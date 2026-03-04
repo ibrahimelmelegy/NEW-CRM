@@ -555,7 +555,9 @@ function openNav() {
   opacity: 0;
   color: var(--text-secondary, #a1a1aa);
   cursor: pointer;
-  transition: opacity 0.2s, color 0.2s;
+  transition:
+    opacity 0.2s,
+    color 0.2s;
   flex-shrink: 0;
 
   &.is-fav {
@@ -573,7 +575,9 @@ function openNav() {
   opacity: 0;
   color: var(--text-secondary, #a1a1aa);
   cursor: pointer;
-  transition: opacity 0.2s, color 0.2s;
+  transition:
+    opacity 0.2s,
+    color 0.2s;
   flex-shrink: 0;
 
   &:hover {

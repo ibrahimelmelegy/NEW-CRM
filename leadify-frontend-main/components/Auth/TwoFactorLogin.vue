@@ -152,5 +152,7 @@ onMounted(() => {
   }
 }
 
-.bg-purple-500_20 { background: rgba(120, 73, 255, 0.15); }
+.bg-purple-500_20 {
+  background: rgba(120, 73, 255, 0.15);
+}
 </style>

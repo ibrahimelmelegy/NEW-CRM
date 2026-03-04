@@ -171,9 +171,7 @@ const riskPieOption = computed(() => ({
         label: { show: true, fontSize: '16', fontWeight: 'bold', color: '#fff' },
         itemStyle: { shadowBlur: 20, shadowColor: 'rgba(239, 68, 68, 0.5)' }
       },
-      data: churnData.value?.riskDistribution?.length
-        ? churnData.value.riskDistribution
-        : [{ value: 0, name: 'No Data' }]
+      data: churnData.value?.riskDistribution?.length ? churnData.value.riskDistribution : [{ value: 0, name: 'No Data' }]
     }
   ]
 }));
@@ -201,13 +199,14 @@ const riskBarOption = computed(() => ({
   },
   series: [
     {
-      data: churnData.value?.riskDistribution?.map((d, i) => ({
-        value: d.value,
-        itemStyle: {
-          color: ['#EF4444', '#F59E0B', '#3B82F6'][i],
-          borderRadius: [8, 8, 0, 0]
-        }
-      })) || [],
+      data:
+        churnData.value?.riskDistribution?.map((d, i) => ({
+          value: d.value,
+          itemStyle: {
+            color: ['#EF4444', '#F59E0B', '#3B82F6'][i],
+            borderRadius: [8, 8, 0, 0]
+          }
+        })) || [],
       type: 'bar',
       barWidth: '45%',
       emphasis: {
@@ -226,10 +225,18 @@ const riskBarOption = computed(() => ({
   -webkit-text-fill-color: transparent;
 }
 
-.bg-red-500_20 { background: rgba(239, 68, 68, 0.15); }
-.bg-amber-500_20 { background: rgba(245, 158, 11, 0.15); }
-.bg-blue-500_20 { background: rgba(59, 130, 246, 0.15); }
-.bg-purple-500_20 { background: rgba(168, 85, 247, 0.15); }
+.bg-red-500_20 {
+  background: rgba(239, 68, 68, 0.15);
+}
+.bg-amber-500_20 {
+  background: rgba(245, 158, 11, 0.15);
+}
+.bg-blue-500_20 {
+  background: rgba(59, 130, 246, 0.15);
+}
+.bg-purple-500_20 {
+  background: rgba(168, 85, 247, 0.15);
+}
 
 .hover-translate-y {
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -263,9 +270,13 @@ const riskBarOption = computed(() => ({
       color: white;
     }
 
-    .cell { padding: 0 16px; }
+    .cell {
+      padding: 0 16px;
+    }
 
-    tr { cursor: pointer; }
+    tr {
+      cursor: pointer;
+    }
   }
 }
 </style>

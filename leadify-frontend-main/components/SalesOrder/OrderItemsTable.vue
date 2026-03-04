@@ -95,98 +95,105 @@
 import { Delete } from '@element-plus/icons-vue';
 
 const props = defineProps<{
-    items: Array<any>;
-    editable?: boolean;
+  items: Array<any>;
+  editable?: boolean;
 }>();
 
 const emit = defineEmits(['update:items']);
 
 const localItems = ref<any[]>([]);
 
-watch(() => props.items, (newItems) => {
+watch(
+  () => props.items,
+  newItems => {
     localItems.value = JSON.parse(JSON.stringify(newItems || []));
-}, { immediate: true, deep: true });
+  },
+  { immediate: true, deep: true }
+);
 
 function calculateLineTotal(row: any): number {
-    const qty = Number(row.quantity) || 0;
-    const price = Number(row.unitPrice) || 0;
-    const taxRate = Number(row.taxRate) || 0;
-    const discountRate = Number(row.discountRate) || 0;
+  const qty = Number(row.quantity) || 0;
+  const price = Number(row.unitPrice) || 0;
+  const taxRate = Number(row.taxRate) || 0;
+  const discountRate = Number(row.discountRate) || 0;
 
-    const lineBase = qty * price;
-    const lineDiscount = lineBase * (discountRate / 100);
-    const lineAfterDiscount = lineBase - lineDiscount;
-    const lineTax = lineAfterDiscount * (taxRate / 100);
-    return lineAfterDiscount + lineTax;
+  const lineBase = qty * price;
+  const lineDiscount = lineBase * (discountRate / 100);
+  const lineAfterDiscount = lineBase - lineDiscount;
+  const lineTax = lineAfterDiscount * (taxRate / 100);
+  return lineAfterDiscount + lineTax;
 }
 
 function recalculateRow(row: any) {
-    row.lineTotal = parseFloat(calculateLineTotal(row).toFixed(2));
-    emitUpdate();
+  row.lineTotal = parseFloat(calculateLineTotal(row).toFixed(2));
+  emitUpdate();
 }
 
 function removeItem(index: number) {
-    localItems.value.splice(index, 1);
-    emitUpdate();
+  localItems.value.splice(index, 1);
+  emitUpdate();
 }
 
 function emitUpdate() {
-    emit('update:items', localItems.value.map(item => ({
-        ...item,
-        lineTotal: parseFloat(calculateLineTotal(item).toFixed(2))
-    })));
+  emit(
+    'update:items',
+    localItems.value.map(item => ({
+      ...item,
+      lineTotal: parseFloat(calculateLineTotal(item).toFixed(2))
+    }))
+  );
 }
 </script>
 
 <style scoped lang="scss">
 .premium-table {
-    background: transparent !important;
-    --el-table-bg-color: transparent;
-    --el-table-tr-bg-color: transparent;
-    --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
-    --el-table-border-color: rgba(255, 255, 255, 0.05);
+  background: transparent !important;
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+  --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
+  --el-table-border-color: rgba(255, 255, 255, 0.05);
 
-    :deep(th.el-table__cell) {
-        text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: 1px;
-        color: var(--text-secondary);
-        padding: 14px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-    }
-    :deep(td.el-table__cell) {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-        padding: 14px 0;
-    }
+  :deep(th.el-table__cell) {
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+  :deep(td.el-table__cell) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 14px 0;
+  }
 }
 
 .table-auto-height {
-    :deep(.el-table__inner-wrapper) {
-        height: auto !important;
-    }
-    :deep(.el-table__body-wrapper) {
-        height: auto !important;
-        overflow-y: hidden !important;
-    }
+  :deep(.el-table__inner-wrapper) {
+    height: auto !important;
+  }
+  :deep(.el-table__body-wrapper) {
+    height: auto !important;
+    overflow-y: hidden !important;
+  }
 }
 
 .premium-input-transparent {
-    :deep(.el-input__wrapper) {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding-left: 0;
-        font-size: 14px;
-    }
+  :deep(.el-input__wrapper) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-left: 0;
+    font-size: 14px;
+  }
 }
 
 .premium-number-input {
-    :deep(.el-input__wrapper) {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 10px !important;
-        box-shadow: none !important;
-        height: 38px;
-    }
+  :deep(.el-input__wrapper) {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    height: 38px;
+  }
 }
 </style>

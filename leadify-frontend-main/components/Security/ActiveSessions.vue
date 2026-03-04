@@ -63,20 +63,12 @@ import { useSecurity, type SessionInfo } from '~/composables/useSecurity';
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 
-const {
-  sessions,
-  loading,
-  fetchSessions,
-  terminateSession,
-  terminateAllSessions
-} = useSecurity();
+const { sessions, loading, fetchSessions, terminateSession, terminateAllSessions } = useSecurity();
 
 const terminatingId = ref<number | null>(null);
 const terminatingAll = ref(false);
 
-const otherSessionsCount = computed(() =>
-  sessions.value.filter((s) => !s.isCurrent).length
-);
+const otherSessionsCount = computed(() => sessions.value.filter(s => !s.isCurrent).length);
 
 onMounted(async () => {
   await fetchSessions();
@@ -85,8 +77,11 @@ onMounted(async () => {
 function formatDate(dateStr: string): string {
   if (!dateStr) return '--';
   const d = new Date(dateStr);
-  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-    + ' ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  return (
+    d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) +
+    ' ' +
+    d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+  );
 }
 
 async function handleTerminate(sessionId: number) {
@@ -102,15 +97,11 @@ async function handleTerminate(sessionId: number) {
 
 async function handleTerminateAll() {
   try {
-    await ElMessageBox.confirm(
-      t('security.terminateAllConfirmMessage'),
-      t('security.terminateAllConfirmTitle'),
-      {
-        confirmButtonText: t('security.terminateAllConfirm'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
-    );
+    await ElMessageBox.confirm(t('security.terminateAllConfirmMessage'), t('security.terminateAllConfirmTitle'), {
+      confirmButtonText: t('security.terminateAllConfirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning'
+    });
     terminatingAll.value = true;
     const success = await terminateAllSessions();
     terminatingAll.value = false;

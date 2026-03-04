@@ -38,7 +38,9 @@ defineProps<{
   margin-bottom: 16px;
 }
 
-.text-secondary { color: var(--text-secondary); }
+.text-secondary {
+  color: var(--text-secondary);
+}
 
 .map-grid {
   display: flex;
@@ -60,8 +62,14 @@ defineProps<{
   border-radius: 6px;
   display: inline-block;
 
-  &.seller { background: rgba(120, 73, 255, 0.15); color: var(--accent-color, #7849ff); }
-  &.buyer { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+  &.seller {
+    background: rgba(120, 73, 255, 0.15);
+    color: var(--accent-color, #7849ff);
+  }
+  &.buyer {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+  }
 }
 
 .stakeholder-card {

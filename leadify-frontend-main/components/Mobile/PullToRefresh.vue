@@ -27,15 +27,18 @@
 </template>
 
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
-  loading?: boolean;
-  threshold?: number;
-  maxPull?: number;
-}>(), {
-  loading: false,
-  threshold: 80,
-  maxPull: 140,
-});
+const props = withDefaults(
+  defineProps<{
+    loading?: boolean;
+    threshold?: number;
+    maxPull?: number;
+  }>(),
+  {
+    loading: false,
+    threshold: 80,
+    maxPull: 140
+  }
+);
 
 const emit = defineEmits<{
   refresh: [];
@@ -63,20 +66,20 @@ const indicatorStyle = computed(() => {
   const opacity = Math.min(pullDistance.value / props.threshold, 1);
   return {
     height: `${height}px`,
-    opacity: props.loading ? 1 : opacity,
+    opacity: props.loading ? 1 : opacity
   };
 });
 
 const contentStyle = computed(() => ({
   transform: `translateY(${pullDistance.value}px)`,
-  transition: isDragging.value ? 'none' : 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)',
+  transition: isDragging.value ? 'none' : 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)'
 }));
 
 const arrowStyle = computed(() => {
   const rotation = pullReady.value ? 180 : 0;
   return {
     transform: `rotate(${rotation}deg)`,
-    transition: 'transform 0.25s ease',
+    transition: 'transform 0.25s ease'
   };
 });
 
@@ -139,11 +142,14 @@ function onTouchEnd() {
 }
 
 // Reset pull distance when loading finishes
-watch(() => props.loading, (newVal, oldVal) => {
-  if (oldVal && !newVal) {
-    pullDistance.value = 0;
+watch(
+  () => props.loading,
+  (newVal, oldVal) => {
+    if (oldVal && !newVal) {
+      pullDistance.value = 0;
+    }
   }
-});
+);
 </script>
 
 <style lang="scss" scoped>

@@ -123,6 +123,10 @@ function formatDisplay(value: number): string {
   top: -16px;
 }
 
-.text-emerald-400 { color: #34d399; }
-.text-red-400 { color: #f87171; }
+.text-emerald-400 {
+  color: #34d399;
+}
+.text-red-400 {
+  color: #f87171;
+}
 </style>

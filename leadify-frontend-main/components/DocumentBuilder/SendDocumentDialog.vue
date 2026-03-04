@@ -98,14 +98,17 @@ const isValid = computed(() => {
 });
 
 // Pre-fill when dialog opens
-watch(() => props.modelValue, (val) => {
-  if (val) {
-    const typeLabel = (props.documentType || 'document').replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
-    form.value.to = props.clientEmail || '';
-    form.value.subject = `${typeLabel} ${props.documentReference || ''} — ${props.documentTitle || ''}`.trim();
-    form.value.message = '';
+watch(
+  () => props.modelValue,
+  val => {
+    if (val) {
+      const typeLabel = (props.documentType || 'document').replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
+      form.value.to = props.clientEmail || '';
+      form.value.subject = `${typeLabel} ${props.documentReference || ''} — ${props.documentTitle || ''}`.trim();
+      form.value.message = '';
+    }
   }
-});
+);
 
 async function handleSend() {
   sending.value = true;

@@ -16,7 +16,21 @@
       stroke-linecap="round"
       stroke-linejoin="round"
     />
-    <path d="M6.66663 11.4727H9.99996" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M6.66663 14.8086H13.3333" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+    <path
+      d="M6.66663 11.4727H9.99996"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-miterlimit="10"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M6.66663 14.8086H13.3333"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-miterlimit="10"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
   </svg>
 </template>

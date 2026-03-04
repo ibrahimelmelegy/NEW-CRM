@@ -43,18 +43,18 @@ export interface KPIMetric {
 }
 
 defineProps<{
-  metrics: KPIMetric[]
-}>()
+  metrics: KPIMetric[];
+}>();
 </script>
 
 <style scoped>
 .kpi-card {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 20px -5px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
 }
 .kpi-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px -5px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
   border-color: var(--primary-color) !important;
 }
 </style>

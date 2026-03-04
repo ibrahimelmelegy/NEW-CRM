@@ -42,15 +42,18 @@ interface SwipeAction {
   color?: string;
 }
 
-const props = withDefaults(defineProps<{
-  leftActions?: SwipeAction[];
-  rightActions?: SwipeAction[];
-  threshold?: number;
-}>(), {
-  leftActions: () => [],
-  rightActions: () => [],
-  threshold: 80,
-});
+const props = withDefaults(
+  defineProps<{
+    leftActions?: SwipeAction[];
+    rightActions?: SwipeAction[];
+    threshold?: number;
+  }>(),
+  {
+    leftActions: () => [],
+    rightActions: () => [],
+    threshold: 80
+  }
+);
 
 const emit = defineEmits<{
   action: [name: string];
@@ -72,7 +75,7 @@ const maxRightSwipe = computed(() => props.rightActions.length * ACTION_WIDTH);
 
 const contentStyle = computed(() => ({
   transform: `translateX(${translateX.value}px)`,
-  transition: isDragging.value ? 'none' : 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)',
+  transition: isDragging.value ? 'none' : 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)'
 }));
 
 function onTouchStart(e: TouchEvent) {

@@ -184,7 +184,7 @@ async function searchClients(query: string) {
   if (!query) return;
   loadingClients.value = true;
   try {
-    const { body, success } = await useApiFetch(`client?searchKey=${encodeURIComponent(query)}&limit=20`) as any;
+    const { body, success } = (await useApiFetch(`client?searchKey=${encodeURIComponent(query)}&limit=20`)) as any;
     if (success && body?.docs) {
       clientOptions.value = body.docs.map((c: any) => ({ id: c.id, clientName: c.clientName }));
     }
@@ -196,7 +196,7 @@ async function searchClients(query: string) {
 // Also load initial clients list
 async function loadInitialClients() {
   try {
-    const { body, success } = await useApiFetch('client?limit=50') as any;
+    const { body, success } = (await useApiFetch('client?limit=50')) as any;
     if (success && body?.docs) {
       clientOptions.value = body.docs.map((c: any) => ({ id: c.id, clientName: c.clientName }));
     }

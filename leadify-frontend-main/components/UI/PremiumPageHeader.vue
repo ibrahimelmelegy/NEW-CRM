@@ -20,7 +20,7 @@ defineProps({
   description: { type: String, default: '' },
   icon: { type: String, default: 'ph:squares-four-bold' },
   primaryColor: { type: String, default: '#7849ff' }
-})
+});
 </script>
 
 <style scoped>
@@ -28,7 +28,13 @@ defineProps({
   animation: slideDown 0.4s ease-out;
 }
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

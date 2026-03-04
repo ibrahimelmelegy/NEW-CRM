@@ -15,25 +15,24 @@ div(class="projection-chart-wrapper")
 import { computed } from 'vue';
 import { use } from 'echarts/core';
 import { LineChart } from 'echarts/charts';
-import {
-  GridComponent,
-  TooltipComponent,
-  LegendComponent
-} from 'echarts/components';
+import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import VChart from 'vue-echarts';
 import { graphic } from 'echarts';
 
 use([LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
-const props = withDefaults(defineProps<{
-  currentData: number[];
-  simulatedData: number[];
-  months: string[];
-  chartHeight?: string;
-}>(), {
-  chartHeight: '350px'
-});
+const props = withDefaults(
+  defineProps<{
+    currentData: number[];
+    simulatedData: number[];
+    months: string[];
+    chartHeight?: string;
+  }>(),
+  {
+    chartHeight: '350px'
+  }
+);
 
 const { t } = useI18n();
 

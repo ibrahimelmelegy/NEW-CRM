@@ -70,7 +70,9 @@ function getSparklineOption(kpi: KPI) {
   border: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
   border-radius: 16px;
   padding: 18px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);

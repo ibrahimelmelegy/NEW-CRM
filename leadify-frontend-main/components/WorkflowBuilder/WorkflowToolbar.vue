@@ -49,7 +49,7 @@ const active = computed({
   padding: 12px 16px;
   background: var(--glass-bg-primary);
   backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border-color, rgba(255,255,255,0.08));
+  border: 1px solid var(--glass-border-color, rgba(255, 255, 255, 0.08));
   border-radius: 12px;
 }
 </style>

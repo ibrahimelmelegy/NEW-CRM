@@ -30,11 +30,13 @@ const emit = defineEmits(['close']);
 
 const visible = computed({
   get: () => props.show,
-  set: (v) => { if (!v) emit('close'); }
+  set: v => {
+    if (!v) emit('close');
+  }
 });
 
-const pageWidth = computed(() => props.orientation === 'portrait' ? 210 : 297);
-const pageHeight = computed(() => props.orientation === 'portrait' ? 297 : 210);
+const pageWidth = computed(() => (props.orientation === 'portrait' ? 210 : 297));
+const pageHeight = computed(() => (props.orientation === 'portrait' ? 297 : 210));
 const previewScale = computed(() => 2.2);
 
 const previewStyle = computed(() => ({

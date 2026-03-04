@@ -159,10 +159,11 @@ const mappedClients = ref<{ label: string; value: any }[]>();
 
 onMounted(async () => {
   const usersRes: any = await useApiFetch('users');
-  users.value = usersRes?.body?.docs?.map((e: any) => ({
-    label: e.name,
-    value: e.id
-  })) || [];
+  users.value =
+    usersRes?.body?.docs?.map((e: any) => ({
+      label: e.name,
+      value: e.id
+    })) || [];
 
   const { clients } = await getClients();
   mappedClients.value = clients?.map((e: any) => ({

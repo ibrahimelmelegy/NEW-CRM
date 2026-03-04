@@ -51,9 +51,7 @@ const props = defineProps<{
   };
 }>();
 
-const total = computed(() =>
-  props.data.current + props.data.thirtyDays + props.data.sixtyDays + props.data.ninetyPlus
-);
+const total = computed(() => props.data.current + props.data.thirtyDays + props.data.sixtyDays + props.data.ninetyPlus);
 
 function pct(value: number): number {
   if (total.value === 0) return 0;
@@ -70,10 +68,10 @@ function pct(value: number): number {
   height: 36px;
   border-radius: 8px;
   overflow: hidden;
-  background: var(--glass-bg, rgba(255,255,255,0.05));
+  background: var(--glass-bg, rgba(255, 255, 255, 0.05));
 }
 .chart-bar.empty {
-  background: var(--glass-bg, rgba(255,255,255,0.05));
+  background: var(--glass-bg, rgba(255, 255, 255, 0.05));
 }
 .bar-segment {
   display: flex;
@@ -95,13 +93,13 @@ function pct(value: number): number {
   background: #ef4444;
 }
 .bar-segment.no-data {
-  background: var(--glass-bg, rgba(255,255,255,0.08));
+  background: var(--glass-bg, rgba(255, 255, 255, 0.08));
 }
 .bar-label {
   font-size: 11px;
   font-weight: 600;
   color: #fff;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .legend-dot {
   width: 10px;

@@ -105,7 +105,9 @@ function handleClick() {
 }
 
 .integration-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   border: 1px solid var(--glass-border-color);
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);

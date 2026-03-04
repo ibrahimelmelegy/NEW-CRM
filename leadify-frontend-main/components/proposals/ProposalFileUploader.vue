@@ -1,9 +1,7 @@
 <template>
   <div class="space-y-4">
     <!-- Label -->
-    <label class="block text-sm font-semibold text-gray-700">
-      Attachments
-    </label>
+    <label class="block text-sm font-semibold text-gray-700">Attachments</label>
 
     <!-- Drop Zone -->
     <div
@@ -13,9 +11,7 @@
       @click="triggerFileInput"
       :class="[
         'relative border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200',
-        isDragging
-          ? 'border-violet-500 bg-violet-50'
-          : 'border-gray-200 hover:border-violet-300 hover:bg-violet-50/50',
+        isDragging ? 'border-violet-500 bg-violet-50' : 'border-gray-200 hover:border-violet-300 hover:bg-violet-50/50',
         disabled ? 'opacity-50 cursor-not-allowed' : ''
       ]"
     >
@@ -38,12 +34,12 @@
             {{ isDragging ? 'Drop files here' : 'Drag & drop files here' }}
           </p>
           <p class="text-sm text-gray-500 mt-1">
-            or <span class="text-violet-600 font-medium">browse</span> to upload
+            or
+            <span class="text-violet-600 font-medium">browse</span>
+            to upload
           </p>
         </div>
-        <p class="text-xs text-gray-400">
-          PDF, DOC, XLS, PPT, Images up to {{ maxSizeMB }}MB
-        </p>
+        <p class="text-xs text-gray-400">PDF, DOC, XLS, PPT, Images up to {{ maxSizeMB }}MB</p>
       </div>
     </div>
 
@@ -52,12 +48,7 @@
       <div
         v-for="file in modelValue"
         :key="file.id"
-        :class="[
-          'flex items-center gap-4 p-4 rounded-xl border',
-          file.status === 'error'
-            ? 'border-red-200 bg-red-50'
-            : 'border-gray-100 bg-white'
-        ]"
+        :class="['flex items-center gap-4 p-4 rounded-xl border', file.status === 'error' ? 'border-red-200 bg-red-50' : 'border-gray-100 bg-white']"
       >
         <!-- Icon -->
         <div class="p-2 rounded-lg bg-gray-100">
@@ -72,14 +63,8 @@
             {{ formatFileSize(file.size) }}
             <span v-if="file.status === 'error' && file.errorMessage" class="text-red-500 ml-2">{{ file.errorMessage }}</span>
           </p>
-          <div
-            v-if="file.status === 'uploading' && file.uploadProgress !== undefined"
-            class="mt-2 h-1 bg-gray-200 rounded-full overflow-hidden"
-          >
-            <div
-              class="h-full bg-violet-500 transition-all duration-300"
-              :style="{ width: `${file.uploadProgress}%` }"
-            ></div>
+          <div v-if="file.status === 'uploading' && file.uploadProgress !== undefined" class="mt-2 h-1 bg-gray-200 rounded-full overflow-hidden">
+            <div class="h-full bg-violet-500 transition-all duration-300" :style="{ width: `${file.uploadProgress}%` }"></div>
           </div>
         </div>
 
@@ -109,11 +94,7 @@
 
 <script setup lang="ts">
 import { ref, computed, markRaw, type Component } from 'vue';
-import {
-  Upload, File as FileIcon, X, Loader2,
-  FileText, Image as ImageIcon, FileSpreadsheet,
-  Presentation, Download
-} from 'lucide-vue-next';
+import { Upload, File as FileIcon, X, Loader2, FileText, Image as ImageIcon, FileSpreadsheet, Presentation, Download } from 'lucide-vue-next';
 
 // ---- Types ----
 interface UploadedFile {
@@ -141,7 +122,7 @@ const props = withDefaults(defineProps<Props>(), {
   maxSize: 10 * 1024 * 1024, // 10MB in bytes
   acceptedTypes: () => ['image/*', 'application/pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'],
   multiple: true,
-  disabled: false,
+  disabled: false
 });
 
 // ---- Emits ----
@@ -216,7 +197,7 @@ const processFiles = async (fileList: FileList | null) => {
         type: file.type,
         url: '',
         status: 'error',
-        errorMessage: `File too large (max ${maxSizeMB.value}MB)`,
+        errorMessage: `File too large (max ${maxSizeMB.value}MB)`
       });
       continue;
     }
@@ -229,7 +210,7 @@ const processFiles = async (fileList: FileList | null) => {
       type: file.type,
       url: '',
       uploadProgress: 0,
-      status: 'uploading',
+      status: 'uploading'
     };
     newFiles.push(fileEntry);
 
@@ -262,7 +243,10 @@ const processFiles = async (fileList: FileList | null) => {
 };
 
 const handleRemove = (id: string) => {
-  emit('update:modelValue', props.modelValue.filter(f => f.id !== id));
+  emit(
+    'update:modelValue',
+    props.modelValue.filter(f => f.id !== id)
+  );
 };
 
 const handleDownload = (file: UploadedFile) => {

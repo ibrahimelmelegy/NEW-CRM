@@ -125,7 +125,17 @@ const props = defineProps<{
 // The parent page [id].vue already defines the page meta.
 
 const route = useRoute();
-const { currentDocument: document, loading, getDocument, getVersions, getVersionById, restoreVersion, changeStatus, convertDocument, generatePdf } = useDocBuilder();
+const {
+  currentDocument: document,
+  loading,
+  getDocument,
+  getVersions,
+  getVersionById,
+  restoreVersion,
+  changeStatus,
+  convertDocument,
+  generatePdf
+} = useDocBuilder();
 
 const activeTab = ref('editor');
 const versions = ref<DocBuilderVersion[]>([]);
@@ -154,8 +164,14 @@ function formatStatus(status: string) {
 
 function statusTagType(status: string) {
   const map: Record<string, string> = {
-    DRAFT: 'info', PENDING_APPROVAL: 'warning', APPROVED: 'success',
-    REJECTED: 'danger', SENT: '', PAID: 'success', CANCELLED: 'info', ARCHIVED: 'info'
+    DRAFT: 'info',
+    PENDING_APPROVAL: 'warning',
+    APPROVED: 'success',
+    REJECTED: 'danger',
+    SENT: '',
+    PAID: 'success',
+    CANCELLED: 'info',
+    ARCHIVED: 'info'
   };
   return map[status] || '';
 }
@@ -185,9 +201,13 @@ function getNextStatuses(current: string): string[] {
 
 function goBack() {
   const typeRoutes: Record<string, string> = {
-    quote: '/sales/quotes', invoice: '/sales/invoices', proforma_invoice: '/sales/proforma-invoices',
-    purchase_order: '/sales/purchase-orders', contract: '/sales/contracts',
-    sales_order: '/sales/sales-orders', delivery_note: '/sales/delivery-notes'
+    quote: '/sales/quotes',
+    invoice: '/sales/invoices',
+    proforma_invoice: '/sales/proforma-invoices',
+    purchase_order: '/sales/purchase-orders',
+    contract: '/sales/contracts',
+    sales_order: '/sales/sales-orders',
+    delivery_note: '/sales/delivery-notes'
   };
   navigateTo(typeRoutes[props.documentType] || '/sales/documents');
 }
@@ -208,23 +228,26 @@ async function handleStatusChange(newStatus: string) {
       ElMessage.success(`Status changed to ${formatStatus(newStatus)}`);
       await loadDocument();
     }
-  } catch { /* cancelled */ }
+  } catch {
+    /* cancelled */
+  }
 }
 
 async function handleConvert(targetType: string) {
   try {
-    await ElMessageBox.confirm(
-      `Convert this document to ${formatType(targetType)}?`,
-      'Convert Document',
-      { confirmButtonText: 'Convert', type: 'info' }
-    );
+    await ElMessageBox.confirm(`Convert this document to ${formatType(targetType)}?`, 'Convert Document', {
+      confirmButtonText: 'Convert',
+      type: 'info'
+    });
     const response: any = await convertDocument(props.documentId, targetType);
     if (response?.success && response.body) {
       ElMessage.success('Document converted successfully');
       const typeSlug = targetType.replace(/_/g, '-') + 's';
       navigateTo(`/sales/${typeSlug}/${response.body.id}`);
     }
-  } catch { /* cancelled */ }
+  } catch {
+    /* cancelled */
+  }
 }
 
 async function handleGeneratePdf() {

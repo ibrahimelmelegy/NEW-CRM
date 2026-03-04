@@ -89,7 +89,11 @@ const truncatedMessage = computed(() => {
   font-weight: 700;
   text-transform: uppercase;
 
-  &.approved { color: #22c55e; }
-  &.rejected { color: #ef4444; }
+  &.approved {
+    color: #22c55e;
+  }
+  &.rejected {
+    color: #ef4444;
+  }
 }
 </style>

@@ -179,18 +179,20 @@ const opportunityId = route.query?.opportunityId;
 onMounted(async () => {
   // Fetch users
   const usersRes: any = await useApiFetch('users');
-  users.value = usersRes?.body?.docs?.map((e: any) => ({
-    label: e.name,
-    value: e.id
-  })) || [];
+  users.value =
+    usersRes?.body?.docs?.map((e: any) => ({
+      label: e.name,
+      value: e.id
+    })) || [];
 
   // Fetch leads
   const leadsResponse = await getLeads();
   const leads = leadsResponse.leads;
-  mappedLeads.value = leads?.map((e: any) => ({
-    label: e.name,
-    value: e.id
-  })) || [];
+  mappedLeads.value =
+    leads?.map((e: any) => ({
+      label: e.name,
+      value: e.id
+    })) || [];
 
   // Fetch clients
   const { clients } = await getClients();

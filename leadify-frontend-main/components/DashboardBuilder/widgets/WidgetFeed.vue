@@ -52,7 +52,7 @@ function getActivityIcon(status: string): string {
     create: 'ph:plus-circle-bold',
     update: 'ph:pencil-simple-bold',
     delete: 'ph:trash-bold',
-    login: 'ph:sign-in-bold',
+    login: 'ph:sign-in-bold'
   };
   return map[status] || 'ph:activity-bold';
 }
@@ -62,7 +62,7 @@ function getActivityColor(status: string): string {
     create: '#10B981',
     update: '#3B82F6',
     delete: '#EF4444',
-    login: '#7849FF',
+    login: '#7849FF'
   };
   return map[status] || '#94A3B8';
 }
@@ -92,7 +92,7 @@ async function loadData() {
           user: a.user?.name || a.userName || undefined,
           time: formatTimeAgo(a.createdAt),
           icon: getActivityIcon(a.status || a.action || ''),
-          color: getActivityColor(a.status || a.action || ''),
+          color: getActivityColor(a.status || a.action || '')
         }));
       }
     } else {
@@ -106,7 +106,7 @@ async function loadData() {
           user: n.from?.name || undefined,
           time: formatTimeAgo(n.createdAt),
           icon: n.read ? 'ph:bell-bold' : 'ph:bell-ringing-bold',
-          color: n.read ? '#94A3B8' : '#EF4444',
+          color: n.read ? '#94A3B8' : '#EF4444'
         }));
       }
     }

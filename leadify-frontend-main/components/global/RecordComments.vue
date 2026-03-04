@@ -68,7 +68,7 @@ const loading = ref(false);
 async function fetchComments() {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch(`comments?entityType=${props.entityType}&entityId=${props.entityId}`) as any;
+    const { body, success } = (await useApiFetch(`comments?entityType=${props.entityType}&entityId=${props.entityId}`)) as any;
     if (success && body) {
       comments.value = body.docs || body || [];
     }
@@ -139,5 +139,8 @@ function formatTimeAgo(dateStr: string): string {
 }
 
 onMounted(() => fetchComments());
-watch(() => [props.entityType, props.entityId], () => fetchComments());
+watch(
+  () => [props.entityType, props.entityId],
+  () => fetchComments()
+);
 </script>

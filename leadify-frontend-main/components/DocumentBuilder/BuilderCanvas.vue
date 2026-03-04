@@ -76,13 +76,19 @@ const showGrid = ref(false);
 const snapToGrid = ref(false);
 const GRID_SIZE_MM = 5; // 5mm grid
 
-function zoomIn() { zoomLevel.value = Math.min(200, zoomLevel.value + 10); }
-function zoomOut() { zoomLevel.value = Math.max(50, zoomLevel.value - 10); }
-function zoomReset() { zoomLevel.value = 100; }
+function zoomIn() {
+  zoomLevel.value = Math.min(200, zoomLevel.value + 10);
+}
+function zoomOut() {
+  zoomLevel.value = Math.max(50, zoomLevel.value - 10);
+}
+function zoomReset() {
+  zoomLevel.value = 100;
+}
 
 // A4 in mm: 210 x 297 (portrait) or 297 x 210 (landscape)
-const pageWidth = computed(() => props.orientation === 'portrait' ? 210 : 297);
-const pageHeight = computed(() => props.orientation === 'portrait' ? 297 : 210);
+const pageWidth = computed(() => (props.orientation === 'portrait' ? 210 : 297));
+const pageHeight = computed(() => (props.orientation === 'portrait' ? 297 : 210));
 
 // Scale factor: base 2.8px/mm, adjusted by zoom
 const baseScale = 2.8;

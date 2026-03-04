@@ -48,7 +48,7 @@ const uploadProgress = ref(0);
 async function fetchAttachments() {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch(`attachments?entityType=${props.entityType}&entityId=${props.entityId}`) as any;
+    const { body, success } = (await useApiFetch(`attachments?entityType=${props.entityType}&entityId=${props.entityId}`)) as any;
     if (success && body) {
       attachments.value = body.docs || body || [];
     }
@@ -107,10 +107,17 @@ function getFileIcon(name: string): string {
   if (!name) return 'ph:file-bold';
   const ext = name.split('.').pop()?.toLowerCase();
   const map: Record<string, string> = {
-    pdf: 'ph:file-pdf-bold', doc: 'ph:file-doc-bold', docx: 'ph:file-doc-bold',
-    xls: 'ph:file-xls-bold', xlsx: 'ph:file-xls-bold', csv: 'ph:file-csv-bold',
-    png: 'ph:file-image-bold', jpg: 'ph:file-image-bold', jpeg: 'ph:file-image-bold',
-    zip: 'ph:file-zip-bold', rar: 'ph:file-zip-bold'
+    pdf: 'ph:file-pdf-bold',
+    doc: 'ph:file-doc-bold',
+    docx: 'ph:file-doc-bold',
+    xls: 'ph:file-xls-bold',
+    xlsx: 'ph:file-xls-bold',
+    csv: 'ph:file-csv-bold',
+    png: 'ph:file-image-bold',
+    jpg: 'ph:file-image-bold',
+    jpeg: 'ph:file-image-bold',
+    zip: 'ph:file-zip-bold',
+    rar: 'ph:file-zip-bold'
   };
   return map[ext || ''] || 'ph:file-bold';
 }
@@ -119,13 +126,22 @@ function getFileColor(name: string): string {
   if (!name) return '#7849ff';
   const ext = name.split('.').pop()?.toLowerCase();
   const map: Record<string, string> = {
-    pdf: '#ef4444', doc: '#3b82f6', docx: '#3b82f6',
-    xls: '#22c55e', xlsx: '#22c55e', csv: '#22c55e',
-    png: '#f59e0b', jpg: '#f59e0b', jpeg: '#f59e0b'
+    pdf: '#ef4444',
+    doc: '#3b82f6',
+    docx: '#3b82f6',
+    xls: '#22c55e',
+    xlsx: '#22c55e',
+    csv: '#22c55e',
+    png: '#f59e0b',
+    jpg: '#f59e0b',
+    jpeg: '#f59e0b'
   };
   return map[ext || ''] || '#7849ff';
 }
 
 onMounted(() => fetchAttachments());
-watch(() => [props.entityType, props.entityId], () => fetchAttachments());
+watch(
+  () => [props.entityType, props.entityId],
+  () => fetchAttachments()
+);
 </script>

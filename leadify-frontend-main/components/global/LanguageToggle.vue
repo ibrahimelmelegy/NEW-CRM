@@ -56,12 +56,12 @@ onMounted(() => {
 }
 
 :global(html.light-mode) .lang-toggle {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(0, 0, 0, 0.08);
-    
-    &:hover {
-        background: rgba(120, 73, 255, 0.05);
-        border-color: rgba(120, 73, 255, 0.2);
-    }
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    background: rgba(120, 73, 255, 0.05);
+    border-color: rgba(120, 73, 255, 0.2);
+  }
 }
 </style>

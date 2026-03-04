@@ -75,9 +75,7 @@ function exportClientSide(format: string) {
 }
 
 function exportCSV(headers: string[], rows: string[][], baseName: string) {
-  const csvContent = [headers, ...rows]
-    .map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
-    .join('\n');
+  const csvContent = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
   downloadFile(csvContent, `${baseName}.csv`, 'text/csv');
 }
 
@@ -92,10 +90,7 @@ async function exportExcel(headers: string[], rows: string[][], baseName: string
 
       // Auto-size columns
       const colWidths = headers.map((h, i) => {
-        const maxLen = Math.max(
-          h.length,
-          ...rows.map(r => String(r[i] || '').length)
-        );
+        const maxLen = Math.max(h.length, ...rows.map(r => String(r[i] || '').length));
         return { wch: Math.min(maxLen + 2, 50) };
       });
       worksheet['!cols'] = colWidths;
@@ -108,9 +103,7 @@ async function exportExcel(headers: string[], rows: string[][], baseName: string
   }
 
   // Fallback: export as CSV with .xls extension (opens in Excel)
-  const csvContent = [headers, ...rows]
-    .map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join('\t'))
-    .join('\n');
+  const csvContent = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join('\t')).join('\n');
   downloadFile(csvContent, `${baseName}.xls`, 'application/vnd.ms-excel');
 }
 
@@ -119,7 +112,7 @@ async function loadLogoBase64(): Promise<string | null> {
     const response = await fetch('/assets/header-logo.png');
     if (!response.ok) return null;
     const blob = await response.blob();
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result as string);
       reader.onerror = () => resolve(null);
@@ -182,11 +175,7 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(220, 210, 255);
-    doc.text(
-      `Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
-      logoEndX + 4,
-      20
-    );
+    doc.text(`Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, logoEndX + 4, 20);
 
     // Thin accent line below header
     doc.setDrawColor(255, 255, 255);
@@ -233,12 +222,7 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
         doc.setFontSize(7);
         doc.setTextColor(150);
         doc.text('High Point Technology', 10, ph - 6);
-        doc.text(
-          `Page ${data.pageNumber} of ${pageCount}`,
-          pageW - 10,
-          ph - 6,
-          { align: 'right' }
-        );
+        doc.text(`Page ${data.pageNumber} of ${pageCount}`, pageW - 10, ph - 6, { align: 'right' });
       }
     });
 

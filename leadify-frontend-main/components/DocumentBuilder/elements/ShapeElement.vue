@@ -26,11 +26,7 @@ const elementStyle = computed(() => {
     width: '100%',
     height: '100%',
     background: props.element.props?.fill || '#e0e0e0',
-    borderRadius: isCircle
-      ? '50%'
-      : props.element.props?.borderRadius
-        ? `${props.element.props.borderRadius * props.scale}px`
-        : '0',
+    borderRadius: isCircle ? '50%' : props.element.props?.borderRadius ? `${props.element.props.borderRadius * props.scale}px` : '0',
     border: props.element.props?.borderWidth
       ? `${props.element.props.borderWidth * props.scale}px solid ${props.element.props?.borderColor || '#ccc'}`
       : 'none'

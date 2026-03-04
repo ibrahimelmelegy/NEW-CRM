@@ -24,7 +24,9 @@ defineProps<{
   padding: 16px;
 }
 
-.text-secondary { color: var(--text-secondary); }
+.text-secondary {
+  color: var(--text-secondary);
+}
 
 .level-badge {
   background: linear-gradient(135deg, var(--accent-color, #7849ff), var(--gradient-end, #a855f7));

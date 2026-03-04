@@ -65,10 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  getEventTypeInfo,
-  type SubscriptionEvent
-} from '~/composables/useSubscriptions';
+import { getEventTypeInfo, type SubscriptionEvent } from '~/composables/useSubscriptions';
 
 const props = defineProps<{
   events: SubscriptionEvent[];

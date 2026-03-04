@@ -123,7 +123,7 @@ function formatCurrency(value: number | string): string {
 .kanban-card-enhanced {
   padding: 14px;
   position: relative;
-  border-left: 3px solid var(--card-accent, #6B7280);
+  border-left: 3px solid var(--card-accent, #6b7280);
   transition: all 0.2s ease;
 
   &:hover {
@@ -140,15 +140,15 @@ function formatCurrency(value: number | string): string {
   flex-shrink: 0;
 
   &--active {
-    background: #10B981;
+    background: #10b981;
     box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
   }
   &--stale {
-    background: #F59E0B;
+    background: #f59e0b;
     box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
   }
   &--inactive {
-    background: #EF4444;
+    background: #ef4444;
     box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
   }
 }
@@ -163,15 +163,15 @@ function formatCurrency(value: number | string): string {
 
   &--default {
     background: rgba(107, 114, 128, 0.3);
-    color: #9CA3AF;
+    color: #9ca3af;
   }
   &--warning {
     background: rgba(245, 158, 11, 0.2);
-    color: #FBBF24;
+    color: #fbbf24;
   }
   &--danger {
     background: rgba(239, 68, 68, 0.2);
-    color: #F87171;
+    color: #f87171;
   }
 }
 
@@ -187,7 +187,7 @@ function formatCurrency(value: number | string): string {
 .card-value {
   font-size: 13px;
   font-family: monospace;
-  color: #C4B5FD;
+  color: #c4b5fd;
   font-weight: 600;
 }
 
@@ -201,7 +201,7 @@ function formatCurrency(value: number | string): string {
   justify-content: center;
   font-size: 10px;
   font-weight: 700;
-  color: #A78BFA;
+  color: #a78bfa;
   background: rgba(168, 85, 247, 0.2);
   border: 1px solid rgba(168, 85, 247, 0.3);
 }
@@ -228,7 +228,7 @@ function formatCurrency(value: number | string): string {
   align-items: center;
   justify-content: space-between;
   font-size: 11px;
-  color: #D1D5DB;
+  color: #d1d5db;
   padding: 3px 0;
 
   & + .preview-row {
@@ -237,7 +237,7 @@ function formatCurrency(value: number | string): string {
 }
 
 .preview-label {
-  color: #9CA3AF;
+  color: #9ca3af;
   font-weight: 500;
 }
 

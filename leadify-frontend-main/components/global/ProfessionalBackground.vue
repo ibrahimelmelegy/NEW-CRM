@@ -8,12 +8,12 @@
         <div class="glow glow-2"></div>
       </div>
     </template>
-    
+
     <!-- Light Mode: Clean solid background -->
     <template v-else>
       <div class="light-pattern"></div>
     </template>
-    
+
     <!-- Subtle noise texture for both modes -->
     <div class="noise-overlay"></div>
   </div>
@@ -35,31 +35,30 @@ const themeStore = useThemeStore();
   overflow: hidden;
   background-color: #0a0a0f;
   transition: background-color 0.3s ease;
-  
+
   // ========== DARK MODE (Default) ==========
   .mesh-gradient {
     position: absolute;
     inset: 0;
     opacity: 0.8;
     background:
-      radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%),
-      radial-gradient(at 50% 0%, hsla(255,100%,64%,0.15) 0, transparent 50%),
-      radial-gradient(at 100% 0%, hsla(29,100%,50%,0.1) 0, transparent 50%),
-      radial-gradient(at 0% 100%, hsla(255,100%,64%,0.1) 0, transparent 50%),
-      radial-gradient(at 100% 100%, hsla(29,100%,50%,0.15) 0, transparent 50%);
+      radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(255, 100%, 64%, 0.15) 0, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(29, 100%, 50%, 0.1) 0, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(255, 100%, 64%, 0.1) 0, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(29, 100%, 50%, 0.15) 0, transparent 50%);
     filter: blur(40px);
   }
 
   .ambient-glows {
     position: absolute;
     inset: 0;
-    
+
     .glow {
       position: absolute;
       border-radius: 50%;
       animation: pulse 8s ease-in-out infinite;
     }
-    
+
     .glow-1 {
       top: -10%;
       left: -5%;
@@ -68,7 +67,7 @@ const themeStore = useThemeStore();
       background: rgba(120, 73, 255, 0.25);
       filter: blur(100px);
     }
-    
+
     .glow-2 {
       bottom: -10%;
       right: -5%;
@@ -79,18 +78,17 @@ const themeStore = useThemeStore();
       animation-delay: 3s;
     }
   }
-  
+
   // ========== LIGHT MODE ==========
   &.light-theme {
     background-color: #f8f9fa;
-    
+
     .light-pattern {
       position: absolute;
       inset: 0;
       // Subtle gradient - NO BLUR
-      background: 
-        linear-gradient(135deg, rgba(124, 58, 237, 0.03) 0%, transparent 50%),
-        linear-gradient(225deg, rgba(249, 115, 22, 0.02) 0%, transparent 50%);
+      background:
+        linear-gradient(135deg, rgba(124, 58, 237, 0.03) 0%, transparent 50%), linear-gradient(225deg, rgba(249, 115, 22, 0.02) 0%, transparent 50%);
     }
   }
 
@@ -104,7 +102,8 @@ const themeStore = useThemeStore();
   }
 
   @keyframes pulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.4;
       transform: scale(1);
     }

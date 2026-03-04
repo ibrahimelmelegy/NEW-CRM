@@ -47,11 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  formatSubscriptionCurrency,
-  getBillingCycleLabel,
-  type SubscriptionPlan
-} from '~/composables/useSubscriptions';
+import { formatSubscriptionCurrency, getBillingCycleLabel, type SubscriptionPlan } from '~/composables/useSubscriptions';
 
 defineProps<{
   plan: SubscriptionPlan;

@@ -55,11 +55,26 @@ const methodClass = computed(() => {
   letter-spacing: 0.5px;
   margin-bottom: 4px;
 
-  &.method-get { background: #166534; color: #86efac; }
-  &.method-post { background: #1e40af; color: #93c5fd; }
-  &.method-put { background: #92400e; color: #fcd34d; }
-  &.method-patch { background: #6b21a8; color: #d8b4fe; }
-  &.method-delete { background: #991b1b; color: #fca5a5; }
+  &.method-get {
+    background: #166534;
+    color: #86efac;
+  }
+  &.method-post {
+    background: #1e40af;
+    color: #93c5fd;
+  }
+  &.method-put {
+    background: #92400e;
+    color: #fcd34d;
+  }
+  &.method-patch {
+    background: #6b21a8;
+    color: #d8b4fe;
+  }
+  &.method-delete {
+    background: #991b1b;
+    color: #fca5a5;
+  }
 }
 
 .http-url {
@@ -89,7 +104,11 @@ const methodClass = computed(() => {
   font-weight: 700;
   text-transform: uppercase;
 
-  &.success { color: #22c55e; }
-  &.error { color: #ef4444; }
+  &.success {
+    color: #22c55e;
+  }
+  &.error {
+    color: #ef4444;
+  }
 }
 </style>

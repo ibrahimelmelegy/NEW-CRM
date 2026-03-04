@@ -1,9 +1,7 @@
 <template>
   <div class="relative">
     <!-- Label -->
-    <label class="block text-sm font-semibold text-gray-700 mb-2">
-      Link to CRM Entity
-    </label>
+    <label class="block text-sm font-semibold text-gray-700 mb-2">Link to CRM Entity</label>
 
     <!-- Selected Value / Trigger -->
     <button
@@ -28,17 +26,10 @@
       <span v-else class="text-gray-400">Select Opportunity, Deal, or Project...</span>
 
       <div class="flex items-center gap-2">
-        <button
-          v-if="modelValue && !disabled"
-          @click.stop="handleClear"
-          class="p-1 hover:bg-gray-100 rounded-full transition-colors"
-        >
+        <button v-if="modelValue && !disabled" @click.stop="handleClear" class="p-1 hover:bg-gray-100 rounded-full transition-colors">
           <X :size="16" class="text-gray-400" />
         </button>
-        <ChevronDown
-          :size="20"
-          :class="['text-gray-400 transition-transform', { 'rotate-180': isOpen }]"
-        />
+        <ChevronDown :size="20" :class="['text-gray-400 transition-transform', { 'rotate-180': isOpen }]" />
       </div>
     </button>
 
@@ -55,9 +46,7 @@
           @click="entityType = et.type"
           :class="[
             'flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200',
-            entityType === et.type
-              ? 'bg-violet-100 text-violet-700'
-              : 'text-gray-500 hover:bg-gray-50'
+            entityType === et.type ? 'bg-violet-100 text-violet-700' : 'text-gray-500 hover:bg-gray-50'
           ]"
         >
           <component :is="et.icon" :size="16" />
@@ -117,20 +106,13 @@
     </div>
 
     <!-- Backdrop to close dropdown -->
-    <div
-      v-if="isOpen"
-      class="fixed inset-0 z-40"
-      @click="isOpen = false"
-    ></div>
+    <div v-if="isOpen" class="fixed inset-0 z-40" @click="isOpen = false"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, markRaw, type Component } from 'vue';
-import {
-  Search, Building2, Briefcase, FolderKanban,
-  ChevronDown, X, Loader2
-} from 'lucide-vue-next';
+import { Search, Building2, Briefcase, FolderKanban, ChevronDown, X, Loader2 } from 'lucide-vue-next';
 
 // ---- Types ----
 type EntityType = 'Opportunity' | 'Deal' | 'Project';
@@ -159,7 +141,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: null,
-  disabled: false,
+  disabled: false
 });
 
 // ---- Emits ----
@@ -184,34 +166,39 @@ const isLoadingProjects = ref(false);
 const entityTypes: EntityTypeConfig[] = [
   { type: 'Opportunity', icon: markRaw(Building2), label: 'Opportunity', color: 'text-blue-600 bg-blue-50' },
   { type: 'Deal', icon: markRaw(Briefcase), label: 'Deal', color: 'text-green-600 bg-green-50' },
-  { type: 'Project', icon: markRaw(FolderKanban), label: 'Project', color: 'text-purple-600 bg-purple-50' },
+  { type: 'Project', icon: markRaw(FolderKanban), label: 'Project', color: 'text-purple-600 bg-purple-50' }
 ];
 
 // ---- Computed ----
 const currentEntities = computed(() => {
   switch (entityType.value) {
-    case 'Opportunity': return opportunities.value || [];
-    case 'Deal': return deals.value || [];
-    case 'Project': return projects.value || [];
-    default: return [];
+    case 'Opportunity':
+      return opportunities.value || [];
+    case 'Deal':
+      return deals.value || [];
+    case 'Project':
+      return projects.value || [];
+    default:
+      return [];
   }
 });
 
 const isLoadingEntities = computed(() => {
   switch (entityType.value) {
-    case 'Opportunity': return isLoadingOpportunities.value;
-    case 'Deal': return isLoadingDeals.value;
-    case 'Project': return isLoadingProjects.value;
-    default: return false;
+    case 'Opportunity':
+      return isLoadingOpportunities.value;
+    case 'Deal':
+      return isLoadingDeals.value;
+    case 'Project':
+      return isLoadingProjects.value;
+    default:
+      return false;
   }
 });
 
 const filteredEntities = computed(() => {
   const term = searchTerm.value.toLowerCase();
-  return currentEntities.value.filter((entity: any) =>
-    entity.name?.toLowerCase().includes(term) ||
-    entity.title?.toLowerCase().includes(term)
-  );
+  return currentEntities.value.filter((entity: any) => entity.name?.toLowerCase().includes(term) || entity.title?.toLowerCase().includes(term));
 });
 
 // ---- Methods ----
@@ -233,7 +220,7 @@ const handleSelect = (entity: any) => {
     name: entity.name || entity.title,
     clientName: clientData.name || entity.contactName || '',
     clientCompany: clientData.companyName || clientData.name || entity.companyName || entity.name || entity.title || '',
-    clientEmail: clientData.email || entity.email || '',
+    clientEmail: clientData.email || entity.email || ''
   });
 
   isOpen.value = false;
@@ -288,22 +275,26 @@ const fetchProjects = async () => {
 };
 
 // Fetch entities when the entity type changes (lazy loading)
-watch(entityType, (newType) => {
-  switch (newType) {
-    case 'Opportunity':
-      if (opportunities.value.length === 0) fetchOpportunities();
-      break;
-    case 'Deal':
-      if (deals.value.length === 0) fetchDeals();
-      break;
-    case 'Project':
-      if (projects.value.length === 0) fetchProjects();
-      break;
-  }
-}, { immediate: false });
+watch(
+  entityType,
+  newType => {
+    switch (newType) {
+      case 'Opportunity':
+        if (opportunities.value.length === 0) fetchOpportunities();
+        break;
+      case 'Deal':
+        if (deals.value.length === 0) fetchDeals();
+        break;
+      case 'Project':
+        if (projects.value.length === 0) fetchProjects();
+        break;
+    }
+  },
+  { immediate: false }
+);
 
 // Fetch initial entities when dropdown opens
-watch(isOpen, (opened) => {
+watch(isOpen, opened => {
   if (opened) {
     switch (entityType.value) {
       case 'Opportunity':

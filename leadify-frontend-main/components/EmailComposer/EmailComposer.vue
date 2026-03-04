@@ -137,7 +137,7 @@ const {
   fetchTemplates,
   selectTemplate,
   injectVariables,
-  resetForm,
+  resetForm
 } = useEmailComposer();
 
 const sending = ref(false);
@@ -164,26 +164,33 @@ onUnmounted(() => {
 });
 
 // Watch visibility to load templates
-watch(() => props.visible, async (val) => {
-  if (val) {
-    if (props.contextData) {
-      context.value = { ...props.contextData };
+watch(
+  () => props.visible,
+  async val => {
+    if (val) {
+      if (props.contextData) {
+        context.value = { ...props.contextData };
+      }
+      await fetchTemplates();
+    } else {
+      resetForm();
+      showCc.value = false;
+      showBcc.value = false;
+      activeCollapse.value = [];
     }
-    await fetchTemplates();
-  } else {
-    resetForm();
-    showCc.value = false;
-    showBcc.value = false;
-    activeCollapse.value = [];
   }
-});
+);
 
 // Apply context data when it changes
-watch(() => props.contextData, (val) => {
-  if (val) {
-    context.value = { ...val };
-  }
-}, { deep: true });
+watch(
+  () => props.contextData,
+  val => {
+    if (val) {
+      context.value = { ...val };
+    }
+  },
+  { deep: true }
+);
 
 function handleTemplateSelect(template: any) {
   selectTemplate(template);
@@ -223,10 +230,7 @@ const previewBody = computed(() => {
     return injectVariables(raw);
   }
   // Otherwise convert plain text to basic HTML paragraphs
-  const escaped = raw
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  const escaped = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const html = escaped
     .split('\n\n')
     .map((p: string) => `<p>${p.replace(/\n/g, '<br>')}</p>`)

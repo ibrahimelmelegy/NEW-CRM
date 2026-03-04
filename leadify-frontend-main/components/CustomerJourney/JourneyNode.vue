@@ -100,9 +100,17 @@ function formatDateTime(dateStr: string): string {
       width: 2px;
       background: linear-gradient(to bottom, var(--glass-border), transparent);
     }
-    .journey-node__badge { order: 2; }
-    .journey-node__content { order: 1; margin-bottom: 8px; }
-    .journey-node__sentiment { order: 0; margin-bottom: 4px; }
+    .journey-node__badge {
+      order: 2;
+    }
+    .journey-node__content {
+      order: 1;
+      margin-bottom: 8px;
+    }
+    .journey-node__sentiment {
+      order: 0;
+      margin-bottom: 4px;
+    }
     .journey-node__details {
       top: -10px;
       transform: translateY(-100%);
@@ -117,9 +125,17 @@ function formatDateTime(dateStr: string): string {
       width: 2px;
       background: linear-gradient(to top, var(--glass-border), transparent);
     }
-    .journey-node__badge { order: 2; }
-    .journey-node__content { order: 3; margin-top: 8px; }
-    .journey-node__sentiment { order: 4; margin-top: 4px; }
+    .journey-node__badge {
+      order: 2;
+    }
+    .journey-node__content {
+      order: 3;
+      margin-top: 8px;
+    }
+    .journey-node__sentiment {
+      order: 4;
+      margin-top: 4px;
+    }
     .journey-node__details {
       bottom: -10px;
       transform: translateY(100%);
@@ -200,7 +216,9 @@ function formatDateTime(dateStr: string): string {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 .fade-enter-from,
 .fade-leave-to {

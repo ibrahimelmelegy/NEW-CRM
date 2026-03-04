@@ -79,8 +79,8 @@ import type { SmartTableSavedView as SavedView } from '~/composables/useSmartTab
 const props = defineProps({
   views: {
     type: Array as PropType<SavedView[]>,
-    default: () => [],
-  },
+    default: () => []
+  }
 });
 
 const emit = defineEmits<{
@@ -113,7 +113,7 @@ const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString(undefined, {
       month: 'short',
-      day: 'numeric',
+      day: 'numeric'
     });
   } catch {
     return '';

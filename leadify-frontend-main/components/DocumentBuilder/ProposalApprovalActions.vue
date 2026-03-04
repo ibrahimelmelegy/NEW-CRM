@@ -1,76 +1,39 @@
 <template>
   <div class="flex items-center gap-3">
     <!-- Status Badge -->
-    <el-tag
-      :type="statusConfig.type as any"
-      effect="dark"
-      round
-      size="default"
-      class="!text-xs !font-bold !px-3"
-    >
+    <el-tag :type="statusConfig.type as any" effect="dark" round size="default" class="!text-xs !font-bold !px-3">
       <Icon :name="statusConfig.icon" size="14" class="mr-1 align-middle" />
       {{ statusConfig.label }}
     </el-tag>
 
     <!-- Draft → Submit for Approval -->
-    <el-button
-      v-if="status === 'DRAFT'"
-      type="primary"
-      size="default"
-      class="!rounded-xl"
-      :loading="loading"
-      @click="handleSubmit"
-    >
+    <el-button v-if="status === 'DRAFT'" type="primary" size="default" class="!rounded-xl" :loading="loading" @click="handleSubmit">
       <Icon name="ph:paper-plane-tilt" size="16" class="mr-1.5" />
       Submit for Approval
     </el-button>
 
     <!-- Waiting Approval → Approve / Reject -->
     <template v-if="status === 'WAITING_APPROVAL'">
-      <el-button
-        type="success"
-        size="default"
-        class="!rounded-xl"
-        :loading="loading"
-        @click="handleApprove"
-      >
+      <el-button type="success" size="default" class="!rounded-xl" :loading="loading" @click="handleApprove">
         <Icon name="ph:check-circle" size="16" class="mr-1.5" />
         Approve
       </el-button>
-      <el-button
-        type="danger"
-        size="default"
-        class="!rounded-xl"
-        :loading="loading"
-        @click="openRejectDialog"
-      >
+      <el-button type="danger" size="default" class="!rounded-xl" :loading="loading" @click="openRejectDialog">
         <Icon name="ph:x-circle" size="16" class="mr-1.5" />
         Reject
       </el-button>
     </template>
 
     <!-- Rejected → Resubmit -->
-    <el-button
-      v-if="status === 'REJECTED'"
-      type="warning"
-      size="default"
-      class="!rounded-xl"
-      :loading="loading"
-      @click="handleSubmit"
-    >
+    <el-button v-if="status === 'REJECTED'" type="warning" size="default" class="!rounded-xl" :loading="loading" @click="handleSubmit">
       <Icon name="ph:arrow-counter-clockwise" size="16" class="mr-1.5" />
       Resubmit
     </el-button>
 
     <!-- Reject Dialog -->
     <el-dialog v-model="rejectDialogVisible" title="Reject Proposal" width="420px" append-to-body>
-      <p class="mb-4" style="color: var(--text-secondary);">Please provide a reason for rejection:</p>
-      <el-input
-        v-model="rejectReason"
-        type="textarea"
-        :rows="3"
-        placeholder="Enter rejection reason..."
-      />
+      <p class="mb-4" style="color: var(--text-secondary)">Please provide a reason for rejection:</p>
+      <el-input v-model="rejectReason" type="textarea" :rows="3" placeholder="Enter rejection reason..." />
       <template #footer>
         <el-button @click="rejectDialogVisible = false">Cancel</el-button>
         <el-button type="danger" :loading="loading" @click="handleReject">Reject</el-button>
@@ -103,7 +66,7 @@ const statusConfig = computed(() => {
     APPROVED: { label: 'Approved', type: 'success', icon: 'ph:check-circle' },
     REJECTED: { label: 'Rejected', type: 'danger', icon: 'ph:x-circle' },
     ARCHIVED: { label: 'Archived', type: 'info', icon: 'ph:archive' },
-    SENT: { label: 'Sent', type: '', icon: 'ph:paper-plane-tilt' },
+    SENT: { label: 'Sent', type: '', icon: 'ph:paper-plane-tilt' }
   };
   return map[props.status] || { label: props.status, type: '' as TagType, icon: 'ph:question' };
 });
@@ -122,7 +85,9 @@ async function handleApprove() {
     const ok = await approveProposal(props.proposalId);
     loading.value = false;
     if (ok) emit('updated');
-  } catch { /* cancelled */ }
+  } catch {
+    /* cancelled */
+  }
 }
 
 function openRejectDialog() {

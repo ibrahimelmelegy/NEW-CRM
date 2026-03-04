@@ -60,20 +60,20 @@ interface KanbanGroup {
 const props = defineProps({
   data: {
     type: Array as PropType<any[]>,
-    required: true,
+    required: true
   },
   columns: {
     type: Array as PropType<SmartTableColumn[]>,
-    required: true,
+    required: true
   },
   groupByField: {
     type: String,
-    default: 'status',
+    default: 'status'
   },
   aggregateField: {
     type: String,
-    default: '',
-  },
+    default: ''
+  }
 });
 
 const emit = defineEmits<{
@@ -88,28 +88,28 @@ const dragFromGroup = ref<string | null>(null);
 // Show first 3 visible columns (excluding groupBy field)
 const displayColumns = computed(() =>
   props.columns
-    .filter((c) => c.visible !== false && c.prop !== props.groupByField)
+    .filter(c => c.visible !== false && c.prop !== props.groupByField)
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .slice(0, 3)
 );
 
 // Get unique group values
 const groupKeys = computed(() => {
-  const groupCol = props.columns.find((c) => c.prop === props.groupByField);
+  const groupCol = props.columns.find(c => c.prop === props.groupByField);
   if (groupCol?.filters?.length) {
-    return groupCol.filters.map((f) => ({ key: f.value, label: f.label }));
+    return groupCol.filters.map(f => ({ key: f.value, label: f.label }));
   }
   // Derive from data
-  const uniqueValues = [...new Set(props.data.map((row) => row[props.groupByField]))].filter(Boolean);
-  return uniqueValues.map((v) => ({ key: String(v), label: String(v) }));
+  const uniqueValues = [...new Set(props.data.map(row => row[props.groupByField]))].filter(Boolean);
+  return uniqueValues.map(v => ({ key: String(v), label: String(v) }));
 });
 
 // Build groups
 const groups = ref<KanbanGroup[]>([]);
 
 const buildGroups = () => {
-  groups.value = groupKeys.value.map((gk) => {
-    const items = props.data.filter((row) => String(row[props.groupByField]) === String(gk.key));
+  groups.value = groupKeys.value.map(gk => {
+    const items = props.data.filter(row => String(row[props.groupByField]) === String(gk.key));
     let aggregate: number | null = null;
     if (props.aggregateField) {
       aggregate = items.reduce((sum, row) => {
@@ -120,8 +120,8 @@ const buildGroups = () => {
     return {
       key: gk.key,
       label: gk.label,
-      items: items.map((item) => ({ ...item })),
-      aggregate,
+      items: items.map(item => ({ ...item })),
+      aggregate
     };
   });
 };
@@ -154,7 +154,7 @@ const onDragChange = (evt: any, toGroupKey: string) => {
       emit('card-move', {
         item: { ...item },
         fromGroup,
-        toGroup: toGroupKey,
+        toGroup: toGroupKey
       });
     }
   }
@@ -163,9 +163,18 @@ const onDragChange = (evt: any, toGroupKey: string) => {
 // Color generation
 const groupColorMap = new Map<string, string>();
 const groupColors = [
-  '#7c3aed', '#3b82f6', '#10b981', '#f59e0b',
-  '#ef4444', '#ec4899', '#06b6d4', '#8b5cf6',
-  '#f97316', '#14b8a6', '#6366f1', '#84cc16',
+  '#7c3aed',
+  '#3b82f6',
+  '#10b981',
+  '#f59e0b',
+  '#ef4444',
+  '#ec4899',
+  '#06b6d4',
+  '#8b5cf6',
+  '#f97316',
+  '#14b8a6',
+  '#6366f1',
+  '#84cc16'
 ];
 
 const getGroupColor = (key: string) => {

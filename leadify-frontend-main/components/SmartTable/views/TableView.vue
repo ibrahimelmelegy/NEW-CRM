@@ -116,20 +116,20 @@ import type { SmartTableColumn, SmartTableSort } from '~/composables/useSmartTab
 const props = defineProps({
   data: {
     type: Array as PropType<any[]>,
-    required: true,
+    required: true
   },
   columns: {
     type: Array as PropType<SmartTableColumn[]>,
-    required: true,
+    required: true
   },
   sort: {
     type: Object as PropType<SmartTableSort | null>,
-    default: null,
+    default: null
   },
   maxHeight: {
     type: [String, Number],
-    default: 600,
-  },
+    default: 600
+  }
 });
 
 const emit = defineEmits<{
@@ -147,11 +147,7 @@ const editingCell = ref<{ rowIndex: number; prop: string } | null>(null);
 const editValue = ref<any>('');
 
 // Computed
-const visibleColumns = computed(() =>
-  [...props.columns]
-    .filter((c) => c.visible !== false)
-    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-);
+const visibleColumns = computed(() => [...props.columns].filter(c => c.visible !== false).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
 
 const currentSort = computed(() => {
   if (!props.sort) return {};
@@ -198,7 +194,7 @@ const cancelEdit = () => {
 const handleSortChange = ({ prop, order }: { prop: string; order: string | null }) => {
   emit('sort-change', {
     prop,
-    order: order as SmartTableSort['order'],
+    order: order as SmartTableSort['order']
   });
 };
 
@@ -220,7 +216,7 @@ const getStatusType = (status: string): string => {
 };
 
 const getSelectLabel = (col: SmartTableColumn, value: any) => {
-  const opt = col.filters?.find((f) => f.value === value);
+  const opt = col.filters?.find(f => f.value === value);
   return opt?.label || value;
 };
 
@@ -244,7 +240,7 @@ const formatNumber = (val: any) => {
 // Expose for parent
 defineExpose({
   tableRef,
-  clearSelection: () => tableRef.value?.clearSelection(),
+  clearSelection: () => tableRef.value?.clearSelection()
 });
 </script>
 

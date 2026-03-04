@@ -87,7 +87,9 @@ async function parsePreview(file: File) {
       preview.value = lines.slice(1, 6).map(line => {
         const vals = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
         const row: Record<string, string> = {};
-        vals.forEach((v, i) => { row[String(i)] = v; });
+        vals.forEach((v, i) => {
+          row[String(i)] = v;
+        });
         return row;
       });
     }

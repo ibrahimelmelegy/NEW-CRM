@@ -25,12 +25,15 @@ Transition(name="slide-up")
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  count: number;
-  actions?: string[];
-}>(), {
-  actions: () => ['delete', 'export']
-});
+withDefaults(
+  defineProps<{
+    count: number;
+    actions?: string[];
+  }>(),
+  {
+    actions: () => ['delete', 'export']
+  }
+);
 
 defineEmits<{
   'bulk-delete': [];

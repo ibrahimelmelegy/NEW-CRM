@@ -80,14 +80,18 @@ const emit = defineEmits<{
 // Local mutable copy of cards for drag operations
 const localCards = ref<Record<string, KanbanCard[]>>({});
 
-watch(() => props.cards, (newCards) => {
-  // Deep clone to avoid mutating parent
-  const cloned: Record<string, KanbanCard[]> = {};
-  for (const key of Object.keys(newCards)) {
-    cloned[key] = [...(newCards[key] || [])];
-  }
-  localCards.value = cloned;
-}, { immediate: true, deep: true });
+watch(
+  () => props.cards,
+  newCards => {
+    // Deep clone to avoid mutating parent
+    const cloned: Record<string, KanbanCard[]> = {};
+    for (const key of Object.keys(newCards)) {
+      cloned[key] = [...(newCards[key] || [])];
+    }
+    localCards.value = cloned;
+  },
+  { immediate: true, deep: true }
+);
 
 const getColumnCards = (key: string): KanbanCard[] => {
   if (!localCards.value[key]) localCards.value[key] = [];
@@ -99,9 +103,7 @@ const onDragEnd = (evt: any, toStage: string) => {
   const card = evt.item._underlying_vm_ as KanbanCard;
 
   // Find what stage the card was originally in
-  const fromStage = Object.entries(props.cards).find(([_, cards]) =>
-    cards.some(c => c.id === card.id)
-  )?.[0];
+  const fromStage = Object.entries(props.cards).find(([_, cards]) => cards.some(c => c.id === card.id))?.[0];
 
   if (fromStage && fromStage !== toStage) {
     emit('stageChange', { cardId: card.id, fromStage, toStage });
@@ -114,8 +116,12 @@ const onDragEnd = (evt: any, toStage: string) => {
   scrollbar-width: thin;
   scrollbar-color: rgba(120, 73, 255, 0.3) transparent;
 
-  &::-webkit-scrollbar { height: 6px; }
-  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
   &::-webkit-scrollbar-thumb {
     background: rgba(120, 73, 255, 0.3);
     border-radius: 3px;
@@ -127,11 +133,13 @@ const onDragEnd = (evt: any, toStage: string) => {
   border: 1px dashed rgba(255, 255, 255, 0.05);
   transition: background 0.2s;
 
-  &:hover { background: rgba(255, 255, 255, 0.03); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
 }
 
 .kanban-card {
-  border-left: 3px solid var(--col-color, #7849FF);
+  border-left: 3px solid var(--col-color, #7849ff);
   transition: all 0.2s ease;
 
   &:hover {
@@ -149,5 +157,4 @@ const onDragEnd = (evt: any, toStage: string) => {
   transform: rotate(2deg);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
 }
-
 </style>

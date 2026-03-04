@@ -219,19 +219,33 @@ const alignOptions = [
 ];
 
 const presetColors = [
-  '#000000', '#333333', '#666666', '#999999', '#cccccc', '#ffffff',
-  '#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#ec4899'
+  '#000000',
+  '#333333',
+  '#666666',
+  '#999999',
+  '#cccccc',
+  '#ffffff',
+  '#7849ff',
+  '#3b82f6',
+  '#22c55e',
+  '#f59e0b',
+  '#ef4444',
+  '#ec4899'
 ];
 
-watch(() => props.element, (el) => {
-  if (el) {
-    localElement.value = JSON.parse(JSON.stringify(el));
-    localOpacity.value = (el.props?.opacity ?? 1) * 100;
-  } else {
-    localElement.value = null;
-    localOpacity.value = 100;
-  }
-}, { immediate: true, deep: true });
+watch(
+  () => props.element,
+  el => {
+    if (el) {
+      localElement.value = JSON.parse(JSON.stringify(el));
+      localOpacity.value = (el.props?.opacity ?? 1) * 100;
+    } else {
+      localElement.value = null;
+      localOpacity.value = 100;
+    }
+  },
+  { immediate: true, deep: true }
+);
 
 function emitUpdate() {
   if (localElement.value) {

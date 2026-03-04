@@ -55,12 +55,12 @@ const emit = defineEmits(['update:nodes', 'update:edges', 'connect', 'nodeClick'
 
 const localNodes = computed({
   get: () => props.nodes,
-  set: (v) => emit('update:nodes', v)
+  set: v => emit('update:nodes', v)
 });
 
 const localEdges = computed({
   get: () => props.edges,
-  set: (v) => emit('update:edges', v)
+  set: v => emit('update:edges', v)
 });
 
 const nodeTypes = {
@@ -88,7 +88,7 @@ function onNodeClick(event: any) {
   height: 600px;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid var(--glass-border-color, rgba(255,255,255,0.08));
+  border: 1px solid var(--glass-border-color, rgba(255, 255, 255, 0.08));
 }
 
 .vue-flow-wrapper {

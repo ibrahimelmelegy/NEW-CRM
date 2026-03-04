@@ -64,16 +64,16 @@ const variableGroups: VariableGroup[] = [
       { path: 'client.name', label: 'Client Name', description: 'Full name of the client', icon: 'ph:user-bold' },
       { path: 'client.email', label: 'Client Email', description: 'Email address of the client', icon: 'ph:envelope-bold' },
       { path: 'client.phone', label: 'Client Phone', description: 'Phone number of the client', icon: 'ph:phone-bold' },
-      { path: 'client.company', label: 'Client Company', description: 'Company the client belongs to', icon: 'ph:buildings-bold' },
-    ],
+      { path: 'client.company', label: 'Client Company', description: 'Company the client belongs to', icon: 'ph:buildings-bold' }
+    ]
   },
   {
     category: 'Deal',
     variables: [
       { path: 'deal.name', label: 'Deal Name', description: 'Name of the deal', icon: 'ph:handshake-bold' },
       { path: 'deal.price', label: 'Deal Value', description: 'Monetary value of the deal', icon: 'ph:currency-dollar-bold' },
-      { path: 'deal.stage', label: 'Deal Stage', description: 'Current pipeline stage', icon: 'ph:funnel-bold' },
-    ],
+      { path: 'deal.stage', label: 'Deal Stage', description: 'Current pipeline stage', icon: 'ph:funnel-bold' }
+    ]
   },
   {
     category: 'Invoice',
@@ -81,8 +81,8 @@ const variableGroups: VariableGroup[] = [
       { path: 'invoice.number', label: 'Invoice Number', description: 'Unique invoice identifier', icon: 'ph:hash-bold' },
       { path: 'invoice.amount', label: 'Invoice Amount', description: 'Total invoice amount', icon: 'ph:currency-dollar-bold' },
       { path: 'invoice.date', label: 'Invoice Date', description: 'Date the invoice was issued', icon: 'ph:calendar-bold' },
-      { path: 'invoice.dueDate', label: 'Due Date', description: 'Payment due date', icon: 'ph:calendar-check-bold' },
-    ],
+      { path: 'invoice.dueDate', label: 'Due Date', description: 'Payment due date', icon: 'ph:calendar-check-bold' }
+    ]
   },
   {
     category: 'Company',
@@ -91,9 +91,9 @@ const variableGroups: VariableGroup[] = [
       { path: 'company.address', label: 'Company Address', description: 'Your company address', icon: 'ph:map-pin-bold' },
       { path: 'company.logo', label: 'Company Logo', description: 'Company logo image URL', icon: 'ph:image-bold' },
       { path: 'company.phone', label: 'Company Phone', description: 'Company phone number', icon: 'ph:phone-bold' },
-      { path: 'company.email', label: 'Company Email', description: 'Company contact email', icon: 'ph:envelope-bold' },
-    ],
-  },
+      { path: 'company.email', label: 'Company Email', description: 'Company contact email', icon: 'ph:envelope-bold' }
+    ]
+  }
 ];
 
 const filteredGroups = computed(() => {
@@ -101,16 +101,13 @@ const filteredGroups = computed(() => {
   if (!query) return variableGroups;
 
   return variableGroups
-    .map((group) => ({
+    .map(group => ({
       ...group,
       variables: group.variables.filter(
-        (v) =>
-          v.label.toLowerCase().includes(query) ||
-          v.path.toLowerCase().includes(query) ||
-          v.description.toLowerCase().includes(query),
-      ),
+        v => v.label.toLowerCase().includes(query) || v.path.toLowerCase().includes(query) || v.description.toLowerCase().includes(query)
+      )
     }))
-    .filter((group) => group.variables.length > 0);
+    .filter(group => group.variables.length > 0);
 });
 
 function handleInsert(path: string) {

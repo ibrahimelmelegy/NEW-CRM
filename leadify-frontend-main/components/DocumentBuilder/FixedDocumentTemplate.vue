@@ -1,9 +1,10 @@
 <template>
   <div class="fixed-doc-template print:block">
     <!-- Single A4 Page -->
-    <div class="page-container bg-white mx-auto print:shadow-none print:m-0"
-         :style="{ width: '210mm', minHeight: '297mm', position: 'relative', boxSizing: 'border-box' }">
-
+    <div
+      class="page-container bg-white mx-auto print:shadow-none print:m-0"
+      :style="{ width: '210mm', minHeight: '297mm', position: 'relative', boxSizing: 'border-box' }"
+    >
       <!-- ══════════════════════════════════════════════════════════ -->
       <!-- TOP COLOR BAR -->
       <!-- ══════════════════════════════════════════════════════════ -->
@@ -13,15 +14,17 @@
       <!-- WATERMARK OVERLAY -->
       <!-- ══════════════════════════════════════════════════════════ -->
       <div v-if="watermarkText" class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden">
-        <span 
+        <span
           class="text-[120px] font-black uppercase tracking-[0.3em] select-none"
-          :style="{ 
+          :style="{
             color: watermarkColor,
             opacity: 0.06,
             transform: 'rotate(-35deg)',
             whiteSpace: 'nowrap'
           }"
-        >{{ watermarkText }}</span>
+        >
+          {{ watermarkText }}
+        </span>
       </div>
 
       <!-- ══════════════════════════════════════════════════════════ -->
@@ -42,14 +45,29 @@
 
           <!-- Document Type Badge -->
           <div class="text-right">
-            <div class="inline-block px-4 py-2 rounded-lg text-sm font-black uppercase tracking-widest text-white mb-2" :style="{ backgroundColor: color }">
+            <div
+              class="inline-block px-4 py-2 rounded-lg text-sm font-black uppercase tracking-widest text-white mb-2"
+              :style="{ backgroundColor: color }"
+            >
               {{ docLabel }}
             </div>
             <div class="space-y-1 mt-2">
-              <p class="text-xs text-gray-500 font-mono">REF: <span class="font-bold text-gray-900">{{ data.refNumber }}</span></p>
-              <p class="text-xs text-gray-500 font-mono">DATE: <span class="font-bold text-gray-900">{{ data.date }}</span></p>
-              <p class="text-xs text-gray-500 font-mono" v-if="data.dueDate">DUE: <span class="font-bold text-red-600">{{ data.dueDate }}</span></p>
-              <p class="text-xs text-gray-500 font-mono" v-else-if="data.validUntil">VALID: <span class="font-bold text-gray-900">{{ data.validUntil }}</span></p>
+              <p class="text-xs text-gray-500 font-mono">
+                REF:
+                <span class="font-bold text-gray-900">{{ data.refNumber }}</span>
+              </p>
+              <p class="text-xs text-gray-500 font-mono">
+                DATE:
+                <span class="font-bold text-gray-900">{{ data.date }}</span>
+              </p>
+              <p class="text-xs text-gray-500 font-mono" v-if="data.dueDate">
+                DUE:
+                <span class="font-bold text-red-600">{{ data.dueDate }}</span>
+              </p>
+              <p class="text-xs text-gray-500 font-mono" v-else-if="data.validUntil">
+                VALID:
+                <span class="font-bold text-gray-900">{{ data.validUntil }}</span>
+              </p>
             </div>
           </div>
         </div>
@@ -85,27 +103,15 @@
         <table class="w-full text-left border-collapse">
           <thead>
             <tr :style="{ backgroundColor: color + '12' }">
-              <th class="py-3 px-4 text-[10px] font-bold uppercase tracking-wider rounded-tl-lg" :style="{ color }">
-                #
-              </th>
-              <th class="py-3 px-4 text-[10px] font-bold uppercase tracking-wider" :style="{ color }">
-                Description
-              </th>
-              <th class="py-3 px-4 text-right text-[10px] font-bold uppercase tracking-wider" :style="{ color }">
-                Qty
-              </th>
-              <th class="py-3 px-4 text-right text-[10px] font-bold uppercase tracking-wider" :style="{ color }">
-                Unit Price
-              </th>
-              <th class="py-3 px-4 text-right text-[10px] font-bold uppercase tracking-wider rounded-tr-lg" :style="{ color }">
-                Total
-              </th>
+              <th class="py-3 px-4 text-[10px] font-bold uppercase tracking-wider rounded-tl-lg" :style="{ color }">#</th>
+              <th class="py-3 px-4 text-[10px] font-bold uppercase tracking-wider" :style="{ color }">Description</th>
+              <th class="py-3 px-4 text-right text-[10px] font-bold uppercase tracking-wider" :style="{ color }">Qty</th>
+              <th class="py-3 px-4 text-right text-[10px] font-bold uppercase tracking-wider" :style="{ color }">Unit Price</th>
+              <th class="py-3 px-4 text-right text-[10px] font-bold uppercase tracking-wider rounded-tr-lg" :style="{ color }">Total</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, idx) in data.items" :key="idx" 
-                :class="idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'"
-                class="border-b border-gray-100">
+            <tr v-for="(item, idx) in data.items" :key="idx" :class="idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'" class="border-b border-gray-100">
               <td class="py-3 px-4 text-xs text-gray-400 font-mono">{{ String(idx + 1).padStart(2, '0') }}</td>
               <td class="py-3 px-4">
                 <p class="text-sm font-semibold text-gray-800">{{ item.description }}</p>
@@ -160,10 +166,22 @@
         <div class="bg-blue-50 border border-blue-100 rounded-xl p-5">
           <p class="text-[10px] font-bold text-blue-700 uppercase tracking-widest mb-3">Payment Details</p>
           <div class="grid grid-cols-2 gap-x-8 gap-y-2 text-xs">
-            <div v-if="data.bankName"><span class="text-blue-500">Bank:</span> <span class="font-bold text-gray-800">{{ data.bankName }}</span></div>
-            <div v-if="data.bankAccountName"><span class="text-blue-500">Account:</span> <span class="font-bold text-gray-800">{{ data.bankAccountName }}</span></div>
-            <div v-if="data.bankIban"><span class="text-blue-500">IBAN:</span> <span class="font-bold text-gray-800 font-mono">{{ data.bankIban }}</span></div>
-            <div v-if="data.bankSwift"><span class="text-blue-500">SWIFT:</span> <span class="font-bold text-gray-800 font-mono">{{ data.bankSwift }}</span></div>
+            <div v-if="data.bankName">
+              <span class="text-blue-500">Bank:</span>
+              <span class="font-bold text-gray-800">{{ data.bankName }}</span>
+            </div>
+            <div v-if="data.bankAccountName">
+              <span class="text-blue-500">Account:</span>
+              <span class="font-bold text-gray-800">{{ data.bankAccountName }}</span>
+            </div>
+            <div v-if="data.bankIban">
+              <span class="text-blue-500">IBAN:</span>
+              <span class="font-bold text-gray-800 font-mono">{{ data.bankIban }}</span>
+            </div>
+            <div v-if="data.bankSwift">
+              <span class="text-blue-500">SWIFT:</span>
+              <span class="font-bold text-gray-800 font-mono">{{ data.bankSwift }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -239,7 +257,6 @@
         </div>
         <div class="h-1.5 w-full mt-2 rounded-full" :style="{ background: `linear-gradient(90deg, ${color}, ${colorLight})` }"></div>
       </div>
-
     </div>
   </div>
 </template>
@@ -267,17 +284,22 @@ const currentDate = new Date().toLocaleDateString('en-GB', { day: '2-digit', mon
 
 // ── Document type labels ──────────────────────────────
 const docTypeConfig: Record<string, { label: string; footer: string; billTo: string; clientSig: string }> = {
-  invoice:       { label: 'INVOICE',                 footer: 'Invoice · Payment Due Within Terms',          billTo: 'Bill To',     clientSig: 'Client Acknowledgement'  },
-  proforma_invoice: { label: 'PROFORMA INVOICE',     footer: 'Proforma Invoice · Not a Tax Invoice',        billTo: 'Bill To',     clientSig: 'Client Acknowledgement'  },
-  purchase_order:{ label: 'PURCHASE ORDER',          footer: 'Purchase Order · Subject to Terms',           billTo: 'Vendor',      clientSig: 'Vendor Acceptance'        },
-  credit_note:   { label: 'CREDIT NOTE',             footer: 'Credit Note · Applied to Account',            billTo: 'Issued To',   clientSig: 'Client Acknowledgement'  },
-  quote:         { label: 'QUOTATION',               footer: 'Quotation · Valid Until Expiry Date',         billTo: 'Quoted To',   clientSig: 'Client Acceptance'       },
-  rfq:           { label: 'REQUEST FOR QUOTATION',   footer: 'RFQ · Awaiting Vendor Response',              billTo: 'Requested From', clientSig: 'Vendor Response'      },
-  sales_order:   { label: 'SALES ORDER',             footer: 'Sales Order · Confirmed',                     billTo: 'Ship To',     clientSig: 'Client Confirmation'     },
-  delivery_note: { label: 'DELIVERY NOTE',           footer: 'Delivery Note · Goods Dispatched',            billTo: 'Deliver To',  clientSig: 'Received By'             },
-  contract:      { label: 'CONTRACT',                footer: 'Contract · Legally Binding Agreement',        billTo: 'Party B',     clientSig: 'Party B Signature'       },
-  sla:           { label: 'SLA',                     footer: 'Service Level Agreement · Binding Terms',     billTo: 'Service Recipient', clientSig: 'Recipient Signature' },
-  proposal:      { label: 'PROPOSAL',                footer: 'Proposal · Confidential',                     billTo: 'Prepared For', clientSig: 'Client Signature'       }
+  invoice: { label: 'INVOICE', footer: 'Invoice · Payment Due Within Terms', billTo: 'Bill To', clientSig: 'Client Acknowledgement' },
+  proforma_invoice: {
+    label: 'PROFORMA INVOICE',
+    footer: 'Proforma Invoice · Not a Tax Invoice',
+    billTo: 'Bill To',
+    clientSig: 'Client Acknowledgement'
+  },
+  purchase_order: { label: 'PURCHASE ORDER', footer: 'Purchase Order · Subject to Terms', billTo: 'Vendor', clientSig: 'Vendor Acceptance' },
+  credit_note: { label: 'CREDIT NOTE', footer: 'Credit Note · Applied to Account', billTo: 'Issued To', clientSig: 'Client Acknowledgement' },
+  quote: { label: 'QUOTATION', footer: 'Quotation · Valid Until Expiry Date', billTo: 'Quoted To', clientSig: 'Client Acceptance' },
+  rfq: { label: 'REQUEST FOR QUOTATION', footer: 'RFQ · Awaiting Vendor Response', billTo: 'Requested From', clientSig: 'Vendor Response' },
+  sales_order: { label: 'SALES ORDER', footer: 'Sales Order · Confirmed', billTo: 'Ship To', clientSig: 'Client Confirmation' },
+  delivery_note: { label: 'DELIVERY NOTE', footer: 'Delivery Note · Goods Dispatched', billTo: 'Deliver To', clientSig: 'Received By' },
+  contract: { label: 'CONTRACT', footer: 'Contract · Legally Binding Agreement', billTo: 'Party B', clientSig: 'Party B Signature' },
+  sla: { label: 'SLA', footer: 'Service Level Agreement · Binding Terms', billTo: 'Service Recipient', clientSig: 'Recipient Signature' },
+  proposal: { label: 'PROPOSAL', footer: 'Proposal · Confidential', billTo: 'Prepared For', clientSig: 'Client Signature' }
 };
 
 const defaultConfig = { label: 'DOCUMENT', footer: 'Document', billTo: 'To', clientSig: 'Client Signature' };
@@ -307,7 +329,7 @@ const watermarkColor = computed(() => {
 
 // ── Financial calculations ────────────────────────────
 const subtotal = computed(() => {
-  return props.data?.items?.reduce((sum, item) => sum + (item.quantity * item.rate), 0) || 0;
+  return props.data?.items?.reduce((sum, item) => sum + item.quantity * item.rate, 0) || 0;
 });
 
 const discountAmount = computed(() => {

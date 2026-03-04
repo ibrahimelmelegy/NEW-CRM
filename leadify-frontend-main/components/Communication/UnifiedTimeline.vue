@@ -152,15 +152,7 @@ interface Props {
 const props = defineProps<Props>();
 const { t, locale } = useI18n();
 
-const {
-  activities,
-  loading,
-  pagination,
-  hasMore,
-  fetchTimeline,
-  loadMore,
-  deleteActivity
-} = useCommunication(props.contactId, props.contactType);
+const { activities, loading, pagination, hasMore, fetchTimeline, loadMore, deleteActivity } = useCommunication(props.contactId, props.contactType);
 
 const showActivityForm = ref(false);
 const showDeleteConfirm = ref(false);
@@ -179,7 +171,7 @@ const groupedActivities = computed(() => {
     groups[date].push(item);
   });
 
-  return Object.keys(groups).map((date) => {
+  return Object.keys(groups).map(date => {
     const dObj = new Date(date);
     const today = new Date().toDateString();
     const yesterday = new Date(Date.now() - 86400000).toDateString();
@@ -187,11 +179,7 @@ const groupedActivities = computed(() => {
     let label = date;
     if (date === today) label = t('common.today') || 'Today';
     else if (date === yesterday) label = t('common.yesterday') || 'Yesterday';
-    else
-      label = dObj.toLocaleDateString(
-        locale.value === 'ar' ? 'ar-EG' : 'en-US',
-        { day: 'numeric', month: 'long', year: 'numeric' }
-      );
+    else label = dObj.toLocaleDateString(locale.value === 'ar' ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 
     return {
       date,
@@ -203,12 +191,12 @@ const groupedActivities = computed(() => {
 
 // Icon & style helpers
 function getIconName(type: string): string {
-  const opt = activityTypeOptions.find((o) => o.value === type);
+  const opt = activityTypeOptions.find(o => o.value === type);
   return opt?.icon || 'ph:activity-bold';
 }
 
 function getIconStyle(type: string) {
-  const opt = activityTypeOptions.find((o) => o.value === type);
+  const opt = activityTypeOptions.find(o => o.value === type);
   const color = opt?.color || '#64748b';
   return {
     color,
@@ -218,7 +206,7 @@ function getIconStyle(type: string) {
 }
 
 function getBadgeStyle(type: string) {
-  const opt = activityTypeOptions.find((o) => o.value === type);
+  const opt = activityTypeOptions.find(o => o.value === type);
   const color = opt?.color || '#64748b';
   return {
     color,
@@ -228,17 +216,17 @@ function getBadgeStyle(type: string) {
 }
 
 function getTypeLabel(type: string): string {
-  const opt = activityTypeOptions.find((o) => o.value === type);
+  const opt = activityTypeOptions.find(o => o.value === type);
   return opt?.label || type;
 }
 
 function getOutcomeLabel(outcome: string): string {
-  const opt = callOutcomeOptions.find((o) => o.value === outcome);
+  const opt = callOutcomeOptions.find(o => o.value === outcome);
   return opt?.label || outcome;
 }
 
 function getOutcomeStyle(outcome: string) {
-  const opt = callOutcomeOptions.find((o) => o.value === outcome);
+  const opt = callOutcomeOptions.find(o => o.value === outcome);
   return { background: opt?.color || '#64748b' };
 }
 
@@ -346,8 +334,12 @@ watch(
           margin-bottom: 8px;
           animation: pulse 1.5s ease-in-out infinite;
 
-          &.skeleton-line-short { width: 30%; }
-          &.skeleton-line-medium { width: 60%; }
+          &.skeleton-line-short {
+            width: 30%;
+          }
+          &.skeleton-line-medium {
+            width: 60%;
+          }
         }
       }
     }
@@ -389,7 +381,9 @@ watch(
 
     &:last-child {
       padding-bottom: 0;
-      .timeline-connector { display: none; }
+      .timeline-connector {
+        display: none;
+      }
     }
   }
 
@@ -500,7 +494,8 @@ watch(
         margin: 0 0 0.75rem;
       }
 
-      .call-details, .meeting-duration {
+      .call-details,
+      .meeting-duration {
         display: flex;
         gap: 1rem;
         flex-wrap: wrap;
@@ -606,8 +601,13 @@ watch(
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 // RTL Support

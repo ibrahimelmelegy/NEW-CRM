@@ -53,7 +53,11 @@ defineProps<{
 }
 
 @keyframes flicker {
-  0% { transform: scale(1) rotate(-2deg); }
-  100% { transform: scale(1.1) rotate(2deg); }
+  0% {
+    transform: scale(1) rotate(-2deg);
+  }
+  100% {
+    transform: scale(1.1) rotate(2deg);
+  }
 }
 </style>

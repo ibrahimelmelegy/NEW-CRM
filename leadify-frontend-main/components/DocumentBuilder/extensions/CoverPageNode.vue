@@ -44,10 +44,10 @@ node-view-wrapper.cover-page-wrapper
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
+import { computed } from 'vue';
+import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3';
 
-const props = defineProps(nodeViewProps)
+const props = defineProps(nodeViewProps);
 
 const coverStyle = computed(() => {
   return {
@@ -60,28 +60,28 @@ const coverStyle = computed(() => {
     borderRadius: '8px 8px 0 0',
     overflow: 'hidden',
     boxSizing: 'border-box'
-  }
-})
+  };
+});
 
 function updateTitle(e: Event) {
-  props.updateAttributes({ title: (e.target as HTMLElement).innerText })
+  props.updateAttributes({ title: (e.target as HTMLElement).innerText });
 }
 function updateSubtitle(e: Event) {
-  props.updateAttributes({ subtitle: (e.target as HTMLElement).innerText })
+  props.updateAttributes({ subtitle: (e.target as HTMLElement).innerText });
 }
 function updatePreparedBy(e: Event) {
-  props.updateAttributes({ preparedBy: (e.target as HTMLElement).innerText })
+  props.updateAttributes({ preparedBy: (e.target as HTMLElement).innerText });
 }
 
 function changeImage() {
-  const url = prompt('Enter new image URL:', props.node.attrs.coverImage)
+  const url = prompt('Enter new image URL:', props.node.attrs.coverImage);
   if (url) {
-    props.updateAttributes({ coverImage: url })
+    props.updateAttributes({ coverImage: url });
   }
 }
 
 function deleteNode() {
-  props.deleteNode()
+  props.deleteNode();
 }
 </script>
 
@@ -102,12 +102,12 @@ function deleteNode() {
   transform: translateY(0);
 }
 
-[contenteditable="true"]:hover {
-  background: rgba(255,255,255,0.1);
+[contenteditable='true']:hover {
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
-[contenteditable="true"]:focus {
-  background: rgba(0,0,0,0.4);
+[contenteditable='true']:focus {
+  background: rgba(0, 0, 0, 0.4);
   outline: 2px solid var(--primary-color, #7849ff);
   border-radius: 4px;
 }

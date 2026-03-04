@@ -54,12 +54,12 @@ import type { SmartTableColumn } from '~/composables/useSmartTable';
 const props = defineProps({
   data: {
     type: Array as PropType<any[]>,
-    required: true,
+    required: true
   },
   columns: {
     type: Array as PropType<SmartTableColumn[]>,
-    required: true,
-  },
+    required: true
+  }
 });
 
 const emit = defineEmits<{
@@ -67,21 +67,15 @@ const emit = defineEmits<{
 }>();
 
 // Find image column (if any)
-const imageColumn = computed(() =>
-  props.columns.find((c) => c.type === 'image' && c.visible !== false)
-);
+const imageColumn = computed(() => props.columns.find(c => c.type === 'image' && c.visible !== false));
 
 // First text column for title
-const titleColumn = computed(() =>
-  props.columns.find(
-    (c) => c.visible !== false && c.type !== 'image' && c.prop !== 'id'
-  )
-);
+const titleColumn = computed(() => props.columns.find(c => c.visible !== false && c.type !== 'image' && c.prop !== 'id'));
 
 // Key fields to show (up to 4, excluding image and title columns)
 const displayFields = computed(() =>
   props.columns
-    .filter((c) => {
+    .filter(c => {
       if (c.visible === false) return false;
       if (c.type === 'image') return false;
       if (titleColumn.value && c.prop === titleColumn.value.prop) return false;
@@ -130,7 +124,7 @@ const accentGradients = [
   'linear-gradient(90deg, #ef4444, #f87171)',
   'linear-gradient(90deg, #ec4899, #f472b6)',
   'linear-gradient(90deg, #06b6d4, #22d3ee)',
-  'linear-gradient(90deg, #8b5cf6, #a78bfa)',
+  'linear-gradient(90deg, #8b5cf6, #a78bfa)'
 ];
 
 const getAccentGradient = (index: number) => {

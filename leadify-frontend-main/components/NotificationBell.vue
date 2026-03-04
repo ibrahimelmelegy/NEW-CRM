@@ -86,8 +86,21 @@ function timeAgo(iso: string): string {
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active { transition: opacity 0.15s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
-.slide-down-enter-active, .slide-down-leave-active { transition: all 0.2s ease; }
-.slide-down-enter-from, .slide-down-leave-to { opacity: 0; transform: translateY(-8px) scale(0.97); }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.2s ease;
+}
+.slide-down-enter-from,
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+}
 </style>

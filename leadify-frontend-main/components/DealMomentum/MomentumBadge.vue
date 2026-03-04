@@ -7,12 +7,15 @@ el-tooltip(:content="tooltipText" placement="top" :show-after="300")
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const props = withDefaults(defineProps<{
-  score: number;
-  label?: string;
-}>(), {
-  label: ''
-});
+const props = withDefaults(
+  defineProps<{
+    score: number;
+    label?: string;
+  }>(),
+  {
+    label: ''
+  }
+);
 
 const badgeColor = computed(() => {
   if (props.score >= 76) return '#00ff88';
@@ -69,7 +72,8 @@ const badgeStyle = computed(() => ({
 }
 
 @keyframes momentum-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 var(--badge-color, rgba(0, 255, 136, 0.4));
   }
   50% {

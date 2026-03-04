@@ -235,7 +235,12 @@ function milestoneTextColor(status: string): string {
 }
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(120, 73, 255, 0.3); }
-  50% { box-shadow: 0 0 0 6px rgba(120, 73, 255, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(120, 73, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(120, 73, 255, 0);
+  }
 }
 </style>

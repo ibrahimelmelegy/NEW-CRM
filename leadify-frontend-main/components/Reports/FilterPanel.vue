@@ -189,12 +189,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  MODULE_DEFINITIONS,
-  FILTER_OPERATORS_BY_TYPE,
-  type ReportFilter,
-  type FieldDefinition
-} from '~/composables/useReportBuilderPro';
+import { MODULE_DEFINITIONS, FILTER_OPERATORS_BY_TYPE, type ReportFilter, type FieldDefinition } from '~/composables/useReportBuilderPro';
 
 interface Props {
   modelValue: ReportFilter[];
@@ -213,7 +208,7 @@ const emit = defineEmits<{
 
 const logicMode = computed({
   get: () => props.logic,
-  set: (val) => emit('update:logic', val)
+  set: val => emit('update:logic', val)
 });
 
 const moduleOptions = computed(() => {

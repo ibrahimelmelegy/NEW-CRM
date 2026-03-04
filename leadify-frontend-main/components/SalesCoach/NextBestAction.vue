@@ -38,22 +38,39 @@ defineProps<{
   background: var(--glass-bg-primary);
   transition: transform 0.2s;
 
-  &:hover { transform: translateX(4px); }
+  &:hover {
+    transform: translateX(4px);
+  }
 
   &.priority-high {
     border-left-color: #ef4444;
-    .action-icon { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-    .action-priority { color: #ef4444; }
+    .action-icon {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+    .action-priority {
+      color: #ef4444;
+    }
   }
   &.priority-medium {
     border-left-color: #f59e0b;
-    .action-icon { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
-    .action-priority { color: #f59e0b; }
+    .action-icon {
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+    }
+    .action-priority {
+      color: #f59e0b;
+    }
   }
   &.priority-low {
     border-left-color: #22c55e;
-    .action-icon { color: #22c55e; background: rgba(34, 197, 94, 0.1); }
-    .action-priority { color: #22c55e; }
+    .action-icon {
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+    .action-priority {
+      color: #22c55e;
+    }
   }
 }
 

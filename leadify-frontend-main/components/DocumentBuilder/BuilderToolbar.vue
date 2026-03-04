@@ -55,6 +55,16 @@ defineEmits(['update:name', 'update:type', 'undo', 'redo', 'save', 'preview', 'p
 const localName = ref(props.name);
 const localType = ref(props.type);
 
-watch(() => props.name, (v) => { localName.value = v; });
-watch(() => props.type, (v) => { localType.value = v; });
+watch(
+  () => props.name,
+  v => {
+    localName.value = v;
+  }
+);
+watch(
+  () => props.type,
+  v => {
+    localType.value = v;
+  }
+);
 </script>

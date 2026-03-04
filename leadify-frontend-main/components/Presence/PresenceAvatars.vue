@@ -47,13 +47,18 @@ defineProps<{
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #10B981;
+  background: #10b981;
   animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
 }
 
 .avatar-stack {
@@ -104,9 +109,15 @@ defineProps<{
   border-radius: 50%;
   border: 2px solid rgba(15, 15, 30, 0.8);
 
-  &.online { background: #10B981; }
-  &.away { background: #F59E0B; }
-  &.busy { background: #EF4444; }
+  &.online {
+    background: #10b981;
+  }
+  &.away {
+    background: #f59e0b;
+  }
+  &.busy {
+    background: #ef4444;
+  }
 }
 
 .avatar-overflow {

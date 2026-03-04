@@ -46,7 +46,9 @@ function formatTime(dateStr: string): string {
 </script>
 
 <style lang="scss" scoped>
-.text-primary { color: var(--text-primary); }
+.text-primary {
+  color: var(--text-primary);
+}
 
 .pulse-dot {
   width: 8px;
@@ -57,8 +59,13 @@ function formatTime(dateStr: string): string {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 .feed-list {
@@ -80,17 +87,23 @@ function formatTime(dateStr: string): string {
   &.alert-won {
     border-left-color: #22c55e;
     background: rgba(34, 197, 94, 0.06);
-    .alert-icon { color: #22c55e; }
+    .alert-icon {
+      color: #22c55e;
+    }
   }
   &.alert-lost {
     border-left-color: #ef4444;
     background: rgba(239, 68, 68, 0.06);
-    .alert-icon { color: #ef4444; }
+    .alert-icon {
+      color: #ef4444;
+    }
   }
   &.alert-update {
     border-left-color: var(--accent-color, #7849ff);
     background: rgba(120, 73, 255, 0.04);
-    .alert-icon { color: var(--accent-color, #7849ff); }
+    .alert-icon {
+      color: var(--accent-color, #7849ff);
+    }
   }
 }
 
@@ -111,11 +124,21 @@ function formatTime(dateStr: string): string {
   margin-top: 2px;
 }
 
-.alert-enter-active { animation: slideIn 0.3s ease; }
-.alert-leave-active { animation: slideIn 0.3s ease reverse; }
+.alert-enter-active {
+  animation: slideIn 0.3s ease;
+}
+.alert-leave-active {
+  animation: slideIn 0.3s ease reverse;
+}
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 </style>

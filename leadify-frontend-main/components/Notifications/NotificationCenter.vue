@@ -86,11 +86,14 @@ const {
 const listRef = ref<HTMLElement | null>(null);
 
 // Fetch when panel becomes visible
-watch(() => props.visible, (val) => {
-  if (val) {
-    fetchNotifications();
+watch(
+  () => props.visible,
+  val => {
+    if (val) {
+      fetchNotifications();
+    }
   }
-});
+);
 
 // Close on Escape key
 function handleKeydown(e: KeyboardEvent) {
@@ -108,13 +111,16 @@ onUnmounted(() => {
 });
 
 // Lock body scroll when panel is open
-watch(() => props.visible, (val) => {
-  if (val) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = '';
+watch(
+  () => props.visible,
+  val => {
+    if (val) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
   }
-});
+);
 
 async function handleMarkAllRead() {
   await markAllRead();
@@ -169,8 +175,8 @@ async function handleDismiss(notif: any) {
   }
 }
 
-html[dir="rtl"] .notification-center,
-:global([dir="rtl"]) .notification-center {
+html[dir='rtl'] .notification-center,
+:global([dir='rtl']) .notification-center {
   right: auto;
   left: 0;
   border-left: none;
@@ -310,13 +316,22 @@ html[dir="rtl"] .notification-center,
   background: var(--glass-bg-hover);
   animation: skeleton-pulse 1.5s ease-in-out infinite;
 
-  &.w-3-4 { width: 75%; }
-  &.w-1-2 { width: 50%; }
+  &.w-3-4 {
+    width: 75%;
+  }
+  &.w-1-2 {
+    width: 50%;
+  }
 }
 
 @keyframes skeleton-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 // Notification list
@@ -429,10 +444,10 @@ html[dir="rtl"] .notification-center,
   transform: translateX(100%);
 }
 
-html[dir="rtl"] .notification-slide-enter-from,
-html[dir="rtl"] .notification-slide-leave-to,
-:global([dir="rtl"]) .notification-slide-enter-from,
-:global([dir="rtl"]) .notification-slide-leave-to {
+html[dir='rtl'] .notification-slide-enter-from,
+html[dir='rtl'] .notification-slide-leave-to,
+:global([dir='rtl']) .notification-slide-enter-from,
+:global([dir='rtl']) .notification-slide-leave-to {
   transform: translateX(-100%);
 }
 

@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden min-w-[180px] p-1 animate-in fade-in zoom-in-95 duration-100 flex flex-col gap-0.5">
+  <div
+    class="bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden min-w-[180px] p-1 animate-in fade-in zoom-in-95 duration-100 flex flex-col gap-0.5"
+  >
     <template v-if="items.length">
       <button
         v-for="(item, index) in items"
@@ -7,9 +9,7 @@
         @click="selectItem(index)"
         :class="[
           'w-full text-left px-3 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2',
-          index === selectedIndex
-            ? 'bg-violet-600 text-white shadow-sm'
-            : 'text-slate-700 hover:bg-slate-100'
+          index === selectedIndex ? 'bg-violet-600 text-white shadow-sm' : 'text-slate-700 hover:bg-slate-100'
         ]"
       >
         <div :class="['w-1.5 h-1.5 rounded-full', index === selectedIndex ? 'bg-white' : 'bg-violet-400 opacity-50']"></div>
@@ -33,9 +33,12 @@ const props = defineProps<Props>();
 const selectedIndex = ref(0);
 
 // Reset index when items change
-watch(() => props.items, () => {
-  selectedIndex.value = 0;
-});
+watch(
+  () => props.items,
+  () => {
+    selectedIndex.value = 0;
+  }
+);
 
 const selectItem = (index: number) => {
   const item = props.items[index];

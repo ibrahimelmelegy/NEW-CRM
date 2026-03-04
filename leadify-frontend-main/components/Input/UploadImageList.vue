@@ -103,7 +103,7 @@ const loading = ref(false);
 
 const handleUploadRequest = async (params: any) => {
   loading.value = true;
-  const result = await uploadFile(params) as any;
+  const result = (await uploadFile(params)) as any;
 
   loading.value = false;
   return result?.data;

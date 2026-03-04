@@ -56,7 +56,12 @@ function formatDate(dateStr: string): string {
 
 function getInitials(name: string): string {
   if (!name) return '?';
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 }
 
 function getAvatarColor(name: string): string {

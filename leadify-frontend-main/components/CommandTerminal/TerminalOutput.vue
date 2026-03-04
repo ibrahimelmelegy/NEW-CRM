@@ -34,8 +34,8 @@ const props = defineProps({
   lines: {
     type: Array as PropType<TerminalLine[]>,
     required: true,
-    default: () => [],
-  },
+    default: () => []
+  }
 });
 
 const containerRef = ref<HTMLElement | null>(null);
@@ -134,7 +134,8 @@ watch(
     width: 100%;
     font-size: 12px;
 
-    th, td {
+    th,
+    td {
       padding: 4px 12px;
       text-align: left;
       white-space: nowrap;

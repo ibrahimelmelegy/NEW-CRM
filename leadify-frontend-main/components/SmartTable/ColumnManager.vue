@@ -67,25 +67,25 @@ import type { SmartTableColumn } from '~/composables/useSmartTable';
 const props = defineProps({
   modelValue: {
     type: Boolean,
-    default: false,
+    default: false
   },
   columns: {
     type: Array as PropType<SmartTableColumn[]>,
-    required: true,
-  },
+    required: true
+  }
 });
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean];
   'update:columns': [columns: SmartTableColumn[]];
-  'reset': [];
+  reset: [];
 }>();
 
 const searchTerm = ref('');
 
 const drawerVisible = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val),
+  set: val => emit('update:modelValue', val)
 });
 
 // Deep clone columns for local editing
@@ -93,7 +93,7 @@ const localColumns = ref<SmartTableColumn[]>([]);
 
 watch(
   () => props.columns,
-  (newCols) => {
+  newCols => {
     localColumns.value = JSON.parse(JSON.stringify(newCols));
   },
   { immediate: true, deep: true }
@@ -109,13 +109,13 @@ const toggleVisibility = (index: number) => {
 };
 
 const selectAll = () => {
-  localColumns.value.forEach((col) => {
+  localColumns.value.forEach(col => {
     col.visible = true;
   });
 };
 
 const deselectAll = () => {
-  localColumns.value.forEach((col) => {
+  localColumns.value.forEach(col => {
     col.visible = false;
   });
 };
@@ -133,7 +133,7 @@ const getTagType = (type: string) => {
     number: 'success',
     date: 'warning',
     select: 'info',
-    image: 'danger',
+    image: 'danger'
   };
   return typeMap[type] || '';
 };

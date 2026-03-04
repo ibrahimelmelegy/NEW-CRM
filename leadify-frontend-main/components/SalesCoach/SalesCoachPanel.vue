@@ -82,28 +82,22 @@ const props = defineProps<{
   dealId?: string;
 }>();
 
-const {
-  dealAnalysis,
-  pipelineHealth,
-  loading,
-  isOpen,
-  analyzeDeal,
-  fetchPipelineHealth,
-  openCoach,
-  closeCoach
-} = useSalesCoach();
+const { dealAnalysis, pipelineHealth, loading, isOpen, analyzeDeal, fetchPipelineHealth, openCoach, closeCoach } = useSalesCoach();
 
 async function loadPipeline() {
   await fetchPipelineHealth();
 }
 
-watch(() => props.dealId, async (newId) => {
-  if (newId && isOpen.value) {
-    await analyzeDeal(newId);
+watch(
+  () => props.dealId,
+  async newId => {
+    if (newId && isOpen.value) {
+      await analyzeDeal(newId);
+    }
   }
-});
+);
 
-watch(isOpen, async (open) => {
+watch(isOpen, async open => {
   if (open && props.dealId) {
     await analyzeDeal(props.dealId);
   }
@@ -149,7 +143,9 @@ watch(isOpen, async (open) => {
   justify-content: center;
 }
 
-.text-secondary { color: var(--text-secondary); }
+.text-secondary {
+  color: var(--text-secondary);
+}
 
 .section-title {
   display: flex;
@@ -204,7 +200,9 @@ watch(isOpen, async (open) => {
   padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .meta-label {

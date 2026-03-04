@@ -161,10 +161,13 @@ function formatTimeAgo(dateStr: string): string {
 }
 
 onMounted(() => loadEntries(1));
-watch(() => [props.entityType, props.entityId], () => {
-  page.value = 1;
-  loadEntries(1);
-});
+watch(
+  () => [props.entityType, props.entityId],
+  () => {
+    page.value = 1;
+    loadEntries(1);
+  }
+);
 </script>
 
 <style scoped>
@@ -201,7 +204,7 @@ watch(() => [props.entityType, props.entityId], () => {
   width: 2px;
   flex: 1;
   min-height: 12px;
-  background: var(--glass-border-color, rgba(255,255,255,0.08));
+  background: var(--glass-border-color, rgba(255, 255, 255, 0.08));
 }
 
 .timeline-content {

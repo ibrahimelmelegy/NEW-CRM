@@ -73,14 +73,16 @@ const emit = defineEmits<{
 
 const visible = computed({
   get: () => props.show,
-  set: (v) => { if (!v) emit('close'); },
+  set: v => {
+    if (!v) emit('close');
+  }
 });
 
 const selectedCategory = ref('');
 
 const filteredTemplates = computed(() => {
   if (!selectedCategory.value) return props.templates;
-  return props.templates.filter((t) => t.category === selectedCategory.value);
+  return props.templates.filter(t => t.category === selectedCategory.value);
 });
 
 function selectTemplate(tpl: ProTemplateDefinition) {

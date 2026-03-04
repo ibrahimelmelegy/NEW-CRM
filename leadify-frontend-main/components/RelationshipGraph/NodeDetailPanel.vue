@@ -77,10 +77,22 @@ function navigateTo() {
   align-items: center;
   justify-content: center;
 
-  &.type-lead { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-  &.type-deal { background: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
-  &.type-client { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-  &.type-user { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+  &.type-lead {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+  }
+  &.type-deal {
+    background: rgba(139, 92, 246, 0.2);
+    color: #8b5cf6;
+  }
+  &.type-client {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+  }
+  &.type-user {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+  }
 }
 
 .node-name {
@@ -113,11 +125,21 @@ function navigateTo() {
   color: var(--text-primary);
 }
 
-.slide-enter-active { animation: slideIn 0.3s ease; }
-.slide-leave-active { animation: slideIn 0.3s ease reverse; }
+.slide-enter-active {
+  animation: slideIn 0.3s ease;
+}
+.slide-leave-active {
+  animation: slideIn 0.3s ease reverse;
+}
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 </style>

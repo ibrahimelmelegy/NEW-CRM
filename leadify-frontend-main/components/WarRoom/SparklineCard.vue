@@ -49,23 +49,28 @@ const chartOptions = computed(() => ({
   grid: { left: 0, right: 0, top: 0, bottom: 0 },
   xAxis: { type: 'category', show: false, data: props.data.map((_, i) => i) },
   yAxis: { type: 'value', show: false },
-  series: [{
-    type: 'line',
-    data: props.data,
-    smooth: true,
-    showSymbol: false,
-    lineStyle: { width: 2, color: props.color },
-    areaStyle: {
-      color: {
-        type: 'linear',
-        x: 0, y: 0, x2: 0, y2: 1,
-        colorStops: [
-          { offset: 0, color: `${props.color}40` },
-          { offset: 1, color: `${props.color}05` }
-        ]
+  series: [
+    {
+      type: 'line',
+      data: props.data,
+      smooth: true,
+      showSymbol: false,
+      lineStyle: { width: 2, color: props.color },
+      areaStyle: {
+        color: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [
+            { offset: 0, color: `${props.color}40` },
+            { offset: 1, color: `${props.color}05` }
+          ]
+        }
       }
     }
-  }]
+  ]
 }));
 </script>
 
@@ -74,7 +79,7 @@ const chartOptions = computed(() => ({
   padding: 16px;
   background: var(--glass-bg-primary);
   backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border-color, rgba(255,255,255,0.08));
+  border: 1px solid var(--glass-border-color, rgba(255, 255, 255, 0.08));
   border-radius: 12px;
 }
 
@@ -100,8 +105,12 @@ const chartOptions = computed(() => ({
   font-size: 12px;
   font-weight: 600;
 
-  &.positive { color: #22c55e; }
-  &.negative { color: #ef4444; }
+  &.positive {
+    color: #22c55e;
+  }
+  &.negative {
+    color: #ef4444;
+  }
 }
 
 .card-value {

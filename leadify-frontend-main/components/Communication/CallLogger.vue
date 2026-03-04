@@ -152,14 +152,10 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const {
-  logCall,
-  callTimerRunning,
-  callTimerSeconds,
-  startCallTimer,
-  stopCallTimer,
-  resetCallTimer
-} = useCommunication(props.contactId, props.contactType);
+const { logCall, callTimerRunning, callTimerSeconds, startCallTimer, stopCallTimer, resetCallTimer } = useCommunication(
+  props.contactId,
+  props.contactType
+);
 
 const submitting = ref(false);
 const manualMinutes = ref(0);
@@ -302,7 +298,9 @@ onUnmounted(() => {
       align-items: center;
       gap: 0.5rem;
 
-      .el-input { flex: 1; }
+      .el-input {
+        flex: 1;
+      }
 
       .click-to-call {
         display: flex;
@@ -348,7 +346,9 @@ onUnmounted(() => {
         align-items: center;
         gap: 0.375rem;
 
-        .el-input-number { width: 90px; }
+        .el-input-number {
+          width: 90px;
+        }
 
         .duration-label {
           font-size: 0.75rem;

@@ -1,22 +1,12 @@
 <template>
   <div class="proposal-print-template print:block force-light-mode">
     <!-- Cover Page (Proposals Only) -->
-    <ProposalPrintCover 
-      v-if="data.coverStyle && isFullDoc" 
-      :data="data" 
-      :color="color" 
-      :typeInfo="typeInfo" 
-    />
+    <ProposalPrintCover v-if="data.coverStyle && isFullDoc" :data="data" :color="color" :typeInfo="typeInfo" />
 
     <!-- Iterate over stepOrder to render sections in the correct order -->
     <template v-for="(sectionId, index) in data.stepOrder" :key="sectionId">
-
       <!-- Executive Summary -->
-      <ProposalPrintPage 
-        v-if="sectionId === 'executive'" 
-        :pageNum="index + 1" 
-        :data="data"
-      >
+      <ProposalPrintPage v-if="sectionId === 'executive'" :pageNum="index + 1" :data="data">
         <div class="flex-1">
           <div class="mb-10">
             <h2 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
@@ -24,10 +14,11 @@
               {{ labels.executive || 'Executive Summary' }}
             </h2>
             <div class="proposal-rich-text mb-8" v-html="data.introduction"></div>
-            
+
             <div v-if="data.objectives" class="bg-gray-50 p-8 rounded-xl border-l-4" :style="{ borderColor: color }">
               <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <CheckCircle size="18" :style="{ color: color }" class="mr-2" /> Objectives
+                <CheckCircle size="18" :style="{ color: color }" class="mr-2" />
+                Objectives
               </h3>
               <div class="proposal-rich-text" v-html="data.objectives"></div>
             </div>
@@ -36,28 +27,24 @@
       </ProposalPrintPage>
 
       <!-- Solution & Scope -->
-      <ProposalPrintPage 
-        v-else-if="sectionId === 'solution'" 
-        :pageNum="index + 1" 
-        :data="data"
-      >
+      <ProposalPrintPage v-else-if="sectionId === 'solution'" :pageNum="index + 1" :data="data">
         <div class="flex-1">
           <div class="mb-10">
             <h2 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
               <span class="text-gray-200 font-mono">0{{ index + 1 }}</span>
               {{ labels.solution || 'Solution & Scope' }}
             </h2>
-            
+
             <div v-if="data.scopeOfWork" class="mb-8">
               <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Scope of Work</h3>
               <div class="proposal-rich-text" v-html="data.scopeOfWork"></div>
             </div>
-            
+
             <div v-if="data.methodology" class="mb-8">
               <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Methodology</h3>
               <div class="proposal-rich-text" v-html="data.methodology"></div>
             </div>
-            
+
             <div v-if="data.phases && data.phases.length > 0">
               <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Timeline</h3>
               <div class="space-y-6">
@@ -81,13 +68,8 @@
       </ProposalPrintPage>
 
       <!-- Financial / Pricing / Invoice -->
-      <ProposalPrintPage 
-        v-else-if="sectionId === 'financial'" 
-        :pageNum="index + 1" 
-        :data="data"
-      >
+      <ProposalPrintPage v-else-if="sectionId === 'financial'" :pageNum="index + 1" :data="data">
         <div class="flex-1">
-          
           <!-- Standard Proposal Header -->
           <h2 v-if="isFullDoc" class="text-3xl font-bold text-gray-900 mb-10 flex items-center gap-3">
             <span class="text-gray-200 font-mono">0{{ index + 1 }}</span>
@@ -96,21 +78,27 @@
 
           <!-- Business Header for Invoices / POs -->
           <div v-else class="mb-12 border-b border-gray-100 pb-10">
-             <div class="flex justify-between items-start">
-                <div>
-                   <h1 class="text-4xl font-bold text-gray-900 uppercase tracking-widest mb-2" :style="{ color }">
-                     {{ data.documentType.replace('_', ' ') }}
-                   </h1>
-                   <p class="text-sm font-mono text-gray-500 mb-1">REF: <span class="font-bold text-gray-900">{{ data.refNumber }}</span></p>
-                   <p class="text-sm font-mono text-gray-500">DATE: <span class="font-bold text-gray-900">{{ data.date }}</span></p>
-                </div>
-                <div class="text-right">
-                   <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Billed To</p>
-                   <p class="text-lg font-bold text-gray-900">{{ data.clientCompany || data.clientName }}</p>
-                   <p class="text-sm text-gray-500" v-if="data.clientCompany">{{ data.clientName }}</p>
-                   <p class="text-sm text-gray-500">{{ data.clientEmail }}</p>
-                </div>
-             </div>
+            <div class="flex justify-between items-start">
+              <div>
+                <h1 class="text-4xl font-bold text-gray-900 uppercase tracking-widest mb-2" :style="{ color }">
+                  {{ data.documentType.replace('_', ' ') }}
+                </h1>
+                <p class="text-sm font-mono text-gray-500 mb-1">
+                  REF:
+                  <span class="font-bold text-gray-900">{{ data.refNumber }}</span>
+                </p>
+                <p class="text-sm font-mono text-gray-500">
+                  DATE:
+                  <span class="font-bold text-gray-900">{{ data.date }}</span>
+                </p>
+              </div>
+              <div class="text-right">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Billed To</p>
+                <p class="text-lg font-bold text-gray-900">{{ data.clientCompany || data.clientName }}</p>
+                <p class="text-sm text-gray-500" v-if="data.clientCompany">{{ data.clientName }}</p>
+                <p class="text-sm text-gray-500">{{ data.clientEmail }}</p>
+              </div>
+            </div>
           </div>
 
           <div class="mb-12">
@@ -143,22 +131,20 @@
                 <span>Subtotal</span>
                 <span>{{ subtotal.toLocaleString() }} {{ data.currency }}</span>
               </div>
-              
+
               <div v-if="discountAmount > 0" class="flex justify-between text-sm text-green-600">
                 <span>Discount</span>
                 <span>- {{ discountAmount.toLocaleString() }} {{ data.currency }}</span>
               </div>
-              
+
               <div class="flex justify-between text-sm text-gray-500 border-b border-gray-200 pb-3">
                 <span>VAT ({{ data.taxRate }}%)</span>
                 <span>{{ taxAmount.toLocaleString() }} {{ data.currency }}</span>
               </div>
-              
+
               <div class="flex justify-between items-baseline pt-1">
                 <span class="text-sm font-bold text-gray-900">Total Due</span>
-                <span class="text-xl font-bold" :style="{ color: color }">
-                  {{ finalTotal.toLocaleString() }} {{ data.currency }}
-                </span>
+                <span class="text-xl font-bold" :style="{ color: color }">{{ finalTotal.toLocaleString() }} {{ data.currency }}</span>
               </div>
             </div>
           </div>
@@ -166,11 +152,7 @@
       </ProposalPrintPage>
 
       <!-- Legal / Terms -->
-      <ProposalPrintPage 
-        v-else-if="sectionId === 'legal'" 
-        :pageNum="index + 1" 
-        :data="data"
-      >
+      <ProposalPrintPage v-else-if="sectionId === 'legal'" :pageNum="index + 1" :data="data">
         <div class="flex-1 flex flex-col">
           <h2 class="text-3xl font-bold text-gray-900 mb-10 flex items-center gap-3">
             <span class="text-gray-200 font-mono">0{{ index + 1 }}</span>
@@ -179,14 +161,16 @@
           <div class="grid grid-cols-1 gap-12 flex-1">
             <div v-if="data.termsAndConditions">
               <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <FileText size="18" class="text-gray-400 mr-2" /> Terms & Conditions
+                <FileText size="18" class="text-gray-400 mr-2" />
+                Terms & Conditions
               </h3>
               <div class="proposal-rich-text text-sm text-gray-600" v-html="data.termsAndConditions"></div>
             </div>
-            
+
             <div v-if="data.paymentTerms">
               <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Clock size="18" class="text-gray-400 mr-2" /> Payment Schedule
+                <Clock size="18" class="text-gray-400 mr-2" />
+                Payment Schedule
               </h3>
               <div class="proposal-rich-text text-sm text-gray-600" v-html="data.paymentTerms"></div>
             </div>
@@ -195,11 +179,7 @@
       </ProposalPrintPage>
 
       <!-- Custom Sections -->
-      <ProposalPrintPage 
-        v-else 
-        :pageNum="index + 1" 
-        :data="data"
-      >
+      <ProposalPrintPage v-else :pageNum="index + 1" :data="data">
         <div class="flex-1">
           <h2 class="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
             <span class="text-gray-200 font-mono">0{{ index + 1 }}</span>
@@ -208,7 +188,6 @@
           <div class="proposal-rich-text" v-html="getCustomSectionContent(sectionId)"></div>
         </div>
       </ProposalPrintPage>
-
     </template>
   </div>
 </template>
@@ -220,15 +199,17 @@ import ProposalPrintPage from './ProposalPrintPage.vue';
 import ProposalPrintCover from './ProposalPrintCover.vue';
 
 // Lightweight icon shims using Nuxt Icon (replaces lucide-vue-next)
-const iconShim = (name: string): FunctionalComponent<{ size?: number | string; class?: string }> =>
-  (props, { attrs }) => h(resolveComponent('Icon'), { name, size: props.size || 20, class: props.class, ...attrs });
+const iconShim =
+  (name: string): FunctionalComponent<{ size?: number | string; class?: string }> =>
+  (props, { attrs }) =>
+    h(resolveComponent('Icon'), { name, size: props.size || 20, class: props.class, ...attrs });
 
 const CheckCircle = iconShim('ph:check-circle');
 const FileText = iconShim('ph:file-text');
 const Clock = iconShim('ph:clock');
 
-const props = defineProps<{ 
-  data: ProposalData; 
+const props = defineProps<{
+  data: ProposalData;
 }>();
 
 const isFullDoc = computed(() => {
@@ -258,7 +239,7 @@ const labels = computed(() => ({
 
 // Computed Financials
 const subtotal = computed(() => {
-  return props.data?.items?.reduce((sum, item) => sum + (item.quantity * item.rate), 0) || 0;
+  return props.data?.items?.reduce((sum, item) => sum + item.quantity * item.rate, 0) || 0;
 });
 const discountAmount = computed(() => {
   if (props.data?.discountType === 'percent') {

@@ -205,7 +205,7 @@ watch(isOpen, value => {
 });
 
 // Scroll selected item into view
-watch(selectedIndex, (idx) => {
+watch(selectedIndex, idx => {
   nextTick(() => {
     const el = itemRefs.value[idx];
     if (el && resultsRef.value) {

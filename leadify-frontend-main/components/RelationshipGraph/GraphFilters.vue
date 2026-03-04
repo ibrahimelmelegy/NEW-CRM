@@ -54,8 +54,12 @@ function toggle(type: string) {
   transition: all 0.2s;
   user-select: none;
 
-  &:hover { border-color: rgba(255, 255, 255, 0.2); }
-  &.active { background: rgba(255, 255, 255, 0.05); }
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  &.active {
+    background: rgba(255, 255, 255, 0.05);
+  }
 }
 
 .filter-dot {

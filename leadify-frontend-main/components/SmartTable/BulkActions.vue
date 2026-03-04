@@ -57,16 +57,16 @@ const props = defineProps({
   selectedCount: {
     type: Number,
     required: true,
-    default: 0,
+    default: 0
   },
   statusOptions: {
     type: Array as PropType<Array<{ label: string; value: string }>>,
     default: () => [
       { label: 'Active', value: 'active' },
       { label: 'Inactive', value: 'inactive' },
-      { label: 'Archived', value: 'archived' },
-    ],
-  },
+      { label: 'Archived', value: 'archived' }
+    ]
+  }
 });
 
 const emit = defineEmits<{

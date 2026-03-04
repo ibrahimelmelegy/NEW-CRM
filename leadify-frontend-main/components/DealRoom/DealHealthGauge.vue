@@ -30,34 +30,38 @@ const scoreLabel = computed(() => {
 });
 
 const gaugeOption = computed(() => ({
-  series: [{
-    type: 'gauge',
-    startAngle: 200,
-    endAngle: -20,
-    min: 0,
-    max: 100,
-    progress: { show: true, width: 14, roundCap: true },
-    pointer: { show: false },
-    axisLine: { lineStyle: { width: 14, color: [[1, 'rgba(255,255,255,0.06)']] } },
-    axisTick: { show: false },
-    splitLine: { show: false },
-    axisLabel: { show: false },
-    detail: {
-      valueAnimation: true,
-      fontSize: 28,
-      fontWeight: 'bold',
-      color: 'var(--text-primary)',
-      offsetCenter: [0, '10%'],
-      formatter: '{value}'
-    },
-    itemStyle: { color: color.value },
-    data: [{ value: props.score }]
-  }]
+  series: [
+    {
+      type: 'gauge',
+      startAngle: 200,
+      endAngle: -20,
+      min: 0,
+      max: 100,
+      progress: { show: true, width: 14, roundCap: true },
+      pointer: { show: false },
+      axisLine: { lineStyle: { width: 14, color: [[1, 'rgba(255,255,255,0.06)']] } },
+      axisTick: { show: false },
+      splitLine: { show: false },
+      axisLabel: { show: false },
+      detail: {
+        valueAnimation: true,
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: 'var(--text-primary)',
+        offsetCenter: [0, '10%'],
+        formatter: '{value}'
+      },
+      itemStyle: { color: color.value },
+      data: [{ value: props.score }]
+    }
+  ]
 }));
 </script>
 
 <style lang="scss" scoped>
-.deal-health-gauge { text-align: center; }
+.deal-health-gauge {
+  text-align: center;
+}
 
 .gauge-label {
   font-size: 13px;

@@ -23,7 +23,9 @@ const activeCount = computed(() => props.members.filter(m => m.isActive).length)
 </script>
 
 <style lang="scss" scoped>
-.text-primary { color: var(--text-primary); }
+.text-primary {
+  color: var(--text-primary);
+}
 
 .active-count {
   margin-left: auto;
@@ -83,7 +85,12 @@ const activeCount = computed(() => props.members.filter(m => m.isActive).length)
 }
 
 @keyframes glow {
-  0%, 100% { box-shadow: 0 0 4px rgba(34, 197, 94, 0.3); }
-  50% { box-shadow: 0 0 12px rgba(34, 197, 94, 0.6); }
+  0%,
+  100% {
+    box-shadow: 0 0 4px rgba(34, 197, 94, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
+  }
 }
 </style>

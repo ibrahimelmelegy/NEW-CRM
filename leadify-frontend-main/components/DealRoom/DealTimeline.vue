@@ -88,13 +88,34 @@ function formatDate(dateStr: string): string {
     background: rgba(255, 255, 255, 0.1);
   }
 
-  &.type-create .node-dot { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-  &.type-email .node-dot { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-  &.type-call .node-dot { background: rgba(168, 85, 247, 0.2); color: #a78bfa; }
-  &.type-meeting .node-dot { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-  &.type-stage .node-dot { background: rgba(236, 72, 153, 0.2); color: #ec4899; }
-  &.type-note .node-dot { background: rgba(107, 114, 128, 0.2); color: #9ca3af; }
-  &.type-update .node-dot { background: rgba(120, 73, 255, 0.2); color: var(--accent-color, #7849ff); }
+  &.type-create .node-dot {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+  }
+  &.type-email .node-dot {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+  }
+  &.type-call .node-dot {
+    background: rgba(168, 85, 247, 0.2);
+    color: #a78bfa;
+  }
+  &.type-meeting .node-dot {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+  }
+  &.type-stage .node-dot {
+    background: rgba(236, 72, 153, 0.2);
+    color: #ec4899;
+  }
+  &.type-note .node-dot {
+    background: rgba(107, 114, 128, 0.2);
+    color: #9ca3af;
+  }
+  &.type-update .node-dot {
+    background: rgba(120, 73, 255, 0.2);
+    color: var(--accent-color, #7849ff);
+  }
 }
 
 .node-content {

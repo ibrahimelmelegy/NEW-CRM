@@ -65,22 +65,22 @@ async function loadData() {
           actual: `SAR ${formatLargeNumber(actualRevenue)}`,
           goal: `SAR ${formatLargeNumber(revenueTarget)}`,
           percentage: Math.min(Math.round((actualRevenue / revenueTarget) * 100), 100) || 0,
-          color: TARGET_COLORS[0],
+          color: TARGET_COLORS[0]
         },
         {
           label: 'Deals Closed',
           actual: actualDeals,
           goal: dealsTarget,
           percentage: Math.min(Math.round((actualDeals / dealsTarget) * 100), 100) || 0,
-          color: TARGET_COLORS[1],
+          color: TARGET_COLORS[1]
         },
         {
           label: 'Leads Generated',
           actual: actualLeads,
           goal: leadsTarget,
           percentage: Math.min(Math.round((actualLeads / leadsTarget) * 100), 100) || 0,
-          color: TARGET_COLORS[2],
-        },
+          color: TARGET_COLORS[2]
+        }
       ];
     }
   } catch (e) {
@@ -89,7 +89,7 @@ async function loadData() {
     targets.value = [
       { label: 'Revenue', actual: '--', goal: '--', percentage: 0, color: TARGET_COLORS[0] },
       { label: 'Deals Closed', actual: '--', goal: '--', percentage: 0, color: TARGET_COLORS[1] },
-      { label: 'Leads Generated', actual: '--', goal: '--', percentage: 0, color: TARGET_COLORS[2] },
+      { label: 'Leads Generated', actual: '--', goal: '--', percentage: 0, color: TARGET_COLORS[2] }
     ];
   } finally {
     loading.value = false;

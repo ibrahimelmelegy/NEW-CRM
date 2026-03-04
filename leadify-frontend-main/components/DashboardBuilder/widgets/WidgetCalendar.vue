@@ -69,7 +69,7 @@ async function loadData() {
           day: date.getDate().toString(),
           month: date.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
           time: e.allDay ? 'All day' : date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
-          color: EVENT_COLORS[i % EVENT_COLORS.length],
+          color: EVENT_COLORS[i % EVENT_COLORS.length]
         };
       });
     }

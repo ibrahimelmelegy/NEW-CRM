@@ -239,39 +239,116 @@ import { Plus } from '@element-plus/icons-vue';
 import { useDocBuilder } from '~/composables/useDocBuilder';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
 
-const props = withDefaults(defineProps<{
-  documentType: string;
-  title?: string;
-  subtitle?: string;
-  icon?: string;
-  color?: string;
-}>(), {
-  icon: 'ph:file-text-bold',
-  color: '#7c3aed'
-});
+const props = withDefaults(
+  defineProps<{
+    documentType: string;
+    title?: string;
+    subtitle?: string;
+    icon?: string;
+    color?: string;
+  }>(),
+  {
+    icon: 'ph:file-text-bold',
+    color: '#7c3aed'
+  }
+);
 
-const { documents, loading, pagination, stats, fetchDocuments, deleteDocument, changeStatus, getStats, createDocument, generatePdf } = useDocBuilder();
+const { documents, loading, pagination, stats, fetchDocuments, deleteDocument, changeStatus, getStats, createDocument, generatePdf } =
+  useDocBuilder();
 
 // Page config
 const typeConfig: Record<string, { title: string; singular: string; icon: string; color: string; createPath: string; detailPath: string }> = {
-  quote: { title: 'Quotes', singular: 'Quote', icon: 'ph:quotes-bold', color: '#3b82f6', createPath: '/sales/quotes/create', detailPath: '/sales/quotes' },
-  invoice: { title: 'Invoices', singular: 'Invoice', icon: 'ph:receipt-bold', color: '#10b981', createPath: '/sales/invoices/create', detailPath: '/sales/invoices' },
-  proforma_invoice: { title: 'Proforma Invoices', singular: 'Proforma Invoice', icon: 'ph:file-text-bold', color: '#8b5cf6', createPath: '/sales/proforma-invoices/create', detailPath: '/sales/proforma-invoices' },
-  purchase_order: { title: 'Purchase Orders', singular: 'Purchase Order', icon: 'ph:shopping-cart-bold', color: '#f59e0b', createPath: '/sales/purchase-orders/create', detailPath: '/sales/purchase-orders' },
-  credit_note: { title: 'Credit Notes', singular: 'Credit Note', icon: 'ph:note-bold', color: '#ef4444', createPath: '/sales/credit-notes/create', detailPath: '/sales/credit-notes' },
-  contract: { title: 'Contracts', singular: 'Contract', icon: 'ph:handshake-bold', color: '#6366f1', createPath: '/sales/contracts/create', detailPath: '/sales/contracts' },
-  rfq: { title: 'RFQs', singular: 'RFQ', icon: 'ph:clipboard-text-bold', color: '#14b8a6', createPath: '/sales/rfqs/create', detailPath: '/sales/rfqs' },
-  sales_order: { title: 'Sales Orders', singular: 'Sales Order', icon: 'ph:package-bold', color: '#0ea5e9', createPath: '/sales/sales-orders/create', detailPath: '/sales/sales-orders' },
-  delivery_note: { title: 'Delivery Notes', singular: 'Delivery Note', icon: 'ph:truck-bold', color: '#84cc16', createPath: '/sales/delivery-notes/create', detailPath: '/sales/delivery-notes' },
+  quote: {
+    title: 'Quotes',
+    singular: 'Quote',
+    icon: 'ph:quotes-bold',
+    color: '#3b82f6',
+    createPath: '/sales/quotes/create',
+    detailPath: '/sales/quotes'
+  },
+  invoice: {
+    title: 'Invoices',
+    singular: 'Invoice',
+    icon: 'ph:receipt-bold',
+    color: '#10b981',
+    createPath: '/sales/invoices/create',
+    detailPath: '/sales/invoices'
+  },
+  proforma_invoice: {
+    title: 'Proforma Invoices',
+    singular: 'Proforma Invoice',
+    icon: 'ph:file-text-bold',
+    color: '#8b5cf6',
+    createPath: '/sales/proforma-invoices/create',
+    detailPath: '/sales/proforma-invoices'
+  },
+  purchase_order: {
+    title: 'Purchase Orders',
+    singular: 'Purchase Order',
+    icon: 'ph:shopping-cart-bold',
+    color: '#f59e0b',
+    createPath: '/sales/purchase-orders/create',
+    detailPath: '/sales/purchase-orders'
+  },
+  credit_note: {
+    title: 'Credit Notes',
+    singular: 'Credit Note',
+    icon: 'ph:note-bold',
+    color: '#ef4444',
+    createPath: '/sales/credit-notes/create',
+    detailPath: '/sales/credit-notes'
+  },
+  contract: {
+    title: 'Contracts',
+    singular: 'Contract',
+    icon: 'ph:handshake-bold',
+    color: '#6366f1',
+    createPath: '/sales/contracts/create',
+    detailPath: '/sales/contracts'
+  },
+  rfq: {
+    title: 'RFQs',
+    singular: 'RFQ',
+    icon: 'ph:clipboard-text-bold',
+    color: '#14b8a6',
+    createPath: '/sales/rfqs/create',
+    detailPath: '/sales/rfqs'
+  },
+  sales_order: {
+    title: 'Sales Orders',
+    singular: 'Sales Order',
+    icon: 'ph:package-bold',
+    color: '#0ea5e9',
+    createPath: '/sales/sales-orders/create',
+    detailPath: '/sales/sales-orders'
+  },
+  delivery_note: {
+    title: 'Delivery Notes',
+    singular: 'Delivery Note',
+    icon: 'ph:truck-bold',
+    color: '#84cc16',
+    createPath: '/sales/delivery-notes/create',
+    detailPath: '/sales/delivery-notes'
+  },
   sla: { title: 'SLAs', singular: 'SLA', icon: 'ph:shield-check-bold', color: '#a855f7', createPath: '/sales/slas/create', detailPath: '/sales/slas' }
 };
 
-const config = computed(() => typeConfig[props.documentType] || { title: 'Documents', singular: 'Document', icon: 'ph:file-text-bold', color: '#7c3aed', createPath: '#', detailPath: '#' });
+const config = computed(
+  () =>
+    typeConfig[props.documentType] || {
+      title: 'Documents',
+      singular: 'Document',
+      icon: 'ph:file-text-bold',
+      color: '#7c3aed',
+      createPath: '#',
+      detailPath: '#'
+    }
+);
 const pageTitle = computed(() => props.title || config.value.title);
 const singularTitle = computed(() => config.value.singular);
 const pageDescription = computed(() => props.subtitle || `Manage and track your ${config.value.title.toLowerCase()}`);
-const pageIcon = computed(() => props.icon !== 'ph:file-text-bold' ? props.icon : config.value.icon);
-const pageColor = computed(() => props.color !== '#7c3aed' ? props.color : config.value.color);
+const pageIcon = computed(() => (props.icon !== 'ph:file-text-bold' ? props.icon : config.value.icon));
+const pageColor = computed(() => (props.color !== '#7c3aed' ? props.color : config.value.color));
 const createUrl = computed(() => config.value.createPath);
 const detailBaseUrl = computed(() => config.value.detailPath);
 
@@ -307,12 +384,13 @@ const statusOptions = [
 // KPI Metrics
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const s = stats.value;
-  if (!s) return [
-    { label: `Total ${pageTitle.value}`, value: 0, icon: config.value.icon, color: config.value.color },
-    { label: 'Draft', value: 0, icon: 'ph:pencil-simple-bold', color: '#6b7280' },
-    { label: 'Pending', value: 0, icon: 'ph:clock-bold', color: '#f59e0b' },
-    { label: 'Approved', value: 0, icon: 'ph:check-circle-bold', color: '#10b981' }
-  ];
+  if (!s)
+    return [
+      { label: `Total ${pageTitle.value}`, value: 0, icon: config.value.icon, color: config.value.color },
+      { label: 'Draft', value: 0, icon: 'ph:pencil-simple-bold', color: '#6b7280' },
+      { label: 'Pending', value: 0, icon: 'ph:clock-bold', color: '#f59e0b' },
+      { label: 'Approved', value: 0, icon: 'ph:check-circle-bold', color: '#10b981' }
+    ];
 
   return [
     { label: `Total ${pageTitle.value}`, value: s.total, icon: config.value.icon, color: config.value.color },
@@ -325,8 +403,14 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
 // Status helpers
 function statusTagType(status: string): string {
   const map: Record<string, string> = {
-    DRAFT: 'info', PENDING_APPROVAL: 'warning', APPROVED: 'success',
-    REJECTED: 'danger', SENT: '', PAID: 'success', CANCELLED: 'info', ARCHIVED: 'info'
+    DRAFT: 'info',
+    PENDING_APPROVAL: 'warning',
+    APPROVED: 'success',
+    REJECTED: 'danger',
+    SENT: '',
+    PAID: 'success',
+    CANCELLED: 'info',
+    ARCHIVED: 'info'
   };
   return map[status] || '';
 }
@@ -413,7 +497,9 @@ async function handleStatusChange(row: any, newStatus: string) {
     } else {
       ElMessage.error(response?.message || 'Failed to change status');
     }
-  } catch { /* cancelled */ }
+  } catch {
+    /* cancelled */
+  }
 }
 
 async function handleDelete(row: any) {
@@ -426,7 +512,9 @@ async function handleDelete(row: any) {
     } else {
       ElMessage.error(response?.message || 'Failed to delete');
     }
-  } catch { /* cancelled */ }
+  } catch {
+    /* cancelled */
+  }
 }
 
 async function handleDuplicate(row: any) {
@@ -446,7 +534,9 @@ async function handleDuplicate(row: any) {
       ElMessage.success('Document duplicated');
       loadData();
     }
-  } catch { /* cancelled */ }
+  } catch {
+    /* cancelled */
+  }
 }
 
 async function handleExportPdf(row: any) {
@@ -468,10 +558,13 @@ async function handleExportPdf(row: any) {
 
 onMounted(() => loadData());
 
-watch(() => props.documentType, () => {
-  currentPage.value = 1;
-  loadData();
-});
+watch(
+  () => props.documentType,
+  () => {
+    currentPage.value = 1;
+    loadData();
+  }
+);
 
 // Mobile
 const { vibrate } = useMobile();
@@ -530,11 +623,17 @@ function handleMobileSwipe(name: string, doc: any) {
 </script>
 
 <style lang="scss" scoped>
-.doc-mobile-view { display: none; }
+.doc-mobile-view {
+  display: none;
+}
 
 @media (max-width: 767px) {
-  .doc-mobile-view { display: block; }
-  .doc-desktop-view { display: none; }
+  .doc-mobile-view {
+    display: block;
+  }
+  .doc-desktop-view {
+    display: none;
+  }
 
   .doc-card {
     cursor: pointer;
@@ -542,14 +641,18 @@ function handleMobileSwipe(name: string, doc: any) {
     background: var(--glass-bg, rgba(255, 255, 255, 0.06));
     border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
     border-radius: 16px;
-    &:active { opacity: 0.85; }
+    &:active {
+      opacity: 0.85;
+    }
   }
 }
 
 .doc-status-pills {
   scrollbar-width: none;
   -ms-overflow-style: none;
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .doc-pill {
@@ -568,7 +671,9 @@ function handleMobileSwipe(name: string, doc: any) {
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
   min-height: 36px;
-  &:active { transform: scale(0.95); }
+  &:active {
+    transform: scale(0.95);
+  }
   &--active {
     color: #fff;
     border-color: transparent;

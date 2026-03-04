@@ -62,12 +62,7 @@ withDefaults(defineProps<Props>(), {
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(124, 58, 237, 0.2),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.2), transparent);
   }
 
   &--wide {
@@ -157,12 +152,7 @@ withDefaults(defineProps<Props>(), {
 }
 
 .skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(124, 58, 237, 0.06) 0%,
-    rgba(124, 58, 237, 0.12) 50%,
-    rgba(124, 58, 237, 0.06) 100%
-  );
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.06) 0%, rgba(124, 58, 237, 0.12) 50%, rgba(124, 58, 237, 0.06) 100%);
   background-size: 200% 100%;
   animation: skeleton-pulse 1.5s ease-in-out infinite;
   border-radius: 8px;
@@ -184,22 +174,12 @@ html.light-mode .skeleton-card {
   backdrop-filter: none;
 
   &::before {
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(124, 58, 237, 0.08),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.08), transparent);
   }
 }
 
 html.light-mode .skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 0.04) 0%,
-    rgba(0, 0, 0, 0.08) 50%,
-    rgba(0, 0, 0, 0.04) 100%
-  );
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.08) 50%, rgba(0, 0, 0, 0.04) 100%);
   background-size: 200% 100%;
   animation: skeleton-pulse 1.5s ease-in-out infinite;
 }

@@ -119,14 +119,7 @@
 
 <script setup lang="ts">
 import { ElNotification, ElMessageBox } from 'element-plus';
-import {
-  fetchTasksByEntity,
-  createTask,
-  updateTask,
-  completeTask,
-  deleteTask,
-  type Task
-} from '~/composables/useTasks';
+import { fetchTasksByEntity, createTask, updateTask, completeTask, deleteTask, type Task } from '~/composables/useTasks';
 
 const props = defineProps<{
   entityType: string;
@@ -236,11 +229,11 @@ async function toggleComplete(task: Task, completed: boolean) {
 
 async function confirmDeleteTask(task: Task) {
   try {
-    await ElMessageBox.confirm(
-      `Delete task "${task.title}"?`,
-      'Delete Task',
-      { confirmButtonText: 'Delete', cancelButtonText: 'Cancel', type: 'warning' }
-    );
+    await ElMessageBox.confirm(`Delete task "${task.title}"?`, 'Delete Task', {
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    });
     await deleteTask(task.id);
     await loadTasks();
     ElNotification({ type: 'success', message: 'Task deleted', duration: 2000 });
@@ -308,7 +301,10 @@ function formatDateTime(dateStr?: string): string {
 }
 
 onMounted(() => loadTasks());
-watch(() => [props.entityType, props.entityId], () => loadTasks());
+watch(
+  () => [props.entityType, props.entityId],
+  () => loadTasks()
+);
 </script>
 
 <style scoped>
@@ -317,7 +313,7 @@ watch(() => [props.entityType, props.entityId], () => loadTasks());
   cursor: pointer;
 }
 .task-item:hover {
-  border-color: var(--glass-border-color, rgba(255,255,255,0.12));
+  border-color: var(--glass-border-color, rgba(255, 255, 255, 0.12));
 }
 
 .task-overdue {

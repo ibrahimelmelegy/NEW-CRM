@@ -17,9 +17,9 @@ const indicatorColor = computed(() => {
   if (isResolvedInTime.value) return '#67c23a';
 
   const hoursLeft = remainingHours.value;
-  if (hoursLeft > 4) return '#67c23a';     // Green
-  if (hoursLeft >= 1) return '#e6a23c';    // Yellow
-  return '#f56c6c';                         // Red
+  if (hoursLeft > 4) return '#67c23a'; // Green
+  if (hoursLeft >= 1) return '#e6a23c'; // Yellow
+  return '#f56c6c'; // Red
 });
 
 const isBreach = computed(() => {

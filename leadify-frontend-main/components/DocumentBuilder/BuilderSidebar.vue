@@ -70,7 +70,12 @@ const props = defineProps<{
 defineEmits(['add-element', 'insert-variable', 'update:orientation', 'select-element', 'move-layer']);
 
 const localOrientation = ref(props.orientation);
-watch(() => props.orientation, (v) => { localOrientation.value = v; });
+watch(
+  () => props.orientation,
+  v => {
+    localOrientation.value = v;
+  }
+);
 
 const reversedElements = computed(() => {
   return [...(props.elements || [])].reverse();

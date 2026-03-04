@@ -84,11 +84,14 @@ const emit = defineEmits<{
 
 const { momentum, loading, fetchMomentum, scoreColor } = useDealMomentum();
 
-watch(() => props.visible, (val) => {
-  if (val && props.dealId) {
-    fetchMomentum(props.dealId);
+watch(
+  () => props.visible,
+  val => {
+    if (val && props.dealId) {
+      fetchMomentum(props.dealId);
+    }
   }
-});
+);
 
 function handleClose() {
   emit('close');
@@ -160,25 +163,30 @@ const trendOption = computed(() => {
       min: Math.max(0, Math.min(...data) - 10),
       max: Math.min(100, Math.max(...data) + 10)
     },
-    series: [{
-      type: 'line',
-      data,
-      smooth: true,
-      showSymbol: true,
-      symbolSize: 6,
-      lineStyle: { width: 2.5, color: scoreColor.value },
-      itemStyle: { color: scoreColor.value },
-      areaStyle: {
-        color: {
-          type: 'linear',
-          x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [
-            { offset: 0, color: `${scoreColor.value}40` },
-            { offset: 1, color: `${scoreColor.value}05` }
-          ]
+    series: [
+      {
+        type: 'line',
+        data,
+        smooth: true,
+        showSymbol: true,
+        symbolSize: 6,
+        lineStyle: { width: 2.5, color: scoreColor.value },
+        itemStyle: { color: scoreColor.value },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: `${scoreColor.value}40` },
+              { offset: 1, color: `${scoreColor.value}05` }
+            ]
+          }
         }
       }
-    }]
+    ]
   };
 });
 </script>

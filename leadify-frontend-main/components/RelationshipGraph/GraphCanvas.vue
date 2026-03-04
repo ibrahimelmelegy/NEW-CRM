@@ -30,11 +30,11 @@ async function initCytoscape() {
         selector: 'node',
         style: {
           'background-color': 'data(color)',
-          'label': 'data(label)',
-          'width': 'data(size)',
-          'height': 'data(size)',
+          label: 'data(label)',
+          width: 'data(size)',
+          height: 'data(size)',
           'font-size': '10px',
-          'color': '#e4e4e7',
+          color: '#e4e4e7',
           'text-outline-color': '#0a0a1a',
           'text-outline-width': 2,
           'text-valign': 'bottom',
@@ -56,14 +56,14 @@ async function initCytoscape() {
       {
         selector: 'edge',
         style: {
-          'width': 1.5,
+          width: 1.5,
           'line-color': 'rgba(255, 255, 255, 0.15)',
           'target-arrow-color': 'rgba(255, 255, 255, 0.15)',
           'target-arrow-shape': 'triangle',
           'curve-style': 'bezier',
-          'label': 'data(label)',
+          label: 'data(label)',
           'font-size': '8px',
-          'color': 'rgba(255, 255, 255, 0.3)',
+          color: 'rgba(255, 255, 255, 0.3)',
           'text-rotation': 'autorotate'
         }
       }
@@ -97,12 +97,16 @@ function deselectNode() {
   if (cy) cy.elements().unselect();
 }
 
-watch(() => props.elements, async (newElements) => {
-  if (cy) {
-    cy.destroy();
-  }
-  await initCytoscape();
-}, { deep: true });
+watch(
+  () => props.elements,
+  async newElements => {
+    if (cy) {
+      cy.destroy();
+    }
+    await initCytoscape();
+  },
+  { deep: true }
+);
 
 onMounted(() => {
   initCytoscape();
@@ -119,6 +123,6 @@ onUnmounted(() => {
   height: 600px;
   border-radius: 12px;
   background: rgba(5, 5, 16, 0.6);
-  border: 1px solid var(--glass-border-color, rgba(255,255,255,0.08));
+  border: 1px solid var(--glass-border-color, rgba(255, 255, 255, 0.08));
 }
 </style>

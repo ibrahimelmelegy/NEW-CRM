@@ -178,62 +178,59 @@
 </template>
 
 <script setup lang="ts">
-import {
-  Search, Filter, Setting, Download, Document,
-  Grid, TrendCharts, Calendar, PictureFilled,
-} from '@element-plus/icons-vue';
+import { Search, Filter, Setting, Download, Document, Grid, TrendCharts, Calendar, PictureFilled } from '@element-plus/icons-vue';
 import { useSmartTable } from '~/composables/useSmartTable';
 import type { SmartTableColumn, ViewType } from '~/composables/useSmartTable';
 
 const props = defineProps({
   columns: {
     type: Array as PropType<SmartTableColumn[]>,
-    required: true,
+    required: true
   },
   data: {
     type: Array as PropType<any[]>,
-    required: true,
+    required: true
   },
   views: {
     type: Array as PropType<ViewType[]>,
-    default: () => ['table', 'kanban', 'calendar', 'gallery'],
+    default: () => ['table', 'kanban', 'calendar', 'gallery']
   },
   entityType: {
     type: String,
-    required: true,
+    required: true
   },
   loading: {
     type: Boolean,
-    default: false,
+    default: false
   },
   pagination: {
     type: Object as PropType<{ totalItems: number; totalPages: number } | null>,
-    default: null,
+    default: null
   },
   filterOptions: {
     type: Array as PropType<any[]>,
-    default: () => [],
+    default: () => []
   },
   groupByField: {
     type: String,
-    default: 'status',
+    default: 'status'
   },
   dateField: {
     type: String,
-    default: 'createdAt',
+    default: 'createdAt'
   },
   aggregateField: {
     type: String,
-    default: '',
+    default: ''
   },
   statusOptions: {
     type: Array as PropType<Array<{ label: string; value: string }>>,
     default: () => [
       { label: 'Active', value: 'active' },
       { label: 'Inactive', value: 'inactive' },
-      { label: 'Archived', value: 'archived' },
-    ],
-  },
+      { label: 'Archived', value: 'archived' }
+    ]
+  }
 });
 
 const emit = defineEmits<{
@@ -248,7 +245,7 @@ const emit = defineEmits<{
   'page-size-change': [size: number];
   'sort-change': [sort: any];
   'filter-change': [filters: any[]];
-  'search': [query: string];
+  search: [query: string];
 }>();
 
 const {
@@ -274,7 +271,7 @@ const {
   deleteView,
   resetColumns,
   exportData,
-  applyFiltersToData,
+  applyFiltersToData
 } = useSmartTable(props.entityType, props.columns);
 
 // Local state
@@ -287,14 +284,14 @@ const pageSize = ref(10);
 // Sync columns from props when they change externally
 watch(
   () => props.columns,
-  (newCols) => {
+  newCols => {
     // Only update if columns are different from current managed columns
-    if (JSON.stringify(newCols.map((c) => c.prop)) !== JSON.stringify(smartColumns.value.map((c) => c.prop))) {
+    if (JSON.stringify(newCols.map(c => c.prop)) !== JSON.stringify(smartColumns.value.map(c => c.prop))) {
       updateColumns(
         newCols.map((col, i) => ({
           ...col,
           visible: col.visible !== false,
-          order: col.order ?? i,
+          order: col.order ?? i
         }))
       );
     }
@@ -304,7 +301,7 @@ watch(
 // Sync groupByField from props
 watch(
   () => props.groupByField,
-  (val) => {
+  val => {
     smartGroupByField.value = val;
   },
   { immediate: true }
@@ -337,7 +334,7 @@ const handlePageSizeChange = (size: number) => {
   emit('page-size-change', size);
 };
 
-watch(currentPage, (page) => {
+watch(currentPage, page => {
   emit('page-change', page);
 });
 
@@ -355,7 +352,7 @@ const getViewLabel = (view: ViewType) => {
     table: 'Table',
     kanban: 'Kanban',
     calendar: 'Calendar',
-    gallery: 'Gallery',
+    gallery: 'Gallery'
   };
   return labels[view] || view;
 };
@@ -364,7 +361,7 @@ const getViewLabel = (view: ViewType) => {
 defineExpose({
   clearSelection,
   switchView,
-  processedData,
+  processedData
 });
 </script>
 

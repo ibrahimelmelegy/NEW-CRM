@@ -63,7 +63,9 @@ function handleRate(value: number) {
   cursor: pointer;
   padding: 2px;
   color: #4b5563;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .star-button:hover {

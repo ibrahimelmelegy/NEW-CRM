@@ -61,19 +61,13 @@ const cardData = computed(() => [
   }
 ]);
 
-const barChartSalesPerformanceOptions = computed(() => getBarChartWithLineData(
-  dailyTaskStats.value?.salesPerformance, ['Tasks count', 'Total paid'],
-  colorbarChart
-));
-const barChartMonthlyRevenueOptions = computed(() => getBarChartData(
-  dailyTaskStats.value?.monthlyRevenue,
-  colorbarChart
-));
-const pieChartTaskDistributionByClientOptions = computed(() => getCenterPieChartsData(
-  dailyTaskStats.value?.taskDistributionByClient,
-  colorpieChart,
-  ''
-));
+const barChartSalesPerformanceOptions = computed(() =>
+  getBarChartWithLineData(dailyTaskStats.value?.salesPerformance, ['Tasks count', 'Total paid'], colorbarChart)
+);
+const barChartMonthlyRevenueOptions = computed(() => getBarChartData(dailyTaskStats.value?.monthlyRevenue, colorbarChart));
+const pieChartTaskDistributionByClientOptions = computed(() =>
+  getCenterPieChartsData(dailyTaskStats.value?.taskDistributionByClient, colorpieChart, '')
+);
 
 const pieChartTaskStatusPercentageOptions = computed(() => getPieChartsData(dailyTaskStats.value?.taskStatusPercentage, colorpieChart));
 </script>

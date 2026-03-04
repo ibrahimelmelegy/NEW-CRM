@@ -52,16 +52,22 @@ const mainTabs = [
   { route: '/', icon: 'ph:house-bold', labelKey: 'navigation.dashboard' },
   { route: '/sales/leads', icon: 'ph:users-three-bold', labelKey: 'navigation.leads' },
   { route: '/sales/deals', icon: 'ph:handshake-bold', labelKey: 'navigation.deals' },
-  { route: '/tasks', icon: 'ph:list-checks-bold', labelKey: 'mobile.tasks' },
+  { route: '/tasks', icon: 'ph:list-checks-bold', labelKey: 'mobile.tasks' }
 ];
 
 const moreItems = [
   { route: '/sales/clients', icon: 'ph:buildings-bold', labelKey: 'navigation.clients', descKey: 'mobile.clientsDesc', color: '#3B82F6' },
-  { route: '/sales/opportunities', icon: 'ph:target-bold', labelKey: 'navigation.opportunities', descKey: 'mobile.opportunitiesDesc', color: '#8B5CF6' },
+  {
+    route: '/sales/opportunities',
+    icon: 'ph:target-bold',
+    labelKey: 'navigation.opportunities',
+    descKey: 'mobile.opportunitiesDesc',
+    color: '#8B5CF6'
+  },
   { route: '/messaging', icon: 'ph:chat-circle-dots-bold', labelKey: 'navigation.messaging', descKey: 'mobile.messagingDesc', color: '#10B981' },
   { route: '/calendar', icon: 'ph:calendar-bold', labelKey: 'navigation.calendar', descKey: 'mobile.calendarDesc', color: '#F59E0B' },
   { route: '/reports', icon: 'ph:chart-bar-bold', labelKey: 'navigation.reports', descKey: 'mobile.reportsDesc', color: '#EF4444' },
-  { route: '/settings', icon: 'ph:gear-bold', labelKey: 'navigation.settings', descKey: 'mobile.settingsDesc', color: '#6366F1' },
+  { route: '/settings', icon: 'ph:gear-bold', labelKey: 'navigation.settings', descKey: 'mobile.settingsDesc', color: '#6366F1' }
 ];
 
 function isActive(link: string) {
@@ -70,9 +76,12 @@ function isActive(link: string) {
 }
 
 // Close more sheet on route change
-watch(() => route.path, () => {
-  moreOpen.value = false;
-});
+watch(
+  () => route.path,
+  () => {
+    moreOpen.value = false;
+  }
+);
 
 // Close on escape
 function onKeyDown(e: KeyboardEvent) {
@@ -119,7 +128,9 @@ onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
   border: none;
   background: none;
   cursor: pointer;
-  transition: color 0.2s ease, transform 0.15s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 
   &:active {

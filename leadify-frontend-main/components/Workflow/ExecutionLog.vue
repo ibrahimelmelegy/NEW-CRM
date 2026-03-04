@@ -329,8 +329,15 @@ onBeforeUnmount(() => {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.2); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
 }
 
 .executions-list {
@@ -345,7 +352,9 @@ onBeforeUnmount(() => {
   border: 1px solid var(--glass-border-color, rgba(255, 255, 255, 0.08));
   overflow: hidden;
   cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 
   &:hover {
     border-color: rgba(255, 255, 255, 0.15);
@@ -369,11 +378,26 @@ onBeforeUnmount(() => {
   justify-content: center;
   flex-shrink: 0;
 
-  &.status-success { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-  &.status-partial { background: rgba(234, 179, 8, 0.15); color: #eab308; }
-  &.status-failed { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-  &.status-running { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-  &.status-pending { background: rgba(113, 113, 122, 0.15); color: #71717a; }
+  &.status-success {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+  &.status-partial {
+    background: rgba(234, 179, 8, 0.15);
+    color: #eab308;
+  }
+  &.status-failed {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+  &.status-running {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+  }
+  &.status-pending {
+    background: rgba(113, 113, 122, 0.15);
+    color: #71717a;
+  }
 }
 
 .execution-name {
@@ -451,9 +475,15 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
 }
 
-.timeline-success .timeline-dot { background: #22c55e; }
-.timeline-failed .timeline-dot { background: #ef4444; }
-.timeline-skipped .timeline-dot { background: #71717a; }
+.timeline-success .timeline-dot {
+  background: #22c55e;
+}
+.timeline-failed .timeline-dot {
+  background: #ef4444;
+}
+.timeline-skipped .timeline-dot {
+  background: #71717a;
+}
 
 .timeline-line {
   width: 2px;

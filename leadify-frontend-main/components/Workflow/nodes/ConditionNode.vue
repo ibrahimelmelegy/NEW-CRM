@@ -86,7 +86,11 @@ const operatorLabel = computed(() => {
   font-weight: 700;
   text-transform: uppercase;
 
-  &.yes { color: #22c55e; }
-  &.no { color: #ef4444; }
+  &.yes {
+    color: #22c55e;
+  }
+  &.no {
+    color: #ef4444;
+  }
 }
 </style>

@@ -34,11 +34,15 @@ defineProps<{
   padding: 16px;
   border-radius: 12px;
   background: var(--glass-bg-primary);
-  border: 1px solid var(--glass-border-color, rgba(255,255,255,0.08));
+  border: 1px solid var(--glass-border-color, rgba(255, 255, 255, 0.08));
   transition: all 0.3s ease;
 
-  &:hover { transform: translateY(-2px); }
-  &.completed { opacity: 0.7; }
+  &:hover {
+    transform: translateY(-2px);
+  }
+  &.completed {
+    opacity: 0.7;
+  }
 }
 
 .challenge-icon {
@@ -49,8 +53,14 @@ defineProps<{
   align-items: center;
   justify-content: center;
 
-  &.weekly { background: rgba(120, 73, 255, 0.15); color: var(--accent-color, #7849ff); }
-  &.monthly { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+  &.weekly {
+    background: rgba(120, 73, 255, 0.15);
+    color: var(--accent-color, #7849ff);
+  }
+  &.monthly {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+  }
 }
 
 .challenge-name {

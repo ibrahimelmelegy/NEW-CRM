@@ -107,21 +107,47 @@ const resultsContainer = ref<HTMLElement | null>(null);
 let debounceTimer: ReturnType<typeof setTimeout>;
 
 const quickActions = [
-  { label: 'Create New Lead', hint: 'Add a new lead to your pipeline', icon: 'ph:user-plus', color: '#7849ff', shortcut: '', link: '/sales/leads/create' },
+  {
+    label: 'Create New Lead',
+    hint: 'Add a new lead to your pipeline',
+    icon: 'ph:user-plus',
+    color: '#7849ff',
+    shortcut: '',
+    link: '/sales/leads/create'
+  },
   { label: 'Create New Deal', hint: 'Start a new sales deal', icon: 'ph:handshake', color: '#10b981', shortcut: '', link: '/sales/deals/create' },
   { label: 'Create Invoice', hint: 'Generate a new invoice', icon: 'ph:receipt', color: '#3b82f6', shortcut: '', link: '/documents/editor' },
   { label: 'Create Task', hint: 'Add a task for your team', icon: 'ph:check-square', color: '#f59e0b', shortcut: '', link: '/tasks/create' },
-  { label: 'View Dashboard', hint: 'Open executive dashboard', icon: 'ph:chart-line-up', color: '#a855f7', shortcut: '', link: '/dashboards/executive' },
-  { label: 'Customer 360', hint: 'View complete customer profile', icon: 'ph:address-book', color: '#06b6d4', shortcut: '', link: '/crm/customer-360' }
+  {
+    label: 'View Dashboard',
+    hint: 'Open executive dashboard',
+    icon: 'ph:chart-line-up',
+    color: '#a855f7',
+    shortcut: '',
+    link: '/dashboards/executive'
+  },
+  {
+    label: 'Customer 360',
+    hint: 'View complete customer profile',
+    icon: 'ph:address-book',
+    color: '#06b6d4',
+    shortcut: '',
+    link: '/crm/customer-360'
+  }
 ];
 
 const groupedResults = computed(() => {
   const groups: Record<string, SearchResult[]> = {};
   results.value.forEach(r => {
-    const typeName = {
-      lead: 'Leads', deal: 'Deals', client: 'Clients',
-      invoice: 'Invoices', task: 'Tasks', ticket: 'Tickets'
-    }[r.type] || 'Other';
+    const typeName =
+      {
+        lead: 'Leads',
+        deal: 'Deals',
+        client: 'Clients',
+        invoice: 'Invoices',
+        task: 'Tasks',
+        ticket: 'Tickets'
+      }[r.type] || 'Other';
     if (!groups[typeName]) groups[typeName] = [];
     groups[typeName].push(r);
   });
@@ -141,7 +167,10 @@ function getGlobalIndex(groupName: string, localIndex: number): number {
 }
 
 function getEntityIcon(type: string): string {
-  return { lead: 'ph:user', deal: 'ph:handshake', client: 'ph:buildings', invoice: 'ph:receipt', task: 'ph:check-square', ticket: 'ph:ticket' }[type] || 'ph:circle';
+  return (
+    { lead: 'ph:user', deal: 'ph:handshake', client: 'ph:buildings', invoice: 'ph:receipt', task: 'ph:check-square', ticket: 'ph:ticket' }[type] ||
+    'ph:circle'
+  );
 }
 
 function getEntityColor(type: string): string {
@@ -197,7 +226,7 @@ function navigateTo(item: SearchResult) {
   router.push(item.link);
 }
 
-watch(query, (val) => {
+watch(query, val => {
   clearTimeout(debounceTimer);
   if (!val.trim()) {
     results.value = [];
@@ -214,15 +243,37 @@ async function search(q: string) {
 
   try {
     const searches = [
-      { endpoint: `lead?search=${encodeURIComponent(q)}&limit=5`, type: 'lead' as const, nameKey: 'name', subtitleKey: 'email', linkPrefix: '/sales/leads/' },
-      { endpoint: `deal?search=${encodeURIComponent(q)}&limit=5`, type: 'deal' as const, nameKey: 'name', subtitleKey: 'stage', linkPrefix: '/sales/deals/' },
-      { endpoint: `client?search=${encodeURIComponent(q)}&limit=5`, type: 'client' as const, nameKey: 'clientName', subtitleKey: 'email', linkPrefix: '/sales/clients/' },
-      { endpoint: `tasks?search=${encodeURIComponent(q)}&limit=5`, type: 'task' as const, nameKey: 'title', subtitleKey: 'status', linkPrefix: '/tasks/' }
+      {
+        endpoint: `lead?search=${encodeURIComponent(q)}&limit=5`,
+        type: 'lead' as const,
+        nameKey: 'name',
+        subtitleKey: 'email',
+        linkPrefix: '/sales/leads/'
+      },
+      {
+        endpoint: `deal?search=${encodeURIComponent(q)}&limit=5`,
+        type: 'deal' as const,
+        nameKey: 'name',
+        subtitleKey: 'stage',
+        linkPrefix: '/sales/deals/'
+      },
+      {
+        endpoint: `client?search=${encodeURIComponent(q)}&limit=5`,
+        type: 'client' as const,
+        nameKey: 'clientName',
+        subtitleKey: 'email',
+        linkPrefix: '/sales/clients/'
+      },
+      {
+        endpoint: `tasks?search=${encodeURIComponent(q)}&limit=5`,
+        type: 'task' as const,
+        nameKey: 'title',
+        subtitleKey: 'status',
+        linkPrefix: '/tasks/'
+      }
     ];
 
-    const responses = await Promise.allSettled(
-      searches.map(s => useApiFetch(s.endpoint))
-    );
+    const responses = await Promise.allSettled(searches.map(s => useApiFetch(s.endpoint)));
 
     responses.forEach((res, i) => {
       if (res.status !== 'fulfilled') return;
@@ -244,7 +295,9 @@ async function search(q: string) {
         });
       });
     });
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 
   results.value = allResults;
   searching.value = false;
@@ -280,7 +333,7 @@ defineExpose({ open, close, isOpen });
   align-items: flex-start;
   justify-content: center;
   padding-top: 15vh;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
 }
 
@@ -290,10 +343,10 @@ defineExpose({ open, close, isOpen });
   max-height: 70vh;
   display: flex;
   flex-direction: column;
-  background: var(--glass-bg, rgba(30,30,40,0.95));
+  background: var(--glass-bg, rgba(30, 30, 40, 0.95));
   backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
-  box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
 }
 
 .palette-item {
@@ -301,7 +354,7 @@ defineExpose({ open, close, isOpen });
 }
 .palette-item:hover,
 .palette-item.active {
-  background: rgba(120,73,255,0.1);
+  background: rgba(120, 73, 255, 0.1);
 }
 
 kbd {
@@ -309,9 +362,19 @@ kbd {
   font-size: 10px;
 }
 
-.palette-fade-enter-active { transition: all 0.15s ease-out; }
-.palette-fade-leave-active { transition: all 0.1s ease-in; }
-.palette-fade-enter-from { opacity: 0; }
-.palette-fade-enter-from .command-palette { transform: scale(0.95) translateY(-10px); }
-.palette-fade-leave-to { opacity: 0; }
+.palette-fade-enter-active {
+  transition: all 0.15s ease-out;
+}
+.palette-fade-leave-active {
+  transition: all 0.1s ease-in;
+}
+.palette-fade-enter-from {
+  opacity: 0;
+}
+.palette-fade-enter-from .command-palette {
+  transform: scale(0.95) translateY(-10px);
+}
+.palette-fade-leave-to {
+  opacity: 0;
+}
 </style>

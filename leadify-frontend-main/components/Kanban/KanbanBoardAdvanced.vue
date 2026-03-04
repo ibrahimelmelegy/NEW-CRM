@@ -143,7 +143,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  swimlaneMode: 'none',
+  swimlaneMode: 'none'
 });
 
 const emit = defineEmits<{
@@ -154,13 +154,17 @@ const emit = defineEmits<{
 // ---- Local mutable copy for drag operations ----
 const localCards = ref<Record<string, KanbanCard[]>>({});
 
-watch(() => props.cards, (newCards) => {
-  const cloned: Record<string, KanbanCard[]> = {};
-  for (const key of Object.keys(newCards)) {
-    cloned[key] = [...(newCards[key] ?? [])];
-  }
-  localCards.value = cloned;
-}, { immediate: true, deep: true });
+watch(
+  () => props.cards,
+  newCards => {
+    const cloned: Record<string, KanbanCard[]> = {};
+    for (const key of Object.keys(newCards)) {
+      cloned[key] = [...(newCards[key] ?? [])];
+    }
+    localCards.value = cloned;
+  },
+  { immediate: true, deep: true }
+);
 
 const getColumnCards = (key: string): KanbanCard[] => {
   if (!localCards.value[key]) localCards.value[key] = [];
@@ -216,9 +220,7 @@ const onDragEnd = (evt: any, toStage: string) => {
   if (!evt.item?._underlying_vm_) return;
   const card = evt.item._underlying_vm_ as KanbanCard;
 
-  const fromStage = Object.entries(props.cards).find(([_key, cards]) =>
-    cards.some((c: KanbanCard) => c.id === card.id)
-  )?.[0];
+  const fromStage = Object.entries(props.cards).find(([_key, cards]) => cards.some((c: KanbanCard) => c.id === card.id))?.[0];
 
   if (fromStage && fromStage !== toStage) {
     emit('stageChange', { cardId: card.id, fromStage, toStage });
@@ -313,7 +315,7 @@ function buildAssigneeSwimlanes(allCards: KanbanCard[]): Swimlane[] {
       userMap.set(key, {
         label: user?.name || 'Unassigned',
         color: user ? stringToColor(user.name || '') : '#6B7280',
-        cards: [],
+        cards: []
       });
     }
     userMap.get(key)!.cards.push(card);
@@ -324,7 +326,7 @@ function buildAssigneeSwimlanes(allCards: KanbanCard[]): Swimlane[] {
     label: data.label,
     color: data.color,
     cardCount: data.cards.length,
-    totalValue: data.cards.reduce((sum: number, c: KanbanCard) => sum + (c.price || c.estimatedValue || 0), 0),
+    totalValue: data.cards.reduce((sum: number, c: KanbanCard) => sum + (c.price || c.estimatedValue || 0), 0)
   }));
 }
 
@@ -336,7 +338,7 @@ function buildPrioritySwimlanes(allCards: KanbanCard[]): Swimlane[] {
     MEDIUM: 'Medium',
     LOW: 'Low',
     VERY_LOW: 'Very Low',
-    NONE: 'No Priority',
+    NONE: 'No Priority'
   };
   const grouped = new Map<string, KanbanCard[]>();
 
@@ -353,7 +355,7 @@ function buildPrioritySwimlanes(allCards: KanbanCard[]): Swimlane[] {
       label: priorityLabels[p] ?? p,
       color: getPriorityColor(p),
       cardCount: grouped.get(p)!.length,
-      totalValue: grouped.get(p)!.reduce((sum: number, c: KanbanCard) => sum + (c.price || c.estimatedValue || 0), 0),
+      totalValue: grouped.get(p)!.reduce((sum: number, c: KanbanCard) => sum + (c.price || c.estimatedValue || 0), 0)
     }));
 }
 
@@ -370,7 +372,7 @@ function buildValueSwimlanes(allCards: KanbanCard[]): Swimlane[] {
   const config: { key: string; label: string; color: string }[] = [
     { key: 'high', label: 'High Value (>10K)', color: '#10B981' },
     { key: 'medium', label: 'Medium Value (1K-10K)', color: '#3B82F6' },
-    { key: 'low', label: 'Low Value (<1K)', color: '#6B7280' },
+    { key: 'low', label: 'Low Value (<1K)', color: '#6B7280' }
   ];
 
   return config
@@ -378,7 +380,7 @@ function buildValueSwimlanes(allCards: KanbanCard[]): Swimlane[] {
     .map(c => ({
       ...c,
       cardCount: groups[c.key]!.length,
-      totalValue: groups[c.key]!.reduce((sum: number, card: KanbanCard) => sum + (card.price || card.estimatedValue || 0), 0),
+      totalValue: groups[c.key]!.reduce((sum: number, card: KanbanCard) => sum + (card.price || card.estimatedValue || 0), 0)
     }));
 }
 
@@ -400,8 +402,12 @@ function stringToColor(str: string): string {
     scrollbar-width: thin;
     scrollbar-color: rgba(120, 73, 255, 0.3) transparent;
 
-    &::-webkit-scrollbar { height: 6px; }
-    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
     &::-webkit-scrollbar-thumb {
       background: rgba(120, 73, 255, 0.3);
       border-radius: 3px;
@@ -425,13 +431,13 @@ function stringToColor(str: string): string {
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #6B7280;
+  color: #6b7280;
   font-weight: 600;
 }
 
 .analytics-value {
   font-size: 12px;
-  color: #D1D5DB;
+  color: #d1d5db;
   font-weight: 600;
   font-family: monospace;
 }
@@ -442,7 +448,9 @@ function stringToColor(str: string): string {
   border: 1px dashed rgba(255, 255, 255, 0.05);
   transition: background 0.2s;
 
-  &:hover { background: rgba(255, 255, 255, 0.03); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
 }
 
 .kanban-ghost {
@@ -487,8 +495,12 @@ function stringToColor(str: string): string {
   scrollbar-width: thin;
   scrollbar-color: rgba(120, 73, 255, 0.3) transparent;
 
-  &::-webkit-scrollbar { height: 6px; }
-  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
   &::-webkit-scrollbar-thumb {
     background: rgba(120, 73, 255, 0.3);
     border-radius: 3px;

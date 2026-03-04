@@ -51,7 +51,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  activeFilter: 'all',
+  activeFilter: 'all'
 });
 
 const emit = defineEmits<{
@@ -64,7 +64,7 @@ const quickFilters: QuickFilter[] = [
   { key: 'all', label: 'All' },
   { key: 'high-value', label: 'High Value' },
   { key: 'stale', label: 'Stale' },
-  { key: 'closing-soon', label: 'Closing Soon' },
+  { key: 'closing-soon', label: 'Closing Soon' }
 ];
 
 function onFilterClick(key: string) {

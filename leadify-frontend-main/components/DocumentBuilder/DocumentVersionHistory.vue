@@ -60,8 +60,11 @@ const emit = defineEmits<{
 function formatDate(d: string) {
   if (!d) return '—';
   return new Date(d).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric',
-    hour: '2-digit', minute: '2-digit'
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
   });
 }
 
@@ -73,6 +76,8 @@ async function handleRestore(version: DocBuilderVersion) {
       { confirmButtonText: 'Restore', type: 'warning' }
     );
     emit('restore', version);
-  } catch { /* cancelled */ }
+  } catch {
+    /* cancelled */
+  }
 }
 </script>

@@ -1,60 +1,197 @@
 <template>
-  <div class="rich-text-editor border-2 rounded-2xl overflow-hidden bg-white transition-all focus-within:border-violet-500 focus-within:ring-4 focus-within:ring-violet-500/10 border-slate-100 shadow-inner" :class="className">
-    
+  <div
+    class="rich-text-editor border-2 rounded-2xl overflow-hidden bg-white transition-all focus-within:border-violet-500 focus-within:ring-4 focus-within:ring-violet-500/10 border-slate-100 shadow-inner"
+    :class="className"
+  >
     <!-- Toolbar -->
     <div v-if="editor" class="flex items-center gap-1 p-2 border-b border-gray-100 bg-gray-50/50 flex-wrap sticky top-0 z-10">
       <!-- Headings -->
-      <button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black font-bold border-gray-400': editor.isActive('heading', { level: 1 }) }]" title="Heading 1">H1</button>
-      <button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black font-bold border-gray-400': editor.isActive('heading', { level: 2 }) }]" title="Heading 2">H2</button>
-      <button @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black font-bold border-gray-400': editor.isActive('heading', { level: 3 }) }]" title="Heading 3">H3</button>
+      <button
+        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+        :class="[
+          'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
+          { 'bg-gray-200 text-black font-bold border-gray-400': editor.isActive('heading', { level: 1 }) }
+        ]"
+        title="Heading 1"
+      >
+        H1
+      </button>
+      <button
+        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+        :class="[
+          'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
+          { 'bg-gray-200 text-black font-bold border-gray-400': editor.isActive('heading', { level: 2 }) }
+        ]"
+        title="Heading 2"
+      >
+        H2
+      </button>
+      <button
+        @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+        :class="[
+          'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
+          { 'bg-gray-200 text-black font-bold border-gray-400': editor.isActive('heading', { level: 3 }) }
+        ]"
+        title="Heading 3"
+      >
+        H3
+      </button>
 
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Text Formatting -->
-      <button @click="editor.chain().focus().toggleBold().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('bold') }]" title="Bold"><Bold :size="16" /></button>
-      <button @click="editor.chain().focus().toggleItalic().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('italic') }]" title="Italic"><Italic :size="16" /></button>
-      <button @click="editor.chain().focus().toggleUnderline().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('underline') }]" title="Underline"><UnderlineIcon :size="16" /></button>
-      <button @click="editor.chain().focus().toggleStrike().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('strike') }]" title="Strikethrough"><Strikethrough :size="16" /></button>
+      <button
+        @click="editor.chain().focus().toggleBold().run()"
+        :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('bold') }]"
+        title="Bold"
+      >
+        <Bold :size="16" />
+      </button>
+      <button
+        @click="editor.chain().focus().toggleItalic().run()"
+        :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('italic') }]"
+        title="Italic"
+      >
+        <Italic :size="16" />
+      </button>
+      <button
+        @click="editor.chain().focus().toggleUnderline().run()"
+        :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('underline') }]"
+        title="Underline"
+      >
+        <UnderlineIcon :size="16" />
+      </button>
+      <button
+        @click="editor.chain().focus().toggleStrike().run()"
+        :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('strike') }]"
+        title="Strikethrough"
+      >
+        <Strikethrough :size="16" />
+      </button>
 
       <!-- Advanced Formatting -->
-      <button @click="editor.chain().focus().toggleHighlight().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-yellow-200 text-black': editor.isActive('highlight') }]" title="Highlight"><Highlighter :size="16" /></button>
-      
+      <button
+        @click="editor.chain().focus().toggleHighlight().run()"
+        :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-yellow-200 text-black': editor.isActive('highlight') }]"
+        title="Highlight"
+      >
+        <Highlighter :size="16" />
+      </button>
+
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Alignment & Direction -->
-      <button @click="editor.chain().focus().setTextAlign('left').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'left' }) }]" title="Align Left"><AlignLeft :size="16" /></button>
-      <button @click="editor.chain().focus().setTextAlign('center').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'center' }) }]" title="Align Center"><AlignCenter :size="16" /></button>
-      <button @click="editor.chain().focus().setTextAlign('right').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'right' }) }]" title="Align Right"><AlignRight :size="16" /></button>
-      <button @click="editor.chain().focus().setTextAlign('justify').run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'justify' }) }]" title="Justify"><AlignJustify :size="16" /></button>
+      <button
+        @click="editor.chain().focus().setTextAlign('left').run()"
+        :class="[
+          'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
+          { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'left' }) }
+        ]"
+        title="Align Left"
+      >
+        <AlignLeft :size="16" />
+      </button>
+      <button
+        @click="editor.chain().focus().setTextAlign('center').run()"
+        :class="[
+          'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
+          { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'center' }) }
+        ]"
+        title="Align Center"
+      >
+        <AlignCenter :size="16" />
+      </button>
+      <button
+        @click="editor.chain().focus().setTextAlign('right').run()"
+        :class="[
+          'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
+          { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'right' }) }
+        ]"
+        title="Align Right"
+      >
+        <AlignRight :size="16" />
+      </button>
+      <button
+        @click="editor.chain().focus().setTextAlign('justify').run()"
+        :class="[
+          'p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors',
+          { 'bg-gray-200 text-black': editor.isActive({ textAlign: 'justify' }) }
+        ]"
+        title="Justify"
+      >
+        <AlignJustify :size="16" />
+      </button>
 
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Lists -->
-      <button @click="editor.chain().focus().toggleBulletList().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('bulletList') }]" title="Bullet List"><List :size="16" /></button>
-      <button @click="editor.chain().focus().toggleOrderedList().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('orderedList') }]" title="Ordered List"><ListOrdered :size="16" /></button>
-      <button @click="editor.chain().focus().toggleTaskList().run()" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('taskList') }]" title="Task List"><CheckSquare :size="16" /></button>
+      <button
+        @click="editor.chain().focus().toggleBulletList().run()"
+        :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('bulletList') }]"
+        title="Bullet List"
+      >
+        <List :size="16" />
+      </button>
+      <button
+        @click="editor.chain().focus().toggleOrderedList().run()"
+        :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('orderedList') }]"
+        title="Ordered List"
+      >
+        <ListOrdered :size="16" />
+      </button>
+      <button
+        @click="editor.chain().focus().toggleTaskList().run()"
+        :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('taskList') }]"
+        title="Task List"
+      >
+        <CheckSquare :size="16" />
+      </button>
 
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Tables -->
-      <button @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Insert Table"><TableIcon :size="16" /></button>
+      <button
+        @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
+        class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors"
+        title="Insert Table"
+      >
+        <TableIcon :size="16" />
+      </button>
       <template v-if="editor.isActive('table')">
-        <button @click="editor.chain().focus().addColumnAfter().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Column"><Plus :size="14" class="rotate-90" /></button>
-        <button @click="editor.chain().focus().deleteColumn().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Column"><Trash2 :size="14" class="rotate-90" /></button>
-        <button @click="editor.chain().focus().addRowAfter().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Row"><Plus :size="14" /></button>
-        <button @click="editor.chain().focus().deleteRow().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Row"><Trash2 :size="14" /></button>
+        <button @click="editor.chain().focus().addColumnAfter().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Column">
+          <Plus :size="14" class="rotate-90" />
+        </button>
+        <button @click="editor.chain().focus().deleteColumn().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Column">
+          <Trash2 :size="14" class="rotate-90" />
+        </button>
+        <button @click="editor.chain().focus().addRowAfter().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Add Row">
+          <Plus :size="14" />
+        </button>
+        <button @click="editor.chain().focus().deleteRow().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600" title="Delete Row">
+          <Trash2 :size="14" />
+        </button>
       </template>
 
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Media & Links -->
-      <button @click="setLink" :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('link') }]" title="Link"><LinkIcon :size="16" /></button>
+      <button
+        @click="setLink"
+        :class="['p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors', { 'bg-gray-200 text-black': editor.isActive('link') }]"
+        title="Link"
+      >
+        <LinkIcon :size="16" />
+      </button>
 
       <div class="w-px h-4 bg-gray-300 mx-1"></div>
 
       <!-- Utils -->
-      <button @click="editor.chain().focus().undo().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Undo"><Undo :size="16" /></button>
-      <button @click="editor.chain().focus().redo().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Redo"><Redo :size="16" /></button>
+      <button @click="editor.chain().focus().undo().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Undo">
+        <Undo :size="16" />
+      </button>
+      <button @click="editor.chain().focus().redo().run()" class="p-1.5 hover:bg-gray-200 rounded text-gray-600 transition-colors" title="Redo">
+        <Redo :size="16" />
+      </button>
     </div>
 
     <editor-content :editor="editor" />
@@ -82,11 +219,26 @@ import Typography from '@tiptap/extension-typography';
 import CharacterCount from '@tiptap/extension-character-count';
 import Placeholder from '@tiptap/extension-placeholder';
 
-import { 
-  Bold, Italic, Underline as UnderlineIcon, Strikethrough,
-  List, ListOrdered, Undo, Redo, Link as LinkIcon,
-  Image as ImageIcon, AlignLeft, AlignCenter, AlignRight, AlignJustify,
-  Table as TableIcon, Plus, Trash2, CheckSquare, Highlighter
+import {
+  Bold,
+  Italic,
+  Underline as UnderlineIcon,
+  Strikethrough,
+  List,
+  ListOrdered,
+  Undo,
+  Redo,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  Table as TableIcon,
+  Plus,
+  Trash2,
+  CheckSquare,
+  Highlighter
 } from 'lucide-vue-next';
 
 // Props
@@ -130,7 +282,7 @@ const editor = useEditor({
     HighlightExt,
     Typography,
     CharacterCount,
-    Placeholder.configure({ placeholder: props.placeholder }),
+    Placeholder.configure({ placeholder: props.placeholder })
   ],
   editorProps: {
     attributes: {
@@ -144,11 +296,14 @@ const editor = useEditor({
 });
 
 // Watch for external value changes
-watch(() => props.modelValue, (newValue) => {
-  if (editor.value && newValue !== editor.value.getHTML()) {
-    editor.value.commands.setContent(newValue, false as any);
+watch(
+  () => props.modelValue,
+  newValue => {
+    if (editor.value && newValue !== editor.value.getHTML()) {
+      editor.value.commands.setContent(newValue, false as any);
+    }
   }
-});
+);
 
 // Cleanup
 onBeforeUnmount(() => {
@@ -172,103 +327,108 @@ const setLink = () => {
 
   editor.value.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
 };
-
 </script>
 
 <style>
 /* Tiptap Editor Styles ported from React */
 .ProseMirror p.is-editor-empty:first-child::before {
-    color: #9ca3af;
-    content: attr(data-placeholder);
-    float: left;
-    height: 0;
-    pointer-events: none;
+  color: #9ca3af;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
 .ProseMirror table {
-    border-collapse: collapse;
-    table-layout: fixed;
-    width: 100%;
-    margin: 0;
-    overflow: hidden;
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
 }
-.ProseMirror td, .ProseMirror th {
-    min-width: 1em;
-    border: 2px solid #ced4da;
-    padding: 3px 5px;
-    vertical-align: top;
-    box-sizing: border-box;
-    position: relative;
+.ProseMirror td,
+.ProseMirror th {
+  min-width: 1em;
+  border: 2px solid #ced4da;
+  padding: 3px 5px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
 }
 .ProseMirror th {
-    font-weight: bold;
-    text-align: left;
-    background-color: #f1f3f5;
+  font-weight: bold;
+  text-align: left;
+  background-color: #f1f3f5;
 }
 .ProseMirror .selectedCell:after {
-    z-index: 2;
-    position: absolute;
-    content: "";
-    left: 0; right: 0; top: 0; bottom: 0;
-    background: rgba(200, 200, 255, 0.4);
-    pointer-events: none;
+  z-index: 2;
+  position: absolute;
+  content: '';
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(200, 200, 255, 0.4);
+  pointer-events: none;
 }
-ul[data-type="taskList"] {
-    list-style: none;
-    padding: 0;
+ul[data-type='taskList'] {
+  list-style: none;
+  padding: 0;
 }
-ul[data-type="taskList"] li {
-    display: flex;
-    align-items: center;
+ul[data-type='taskList'] li {
+  display: flex;
+  align-items: center;
 }
-ul[data-type="taskList"] li > label {
-    flex: 0 0 auto;
-    margin-right: 0.5rem;
-    user-select: none;
+ul[data-type='taskList'] li > label {
+  flex: 0 0 auto;
+  margin-right: 0.5rem;
+  user-select: none;
 }
-ul[data-type="taskList"] li > div {
-    flex: 1 1 auto;
+ul[data-type='taskList'] li > div {
+  flex: 1 1 auto;
 }
 .ProseMirror ul {
-    list-style-type: disc;
-    padding-left: 1.5rem;
-    margin: 1rem 0;
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
 }
 .ProseMirror ol {
-    list-style-type: decimal;
-    padding-left: 1.5rem;
-    margin: 1rem 0;
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
 }
 .ProseMirror li {
-    margin: 0.25rem 0;
+  margin: 0.25rem 0;
 }
 .ProseMirror img {
-    max-width: 100%;
-    height: auto;
+  max-width: 100%;
+  height: auto;
 }
 .ProseMirror h1 {
-    font-size: 2.25rem;
-    font-weight: 800;
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-    line-height: 1.2;
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
 }
 .ProseMirror h2 {
-    font-size: 1.875rem;
-    font-weight: 700;
-    margin-top: 1.25rem;
-    margin-bottom: 0.75rem;
-    line-height: 1.3;
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
 }
 .ProseMirror h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-    line-height: 1.4;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
 }
-.prose h1, .prose h2, .prose h3 {
-    margin: unset;
-    font-weight: unset;
-    font-size: unset;
+.prose h1,
+.prose h2,
+.prose h3 {
+  margin: unset;
+  font-weight: unset;
+  font-size: unset;
 }
 </style>

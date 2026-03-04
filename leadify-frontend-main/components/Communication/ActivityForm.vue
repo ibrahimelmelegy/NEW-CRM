@@ -241,7 +241,7 @@ async function handleSubmit() {
 // Populate form when editing
 watch(
   () => props.editingActivity,
-  (activity) => {
+  activity => {
     if (activity) {
       form.value.type = activity.type;
       form.value.subject = activity.subject;

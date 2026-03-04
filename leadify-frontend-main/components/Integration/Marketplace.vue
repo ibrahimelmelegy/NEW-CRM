@@ -89,12 +89,7 @@ const filteredIntegrations = computed(() => {
 
   if (search.value.trim()) {
     const q = search.value.toLowerCase();
-    list = list.filter(
-      i =>
-        i.name.toLowerCase().includes(q) ||
-        i.description.toLowerCase().includes(q) ||
-        i.category.toLowerCase().includes(q)
-    );
+    list = list.filter(i => i.name.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || i.category.toLowerCase().includes(q));
   }
 
   return list;

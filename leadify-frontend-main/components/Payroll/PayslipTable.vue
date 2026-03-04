@@ -75,9 +75,17 @@ function getSummary({ columns, data }: { columns: any[]; data: any[] }) {
       return;
     }
     const numericProps = [
-      'basicSalary', 'housingAllowance', 'transportAllowance', 'otherAllowances',
-      'grossSalary', 'gosiDeduction', 'absentDeduction', 'loanDeduction',
-      'otherDeductions', 'totalDeductions', 'netSalary'
+      'basicSalary',
+      'housingAllowance',
+      'transportAllowance',
+      'otherAllowances',
+      'grossSalary',
+      'gosiDeduction',
+      'absentDeduction',
+      'loanDeduction',
+      'otherDeductions',
+      'totalDeductions',
+      'netSalary'
     ];
     if (numericProps.includes(prop)) {
       const total = data.reduce((sum: number, row: any) => sum + (Number(row[prop]) || 0), 0);

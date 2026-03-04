@@ -76,16 +76,16 @@ interface CalendarCell {
 const props = defineProps({
   data: {
     type: Array as PropType<any[]>,
-    required: true,
+    required: true
   },
   columns: {
     type: Array as PropType<SmartTableColumn[]>,
-    required: true,
+    required: true
   },
   dateField: {
     type: String,
-    required: true,
-  },
+    required: true
+  }
 });
 
 const emit = defineEmits<{
@@ -119,7 +119,7 @@ const calendarCells = computed<CalendarCell[]>(() => {
 
   // Build record map for quick lookup
   const recordsByDate = new Map<string, any[]>();
-  props.data.forEach((record) => {
+  props.data.forEach(record => {
     const dateVal = record[props.dateField];
     if (!dateVal) return;
     const d = new Date(dateVal);
@@ -145,7 +145,7 @@ const calendarCells = computed<CalendarCell[]>(() => {
       isCurrentMonth: false,
       isToday: key === todayKey,
       date: d,
-      records: recordsByDate.get(key) || [],
+      records: recordsByDate.get(key) || []
     });
   }
 
@@ -159,7 +159,7 @@ const calendarCells = computed<CalendarCell[]>(() => {
       isCurrentMonth: true,
       isToday: key === todayKey,
       date: d,
-      records: recordsByDate.get(key) || [],
+      records: recordsByDate.get(key) || []
     });
   }
 
@@ -174,7 +174,7 @@ const calendarCells = computed<CalendarCell[]>(() => {
       isCurrentMonth: false,
       isToday: key === todayKey,
       date: d,
-      records: recordsByDate.get(key) || [],
+      records: recordsByDate.get(key) || []
     });
   }
 
@@ -183,7 +183,7 @@ const calendarCells = computed<CalendarCell[]>(() => {
 
 const selectedRecords = computed(() => {
   if (!selectedDate.value) return [];
-  const cell = calendarCells.value.find((c) => c.dateKey === selectedDate.value);
+  const cell = calendarCells.value.find(c => c.dateKey === selectedDate.value);
   return cell?.records || [];
 });
 
@@ -196,7 +196,7 @@ const selectedDateLabel = computed(() => {
 // Show first 3 columns in detail view (excluding date field)
 const detailColumns = computed(() =>
   props.columns
-    .filter((c) => c.visible !== false && c.prop !== props.dateField)
+    .filter(c => c.visible !== false && c.prop !== props.dateField)
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .slice(0, 3)
 );
@@ -245,14 +245,12 @@ const getDayCellClasses = (cell: CalendarCell) => ({
   'calendar-day--other-month': !cell.isCurrentMonth,
   'calendar-day--today': cell.isToday,
   'calendar-day--selected': selectedDate.value === cell.dateKey,
-  'calendar-day--has-records': cell.records.length > 0,
+  'calendar-day--has-records': cell.records.length > 0
 });
 
 const getRecordLabel = (record: any) => {
   // Use first visible text column as label
-  const textCol = props.columns.find(
-    (c) => c.visible !== false && c.prop !== props.dateField && c.type !== 'image'
-  );
+  const textCol = props.columns.find(c => c.visible !== false && c.prop !== props.dateField && c.type !== 'image');
   if (textCol) {
     const val = record[textCol.prop];
     if (val && typeof val === 'object' && val.title) return val.title;
@@ -267,7 +265,7 @@ const pillColors = [
   'rgba(16, 185, 129, 0.8)',
   'rgba(245, 158, 11, 0.8)',
   'rgba(239, 68, 68, 0.8)',
-  'rgba(236, 72, 153, 0.8)',
+  'rgba(236, 72, 153, 0.8)'
 ];
 
 const getPillColor = (index: number) => {

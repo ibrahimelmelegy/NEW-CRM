@@ -34,32 +34,32 @@ const tabs = [
     route: '/',
     icon: 'ph:house-bold',
     activeIcon: 'ph:house-fill',
-    labelKey: 'navigation.dashboard',
+    labelKey: 'navigation.dashboard'
   },
   {
     route: '/sales/leads',
     icon: 'ph:users-three-bold',
     activeIcon: 'ph:users-three-fill',
-    labelKey: 'navigation.leads',
+    labelKey: 'navigation.leads'
   },
   {
     route: '/sales/deals',
     icon: 'ph:handshake-bold',
     activeIcon: 'ph:handshake-fill',
-    labelKey: 'navigation.deals',
+    labelKey: 'navigation.deals'
   },
   {
     route: '/tasks',
     icon: 'ph:list-checks-bold',
     activeIcon: 'ph:list-checks-fill',
-    labelKey: 'mobile.tasks',
+    labelKey: 'mobile.tasks'
   },
   {
     route: '/sales/clients',
     icon: 'ph:dots-three-outline-bold',
     activeIcon: 'ph:dots-three-outline-fill',
-    labelKey: 'mobile.more',
-  },
+    labelKey: 'mobile.more'
+  }
 ];
 
 function isActive(link: string): boolean {

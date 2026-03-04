@@ -86,9 +86,12 @@ onMounted(() => {
   expandedModules.value[props.activeModule] = true;
 });
 
-watch(() => props.activeModule, (newMod) => {
-  expandedModules.value[newMod] = true;
-});
+watch(
+  () => props.activeModule,
+  newMod => {
+    expandedModules.value[newMod] = true;
+  }
+);
 
 const filteredModules = computed(() => {
   const modules = Object.values(MODULE_DEFINITIONS);
@@ -98,11 +101,7 @@ const filteredModules = computed(() => {
   return modules
     .map(mod => ({
       ...mod,
-      fields: mod.fields.filter(f =>
-        f.label.toLowerCase().includes(q) ||
-        f.name.toLowerCase().includes(q) ||
-        f.type.toLowerCase().includes(q)
-      )
+      fields: mod.fields.filter(f => f.label.toLowerCase().includes(q) || f.name.toLowerCase().includes(q) || f.type.toLowerCase().includes(q))
     }))
     .filter(mod => mod.fields.length > 0);
 });
@@ -145,11 +144,16 @@ function findModuleForField(fieldName: string): string | null {
 
 function getFieldTypeTagType(type: string): string {
   switch (type) {
-    case 'text': return 'info';
-    case 'number': return 'success';
-    case 'date': return 'warning';
-    case 'select': return '';
-    default: return 'info';
+    case 'text':
+      return 'info';
+    case 'number':
+      return 'success';
+    case 'date':
+      return 'warning';
+    case 'select':
+      return '';
+    default:
+      return 'info';
   }
 }
 </script>

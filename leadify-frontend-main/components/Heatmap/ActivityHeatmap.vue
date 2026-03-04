@@ -54,11 +54,21 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
   border-radius: 3px;
   transition: all 0.15s ease;
 
-  &.level-0 { background: var(--glass-bg-primary, rgba(255,255,255,0.05)); }
-  &.level-1 { background: color-mix(in srgb, var(--accent-color, #7849ff) 25%, transparent); }
-  &.level-2 { background: color-mix(in srgb, var(--accent-color, #7849ff) 50%, transparent); }
-  &.level-3 { background: color-mix(in srgb, var(--accent-color, #7849ff) 75%, transparent); }
-  &.level-4 { background: var(--accent-color, #7849ff); }
+  &.level-0 {
+    background: var(--glass-bg-primary, rgba(255, 255, 255, 0.05));
+  }
+  &.level-1 {
+    background: color-mix(in srgb, var(--accent-color, #7849ff) 25%, transparent);
+  }
+  &.level-2 {
+    background: color-mix(in srgb, var(--accent-color, #7849ff) 50%, transparent);
+  }
+  &.level-3 {
+    background: color-mix(in srgb, var(--accent-color, #7849ff) 75%, transparent);
+  }
+  &.level-4 {
+    background: var(--accent-color, #7849ff);
+  }
 
   &:hover {
     outline: 2px solid var(--accent-color, #7849ff);
@@ -72,10 +82,20 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
   height: 12px;
   border-radius: 3px;
 
-  &.level-0 { background: var(--glass-bg-primary, rgba(255,255,255,0.05)); }
-  &.level-1 { background: color-mix(in srgb, var(--accent-color, #7849ff) 25%, transparent); }
-  &.level-2 { background: color-mix(in srgb, var(--accent-color, #7849ff) 50%, transparent); }
-  &.level-3 { background: color-mix(in srgb, var(--accent-color, #7849ff) 75%, transparent); }
-  &.level-4 { background: var(--accent-color, #7849ff); }
+  &.level-0 {
+    background: var(--glass-bg-primary, rgba(255, 255, 255, 0.05));
+  }
+  &.level-1 {
+    background: color-mix(in srgb, var(--accent-color, #7849ff) 25%, transparent);
+  }
+  &.level-2 {
+    background: color-mix(in srgb, var(--accent-color, #7849ff) 50%, transparent);
+  }
+  &.level-3 {
+    background: color-mix(in srgb, var(--accent-color, #7849ff) 75%, transparent);
+  }
+  &.level-4 {
+    background: var(--accent-color, #7849ff);
+  }
 }
 </style>

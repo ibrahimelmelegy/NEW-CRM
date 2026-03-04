@@ -78,8 +78,15 @@ onUnmounted(() => {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.3); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.3);
+  }
 }
 
 .ticker-track {
@@ -116,10 +123,22 @@ onUnmounted(() => {
   justify-content: center;
   flex-shrink: 0;
 
-  &.type-lead { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-  &.type-deal { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
-  &.type-client { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
-  &.type-opportunity { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+  &.type-lead {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+  }
+  &.type-deal {
+    background: rgba(139, 92, 246, 0.2);
+    color: #a78bfa;
+  }
+  &.type-client {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+  }
+  &.type-opportunity {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+  }
 }
 
 .ticker-text {

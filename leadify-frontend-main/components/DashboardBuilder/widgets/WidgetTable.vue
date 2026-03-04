@@ -68,7 +68,7 @@ async function loadRecentDeals() {
     { prop: 'name', label: 'Deal', minWidth: '140' },
     { prop: 'clientName', label: 'Client', minWidth: '120' },
     { prop: 'stage', label: 'Stage', minWidth: '100' },
-    { prop: 'revenue', label: 'Value', minWidth: '100', format: (v: any) => v ? `SAR ${formatLargeNumber(v)}` : '--' },
+    { prop: 'revenue', label: 'Value', minWidth: '100', format: (v: any) => (v ? `SAR ${formatLargeNumber(v)}` : '--') }
   ];
   const { body, success } = await useApiFetch('deal?limit=8&sort=-updatedAt');
   if (success && body) {
@@ -78,7 +78,7 @@ async function loadRecentDeals() {
       name: d.name || d.title || '--',
       clientName: d.client?.name || d.clientName || '--',
       stage: d.stage || d.status || '--',
-      revenue: d.price || d.value || d.amount || 0,
+      revenue: d.price || d.value || d.amount || 0
     }));
   }
 }
@@ -87,8 +87,8 @@ async function loadTeamPerformance() {
   columns.value = [
     { prop: 'name', label: 'Team Member', minWidth: '140' },
     { prop: 'deals', label: 'Deals', minWidth: '70' },
-    { prop: 'revenue', label: 'Revenue', minWidth: '100', format: (v: any) => v ? `SAR ${formatLargeNumber(v)}` : '--' },
-    { prop: 'conversion', label: 'Conv.', minWidth: '70', format: (v: any) => v ? `${v}%` : '--' },
+    { prop: 'revenue', label: 'Revenue', minWidth: '100', format: (v: any) => (v ? `SAR ${formatLargeNumber(v)}` : '--') },
+    { prop: 'conversion', label: 'Conv.', minWidth: '70', format: (v: any) => (v ? `${v}%` : '--') }
   ];
   const { body, success } = await useApiFetch('dashboards/team-performance');
   if (success && body) {
@@ -98,7 +98,7 @@ async function loadTeamPerformance() {
       name: m.name || m.userName || '--',
       deals: m.dealsCount || m.deals || 0,
       revenue: m.revenue || m.totalRevenue || 0,
-      conversion: m.conversionRate ? Number(m.conversionRate).toFixed(1) : null,
+      conversion: m.conversionRate ? Number(m.conversionRate).toFixed(1) : null
     }));
   }
 }

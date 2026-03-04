@@ -41,7 +41,9 @@ const iconMap: Record<string, string> = {
   border-radius: 14px;
   padding: 16px;
   border-left: 4px solid transparent;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);

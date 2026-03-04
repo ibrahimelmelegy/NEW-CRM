@@ -12,7 +12,7 @@ const props = defineProps<{
 }>();
 
 const labelStyle = computed(() => ({
-  backgroundColor: props.color,
+  backgroundColor: props.color
 }));
 </script>
 

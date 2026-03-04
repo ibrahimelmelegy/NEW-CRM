@@ -179,16 +179,37 @@ const emit = defineEmits<{
 
 // ── Color palettes ────────────────────────────────────────────────────
 const textColors = [
-  '#000000', '#333333', '#666666', '#999999',
-  '#dc2626', '#ea580c', '#d97706', '#65a30d',
-  '#0d9488', '#2563eb', '#7c3aed', '#db2777',
-  '#1e3a5f', '#1a365d', '#064e3b', '#78350f',
+  '#000000',
+  '#333333',
+  '#666666',
+  '#999999',
+  '#dc2626',
+  '#ea580c',
+  '#d97706',
+  '#65a30d',
+  '#0d9488',
+  '#2563eb',
+  '#7c3aed',
+  '#db2777',
+  '#1e3a5f',
+  '#1a365d',
+  '#064e3b',
+  '#78350f'
 ];
 
 const highlightColors = [
-  '#fef08a', '#fde68a', '#fed7aa', '#fecaca',
-  '#d9f99d', '#bbf7d0', '#bfdbfe', '#ddd6fe',
-  '#fbcfe8', '#e0e7ff', '#ccfbf1', '#fef3c7',
+  '#fef08a',
+  '#fde68a',
+  '#fed7aa',
+  '#fecaca',
+  '#d9f99d',
+  '#bbf7d0',
+  '#bfdbfe',
+  '#ddd6fe',
+  '#fbcfe8',
+  '#e0e7ff',
+  '#ccfbf1',
+  '#fef3c7'
 ];
 
 const currentTextColor = computed(() => {
@@ -201,9 +222,7 @@ const tableRows = ref(3);
 const tableCols = ref(3);
 
 function insertTable() {
-  props.editor?.chain().focus()
-    .insertTable({ rows: tableRows.value, cols: tableCols.value, withHeaderRow: true })
-    .run();
+  props.editor?.chain().focus().insertTable({ rows: tableRows.value, cols: tableCols.value, withHeaderRow: true }).run();
   showTablePicker.value = false;
   tableRows.value = 3;
   tableCols.value = 3;
@@ -234,10 +253,7 @@ function handleInsertLink() {
     return;
   }
 
-  props.editor?.chain().focus()
-    .extendMarkRange('link')
-    .setLink({ href: url })
-    .run();
+  props.editor?.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
 }
 
 // ── Image ─────────────────────────────────────────────────────────────
@@ -252,10 +268,12 @@ const signatureLabel = ref('Signature');
 const signatureShowDate = ref(true);
 
 function insertSignature() {
-  props.editor?.chain().focus()
+  props.editor
+    ?.chain()
+    .focus()
     .insertSignatureBlock({
       label: signatureLabel.value || 'Signature',
-      showDate: signatureShowDate.value,
+      showDate: signatureShowDate.value
     })
     .run();
   signatureLabel.value = 'Signature';

@@ -109,7 +109,7 @@ const localItems = ref<LineItem[]>([]);
 
 watch(
   () => props.items,
-  (newItems) => {
+  newItems => {
     localItems.value = newItems.map(item => ({ ...item }));
   },
   { immediate: true, deep: true }

@@ -36,17 +36,7 @@ Teleport(to="body")
 import { useOnboarding } from '~/composables/useOnboarding';
 import type { TourStep } from '~/composables/useOnboarding';
 
-const {
-  isActive,
-  currentStep,
-  currentStepIndex,
-  progress,
-  totalSteps,
-  isLastStep,
-  nextStep,
-  prevStep,
-  skipTour,
-} = useOnboarding();
+const { isActive, currentStep, currentStepIndex, progress, totalSteps, isLastStep, nextStep, prevStep, skipTour } = useOnboarding();
 
 const spotlightRef = ref<HTMLElement | null>(null);
 const tooltipRef = ref<HTMLElement | null>(null);
@@ -66,7 +56,7 @@ const spotlightStyle = computed(() => {
       left: '50%',
       width: '0px',
       height: '0px',
-      opacity: '0',
+      opacity: '0'
     };
   }
 
@@ -76,7 +66,7 @@ const spotlightStyle = computed(() => {
     left: `${r.left - SPOTLIGHT_PADDING}px`,
     width: `${r.width + SPOTLIGHT_PADDING * 2}px`,
     height: `${r.height + SPOTLIGHT_PADDING * 2}px`,
-    opacity: '1',
+    opacity: '1'
   };
 });
 
@@ -122,7 +112,7 @@ const tooltipStyle = computed(() => {
 
   return {
     top: `${top}px`,
-    left: `${left}px`,
+    left: `${left}px`
   };
 });
 
@@ -145,12 +135,7 @@ function updateTargetRect() {
     targetRect.value = el.getBoundingClientRect();
   } else {
     // If element not found, center spotlight (fallback)
-    targetRect.value = new DOMRect(
-      window.innerWidth / 2 - 150,
-      window.innerHeight / 2 - 50,
-      300,
-      100
-    );
+    targetRect.value = new DOMRect(window.innerWidth / 2 - 150, window.innerHeight / 2 - 50, 300, 100);
   }
 }
 
@@ -265,7 +250,8 @@ onUnmounted(() => {
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.5),
     0 0 30px rgba(120, 73, 255, 0.1);
-  transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+  transition:
+    top 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: all;
 }

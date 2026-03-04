@@ -90,11 +90,7 @@ import { useSecurity, type LoginHistoryEntry, type LoginHistoryFilters } from '~
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 
-const {
-  loginHistory,
-  loading,
-  fetchLoginHistory
-} = useSecurity();
+const { loginHistory, loading, fetchLoginHistory } = useSecurity();
 
 const dateRange = ref<[string, string] | null>(null);
 const statusFilter = ref('');
@@ -145,16 +141,23 @@ async function refresh() {
 function formatDate(dateStr: string): string {
   if (!dateStr) return '--';
   const d = new Date(dateStr);
-  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-    + ' ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  return (
+    d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) +
+    ' ' +
+    d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+  );
 }
 
 function getStatusType(status: string): 'success' | 'danger' | 'warning' | 'info' {
   switch (status) {
-    case 'SUCCESS': return 'success';
-    case 'FAILED': return 'danger';
-    case 'BLOCKED': return 'warning';
-    default: return 'info';
+    case 'SUCCESS':
+      return 'success';
+    case 'FAILED':
+      return 'danger';
+    case 'BLOCKED':
+      return 'warning';
+    default:
+      return 'info';
   }
 }
 

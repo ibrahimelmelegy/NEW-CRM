@@ -160,7 +160,7 @@ const emit = defineEmits(['update:visible', 'updateConfig', 'updateLabel', 'dele
 
 const visible = computed({
   get: () => props.visible,
-  set: (v) => emit('update:visible', v)
+  set: v => emit('update:visible', v)
 });
 
 const nodeType = computed(() => props.node?.data?.nodeType || 'trigger');
@@ -181,12 +181,16 @@ const nodeTypeLabel = computed(() => {
 const localLabel = ref('');
 const config = ref<Record<string, any>>({});
 
-watch(() => props.node, (n) => {
-  if (n) {
-    localLabel.value = n.data?.label || '';
-    config.value = { ...(n.data?.config || {}) };
-  }
-}, { immediate: true, deep: true });
+watch(
+  () => props.node,
+  n => {
+    if (n) {
+      localLabel.value = n.data?.label || '';
+      config.value = { ...(n.data?.config || {}) };
+    }
+  },
+  { immediate: true, deep: true }
+);
 
 function getIcon(): string {
   const icons: Record<string, string> = {
@@ -217,7 +221,9 @@ const operators = ['equals', 'not_equals', 'contains', 'greater_than', 'less_tha
 </script>
 
 <style lang="scss" scoped>
-.text-secondary { color: var(--text-secondary); }
+.text-secondary {
+  color: var(--text-secondary);
+}
 
 .config-icon {
   width: 36px;
@@ -228,14 +234,30 @@ const operators = ['equals', 'not_equals', 'contains', 'greater_than', 'less_tha
   justify-content: center;
   color: white;
 
-  &.trigger { background: linear-gradient(135deg, #16a34a, #22c55e); }
-  &.action { background: linear-gradient(135deg, #7849ff, #a855f7); }
-  &.condition { background: linear-gradient(135deg, #ea580c, #f59e0b); }
-  &.delay { background: linear-gradient(135deg, #ca8a04, #eab308); }
-  &.http { background: linear-gradient(135deg, #2563eb, #3b82f6); }
-  &.wfCondition { background: linear-gradient(135deg, #7c3aed, #a855f7); }
-  &.template { background: linear-gradient(135deg, #16a34a, #4ade80); }
-  &.approval { background: linear-gradient(135deg, #ea580c, #f97316); }
+  &.trigger {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+  }
+  &.action {
+    background: linear-gradient(135deg, #7849ff, #a855f7);
+  }
+  &.condition {
+    background: linear-gradient(135deg, #ea580c, #f59e0b);
+  }
+  &.delay {
+    background: linear-gradient(135deg, #ca8a04, #eab308);
+  }
+  &.http {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+  }
+  &.wfCondition {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+  }
+  &.template {
+    background: linear-gradient(135deg, #16a34a, #4ade80);
+  }
+  &.approval {
+    background: linear-gradient(135deg, #ea580c, #f97316);
+  }
 }
 
 .form-group {

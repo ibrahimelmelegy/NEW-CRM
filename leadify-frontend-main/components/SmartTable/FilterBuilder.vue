@@ -156,12 +156,12 @@ import type { SmartTableColumn, SmartTableFilter } from '~/composables/useSmartT
 const props = defineProps({
   columns: {
     type: Array as PropType<SmartTableColumn[]>,
-    required: true,
+    required: true
   },
   filters: {
     type: Array as PropType<SmartTableFilter[]>,
-    default: () => [],
-  },
+    default: () => []
+  }
 });
 
 const emit = defineEmits<{
@@ -181,53 +181,51 @@ const localFilters = ref<LocalFilter[]>([]);
 // Initialize from prop
 watch(
   () => props.filters,
-  (newFilters) => {
+  newFilters => {
     if (newFilters.length > 0 && localFilters.value.length === 0) {
-      localFilters.value = newFilters.map((f) => ({
+      localFilters.value = newFilters.map(f => ({
         field: f.field,
         operator: f.operator,
         value: f.operator === 'between' ? (Array.isArray(f.value) ? [...f.value] : ['', '']) : f.value,
-        logic: f.logic || 'AND',
+        logic: f.logic || 'AND'
       }));
     }
   },
   { immediate: true }
 );
 
-const filterableColumns = computed(() =>
-  props.columns.filter((col) => col.prop && col.label)
-);
+const filterableColumns = computed(() => props.columns.filter(col => col.prop && col.label));
 
 const operatorsByType: Record<string, Array<{ label: string; value: string }>> = {
   text: [
     { label: 'Equals', value: 'equals' },
     { label: 'Contains', value: 'contains' },
-    { label: 'In', value: 'in' },
+    { label: 'In', value: 'in' }
   ],
   number: [
     { label: 'Equals', value: 'equals' },
     { label: 'Greater than', value: 'gt' },
     { label: 'Less than', value: 'lt' },
-    { label: 'Between', value: 'between' },
+    { label: 'Between', value: 'between' }
   ],
   date: [
     { label: 'Equals', value: 'equals' },
     { label: 'Greater than', value: 'gt' },
     { label: 'Less than', value: 'lt' },
-    { label: 'Between', value: 'between' },
+    { label: 'Between', value: 'between' }
   ],
   select: [
     { label: 'Equals', value: 'equals' },
-    { label: 'In', value: 'in' },
+    { label: 'In', value: 'in' }
   ],
   image: [
     { label: 'Equals', value: 'equals' },
-    { label: 'Contains', value: 'contains' },
-  ],
+    { label: 'Contains', value: 'contains' }
+  ]
 };
 
 const getFieldType = (fieldProp: string): string => {
-  const col = props.columns.find((c) => c.prop === fieldProp);
+  const col = props.columns.find(c => c.prop === fieldProp);
   return col?.type || 'text';
 };
 
@@ -237,7 +235,7 @@ const getOperatorsForField = (fieldProp: string) => {
 };
 
 const getSelectOptions = (fieldProp: string) => {
-  const col = props.columns.find((c) => c.prop === fieldProp);
+  const col = props.columns.find(c => c.prop === fieldProp);
   return col?.filters || [];
 };
 
@@ -256,7 +254,7 @@ const addRule = () => {
     field: defaultField,
     operator: 'contains',
     value: '',
-    logic: 'AND',
+    logic: 'AND'
   });
 };
 
@@ -271,7 +269,7 @@ const clearAll = () => {
 
 const applyAll = () => {
   const validFilters: SmartTableFilter[] = localFilters.value
-    .filter((r) => {
+    .filter(r => {
       if (!r.field || !r.operator) return false;
       if (r.operator === 'between') {
         return Array.isArray(r.value) && r.value[0] !== '' && r.value[1] !== '';
@@ -281,11 +279,11 @@ const applyAll = () => {
       }
       return r.value !== '' && r.value != null;
     })
-    .map((r) => ({
+    .map(r => ({
       field: r.field,
       operator: r.operator as SmartTableFilter['operator'],
       value: r.value,
-      logic: r.logic,
+      logic: r.logic
     }));
 
   emit('apply-filters', validFilters);

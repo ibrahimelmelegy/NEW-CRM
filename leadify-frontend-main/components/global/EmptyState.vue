@@ -67,11 +67,7 @@ defineEmits<{
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    rgba(124, 58, 237, 0.08) 0%,
-    rgba(249, 115, 22, 0.04) 100%
-  );
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(249, 115, 22, 0.04) 100%);
   border: 1px solid rgba(124, 58, 237, 0.12);
   display: flex;
   align-items: center;
@@ -84,11 +80,7 @@ defineEmits<{
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    rgba(124, 58, 237, 0.12) 0%,
-    rgba(249, 115, 22, 0.06) 100%
-  );
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.12) 0%, rgba(249, 115, 22, 0.06) 100%);
   border: 1px solid rgba(124, 58, 237, 0.15);
   display: flex;
   align-items: center;
@@ -205,7 +197,8 @@ defineEmits<{
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -214,7 +207,8 @@ defineEmits<{
 }
 
 @keyframes floatDot {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
     opacity: 0.3;
   }
@@ -226,20 +220,12 @@ defineEmits<{
 
 // Light mode
 html.light-mode .empty-state-circle {
-  background: linear-gradient(
-    135deg,
-    rgba(124, 58, 237, 0.06) 0%,
-    rgba(249, 115, 22, 0.03) 100%
-  );
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.06) 0%, rgba(249, 115, 22, 0.03) 100%);
   border-color: rgba(124, 58, 237, 0.1);
 }
 
 html.light-mode .empty-state-circle-inner {
-  background: linear-gradient(
-    135deg,
-    rgba(124, 58, 237, 0.08) 0%,
-    rgba(249, 115, 22, 0.04) 100%
-  );
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(249, 115, 22, 0.04) 100%);
   border-color: rgba(124, 58, 237, 0.12);
   color: var(--accent-purple, #7c3aed);
 }

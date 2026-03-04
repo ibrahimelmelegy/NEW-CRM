@@ -49,64 +49,84 @@
 
 <script setup lang="ts">
 defineProps<{
-    fulfillments: Array<any>;
+  fulfillments: Array<any>;
 }>();
 
 function formatDate(date: any) {
-    if (!date) return 'N/A';
-    const d = new Date(date);
-    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  if (!date) return 'N/A';
+  const d = new Date(date);
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 function getTimelineType(status: string) {
-    switch (status) {
-        case 'PENDING': return 'info';
-        case 'PACKED': return 'warning';
-        case 'SHIPPED': return 'primary';
-        case 'DELIVERED': return 'success';
-        default: return 'info';
-    }
+  switch (status) {
+    case 'PENDING':
+      return 'info';
+    case 'PACKED':
+      return 'warning';
+    case 'SHIPPED':
+      return 'primary';
+    case 'DELIVERED':
+      return 'success';
+    default:
+      return 'info';
+  }
 }
 
 function getStatusIcon(status: string) {
-    switch (status) {
-        case 'PENDING': return 'ph:clock-bold';
-        case 'PACKED': return 'ph:box-bold';
-        case 'SHIPPED': return 'ph:truck-bold';
-        case 'DELIVERED': return 'ph:check-circle-bold';
-        default: return 'ph:circle-bold';
-    }
+  switch (status) {
+    case 'PENDING':
+      return 'ph:clock-bold';
+    case 'PACKED':
+      return 'ph:box-bold';
+    case 'SHIPPED':
+      return 'ph:truck-bold';
+    case 'DELIVERED':
+      return 'ph:check-circle-bold';
+    default:
+      return 'ph:circle-bold';
+  }
 }
 
 function getStatusColor(status: string) {
-    switch (status) {
-        case 'PENDING': return 'text-blue-400';
-        case 'PACKED': return 'text-yellow-400';
-        case 'SHIPPED': return 'text-purple-400';
-        case 'DELIVERED': return 'text-green-400';
-        default: return 'text-gray-400';
-    }
+  switch (status) {
+    case 'PENDING':
+      return 'text-blue-400';
+    case 'PACKED':
+      return 'text-yellow-400';
+    case 'SHIPPED':
+      return 'text-purple-400';
+    case 'DELIVERED':
+      return 'text-green-400';
+    default:
+      return 'text-gray-400';
+  }
 }
 
 function getStatusLabel(status: string) {
-    switch (status) {
-        case 'PENDING': return 'Pending';
-        case 'PACKED': return 'Packed';
-        case 'SHIPPED': return 'Shipped';
-        case 'DELIVERED': return 'Delivered';
-        default: return status;
-    }
+  switch (status) {
+    case 'PENDING':
+      return 'Pending';
+    case 'PACKED':
+      return 'Packed';
+    case 'SHIPPED':
+      return 'Shipped';
+    case 'DELIVERED':
+      return 'Delivered';
+    default:
+      return status;
+  }
 }
 </script>
 
 <style scoped lang="scss">
 .fulfillment-timeline {
-    :deep(.el-timeline-item__wrapper) {
-        padding-left: 20px;
-    }
-    :deep(.el-timeline-item__timestamp) {
-        color: var(--text-secondary);
-        font-size: 12px;
-    }
+  :deep(.el-timeline-item__wrapper) {
+    padding-left: 20px;
+  }
+  :deep(.el-timeline-item__timestamp) {
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
 }
 </style>

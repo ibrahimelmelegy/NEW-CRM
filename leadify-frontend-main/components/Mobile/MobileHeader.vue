@@ -27,20 +27,23 @@ header.mobile-header
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  title?: string;
-  showBack?: boolean;
-  showSearch?: boolean;
-}>(), {
-  title: '',
-  showBack: false,
-  showSearch: true,
-});
+withDefaults(
+  defineProps<{
+    title?: string;
+    showBack?: boolean;
+    showSearch?: boolean;
+  }>(),
+  {
+    title: '',
+    showBack: false,
+    showSearch: true
+  }
+);
 
 defineEmits<{
   'menu-toggle': [];
-  'search': [];
-  'back': [];
+  search: [];
+  back: [];
 }>();
 </script>
 

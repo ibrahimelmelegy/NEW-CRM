@@ -29,8 +29,8 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { useCollaborationCursors } from '~/composables/useCollaborationCursors';
 import CursorLabel from './CursorLabel.vue';
+import { useCollaborationCursors } from '~/composables/useCollaborationCursors';
 
 const props = defineProps<{
   page: string;
@@ -50,7 +50,7 @@ function cursorStyle(cursor: CursorData) {
   const px = (cursor.x / 100) * window.innerWidth;
   const py = (cursor.y / 100) * window.innerHeight;
   return {
-    transform: `translate(${px}px, ${py}px)`,
+    transform: `translate(${px}px, ${py}px)`
   };
 }
 

@@ -115,7 +115,7 @@ function goBack() {
 function handleContentUpdate(content: JSONContent) {
   builder.state.isDirty = true;
   // Map our UI document types to the backend template types for saving
-  const mappedType = props.documentType.toUpperCase() as any; 
+  const mappedType = props.documentType.toUpperCase() as any;
   builder.autoSave(templateId.value, documentName.value, mappedType, content);
 }
 
@@ -163,8 +163,12 @@ function formatTimeSince(date: Date | null): string {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .header-bar {

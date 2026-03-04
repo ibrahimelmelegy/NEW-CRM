@@ -253,14 +253,7 @@ onMounted(() => {
   &__line-gradient {
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      #10b981 0%,
-      #3b82f6 25%,
-      #8b5cf6 50%,
-      #f59e0b 75%,
-      #ef4444 100%
-    );
+    background: linear-gradient(90deg, #10b981 0%, #3b82f6 25%, #8b5cf6 50%, #f59e0b 75%, #ef4444 100%);
     opacity: 0.4;
     border-radius: 2px;
   }
@@ -278,7 +271,9 @@ onMounted(() => {
     top: 50%;
     transform: translate(-50%, -50%);
     opacity: 0;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s ease;
 
     &--mounted {
       opacity: 1;

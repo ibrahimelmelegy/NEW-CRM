@@ -88,13 +88,7 @@ import { useSecurity } from '~/composables/useSecurity';
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 
-const {
-  ipWhitelist,
-  loading,
-  fetchIPWhitelist,
-  addIP,
-  removeIP
-} = useSecurity();
+const { ipWhitelist, loading, fetchIPWhitelist, addIP, removeIP } = useSecurity();
 
 const newIP = ref('');
 const newLabel = ref('');

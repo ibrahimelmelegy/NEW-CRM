@@ -3,12 +3,15 @@
 </template>
 
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
-  userId: number;
-  size?: 'sm' | 'md';
-}>(), {
-  size: 'sm'
-});
+const props = withDefaults(
+  defineProps<{
+    userId: number;
+    size?: 'sm' | 'md';
+  }>(),
+  {
+    size: 'sm'
+  }
+);
 
 const { getUserStatus } = usePresence();
 
@@ -16,19 +19,27 @@ const status = computed(() => getUserStatus(props.userId));
 
 const statusClass = computed(() => {
   switch (status.value) {
-    case 'online': return 'is-online';
-    case 'away': return 'is-away';
-    case 'busy': return 'is-busy';
-    default: return 'is-offline';
+    case 'online':
+      return 'is-online';
+    case 'away':
+      return 'is-away';
+    case 'busy':
+      return 'is-busy';
+    default:
+      return 'is-offline';
   }
 });
 
 const statusLabel = computed(() => {
   switch (status.value) {
-    case 'online': return 'Online';
-    case 'away': return 'Away';
-    case 'busy': return 'Busy';
-    default: return 'Offline';
+    case 'online':
+      return 'Online';
+    case 'away':
+      return 'Away';
+    case 'busy':
+      return 'Busy';
+    default:
+      return 'Offline';
   }
 });
 </script>
@@ -50,17 +61,17 @@ const statusLabel = computed(() => {
   }
 
   &.is-online {
-    background: #10B981;
+    background: #10b981;
     box-shadow: 0 0 4px rgba(16, 185, 129, 0.5);
   }
 
   &.is-away {
-    background: #F59E0B;
+    background: #f59e0b;
     box-shadow: 0 0 4px rgba(245, 158, 11, 0.5);
   }
 
   &.is-busy {
-    background: #EF4444;
+    background: #ef4444;
     box-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
   }
 

@@ -21,7 +21,7 @@ const hasMore = computed(() => activities.value.length > 0 && page.value < total
 async function fetchActivities(pageNum: number) {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch(`activity/${props.entityType}/${props.entityId}?limit=10&page=${pageNum}`) as any;
+    const { body, success } = (await useApiFetch(`activity/${props.entityType}/${props.entityId}?limit=10&page=${pageNum}`)) as any;
     if (success && body) {
       if (pageNum === 1) {
         activities.value = body.docs || [];
@@ -42,8 +42,11 @@ async function loadMore() {
 
 onMounted(() => fetchActivities(1));
 
-watch(() => [props.entityType, props.entityId], () => {
-  page.value = 1;
-  fetchActivities(1);
-});
+watch(
+  () => [props.entityType, props.entityId],
+  () => {
+    page.value = 1;
+    fetchActivities(1);
+  }
+);
 </script>

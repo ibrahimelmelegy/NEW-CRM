@@ -38,11 +38,11 @@ const chartHeight = computed(() => {
 
 const emptyIcon = computed(() => {
   const map: Record<string, string> = {
-    'pipeline': 'ph:chart-bar',
+    pipeline: 'ph:chart-bar',
     'lead-sources': 'ph:chart-pie',
     'win-loss': 'ph:trophy',
-    'funnel': 'ph:funnel',
-    'revenue-trend': 'ph:trend-up',
+    funnel: 'ph:funnel',
+    'revenue-trend': 'ph:trend-up'
   };
   return map[props.chartType] || 'ph:chart-bar';
 });
@@ -53,7 +53,7 @@ const TOOLTIP = {
   borderWidth: 1,
   padding: [12, 16],
   textStyle: { color: '#fff' },
-  extraCssText: 'backdrop-filter: blur(12px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-radius: 16px;',
+  extraCssText: 'backdrop-filter: blur(12px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-radius: 16px;'
 };
 
 async function loadData() {
@@ -91,7 +91,7 @@ async function loadPipelineChart() {
     if (!stages.length) return;
     const chartData = stages.map((s: any) => ({
       name: s.name || s.stage || 'Unknown',
-      value: s.count || s.value || 0,
+      value: s.count || s.value || 0
     }));
     chartOption.value = {
       tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, ...TOOLTIP },
@@ -101,25 +101,27 @@ async function loadPipelineChart() {
         data: chartData.map((d: any) => d.name),
         axisLabel: { color: '#94A3B8', fontSize: 10 },
         axisLine: { show: false },
-        axisTick: { show: false },
+        axisTick: { show: false }
       },
       yAxis: {
         type: 'value',
         splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
-        axisLabel: { color: '#64748B' },
+        axisLabel: { color: '#64748B' }
       },
-      series: [{
-        type: 'bar',
-        barWidth: '40%',
-        data: chartData.map((d: any) => d.value),
-        itemStyle: {
-          borderRadius: [6, 6, 6, 6],
-          color: new graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: '#8B5CF6' },
-            { offset: 1, color: 'rgba(139, 92, 246, 0.3)' },
-          ]),
-        },
-      }],
+      series: [
+        {
+          type: 'bar',
+          barWidth: '40%',
+          data: chartData.map((d: any) => d.value),
+          itemStyle: {
+            borderRadius: [6, 6, 6, 6],
+            color: new graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#8B5CF6' },
+              { offset: 1, color: 'rgba(139, 92, 246, 0.3)' }
+            ])
+          }
+        }
+      ]
     };
   }
 }
@@ -137,29 +139,36 @@ async function loadLeadSourcesChart() {
           { name: 'Referral', value: 25 },
           { name: 'Social', value: 20 },
           { name: 'Direct', value: 15 },
-          { name: 'Other', value: 5 },
+          { name: 'Other', value: 5 }
         ];
     chartOption.value = {
       tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)', ...TOOLTIP },
       legend: {
-        orient: 'vertical', right: 10, top: 'center',
+        orient: 'vertical',
+        right: 10,
+        top: 'center',
         textStyle: { color: '#94A3B8', fontSize: 11 },
-        itemWidth: 10, itemHeight: 10, icon: 'circle',
+        itemWidth: 10,
+        itemHeight: 10,
+        icon: 'circle'
       },
       color: ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444'],
-      series: [{
-        type: 'pie',
-        radius: ['45%', '70%'],
-        center: ['35%', '50%'],
-        avoidLabelOverlap: true,
-        itemStyle: { borderRadius: 6, borderColor: 'transparent', borderWidth: 2 },
-        label: { show: false },
-        emphasis: {
-          label: { show: true, fontSize: 13, fontWeight: 'bold', color: '#fff', formatter: '{b}\n{d}%' },
-          scale: true, scaleSize: 6,
-        },
-        data: chartData,
-      }],
+      series: [
+        {
+          type: 'pie',
+          radius: ['45%', '70%'],
+          center: ['35%', '50%'],
+          avoidLabelOverlap: true,
+          itemStyle: { borderRadius: 6, borderColor: 'transparent', borderWidth: 2 },
+          label: { show: false },
+          emphasis: {
+            label: { show: true, fontSize: 13, fontWeight: 'bold', color: '#fff', formatter: '{b}\n{d}%' },
+            scale: true,
+            scaleSize: 6
+          },
+          data: chartData
+        }
+      ]
     };
   }
 }
@@ -175,22 +184,26 @@ async function loadWinLossChart() {
       legend: {
         bottom: 0,
         textStyle: { color: '#94A3B8', fontSize: 11 },
-        itemWidth: 10, itemHeight: 10, icon: 'circle',
+        itemWidth: 10,
+        itemHeight: 10,
+        icon: 'circle'
       },
       color: ['#10B981', '#EF4444'],
-      series: [{
-        type: 'pie',
-        radius: ['50%', '75%'],
-        center: ['50%', '42%'],
-        label: { show: false },
-        emphasis: {
-          label: { show: true, fontSize: 16, fontWeight: 'bold', color: '#fff', formatter: '{b}\n{c}' },
-        },
-        data: [
-          { name: 'Won', value: won },
-          { name: 'Lost', value: lost },
-        ],
-      }],
+      series: [
+        {
+          type: 'pie',
+          radius: ['50%', '75%'],
+          center: ['50%', '42%'],
+          label: { show: false },
+          emphasis: {
+            label: { show: true, fontSize: 16, fontWeight: 'bold', color: '#fff', formatter: '{b}\n{c}' }
+          },
+          data: [
+            { name: 'Won', value: won },
+            { name: 'Lost', value: lost }
+          ]
+        }
+      ]
     };
   }
 }
@@ -207,28 +220,30 @@ async function loadFunnelChart() {
           { name: 'Qualified', value: 65 },
           { name: 'Proposal', value: 40 },
           { name: 'Negotiation', value: 25 },
-          { name: 'Won', value: 12 },
+          { name: 'Won', value: 12 }
         ];
     // Sort descending for funnel
     funnelData.sort((a: any, b: any) => b.value - a.value);
     chartOption.value = {
       tooltip: { trigger: 'item', formatter: '{b}: {c}', ...TOOLTIP },
       color: ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444'],
-      series: [{
-        type: 'funnel',
-        left: '10%',
-        top: 10,
-        bottom: 10,
-        width: '80%',
-        sort: 'descending',
-        gap: 2,
-        label: { show: true, position: 'inside', color: '#fff', fontSize: 11 },
-        itemStyle: { borderWidth: 0, borderColor: 'transparent' },
-        emphasis: {
-          label: { fontSize: 14, fontWeight: 'bold' },
-        },
-        data: funnelData,
-      }],
+      series: [
+        {
+          type: 'funnel',
+          left: '10%',
+          top: 10,
+          bottom: 10,
+          width: '80%',
+          sort: 'descending',
+          gap: 2,
+          label: { show: true, position: 'inside', color: '#fff', fontSize: 11 },
+          itemStyle: { borderWidth: 0, borderColor: 'transparent' },
+          emphasis: {
+            label: { fontSize: 14, fontWeight: 'bold' }
+          },
+          data: funnelData
+        }
+      ]
     };
   }
 }
@@ -251,26 +266,28 @@ async function loadRevenueTrendChart() {
         data: chartData.map((d: any) => d.name),
         axisLabel: { color: '#94A3B8', fontSize: 10 },
         axisLine: { show: false },
-        axisTick: { show: false },
+        axisTick: { show: false }
       },
       yAxis: {
         type: 'value',
         splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
-        axisLabel: { color: '#64748B' },
+        axisLabel: { color: '#64748B' }
       },
-      series: [{
-        type: 'line',
-        data: chartData.map((d: any) => d.value),
-        smooth: true,
-        showSymbol: false,
-        lineStyle: { width: 3, color: '#EF4444', shadowBlur: 12, shadowColor: 'rgba(239,68,68,0.3)', shadowOffsetY: 6 },
-        areaStyle: {
-          color: new graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(239, 68, 68, 0.3)' },
-            { offset: 1, color: 'rgba(0, 0, 0, 0)' },
-          ]),
-        },
-      }],
+      series: [
+        {
+          type: 'line',
+          data: chartData.map((d: any) => d.value),
+          smooth: true,
+          showSymbol: false,
+          lineStyle: { width: 3, color: '#EF4444', shadowBlur: 12, shadowColor: 'rgba(239,68,68,0.3)', shadowOffsetY: 6 },
+          areaStyle: {
+            color: new graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(239, 68, 68, 0.3)' },
+              { offset: 1, color: 'rgba(0, 0, 0, 0)' }
+            ])
+          }
+        }
+      ]
     };
   }
 }

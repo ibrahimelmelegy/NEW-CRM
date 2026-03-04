@@ -73,12 +73,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import {
-  useCommunication,
-  activityTypeOptions,
-  formatCallDuration as formatDuration,
-  type ActivityStats
-} from '../../composables/useCommunication';
+import { useCommunication, activityTypeOptions, formatCallDuration as formatDuration, type ActivityStats } from '../../composables/useCommunication';
 
 interface Props {
   userId?: number;
@@ -112,9 +107,7 @@ const statCards = computed(() => {
       value: stats.value.callsToday.toString(),
       color: '#10b981',
       bgColor: 'rgba(16, 185, 129, 0.1)',
-      extra: stats.value.avgCallDuration > 0
-        ? `Avg: ${formatDuration(stats.value.avgCallDuration)}`
-        : null
+      extra: stats.value.avgCallDuration > 0 ? `Avg: ${formatDuration(stats.value.avgCallDuration)}` : null
     },
     {
       key: 'emails',
@@ -389,7 +382,12 @@ onMounted(() => {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 </style>

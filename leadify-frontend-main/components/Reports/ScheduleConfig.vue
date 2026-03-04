@@ -143,7 +143,7 @@ const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 // Reactive schedule fields
 const enabled = computed({
   get: () => props.modelValue?.enabled ?? false,
-  set: (val) => {
+  set: val => {
     if (val) {
       emit('update:modelValue', {
         enabled: true,
@@ -162,32 +162,32 @@ const enabled = computed({
 
 const frequency = computed({
   get: () => props.modelValue?.frequency ?? 'weekly',
-  set: (val) => emitUpdate({ frequency: val })
+  set: val => emitUpdate({ frequency: val })
 });
 
 const dayOfWeek = computed({
   get: () => props.modelValue?.dayOfWeek ?? 1,
-  set: (val) => emitUpdate({ dayOfWeek: val })
+  set: val => emitUpdate({ dayOfWeek: val })
 });
 
 const dayOfMonth = computed({
   get: () => props.modelValue?.dayOfMonth ?? 1,
-  set: (val) => emitUpdate({ dayOfMonth: val })
+  set: val => emitUpdate({ dayOfMonth: val })
 });
 
 const time = computed({
   get: () => props.modelValue?.time ?? '08:00',
-  set: (val) => emitUpdate({ time: val })
+  set: val => emitUpdate({ time: val })
 });
 
 const recipients = computed({
   get: () => props.modelValue?.recipients ?? [],
-  set: (val) => emitUpdate({ recipients: val })
+  set: val => emitUpdate({ recipients: val })
 });
 
 const format = computed({
   get: () => props.modelValue?.format ?? 'pdf',
-  set: (val) => emitUpdate({ format: val })
+  set: val => emitUpdate({ format: val })
 });
 
 function emitUpdate(partial: Partial<ScheduleConfig>) {
@@ -251,9 +251,7 @@ const scheduleDescription = computed(() => {
     when = `On the ${ordinal(props.modelValue.dayOfMonth || 1)} of each month at ${t}`;
   }
 
-  const to = recipientCount > 0
-    ? ` to ${recipientCount} recipient${recipientCount > 1 ? 's' : ''} (${props.modelValue.recipients?.join(', ')})`
-    : '';
+  const to = recipientCount > 0 ? ` to ${recipientCount} recipient${recipientCount > 1 ? 's' : ''} (${props.modelValue.recipients?.join(', ')})` : '';
 
   return `${when}${to} as ${fmt}`;
 });

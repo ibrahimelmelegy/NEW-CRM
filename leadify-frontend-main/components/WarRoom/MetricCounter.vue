@@ -48,7 +48,10 @@ function animateCount(target: number) {
 }
 
 onMounted(() => animateCount(props.value));
-watch(() => props.value, (val) => animateCount(val));
+watch(
+  () => props.value,
+  val => animateCount(val)
+);
 </script>
 
 <style lang="scss" scoped>

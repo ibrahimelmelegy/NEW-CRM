@@ -43,23 +43,52 @@ defineProps<{
 }>();
 
 const typeIcons: Record<string, string> = {
-  quote: 'ph:quotes-bold', invoice: 'ph:receipt-bold', proforma_invoice: 'ph:file-text-bold',
-  purchase_order: 'ph:shopping-cart-bold', credit_note: 'ph:note-bold', contract: 'ph:handshake-bold',
-  rfq: 'ph:clipboard-text-bold', sales_order: 'ph:package-bold', delivery_note: 'ph:truck-bold', sla: 'ph:shield-check-bold'
+  quote: 'ph:quotes-bold',
+  invoice: 'ph:receipt-bold',
+  proforma_invoice: 'ph:file-text-bold',
+  purchase_order: 'ph:shopping-cart-bold',
+  credit_note: 'ph:note-bold',
+  contract: 'ph:handshake-bold',
+  rfq: 'ph:clipboard-text-bold',
+  sales_order: 'ph:package-bold',
+  delivery_note: 'ph:truck-bold',
+  sla: 'ph:shield-check-bold'
 };
 
 const typeRoutes: Record<string, string> = {
-  quote: '/sales/quotes', invoice: '/sales/invoices', proforma_invoice: '/sales/proforma-invoices',
-  purchase_order: '/sales/purchase-orders', credit_note: '/sales/credit-notes', contract: '/sales/contracts',
-  rfq: '/sales/rfqs', sales_order: '/sales/sales-orders', delivery_note: '/sales/delivery-notes', sla: '/sales/slas'
+  quote: '/sales/quotes',
+  invoice: '/sales/invoices',
+  proforma_invoice: '/sales/proforma-invoices',
+  purchase_order: '/sales/purchase-orders',
+  credit_note: '/sales/credit-notes',
+  contract: '/sales/contracts',
+  rfq: '/sales/rfqs',
+  sales_order: '/sales/sales-orders',
+  delivery_note: '/sales/delivery-notes',
+  sla: '/sales/slas'
 };
 
-function getTypeIcon(type: string) { return typeIcons[type] || 'ph:file-text-bold'; }
-function getDocUrl(doc: { id: string; type: string }) { return `${typeRoutes[doc.type] || '/sales/documents'}/${doc.id}`; }
-function formatType(type: string) { return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); }
-function formatStatus(status: string) { return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); }
+function getTypeIcon(type: string) {
+  return typeIcons[type] || 'ph:file-text-bold';
+}
+function getDocUrl(doc: { id: string; type: string }) {
+  return `${typeRoutes[doc.type] || '/sales/documents'}/${doc.id}`;
+}
+function formatType(type: string) {
+  return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+function formatStatus(status: string) {
+  return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
 function statusTagType(status: string) {
-  const map: Record<string, string> = { DRAFT: 'info', PENDING_APPROVAL: 'warning', APPROVED: 'success', REJECTED: 'danger', SENT: '', PAID: 'success' };
+  const map: Record<string, string> = {
+    DRAFT: 'info',
+    PENDING_APPROVAL: 'warning',
+    APPROVED: 'success',
+    REJECTED: 'danger',
+    SENT: '',
+    PAID: 'success'
+  };
   return map[status] || '';
 }
 </script>

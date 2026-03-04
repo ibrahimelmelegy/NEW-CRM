@@ -76,12 +76,7 @@ const filteredTemplates = computed(() => {
   }
   if (search.value) {
     const q = search.value.toLowerCase();
-    result = result.filter(
-      (t: any) =>
-        t.name.toLowerCase().includes(q) ||
-        t.subject.toLowerCase().includes(q) ||
-        t.body.toLowerCase().includes(q)
-    );
+    result = result.filter((t: any) => t.name.toLowerCase().includes(q) || t.subject.toLowerCase().includes(q) || t.body.toLowerCase().includes(q));
   }
   return result;
 });

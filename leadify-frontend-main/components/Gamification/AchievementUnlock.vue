@@ -81,12 +81,15 @@ function launchConfetti() {
   animate();
 }
 
-watch(() => props.visible, (val) => {
-  if (val) {
-    setTimeout(launchConfetti, 100);
-    setTimeout(dismiss, 5000);
+watch(
+  () => props.visible,
+  val => {
+    if (val) {
+      setTimeout(launchConfetti, 100);
+      setTimeout(dismiss, 5000);
+    }
   }
-});
+);
 
 onUnmounted(() => {
   if (animId) cancelAnimationFrame(animId);
@@ -173,15 +176,30 @@ onUnmounted(() => {
 }
 
 @keyframes popIn {
-  from { transform: scale(0.5); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes iconPulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(120, 73, 255, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(120, 73, 255, 0.6); }
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(120, 73, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(120, 73, 255, 0.6);
+  }
 }
 
-.unlock-enter-active { animation: popIn 0.5s ease; }
-.unlock-leave-active { animation: popIn 0.3s ease reverse; }
+.unlock-enter-active {
+  animation: popIn 0.5s ease;
+}
+.unlock-leave-active {
+  animation: popIn 0.3s ease reverse;
+}
 </style>

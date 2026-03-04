@@ -69,14 +69,7 @@
 
 <script setup lang="ts">
 import { ElMessageBox, ElNotification } from 'element-plus';
-import {
-  fetchSavedViews,
-  createSavedView,
-  updateSavedView,
-  deleteSavedView,
-  setDefaultView,
-  type SavedView
-} from '~/composables/useSavedViews';
+import { fetchSavedViews, createSavedView, updateSavedView, deleteSavedView, setDefaultView, type SavedView } from '~/composables/useSavedViews';
 
 const props = defineProps<{
   entityType: string;
@@ -100,10 +93,7 @@ const formData = reactive({
   color: '#7849ff'
 });
 
-const presetColors = [
-  '#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444',
-  '#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#f97316'
-];
+const presetColors = ['#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#f97316'];
 
 const contextMenu = reactive({
   visible: false,
@@ -214,11 +204,11 @@ async function confirmDelete() {
   const view = contextMenu.view;
   closeContextMenu();
   try {
-    await ElMessageBox.confirm(
-      `Delete view "${view.name}"?`,
-      'Delete View',
-      { confirmButtonText: 'Delete', cancelButtonText: 'Cancel', type: 'warning' }
-    );
+    await ElMessageBox.confirm(`Delete view "${view.name}"?`, 'Delete View', {
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    });
     await deleteSavedView(view.id);
     if (activeViewId.value === view.id) {
       clearView();
@@ -231,7 +221,10 @@ async function confirmDelete() {
 }
 
 onMounted(() => loadViews());
-watch(() => props.entityType, () => loadViews());
+watch(
+  () => props.entityType,
+  () => loadViews()
+);
 </script>
 
 <style scoped>
@@ -257,8 +250,8 @@ watch(() => props.entityType, () => loadViews());
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  border: 1.5px solid var(--glass-border-color, rgba(255,255,255,0.08));
-  background: var(--card-bg, rgba(255,255,255,0.03));
+  border: 1.5px solid var(--glass-border-color, rgba(255, 255, 255, 0.08));
+  background: var(--card-bg, rgba(255, 255, 255, 0.03));
   color: var(--text-muted);
   transition: all 0.2s ease;
   user-select: none;
@@ -293,10 +286,10 @@ watch(() => props.entityType, () => loadViews());
   z-index: 9999;
   min-width: 160px;
   background: var(--card-bg, #1e1e2e);
-  border: 1px solid var(--glass-border-color, rgba(255,255,255,0.08));
+  border: 1px solid var(--glass-border-color, rgba(255, 255, 255, 0.08));
   border-radius: 12px;
   padding: 6px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .context-menu-item {
@@ -311,7 +304,7 @@ watch(() => props.entityType, () => loadViews());
   transition: background 0.15s;
 }
 .context-menu-item:hover {
-  background: var(--glass-border-color, rgba(255,255,255,0.06));
+  background: var(--glass-border-color, rgba(255, 255, 255, 0.06));
 }
 
 .color-swatch {

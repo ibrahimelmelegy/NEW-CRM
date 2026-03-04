@@ -1,99 +1,102 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { FileText, CheckCircle, Clock, Hexagon } from 'lucide-vue-next'
+import { computed } from 'vue';
+import { FileText, CheckCircle, Clock, Hexagon } from 'lucide-vue-next';
 
 // ─── Types ───────────────────────────────────────────────────────────
 
 interface ProposalItem {
-  id: number
-  description: string
-  quantity: number
-  unit: string
-  cost: number
-  margin: number
-  rate: number
+  id: number;
+  description: string;
+  quantity: number;
+  unit: string;
+  cost: number;
+  margin: number;
+  rate: number;
 }
 
 interface ProposalPhase {
-  id: number
-  name: string
-  duration: string
-  deliverables: string
+  id: number;
+  name: string;
+  duration: string;
+  deliverables: string;
 }
 
 interface CustomSection {
-  id: string
-  title: string
-  content: string
+  id: string;
+  title: string;
+  content: string;
 }
 
 interface ProposalData {
-  id: number
-  refNumber: string
-  title: string
-  clientName: string
-  clientCompany: string
-  clientEmail: string
-  date: string
-  validUntil: string
-  status: 'Draft' | 'In Review' | 'Approved' | 'Sent' | 'Rejected' | 'Archived'
-  type?: 'FINANCIAL' | 'TECHNICAL' | 'MIXED'
-  themeColor: string
-  coverStyle: string
-  font: 'sans' | 'serif' | 'mono'
-  logo?: string
-  clientLogo?: string
-  stepOrder: string[]
+  id: number;
+  refNumber: string;
+  title: string;
+  clientName: string;
+  clientCompany: string;
+  clientEmail: string;
+  date: string;
+  validUntil: string;
+  status: 'Draft' | 'In Review' | 'Approved' | 'Sent' | 'Rejected' | 'Archived';
+  type?: 'FINANCIAL' | 'TECHNICAL' | 'MIXED';
+  themeColor: string;
+  coverStyle: string;
+  font: 'sans' | 'serif' | 'mono';
+  logo?: string;
+  clientLogo?: string;
+  stepOrder: string[];
   stepLabels: {
-    branding: string
-    executive: string
-    solution: string
-    financial: string
-    legal: string
-  }
-  introduction: string
-  objectives: string
-  scopeOfWork: string
-  methodology: string
-  phases: ProposalPhase[]
-  customSections: CustomSection[]
-  currency: string
-  items: ProposalItem[]
-  taxRate: number
-  discount: number
-  discountType: 'percent' | 'fixed'
-  paymentTerms: string
-  termsAndConditions: string
-  version: number
-  lastModified: string
-  approvedBy?: string
+    branding: string;
+    executive: string;
+    solution: string;
+    financial: string;
+    legal: string;
+  };
+  introduction: string;
+  objectives: string;
+  scopeOfWork: string;
+  methodology: string;
+  phases: ProposalPhase[];
+  customSections: CustomSection[];
+  currency: string;
+  items: ProposalItem[];
+  taxRate: number;
+  discount: number;
+  discountType: 'percent' | 'fixed';
+  paymentTerms: string;
+  termsAndConditions: string;
+  version: number;
+  lastModified: string;
+  approvedBy?: string;
 }
 
 // ─── Props ───────────────────────────────────────────────────────────
 
-const props = withDefaults(defineProps<{
-  formData: ProposalData
-  themeColor?: string
-}>(), {
-  themeColor: '#7c3aed'
-})
+const props = withDefaults(
+  defineProps<{
+    formData: ProposalData;
+    themeColor?: string;
+  }>(),
+  {
+    themeColor: '#7c3aed'
+  }
+);
 
 // ─── Computed ────────────────────────────────────────────────────────
 
-const color = computed(() => props.formData.themeColor || props.themeColor)
+const color = computed(() => props.formData.themeColor || props.themeColor);
 
 const fontClass = computed(() => {
-  if (props.formData.font === 'serif') return 'font-serif'
-  if (props.formData.font === 'mono') return 'font-mono'
-  return 'font-sans'
-})
+  if (props.formData.font === 'serif') return 'font-serif';
+  if (props.formData.font === 'mono') return 'font-mono';
+  return 'font-sans';
+});
 
 const typeInfo = computed(() => {
-  const t = props.formData.type || 'MIXED'
-  if (t === 'FINANCIAL') return { label: 'Financial', fullLabel: 'Financial Proposal', color: 'emerald' }
-  if (t === 'TECHNICAL') return { label: 'Technical', fullLabel: 'Technical Proposal', color: 'blue' }
-  return { label: 'Mixed', fullLabel: 'Comprehensive Proposal', color: 'violet' }
-})
+  const t = props.formData.type || 'MIXED';
+  if (t === 'FINANCIAL') return { label: 'Financial', fullLabel: 'Financial Proposal', color: 'emerald' };
+  if (t === 'TECHNICAL') return { label: 'Technical', fullLabel: 'Technical Proposal', color: 'blue' };
+  return { label: 'Mixed', fullLabel: 'Comprehensive Proposal', color: 'violet' };
+});
 
 const defaultLabels: Record<string, string> = {
   branding: 'Branding & Details',
@@ -101,61 +104,57 @@ const defaultLabels: Record<string, string> = {
   solution: 'Solution & Scope',
   financial: 'Investment',
   legal: 'Terms & Legal'
-}
+};
 
 const labels = computed(() => ({
   ...defaultLabels,
   ...props.formData.stepLabels
-}))
+}));
 
 /** Steps that produce content pages (everything except branding) */
 const contentSteps = computed(() =>
-  (props.formData.stepOrder || ['executive', 'solution', 'financial', 'legal'])
-    .filter((id: string) => id !== 'branding')
-)
+  (props.formData.stepOrder || ['executive', 'solution', 'financial', 'legal']).filter((id: string) => id !== 'branding')
+);
 
 // ─── Financial Calculations ──────────────────────────────────────────
 
-const subtotal = computed(() =>
-  props.formData.items?.reduce((sum, item) => sum + (item.quantity * item.rate), 0) || 0
-)
+const subtotal = computed(() => props.formData.items?.reduce((sum, item) => sum + item.quantity * item.rate, 0) || 0);
 
 const discountAmount = computed(() =>
-  props.formData.discountType === 'percent'
-    ? subtotal.value * ((props.formData.discount || 0) / 100)
-    : (props.formData.discount || 0)
-)
+  props.formData.discountType === 'percent' ? subtotal.value * ((props.formData.discount || 0) / 100) : props.formData.discount || 0
+);
 
-const taxableAmount = computed(() => subtotal.value - discountAmount.value)
+const taxableAmount = computed(() => subtotal.value - discountAmount.value);
 
-const tax = computed(() => taxableAmount.value * ((props.formData.taxRate || 0) / 100))
+const tax = computed(() => taxableAmount.value * ((props.formData.taxRate || 0) / 100));
 
-const total = computed(() => taxableAmount.value + tax.value)
+const total = computed(() => taxableAmount.value + tax.value);
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 
-const refIdShort = computed(() => props.formData.refNumber?.split('-').pop() || '')
+const refIdShort = computed(() => props.formData.refNumber?.split('-').pop() || '');
 
-const currentDate = computed(() => new Date().toLocaleDateString())
+const currentDate = computed(() => new Date().toLocaleDateString());
 
 function getTocTitle(id: string): string {
-  if (defaultLabels[id]) return defaultLabels[id]
-  const custom = props.formData.customSections?.find(s => s.id === id)
-  return custom ? custom.title : id
+  if (defaultLabels[id]) return defaultLabels[id];
+  const custom = props.formData.customSections?.find(s => s.id === id);
+  return custom ? custom.title : id;
 }
 
 function getCustomSection(id: string): CustomSection | undefined {
-  return props.formData.customSections?.find(s => s.id === id)
+  return props.formData.customSections?.find(s => s.id === id);
 }
 
 function handleImgError(event: Event) {
-  const target = event.target as HTMLImageElement
-  target.style.display = 'none'
+  const target = event.target as HTMLImageElement;
+  target.style.display = 'none';
 }
 
 // ─── Print Styles ────────────────────────────────────────────────────
 
-const printStyles = computed(() => `
+const printStyles = computed(
+  () => `
   @page {
     size: A4;
     margin: 0 !important;
@@ -194,7 +193,8 @@ const printStyles = computed(() => `
   .proposal-rich-text ul { list-style-type: disc; margin-left: 20pt; margin-bottom: 10pt; }
   .proposal-rich-text table { width: 100%; border-collapse: collapse; margin: 15pt 0; }
   .proposal-rich-text th, .proposal-rich-text td { border: 1px solid #e5e7eb; padding: 8pt; }
-`)
+`
+);
 </script>
 
 <template lang="pug">

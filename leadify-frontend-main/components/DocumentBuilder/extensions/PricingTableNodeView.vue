@@ -108,12 +108,12 @@ const props = defineProps(nodeViewProps);
 const items = computed(() => props.node.attrs.items || []);
 const taxRate = computed({
   get: () => props.node.attrs.taxRate || 15,
-  set: (val) => props.updateAttributes({ taxRate: val })
+  set: val => props.updateAttributes({ taxRate: val })
 });
 const isEditable = computed(() => props.editor.isEditable);
 
 const subtotal = computed(() => {
-  return items.value.reduce((sum: number, item: any) => sum + (item.qty * item.price), 0);
+  return items.value.reduce((sum: number, item: any) => sum + item.qty * item.price, 0);
 });
 
 const taxAmount = computed(() => {

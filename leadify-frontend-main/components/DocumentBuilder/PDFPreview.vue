@@ -52,10 +52,12 @@ const pageStyle = computed(() => ({
   width: `${A4_WIDTH}px`,
   minHeight: `${A4_HEIGHT}px`,
   transform: `scale(${zoom.value / 100})`,
-  transformOrigin: 'top center',
+  transformOrigin: 'top center'
 }));
 
-const renderedHtml = computed(() => props.htmlContent || '<p style="color: #999; text-align: center; padding-top: 40px;">Start typing in the editor to see a preview here...</p>');
+const renderedHtml = computed(
+  () => props.htmlContent || '<p style="color: #999; text-align: center; padding-top: 40px;">Start typing in the editor to see a preview here...</p>'
+);
 
 function zoomIn() {
   if (zoom.value < 150) zoom.value += 10;
@@ -142,9 +144,7 @@ function handlePrint() {
 }
 
 .preview-area {
-  background:
-    repeating-conic-gradient(rgba(0, 0, 0, 0.03) 0% 25%, transparent 0% 50%)
-    50% / 16px 16px;
+  background: repeating-conic-gradient(rgba(0, 0, 0, 0.03) 0% 25%, transparent 0% 50%) 50% / 16px 16px;
 }
 
 .preview-page {
@@ -237,7 +237,7 @@ function handlePrint() {
 }
 
 .preview-page-content :deep(.variable-node),
-.preview-page-content :deep([data-type="variable"]) {
+.preview-page-content :deep([data-type='variable']) {
   display: inline-flex;
   align-items: center;
   padding: 1px 6px;
@@ -250,7 +250,7 @@ function handlePrint() {
   border: 1px solid rgba(120, 73, 255, 0.2);
 }
 
-.preview-page-content :deep([data-type="page-break"]) {
+.preview-page-content :deep([data-type='page-break']) {
   margin: 20px 0;
   border-top: 2px dashed #ccc;
   text-align: center;
@@ -259,24 +259,24 @@ function handlePrint() {
 }
 
 .preview-page-content :deep(.signature-block),
-.preview-page-content :deep([data-type="signature-block"]) {
+.preview-page-content :deep([data-type='signature-block']) {
   padding: 20px 0;
   margin: 12px 0;
   border-top: 1px dashed #ccc;
 }
 
-.preview-page-content :deep(ul[data-type="taskList"]) {
+.preview-page-content :deep(ul[data-type='taskList']) {
   list-style: none;
   padding-left: 0;
 }
 
-.preview-page-content :deep(ul[data-type="taskList"] li) {
+.preview-page-content :deep(ul[data-type='taskList'] li) {
   display: flex;
   align-items: flex-start;
   gap: 6px;
 }
 
-.preview-page-content :deep(ul[data-type="taskList"] li::before) {
+.preview-page-content :deep(ul[data-type='taskList'] li::before) {
   content: '';
   display: inline-block;
   width: 14px;

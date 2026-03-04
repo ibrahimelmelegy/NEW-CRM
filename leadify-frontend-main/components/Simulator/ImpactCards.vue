@@ -105,7 +105,9 @@ function deltaClass(delta: number): string {
   background: var(--glass-bg, rgba(255, 255, 255, 0.03));
   backdrop-filter: var(--glass-blur, blur(12px));
   border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.06));
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -144,10 +146,21 @@ function deltaClass(delta: number): string {
 }
 
 @keyframes pulse-arrow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.15); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.15);
+  }
 }
 
-.text-emerald-400 { color: #34d399; }
-.text-red-400 { color: #f87171; }
+.text-emerald-400 {
+  color: #34d399;
+}
+.text-red-400 {
+  color: #f87171;
+}
 </style>

@@ -57,7 +57,7 @@ function parseKeys(keys: string): KeyPart[] {
     segments.forEach((seg, idx) => {
       parts.push({
         key: seg.trim(),
-        separator: idx < segments.length - 1 ? 'then' : undefined,
+        separator: idx < segments.length - 1 ? 'then' : undefined
       });
     });
     return parts;
@@ -69,7 +69,7 @@ function parseKeys(keys: string): KeyPart[] {
     segments.forEach((seg, idx) => {
       parts.push({
         key: seg.trim(),
-        separator: idx < segments.length - 1 ? '+' : undefined,
+        separator: idx < segments.length - 1 ? '+' : undefined
       });
     });
     return parts;
@@ -104,7 +104,8 @@ function parseKeys(keys: string): KeyPart[] {
   background: var(--bg-card);
   border: 1px solid var(--border-glass);
   border-radius: 16px;
-  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.5),
+  box-shadow:
+    0 25px 60px -12px rgba(0, 0, 0, 0.5),
     0 0 40px rgba(168, 85, 247, 0.1);
   overflow: hidden;
 }
@@ -264,7 +265,9 @@ kbd {
   transition: opacity 0.2s ease;
 
   .shortcuts-modal {
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
   }
 }
 

@@ -49,7 +49,9 @@ const emit = defineEmits(['close', 'select', 'start-blank']);
 
 const visible = computed({
   get: () => props.show,
-  set: (v) => { if (!v) emit('close'); }
+  set: v => {
+    if (!v) emit('close');
+  }
 });
 
 const filteredTemplates = computed(() => {
@@ -71,14 +73,14 @@ function thumbStyle(el: any) {
     top: `${el.y * SY}px`,
     width: `${Math.max(el.width * SX, 1)}px`,
     height: `${Math.max(el.height * SY, 1)}px`,
-    overflow: 'hidden',
+    overflow: 'hidden'
   };
 
   if (el.type === 'shape') {
     base.background = el.props?.fill || '#e0e0e0';
     base.borderRadius = el.props?.borderRadius ? `${el.props.borderRadius * SX}px` : undefined;
   } else if (el.type === 'line') {
-    base.borderTop = `${Math.max(1, (el.props?.thickness || 1))}px solid ${el.props?.color || '#ccc'}`;
+    base.borderTop = `${Math.max(1, el.props?.thickness || 1)}px solid ${el.props?.color || '#ccc'}`;
     base.height = '0px';
   }
 
@@ -106,7 +108,7 @@ function textLineStyle(el: any, lineIndex: number) {
     opacity: isBold ? '0.7' : '0.35',
     width: scaledW < 10 ? '100%' : width,
     marginBottom: '1.5px',
-    borderRadius: '1px',
+    borderRadius: '1px'
   };
 }
 </script>
@@ -126,7 +128,9 @@ function textLineStyle(el: any, lineIndex: number) {
   height: 170px;
   background: white;
   border-radius: 3px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 0 1px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.12),
+    0 0 1px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 

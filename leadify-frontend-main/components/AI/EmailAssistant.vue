@@ -128,8 +128,8 @@
 </template>
 
 <script setup lang="ts">
-import { useAI } from '~/composables/useAI';
 import { ElNotification } from 'element-plus';
+import { useAI } from '~/composables/useAI';
 
 const props = defineProps<{
   context?: {

@@ -43,16 +43,7 @@ Teleport(to="body")
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue';
 
-const {
-  isOpen,
-  input,
-  output,
-  suggestions,
-  toggle,
-  execute,
-  navigateHistory,
-  autocomplete,
-} = useCommandTerminal();
+const { isOpen, input, output, suggestions, toggle, execute, navigateHistory, autocomplete } = useCommandTerminal();
 
 const inputRef = ref<HTMLInputElement | null>(null);
 const outputAreaRef = ref<HTMLElement | null>(null);
@@ -76,7 +67,7 @@ function selectSuggestion(s: string) {
 }
 
 // Auto-focus input when terminal opens
-watch(isOpen, async (val) => {
+watch(isOpen, async val => {
   if (val) {
     await nextTick();
     inputRef.value?.focus();

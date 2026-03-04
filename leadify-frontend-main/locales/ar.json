@@ -6629,7 +6629,7 @@
     "portalLogoAlt": "شعار البوابة",
     "domainPlaceholder": "crm.yourcompany.com",
     "fromNamePlaceholder": "شركتك",
-    "fromEmailPlaceholder": "noreply@yourcompany.com",
+    "fromEmailPlaceholder": "noreply{'@'}yourcompany.com",
     "signaturePlaceholder": "<p>مع التحية،<br/>فريق شركتك</p>",
     "footerPlaceholder": "عنوان الشركة | رابط إلغاء الاشتراك",
     "welcomeTextPlaceholder": "مرحباً بك في نظام CRM",
@@ -12216,7 +12216,7 @@
     "password": "كلمة المرور",
     "appPassword": "كلمة مرور التطبيق",
     "connect": "ربط",
-    "emailPlaceholder": "بريدك@مثال.com",
+    "emailPlaceholder": "بريدك{'@'}مثال.com",
     "hostPlaceholder": "imap.example.com"
   },
   "dashboardBuilder": {
@@ -12257,7 +12257,7 @@
     "composeTo": "إلى",
     "composeSubject": "الموضوع",
     "composeBody": "المحتوى",
-    "recipientPlaceholder": "recipient@email.com",
+    "recipientPlaceholder": "recipient{'@'}email.com",
     "subjectPlaceholder": "موضوع الرسالة",
     "bodyPlaceholder": "اكتب رسالتك...",
     "send": "إرسال",

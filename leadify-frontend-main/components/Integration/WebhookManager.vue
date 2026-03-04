@@ -205,7 +205,9 @@ const formRules: FormRules = {
 function generateSecret(): string {
   const bytes = new Uint8Array(32);
   globalThis.crypto.getRandomValues(bytes);
-  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  return Array.from(bytes)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 function regenerateSecret() {
@@ -294,23 +296,27 @@ async function handleSubmit() {
 async function testWebhook(webhook: WebhookItem) {
   testingId.value = webhook.id;
   emit('test', webhook.id);
-  setTimeout(() => { testingId.value = null; }, 3000);
+  setTimeout(() => {
+    testingId.value = null;
+  }, 3000);
 }
 
 async function toggleStatus(webhook: WebhookItem) {
   togglingId.value = webhook.id;
   const newStatus = webhook.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
   emit('toggle', { id: webhook.id, status: newStatus });
-  setTimeout(() => { togglingId.value = null; }, 1000);
+  setTimeout(() => {
+    togglingId.value = null;
+  }, 1000);
 }
 
 async function confirmDelete(webhook: WebhookItem) {
   try {
-    await ElMessageBox.confirm(
-      t('integrationHub.webhooks.deleteConfirm', { name: webhook.name }),
-      t('integrationHub.webhooks.deleteTitle'),
-      { confirmButtonText: t('integrationHub.webhooks.confirmDelete'), cancelButtonText: t('integrationHub.webhooks.cancel'), type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('integrationHub.webhooks.deleteConfirm', { name: webhook.name }), t('integrationHub.webhooks.deleteTitle'), {
+      confirmButtonText: t('integrationHub.webhooks.confirmDelete'),
+      cancelButtonText: t('integrationHub.webhooks.cancel'),
+      type: 'warning'
+    });
     emit('delete', webhook.id);
   } catch {
     // User cancelled

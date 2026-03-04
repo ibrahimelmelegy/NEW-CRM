@@ -130,14 +130,17 @@ interface OperatorOption {
   label: string;
 }
 
-const props = withDefaults(defineProps<{
-  entityType: string;
-  fields: FilterField[];
-  alwaysOpen?: boolean;
-  initialFilters?: any[];
-}>(), {
-  alwaysOpen: false
-});
+const props = withDefaults(
+  defineProps<{
+    entityType: string;
+    fields: FilterField[];
+    alwaysOpen?: boolean;
+    initialFilters?: any[];
+  }>(),
+  {
+    alwaysOpen: false
+  }
+);
 
 const emit = defineEmits<{
   apply: [filters: { logic: string; conditions: any[] }];
@@ -198,10 +201,14 @@ function getFieldOptions(fieldKey: string): { value: string; label: string }[] {
 function getOperators(fieldKey: string): OperatorOption[] {
   const type = getFieldType(fieldKey);
   switch (type) {
-    case 'number': return NUMBER_OPERATORS;
-    case 'date': return DATE_OPERATORS;
-    case 'select': return SELECT_OPERATORS;
-    default: return STRING_OPERATORS;
+    case 'number':
+      return NUMBER_OPERATORS;
+    case 'date':
+      return DATE_OPERATORS;
+    case 'select':
+      return SELECT_OPERATORS;
+    default:
+      return STRING_OPERATORS;
   }
 }
 
@@ -309,6 +316,6 @@ if (props.initialFilters && props.initialFilters.length > 0) {
 
 .filter-row + .filter-row {
   padding-top: 8px;
-  border-top: 1px dashed var(--glass-border-color, rgba(255,255,255,0.06));
+  border-top: 1px dashed var(--glass-border-color, rgba(255, 255, 255, 0.06));
 }
 </style>

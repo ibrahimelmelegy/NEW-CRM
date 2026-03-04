@@ -144,23 +144,21 @@ function getDefaultFields(type: string) {
       { key: 'phoneNumberId', label: 'Phone Number ID', type: 'text', placeholder: 'Enter Phone ID', required: true },
       { key: 'accessToken', label: 'Access Token', type: 'password', placeholder: 'Enter Access Token', required: true }
     ],
-    OPENAI: [
-      { key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'sk-...', required: true }
-    ],
+    OPENAI: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'sk-...', required: true }],
     ERPNEXT: [
       { key: 'baseUrl', label: 'Base URL', type: 'url', placeholder: 'https://your-instance.erpnext.com', required: true },
       { key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'Enter ERPNext API Key', required: true },
       { key: 'apiSecret', label: 'API Secret', type: 'password', placeholder: 'Enter ERPNext API Secret', required: true }
     ],
-    BREVO: [
-      { key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'xkeysib-...', required: true }
-    ]
+    BREVO: [{ key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'xkeysib-...', required: true }]
   };
-  return fieldMap[type] || [
-    { key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'Enter API Key', required: true },
-    { key: 'baseUrl', label: 'Base URL', type: 'url', placeholder: 'https://...', required: false },
-    { key: 'secret', label: 'Secret', type: 'password', placeholder: 'Enter Secret', required: false }
-  ];
+  return (
+    fieldMap[type] || [
+      { key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'Enter API Key', required: true },
+      { key: 'baseUrl', label: 'Base URL', type: 'url', placeholder: 'https://...', required: false },
+      { key: 'secret', label: 'Secret', type: 'password', placeholder: 'Enter Secret', required: false }
+    ]
+  );
 }
 
 async function handleSave() {
@@ -188,7 +186,9 @@ async function handleTest() {
     emit('test', { type: props.integration.type, config: { ...formData.value } });
   } finally {
     // Parent handles async; reset after a delay
-    setTimeout(() => { testing.value = false; }, 2000);
+    setTimeout(() => {
+      testing.value = false;
+    }, 2000);
   }
 }
 

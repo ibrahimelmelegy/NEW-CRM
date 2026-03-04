@@ -120,10 +120,11 @@ const filteredDocuments = computed(() => {
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
-    result = result.filter(doc =>
-      doc.name.toLowerCase().includes(query) ||
-      (doc.category || '').toLowerCase().includes(query) ||
-      (doc.tags || []).some(t => t.toLowerCase().includes(query))
+    result = result.filter(
+      doc =>
+        doc.name.toLowerCase().includes(query) ||
+        (doc.category || '').toLowerCase().includes(query) ||
+        (doc.tags || []).some(t => t.toLowerCase().includes(query))
     );
   }
 
