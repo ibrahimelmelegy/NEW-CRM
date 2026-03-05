@@ -152,6 +152,9 @@ router.post('/push-subscription', authenticateUser, notificationController.regis
  */
 router.put('/', authenticateUser, notificationController.updateNotificationsToRead);
 
+// Alias: PUT /read-all (used by frontend composables)
+router.put('/read-all', authenticateUser, notificationController.updateNotificationsToRead);
+
 /**
  * @swagger
  * /api/notification/click/{id}:
@@ -269,5 +272,27 @@ router.delete('/push-subscription', authenticateUser, notificationController.unr
  *         description: Old notifications deleted
  */
 router.delete('/cleanup', authenticateUser, notificationController.deleteOldNotifications);
+
+/**
+ * @swagger
+ * /api/notification/{id}:
+ *   delete:
+ *     summary: Delete a single notification
+ *     tags: [Notification]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Notification deleted
+ *       607:
+ *         description: Notification not found
+ */
+router.delete('/:id', authenticateUser, notificationController.deleteNotification);
 
 export default router;

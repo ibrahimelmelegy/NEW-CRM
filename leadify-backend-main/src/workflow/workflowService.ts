@@ -1233,5 +1233,8 @@ export default {
   getTemplates,
 
   // Testing
-  testRule
+  testRule,
+
+  // Delayed execution (called by BullMQ worker)
+  executeDelayedActions
 };

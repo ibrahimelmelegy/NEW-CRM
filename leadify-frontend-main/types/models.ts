@@ -236,10 +236,16 @@ export interface AppNotification {
   id: string;
   title: string;
   message: string;
-  type: 'info' | 'success' | 'warning' | 'error';
+  type: string;
   read: boolean;
   createdAt: string;
   link?: string;
+  body_en?: string;
+  body_ar?: string;
+  target?: string;
+  entityType?: string;
+  entityId?: string;
+  priority?: string;
 }
 
 // Socket Events

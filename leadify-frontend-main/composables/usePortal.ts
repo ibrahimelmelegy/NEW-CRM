@@ -25,6 +25,21 @@ export interface SupportTicket {
   createdAt: string;
 }
 
+export interface PortalTicketMessage {
+  id: number;
+  ticketId: string;
+  message: string;
+  senderType: 'client' | 'staff';
+  portalUserId: string | null;
+  portalUser?: { id: string; name: string; email: string } | null;
+  staffUserId: number | null;
+  createdAt: string;
+}
+
+export interface TicketWithMessages extends SupportTicket {
+  messages: PortalTicketMessage[];
+}
+
 export const TICKET_STATUSES = [
   { value: 'OPEN', label: 'Open', type: 'danger' },
   { value: 'IN_PROGRESS', label: 'In Progress', type: 'warning' },
@@ -39,7 +54,8 @@ export const TICKET_PRIORITIES = [
   { value: 'URGENT', label: 'Urgent', type: 'danger' }
 ];
 
-// Admin: Portal User management
+// ─── Admin: Portal User management ──────────────────────────────────────────
+
 export async function fetchPortalUsers(): Promise<PortalUser[]> {
   const { body, success } = await useApiFetch('portal/admin/users');
   return success && body ? body : [];
@@ -63,7 +79,8 @@ export async function togglePortalUser(id: string, isActive: boolean) {
   return response;
 }
 
-// Admin: Ticket management
+// ─── Admin: Ticket management ────────────────────────────────────────────────
+
 export async function fetchAllTickets(): Promise<SupportTicket[]> {
   const { body, success } = await useApiFetch('portal/admin/tickets');
   return success && body ? body : [];
@@ -79,13 +96,20 @@ export async function respondToTicket(id: string, responseText: string, status?:
   return response;
 }
 
-// --- Enhanced Portal Interfaces ---
+// ─── Enhanced Portal Interfaces ──────────────────────────────────────────────
 
 export interface PortalDashboardData {
   openInvoices: { count: number; total: number };
   activeProjects: { count: number; items: PortalProject[] };
   pendingSignatures: { count: number; items: PortalSignatureDoc[] };
   sharedDocuments: { count: number };
+}
+
+export interface PortalDashboardStats {
+  outstandingInvoices: { count: number; total: number };
+  openTickets: number;
+  activeProjects: number;
+  totalDeals: number;
 }
 
 export interface PortalProject {
@@ -123,6 +147,7 @@ export interface PortalInvoice {
   invoiceNumber: string;
   amount: number;
   invoiceDate: string | null;
+  dueDate?: string | null;
   collected: boolean;
   collectedDate: string | null;
   status: 'PAID' | 'UNPAID' | 'OVERDUE' | 'PARTIAL';
@@ -151,12 +176,13 @@ export interface InvoiceListResult {
 
 /**
  * Enhanced portal composable for client portal features:
- * e-signatures, invoices, projects, and shared documents
+ * e-signatures, invoices, projects, shared documents, tickets, and dashboard stats
  */
 export function useEnhancedPortal() {
   const { portalFetch } = usePortalAuth();
 
   const dashboard = ref<PortalDashboardData | null>(null);
+  const dashboardStats = ref<PortalDashboardStats | null>(null);
   const invoices = ref<PortalInvoice[]>([]);
   const invoicePagination = ref({ total: 0, page: 1, limit: 20, totalPages: 0 });
   const projects = ref<PortalProject[]>([]);
@@ -175,9 +201,20 @@ export function useEnhancedPortal() {
         error.value = res.message || 'Failed to fetch dashboard';
       }
     } catch (e: unknown) {
-      error.value = e.message || 'Failed to fetch dashboard';
+      error.value = (e as Error).message || 'Failed to fetch dashboard';
     } finally {
       loading.value = false;
+    }
+  }
+
+  async function fetchDashboardStats() {
+    try {
+      const res = await portalFetch<PortalDashboardStats>('dashboard/stats');
+      if (res.success && res.body) {
+        dashboardStats.value = res.body;
+      }
+    } catch {
+      // silently ignore stats errors
     }
   }
 
@@ -198,7 +235,7 @@ export function useEnhancedPortal() {
         error.value = res.message || 'Failed to fetch invoices';
       }
     } catch (e: unknown) {
-      error.value = e.message || 'Failed to fetch invoices';
+      error.value = (e as Error).message || 'Failed to fetch invoices';
     } finally {
       loading.value = false;
     }
@@ -215,7 +252,7 @@ export function useEnhancedPortal() {
         error.value = res.message || 'Failed to fetch projects';
       }
     } catch (e: unknown) {
-      error.value = e.message || 'Failed to fetch projects';
+      error.value = (e as Error).message || 'Failed to fetch projects';
     } finally {
       loading.value = false;
     }
@@ -232,7 +269,7 @@ export function useEnhancedPortal() {
         error.value = res.message || 'Failed to fetch documents';
       }
     } catch (e: unknown) {
-      error.value = e.message || 'Failed to fetch documents';
+      error.value = (e as Error).message || 'Failed to fetch documents';
     } finally {
       loading.value = false;
     }
@@ -257,7 +294,7 @@ export function useEnhancedPortal() {
         return { success: false, message: msg };
       }
     } catch (e: unknown) {
-      const msg = e.message || 'Failed to sign document';
+      const msg = (e as Error).message || 'Failed to sign document';
       error.value = msg;
       ElNotification({ type: 'error', title: 'Error', message: msg });
       return { success: false, message: msg };
@@ -278,8 +315,49 @@ export function useEnhancedPortal() {
     }
   }
 
+  // ─── Ticket Messaging ────────────────────────────────────────────────
+
+  async function fetchTicketWithMessages(ticketId: string): Promise<TicketWithMessages | null> {
+    try {
+      const res = await portalFetch<TicketWithMessages>(`tickets/${ticketId}/messages`);
+      if (res.success && res.body) {
+        return res.body;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  async function sendPortalTicketMessage(ticketId: string, message: string): Promise<{ success: boolean; message?: string }> {
+    try {
+      const res = await portalFetch(`tickets/${ticketId}/messages`, 'POST', { message });
+      if (res.success) {
+        return { success: true };
+      }
+      return { success: false, message: res.message || 'Failed to send message' };
+    } catch (e: unknown) {
+      return { success: false, message: (e as Error).message || 'Failed to send message' };
+    }
+  }
+
+  // ─── Invoice PDF ─────────────────────────────────────────────────────
+
+  async function fetchInvoicePdfData(invoiceId: number): Promise<PortalInvoice | null> {
+    try {
+      const res = await portalFetch<PortalInvoice>(`invoices/${invoiceId}/pdf`);
+      if (res.success && res.body) {
+        return res.body;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
   return {
     dashboard,
+    dashboardStats,
     invoices,
     invoicePagination,
     projects,
@@ -287,10 +365,14 @@ export function useEnhancedPortal() {
     loading,
     error,
     fetchDashboard,
+    fetchDashboardStats,
     fetchInvoices,
     fetchProjects,
     fetchDocuments,
     signDocument,
-    getSignatures
+    getSignatures,
+    fetchTicketWithMessages,
+    sendPortalTicketMessage,
+    fetchInvoicePdfData
   };
 }

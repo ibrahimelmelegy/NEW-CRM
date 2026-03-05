@@ -11,7 +11,7 @@
           Icon(:name="getTypeIcon(parentDocument.type)" size="16")
         .flex-1
           span.font-bold.text-sm(style="color: var(--text-primary)") {{ parentDocument.title }}
-          .flex.items-center.gap-2.mt-0.5
+          .flex.items-center.gap-2(class="mt-0.5")
             span.font-mono.text-xs(style="color: var(--text-muted)") {{ parentDocument.reference }}
             el-tag(size="small" round effect="plain") {{ formatType(parentDocument.type) }}
         Icon(name="ph:arrow-right" size="16" style="color: var(--text-muted)")
@@ -26,7 +26,7 @@
             Icon(:name="getTypeIcon(child.type)" size="16")
           .flex-1
             span.font-bold.text-sm(style="color: var(--text-primary)") {{ child.title }}
-            .flex.items-center.gap-2.mt-0.5
+            .flex.items-center.gap-2(class="mt-0.5")
               span.font-mono.text-xs(style="color: var(--text-muted)") {{ child.reference }}
               el-tag(size="small" :type="statusTagType(child.status)" round effect="dark") {{ formatStatus(child.status) }}
           Icon(name="ph:arrow-right" size="16" style="color: var(--text-muted)")

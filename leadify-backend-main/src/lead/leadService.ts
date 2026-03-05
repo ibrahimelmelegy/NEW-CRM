@@ -14,6 +14,8 @@ import { sendEmail } from '../utils/emailHelper';
 import { io } from '../server';
 import { tenantWhere, tenantCreate } from '../utils/tenantScope';
 import { clampPagination } from '../utils/pagination';
+import { TriggerType } from '../workflow/workflowModel';
+import workflowService from '../workflow/workflowService';
 
 // ---------------------------------------------------------------------------
 // Configurable Lead Scoring Rules Engine
@@ -148,6 +150,12 @@ class LeadService {
     }
 
     io.emit('lead:created', lead); // Emit event after creation
+
+    // Trigger workflow automation for lead creation
+    workflowService.processEntityEvent('lead', String(lead.id), TriggerType.ON_CREATE, null, lead.toJSON(), adminId).catch((err: Error) => {
+      console.error('Workflow processEntityEvent (lead.create) error:', err.message);
+    });
+
     return lead;
   }
 
@@ -165,10 +173,13 @@ class LeadService {
     await this.validateLeadAccess(id, user);
     const lead = await this.leadOrError({ id });
 
+    // Capture old data for workflow field-change detection
+    const oldData = lead.toJSON();
+
     if (input.email) await this.errorIfLeadWithExistEmail(input.email, lead.id);
     if (input.phone) await this.errorIfLeadWithExistPhone(input.phone, lead.id);
 
-    // 🧠 Recalculate Score on Update
+    // Recalculate Score on Update
     const updatedData = { ...lead.toJSON(), ...input };
     input.score = this.calculateScore(updatedData);
 
@@ -185,6 +196,13 @@ class LeadService {
     users?.length && (await notificationService.sendAssignLeadNotification({ userId: user.id, target: lead.id }));
     const updatedLead = await lead.save();
     io.emit('lead:updated', updatedLead); // Emit event after update
+
+    // Trigger workflow automation for lead update (including field change detection)
+    const newData = updatedLead.toJSON();
+    workflowService.processEntityEvent('lead', String(lead.id), TriggerType.ON_UPDATE, oldData, newData, user.id).catch((err: Error) => {
+      console.error('Workflow processEntityEvent (lead.update) error:', err.message);
+    });
+
     return updatedLead;
   }
 

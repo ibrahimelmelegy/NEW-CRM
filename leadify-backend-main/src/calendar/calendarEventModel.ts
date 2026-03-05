@@ -83,11 +83,31 @@ class CalendarEvent extends Model {
   public reminder?: number;
 
   @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+    defaultValue: []
+  })
+  public reminders?: Array<{ minutes: number; type: 'email' | 'push' | 'sms' }>;
+
+  @Column({
     type: DataType.ENUM('SCHEDULED', 'COMPLETED', 'CANCELLED'),
     allowNull: false,
     defaultValue: 'SCHEDULED'
   })
   public status!: string;
+
+  // ─── External Calendar Sync Fields ────────────────────────────────────────
+  @Column({ type: DataType.STRING(500), allowNull: true })
+  public externalId?: string;
+
+  @Column({
+    type: DataType.ENUM('google', 'outlook'),
+    allowNull: true
+  })
+  public externalProvider?: string;
+
+  @Column({ type: DataType.DATE, allowNull: true })
+  public lastSyncedAt?: Date;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;

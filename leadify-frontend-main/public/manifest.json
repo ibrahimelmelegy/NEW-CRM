@@ -9,16 +9,27 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "/images/logo-shape.png",
+      "src": "/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/images/logo-shape.png",
+      "src": "/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ],
   "shortcuts": [
@@ -28,8 +39,8 @@
       "url": "/",
       "icons": [
         {
-          "src": "/images/logo-shape.png",
-          "sizes": "96x96",
+          "src": "/icon-192x192.png",
+          "sizes": "192x192",
           "type": "image/png"
         }
       ]
@@ -40,8 +51,8 @@
       "url": "/sales/leads",
       "icons": [
         {
-          "src": "/images/logo-shape.png",
-          "sizes": "96x96",
+          "src": "/icon-192x192.png",
+          "sizes": "192x192",
           "type": "image/png"
         }
       ]
@@ -52,8 +63,8 @@
       "url": "/sales/deals",
       "icons": [
         {
-          "src": "/images/logo-shape.png",
-          "sizes": "96x96",
+          "src": "/icon-192x192.png",
+          "sizes": "192x192",
           "type": "image/png"
         }
       ]

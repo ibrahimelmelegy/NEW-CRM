@@ -1,5 +1,6 @@
-import { Column, DataType, Default, ForeignKey, BelongsTo, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Default, ForeignKey, BelongsTo, HasMany, Model, Table } from 'sequelize-typescript';
 import PortalUser from './portalUserModel';
+import TicketMessage from './ticketMessageModel';
 import { TicketStatus, TicketPriority } from './portalEnum';
 
 @Table({
@@ -37,6 +38,9 @@ class SupportTicket extends Model {
 
   @BelongsTo(() => PortalUser)
   public portalUser?: PortalUser;
+
+  @HasMany(() => TicketMessage)
+  public messages?: TicketMessage[];
 }
 
 export default SupportTicket;

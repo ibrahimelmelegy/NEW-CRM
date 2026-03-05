@@ -22,39 +22,73 @@ const router = express.Router();
  *         id:
  *           type: string
  *           format: uuid
- *         fieldName:
- *           type: string
- *         fieldLabel:
- *           type: string
- *         fieldType:
- *           type: string
- *           enum: [TEXT, NUMBER, DATE, SELECT, CHECKBOX, TEXTAREA]
  *         entityType:
  *           type: string
- *           enum: [LEAD, DEAL, OPPORTUNITY, CLIENT]
+ *           enum: [LEAD, DEAL, OPPORTUNITY, CLIENT, CONTACT, INVOICE]
+ *         fieldName:
+ *           type: string
+ *           description: Machine name (snake_case)
+ *         fieldLabel:
+ *           type: string
+ *           description: Display label
+ *         fieldType:
+ *           type: string
+ *           enum: [TEXT, NUMBER, DATE, SELECT, MULTISELECT, CHECKBOX, TEXTAREA, EMAIL, PHONE, URL, CURRENCY]
  *         options:
  *           type: array
  *           items:
- *             type: string
+ *             type: object
+ *             properties:
+ *               value:
+ *                 type: string
+ *               label:
+ *                 type: string
  *           nullable: true
- *         required:
+ *         defaultValue:
+ *           type: string
+ *           nullable: true
+ *         isRequired:
  *           type: boolean
  *           default: false
  *         sortOrder:
  *           type: integer
  *           default: 0
+ *         isActive:
+ *           type: boolean
+ *           default: true
+ *         validationRules:
+ *           type: object
+ *           nullable: true
+ *           properties:
+ *             min:
+ *               type: number
+ *             max:
+ *               type: number
+ *             minLength:
+ *               type: integer
+ *             maxLength:
+ *               type: integer
+ *             pattern:
+ *               type: string
  *     CustomFieldValue:
  *       type: object
  *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
  *         customFieldId:
  *           type: string
  *           format: uuid
+ *         entityType:
+ *           type: string
+ *         entityId:
+ *           type: string
  *         value:
- *           oneOf:
- *             - type: string
- *             - type: number
- *             - type: boolean
+ *           type: string
+ *           nullable: true
  */
+
+// ─── Field Definition Routes ─────────────────────────────────────────────────
 
 /**
  * @swagger
@@ -70,13 +104,38 @@ const router = express.Router();
  *         required: true
  *         schema:
  *           type: string
- *           enum: [LEAD, DEAL, OPPORTUNITY, CLIENT]
- *         description: The entity type to get fields for
+ *           enum: [LEAD, DEAL, OPPORTUNITY, CLIENT, CONTACT, INVOICE]
+ *       - in: query
+ *         name: includeInactive
+ *         schema:
+ *           type: boolean
+ *         description: Include inactive fields (admin only)
  *     responses:
  *       200:
  *         description: List of custom field definitions
  */
 router.get('/fields/:entityType', authenticateUser, customFieldController.getFields);
+
+/**
+ * @swagger
+ * /api/custom-fields/fields/detail/{id}:
+ *   get:
+ *     summary: Get a single custom field definition
+ *     tags: [Custom Field]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Custom field definition
+ */
+router.get('/fields/detail/:id', authenticateUser, customFieldController.getFieldById);
 
 /**
  * @swagger
@@ -100,27 +159,29 @@ router.get('/fields/:entityType', authenticateUser, customFieldController.getFie
  *             properties:
  *               fieldName:
  *                 type: string
- *                 description: Internal field name
  *               fieldLabel:
  *                 type: string
- *                 description: Display label for the field
  *               fieldType:
  *                 type: string
- *                 enum: [TEXT, NUMBER, DATE, SELECT, CHECKBOX, TEXTAREA]
+ *                 enum: [TEXT, NUMBER, DATE, SELECT, MULTISELECT, CHECKBOX, TEXTAREA, EMAIL, PHONE, URL, CURRENCY]
  *               entityType:
  *                 type: string
- *                 enum: [LEAD, DEAL, OPPORTUNITY, CLIENT]
+ *                 enum: [LEAD, DEAL, OPPORTUNITY, CLIENT, CONTACT, INVOICE]
  *               options:
  *                 type: array
  *                 items:
- *                   type: string
- *                 description: Options for SELECT field type
- *               required:
+ *                   type: object
+ *                   properties:
+ *                     value:
+ *                       type: string
+ *                     label:
+ *                       type: string
+ *               defaultValue:
+ *                 type: string
+ *               isRequired:
  *                 type: boolean
- *                 default: false
- *               sortOrder:
- *                 type: integer
- *                 default: 0
+ *               validationRules:
+ *                 type: object
  *     responses:
  *       201:
  *         description: Custom field created
@@ -142,29 +203,12 @@ router.post('/fields', authenticateUser, HasPermission([SettingsPermissionsEnum.
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Custom field ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               fieldName:
- *                 type: string
- *               fieldLabel:
- *                 type: string
- *               fieldType:
- *                 type: string
- *                 enum: [TEXT, NUMBER, DATE, SELECT, CHECKBOX, TEXTAREA]
- *               options:
- *                 type: array
- *                 items:
- *                   type: string
- *               required:
- *                 type: boolean
- *               sortOrder:
- *                 type: integer
+ *             $ref: '#/components/schemas/CustomField'
  *     responses:
  *       200:
  *         description: Custom field updated
@@ -175,7 +219,7 @@ router.put('/fields/:id', authenticateUser, HasPermission([SettingsPermissionsEn
  * @swagger
  * /api/custom-fields/fields/{id}:
  *   delete:
- *     summary: Delete a custom field definition and its values
+ *     summary: Soft-delete a custom field (set isActive=false)
  *     tags: [Custom Field]
  *     security:
  *       - bearerAuth: []
@@ -186,10 +230,9 @@ router.put('/fields/:id', authenticateUser, HasPermission([SettingsPermissionsEn
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Custom field ID
  *     responses:
  *       200:
- *         description: Custom field deleted
+ *         description: Custom field deactivated
  */
 router.delete('/fields/:id', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), customFieldController.deleteField);
 
@@ -214,13 +257,9 @@ router.delete('/fields/:id', authenticateUser, HasPermission([SettingsPermission
  *                 type: array
  *                 items:
  *                   type: object
- *                   required:
- *                     - id
- *                     - sortOrder
  *                   properties:
  *                     id:
  *                       type: string
- *                       format: uuid
  *                     sortOrder:
  *                       type: integer
  *     responses:
@@ -228,6 +267,8 @@ router.delete('/fields/:id', authenticateUser, HasPermission([SettingsPermission
  *         description: Fields reordered
  */
 router.put('/fields/reorder', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), customFieldController.reorderFields);
+
+// ─── Field Value Routes ──────────────────────────────────────────────────────
 
 /**
  * @swagger
@@ -243,17 +284,14 @@ router.put('/fields/reorder', authenticateUser, HasPermission([SettingsPermissio
  *         required: true
  *         schema:
  *           type: string
- *           enum: [LEAD, DEAL, OPPORTUNITY, CLIENT]
- *         description: The entity type
  *       - in: path
  *         name: entityId
  *         required: true
  *         schema:
  *           type: string
- *         description: The entity ID
  *     responses:
  *       200:
- *         description: List of custom field values with field definitions
+ *         description: Custom field values with field definitions
  */
 router.get('/values/:entityType/:entityId', authenticateUser, customFieldController.getValues);
 
@@ -261,7 +299,7 @@ router.get('/values/:entityType/:entityId', authenticateUser, customFieldControl
  * @swagger
  * /api/custom-fields/values/{entityType}/{entityId}:
  *   put:
- *     summary: Save custom field values for a specific entity
+ *     summary: Bulk save custom field values for a specific entity
  *     tags: [Custom Field]
  *     security:
  *       - bearerAuth: []
@@ -271,14 +309,11 @@ router.get('/values/:entityType/:entityId', authenticateUser, customFieldControl
  *         required: true
  *         schema:
  *           type: string
- *           enum: [LEAD, DEAL, OPPORTUNITY, CLIENT]
- *         description: The entity type
  *       - in: path
  *         name: entityId
  *         required: true
  *         schema:
  *           type: string
- *         description: The entity ID
  *     requestBody:
  *       required: true
  *       content:
@@ -292,22 +327,41 @@ router.get('/values/:entityType/:entityId', authenticateUser, customFieldControl
  *                 type: array
  *                 items:
  *                   type: object
- *                   required:
- *                     - customFieldId
- *                     - value
  *                   properties:
  *                     customFieldId:
  *                       type: string
- *                       format: uuid
  *                     value:
- *                       oneOf:
- *                         - type: string
- *                         - type: number
- *                         - type: boolean
+ *                       type: string
+ *                       nullable: true
  *     responses:
  *       200:
  *         description: Custom field values saved
  */
 router.put('/values/:entityType/:entityId', authenticateUser, customFieldController.saveValues);
+
+/**
+ * @swagger
+ * /api/custom-fields/values/{entityType}/{entityId}:
+ *   delete:
+ *     summary: Delete all custom field values for a specific entity
+ *     tags: [Custom Field]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: entityType
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: entityId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Custom field values deleted
+ */
+router.delete('/values/:entityType/:entityId', authenticateUser, customFieldController.deleteValues);
 
 export default router;

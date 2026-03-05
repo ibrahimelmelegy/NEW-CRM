@@ -139,6 +139,13 @@ const settingsItems = [
 
 const systemItems = [
   {
+    title: 'Organization',
+    desc: 'View your tenant plan, usage limits, and organization details.',
+    icon: 'ph:buildings',
+    color: '#7c3aed',
+    url: '/settings/tenant'
+  },
+  {
     title: 'Security',
     desc: 'Manage roles, permissions, and access controls.',
     icon: 'ph:shield-check',

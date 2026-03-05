@@ -33,6 +33,8 @@ import { ProjectCategoryEnum, ProjectStatusEnum } from '../project/projectEnum';
 import { tenantWhere, tenantCreate } from '../utils/tenantScope';
 import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
+import { TriggerType } from '../workflow/workflowModel';
+import workflowService from '../workflow/workflowService';
 
 /**
  * Defines which stage transitions are allowed for deals.
@@ -141,6 +143,11 @@ class DealService {
       }
       await createActivityLog('deal', 'create', deal.id, admin.id, null, 'Deal created succesfully from lead conversion');
 
+      // Trigger workflow automation for deal creation (from lead conversion)
+      workflowService.processEntityEvent('deal', String(deal.id), TriggerType.ON_CREATE, null, deal.toJSON(), admin.id).catch((err: Error) => {
+        console.error('Workflow processEntityEvent (deal.convertCreate) error:', err.message);
+      });
+
       return deal;
     } catch (error) {
       await transaction.rollback();
@@ -226,6 +233,12 @@ class DealService {
       }
       await createActivityLog('deal', 'create', deal.id, admin.id, t, 'Deal created succesfully');
       await t.commit();
+
+      // Trigger workflow automation for deal creation
+      workflowService.processEntityEvent('deal', String(deal.id), TriggerType.ON_CREATE, null, deal.toJSON(), admin.id).catch((err: Error) => {
+        console.error('Workflow processEntityEvent (deal.create) error:', err.message);
+      });
+
       return deal;
     } catch (error: Error | unknown) {
       await t.rollback();
@@ -350,6 +363,8 @@ class DealService {
     await this.validateDealAccess(input.dealId, user);
 
     const deal = await this.dealOrError({ id: input.dealId });
+    // Capture old data for workflow field-change detection
+    const oldDealData = deal.toJSON();
 
     if (input.name && input.companyName) {
       const existingDeal = await Deal.findOne({
@@ -393,6 +408,12 @@ class DealService {
     await createActivityLog('deal', 'update', deal.id, user.id, null, `New updates added suucesfully`);
     await deal.save();
     if (input.users && Array.isArray(input.users)) await deal.$set('users', input.users);
+
+    // Trigger workflow automation for deal update (including field change detection)
+    const newDealData = deal.toJSON();
+    workflowService.processEntityEvent('deal', String(deal.id), TriggerType.ON_UPDATE, oldDealData, newDealData, user.id).catch((err: Error) => {
+      console.error('Workflow processEntityEvent (deal.update) error:', err.message);
+    });
 
     return await this.getDealById(deal.id, user);
   }
@@ -504,6 +525,9 @@ class DealService {
     // Validate that this stage transition is allowed
     this.validateDealStageTransition(deal.stage, stage);
 
+    // Capture old data for workflow field-change detection
+    const oldStageData = deal.toJSON();
+
     // Auto-set probability based on the new stage
     const fromStage = deal.stage;
     const probability = DEAL_STAGE_PROBABILITY[stage] ?? 0;
@@ -547,6 +571,13 @@ class DealService {
     }
 
     await createActivityLog('deal', 'update', deal.id, user.id, null, `Deal stage changed to ${stage}`);
+
+    // Trigger workflow automation for deal stage change (ON_UPDATE + ON_FIELD_CHANGE)
+    const newStageData = deal.toJSON();
+    workflowService.processEntityEvent('deal', String(deal.id), TriggerType.ON_UPDATE, oldStageData, newStageData, user.id).catch((err: Error) => {
+      console.error('Workflow processEntityEvent (deal.stageChange) error:', err.message);
+    });
+
     return deal;
   }
 

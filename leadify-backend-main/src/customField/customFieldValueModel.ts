@@ -5,7 +5,11 @@ import CustomField from './customFieldModel';
   tableName: 'custom_field_values',
   modelName: 'CustomFieldValue',
   timestamps: true,
-  indexes: [{ fields: ['entityId', 'entityType'] }, { fields: ['customFieldId'] }]
+  indexes: [
+    { fields: ['entityId', 'entityType'] },
+    { fields: ['customFieldId'] },
+    { fields: ['customFieldId', 'entityType', 'entityId'], unique: true }
+  ]
 })
 class CustomFieldValue extends Model {
   @Column({
@@ -22,14 +26,14 @@ class CustomFieldValue extends Model {
   @BelongsTo(() => CustomField)
   public customField!: CustomField;
 
-  @Column({ type: DataType.UUID, allowNull: false })
-  public entityId!: string;
-
   @Column({ type: DataType.STRING, allowNull: false })
   public entityType!: string;
 
-  @Column({ type: DataType.JSONB, allowNull: true })
-  public value?: unknown;
+  @Column({ type: DataType.UUID, allowNull: false })
+  public entityId!: string;
+
+  @Column({ type: DataType.TEXT, allowNull: true })
+  public value?: string;
 }
 
 export default CustomFieldValue;

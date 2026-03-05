@@ -391,6 +391,15 @@ class NotificationCenterService {
   }
 
   /**
+   * Delete a single notification for a user.
+   */
+  async deleteNotification(id: string, userId: number): Promise<void> {
+    const notification = await Notification.findOne({ where: { id, userId } });
+    if (!notification) throw new BaseError(ERRORS.NOTIFICATION_NOT_FOUND);
+    await notification.destroy();
+  }
+
+  /**
    * Delete notifications older than the specified number of days.
    * Returns the number of deleted notifications.
    */

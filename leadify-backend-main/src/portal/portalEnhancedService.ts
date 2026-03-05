@@ -287,7 +287,7 @@ class PortalEnhancedService {
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   }
 
-  private generateMilestones(project: unknown, progress: number) {
+  private generateMilestones(project: { startDate?: Date; endDate?: Date; isCompleted?: boolean }, progress: number) {
     const milestones = [
       {
         name: 'Project Kickoff',

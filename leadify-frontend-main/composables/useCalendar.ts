@@ -33,9 +33,43 @@ export interface CalendarEvent {
   relatedEntityType?: string;
   relatedEntityId?: string;
   reminder?: number;
+  reminders?: Array<{ minutes: number; type: string }>;
   status: string;
   userId: number;
   user?: { id: number; name: string; profilePicture?: string };
+  externalId?: string;
+  externalProvider?: 'google' | 'outlook' | null;
+  lastSyncedAt?: string;
+}
+
+export interface CalendarSyncStatus {
+  google: {
+    connected: boolean;
+    email: string | null;
+    lastSyncAt: string | null;
+    syncStatus: string;
+    autoSync: boolean;
+    syncedEventsCount: number;
+    lastError: string | null;
+  };
+  outlook: {
+    connected: boolean;
+    email: string | null;
+    lastSyncAt: string | null;
+    syncStatus: string;
+    autoSync: boolean;
+    syncedEventsCount: number;
+    lastError: string | null;
+  };
+  googleConfigured: boolean;
+  outlookConfigured: boolean;
+}
+
+export interface SyncResult {
+  created: number;
+  updated: number;
+  deleted: number;
+  errors: string[];
 }
 
 export const EVENT_TYPES = [
@@ -74,6 +108,10 @@ export function getCalendarPriorityColor(priority: string): string {
   return PRIORITY_OPTIONS.find(p => p.value === priority)?.color || '#6b7280';
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// EVENT API FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+
 export async function fetchCalendarEvents(params?: Record<string, string>): Promise<CalendarEvent[]> {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`calendar${query}`);
@@ -92,8 +130,9 @@ export async function deleteCalendarEvent(id: number) {
   return useApiFetch(`calendar/${id}`, 'DELETE');
 }
 
-export async function fetchUpcomingEvents(): Promise<CalendarEvent[]> {
-  const { body, success } = await useApiFetch('calendar/upcoming');
+export async function fetchUpcomingEvents(limit?: number): Promise<CalendarEvent[]> {
+  const query = limit ? `?limit=${limit}` : '';
+  const { body, success } = await useApiFetch(`calendar/upcoming${query}`);
   return success && body ? (body as CalendarEvent[]) : [];
 }
 
@@ -120,4 +159,82 @@ export async function fetchCalendarAnalytics(startDate?: string, endDate?: strin
 
 export async function updateAttendeeRsvp(eventId: number, status: 'ACCEPTED' | 'DECLINED') {
   return useApiFetch(`calendar/${eventId}/attendee`, 'PUT', { status });
+}
+
+export async function fetchEntityEvents(entityType: string, entityId: string): Promise<CalendarEvent[]> {
+  const { body, success } = await useApiFetch(`calendar/entity/${entityType}/${entityId}`);
+  return success && body ? (body as CalendarEvent[]) : [];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SYNC API FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export async function fetchSyncStatus(): Promise<CalendarSyncStatus | null> {
+  const { body, success } = await useApiFetch('calendar/sync/status');
+  return success && body ? (body as CalendarSyncStatus) : null;
+}
+
+export async function initiateGoogleAuth(): Promise<{ url: string; mock?: boolean } | null> {
+  const { body, success } = await useApiFetch('calendar/sync/google/auth');
+  return success && body ? (body as { url: string; mock?: boolean }) : null;
+}
+
+export async function initiateOutlookAuth(): Promise<{ url: string; mock?: boolean } | null> {
+  const { body, success } = await useApiFetch('calendar/sync/outlook/auth');
+  return success && body ? (body as { url: string; mock?: boolean }) : null;
+}
+
+export async function triggerSync(provider?: 'google' | 'outlook'): Promise<SyncResult | null> {
+  const payload = provider ? { provider } : {};
+  const { body, success } = await useApiFetch('calendar/sync/now', 'POST', payload);
+  return success && body ? (body as SyncResult) : null;
+}
+
+export async function disconnectCalendarProvider(provider: 'google' | 'outlook') {
+  return useApiFetch(`calendar/sync/${provider}/disconnect`, 'POST');
+}
+
+export async function toggleCalendarAutoSync(provider: 'google' | 'outlook', enabled: boolean) {
+  return useApiFetch(`calendar/sync/${provider}/auto-sync`, 'PUT', { enabled });
+}
+
+export async function pushEventToProvider(provider: 'google' | 'outlook', eventId: number) {
+  return useApiFetch(`calendar/sync/${provider}/push`, 'POST', { eventId });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PROVIDER HELPERS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export function getProviderIcon(provider: string): string {
+  if (provider === 'google') return 'logos:google-calendar';
+  if (provider === 'outlook') return 'logos:microsoft-icon';
+  return 'ph:calendar-bold';
+}
+
+export function getProviderLabel(provider: string): string {
+  if (provider === 'google') return 'Google Calendar';
+  if (provider === 'outlook') return 'Outlook Calendar';
+  return 'Calendar';
+}
+
+export function getProviderColor(provider: string): string {
+  if (provider === 'google') return '#4285F4';
+  if (provider === 'outlook') return '#0078D4';
+  return '#6b7280';
+}
+
+export function formatSyncTime(dateStr: string | null): string {
+  if (!dateStr) return 'Never';
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 }

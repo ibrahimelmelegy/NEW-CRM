@@ -52,7 +52,7 @@ Teleport(to="body")
 
       //- Footer
       .notification-footer
-        NuxtLink.view-all(:to="'/notification'" @click="$emit('close')")
+        NuxtLink.view-all(:to="'/notifications'" @click="$emit('close')")
           Icon(name="ph:list-bold" size="16")
           span {{ $t('notifications.viewAll') }}
 </template>

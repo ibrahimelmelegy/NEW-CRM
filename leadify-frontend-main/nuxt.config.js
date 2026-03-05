@@ -14,8 +14,9 @@ export default defineNuxtConfig({
         lang: 'en'
       },
       link: [
-        { rel: 'icon', href: '/images/logo-shape.png' },
-        { rel: 'apple-touch-icon', href: '/images/logo-shape.png' },
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
         { rel: 'dns-prefetch', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com', crossorigin: '' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
@@ -35,7 +36,7 @@ export default defineNuxtConfig({
     }
   },
 
-  css: ['@/assets/styles/global.scss', '@/assets/scss/transitions.scss', '@/assets/css/microsoft-light.css', '@/assets/css/mobile.scss'],
+  css: ['@/assets/styles/global.scss', '@/assets/scss/transitions.scss', '@/assets/css/dark-theme.css', '@/assets/css/microsoft-light.css', '@/assets/css/mobile.scss'],
 
   sourcemap: {
     server: process.env.NODE_ENV !== 'production',

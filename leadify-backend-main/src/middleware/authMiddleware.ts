@@ -8,6 +8,8 @@ import Role from '../role/roleModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import { tenantStorage, TenantStore } from './tenantContext';
+import { validateTenant } from './tenantMiddleware';
+import { tenantRateLimit } from './tenantRateLimit';
 
 interface JwtPayload {
   id: string;
@@ -108,3 +110,21 @@ export const HasPermission = (requiredPermissions: string[]) => {
     }
   };
 };
+
+/**
+ * Combined middleware: authenticateUser + validateTenant + tenantRateLimit.
+ *
+ * Chains three middlewares:
+ * 1. authenticateUser  - JWT auth, session check, sets req.user + tenant context
+ * 2. validateTenant    - Verifies tenant is active/not suspended, attaches req.tenant
+ * 3. tenantRateLimit   - Per-tenant rate limiting based on plan tier
+ *
+ * Use this for new routes that need full tenant isolation.
+ * Existing routes using just `authenticateUser` continue to work unchanged
+ * (they still get automatic query scoping via tenantHooks).
+ */
+export const authenticateWithTenant = [
+  authenticateUser,
+  validateTenant,
+  tenantRateLimit
+] as unknown as ((req: AuthenticatedRequest, res: Response, next: NextFunction) => void)[];

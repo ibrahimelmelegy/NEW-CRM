@@ -5,9 +5,28 @@ div
     :subtitle="$t('calendar.subtitle')"
   )
     template(#actions)
-      el-button(size="large" type="primary" @click="openCreate" class="!rounded-2xl")
-        Icon(name="ph:plus-bold" size="16")
-        span.ml-1 {{ $t('calendar.addEvent') }}
+      .flex.items-center.gap-3
+        //- Sync status indicator
+        NuxtLink.flex.items-center.gap-2.px-3.py-2.rounded-2xl.transition(
+          v-if="syncConnected"
+          to="/settings/calendar-sync"
+          style="background: var(--bg-input)"
+          class="hover:brightness-110"
+        )
+          .w-2.h-2.rounded-full.bg-green-500
+          .text-xs.font-medium(style="color: var(--text-muted)") {{ syncLabel }}
+          Icon(name="ph:arrows-clockwise-bold" size="14" style="color: var(--text-muted)")
+        NuxtLink.flex.items-center.gap-2.px-3.py-2.rounded-2xl.transition(
+          v-else
+          to="/settings/calendar-sync"
+          style="background: var(--bg-input)"
+          class="hover:brightness-110"
+        )
+          Icon(name="ph:plug-bold" size="14" style="color: var(--text-muted)")
+          .text-xs.font-medium(style="color: var(--text-muted)") {{ $t('calendarSync.connectCalendar') }}
+        el-button(size="large" type="primary" @click="openCreate" class="!rounded-2xl")
+          Icon(name="ph:plus-bold" size="16")
+          span.ml-1 {{ $t('calendar.addEvent') }}
 
   //- Stats Row + Quick Analytics
   .grid.grid-cols-2(class="md:grid-cols-5 gap-4 mb-6")
@@ -324,6 +343,20 @@ div
           Icon(name="ph:link-bold" size="18" style="color: var(--text-muted)")
           a.text-sm(:href="detailEvent.meetingLink" target="_blank" style="color: #7849ff; text-decoration: underline") {{ detailEvent.meetingLink }}
 
+        //- Sync indicator
+        .flex.items-center.gap-2.p-2.rounded-lg(
+          v-if="detailEvent.externalProvider"
+          style="background: var(--bg-input)"
+        )
+          Icon(
+            :name="detailEvent.externalProvider === 'google' ? 'logos:google-calendar' : 'logos:microsoft-icon'"
+            size="16"
+          )
+          .text-xs(style="color: var(--text-muted)")
+            | {{ $t('calendarSync.syncedFrom') }}
+            |
+            span.font-medium(style="color: var(--text-primary)") {{ detailEvent.externalProvider === 'google' ? 'Google Calendar' : 'Outlook' }}
+
         //- Description
         div(v-if="detailEvent.description")
           .text-xs.font-bold.mb-1(style="color: var(--text-muted)") {{ $t('calendar.description') }}
@@ -449,13 +482,14 @@ div
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import type { CalendarEvent, CalendarAttendee } from '~/composables/useCalendar';
+import type { CalendarEvent, CalendarAttendee, CalendarSyncStatus } from '~/composables/useCalendar';
 import {
   fetchCalendarEvents,
   createCalendarEvent,
   updateCalendarEvent,
   deleteCalendarEvent,
   fetchTodayAgenda,
+  fetchSyncStatus,
   EVENT_TYPES,
   PRIORITY_OPTIONS,
   STATUS_OPTIONS,
@@ -480,6 +514,21 @@ const showDetail = ref(false);
 const editingId = ref<number | null>(null);
 const detailEvent = ref<CalendarEvent | null>(null);
 const formRef = ref();
+
+// Calendar sync status
+const syncStatusData = ref<CalendarSyncStatus | null>(null);
+const syncConnected = computed(() => {
+  if (!syncStatusData.value) return false;
+  return syncStatusData.value.google.connected || syncStatusData.value.outlook.connected;
+});
+const syncLabel = computed(() => {
+  if (!syncStatusData.value) return '';
+  const { google, outlook } = syncStatusData.value;
+  if (google.connected && outlook.connected) return 'Google + Outlook';
+  if (google.connected) return 'Google';
+  if (outlook.connected) return 'Outlook';
+  return '';
+});
 
 // Mini calendar separate date tracking
 const miniDate = ref(new Date());
@@ -1007,6 +1056,10 @@ watch(viewMode, () => {
 onMounted(() => {
   loadEvents();
   loadTodayAgenda();
+  // Load sync status (non-blocking)
+  fetchSyncStatus().then(status => {
+    syncStatusData.value = status;
+  });
 });
 </script>
 

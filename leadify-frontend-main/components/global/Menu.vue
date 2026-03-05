@@ -438,6 +438,7 @@ const menu = [
       { link: '/approvals/workflows', name: 'navigation.approvalWorkflows', icon: 'ph:flow-arrow-bold' },
       { link: '/settings/theme-studio', name: 'navigation.themeStudio', icon: 'ph:palette-bold' },
       { link: '/settings/integrations', name: 'navigation.integrations', icon: 'ph:plugs-connected-bold' },
+      { link: '/settings/calendar-sync', name: 'navigation.calendarSync', icon: 'ph:calendar-plus-bold' },
       { link: '/settings/security', name: 'navigation.security', icon: 'ph:lock-bold' },
       { link: '/settings/custom-fields', name: 'navigation.customFields', icon: 'ph:sliders-horizontal-bold' },
       { link: '/settings/webhooks', name: 'navigation.webhooks', icon: 'ph:webhooks-logo-bold' },

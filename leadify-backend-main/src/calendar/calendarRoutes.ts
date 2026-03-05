@@ -9,8 +9,214 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Calendar
- *   description: Calendar event management
+ *   description: Calendar event management and external calendar sync
  */
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SYNC ROUTES (must be before parameterized routes)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * @swagger
+ * /api/calendar/sync/status:
+ *   get:
+ *     summary: Get sync status for all providers
+ *     tags: [Calendar]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Sync status for Google and Outlook
+ */
+router.get('/sync/status', authenticateUser, HasPermission([CalendarPermissionsEnum.VIEW_CALENDAR]), calendarController.getSyncStatus);
+
+/**
+ * @swagger
+ * /api/calendar/sync/google/auth:
+ *   get:
+ *     summary: Initiate Google Calendar OAuth
+ *     tags: [Calendar]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: OAuth URL to redirect user to
+ */
+router.get('/sync/google/auth', authenticateUser, HasPermission([CalendarPermissionsEnum.EDIT_CALENDAR]), calendarController.initiateGoogleAuth);
+
+/**
+ * @swagger
+ * /api/calendar/sync/google/callback:
+ *   get:
+ *     summary: Handle Google Calendar OAuth callback
+ *     tags: [Calendar]
+ *     parameters:
+ *       - in: query
+ *         name: code
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: state
+ *         schema:
+ *           type: string
+ *     responses:
+ *       302:
+ *         description: Redirects to frontend
+ */
+router.get('/sync/google/callback', calendarController.handleGoogleCallback);
+
+/**
+ * @swagger
+ * /api/calendar/sync/outlook/auth:
+ *   get:
+ *     summary: Initiate Outlook Calendar OAuth
+ *     tags: [Calendar]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: OAuth URL to redirect user to
+ */
+router.get('/sync/outlook/auth', authenticateUser, HasPermission([CalendarPermissionsEnum.EDIT_CALENDAR]), calendarController.initiateOutlookAuth);
+
+/**
+ * @swagger
+ * /api/calendar/sync/outlook/callback:
+ *   get:
+ *     summary: Handle Outlook Calendar OAuth callback
+ *     tags: [Calendar]
+ *     parameters:
+ *       - in: query
+ *         name: code
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: state
+ *         schema:
+ *           type: string
+ *     responses:
+ *       302:
+ *         description: Redirects to frontend
+ */
+router.get('/sync/outlook/callback', calendarController.handleOutlookCallback);
+
+/**
+ * @swagger
+ * /api/calendar/sync/now:
+ *   post:
+ *     summary: Trigger manual sync
+ *     tags: [Calendar]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               provider:
+ *                 type: string
+ *                 enum: [google, outlook]
+ *                 description: If omitted, syncs all connected providers
+ *     responses:
+ *       200:
+ *         description: Sync results
+ */
+router.post('/sync/now', authenticateUser, HasPermission([CalendarPermissionsEnum.EDIT_CALENDAR]), calendarController.syncNow);
+
+/**
+ * @swagger
+ * /api/calendar/sync/{provider}/disconnect:
+ *   post:
+ *     summary: Disconnect a calendar provider
+ *     tags: [Calendar]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: provider
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [google, outlook]
+ *     responses:
+ *       200:
+ *         description: Provider disconnected
+ */
+router.post(
+  '/sync/:provider/disconnect',
+  authenticateUser,
+  HasPermission([CalendarPermissionsEnum.EDIT_CALENDAR]),
+  calendarController.disconnectProvider
+);
+
+/**
+ * @swagger
+ * /api/calendar/sync/{provider}/auto-sync:
+ *   put:
+ *     summary: Toggle auto-sync for a provider
+ *     tags: [Calendar]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: provider
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [google, outlook]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               enabled:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Auto-sync toggled
+ */
+router.put('/sync/:provider/auto-sync', authenticateUser, HasPermission([CalendarPermissionsEnum.EDIT_CALENDAR]), calendarController.toggleAutoSync);
+
+/**
+ * @swagger
+ * /api/calendar/sync/{provider}/push:
+ *   post:
+ *     summary: Push a CRM event to external calendar
+ *     tags: [Calendar]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: provider
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [google, outlook]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - eventId
+ *             properties:
+ *               eventId:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Event pushed to external calendar
+ */
+router.post('/sync/:provider/push', authenticateUser, HasPermission([CalendarPermissionsEnum.EDIT_CALENDAR]), calendarController.pushEventToProvider);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CALENDAR EVENT ROUTES
+// ═══════════════════════════════════════════════════════════════════════════════
 
 /**
  * @swagger
@@ -20,6 +226,11 @@ const router = express.Router();
  *     tags: [Calendar]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
  *         description: Upcoming events
@@ -98,6 +309,37 @@ router.get('/analytics', authenticateUser, HasPermission([CalendarPermissionsEnu
 
 /**
  * @swagger
+ * /api/calendar/entity/{entityType}/{entityId}:
+ *   get:
+ *     summary: Get events linked to a CRM entity
+ *     tags: [Calendar]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: entityType
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [lead, deal, client, opportunity, project]
+ *       - in: path
+ *         name: entityId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Events for the entity
+ */
+router.get(
+  '/entity/:entityType/:entityId',
+  authenticateUser,
+  HasPermission([CalendarPermissionsEnum.VIEW_CALENDAR]),
+  calendarController.getEventsForEntity
+);
+
+/**
+ * @swagger
  * /api/calendar:
  *   get:
  *     summary: Get calendar events with filtering
@@ -110,18 +352,15 @@ router.get('/analytics', authenticateUser, HasPermission([CalendarPermissionsEnu
  *         schema:
  *           type: string
  *           format: date-time
- *         description: Range start date
  *       - in: query
  *         name: end
  *         schema:
  *           type: string
  *           format: date-time
- *         description: Range end date
  *       - in: query
  *         name: userId
  *         schema:
  *           type: integer
- *         description: Filter by user ID
  *       - in: query
  *         name: eventType
  *         schema:
@@ -165,46 +404,6 @@ router.get('/', authenticateUser, HasPermission([CalendarPermissionsEnum.VIEW_CA
  *               - title
  *               - startDate
  *               - endDate
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               startDate:
- *                 type: string
- *                 format: date-time
- *               endDate:
- *                 type: string
- *                 format: date-time
- *               allDay:
- *                 type: boolean
- *                 default: false
- *               color:
- *                 type: string
- *               eventType:
- *                 type: string
- *                 enum: [MEETING, CALL, TASK, REMINDER, BOOKING, FOLLOW_UP, DEADLINE, OTHER]
- *                 default: OTHER
- *               priority:
- *                 type: string
- *                 enum: [LOW, MEDIUM, HIGH, URGENT]
- *                 default: MEDIUM
- *               location:
- *                 type: string
- *               meetingLink:
- *                 type: string
- *               attendees:
- *                 type: array
- *               recurrence:
- *                 type: object
- *               isPrivate:
- *                 type: boolean
- *               relatedEntityType:
- *                 type: string
- *               relatedEntityId:
- *                 type: string
- *               reminder:
- *                 type: integer
  *     responses:
  *       201:
  *         description: Event created

@@ -22,20 +22,25 @@
       el-table-column(:label="$t('portal.invoices.invoiceNo')" prop="invoiceNumber" width="160")
       el-table-column(:label="$t('portal.invoices.deal')" min-width="200")
         template(#default="{ row }")
-          span {{ row.deal?.name || '—' }}
+          span {{ row.deal?.name || '---' }}
       el-table-column(:label="$t('portal.invoices.amount')" width="150" align="right")
         template(#default="{ row }")
           span.font-bold {{ formatCurrency(row.amount) }}
       el-table-column(:label="$t('portal.invoices.date')" width="140")
         template(#default="{ row }")
-          span {{ row.invoiceDate ? new Date(row.invoiceDate).toLocaleDateString() : '—' }}
+          span {{ row.invoiceDate ? new Date(row.invoiceDate).toLocaleDateString() : '---' }}
       el-table-column(:label="$t('portal.invoices.status')" width="130" align="center")
         template(#default="{ row }")
           el-tag(:type="invoiceStatusType(row)" size="small" effect="dark") {{ invoiceStatusLabel(row) }}
-      el-table-column(:label="''" width="100" align="center")
+      el-table-column(:label="$t('common.actions')" width="140" align="center")
         template(#default="{ row }")
-          el-button(text size="small" @click="viewInvoice(row)")
-            Icon(name="ph:eye-bold" size="14" aria-label="View")
+          .flex.items-center.justify-center.gap-1
+            el-tooltip(:content="$t('portal.invoices.viewDetails')" placement="top")
+              el-button(text size="small" @click="viewInvoice(row)")
+                Icon(name="ph:eye-bold" size="14" aria-label="View")
+            el-tooltip(:content="$t('portal.invoices.downloadPdf')" placement="top")
+              el-button(text size="small" @click="downloadPdf(row)")
+                Icon(name="ph:file-pdf-bold" size="14" aria-label="Download PDF")
 
     //- Pagination
     .flex.justify-center.mt-4(v-if="pagination.totalPages > 1")
@@ -53,6 +58,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElNotification } from 'element-plus';
 import { useEnhancedPortal, type PortalInvoice } from '~/composables/usePortal';
 
 definePageMeta({ layout: 'portal' });
@@ -60,7 +66,7 @@ definePageMeta({ layout: 'portal' });
 const { t } = useI18n();
 
 const { init, isAuthenticated } = usePortalAuth();
-const { invoices, invoicePagination: pagination, loading, fetchInvoices } = useEnhancedPortal();
+const { invoices, invoicePagination: pagination, loading, fetchInvoices, fetchInvoicePdfData } = useEnhancedPortal();
 
 const showInvoiceDetail = ref(false);
 const selectedInvoice = ref<PortalInvoice | null>(null);
@@ -80,19 +86,56 @@ function viewInvoice(row: PortalInvoice) {
   showInvoiceDetail.value = true;
 }
 
+async function downloadPdf(row: PortalInvoice) {
+  const data = await fetchInvoicePdfData(row.id);
+  if (!data) {
+    ElNotification({ type: 'error', title: t('common.error'), message: t('portal.invoices.pdfError') });
+    return;
+  }
+
+  // Generate a simple text-based invoice document for download
+  const lines = [
+    '='.repeat(50),
+    'INVOICE',
+    '='.repeat(50),
+    '',
+    `Invoice #: ${data.invoiceNumber}`,
+    `Amount: ${formatCurrency(data.amount)}`,
+    `Issue Date: ${data.invoiceDate ? new Date(data.invoiceDate).toLocaleDateString() : 'N/A'}`,
+    `Due Date: ${data.dueDate ? new Date(data.dueDate).toLocaleDateString() : 'N/A'}`,
+    `Status: ${data.status}`,
+    `Deal: ${data.deal?.name || 'N/A'}`,
+    '',
+    '='.repeat(50),
+    `Generated on ${new Date().toLocaleString()}`
+  ];
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `invoice-${data.invoiceNumber}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  ElNotification({ type: 'success', title: t('common.success'), message: t('portal.invoices.pdfDownloaded') });
+}
+
 async function handlePageChange(page: number) {
   currentPage.value = page;
   await fetchInvoices(page);
 }
 
-function invoiceStatusType(row: unknown): string {
+function invoiceStatusType(row: PortalInvoice): string {
   if (row.status === 'PAID' || row.collected) return 'success';
   if (row.status === 'OVERDUE') return 'warning';
   if (row.status === 'PARTIAL') return '';
   return 'danger';
 }
 
-function invoiceStatusLabel(row: unknown): string {
+function invoiceStatusLabel(row: PortalInvoice): string {
   if (row.status === 'PAID' || row.collected) return t('portal.invoices.paid');
   if (row.status === 'OVERDUE') return t('portal.invoices.overdue');
   if (row.status === 'PARTIAL') return t('portal.invoices.partial');

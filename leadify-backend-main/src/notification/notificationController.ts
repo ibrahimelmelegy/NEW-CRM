@@ -81,6 +81,16 @@ class NotificationController {
     }
   }
 
+  public async deleteNotification(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.id;
+      await notificationCenterService.deleteNotification(req.params.id as string, userId);
+      wrapResult(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async deleteOldNotifications(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const daysOld = parseInt(req.query.daysOld as string) || 90;

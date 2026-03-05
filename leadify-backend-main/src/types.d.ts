@@ -1,8 +1,11 @@
 import { Request } from 'express';
 import User from './user/userModel';
+import Tenant from './tenant/tenantModel';
 
 export interface AuthenticatedRequest extends Request {
   user?: InstanceType<typeof User>; // or just `User` if it's the instance type
+  /** Populated by validateTenant middleware — the full tenant record */
+  tenant?: InstanceType<typeof Tenant>;
   emailApiKey?: InstanceType<typeof String>;
   file?: {
     fieldname: string;

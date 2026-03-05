@@ -1,7 +1,7 @@
 <template lang="pug">
 .portal-layout.min-h-screen
   ProfessionalBackground
-  PortalHeader(:user="portalUser" @logout="logout")
+  PortalPortalHeader(:user="portalUser" @logout="logout")
   .portal-nav
     .portal-nav-inner
       NuxtLink.portal-nav-item(
@@ -25,9 +25,9 @@ const navItems = [
   { to: '/portal/deals', icon: 'ph:handshake-bold', label: 'portal.nav.deals' },
   { to: '/portal/invoices', icon: 'ph:receipt-bold', label: 'portal.nav.invoices' },
   { to: '/portal/projects', icon: 'ph:kanban-bold', label: 'portal.nav.projects' },
+  { to: '/portal/tickets', icon: 'ph:ticket-bold', label: 'portal.nav.tickets' },
   { to: '/portal/documents', icon: 'ph:folder-open-bold', label: 'portal.nav.documents' },
-  { to: '/portal/signatures', icon: 'ph:pen-nib-bold', label: 'portal.nav.signatures' },
-  { to: '/portal/tickets', icon: 'ph:ticket-bold', label: 'portal.nav.tickets' }
+  { to: '/portal/signatures', icon: 'ph:pen-nib-bold', label: 'portal.nav.signatures' }
 ];
 
 function isActive(path: string): boolean {
@@ -57,6 +57,7 @@ onMounted(() => {
   padding: 0 24px;
   display: flex;
   gap: 4px;
+  overflow-x: auto;
 }
 .portal-nav-item {
   display: flex;
@@ -69,6 +70,7 @@ onMounted(() => {
   text-decoration: none;
   border-bottom: 2px solid transparent;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 .portal-nav-item:hover {
   color: var(--text-primary);

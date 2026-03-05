@@ -31,11 +31,26 @@ export const useThemeStore = defineStore('theme', () => {
   const glassOpacity = ref(0.08);
   const fontSize = ref(14);
 
+  // isDark is the inverse of isLight for convenient access
+  const isDark = computed(() => !isLight.value);
+
   const activePreset = computed(() => THEME_PRESETS.find(p => p.id === activePresetId.value) || THEME_PRESETS[0]);
 
   const initializeTheme = () => {
     const saved = localStorage.getItem('theme');
-    isLight.value = saved === 'light' || saved === 'true';
+
+    if (saved === 'light' || saved === 'true') {
+      isLight.value = true;
+    } else if (saved === 'dark' || saved === 'false') {
+      isLight.value = false;
+    } else {
+      // No saved preference: detect system preference
+      if (typeof window !== 'undefined' && window.matchMedia) {
+        isLight.value = window.matchMedia('(prefers-color-scheme: light)').matches;
+      } else {
+        isLight.value = false; // Default to dark
+      }
+    }
 
     const savedPreset = localStorage.getItem('theme-preset');
     if (savedPreset) activePresetId.value = savedPreset;
@@ -60,13 +75,26 @@ export const useThemeStore = defineStore('theme', () => {
     isLight.value = !isLight.value;
     localStorage.setItem('theme', isLight.value ? 'light' : 'dark');
     applyTheme();
+    applyCustomTheme();
   };
 
   const applyTheme = () => {
+    const root = document.documentElement;
     if (isLight.value) {
-      document.documentElement.classList.add('light-mode');
+      root.classList.add('light-mode');
+      root.classList.remove('dark');
+      document.body.classList.add('light-theme');
+      document.body.classList.remove('dark');
     } else {
-      document.documentElement.classList.remove('light-mode');
+      root.classList.remove('light-mode');
+      root.classList.add('dark');
+      document.body.classList.remove('light-theme');
+      document.body.classList.add('dark');
+    }
+    // Update meta theme-color for mobile browsers
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', isLight.value ? '#f4f4f5' : '#0a0a0f');
     }
   };
 
@@ -93,8 +121,10 @@ export const useThemeStore = defineStore('theme', () => {
     root.style.setProperty('--glass-opacity', `${glassOpacity.value}`);
     root.style.setProperty('--base-font-size', `${fontSize.value}px`);
 
-    // Glass background with dynamic opacity
-    const glassBg = isLight.value ? `rgba(255, 255, 255, ${glassOpacity.value})` : `rgba(255, 255, 255, ${glassOpacity.value})`;
+    // Glass background with dynamic opacity - different tint for light vs dark
+    const glassBg = isLight.value
+      ? `rgba(255, 255, 255, ${Math.max(glassOpacity.value, 0.6)})`
+      : `rgba(255, 255, 255, ${glassOpacity.value})`;
     root.style.setProperty('--glass-bg-primary', glassBg);
   };
 
@@ -124,6 +154,7 @@ export const useThemeStore = defineStore('theme', () => {
 
   return {
     isLight,
+    isDark,
     activePresetId,
     accentColor,
     glassBlur,

@@ -3,13 +3,20 @@ export enum CustomFieldType {
   NUMBER = 'NUMBER',
   DATE = 'DATE',
   SELECT = 'SELECT',
+  MULTISELECT = 'MULTISELECT',
   CHECKBOX = 'CHECKBOX',
-  TEXTAREA = 'TEXTAREA'
+  TEXTAREA = 'TEXTAREA',
+  EMAIL = 'EMAIL',
+  PHONE = 'PHONE',
+  URL = 'URL',
+  CURRENCY = 'CURRENCY'
 }
 
 export enum CustomFieldEntity {
   LEAD = 'LEAD',
   DEAL = 'DEAL',
   OPPORTUNITY = 'OPPORTUNITY',
-  CLIENT = 'CLIENT'
+  CLIENT = 'CLIENT',
+  CONTACT = 'CONTACT',
+  INVOICE = 'INVOICE'
 }

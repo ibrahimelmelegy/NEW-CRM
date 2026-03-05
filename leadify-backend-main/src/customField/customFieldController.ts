@@ -7,8 +7,20 @@ class CustomFieldController {
   async getFields(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const { entityType } = req.params;
-      const fields = await customFieldService.getFieldsByEntity(entityType as string);
+      const includeInactive = req.query.includeInactive === 'true';
+      const fields = includeInactive
+        ? await customFieldService.getAllFieldsByEntity(entityType as string)
+        : await customFieldService.getFieldsByEntity(entityType as string);
       wrapResult(res, fields);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getFieldById(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const field = await customFieldService.getFieldById(req.params.id as string);
+      wrapResult(res, field);
     } catch (error) {
       next(error);
     }
@@ -16,7 +28,11 @@ class CustomFieldController {
 
   async createField(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const field = await customFieldService.createField(req.body);
+      const data = {
+        ...req.body,
+        createdBy: req.user?.id
+      };
+      const field = await customFieldService.createField(data);
       wrapResult(res, field, 201);
     } catch (error) {
       next(error);
@@ -34,8 +50,8 @@ class CustomFieldController {
 
   async deleteField(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      await customFieldService.deleteField(req.params.id as string);
-      wrapResult(res, { deleted: true });
+      const result = await customFieldService.deleteField(req.params.id as string);
+      wrapResult(res, result);
     } catch (error) {
       next(error);
     }
@@ -43,8 +59,8 @@ class CustomFieldController {
 
   async reorderFields(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      await customFieldService.reorderFields(req.body.fields);
-      wrapResult(res, { reordered: true });
+      const result = await customFieldService.reorderFields(req.body.fields);
+      wrapResult(res, result);
     } catch (error) {
       next(error);
     }
@@ -53,7 +69,7 @@ class CustomFieldController {
   async getValues(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const { entityType, entityId } = req.params;
-      const values = await customFieldService.getValuesForEntity(entityId as string, entityType as string);
+      const values = await customFieldService.getValuesForEntity(entityType as string, entityId as string);
       wrapResult(res, values);
     } catch (error) {
       next(error);
@@ -63,8 +79,22 @@ class CustomFieldController {
   async saveValues(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const { entityType, entityId } = req.params;
-      const values = await customFieldService.saveValues(entityId as string, entityType as string, req.body.values);
+      const values = await customFieldService.setFieldValues(
+        entityType as string,
+        entityId as string,
+        req.body.values
+      );
       wrapResult(res, values);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteValues(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { entityType, entityId } = req.params;
+      const result = await customFieldService.deleteFieldValues(entityType as string, entityId as string);
+      wrapResult(res, result);
     } catch (error) {
       next(error);
     }

@@ -116,6 +116,17 @@ sequelize
       } catch (e) {
         // Cron job initialization failed - silently handled
       }
+
+      // Start automated database backup schedule (daily at 2:00 AM)
+      try {
+        const { scheduleAutoBackup } = require('./backup/backupService');
+        const cronExpr = process.env.BACKUP_CRON || '0 2 * * *';
+        if (process.env.BACKUP_ENABLED !== 'false') {
+          scheduleAutoBackup(cronExpr);
+        }
+      } catch (e) {
+        // Auto-backup initialization failed - silently handled
+      }
     });
   })
   .catch((err: Error) => {

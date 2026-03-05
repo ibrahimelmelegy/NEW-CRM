@@ -1,0 +1,304 @@
+/*
+ * DARK MODE - Element Plus & App-wide CSS Variable Overrides
+ * Uses html.dark selector for consistency with Element Plus dark mode convention.
+ * The app defaults to dark mode; this file ensures the html.dark class
+ * properly sets all Element Plus internal variables.
+ *
+ * Light mode is handled by html.light-mode in theme-variables.scss
+ * and microsoft-light.css.
+ */
+
+/* ============================================
+   SMOOTH THEME TRANSITION
+   ============================================ */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    fill 0.3s ease,
+    stroke 0.3s ease !important;
+  transition-delay: 0s !important;
+}
+
+/* ============================================
+   DARK MODE - Element Plus Core Variables
+   ============================================ */
+html.dark {
+  color-scheme: dark;
+
+  /* Element Plus Background Colors */
+  --el-bg-color: #0f0f14;
+  --el-bg-color-page: #0a0a0f;
+  --el-bg-color-overlay: #16161d;
+
+  /* Element Plus Text Colors */
+  --el-text-color-primary: #ffffff;
+  --el-text-color-regular: #a1a1aa;
+  --el-text-color-secondary: #71717a;
+  --el-text-color-placeholder: #52525b;
+  --el-text-color-disabled: #3f3f46;
+
+  /* Element Plus Border Colors */
+  --el-border-color: rgba(255, 255, 255, 0.08);
+  --el-border-color-light: rgba(255, 255, 255, 0.06);
+  --el-border-color-lighter: rgba(255, 255, 255, 0.04);
+  --el-border-color-extra-light: rgba(255, 255, 255, 0.03);
+  --el-border-color-dark: rgba(255, 255, 255, 0.12);
+  --el-border-color-darker: rgba(255, 255, 255, 0.16);
+
+  /* Element Plus Fill Colors */
+  --el-fill-color: #1e1e26;
+  --el-fill-color-light: #252530;
+  --el-fill-color-lighter: #1e1e26;
+  --el-fill-color-extra-light: #16161d;
+  --el-fill-color-dark: #2a2a35;
+  --el-fill-color-darker: #33333f;
+  --el-fill-color-blank: #0f0f14;
+
+  /* Element Plus Box Shadow */
+  --el-box-shadow: 0 12px 32px 4px rgba(0, 0, 0, 0.36), 0 8px 20px rgba(0, 0, 0, 0.72);
+  --el-box-shadow-light: 0 0 12px rgba(0, 0, 0, 0.72);
+  --el-box-shadow-lighter: 0 0 6px rgba(0, 0, 0, 0.48);
+  --el-box-shadow-dark: 0 16px 48px 16px rgba(0, 0, 0, 0.72), 0 12px 32px rgba(0, 0, 0, 0.36),
+    0 8px 16px -8px rgba(0, 0, 0, 0.48);
+
+  /* Element Plus Mask Colors */
+  --el-mask-color: rgba(0, 0, 0, 0.8);
+  --el-mask-color-extra-light: rgba(0, 0, 0, 0.3);
+
+  /* Element Plus Disabled */
+  --el-disabled-bg-color: #1e1e26;
+  --el-disabled-text-color: #52525b;
+  --el-disabled-border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* ============================================
+   DARK MODE - Element Plus Component Overrides
+   ============================================ */
+
+/* Input */
+html.dark .el-input__wrapper {
+  background-color: var(--bg-input, rgba(30, 30, 38, 0.8));
+  box-shadow: 0 0 0 1px var(--el-border-color) inset;
+}
+
+html.dark .el-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--el-border-color-dark) inset;
+}
+
+html.dark .el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--el-color-primary) inset;
+}
+
+/* Textarea */
+html.dark .el-textarea__inner {
+  background-color: var(--bg-input, rgba(30, 30, 38, 0.8));
+  box-shadow: 0 0 0 1px var(--el-border-color) inset;
+}
+
+/* Select Dropdown */
+html.dark .el-select-dropdown {
+  background-color: var(--bg-card-solid, #16161d);
+  border-color: var(--el-border-color);
+}
+
+html.dark .el-select-dropdown__item.is-hovering {
+  background-color: var(--bg-hover, #252530);
+}
+
+/* Table */
+html.dark .el-table {
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+  --el-table-header-bg-color: var(--bg-tertiary, #1e1e26);
+  --el-table-row-hover-bg-color: var(--bg-hover, #252530);
+  --el-table-border-color: var(--el-border-color);
+  --el-table-text-color: var(--text-primary, #ffffff);
+  --el-table-header-text-color: var(--text-secondary, #a1a1aa);
+  --el-table-current-row-bg-color: rgba(120, 73, 255, 0.08);
+}
+
+html.dark .el-table th.el-table__cell {
+  background-color: var(--bg-tertiary, #1e1e26);
+}
+
+/* Dialog */
+html.dark .el-dialog {
+  background-color: var(--bg-card-solid, #16161d);
+  border: 1px solid var(--el-border-color);
+}
+
+html.dark .el-dialog__header {
+  border-bottom: 1px solid var(--el-border-color);
+}
+
+/* Message Box */
+html.dark .el-message-box {
+  background-color: var(--bg-card-solid, #16161d);
+  border: 1px solid var(--el-border-color);
+}
+
+/* Notification */
+html.dark .el-notification {
+  background-color: var(--bg-card-solid, #16161d);
+  border-color: var(--el-border-color);
+}
+
+/* Popover */
+html.dark .el-popover.el-popper {
+  background: var(--bg-card-solid, #16161d);
+  border-color: var(--el-border-color);
+}
+
+/* Dropdown Menu */
+html.dark .el-dropdown-menu {
+  background-color: var(--bg-card-solid, #16161d);
+  border-color: var(--el-border-color);
+}
+
+html.dark .el-dropdown-menu__item:not(.is-disabled):hover {
+  background-color: var(--bg-hover, #252530);
+}
+
+/* Drawer */
+html.dark .el-drawer {
+  background-color: var(--bg-card-solid, #16161d);
+}
+
+/* Tabs */
+html.dark .el-tabs__item {
+  color: var(--text-secondary, #a1a1aa);
+}
+
+html.dark .el-tabs__item.is-active {
+  color: var(--el-color-primary);
+}
+
+html.dark .el-tabs__nav-wrap::after {
+  background-color: var(--el-border-color);
+}
+
+/* Pagination */
+html.dark .el-pagination button,
+html.dark .el-pager li {
+  background-color: transparent;
+  color: var(--text-secondary, #a1a1aa);
+}
+
+html.dark .el-pager li.is-active {
+  color: var(--el-color-primary);
+}
+
+/* Tag */
+html.dark .el-tag {
+  --el-tag-bg-color: rgba(120, 73, 255, 0.12);
+  --el-tag-border-color: rgba(120, 73, 255, 0.2);
+  --el-tag-text-color: #a78bfa;
+}
+
+/* Collapse */
+html.dark .el-collapse-item__header,
+html.dark .el-collapse-item__wrap {
+  background-color: transparent;
+  border-color: var(--el-border-color);
+}
+
+/* Loading */
+html.dark .el-loading-mask {
+  background-color: rgba(10, 10, 15, 0.8);
+}
+
+/* Tooltip */
+html.dark .el-tooltip__popper.is-dark {
+  background: #1e1e26;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Skeleton */
+html.dark .el-skeleton__item {
+  background: linear-gradient(90deg, #1e1e26 25%, #252530 50%, #1e1e26 75%);
+}
+
+/* Calendar */
+html.dark .el-calendar-table td.is-today {
+  color: var(--el-color-primary);
+}
+
+/* Switch */
+html.dark .el-switch__core {
+  border-color: var(--el-border-color);
+}
+
+/* Card */
+html.dark .el-card {
+  background-color: var(--bg-card, rgba(22, 22, 29, 0.85));
+  border-color: var(--el-border-color);
+  color: var(--text-primary);
+}
+
+/* Menu */
+html.dark .el-menu {
+  background-color: transparent;
+  border-color: var(--el-border-color);
+}
+
+html.dark .el-menu-item:hover,
+html.dark .el-sub-menu__title:hover {
+  background-color: var(--bg-hover, #252530);
+}
+
+/* Breadcrumb */
+html.dark .el-breadcrumb__inner {
+  color: var(--text-secondary, #a1a1aa);
+}
+
+html.dark .el-breadcrumb__separator {
+  color: var(--text-muted, #71717a);
+}
+
+/* Form */
+html.dark .el-form-item__label {
+  color: var(--text-secondary, #a1a1aa);
+}
+
+/* Date Picker */
+html.dark .el-date-editor .el-input__wrapper,
+html.dark .el-date-picker,
+html.dark .el-date-range-picker {
+  background-color: var(--bg-card-solid, #16161d);
+}
+
+html.dark .el-picker-panel {
+  background: var(--bg-card-solid, #16161d);
+  border-color: var(--el-border-color);
+}
+
+/* Color Picker */
+html.dark .el-color-picker__panel {
+  background-color: var(--bg-card-solid, #16161d);
+  border-color: var(--el-border-color);
+}
+
+/* Progress */
+html.dark .el-progress__text {
+  color: var(--text-primary, #ffffff);
+}
+
+/* Scrollbar in dark mode */
+html.dark ::-webkit-scrollbar-track {
+  background: var(--bg-primary, #0f0f14);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.24);
+}

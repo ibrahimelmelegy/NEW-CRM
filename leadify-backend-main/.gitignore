@@ -31,6 +31,11 @@ docker-compose.override.yml
 *.swp
 *.swo
 
+# Database backups (keep directory via .gitkeep)
+backups/*.sql.gz
+backups/*.sql
+backups/*.dump
+
 # Build output
 dist/
 build/

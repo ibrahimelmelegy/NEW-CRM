@@ -1,22 +1,19 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op } from 'sequelize';
 import CalendarEvent from './calendarEventModel';
 import User from '../user/userModel';
 
 class CalendarService {
   // ─── Get Events with Date Range & Filters ─────────────────────────────────
-  async getEvents(query: unknown) {
+  async getEvents(query: Record<string, unknown>) {
     const { start, end, userId, eventType, status, priority, search } = query;
     const where: Record<string, unknown> = {};
 
     if (start && end) {
-      where[Op.or] = [
-        { startDate: { [Op.between]: [new Date(start), new Date(end)] } },
-        { endDate: { [Op.between]: [new Date(start), new Date(end)] } },
+      where[Op.or as unknown as string] = [
+        { startDate: { [Op.between]: [new Date(start as string), new Date(end as string)] } },
+        { endDate: { [Op.between]: [new Date(start as string), new Date(end as string)] } },
         {
-          [Op.and]: [
-            { startDate: { [Op.lte]: new Date(start) } },
-            { endDate: { [Op.gte]: new Date(end) } }
-          ]
+          [Op.and]: [{ startDate: { [Op.lte]: new Date(start as string) } }, { endDate: { [Op.gte]: new Date(end as string) } }]
         }
       ];
     }
@@ -38,12 +35,12 @@ class CalendarService {
   }
 
   // ─── Create Event ─────────────────────────────────────────────────────────
-  async createEvent(data: unknown, userId: number) {
+  async createEvent(data: Record<string, unknown>, userId: number) {
     return CalendarEvent.create({ ...data, userId });
   }
 
   // ─── Update Event ─────────────────────────────────────────────────────────
-  async updateEvent(id: number, data: unknown, userId: number) {
+  async updateEvent(id: number, data: Record<string, unknown>, userId: number) {
     const event = await CalendarEvent.findByPk(id);
     if (!event) throw new Error('Event not found');
     return event.update(data);
@@ -67,7 +64,7 @@ class CalendarService {
   }
 
   // ─── Upcoming Events (next 7 days) ───────────────────────────────────────
-  async getUpcomingEvents(userId: number) {
+  async getUpcomingEvents(userId: number, limit?: number) {
     const now = new Date();
     const weekLater = new Date();
     weekLater.setDate(weekLater.getDate() + 7);
@@ -80,7 +77,7 @@ class CalendarService {
       },
       include: [{ model: User, attributes: ['id', 'name', 'profilePicture'] }],
       order: [['startDate', 'ASC']],
-      limit: 20
+      limit: limit || 20
     });
   }
 
@@ -98,10 +95,37 @@ class CalendarService {
           { startDate: { [Op.between]: [todayStart, todayEnd] } },
           { endDate: { [Op.between]: [todayStart, todayEnd] } },
           {
-            [Op.and]: [
-              { startDate: { [Op.lte]: todayStart } },
-              { endDate: { [Op.gte]: todayEnd } }
-            ]
+            [Op.and]: [{ startDate: { [Op.lte]: todayStart } }, { endDate: { [Op.gte]: todayEnd } }]
+          }
+        ]
+      },
+      include: [{ model: User, attributes: ['id', 'name', 'profilePicture'] }],
+      order: [['startDate', 'ASC']]
+    });
+  }
+
+  // ─── Get Events for Entity ────────────────────────────────────────────────
+  async getEventsForEntity(entityType: string, entityId: string) {
+    return CalendarEvent.findAll({
+      where: {
+        relatedEntityType: entityType,
+        relatedEntityId: entityId
+      },
+      include: [{ model: User, attributes: ['id', 'name', 'profilePicture'] }],
+      order: [['startDate', 'ASC']]
+    });
+  }
+
+  // ─── Get Events by Date Range for User ────────────────────────────────────
+  async getEventsByDateRange(userId: number, start: string, end: string) {
+    return CalendarEvent.findAll({
+      where: {
+        userId,
+        [Op.or]: [
+          { startDate: { [Op.between]: [new Date(start), new Date(end)] } },
+          { endDate: { [Op.between]: [new Date(start), new Date(end)] } },
+          {
+            [Op.and]: [{ startDate: { [Op.lte]: new Date(start) } }, { endDate: { [Op.gte]: new Date(end) } }]
           }
         ]
       },
@@ -116,7 +140,7 @@ class CalendarService {
       userId,
       status: 'SCHEDULED',
       allDay: false,
-      [Op.or]: [
+      [Op.or as unknown as string]: [
         {
           startDate: { [Op.lt]: new Date(endDate) },
           endDate: { [Op.gt]: new Date(startDate) }
@@ -193,6 +217,10 @@ class CalendarService {
       priorityDistribution[e.priority] = (priorityDistribution[e.priority] || 0) + 1;
     });
 
+    // Synced events count
+    const syncedFromGoogle = events.filter(e => e.externalProvider === 'google').length;
+    const syncedFromOutlook = events.filter(e => e.externalProvider === 'outlook').length;
+
     return {
       totalEvents: events.length,
       typeDistribution,
@@ -202,7 +230,9 @@ class CalendarService {
       meetingHoursPerWeek: Math.round((totalMeetingMinutes / 60) * 10) / 10,
       scheduledCount: events.filter(e => e.status === 'SCHEDULED').length,
       completedCount: events.filter(e => e.status === 'COMPLETED').length,
-      cancelledCount: events.filter(e => e.status === 'CANCELLED').length
+      cancelledCount: events.filter(e => e.status === 'CANCELLED').length,
+      syncedFromGoogle,
+      syncedFromOutlook
     };
   }
 }

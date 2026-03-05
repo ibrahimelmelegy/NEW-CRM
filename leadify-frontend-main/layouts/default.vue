@@ -108,6 +108,8 @@ const searchInput = ref('');
 const notificationCenter = useNotificationCenter();
 // Initial unread count fetch
 notificationCenter.fetchUnreadCount();
+// Initialize real-time Socket.io listener for notifications
+notificationCenter.initSocketListener();
 
 function toggleDropdown(val: boolean) {
   showDropdown.value = val;

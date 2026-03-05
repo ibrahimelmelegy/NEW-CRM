@@ -1,17 +1,28 @@
 /**
  * Notification Center composable
  * Manages the slide-out notification panel state, data fetching,
- * filtering, grouping, and read/dismiss actions.
+ * filtering, grouping, read/dismiss actions, and real-time Socket.io updates.
  *
  * Uses module-level refs so all callers share the same state (singleton).
  */
 
+import { useSocketStore as _importedSocketStore } from '~/stores/socket';
+
+// Wrapper to get the socket store instance (only call client-side)
+function _getSocketStore() {
+  return _importedSocketStore();
+}
+
 interface NotificationData {
   id: string;
   type: string;
+  title?: string;
   body_en?: string;
   body_ar?: string;
   target?: string;
+  entityType?: string;
+  entityId?: string;
+  priority?: string;
   read: 'READ' | 'UN_READ' | 'CLICKED';
   createdAt: string;
   updatedAt?: string;
@@ -33,6 +44,7 @@ const notifications = ref<NotificationData[]>([]);
 const unreadCount = ref(0);
 const activeTab = ref<TabFilter>('all');
 const loading = ref(false);
+const socketInitialized = ref(false);
 
 export function useNotificationCenter() {
   const { locale } = useI18n();
@@ -79,6 +91,61 @@ export function useNotificationCenter() {
       }
     } catch (e) {
       // Silently fail - this is a background poll
+    }
+  }
+
+  // Initialize Socket.io real-time listener (safe to call multiple times)
+  // Must be called client-side only (e.g. inside onMounted or a client plugin)
+  function initSocketListener() {
+    if (socketInitialized.value || import.meta.server) return;
+
+    try {
+      const socketStore = _getSocketStore();
+
+      if (!socketStore.connected) {
+        socketStore.connect();
+      }
+
+      socketStore.on('notification:new', (data: any) => {
+        if (!data) return;
+
+        const notif = data.notification || data;
+        const newNotification: NotificationData = {
+          id: notif.id || `temp_${Date.now()}`,
+          type: notif.type || 'SYSTEM_ALERT',
+          title: notif.title || '',
+          body_en: notif.message || notif.body_en || '',
+          body_ar: notif.body_ar || notif.message || '',
+          target: notif.actionUrl || notif.entityId || '',
+          entityType: notif.entityType || '',
+          entityId: notif.entityId || '',
+          priority: notif.priority || 'MEDIUM',
+          read: 'UN_READ',
+          createdAt: notif.createdAt || new Date().toISOString()
+        };
+
+        // Avoid duplicates
+        const exists = notifications.value.some(n => n.id === newNotification.id);
+        if (!exists) {
+          notifications.value.unshift(newNotification);
+          unreadCount.value += 1;
+        }
+      });
+
+      socketStore.on('notification:read', (data: any) => {
+        if (!data) return;
+        if (data.readAll) {
+          notifications.value = notifications.value.map(n => ({
+            ...n,
+            read: 'READ' as const
+          }));
+          unreadCount.value = 0;
+        }
+      });
+
+      socketInitialized.value = true;
+    } catch (e) {
+      // Socket store may not be available during SSR
     }
   }
 
@@ -181,6 +248,26 @@ export function useNotificationCenter() {
     }
   }
 
+  // Delete a single notification
+  async function deleteNotification(id: string) {
+    try {
+      const res = await useApiFetch(`notification/${id}`, 'DELETE');
+      if (res?.success) {
+        const idx = notifications.value.findIndex(n => n.id === id);
+        if (idx !== -1) {
+          const wasUnread = notifications.value[idx]?.read === 'UN_READ';
+          notifications.value.splice(idx, 1);
+          notifications.value = [...notifications.value];
+          if (wasUnread) {
+            unreadCount.value = Math.max(0, unreadCount.value - 1);
+          }
+        }
+      }
+    } catch (e) {
+      console.error('[NotificationCenter] Failed to delete:', e);
+    }
+  }
+
   // Click a notification (marks as clicked) and navigate
   async function clickNotification(notif: NotificationData) {
     try {
@@ -228,6 +315,8 @@ export function useNotificationCenter() {
       return null; // Would need more context
     } else if (typeAssign === 'approval') {
       return `/settings/approval-center`;
+    } else if (typeAssign === 'document') {
+      return `/documents`;
     } else {
       typeAssign = `${typeAssign}s`;
     }
@@ -254,12 +343,15 @@ export function useNotificationCenter() {
     toggle,
     fetchNotifications,
     fetchUnreadCount,
+    initSocketListener,
     filteredNotifications,
     groupedNotifications,
     markAllRead,
     markRead,
+    deleteNotification,
     clickNotification,
     getNotificationPath,
     getNotificationText
   };
 }
+

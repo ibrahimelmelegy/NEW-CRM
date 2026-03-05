@@ -69,12 +69,15 @@ import EmailTemplate from '../campaign/emailTemplateModel';
 import Contract from '../contract/contractModel';
 import PortalUser from '../portal/portalUserModel';
 import SupportTicket from '../portal/supportTicketModel';
+import PortalToken from '../portal/portalTokenModel';
+import TicketMessage from '../portal/ticketMessageModel';
 import DocumentTemplate from '../documentTemplate/documentTemplateModel';
 import KBArticle from '../knowledgeBase/kbArticleModel';
 import Attendance from '../hr/attendanceModel';
 import LeaveRequest from '../hr/leaveRequestModel';
 import ExpenseCategory from '../finance/expenseCategoryModel';
 import CalendarEvent from '../calendar/calendarEventModel';
+import CalendarSync from '../calendar/calendarSyncModel';
 import Expense from '../finance/expenseModel';
 import Budget from '../finance/budgetModel';
 import FieldCheckIn from '../fieldOps/checkInModel';
@@ -221,6 +224,7 @@ import UsageRecord from '../usageBilling/usageRecordModel';
 import AccountPlan from '../accountPlanning/accountPlanModel';
 import Stakeholder from '../accountPlanning/stakeholderModel';
 import DemandForecast from '../demandForecasting/forecastModel';
+import Backup from '../backup/backupModel';
 import { registerTenantHooks } from './tenantHooks';
 
 dotenv.config();
@@ -312,6 +316,8 @@ const sequelize = new Sequelize({
     Contract,
     PortalUser,
     SupportTicket,
+    PortalToken,
+    TicketMessage,
     DocumentTemplate,
     KBArticle,
     Attendance,
@@ -320,6 +326,7 @@ const sequelize = new Sequelize({
     Expense,
     Budget,
     CalendarEvent,
+    CalendarSync,
     FieldCheckIn,
     Achievement,
     UserPoints,
@@ -474,7 +481,9 @@ const sequelize = new Sequelize({
     // Account Planning & Demand Forecasting
     AccountPlan,
     Stakeholder,
-    DemandForecast
+    DemandForecast,
+    // Database Backup
+    Backup
   ], // Path to your models
   logging: false
 });

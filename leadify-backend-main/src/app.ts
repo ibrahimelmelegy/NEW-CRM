@@ -10,6 +10,8 @@ import { doubleCsrf } from 'csrf-csrf';
 import { generalLimiter, uploadLimiter, authLimiter, apiIntensiveLimiter, exportLimiter, webhookLimiter } from './middleware/rateLimiter';
 import { sanitizeInput } from './middleware/sanitize';
 import { authenticateUser, HasPermission } from './middleware/authMiddleware';
+import { validateTenant } from './middleware/tenantMiddleware';
+import { tenantRateLimit } from './middleware/tenantRateLimit';
 
 // Validate required SECRET_KEY at startup — never fall back to a hardcoded value
 const CSRF_SECRET = process.env.SECRET_KEY;
@@ -151,6 +153,13 @@ import usageBillingRoutes from './usageBilling/usageBillingRoutes';
 import accountPlanRoutes from './accountPlanning/accountPlanRoutes';
 import complianceManagerRoutes from './complianceManager/complianceRoutes';
 import aiLeadScoringRoutes from './aiLeadScoring/aiLeadScoringRoutes';
+// ─── Tenant Management Routes ────────────────────────────────────────────────
+import tenantAdminRoutes from './tenant/tenantRoutes';
+import tenantSelfRoutes from './tenant/tenantSelfRoutes';
+import backupRoutes from './backup/backupRoutes';
+import monitoringRoutes from './monitoring/monitoringRoutes';
+import { metricsMiddleware } from './middleware/metricsMiddleware';
+import { errorTracker } from './middleware/errorTracker';
 
 const fileUpload = require('express-fileupload');
 
@@ -277,6 +286,9 @@ app.get('/api/csrf-token', (req: Request, res: Response) => {
 
 // 9. General rate limiting
 app.use(generalLimiter);
+
+// 9.5. Metrics collection middleware (tracks request count, response times, errors)
+app.use(metricsMiddleware);
 
 // 9. Request logging (development only, no query strings)
 if (process.env.NODE_ENV !== 'production') {
@@ -447,6 +459,10 @@ app.use('/api/usage-billing', usageBillingRoutes);
 app.use('/api/account-plans', accountPlanRoutes);
 app.use('/api/compliance', complianceManagerRoutes);
 app.use('/api/ai-lead-scoring', aiLeadScoringRoutes);
+// ─── Database Backup & Restore ──────────────────────────────────────────────
+app.use('/api/backups', backupRoutes);
+// ─── Monitoring & Health Dashboard ──────────────────────────────────────────
+app.use('/api/monitoring', monitoringRoutes);
 
 // Public notification unsubscribe (no auth required)
 app.use('/api/notifications', unsubscribeRoutes);
@@ -460,6 +476,12 @@ app.use('/api/auth', authRoutes);
 // BullMQ Queue Dashboard — protected with authentication and ADMIN permission
 app.use('/api/admin/queues', authenticateUser, HasPermission(['MANAGE_SETTINGS']), serverAdapter.getRouter());
 
+// ─── Tenant Management ─────────────────────────────────────────────────────
+// Superadmin tenant admin routes
+app.use('/api/admin/tenants', tenantAdminRoutes);
+// Self-service tenant info for authenticated users
+app.use('/api/tenant', tenantSelfRoutes);
+
 // Serve static files — redirect to CDN when using cloud storage
 if (process.env.STORAGE_PROVIDER === 'spaces' && process.env.DO_SPACES_CDN_URL) {
   app.use('/assets', (req: Request, res: Response) => {
@@ -471,6 +493,9 @@ if (process.env.STORAGE_PROVIDER === 'spaces' && process.env.DO_SPACES_CDN_URL) 
 
 // Legacy Swagger docs route (redirects to new location)
 app.get('/api-docs', (_req, res) => res.redirect('/api/docs'));
+
+// Error Tracking Middleware (logs errors to Redis before passing to handler)
+app.use(errorTracker);
 
 // Error Handling Middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

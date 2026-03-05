@@ -18,6 +18,8 @@ import { sendEmail } from '../utils/emailHelper';
 import notificationService from '../notification/notificationService';
 import { tenantWhere } from '../utils/tenantScope';
 import { io } from '../server';
+import { TriggerType } from '../workflow/workflowModel';
+import workflowService from '../workflow/workflowService';
 import Deal from '../deal/model/dealModel';
 import { DealStageEnums } from '../deal/dealEnum';
 import Invoice from '../deal/model/invoiceMode';
@@ -65,6 +67,12 @@ class ClientService {
     await createActivityLog('client', 'create', client.id, admin.id, null, 'Client created succesfully');
 
     try { io.emit('client:created', { id: client.id, clientName: client.clientName, companyName: client.companyName }); } catch {}
+
+    // Trigger workflow automation for client creation
+    workflowService.processEntityEvent('client', String(client.id), TriggerType.ON_CREATE, null, client.toJSON(), admin.id).catch((err: Error) => {
+      console.error('Workflow processEntityEvent (client.create) error:', err.message);
+    });
+
     return client;
   }
 
@@ -81,6 +89,10 @@ class ClientService {
   async updateClient(id: string, input: unknown, user: User): Promise<unknown> {
     await this.validateClientAccess(id, user);
     const client = await this.clientOrError({ id });
+
+    // Capture old data for workflow field-change detection
+    const oldClientData = client.toJSON();
+
     if (input.email) await this.errorIfClientWithExistEmail(input.email, id);
     if (input.phoneNumber) await this.errorIfClientWithExistPhone(input.phoneNumber, id);
     client.set(input);
@@ -94,6 +106,13 @@ class ClientService {
 
     const updatedClient = await client.save();
     try { io.emit('client:updated', { id: updatedClient.id, clientName: updatedClient.clientName, companyName: updatedClient.companyName }); } catch {}
+
+    // Trigger workflow automation for client update
+    const newClientData = updatedClient.toJSON();
+    workflowService.processEntityEvent('client', String(client.id), TriggerType.ON_UPDATE, oldClientData, newClientData, user.id).catch((err: Error) => {
+      console.error('Workflow processEntityEvent (client.update) error:', err.message);
+    });
+
     return updatedClient;
   }
 
