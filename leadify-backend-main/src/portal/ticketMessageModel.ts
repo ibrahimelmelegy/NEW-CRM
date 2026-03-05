@@ -3,8 +3,8 @@ import SupportTicket from './supportTicketModel';
 import PortalUser from './portalUserModel';
 
 @Table({
-  tableName: 'ticket_messages',
-  modelName: 'TicketMessage',
+  tableName: 'portal_ticket_messages',
+  modelName: 'PortalTicketMessage',
   timestamps: true
 })
 class TicketMessage extends Model {

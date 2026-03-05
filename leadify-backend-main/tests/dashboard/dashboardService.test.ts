@@ -24,6 +24,12 @@ jest.mock('../../src/dailyTask/dailyTaskModel');
 jest.mock('../../src/project/models/projectModel');
 jest.mock('../../src/client/clientModel');
 jest.mock('../../src/deal/model/invoiceMode');
+jest.mock('../../src/infrastructure/cacheService', () => ({
+    __esModule: true,
+    default: {
+        getOrSet: jest.fn((_key: string, fn: () => Promise<unknown>) => fn()),
+    },
+}));
 
 describe('DashboardService', () => {
   const mockDashboard: any = {
