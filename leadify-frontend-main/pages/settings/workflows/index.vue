@@ -132,26 +132,32 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import {
-  fetchWorkflows,
-  createWorkflow,
-  updateWorkflow,
-  deleteWorkflow,
-  toggleWorkflow,
-  fetchWorkflowLogs,
-  WORKFLOW_TRIGGERS,
+  useWorkflows,
+  TRIGGER_TYPES,
   CONDITION_OPERATORS,
   ACTION_TYPES,
-  type Workflow
+  type WorkflowRule
 } from '~/composables/useWorkflows';
+
+const {
+  fetchWorkflows,
+  createWorkflow: apiCreateWorkflow,
+  updateWorkflow: apiUpdateWorkflow,
+  deleteWorkflow: apiDeleteWorkflow,
+  toggleWorkflow: apiToggleWorkflow,
+  fetchExecutions
+} = useWorkflows();
 
 const loading = ref(true);
 const saving = ref(false);
-const workflows = ref<Workflow[]>([]);
+const workflows = ref<WorkflowRule[]>([]);
 const showBuilder = ref(false);
 const showLogs = ref(false);
 const logsLoading = ref(false);
 const logs = ref<Record<string, unknown>[]>([]);
-const editingId = ref<string | null>(null);
+const editingId = ref<number | null>(null);
+
+const WORKFLOW_TRIGGERS = TRIGGER_TYPES;
 
 const emptyForm = () => ({
   name: '',
@@ -164,7 +170,8 @@ const emptyForm = () => ({
 const form = ref(emptyForm());
 
 onMounted(async () => {
-  workflows.value = await fetchWorkflows();
+  await fetchWorkflows();
+  workflows.value = (await useApiFetch('workflows'))?.body?.docs || [];
   loading.value = false;
 });
 
@@ -184,13 +191,13 @@ function addAction() {
   form.value.actions.push({ type: 'SEND_EMAIL', config: {} });
 }
 
-function editWorkflow(wf: Workflow) {
+function editWorkflow(wf: WorkflowRule) {
   editingId.value = wf.id;
   form.value = {
     name: wf.name,
-    trigger: wf.trigger,
+    trigger: wf.triggerType,
     conditions: [...(wf.conditions || [])],
-    actions: (wf.actions || []).map((a) => ({ type: a.type, config: { ...a.config } })),
+    actions: (wf.actions || []).map((a: Record<string, unknown>) => ({ type: a.type as string, config: { ...(a.config as Record<string, unknown> || {}) } })),
     isActive: wf.isActive
   };
   showBuilder.value = true;
@@ -200,30 +207,36 @@ async function saveWorkflow() {
   saving.value = true;
   const data = { ...form.value };
   if (editingId.value) {
-    await updateWorkflow(editingId.value, data);
+    await apiUpdateWorkflow(editingId.value, data as Partial<WorkflowRule>);
   } else {
-    await createWorkflow(data);
+    await apiCreateWorkflow(data as Partial<WorkflowRule>);
   }
-  workflows.value = await fetchWorkflows();
+  workflows.value = (await useApiFetch('workflows'))?.body?.docs || [];
   showBuilder.value = false;
   editingId.value = null;
   form.value = emptyForm();
   saving.value = false;
 }
 
-async function removeWorkflow(id: string) {
-  await deleteWorkflow(id);
+async function removeWorkflow(id: number) {
+  await apiDeleteWorkflow(id);
   workflows.value = workflows.value.filter(w => w.id !== id);
 }
 
-async function handleToggle(wf: Workflow) {
-  await toggleWorkflow(wf.id, wf.isActive);
+async function handleToggle(wf: WorkflowRule) {
+  await apiToggleWorkflow(wf.id, wf.isActive);
 }
 
-async function viewLogs(id: string) {
+async function viewLogs(id: number) {
   showLogs.value = true;
   logsLoading.value = true;
-  logs.value = await fetchWorkflowLogs(id);
+  try {
+    await fetchExecutions(id);
+    const res = await useApiFetch(`workflows/rules/${id}/executions`);
+    logs.value = res?.body?.docs || [];
+  } catch {
+    logs.value = [];
+  }
   logsLoading.value = false;
 }
 
