@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import PortalUser from './portalUserModel';
 import SupportTicket from './supportTicketModel';
-import TicketMessage from './ticketMessageModel';
+import PortalTicketMessage from './ticketMessageModel';
 import PortalToken from './portalTokenModel';
 import Client from '../client/clientModel';
 import Deal from '../deal/model/dealModel';
@@ -227,7 +227,7 @@ class PortalService {
         collected: inv.collected,
         collectedDate: inv.collectedDate,
         status,
-        deal: (inv as unknown as Record<string, unknown>).deal || null
+        deal: (inv as unknown as Record<string, any>).deal || null
       };
     });
   }
@@ -285,7 +285,7 @@ class PortalService {
     });
 
     // Create initial message from the ticket description
-    await TicketMessage.create({
+    await PortalTicketMessage.create({
       ticketId: ticket.id,
       message: data.description,
       senderType: 'client',
@@ -322,7 +322,7 @@ class PortalService {
 
     if (!ticket) throw new Error('Ticket not found');
 
-    const messages = await TicketMessage.findAll({
+    const messages = await PortalTicketMessage.findAll({
       where: { ticketId },
       include: [{ model: PortalUser, attributes: ['id', 'name', 'email'] }],
       order: [['createdAt', 'ASC']]
@@ -349,7 +349,7 @@ class PortalService {
       await ticket.update({ status: TicketStatus.OPEN });
     }
 
-    const message = await TicketMessage.create({
+    const message = await PortalTicketMessage.create({
       ticketId,
       message: messageText,
       senderType: 'client',
@@ -409,7 +409,7 @@ class PortalService {
     if (!ticket) throw new Error('Ticket not found');
 
     // Add a staff message
-    await TicketMessage.create({
+    await PortalTicketMessage.create({
       ticketId: id,
       message: response,
       senderType: 'staff'

@@ -7,7 +7,7 @@ import PortalUser from './portalUserModel';
   modelName: 'PortalTicketMessage',
   timestamps: true
 })
-class TicketMessage extends Model {
+class PortalTicketMessage extends Model {
   @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true })
   public id!: number;
 
@@ -16,7 +16,7 @@ class TicketMessage extends Model {
   public ticketId!: string;
 
   @BelongsTo(() => SupportTicket)
-  public ticket?: SupportTicket;
+  public supportTicket?: SupportTicket;
 
   @Column({ type: DataType.TEXT, allowNull: false })
   public message!: string;
@@ -35,4 +35,4 @@ class TicketMessage extends Model {
   public staffUserId?: number;
 }
 
-export default TicketMessage;
+export default PortalTicketMessage;
