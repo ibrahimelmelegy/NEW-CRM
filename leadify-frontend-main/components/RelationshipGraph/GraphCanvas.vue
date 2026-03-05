@@ -7,7 +7,7 @@ import { ref, onMounted, onUnmounted, watch } from 'vue';
 import type { GraphNode } from '~/composables/useRelationshipGraph';
 
 const props = defineProps<{
-  elements: any[];
+  elements: Record<string, unknown>[];
 }>();
 
 const emit = defineEmits<{
@@ -15,7 +15,7 @@ const emit = defineEmits<{
 }>();
 
 const containerRef = ref<HTMLElement | null>(null);
-let cy: any = null;
+let cy: unknown = null;
 
 async function initCytoscape() {
   if (!containerRef.value) return;
@@ -82,7 +82,7 @@ async function initCytoscape() {
     wheelSensitivity: 0.3
   });
 
-  cy.on('tap', 'node', (evt: any) => {
+  cy.on('tap', 'node', (evt: unknown) => {
     const nodeData = evt.target.data();
     emit('nodeClick', {
       id: nodeData.id,

@@ -14,7 +14,7 @@ el-dialog(v-model='dialog' width='800' align-center='' :class="{ 'material': isA
         InputSelect.flex-1(placeholder=" Additional Material Category" name="materialCategoryId" :options="addMaterialsOptions"  :value="addMaterialId" :key="addMaterialId" @change="toggleAddMaterialSelection" )
         el-button(size='medium' v-if="addMaterialId" :icon="Select" native-type="button" @click='AdditionalMaterialItem = true' class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4 !m-0")
         el-button(size='medium' :icon="Plus" native-type="button" @click='selectedMaterial= {},addAdditionMaterial = true' class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4 !m-0")
-        el-button(size='medium' :icon="Edit" native-type="button" @click='selectedMaterial=addMaterials?.find((item: any) => item.id === addMaterialId),addAdditionMaterial = true' v-if="addMaterialId" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4 !m-0")
+        el-button(size='medium' :icon="Edit" native-type="button" @click='selectedMaterial=addMaterials?.find((item) => item.id === addMaterialId),addAdditionMaterial = true' v-if="addMaterialId" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4 !m-0")
       .glass-card.rounded-3xl.my-3.border.p-5
         .flex.justify-justify-between.items-center
           .title.font-bold.text-base.capitalize.flex-1 Items
@@ -25,10 +25,10 @@ el-dialog(v-model='dialog' width='800' align-center='' :class="{ 'material': isA
     template(v-if="isAdditionalService")
       p.text-sm.text-neutral-500.font-semibold.mb-3 Service Type
       .flex.align-center.gap-1
-        InputSelect.flex-1(placeholder=" Service Type" name="serviceId" :options="services" :value="isNewlyAdded ? services[0]?.value : serviceId? services?.find((item: any) => item.value === serviceId)?.value :data?.serviceId" :key="isNewlyAdded" @change="toggleServiceSelection" )
+        InputSelect.flex-1(placeholder=" Service Type" name="serviceId" :options="services" :value="isNewlyAdded ? services[0]?.value : serviceId? services?.find((item) => item.value === serviceId)?.value :data?.serviceId" :key="isNewlyAdded" @change="toggleServiceSelection" )
         el-button(size='medium' :icon="Plus" native-type="button" @click="selectedService={},addService = true" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4")
-        el-button(size='medium' :icon="Edit" native-type="button" @click='selectedService=services?.find((item: any) => item.value === serviceId),addService = true' v-if="serviceId" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4 !m-0")
-      InputText.mt-4(:label="$t('operations.servicePrice')" type="number" disabled name="servicePrice" :value="services.find((service: any) => service.value === values.serviceId)?.price || 0" :key="values.serviceId" )
+        el-button(size='medium' :icon="Edit" native-type="button" @click='selectedService=services?.find((item) => item.value === serviceId),addService = true' v-if="serviceId" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4 !m-0")
+      InputText.mt-4(:label="$t('operations.servicePrice')" type="number" disabled name="servicePrice" :value="services.find((service) => service.value === values.serviceId)?.price || 0" :key="values.serviceId" )
     .dialog-footer
         .flex.mt-4.justify-end
             el-button(  class="!rounded-2xl" @click='dialog = false' size="large"   ) Cancel
@@ -68,20 +68,20 @@ const addMaterial = ref<AdditionalMaterial>();
 const selectedMaterial = ref<AdditionalMaterial>();
 const addMaterialsId = ref<string[]>([]);
 const serviceId = ref();
-const addMaterialsItems = ref<any>();
+const addMaterialsItems = ref<Record<string, unknown>>();
 const selectedService = ref<Service>();
-const finalAddMaterialsItems = ref<any>([]);
+const finalAddMaterialsItems = ref<Record<string, unknown>>([]);
 const formSchema = yup.object({
   description: yup.string().trim().required().min(2).max(100).label('Description'),
   quantity: yup
     .number()
     .required()
     .label('material Quantity')
-    .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value)),
+    .transform((value: unknown, originalValue: unknown) => (String(originalValue).trim() === '' ? null : value)),
   unitPrice: yup
     .string()
     .required()
-    .test('is-valid-number', 'Please enter a valid number.', (value: any) => /^\d*\.?\d*$/.test(value || ''))
+    .test('is-valid-number', 'Please enter a valid number.', (value: unknown) => /^\d*\.?\d*$/.test(value || ''))
     .label('material Unit Price')
 });
 
@@ -89,7 +89,7 @@ const { handleSubmit, values } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit(async (values: any, actions: any) => {
+const onSubmit = handleSubmit(async (values: unknown, actions: unknown) => {
   const formattedValues = cleanObject({
     materialId: props.data?.id,
     serviceId: values.serviceId,
@@ -152,7 +152,7 @@ isAdditionalMaterial.value = !!props.data?.additionalMaterialId;
 isAdditionalService.value = !!props.data?.serviceId;
 
 let services = await useTableFilter('service');
-services = services.formattedData.map((item: any) => ({
+services = services.formattedData.map((item) => ({
   label: item.type,
   value: item.id,
   price: item.price
@@ -168,13 +168,13 @@ function mapAddMaterials(data: AdditionalMaterial[] = []): { label: string; valu
  * Updates the items data and filtered addMaterials list based on the selected addMaterial IDs.
  */
 function updateTableData() {
-  items.value.data = addMaterialsItems.value?.map((item: any) => ({
+  items.value.data = addMaterialsItems.value?.map((item) => ({
     price: item?.price,
     name:
       item?.name ||
       addMaterials.value
-        ?.find((material: any) => Object.keys(finalAddMaterialsItems.value).includes(material.id?.toString()))
-        ?.materialItem.find((materialI: any) => materialI.id === item?.id)?.name,
+        ?.find((material) => Object.keys(finalAddMaterialsItems.value).includes(material.id?.toString()))
+        ?.materialItem.find((materialI: unknown) => materialI.id === item?.id)?.name,
     quantity: item?.quantity || 1,
     additionalMaterialPrice: item?.price * (item?.quantity || 1)
   }));
@@ -184,9 +184,9 @@ const addMaterialId = ref<string>('');
 /**
  * Toggles the selection of a addMaterial by its ID.
  */
-function toggleAddMaterialSelection(val?: any) {
+function toggleAddMaterialSelection(val?: unknown) {
   addMaterialId.value = val?.value || val;
-  addMaterial.value = addMaterials.value?.find((item: any) => item.id === addMaterialId.value);
+  addMaterial.value = addMaterials.value?.find((item) => item.id === addMaterialId.value);
   if (props.selectedAddMaterialItem && addMaterial.value && Object.keys(props.selectedAddMaterialItem).length) {
     addMaterial.value = updateMaterialQuantities(props.selectedAddMaterialItem, addMaterial.value);
     getAddMaterialsItem(props.selectedAddMaterialItem);
@@ -195,7 +195,7 @@ function toggleAddMaterialSelection(val?: any) {
     Object.keys(props.allAddMaterialItems).length &&
     Object.keys(props.allAddMaterialItems).includes(addMaterialId.value?.toString())
   ) {
-    getAddMaterialsItem({ [addMaterialId.value]: props.allAddMaterialItems[addMaterialId.value as any] });
+    getAddMaterialsItem({ [addMaterialId.value]: props.allAddMaterialItems[addMaterialId.value as unknown] });
   }
 }
 /**
@@ -212,18 +212,18 @@ if (props.data) {
   serviceId.value = props.data?.serviceId;
 }
 
-function getAddMaterialsItem(val: any) {
+function getAddMaterialsItem(val: unknown) {
   finalAddMaterialsItems.value = val;
   addMaterialsItems.value = val[Object.keys(val)[0]!];
   updateTableData();
 }
 await fetchAddMaterials(props?.data?.additionalMaterialId);
 
-function updateMaterialQuantities(selectedItems: any, additionalMaterial: any) {
+function updateMaterialQuantities(selectedItems: unknown, additionalMaterial: unknown) {
   return {
     ...additionalMaterial,
-    materialItem: additionalMaterial.materialItem?.map((item: any) => {
-      const selectedItem = selectedItems[Object.keys(selectedItems)[0]!]?.find((s: any) => s.id === item.id);
+    materialItem: additionalMaterial.materialItem?.map((item) => {
+      const selectedItem = selectedItems[Object.keys(selectedItems)[0]!]?.find((s) => s.id === item.id);
       return selectedItem ? { ...item, quantity: selectedItem.quantity } : item;
     })
   };
@@ -231,14 +231,14 @@ function updateMaterialQuantities(selectedItems: any, additionalMaterial: any) {
 
 const isNewlyAdded = ref(false);
 
-function toggleServiceSelection(val?: any) {
+function toggleServiceSelection(val?: unknown) {
   serviceId.value = val?.value || val;
 }
 
-async function updateService(val?: any) {
+async function updateService(val?: unknown) {
   serviceId.value = '';
   services = await useTableFilter('service');
-  services = services.formattedData.map((item: any) => ({
+  services = services.formattedData.map((item) => ({
     label: item.type,
     value: item.id,
     price: item.price

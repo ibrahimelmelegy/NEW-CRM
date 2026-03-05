@@ -134,17 +134,17 @@ const props = defineProps({
 
 const emit = defineEmits<{
   'sort-change': [sort: SmartTableSort];
-  'selection-change': [rows: any[]];
-  'row-click': [row: any];
-  'cell-edit': [payload: { row: any; prop: string; value: any; oldValue: any }];
+  'selection-change': [rows: Record<string, unknown>[]];
+  'row-click': [row: unknown];
+  'cell-edit': [payload: { row: unknown; prop: string; value: unknown; oldValue: unknown }];
 }>();
 
 const tableRef = ref<InstanceType<typeof ElTable> | null>(null);
-const editInputRef = ref<any>(null);
+const editInputRef = ref<Record<string, unknown> | null>(null);
 
 // Inline editing state
 const editingCell = ref<{ rowIndex: number; prop: string } | null>(null);
-const editValue = ref<any>('');
+const editValue = ref<Record<string, unknown>>('');
 
 // Computed
 const visibleColumns = computed(() => [...props.columns].filter(c => c.visible !== false).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
@@ -163,7 +163,7 @@ const isEditingCell = (rowIndex: number, prop: string) => {
   return editingCell.value?.rowIndex === rowIndex && editingCell.value?.prop === prop;
 };
 
-const startEdit = (rowIndex: number, prop: string, currentValue: any) => {
+const startEdit = (rowIndex: number, prop: string, currentValue: unknown) => {
   editingCell.value = { rowIndex, prop };
   editValue.value = currentValue ?? '';
   nextTick(() => {
@@ -174,7 +174,7 @@ const startEdit = (rowIndex: number, prop: string, currentValue: any) => {
   });
 };
 
-const saveEdit = (rowIndex: number, prop: string, row: any) => {
+const saveEdit = (rowIndex: number, prop: string, row: unknown) => {
   if (!editingCell.value) return;
   const oldValue = row[prop];
   const newValue = editValue.value;
@@ -198,11 +198,11 @@ const handleSortChange = ({ prop, order }: { prop: string; order: string | null 
   });
 };
 
-const handleSelectionChange = (rows: any[]) => {
+const handleSelectionChange = (rows: Record<string, unknown>[]) => {
   emit('selection-change', rows);
 };
 
-const handleRowClick = (row: any) => {
+const handleRowClick = (row: unknown) => {
   emit('row-click', row);
 };
 
@@ -215,12 +215,12 @@ const getStatusType = (status: string): string => {
   return '';
 };
 
-const getSelectLabel = (col: SmartTableColumn, value: any) => {
+const getSelectLabel = (col: SmartTableColumn, value: unknown) => {
   const opt = col.filters?.find(f => f.value === value);
   return opt?.label || value;
 };
 
-const formatDate = (val: any) => {
+const formatDate = (val: unknown) => {
   if (!val) return '-';
   try {
     const d = new Date(val);
@@ -230,7 +230,7 @@ const formatDate = (val: any) => {
   }
 };
 
-const formatNumber = (val: any) => {
+const formatNumber = (val: unknown) => {
   if (val == null || val === '') return '-';
   const num = Number(val);
   if (isNaN(num)) return val;

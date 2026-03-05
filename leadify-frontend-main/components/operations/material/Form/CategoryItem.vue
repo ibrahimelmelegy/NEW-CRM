@@ -30,7 +30,7 @@ const formSchema = yup.object({
     .number()
     .required()
     .label('Price')
-    .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value))
+    .transform((value: unknown, originalValue: unknown) => (String(originalValue).trim() === '' ? null : value))
 });
 
 // Form setup
@@ -39,7 +39,7 @@ const { handleSubmit, errors, validate, values } = useForm({ validationSchema: f
 const formRef = ref();
 
 //  Emit submittion values
-const onSubmit = handleSubmit((values: any) => {
+const onSubmit = handleSubmit((values: unknown) => {
   emit('onSubmit', { name: values.name, id: props.categoryItem.id, price: Number(values.price) });
 });
 

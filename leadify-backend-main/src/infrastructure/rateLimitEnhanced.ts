@@ -19,7 +19,7 @@ import { Request, Response } from 'express';
  * ensures fair usage across a multi-user deployment behind a load balancer.
  */
 function userOrIpKeyGenerator(req: Request): string {
-  const user = (req as any).user;
+  const user = (req as unknown).user;
   if (user && user.id) {
     return `user_${user.id}`;
   }

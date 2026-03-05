@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  timeline: any[];
+  timeline: Record<string, unknown>[];
 }>();
 
 function getIcon(type: string): string {

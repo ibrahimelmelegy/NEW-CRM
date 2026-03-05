@@ -23,12 +23,12 @@ const { handleSubmit, errors, values, resetForm } = useForm();
 const emit = defineEmits(['showFilter']);
 
 const users = await useApiFetch('users');
-const mappedUsers = users?.body?.docs?.map((e: any) => ({
+const mappedUsers = users?.body?.docs?.map((e) => ({
   label: e.name,
   value: e.id
 }));
 
-const onSubmit = handleSubmit(async (values: any) => {
+const onSubmit = handleSubmit(async (values: unknown) => {
   if (values.fromExpectedCloseDate) {
     values.fromExpectedCloseDate = [getYear(values.fromExpectedCloseDate.toISOString())];
   }

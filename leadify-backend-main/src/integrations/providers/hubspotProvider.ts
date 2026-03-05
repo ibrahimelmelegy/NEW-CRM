@@ -11,13 +11,13 @@ export interface HubSpotSyncResult<T> {
 
 export interface HubSpotRecord {
   id: string;
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   createdAt?: string;
   updatedAt?: string;
 }
 
 export class HubSpotProvider {
-  private client: any = null;
+  private client: unknown = null;
 
   static isConfigured(): boolean {
     return !!process.env.HUBSPOT_API_KEY;
@@ -44,7 +44,7 @@ export class HubSpotProvider {
         return { success: true, data: { synced: response.results.length, failed: contacts.length - response.results.length }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: contacts.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[HubSpotProvider] syncContacts error:', err.message);
       return { success: false, data: null, error: err.message, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
@@ -59,7 +59,7 @@ export class HubSpotProvider {
         return { success: true, data: { synced: response.results.length, failed: deals.length - response.results.length }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: deals.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[HubSpotProvider] syncDeals error:', err.message);
       return { success: false, data: null, error: err.message, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
@@ -74,7 +74,7 @@ export class HubSpotProvider {
         return { success: true, data: { synced: response.results.length, failed: companies.length - response.results.length }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: companies.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[HubSpotProvider] syncCompanies error:', err.message);
       return { success: false, data: null, error: err.message, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
@@ -84,13 +84,13 @@ export class HubSpotProvider {
     try {
       const client = this.getClient();
       if (client) {
-        const apiMap: Record<string, any> = {
+        const apiMap: Record<string, unknown> = {
           contacts: client.crm.contacts,
           deals: client.crm.deals,
           companies: client.crm.companies,
         };
         const response = await apiMap[objectType].basicApi.getPage(limit);
-        const records: HubSpotRecord[] = response.results.map((r: any) => ({
+        const records: HubSpotRecord[] = response.results.map((r) => ({
           id: r.id,
           properties: r.properties,
           createdAt: r.createdAt,
@@ -103,18 +103,18 @@ export class HubSpotProvider {
         { id: 'hs_002', properties: { firstname: 'Test', lastname: 'User', email: 'test@example.com' } },
       ];
       return { success: true, data: mockRecords, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[HubSpotProvider] importFromHubspot error:', err.message);
       return { success: false, data: null, error: err.message, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 
-  async exportToHubspot(objectType: 'contacts' | 'deals' | 'companies', records: Array<Record<string, any>>): Promise<HubSpotSyncResult<{ exported: number; failed: number }>> {
+  async exportToHubspot(objectType: 'contacts' | 'deals' | 'companies', records: Array<Record<string, unknown>>): Promise<HubSpotSyncResult<{ exported: number; failed: number }>> {
     try {
       const client = this.getClient();
       if (client) {
         const inputs = records.map(r => ({ properties: r }));
-        const apiMap: Record<string, any> = {
+        const apiMap: Record<string, unknown> = {
           contacts: client.crm.contacts,
           deals: client.crm.deals,
           companies: client.crm.companies,
@@ -123,7 +123,7 @@ export class HubSpotProvider {
         return { success: true, data: { exported: response.results.length, failed: records.length - response.results.length }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { exported: records.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[HubSpotProvider] exportToHubspot error:', err.message);
       return { success: false, data: null, error: err.message, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }

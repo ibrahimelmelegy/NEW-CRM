@@ -285,7 +285,7 @@ const setHeading = (event: Event) => {
     editor.value
       .chain()
       .focus()
-      .toggleHeading({ level: parseInt(value) as any })
+      .toggleHeading({ level: parseInt(value) as unknown })
       .run();
   }
 };

@@ -145,7 +145,7 @@ watch(
   }
 );
 
-async function setEmail(pre: any) {
+async function setEmail(pre: unknown) {
   email.value = pre.target.value;
 }
 

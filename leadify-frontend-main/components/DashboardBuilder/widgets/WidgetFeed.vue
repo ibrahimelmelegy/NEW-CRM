@@ -84,9 +84,9 @@ async function loadData() {
     if (props.feedType === 'activities') {
       const { body, success } = await useApiFetch('activity?limit=12');
       if (success && body) {
-        const data = body as any;
+        const data = body as unknown;
         const docs = data.docs || data || [];
-        items.value = docs.map((a: any) => ({
+        items.value = docs.map((a) => ({
           id: a.id || a._id,
           text: a.description || `${a.action || a.status || 'Action'} on ${a.entityType || 'record'}`,
           user: a.user?.name || a.userName || undefined,
@@ -98,9 +98,9 @@ async function loadData() {
     } else {
       const { body, success } = await useApiFetch('notifications?limit=10');
       if (success && body) {
-        const data = body as any;
+        const data = body as unknown;
         const docs = data.docs || data || [];
-        items.value = docs.map((n: any) => ({
+        items.value = docs.map((n) => ({
           id: n.id || n._id,
           text: n.message || n.title || n.description || 'Notification',
           user: n.from?.name || undefined,

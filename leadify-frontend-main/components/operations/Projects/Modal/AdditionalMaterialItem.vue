@@ -42,7 +42,7 @@ const emit = defineEmits(['confirm', 'submit']);
 const checkList = ref([]);
 
 // Track selected items
-const selectedItems = ref<any[]>([]);
+const selectedItems = ref<Record<string, unknown>[]>([]);
 
 // ✅ Update checklist based on condition:
 // - If addMaterial.id exists in allAddMaterialItems, use that data.
@@ -50,8 +50,8 @@ const selectedItems = ref<any[]>([]);
 if (props.addMaterial?.id && props.allAddMaterialItems && props.allAddMaterialItems[props.addMaterial.id]) {
   if (!props.isNew) {
     const filterAddMaterial = props.addMaterial.materialItem;
-    filterAddMaterial.forEach((item: any) => {
-      const matchedItem = props.allAddMaterialItems?.[props.addMaterial?.id]?.find((material: any) => material.id === item.id);
+    filterAddMaterial.forEach((item) => {
+      const matchedItem = props.allAddMaterialItems?.[props.addMaterial?.id]?.find((material) => material.id === item.id);
       if (matchedItem) {
         item.quantity = matchedItem.quantity; // Update the quantity in materialItem
       }
@@ -65,14 +65,14 @@ if (props.addMaterial?.id && props.allAddMaterialItems && props.allAddMaterialIt
 }
 
 // Update selectedItems (only items with quantity)
-selectedItems.value = checkList.value.filter((item: any) => item.quantity > 0);
+selectedItems.value = checkList.value.filter((item) => item.quantity > 0);
 
 // Function to check if an item is selected 👍
-const isSelected = (item: any) => selectedItems.value.some((i: any) => i.id === item.id);
+const isSelected = (item: unknown) => selectedItems.value.some((i) => i.id === item.id);
 
 // Collect data on form submit and emit the data
 const onSubmit = () => {
-  const selectedData = selectedItems.value.map((item: any) => ({
+  const selectedData = selectedItems.value.map((item) => ({
     name: item.name,
     id: item.id,
     quantity: +item.quantity || 1,

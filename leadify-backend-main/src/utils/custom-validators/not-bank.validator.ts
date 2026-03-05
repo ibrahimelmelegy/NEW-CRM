@@ -12,7 +12,7 @@ export function IsNotBlank(validationOptions?: ValidationOptions) {
       name: 'isNotBlank',
       constraints: [],
       validator: {
-        validate(value: any) {
+        validate(value: unknown) {
           return typeof value === 'string' && value.trim().length > 0;
         },
         defaultMessage: options => `${options!.property} must not be blank`

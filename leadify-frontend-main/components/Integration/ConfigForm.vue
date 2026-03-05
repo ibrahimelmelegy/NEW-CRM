@@ -80,13 +80,13 @@ const props = defineProps<{
   modelValue: boolean;
   integration: MarketplaceIntegration | null;
   isConfigured: boolean;
-  existingConfig?: Record<string, any>;
+  existingConfig?: Record<string, unknown>;
 }>();
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
-  (e: 'save', data: { type: string; config: Record<string, any> }): void;
-  (e: 'test', data: { type: string; config: Record<string, any> }): void;
+  (e: 'save', data: { type: string; config: Record<string, unknown> }): void;
+  (e: 'test', data: { type: string; config: Record<string, unknown> }): void;
   (e: 'disconnect', type: string): void;
 }>();
 

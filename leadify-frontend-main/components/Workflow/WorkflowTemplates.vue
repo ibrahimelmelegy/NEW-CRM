@@ -54,7 +54,7 @@ interface TemplateNode {
   data: {
     label: string;
     nodeType: string;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
   };
 }
 
@@ -119,7 +119,7 @@ function selectTemplate(tpl: WorkflowTemplate) {
 async function fetchTemplates() {
   loading.value = true;
   try {
-    const { body, success } = await useApiFetch('workflows/templates' as any);
+    const { body, success } = await useApiFetch('workflows/templates' as unknown);
     if (success && body) {
       templates.value = Array.isArray(body) ? body : [];
     }

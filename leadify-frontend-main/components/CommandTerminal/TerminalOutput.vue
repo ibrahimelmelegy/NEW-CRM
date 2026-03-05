@@ -27,7 +27,7 @@ interface TerminalLine {
   type: 'command' | 'result' | 'error' | 'info' | 'table';
   content: string;
   timestamp: Date;
-  data?: any[];
+  data?: Record<string, unknown>[];
 }
 
 const props = defineProps({
@@ -48,7 +48,7 @@ function formatTime(date: Date): string {
   return `${h}:${m}:${s}`;
 }
 
-function tableColumns(data: any[]): string[] {
+function tableColumns(data: Record<string, unknown>[]): string[] {
   if (!data || data.length === 0) return [];
   return Object.keys(data[0]);
 }

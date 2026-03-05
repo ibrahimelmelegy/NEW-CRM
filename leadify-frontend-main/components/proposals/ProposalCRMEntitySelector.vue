@@ -155,9 +155,9 @@ const entityType = ref<EntityType>('Opportunity');
 const searchTerm = ref('');
 
 // CRM data
-const opportunities = ref<any[]>([]);
-const deals = ref<any[]>([]);
-const projects = ref<any[]>([]);
+const opportunities = ref<Record<string, unknown>[]>([]);
+const deals = ref<Record<string, unknown>[]>([]);
+const projects = ref<Record<string, unknown>[]>([]);
 const isLoadingOpportunities = ref(false);
 const isLoadingDeals = ref(false);
 const isLoadingProjects = ref(false);
@@ -198,7 +198,7 @@ const isLoadingEntities = computed(() => {
 
 const filteredEntities = computed(() => {
   const term = searchTerm.value.toLowerCase();
-  return currentEntities.value.filter((entity: any) => entity.name?.toLowerCase().includes(term) || entity.title?.toLowerCase().includes(term));
+  return currentEntities.value.filter((entity) => entity.name?.toLowerCase().includes(term) || entity.title?.toLowerCase().includes(term));
 });
 
 // ---- Methods ----
@@ -211,7 +211,7 @@ const toggleDropdown = () => {
   isOpen.value = !isOpen.value;
 };
 
-const handleSelect = (entity: any) => {
+const handleSelect = (entity: unknown) => {
   const clientData = entity.client || {};
 
   emit('update:modelValue', {
@@ -237,7 +237,7 @@ const fetchOpportunities = async () => {
   try {
     const response = await useApiFetch('opportunity', 'GET');
     if (response.success && response.body) {
-      opportunities.value = Array.isArray(response.body) ? response.body : (response.body as any).rows || [];
+      opportunities.value = Array.isArray(response.body) ? response.body : (response.body as unknown).rows || [];
     }
   } catch (error) {
     console.error('Failed to fetch opportunities:', error);
@@ -251,7 +251,7 @@ const fetchDeals = async () => {
   try {
     const response = await useApiFetch('deal', 'GET');
     if (response.success && response.body) {
-      deals.value = Array.isArray(response.body) ? response.body : (response.body as any).rows || [];
+      deals.value = Array.isArray(response.body) ? response.body : (response.body as unknown).rows || [];
     }
   } catch (error) {
     console.error('Failed to fetch deals:', error);
@@ -265,7 +265,7 @@ const fetchProjects = async () => {
   try {
     const response = await useApiFetch('project', 'GET');
     if (response.success && response.body) {
-      projects.value = Array.isArray(response.body) ? response.body : (response.body as any).rows || [];
+      projects.value = Array.isArray(response.body) ? response.body : (response.body as unknown).rows || [];
     }
   } catch (error) {
     console.error('Failed to fetch projects:', error);

@@ -22,7 +22,7 @@ el-dropdown(trigger="click" @command="handleExport")
 <script setup lang="ts">
 /* eslint-disable require-await */
 const props = defineProps<{
-  data?: any[];
+  data?: Record<string, unknown>[];
   columns?: { prop: string; label: string }[];
   filename?: string;
   apiEndpoint?: string;
@@ -212,8 +212,8 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
         overflow: 'linebreak' as const
       },
       margin: { left: 10, right: 10 },
-      didDrawPage: (data: any) => {
-        const pageCount = (doc as any).internal.getNumberOfPages();
+      didDrawPage: (data: unknown) => {
+        const pageCount = (doc as unknown).internal.getNumberOfPages();
         const ph = doc.internal.pageSize.getHeight();
         // Footer line
         doc.setDrawColor(220, 220, 230);

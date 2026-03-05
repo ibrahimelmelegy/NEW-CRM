@@ -113,7 +113,7 @@ export async function executeDelay(
         await execution.update({ actionsExecuted: currentActions });
       }
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Failed to persist delay metadata:', err.message);
   }
 

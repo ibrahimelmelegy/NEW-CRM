@@ -193,12 +193,12 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-  element: any | null;
+  element: unknown | null;
 }>();
 
 const emit = defineEmits(['update', 'delete', 'duplicate']);
 
-const localElement = ref<any>(null);
+const localElement = ref<Record<string, unknown> | null>(null);
 const localOpacity = ref(100);
 
 const fontFamilies = [

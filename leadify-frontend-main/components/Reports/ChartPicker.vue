@@ -145,7 +145,7 @@ function selectChartType(type: string) {
   }
 }
 
-function updateConfig(key: string, value: any) {
+function updateConfig(key: string, value: unknown) {
   emit('update:config', {
     ...configValue.value,
     [key]: value

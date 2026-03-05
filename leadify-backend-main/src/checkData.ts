@@ -23,7 +23,7 @@ const checkData = async () => {
     if (leads === 0) {
       console.warn('DATABASE IS EMPTY OF LEADS.');
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Data Audit Error:', e.message);
   }
   // Audit complete

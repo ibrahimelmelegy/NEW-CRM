@@ -156,7 +156,7 @@ const loadingAction = ref<string | null>(null);
 
 // ---- Computed ----
 const statusConfig = computed(() => {
-  const configs: Record<ProposalStatus, { color: string; icon: any; label: string }> = {
+  const configs: Record<ProposalStatus, { color: string; icon: unknown; label: string }> = {
     DRAFT: { color: 'bg-gray-100 text-gray-600', icon: Clock, label: 'Draft' },
     WAITING_APPROVAL: { color: 'bg-amber-100 text-amber-600', icon: Clock, label: 'Waiting Approval' },
     APPROVED: { color: 'bg-green-100 text-green-600', icon: CheckCircle, label: 'Approved' },

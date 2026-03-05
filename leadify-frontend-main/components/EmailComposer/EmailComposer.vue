@@ -123,7 +123,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): void;
-  (e: 'sent', data: any): void;
+  (e: 'sent', data: unknown): void;
 }>();
 
 const {
@@ -144,7 +144,7 @@ const sending = ref(false);
 const showCc = ref(false);
 const showBcc = ref(false);
 const activeCollapse = ref<string[]>([]);
-const bodyEditorRef = ref<any>(null);
+const bodyEditorRef = ref<Record<string, unknown> | null>(null);
 
 // Responsive check
 const isMobile = ref(false);
@@ -192,7 +192,7 @@ watch(
   { deep: true }
 );
 
-function handleTemplateSelect(template: any) {
+function handleTemplateSelect(template: unknown) {
   selectTemplate(template);
   // Close template section after selection
   activeCollapse.value = [];

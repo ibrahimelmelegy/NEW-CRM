@@ -104,7 +104,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  submitted: [data: any];
+  submitted: [data: unknown];
 }>();
 
 const formRef = ref();
@@ -185,9 +185,9 @@ async function searchClients(query: string) {
   if (!query) return;
   loadingClients.value = true;
   try {
-    const { body, success } = (await useApiFetch(`client?searchKey=${encodeURIComponent(query)}&limit=20`)) as any;
+    const { body, success } = (await useApiFetch(`client?searchKey=${encodeURIComponent(query)}&limit=20`)) as unknown;
     if (success && body?.docs) {
-      clientOptions.value = body.docs.map((c: any) => ({ id: c.id, clientName: c.clientName }));
+      clientOptions.value = body.docs.map((c) => ({ id: c.id, clientName: c.clientName }));
     }
   } finally {
     loadingClients.value = false;
@@ -197,9 +197,9 @@ async function searchClients(query: string) {
 // Also load initial clients list
 async function loadInitialClients() {
   try {
-    const { body, success } = (await useApiFetch('client?limit=50')) as any;
+    const { body, success } = (await useApiFetch('client?limit=50')) as unknown;
     if (success && body?.docs) {
-      clientOptions.value = body.docs.map((c: any) => ({ id: c.id, clientName: c.clientName }));
+      clientOptions.value = body.docs.map((c) => ({ id: c.id, clientName: c.clientName }));
     }
   } catch {
     // Silently fail

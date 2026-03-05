@@ -313,7 +313,7 @@ const FontSize = Extension.create({
           fontSize: {
             default: null,
             parseHTML: (element: HTMLElement) => element.style.fontSize?.replace(/['"]+/g, ''),
-            renderHTML: (attributes: Record<string, any>) => {
+            renderHTML: (attributes: Record<string, unknown>) => {
               if (!attributes.fontSize) return {};
               return { style: `font-size: ${attributes.fontSize}` };
             }
@@ -326,15 +326,15 @@ const FontSize = Extension.create({
     return {
       setFontSize:
         (fontSize: string) =>
-        ({ chain }: any) => {
+        ({ chain }: unknown) => {
           return chain().setMark('textStyle', { fontSize }).run();
         },
       unsetFontSize:
         () =>
-        ({ chain }: any) => {
+        ({ chain }: unknown) => {
           return chain().setMark('textStyle', { fontSize: null }).removeEmptyTextStyle().run();
         }
-    } as any;
+    } as unknown;
   }
 });
 
@@ -375,7 +375,7 @@ const fontSizes = ['12px', '14px', '16px', '18px', '20px', '24px', '30px', '36px
 
 // ---- Build extensions list ----
 const buildExtensions = () => {
-  const extensions: any[] = [
+  const extensions: Record<string, unknown>[] = [
     StarterKit,
     Underline,
     ImageExt.configure({ inline: true }),
@@ -429,11 +429,11 @@ const buildExtensions = () => {
         return variables.filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5);
       },
       render: () => {
-        let component: any;
-        let popup: any[];
+        let component: unknown;
+        let popup: Record<string, unknown>[];
 
         return {
-          onStart: (renderProps: any) => {
+          onStart: (renderProps: unknown) => {
             component = new VueRenderer(ProposalMentionList, {
               props: renderProps,
               editor: renderProps.editor
@@ -451,12 +451,12 @@ const buildExtensions = () => {
               placement: 'bottom-start'
             });
           },
-          onUpdate(renderProps: any) {
+          onUpdate(renderProps: unknown) {
             component.updateProps(renderProps);
             if (!renderProps.clientRect) return;
             popup[0].setProps({ getReferenceClientRect: renderProps.clientRect });
           },
-          onKeyDown(renderProps: any) {
+          onKeyDown(renderProps: unknown) {
             if (renderProps.event.key === 'Escape') {
               popup[0].hide();
               return true;
@@ -544,7 +544,7 @@ onBeforeUnmount(() => {
 const onFontSizeChange = (event: Event) => {
   const target = event.target as HTMLSelectElement;
   if (editor.value) {
-    (editor.value.chain().focus() as any).setFontSize(target.value).run();
+    (editor.value.chain().focus() as unknown).setFontSize(target.value).run();
   }
 };
 
@@ -580,7 +580,7 @@ const handleImageUpload = async (event: Event) => {
     formData.append('file', file);
     formData.append('model', 'PROPOSAL');
 
-    const response = await useApiFetch('upload', 'POST', formData as any, false, true);
+    const response = await useApiFetch('upload', 'POST', formData as unknown, false, true);
 
     if (response.success && response.body) {
       const fileName = response.body;
@@ -603,7 +603,7 @@ const copyMarkdown = () => {
 
   // If tiptap-markdown is available, use its getMarkdown()
   try {
-    const markdown = (editor.value.storage as any).markdown?.getMarkdown();
+    const markdown = (editor.value.storage as unknown).markdown?.getMarkdown();
     if (markdown) {
       navigator.clipboard.writeText(markdown);
       ElNotification({ type: 'success', title: 'Copied', message: 'Copied as Markdown!' });

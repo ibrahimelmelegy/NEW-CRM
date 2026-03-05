@@ -47,8 +47,8 @@ import TemplateNode from '~/components/Workflow/nodes/TemplateNode.vue';
 import ApprovalNode from '~/components/Workflow/nodes/ApprovalNode.vue';
 
 const props = defineProps<{
-  nodes: any[];
-  edges: any[];
+  nodes: Record<string, unknown>[];
+  edges: Record<string, unknown>[];
 }>();
 
 const emit = defineEmits(['update:nodes', 'update:edges', 'connect', 'nodeClick']);
@@ -74,11 +74,11 @@ const nodeTypes = {
   approvalNode: ApprovalNode
 };
 
-function onConnect(params: any) {
+function onConnect(params: unknown) {
   emit('connect', params);
 }
 
-function onNodeClick(event: any) {
+function onNodeClick(event: unknown) {
   emit('nodeClick', event.node);
 }
 </script>

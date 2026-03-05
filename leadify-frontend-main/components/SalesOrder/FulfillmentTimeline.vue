@@ -49,10 +49,10 @@
 
 <script setup lang="ts">
 defineProps<{
-  fulfillments: Array<any>;
+  fulfillments: Array<<unknown>;
 }>();
 
-function formatDate(date: any) {
+function formatDate(date: unknown) {
   if (!date) return 'N/A';
   const d = new Date(date);
   return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });

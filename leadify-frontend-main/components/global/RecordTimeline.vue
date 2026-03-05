@@ -12,7 +12,7 @@ const props = defineProps<{
 }>();
 
 const loading = ref(false);
-const activities = ref<any[]>([]);
+const activities = ref<Record<string, unknown>[]>([]);
 const page = ref(1);
 const totalPages = ref(1);
 
@@ -21,7 +21,7 @@ const hasMore = computed(() => activities.value.length > 0 && page.value < total
 async function fetchActivities(pageNum: number) {
   loading.value = true;
   try {
-    const { body, success } = (await useApiFetch(`activity/${props.entityType}/${props.entityId}?limit=10&page=${pageNum}`)) as any;
+    const { body, success } = (await useApiFetch(`activity/${props.entityType}/${props.entityId}?limit=10&page=${pageNum}`)) as unknown;
     if (success && body) {
       if (pageNum === 1) {
         activities.value = body.docs || [];

@@ -113,7 +113,7 @@ const table = reactive({
       width: 200
     }
   ],
-  data: [] as any[],
+  data: [] as unknown[],
   sort: [
     { prop: 'price', order: 'ascending', value: 'PRICE_ASC' },
     { prop: 'price', order: 'descending', value: 'PRICE_DESC' },
@@ -139,7 +139,7 @@ watch(
   }
 );
 
-async function setEmail(pre: any) {
+async function setEmail(pre: unknown) {
   email.value = pre.target.value;
 }
 

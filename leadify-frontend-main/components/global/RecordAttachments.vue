@@ -40,7 +40,7 @@ const props = defineProps<{
 }>();
 
 const fileInput = ref<HTMLInputElement>();
-const attachments = ref<any[]>([]);
+const attachments = ref<Record<string, unknown>[]>([]);
 const loading = ref(false);
 const uploading = ref(false);
 const uploadProgress = ref(0);
@@ -48,7 +48,7 @@ const uploadProgress = ref(0);
 async function fetchAttachments() {
   loading.value = true;
   try {
-    const { body, success } = (await useApiFetch(`attachments?entityType=${props.entityType}&entityId=${props.entityId}`)) as any;
+    const { body, success } = (await useApiFetch(`attachments?entityType=${props.entityType}&entityId=${props.entityId}`)) as unknown;
     if (success && body) {
       attachments.value = body.docs || body || [];
     }
@@ -82,7 +82,7 @@ async function handleFiles(e: Event) {
   }
 }
 
-function downloadFile(file: any) {
+function downloadFile(file: unknown) {
   window.open(file.fileUrl, '_blank');
 }
 

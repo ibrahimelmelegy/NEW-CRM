@@ -95,13 +95,13 @@
 import { Delete } from '@element-plus/icons-vue';
 
 const props = defineProps<{
-  items: Array<any>;
+  items: Array<<unknown>;
   editable?: boolean;
 }>();
 
 const emit = defineEmits(['update:items']);
 
-const localItems = ref<any[]>([]);
+const localItems = ref<Record<string, unknown>[]>([]);
 
 watch(
   () => props.items,
@@ -111,7 +111,7 @@ watch(
   { immediate: true, deep: true }
 );
 
-function calculateLineTotal(row: any): number {
+function calculateLineTotal(row: unknown): number {
   const qty = Number(row.quantity) || 0;
   const price = Number(row.unitPrice) || 0;
   const taxRate = Number(row.taxRate) || 0;
@@ -124,7 +124,7 @@ function calculateLineTotal(row: any): number {
   return lineAfterDiscount + lineTax;
 }
 
-function recalculateRow(row: any) {
+function recalculateRow(row: unknown) {
   row.lineTotal = parseFloat(calculateLineTotal(row).toFixed(2));
   emitUpdate();
 }

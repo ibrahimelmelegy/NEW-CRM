@@ -115,7 +115,7 @@ function goBack() {
 function handleContentUpdate(content: JSONContent) {
   builder.state.isDirty = true;
   // Map our UI document types to the backend template types for saving
-  const mappedType = props.documentType.toUpperCase() as any;
+  const mappedType = props.documentType.toUpperCase() as unknown;
   builder.autoSave(templateId.value, documentName.value, mappedType, content);
 }
 
@@ -129,8 +129,8 @@ async function handleSave() {
   const content = docBuilderRef.value?.getContent();
   if (!content) return;
 
-  const mappedType = props.documentType.toUpperCase() as any;
-  const result: any = await builder.save(templateId.value, documentName.value, mappedType, content);
+  const mappedType = props.documentType.toUpperCase() as unknown;
+  const result = await builder.save(templateId.value, documentName.value, mappedType, content);
 
   if (result.success) {
     ElNotification({ type: 'success', title: 'Success', message: `${displayType.value} saved successfully.` });

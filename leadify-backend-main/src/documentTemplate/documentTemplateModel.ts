@@ -25,7 +25,7 @@ export interface TemplateElement {
   y: number;
   width: number;
   height: number;
-  props: Record<string, any>;
+  props: Record<string, unknown>;
 }
 
 export interface TemplateLayout {
@@ -71,19 +71,19 @@ class DocumentTemplate extends Model {
     type: DataType.JSONB,
     allowNull: true
   })
-  public headerConfig?: Record<string, any>;
+  public headerConfig?: Record<string, unknown>;
 
   @Column({
     type: DataType.JSONB,
     allowNull: true
   })
-  public footerConfig?: Record<string, any>;
+  public footerConfig?: Record<string, unknown>;
 
   @Column({
     type: DataType.JSONB,
     allowNull: true
   })
-  public tableConfig?: Record<string, any>;
+  public tableConfig?: Record<string, unknown>;
 
   @Default(false)
   @Column({

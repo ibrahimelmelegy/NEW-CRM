@@ -18,12 +18,12 @@ el-form( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-po
     .bg-white_5.rounded-2xl.p-6.mb-6
         .text-xs.uppercase.tracking-widest.text-muted.mb-4.font-bold {{ $t('operations.projects.form.clientSchedule') }}
         .grid.grid-cols-1.md.grid-cols-3.gap-6
-             InputSelect(:label="$t('operations.projects.form.client')" name="client" :options="mappedClients" :value="mappedClients?.find((client: any) => client.value === project?.clientId)?.value" class="premium-select")
+             InputSelect(:label="$t('operations.projects.form.client')" name="client" :options="mappedClients" :value="mappedClients?.find((client) => client.value === project?.clientId)?.value" class="premium-select")
              InputDate(:label="$t('operations.projects.form.startDate')" :placeholder="$t('operations.projects.form.selectDate')" :value="project?.startDate" name="startDate" class="premium-datepicker")
              InputDate(:label="$t('operations.projects.form.endDate')" :placeholder="$t('operations.projects.form.selectDate')" :value="project?.endDate" name="endDate" class="premium-datepicker")
              
              InputText(:label="$t('operations.projects.form.duration')" :placeholder="$t('operations.projects.form.days')" name="duration" :value="project?.duration" class="premium-input")
-             InputSelect(:label="$t('operations.projects.form.assignUsers')" isMultiple name="assignUser" :options="users" :value="users?.filter((user: any) => project?.assignedUsers?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)" class="premium-select")
+             InputSelect(:label="$t('operations.projects.form.assignUsers')" isMultiple name="assignUser" :options="users" :value="users?.filter((user) => project?.assignedUsers?.map((user) => user.id)?.includes(user.value))?.map((user) => user.value)" class="premium-select")
              InputSelect(:label="$t('operations.projects.form.status')" name="status" :options="getProjectStatuses()" :value="project?.status" @change="checkIfCancelled" class="premium-select")
 
     //- SECTION 3: Additional Details
@@ -100,7 +100,7 @@ const formSchema = computed(() => {
     duration: yup
       .string()
       .required()
-      .test('is-valid-number', t('validation.invalidNumber'), (value: any) => {
+      .test('is-valid-number', t('validation.invalidNumber'), (value: unknown) => {
         return /^\d+$/.test(value || '');
       })
       .label(t('operations.projects.form.duration')),
@@ -123,23 +123,23 @@ const formSchema = computed(() => {
       tenderPrice: yup
         .string()
         .nullable()
-        .test('is-valid-number', t('validation.invalidNumber'), (value: any) => /^\d*\.?\d*$/.test(value || ''))
+        .test('is-valid-number', t('validation.invalidNumber'), (value: unknown) => /^\d*\.?\d*$/.test(value || ''))
         .label(t('operations.projects.form.tenderPrice')),
       businessLine: yup.string().nullable().trim().max(100).label(t('operations.projects.form.businessLine')),
       estimatedBudget: yup
         .string()
         .nullable()
-        .test('is-valid-number', t('validation.invalidNumber'), (value: any) => /^\d*\.?\d*$/.test(value || ''))
+        .test('is-valid-number', t('validation.invalidNumber'), (value: unknown) => /^\d*\.?\d*$/.test(value || ''))
         .label(t('operations.projects.form.estBudget')),
       companyMargin: yup
         .string()
         .nullable()
-        .test('is-valid-number', t('validation.invalidNumber'), (value: any) => /^\d*\.?\d*$/.test(value || ''))
-        .test('max-value', t('validation.maxValue', { value: 100 }), (value: any) => (value ? parseFloat(value) <= 100 : true))
+        .test('is-valid-number', t('validation.invalidNumber'), (value: unknown) => /^\d*\.?\d*$/.test(value || ''))
+        .test('max-value', t('validation.maxValue', { value: 100 }), (value: unknown) => (value ? parseFloat(value) <= 100 : true))
         .label(t('operations.projects.form.margin')),
       submissionDate: yup
         .mixed()
-        .test('is-valid-date', t('validation.invalidDate'), (value: any) => {
+        .test('is-valid-date', t('validation.invalidDate'), (value: unknown) => {
           // Check if the value is valid
           return value && !isNaN(new Date(value).getTime());
         })
@@ -154,19 +154,19 @@ const formSchema = computed(() => {
 });
 
 //  Get Users
-const users = ref<any[]>([]);
-const mappedClients = ref<{ label: string; value: any }[]>();
+const users = ref<Record<string, unknown>[]>([]);
+const mappedClients = ref<{ label: string; value: unknown }[]>();
 
 onMounted(async () => {
-  const usersRes: any = await useApiFetch('users');
+  const usersRes: unknown = await useApiFetch('users');
   users.value =
-    usersRes?.body?.docs?.map((e: any) => ({
+    usersRes?.body?.docs?.map((e) => ({
       label: e.name,
       value: e.id
     })) || [];
 
   const { clients } = await getClients();
-  mappedClients.value = clients?.map((e: any) => ({
+  mappedClients.value = clients?.map((e) => ({
     label: e.clientName,
     value: e.id
   }));
@@ -175,7 +175,7 @@ onMounted(async () => {
 /**
  * Checks if the deal stage has been set to 'Cancelled'.
  */
-function checkIfCancelled(value: any) {
+function checkIfCancelled(value: unknown) {
   if (value.value === 'CANCELLED') {
     isCancelled.value = true;
   } else {
@@ -190,7 +190,7 @@ if (project.value?.cancelledReason) {
 /**
  * Checks if the project category has been set to 'ETIMAD Project'.
  */
-function checkIfEtimadProject(value: any) {
+function checkIfEtimadProject(value: unknown) {
   if (value.label === 'Etimad') {
     isEtimadProject.value = true;
   } else {
@@ -228,7 +228,7 @@ const onSubmit = handleSubmit(async (values: CombinedProjectValues) => {
   // emit('submit')
 });
 
-function formattedBasicInfo(values: any) {
+function formattedBasicInfo(values: unknown) {
   if (!values) return {};
   return cleanObject({
     name: values?.name,
@@ -245,7 +245,7 @@ function formattedBasicInfo(values: any) {
   });
 }
 
-function formattedEtimadProjectInfo(values: any) {
+function formattedEtimadProjectInfo(values: unknown) {
   if (!values) return {};
   return cleanObject({
     abbreviation: values?.abbreviation,

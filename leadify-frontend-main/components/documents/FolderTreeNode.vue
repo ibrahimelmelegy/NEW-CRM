@@ -33,8 +33,8 @@ div
       :selected-id="selectedId"
       :depth="depth + 1"
       @select="(id: number) => $emit('select', id)"
-      @edit="(f: any) => $emit('edit', f)"
-      @delete="(f: any) => $emit('delete', f)"
+      @edit="(f: unknown) => $emit('edit', f)"
+      @delete="(f: unknown) => $emit('delete', f)"
     )
 </template>
 

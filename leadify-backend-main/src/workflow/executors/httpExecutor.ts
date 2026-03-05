@@ -2,7 +2,7 @@ export interface HttpNodeConfig {
   url: string;
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   headers?: Record<string, string>;
-  body?: Record<string, any> | string;
+  body?: Record<string, unknown> | string;
   retries?: number;
   timeoutMs?: number;
 }
@@ -10,7 +10,7 @@ export interface HttpNodeConfig {
 export interface HttpContext {
   entityType: string;
   entityId: string;
-  entityData: Record<string, any>;
+  entityData: Record<string, unknown>;
   workflowRuleId: number;
   nodeId: string;
 }
@@ -27,9 +27,9 @@ export interface HttpExecutionResult {
 /**
  * Resolves {{variable}} placeholders in a string using the entity data context.
  */
-function resolveVariables(template: string, data: Record<string, any>): string {
+function resolveVariables(template: string, data: Record<string, unknown>): string {
   return template.replace(/\{\{([\w.]+)\}\}/g, (_match, path: string) => {
-    const value = path.split('.').reduce((obj: any, key: string) => {
+    const value = path.split('.').reduce((obj: unknown, key: string) => {
       if (obj === null || obj === undefined) return undefined;
       return obj[key];
     }, data);
@@ -40,8 +40,8 @@ function resolveVariables(template: string, data: Record<string, any>): string {
 /**
  * Deep-resolves all string values in an object, substituting {{variable}} placeholders.
  */
-function resolveObjectVariables(obj: Record<string, any>, data: Record<string, any>): Record<string, any> {
-  const resolved: Record<string, any> = {};
+function resolveObjectVariables(obj: Record<string, unknown>, data: Record<string, unknown>): Record<string, unknown> {
+  const resolved: Record<string, unknown> = {};
   for (const [key, val] of Object.entries(obj)) {
     if (typeof val === 'string') {
       resolved[key] = resolveVariables(val, data);
@@ -93,7 +93,7 @@ async function performRequest(
       text: text.substring(0, 5000), // Truncate large responses
       resHeaders
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     clearTimeout(timer);
     throw err;
   }
@@ -183,7 +183,7 @@ export async function executeHttp(nodeConfig: HttpNodeConfig, context: HttpConte
 
       // Server error (5xx) - retry if we have retries left
       lastError = new Error(`HTTP ${result.status}: ${result.text.substring(0, 200)}`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       lastError = err;
 
       // Abort errors (timeout) should not retry

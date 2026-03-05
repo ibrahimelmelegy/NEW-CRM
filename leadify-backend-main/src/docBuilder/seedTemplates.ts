@@ -37,9 +37,9 @@ interface SeedTemplate {
     variables: string[];
     templateHtml: string;
   };
-  headerConfig: Record<string, any>;
-  footerConfig: Record<string, any>;
-  tableConfig: Record<string, any>;
+  headerConfig: Record<string, unknown>;
+  footerConfig: Record<string, unknown>;
+  tableConfig: Record<string, unknown>;
 }
 
 const COMMON_VARS = [
@@ -1368,12 +1368,12 @@ export async function seedTemplates(): Promise<void> {
     const [, wasCreated] = await DocumentTemplate.findOrCreate({
       where: { name: tpl.name, type: tpl.type },
       defaults: {
-        layout: tpl.layout as any,
+        layout: tpl.layout as unknown,
         headerConfig: tpl.headerConfig,
         footerConfig: tpl.footerConfig,
         tableConfig: tpl.tableConfig,
         isDefault: tpl.isDefault,
-        userId: null as any,
+        userId: null as unknown,
         category: 'system'
       }
     });

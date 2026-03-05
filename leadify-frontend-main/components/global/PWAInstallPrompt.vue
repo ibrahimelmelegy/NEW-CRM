@@ -18,7 +18,7 @@ teleport(to="body")
 const { t } = useI18n();
 
 const showPrompt = ref(false);
-let deferredPrompt: any = null;
+let deferredPrompt: unknown = null;
 
 const DISMISS_KEY = 'pwa-install-dismissed';
 const DISMISS_DAYS = 7;
@@ -39,7 +39,7 @@ function isDismissed(): boolean {
 
 function isStandalone(): boolean {
   if (typeof window === 'undefined') return false;
-  return window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+  return window.matchMedia('(display-mode: standalone)').matches || (window.navigator as unknown).standalone === true;
 }
 
 function onBeforeInstallPrompt(e: Event) {

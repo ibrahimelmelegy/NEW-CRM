@@ -62,9 +62,9 @@ function fmt(value: number) {
   }).format(Number(value) || 0);
 }
 
-function getSummary({ columns, data }: { columns: any[]; data: any[] }) {
+function getSummary({ columns, data }: { columns: Record<string, unknown>[]; data: Record<string, unknown>[] }) {
   const sums: string[] = [];
-  columns.forEach((column: any, index: number) => {
+  columns.forEach((column: unknown, index: number) => {
     if (index === 0) {
       sums[index] = 'Total';
       return;
@@ -88,7 +88,7 @@ function getSummary({ columns, data }: { columns: any[]; data: any[] }) {
       'netSalary'
     ];
     if (numericProps.includes(prop)) {
-      const total = data.reduce((sum: number, row: any) => sum + (Number(row[prop]) || 0), 0);
+      const total = data.reduce((sum: number, row: unknown) => sum + (Number(row[prop]) || 0), 0);
       sums[index] = fmt(total);
     } else {
       sums[index] = '';

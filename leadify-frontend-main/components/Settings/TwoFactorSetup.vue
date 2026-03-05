@@ -63,11 +63,11 @@ const qrCode = ref('');
 const secret = ref('');
 const error = ref('');
 const digits = ref<string[]>(['', '', '', '', '', '']);
-const inputRefs = ref<any[]>([]);
+const inputRefs = ref<Record<string, unknown>[]>([]);
 
 const code = computed(() => digits.value.join(''));
 
-function setInputRef(el: any, i: number) {
+function setInputRef(el: unknown, i: number) {
   if (el) inputRefs.value[i] = el;
 }
 

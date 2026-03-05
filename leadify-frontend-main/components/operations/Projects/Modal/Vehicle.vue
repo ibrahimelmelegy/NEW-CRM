@@ -29,12 +29,12 @@ async function submitForm(values: Vehicle) {
   let response;
   if (props.vehicle?.id) {
     response = await updateVehicle({ ...values, vehicleId: props.vehicle.id }, false);
-    emit('confirm', (response as any)?.id, true);
+    emit('confirm', (response as unknown)?.id, true);
   } else {
     response = await createVehicle(values, false);
-    emit('confirm', (response as any)?.id);
+    emit('confirm', (response as unknown)?.id);
   }
   loading.value = false;
-  if (Object.keys(response as any).length) dialog.value = false;
+  if (Object.keys(response as unknown).length) dialog.value = false;
 }
 </script>

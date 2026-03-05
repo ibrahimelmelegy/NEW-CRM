@@ -11,7 +11,7 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
         InputSelect(:label="$t('leads.info.leadSource')" name="leadSource" :options="leadSources" :value="data?.leadSource" @change="checkIfOtherSource" )
       InputText(:label="$t('leads.info.otherSource')"  name="otherSource" v-if="isOtherSource" :value="data?.otherSource" )
       InputDate.mt-4(:label="$t('leads.info.lastContact')" v-if="route.path.includes('edit')" :placeholder="$t('leads.info.lastContact')" disabledDate="future" :value="data?.lastContactDate || new Date()" name="lastContactDate" )
-      InputSelect.mt-4(:label="$t('leads.info.assign')" name="assignUser" isMultiple :options="users" :value="users?.filter((user: any) => data?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)"  )
+      InputSelect.mt-4(:label="$t('leads.info.assign')" name="assignUser" isMultiple :options="users" :value="users?.filter((user) => data?.users?.map((user) => user.id)?.includes(user.value))?.map((user) => user.value)"  )
       InputText(type="textarea" :placeholder="$t('leads.notes')"  name="notes" :value="data?.notes" )
 
 </template>
@@ -55,8 +55,8 @@ const formSchema = computed(() =>
           .nullable()
           .test(
             'is-valid',
-            (message: any) => t('errors.invalidEmail'),
-            (value: any) => !value || isEmailValidator(value)
+            (message: unknown) => t('errors.invalidEmail'),
+            (value: unknown) => !value || isEmailValidator(value)
           )
           .label(t('leads.info.email')),
       otherwise: () =>
@@ -67,8 +67,8 @@ const formSchema = computed(() =>
           .required(t('errors.emailOrPhoneRequired'))
           .test(
             'is-valid',
-            (message: any) => t('errors.invalidEmail'),
-            (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
+            (message: unknown) => t('errors.invalidEmail'),
+            (value: unknown) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
           )
           .label(t('leads.info.email'))
     }),
@@ -78,9 +78,9 @@ const formSchema = computed(() =>
         yup
           .number()
           .nullable() // Allows the value to be null
-          .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
+          .transform((value: unknown, originalValue: unknown) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
           .label(t('leads.info.phone'))
-          .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+          .test('Phone number', t('errors.invalidPhone'), function (value: unknown) {
             if (value === null || value === undefined) {
               return true;
             }
@@ -89,11 +89,11 @@ const formSchema = computed(() =>
       otherwise: () =>
         yup
           .number()
-          .transform((value: any) => (Number.isNaN(value) ? null : value))
+          .transform((value: unknown) => (Number.isNaN(value) ? null : value))
           .nullable()
           .required(t('errors.emailOrPhoneRequired'))
           .label(t('leads.info.phone'))
-          .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+          .test('Phone number', t('errors.invalidPhone'), function (value: unknown) {
             return !!validPhone.value;
           })
     }),
@@ -107,7 +107,7 @@ const formSchema = computed(() =>
           .string()
           .trim()
           .nullable()
-          .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
+          .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: unknown) => !value || value.length >= 2)
           .trim()
           .max(250)
           .label(t('leads.info.otherSource'))
@@ -118,7 +118,7 @@ const formSchema = computed(() =>
       .string()
       .trim()
       .nullable()
-      .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
+      .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: unknown) => !value || value.length >= 2)
       .trim()
       .max(2000)
       .label(t('leads.notes'))
@@ -129,17 +129,17 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit((values: any, actions: any) => {
+const onSubmit = handleSubmit((values: unknown, actions: unknown) => {
   emit('submit', values);
 });
 
-let users: any = await useApiFetch('users');
-users = users?.body?.docs?.map((e: any) => ({
+let users: unknown = await useApiFetch('users');
+users = users?.body?.docs?.map((e) => ({
   label: e.name,
   value: e.id
 }));
 
-function checkIfOtherSource(value: any) {
+function checkIfOtherSource(value: unknown) {
   if (value.value === 'OTHER') {
     isOtherSource.value = true;
   } else {

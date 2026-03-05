@@ -115,8 +115,8 @@ import { ref, onMounted, watch } from 'vue';
 import { ElMessageBox } from 'element-plus';
 interface Project {
   id: string;
-  files: any[];
-  etimadProject?: any;
+  files: Record<string, unknown>[];
+  etimadProject?: unknown;
 }
 const props = defineProps<{ project?: Project }>();
 const emit = defineEmits(['onSubmit', 'onCancel']);
@@ -147,17 +147,17 @@ watch(
   { deep: true }
 );
 
-function showfile(value: any) {
+function showfile(value: unknown) {
   fileShow.value = true;
   fileFolder.value = value;
 }
 
-function editfile(value: any) {
+function editfile(value: unknown) {
   folderDetails.value = { ...value };
   fileEdit.value = true;
 }
 
-function formattedBasicInfo(values: any) {
+function formattedBasicInfo(values: unknown) {
   if (!values) return {};
   return cleanObject({
     name: values?.name,
@@ -167,14 +167,14 @@ function formattedBasicInfo(values: any) {
     startDate: typeof values?.startDate === 'string' ? values?.startDate : values?.startDate?.toISOString(),
     endDate: typeof values?.endDate === 'string' ? values?.endDate : values?.endDate?.toISOString(),
     duration: Number(values?.duration),
-    assignedUsersIds: values?.assignedUsers?.map((el: any) => el?.id),
+    assignedUsersIds: values?.assignedUsers?.map((el) => el?.id),
     status: values?.status,
     description: values?.description,
     cancelledReason: values?.cancelReason
   });
 }
 
-function formattedEtimadProjectInfo(values: any) {
+function formattedEtimadProjectInfo(values: unknown) {
   if (!values) return {};
   return cleanObject({
     abbreviation: values?.abbreviation,

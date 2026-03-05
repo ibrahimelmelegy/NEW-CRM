@@ -42,7 +42,7 @@ class Integration extends Model {
     type: DataType.JSONB,
     allowNull: true
   })
-  public config?: any; // For clientID, clientSecret, or WhatsApp ID
+  public config?: unknown; // For clientID, clientSecret, or WhatsApp ID
 
   @ForeignKey(() => User)
   @Column({

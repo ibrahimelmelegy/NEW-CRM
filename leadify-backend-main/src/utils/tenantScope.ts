@@ -8,7 +8,7 @@
 
 interface UserWithTenant {
   tenantId?: string | null;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -31,6 +31,6 @@ export function tenantWhere(user: UserWithTenant): { tenantId?: string } {
  * This function still works (produces a harmless duplicate tenantId assignment)
  * but is no longer necessary. See src/config/tenantHooks.ts.
  */
-export function tenantCreate<T extends Record<string, any>>(data: T, user: UserWithTenant): T & { tenantId?: string } {
+export function tenantCreate<T extends Record<string, unknown>>(data: T, user: UserWithTenant): T & { tenantId?: string } {
   return user?.tenantId ? { ...data, tenantId: user.tenantId } : data;
 }

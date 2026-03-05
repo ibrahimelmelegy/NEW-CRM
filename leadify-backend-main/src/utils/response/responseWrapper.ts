@@ -3,7 +3,7 @@ import { constants } from '../constants'; // Adjust the path to your constants f
 
 // Define the function type
 interface WrapResult {
-  (res: Response, data?: any, status?: number): Response;
+  (res: Response, data?: unknown, status?: number): Response;
 }
 
 // Wrap Result function

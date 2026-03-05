@@ -10,7 +10,7 @@ const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
 // Create the Workflow Queue
-export const workflowQueue = new Queue('workflow-execution-queue', { connection: connection as any });
+export const workflowQueue = new Queue('workflow-execution-queue', { connection: connection as unknown });
 
 // Initialize the Express Adapter for BullMQ Board UI
 export const serverAdapter = new ExpressAdapter();
@@ -27,8 +27,8 @@ export interface WorkflowJobData {
   ruleId: number;
   entityType: string;
   entityId: string;
-  actions: any[];
-  entityData: any;
+  actions: unknown[];
+  entityData: unknown;
   triggerUserId?: number;
 }
 
@@ -41,8 +41,8 @@ const setupWorker = () => {
       const { executionId, ruleId, entityType, entityId, actions, entityData, triggerUserId } = job.data;
 
       // Process the exact delayed actions via the service
-      if (typeof (workflowService as any).executeDelayedActions === 'function') {
-        await (workflowService as any).executeDelayedActions(executionId, ruleId, entityData, actions, triggerUserId);
+      if (typeof (workflowService as unknown).executeDelayedActions === 'function') {
+        await (workflowService as unknown).executeDelayedActions(executionId, ruleId, entityData, actions, triggerUserId);
       } else {
         console.warn(`[Queue] executeDelayedActions not yet implemented, skipping job ${job.id}`);
       }
@@ -50,7 +50,7 @@ const setupWorker = () => {
       return { status: 'completed' };
     },
     {
-      connection: connection as any,
+      connection: connection as unknown,
       concurrency: 5
     }
   );

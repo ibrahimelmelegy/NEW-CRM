@@ -150,7 +150,7 @@ const trendOption = computed(() => {
       backgroundColor: 'rgba(0,0,0,0.8)',
       borderColor: 'rgba(255,255,255,0.1)',
       textStyle: { color: '#fff', fontSize: 12 },
-      formatter: (params: any) => `Score: ${params[0]?.value ?? '-'}`
+      formatter: (params: unknown) => `Score: ${params[0]?.value ?? '-'}`
     },
     xAxis: {
       type: 'category',

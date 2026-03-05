@@ -74,7 +74,7 @@ const {
   handleChange,
   meta
 } = useField(props.name, undefined, {
-  initialValue: props.isMultiple ? [] : props.firstOption ? (props.options[0] as any).value : props.value
+  initialValue: props.isMultiple ? [] : props.firstOption ? (props.options[0] as unknown).value : props.value
 });
 
 watchEffect(() => {
@@ -92,14 +92,14 @@ const load = () => {
   emits('loadMore');
 };
 
-function onChange(item: any) {
+function onChange(item: unknown) {
   emits('change', item);
 }
 
-function removeTag(tag: any) {
+function removeTag(tag: unknown) {
   emits(
     'change',
-    props.options.find((option: any) => option.value === tag)
+    props.options.find((option) => option.value === tag)
   );
 }
 </script>

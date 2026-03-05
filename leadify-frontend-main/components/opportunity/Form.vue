@@ -17,7 +17,7 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
           InputText(:label="$t('opportunities.table.name')"  name="opportunityName" :value="data?.name" )
           InputSelect(:label="$t('opportunities.table.stage')" name="opportunityStage" :options="stageOptions.map(o => ({...o, label: $t(o.label)}))" :value="data?.stage" @change="checkIfCancelled" )
           InputText(:label="$t('opportunities.table.profit') + ' (Optional)'" type="number" :placeholder="$t('opportunities.table.profit')" name="profit" :value="data?.profit" )
-          InputSelect(:class="{'col-span-2': !switchType}" :label="$t('opportunities.table.assigned')" name="assignUser" isMultiple :options="users" :value="users?.filter((user: any) => data?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)" )
+          InputSelect(:class="{'col-span-2': !switchType}" :label="$t('opportunities.table.assigned')" name="assignUser" isMultiple :options="users" :value="users?.filter((user) => data?.users?.map((user) => user.id)?.includes(user.value))?.map((user) => user.value)" )
         .grid.grid-cols-2.gap-3
           InputText.mt-4(:label="$t('opportunities.info.budget') + ' (Optional)'" type="number" :placeholder="$t('opportunities.info.budget')" name="estimatedValue" :value="data?.estimatedValue" )
           InputDate.mt-4(:label="$t('opportunities.info.closeDate') + ' (Optional)'" disabledDate="past" :placeholder="$t('opportunities.info.closeDate')" :value="data?.expectedCloseDate || new Date()" name="expectedCloseDate" )
@@ -85,8 +85,8 @@ const formSchema = computed(() =>
           .nullable()
           .test(
             'is-valid',
-            (message: any) => t('errors.invalidEmail'),
-            (value: any) => !value || isEmailValidator(value)
+            (message: unknown) => t('errors.invalidEmail'),
+            (value: unknown) => !value || isEmailValidator(value)
           )
           .label(t('leads.info.email')),
       otherwise: () =>
@@ -97,8 +97,8 @@ const formSchema = computed(() =>
           .nullable(t('errors.emailOrPhoneRequired'))
           .test(
             'is-valid',
-            (message: any) => t('errors.invalidEmail'),
-            (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError(t('errors.invalidEmail')))
+            (message: unknown) => t('errors.invalidEmail'),
+            (value: unknown) => (value ? isEmailValidator(value) : new yup.ValidationError(t('errors.invalidEmail')))
           )
           .label(t('leads.info.email'))
     }),
@@ -108,9 +108,9 @@ const formSchema = computed(() =>
         yup
           .number()
           .nullable()
-          .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
+          .transform((value: unknown, originalValue: unknown) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
           .label(t('leads.info.phone'))
-          .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+          .test('Phone number', t('errors.invalidPhone'), function (value: unknown) {
             if (value === null || value === undefined) {
               return true;
             }
@@ -119,11 +119,11 @@ const formSchema = computed(() =>
       otherwise: () =>
         yup
           .number()
-          .transform((value: any) => (Number.isNaN(value) ? null : value))
+          .transform((value: unknown) => (Number.isNaN(value) ? null : value))
           .nullable()
           .required(t('errors.emailOrPhoneRequired'))
           .label(t('leads.info.phone'))
-          .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+          .test('Phone number', t('errors.invalidPhone'), function (value: unknown) {
             return !!validPhone.value;
           })
     }),
@@ -135,13 +135,13 @@ const formSchema = computed(() =>
       .nullable()
       .max(10000000)
       .label(t('opportunities.info.budget'))
-      .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value)),
+      .transform((value: unknown, originalValue: unknown) => (String(originalValue).trim() === '' ? null : value)),
     profit: yup
       .number()
       .nullable()
       .max(10000000)
       .label(t('opportunities.table.profit'))
-      .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value)),
+      .transform((value: unknown, originalValue: unknown) => (String(originalValue).trim() === '' ? null : value)),
     expectedCloseDate: yup.date().nullable().label(t('opportunities.info.closeDate')),
     priority: yup.string().nullable().trim().max(100).label(t('opportunities.info.priority')),
     interestedIn: yup.string().nullable().trim().max(200).label(t('opportunities.info.products')),
@@ -154,7 +154,7 @@ const formSchema = computed(() =>
           .string()
           .trim()
           .nullable()
-          .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
+          .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: unknown) => !value || value.length >= 2)
           .trim()
           .max(250)
           .label(t('opportunities.info.reasonLoss'))
@@ -163,7 +163,7 @@ const formSchema = computed(() =>
       .string()
       .trim()
       .nullable()
-      .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: any) => !value || value.length >= 2)
+      .test('min-length-if-entered', t('errors.minLength', { min: 2 }), (value: unknown) => !value || value.length >= 2)
       .trim()
       .max(2000)
       .label(t('leads.notes'))
@@ -171,7 +171,7 @@ const formSchema = computed(() =>
 );
 
 const isLose = ref(false);
-function checkIfCancelled(value: any) {
+function checkIfCancelled(value: unknown) {
   if (value.label === 'Lost') {
     isLose.value = true;
   } else {
@@ -183,7 +183,7 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit((values: any, actions: any) => {
+const onSubmit = handleSubmit((values: unknown, actions: unknown) => {
   const formatedValues = {
     ...(switchType.value && {
       lead: {
@@ -214,17 +214,17 @@ const onSubmit = handleSubmit((values: any, actions: any) => {
   emit('submit', formatedValues);
 });
 
-let users: any = await useApiFetch('users');
-users = users?.body?.docs?.map((e: any) => ({
+let users: unknown = await useApiFetch('users');
+users = users?.body?.docs?.map((e) => ({
   label: e.name,
   value: e.id
 }));
 
-const selectedLead = ref<any>([]);
+const selectedLead = ref<Record<string, unknown>>([]);
 const response = await getLeads();
 const leads = response.leads;
 
-const mappedLeads = leads?.map((e: any) => ({
+const mappedLeads = leads?.map((e) => ({
   label: e.name,
   value: e.name,
   id: e.id
@@ -245,7 +245,7 @@ if (leadId) {
       selectedLead.value = lead;
     }
   } else {
-    selectedLead.value = leads?.find((lead: any) => lead.id === leadId);
+    selectedLead.value = leads?.find((lead) => lead.id === leadId);
   }
 
   if (selectedLead.value) {
@@ -254,17 +254,17 @@ if (leadId) {
   }
 }
 
-const mappedClients = ref<{ label: string; value: any }[]>();
+const mappedClients = ref<{ label: string; value: unknown }[]>();
 //  Get clients
 const { clients } = await getClients();
 // Map clients to Select Options
-mappedClients.value = clients?.map((e: any) => ({
+mappedClients.value = clients?.map((e) => ({
   label: e.clientName,
   value: e.id
 }));
 
-function getSelectedLead(e: any) {
-  selectedLead.value = leads?.find((lead: any) => lead.id === e.id);
+function getSelectedLead(e: unknown) {
+  selectedLead.value = leads?.find((lead) => lead.id === e.id);
   if (selectedLead.value?.email) {
     isEmail.value = true;
   } else if (selectedLead.value?.phone) {

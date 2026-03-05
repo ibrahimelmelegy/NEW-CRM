@@ -3,7 +3,7 @@ el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myFo
   .card.m-auto.glass-card.p-10.rounded-3xl(class="w-[90%] ")
     .title.font-bold.text-xl.capitalize.mb-8 {{ $t('operations.projects.vehicles.title') }}
     .flex.align-center.gap-1
-      InputSelect.flex-1(:label="$t('operations.projects.vehicles.label')" isMultiple name="vehicles" :options="vehiclesOptions"  :value="filteredVehicles.map((vehicle: any) => vehicle.value)" :key="filteredVehicles.length  || vehiclesOptions.length" @change="toggleVehicleSelection")
+      InputSelect.flex-1(:label="$t('operations.projects.vehicles.label')" isMultiple name="vehicles" :options="vehiclesOptions"  :value="filteredVehicles.map((vehicle) => vehicle.value)" :key="filteredVehicles.length  || vehiclesOptions.length" @change="toggleVehicleSelection")
       el-button.mt-7(size='medium' :icon="Plus" native-type="button" @click="vehicle = {}, addVehicle = true" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4")
     .glass-card.rounded-3xl.mt-3.border
       AppTable(v-slot="{data}" without-filters without-search without-pagination :columns="table.columns" :data="table.data" :key="table.data" class="!py-0")
@@ -53,7 +53,7 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit(async (values: any) => {
+const onSubmit = handleSubmit(async (values: unknown) => {
   try {
     // Attempt to create the project
     if (values.vehicles.length) {
@@ -175,7 +175,7 @@ function updateTableData() {
 /**
  * Toggles the selection of a vehicle by its ID.
  */
-function toggleVehicleSelection(val: any) {
+function toggleVehicleSelection(val: unknown) {
   const vehicleId = val.value || val;
   const index = vehiclesId.value?.indexOf(vehicleId);
 

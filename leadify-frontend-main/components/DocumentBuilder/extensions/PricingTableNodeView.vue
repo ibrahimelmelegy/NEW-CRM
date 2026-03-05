@@ -113,7 +113,7 @@ const taxRate = computed({
 const isEditable = computed(() => props.editor.isEditable);
 
 const subtotal = computed(() => {
-  return items.value.reduce((sum: number, item: any) => sum + item.qty * item.price, 0);
+  return items.value.reduce((sum: number, item: unknown) => sum + item.qty * item.price, 0);
 });
 
 const taxAmount = computed(() => {
@@ -138,7 +138,7 @@ function addRow() {
 }
 
 function removeRow(index: number) {
-  const newItems = items.value.filter((_: any, i: number) => i !== index);
+  const newItems = items.value.filter((_: unknown, i: number) => i !== index);
   props.updateAttributes({ items: newItems });
 }
 

@@ -9,7 +9,7 @@ const diagnose = async () => {
   try {
     await sequelize.authenticate();
     // Database Connection: OK
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Database Connection: FAILED', error.message);
   }
 
@@ -20,7 +20,7 @@ const diagnose = async () => {
       await Promise.race([redisClient.connect(), new Promise((_, reject) => setTimeout(() => reject(new Error('Redis Timeout')), 2000))]);
     }
     // Redis Connection: OK
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.warn('Redis Connection: FAILED (Caching will be skipped)');
   }
 
@@ -28,7 +28,7 @@ const diagnose = async () => {
   try {
     const leadCount = await Lead.count();
     // Lead count retrieved
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Data Access Error:', error.message);
   }
 

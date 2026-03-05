@@ -15,17 +15,17 @@
 
 <script setup lang="ts">
 defineProps<{
-  alerts: any[];
+  alerts: Record<string, unknown>[];
 }>();
 
-function getAlertClass(alert: any): string {
+function getAlertClass(alert: unknown): string {
   const desc = (alert.description || alert.descripion || '').toLowerCase();
   if (desc.includes('won') || desc.includes('closed')) return 'alert-won';
   if (desc.includes('lost') || desc.includes('cancelled')) return 'alert-lost';
   return 'alert-update';
 }
 
-function getAlertIcon(alert: any): string {
+function getAlertIcon(alert: unknown): string {
   const desc = (alert.description || alert.descripion || '').toLowerCase();
   if (desc.includes('won') || desc.includes('closed')) return 'ph:trophy-bold';
   if (desc.includes('lost') || desc.includes('cancelled')) return 'ph:x-circle-bold';

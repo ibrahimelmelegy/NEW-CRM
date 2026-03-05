@@ -102,7 +102,7 @@ onMounted(async () => {
   try {
     const response = await useApiFetch('procurement/stats');
     if (response?.success && response.body) {
-      stats.value = response.body as any;
+      stats.value = response.body as unknown;
     }
   } catch (e) {
     // Failed to fetch statistics - keep defaults
@@ -117,7 +117,7 @@ const formatCurrency = (value: number) => {
 };
 
 const getStatusClass = (status: string) => {
-  const map: any = {
+  const map: unknown = {
     Pending: 'bg-yellow-500/20 text-yellow-500',
     Approved: 'bg-green-500/20 text-green-500',
     Rejected: 'bg-red-500/20 text-red-500',
@@ -157,11 +157,11 @@ const vendorChartOption = computed(() => ({
         itemStyle: { shadowBlur: 20, shadowColor: 'rgba(168, 85, 247, 0.5)' }
       },
       data:
-        stats.value.charts.topVendors.map((v: any) => ({
+        stats.value.charts.topVendors.map((v) => ({
           value: v.value,
           name: v.name
         })).length > 0
-          ? stats.value.charts.topVendors.map((v: any) => ({ value: v.value, name: v.name }))
+          ? stats.value.charts.topVendors.map((v) => ({ value: v.value, name: v.name }))
           : [{ value: 0, name: 'No Data' }]
     }
   ]
@@ -172,7 +172,7 @@ const monthlyChartOption = computed(() => ({
   grid: { top: '10%', left: '3%', right: '4%', bottom: '15%', containLabel: true },
   xAxis: {
     type: 'category',
-    data: stats.value.charts.monthlyTrend.map((d: any) => d.month),
+    data: stats.value.charts.monthlyTrend.map((d) => d.month),
     axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
     axisLabel: { color: 'rgba(255,255,255,0.4)', fontSize: 10 }
   },
@@ -183,7 +183,7 @@ const monthlyChartOption = computed(() => ({
   },
   series: [
     {
-      data: stats.value.charts.monthlyTrend.map((d: any) => d.value),
+      data: stats.value.charts.monthlyTrend.map((d) => d.value),
       type: 'bar',
       barWidth: '40%',
       itemStyle: {

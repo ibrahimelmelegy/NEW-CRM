@@ -59,9 +59,9 @@ async function loadData() {
 
     const { body, success } = await useApiFetch(`calendar/events?startDate=${start}&endDate=${end}&limit=6`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       const docs = data.docs || data.events || data || [];
-      events.value = docs.map((e: any, i: number) => {
+      events.value = docs.map((e: unknown, i: number) => {
         const date = new Date(e.startDate || e.date || e.start);
         return {
           id: e.id || e._id || i,

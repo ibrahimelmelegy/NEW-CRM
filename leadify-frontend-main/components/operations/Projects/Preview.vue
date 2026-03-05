@@ -86,10 +86,10 @@ const formSchema = computed(() => {
         yup
           .string()
           .required()
-          .test('is-valid-number', t('validation.phoneInvalid'), (value: any) => {
+          .test('is-valid-number', t('validation.phoneInvalid'), (value: unknown) => {
             return /^\d+$/.test(value || '');
           })
-          .test('is-valid-discount', t('validation.invalidFormat'), (value: any) => {
+          .test('is-valid-discount', t('validation.invalidFormat'), (value: unknown) => {
             return value <= (project.value?.grandTotal || 0);
           })
           .max(999999999.99)
@@ -101,7 +101,7 @@ const formSchema = computed(() => {
         yup
           .string()
           .required()
-          .test('is-valid-number', t('validation.phoneInvalid'), (value: any) => {
+          .test('is-valid-number', t('validation.phoneInvalid'), (value: unknown) => {
             return /^\d+$/.test(value || '');
           })
           .max(9999)
@@ -115,7 +115,7 @@ const { handleSubmit, errors, values } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit((values: any, actions: any) => {
+const onSubmit = handleSubmit((values: unknown, actions: unknown) => {
   const formatedValues = cleanObject({
     discount: Number(values.discount),
     marginPercentage: Number(values.margin)
@@ -167,7 +167,7 @@ const finalCost = ref({
     //   width: 150,
     // },
   ],
-  data: [] as any
+  data: [] as unknown
 });
 
 if (projectId.value) {

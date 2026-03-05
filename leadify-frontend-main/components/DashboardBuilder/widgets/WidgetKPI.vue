@@ -36,7 +36,7 @@ async function loadData() {
   try {
     const { body, success } = await useApiFetch('dashboards/executive-summary');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       switch (props.dataSource) {
         case 'revenue':
           displayValue.value = data.totalRevenue ? `SAR ${formatLargeNumber(data.totalRevenue)}` : 'SAR 0';

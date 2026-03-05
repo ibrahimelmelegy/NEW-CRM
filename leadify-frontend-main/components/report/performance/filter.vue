@@ -51,11 +51,11 @@ const props = defineProps({
 const { handleSubmit, errors, values, resetForm } = useForm();
 const filter = ref();
 
-const mappedRoles = ref<{ label: string; value: any }[]>();
+const mappedRoles = ref<{ label: string; value: unknown }[]>();
 //  Get roles
 const repsonse = await useApiFetch('role');
 // Map clients to Select Options
-mappedRoles.value = repsonse.body?.docs?.map((e: any) => ({
+mappedRoles.value = repsonse.body?.docs?.map((e) => ({
   label: e.name,
   value: e.id
 }));
@@ -140,7 +140,7 @@ const getData = async () => {
   isLoading.value = false;
 };
 
-const onSubmit = handleSubmit(async (values: any) => {
+const onSubmit = handleSubmit(async (values: unknown) => {
   filter.value = values;
   getData();
 });
@@ -151,7 +151,7 @@ const ResetFilter = async () => {
   await getData();
   resetForm();
 };
-async function setEmail(pre: any) {
+async function setEmail(pre: unknown) {
   email.value = pre.target.value;
 }
 

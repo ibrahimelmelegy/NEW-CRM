@@ -29,7 +29,7 @@ class CustomFieldValue extends Model {
   public entityType!: string;
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public value?: any;
+  public value?: unknown;
 }
 
 export default CustomFieldValue;

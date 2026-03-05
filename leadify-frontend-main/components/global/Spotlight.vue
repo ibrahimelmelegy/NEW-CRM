@@ -171,7 +171,7 @@ onMounted(() => {
 // Track item refs for scroll-into-view
 const itemRefs = ref<Record<number, HTMLElement | null>>({});
 
-function setItemRef(el: any, index: number) {
+function setItemRef(el: unknown, index: number) {
   if (el?.$el) {
     itemRefs.value[index] = el.$el;
   } else {

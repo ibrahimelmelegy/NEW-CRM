@@ -63,7 +63,7 @@
 const props = defineProps<{
   variables: string[];
   orientation: string;
-  elements?: any[];
+  elements?: Record<string, unknown>[];
   selectedId?: string | null;
 }>();
 
@@ -94,7 +94,7 @@ function getElementIcon(type: string): string {
   return found?.icon || 'ph:cube-bold';
 }
 
-function getElementLabel(el: any): string {
+function getElementLabel(el: unknown): string {
   if (el.type === 'text') {
     const content = el.props?.content || '';
     return content.substring(0, 20) || 'Text';

@@ -114,7 +114,7 @@ class ZatcaInvoice extends Model {
   public status!: string;
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public zatcaResponse?: Record<string, any>;
+  public zatcaResponse?: Record<string, unknown>;
 
   @Column({ type: DataType.DATE, allowNull: true })
   public submittedAt?: Date;

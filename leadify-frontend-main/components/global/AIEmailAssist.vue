@@ -67,7 +67,7 @@ async function generateEmail() {
 
   loading.value = true;
   try {
-    const response: any = await useApiFetch('ai/generate-email', 'POST', {
+    const response = await useApiFetch('ai/generate-email', 'POST', {
       prompt: prompt.value,
       context: props.context
     });

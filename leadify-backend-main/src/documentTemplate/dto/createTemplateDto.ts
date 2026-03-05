@@ -17,22 +17,22 @@ export class CreateTemplateDto {
   @Expose()
   @IsOptional()
   @IsObject()
-  layout?: Record<string, any>;
+  layout?: Record<string, unknown>;
 
   @Expose()
   @IsOptional()
   @IsObject()
-  headerConfig?: Record<string, any>;
+  headerConfig?: Record<string, unknown>;
 
   @Expose()
   @IsOptional()
   @IsObject()
-  footerConfig?: Record<string, any>;
+  footerConfig?: Record<string, unknown>;
 
   @Expose()
   @IsOptional()
   @IsObject()
-  tableConfig?: Record<string, any>;
+  tableConfig?: Record<string, unknown>;
 
   @Expose()
   @IsOptional()

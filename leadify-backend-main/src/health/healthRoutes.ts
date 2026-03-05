@@ -17,7 +17,7 @@ router.get('/health', (_req: Request, res: Response) => {
 router.get('/health/ready', async (_req: Request, res: Response) => {
   try {
     await sequelize.authenticate();
-    const [results]: any = await sequelize.query('SELECT 1+1 AS result');
+    const [results]: unknown = await sequelize.query('SELECT 1+1 AS result');
 
     res.status(200).json({
       status: 'ok',
@@ -32,7 +32,7 @@ router.get('/health/ready', async (_req: Request, res: Response) => {
         },
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(503).json({
       status: 'error',
       timestamp: new Date().toISOString(),

@@ -53,7 +53,7 @@ import type { SmartTableColumn } from '~/composables/useSmartTable';
 interface KanbanGroup {
   key: string;
   label: string;
-  items: any[];
+  items: Record<string, unknown>[];
   aggregate: number | null;
 }
 
@@ -77,8 +77,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  'card-move': [payload: { item: any; fromGroup: string; toGroup: string }];
-  'row-click': [row: any];
+  'card-move': [payload: { item: unknown; fromGroup: string; toGroup: string }];
+  'row-click': [row: unknown];
 }>();
 
 const boardRef = ref<HTMLElement | null>(null);
@@ -133,7 +133,7 @@ watch(
 );
 
 // Drag handlers
-const onDragStart = (_evt: any, groupKey: string) => {
+const onDragStart = (_evt: unknown, groupKey: string) => {
   dragFromGroup.value = groupKey;
 };
 
@@ -142,7 +142,7 @@ const onDragEnd = () => {
   dragFromGroup.value = null;
 };
 
-const onDragChange = (evt: any, toGroupKey: string) => {
+const onDragChange = (evt: unknown, toGroupKey: string) => {
   if (evt.added) {
     const item = evt.added.element;
     const fromGroup = dragFromGroup.value || '';
@@ -194,7 +194,7 @@ const getStatusTagType = (status: string): string => {
   return '';
 };
 
-const formatFieldValue = (col: SmartTableColumn, val: any) => {
+const formatFieldValue = (col: SmartTableColumn, val: unknown) => {
   if (val == null || val === '') return '-';
   if (col.type === 'date') {
     try {

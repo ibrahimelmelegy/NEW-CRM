@@ -152,7 +152,7 @@ el-drawer(
 import { ref, watch, computed } from 'vue';
 
 const props = defineProps<{
-  node: any;
+  node: unknown;
   visible: boolean;
 }>();
 
@@ -179,7 +179,7 @@ const nodeTypeLabel = computed(() => {
 });
 
 const localLabel = ref('');
-const config = ref<Record<string, any>>({});
+const config = ref<Record<string, unknown>>({});
 
 watch(
   () => props.node,

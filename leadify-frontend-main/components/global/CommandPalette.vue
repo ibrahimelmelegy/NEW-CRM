@@ -216,7 +216,7 @@ function selectItem() {
   }
 }
 
-function executeAction(action: any) {
+function executeAction(action: unknown) {
   close();
   router.push(action.link);
 }
@@ -279,12 +279,12 @@ async function search(q: string) {
       if (res.status !== 'fulfilled') return;
       const { body, success } = res.value;
       if (!success || !body) return;
-      const data = body as any;
+      const data = body as unknown;
       const docs = data.docs || data || [];
       const config = searches[i];
       if (!config) return;
 
-      docs.forEach((doc: any) => {
+      docs.forEach((doc) => {
         allResults.push({
           id: doc.id,
           name: doc[config.nameKey] || doc.name || 'Untitled',

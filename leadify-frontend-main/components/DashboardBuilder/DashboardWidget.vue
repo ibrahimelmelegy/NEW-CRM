@@ -103,7 +103,7 @@
 <script setup lang="ts">
 defineProps<{
   type: string;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
 }>();
 </script>
 

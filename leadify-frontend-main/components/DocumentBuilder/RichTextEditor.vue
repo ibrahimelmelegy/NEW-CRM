@@ -300,7 +300,7 @@ watch(
   () => props.modelValue,
   newValue => {
     if (editor.value && newValue !== editor.value.getHTML()) {
-      editor.value.commands.setContent(newValue, false as any);
+      editor.value.commands.setContent(newValue, false as unknown);
     }
   }
 );

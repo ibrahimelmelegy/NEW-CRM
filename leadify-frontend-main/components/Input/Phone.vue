@@ -56,7 +56,7 @@ const errorPhone = ref('');
 
 const validPhone = ref(true);
 
-function validatecode(event: any, submit: any) {
+function validatecode(event: unknown, submit: unknown) {
   if (event) {
     validPhone.value = event.valid;
     emit('validphone', validPhone.value);

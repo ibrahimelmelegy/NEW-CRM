@@ -99,7 +99,7 @@ const logoSrc = computed(() => {
 onMounted(async () => {
   themeStore.initializeTheme();
   try {
-    const response: any = await useApiFetch('auth/me');
+    const response = await useApiFetch('auth/me');
     user.value = response?.user;
   } catch (e) {
     console.error('Auth fetch failed', e);
@@ -121,13 +121,13 @@ function getDisabled(role: string) {
 /**
  * Hide entire section if user has no access to ANY child item
  */
-function hasAccessToSection(navLink: any): boolean {
+function hasAccessToSection(navLink: unknown): boolean {
   // If section itself has a role requirement, check it
   if (navLink.role && getDisabled(navLink.role)) return false;
 
   // If it has a submenu, show section only if user can access at least one child
   if (navLink.submenu) {
-    return navLink.submenu.some((sub: any) => !getDisabled(sub.role));
+    return navLink.submenu.some((sub) => !getDisabled(sub.role));
   }
 
   return true;

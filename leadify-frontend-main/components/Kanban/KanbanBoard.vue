@@ -98,7 +98,7 @@ const getColumnCards = (key: string): KanbanCard[] => {
   return localCards.value[key];
 };
 
-const onDragEnd = (evt: any, toStage: string) => {
+const onDragEnd = (evt: unknown, toStage: string) => {
   if (!evt.item?._underlying_vm_) return;
   const card = evt.item._underlying_vm_ as KanbanCard;
 

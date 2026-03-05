@@ -13,7 +13,7 @@ export default class Segment extends Model {
   public description?: string;
 
   @Column({ type: DataType.JSONB, allowNull: false, defaultValue: [] })
-  public criteria!: Array<{ field: string; operator: string; value: any }>;
+  public criteria!: Array<{ field: string; operator: string; value: unknown }>;
 
   @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
   public customerCount!: number;

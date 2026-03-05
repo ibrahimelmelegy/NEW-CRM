@@ -124,7 +124,7 @@ const loading = ref(false);
 
 const beforeUpload: UploadProps['beforeUpload'] = (file: File) => {
   if (!props.formats.includes(file.type)) {
-    ElMessage.error(t('common.acceptUpload', { formats: props.formats.map((format: any) => format.split('/').pop()).join(', ') }));
+    ElMessage.error(t('common.acceptUpload', { formats: props.formats.map((format) => format.split('/').pop()).join(', ') }));
     return false;
   }
 
@@ -136,7 +136,7 @@ const beforeUpload: UploadProps['beforeUpload'] = (file: File) => {
   return true;
 };
 
-const handleUploadRequest = async (params: any) => {
+const handleUploadRequest = async (params: unknown) => {
   const { file, filename, data } = params;
   try {
     loading.value = true;
@@ -147,7 +147,7 @@ const handleUploadRequest = async (params: any) => {
 
     formData.append(filename, fileToUpload);
 
-    Object.entries(data).forEach(([key, value]: any) => {
+    Object.entries(data).forEach(([key, value]: unknown) => {
       formData.append(key, value);
     });
 
@@ -163,7 +163,7 @@ const handleUploadRequest = async (params: any) => {
 };
 
 const handleRemove = (file: UploadFile) => {
-  inputValue.value = (inputValue.value as any[])?.filter((f: any) => f.uid !== file.uid);
+  inputValue.value = (inputValue.value as unknown[])?.filter((f) => f.uid !== file.uid);
 };
 </script>
 

@@ -338,7 +338,7 @@ export const ProposalPrintTemplate: React.FC<{ data: ProposalData }> = ({ data }
 
     // --- COVER PAGE STYLES ---
 
-    const CoverPage = ({ data, color, typeInfo }: { data: ProposalData, color: string, typeInfo: any }) => {
+    const CoverPage = ({ data, color, typeInfo }: { data: ProposalData, color: string, typeInfo: unknown }) => {
         // 0. CORPORATE
         if (data.coverStyle === 'corporate') {
             return (

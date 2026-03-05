@@ -19,7 +19,7 @@ import { useForm } from 'vee-validate';
 const { handleSubmit, errors, values, resetForm } = useForm();
 const emit = defineEmits(['showFilter']);
 
-const onSubmit = handleSubmit(async (values: any) => {
+const onSubmit = handleSubmit(async (values: unknown) => {
   emit('showFilter', values);
 });
 

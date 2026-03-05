@@ -43,14 +43,14 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  success: [data: any];
+  success: [data: unknown];
 }>();
 
 const visible = defineModel<boolean>({ default: false });
 
 const fileInput = ref<HTMLInputElement>();
 const selectedFile = ref<File | null>(null);
-const preview = ref<any[]>([]);
+const preview = ref<Record<string, unknown>[]>([]);
 const previewColumns = ref<string[]>([]);
 const uploading = ref(false);
 const dragOver = ref(false);

@@ -49,7 +49,7 @@ const activeTab = ref(tabs.value[0]);
 
 const filter = ref();
 
-const showFilter = (val: any) => {
+const showFilter = (val: unknown) => {
   filter.value = val;
 };
 

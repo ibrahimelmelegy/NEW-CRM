@@ -55,14 +55,14 @@ const visible = computed({
 
 const rawText = ref(props.initialText || '');
 const loading = ref(false);
-const summaryData = ref<any>(null);
+const summaryData = ref<Record<string, unknown> | null>(null);
 
 const generateSummary = async () => {
   if (!rawText.value) return ElNotification.warning('Please enter some text');
 
   loading.value = true;
   try {
-    const response: any = await useApiFetch('ai/summarize-meeting', 'POST', {
+    const response = await useApiFetch('ai/summarize-meeting', 'POST', {
       text: rawText.value
     });
 

@@ -29,7 +29,7 @@ const formSchema = yup.object({
     .string()
     .trim()
     .nullable()
-    .test('min-length-if-entered', t('role.form.descriptionHint'), (value: any) => !value || value.length >= 2)
+    .test('min-length-if-entered', t('role.form.descriptionHint'), (value: unknown) => !value || value.length >= 2)
     .trim()
     .max(2000)
     .label(t('role.form.description'))
@@ -39,7 +39,7 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit((values: any, actions: any) => {
+const onSubmit = handleSubmit((values: unknown, actions: unknown) => {
   emit('submit', values);
 });
 </script>

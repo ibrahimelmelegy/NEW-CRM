@@ -65,7 +65,7 @@ const formSchema = yup.object({
     .number()
     .required()
     .label(t('deals.table.amount'))
-    .transform((value: any, originalValue: any) => (String(originalValue).trim() === '' ? null : value)),
+    .transform((value: unknown, originalValue: unknown) => (String(originalValue).trim() === '' ? null : value)),
   invoiceDate: yup.date().nullable().label(t('deals.table.invoiceDate')),
   collectedDate: yup.date().nullable().label(t('deals.table.collectedDate')),
   collected: yup.string().trim().nullable().label(t('deals.table.collected'))
@@ -77,7 +77,7 @@ const { handleSubmit, errors, validate, values } = useForm({ validationSchema: f
 const formRef = ref();
 
 //  Emit submittion values
-const onSubmit = handleSubmit((values: any) => {
+const onSubmit = handleSubmit((values: unknown) => {
   const formattedValues = {
     ...values,
     id: props.invoice.id,
@@ -95,7 +95,7 @@ function onDelete() {
  * Handles the change event for the "collected" field.
  */
 const isCollected = ref(false);
-function handleCollectedChange(value: any) {
+function handleCollectedChange(value: unknown) {
   if (value.label === 'Yes') {
     isCollected.value = true;
   } else {

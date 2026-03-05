@@ -41,12 +41,12 @@ interface TableColumn {
   prop: string;
   label: string;
   minWidth?: string;
-  format?: (val: any) => string;
+  format?: (val: unknown) => string;
 }
 
 const loading = ref(true);
 const columns = ref<TableColumn[]>([]);
-const rows = ref<any[]>([]);
+const rows = ref<Record<string, unknown>[]>([]);
 
 async function loadData() {
   loading.value = true;
@@ -68,13 +68,13 @@ async function loadRecentDeals() {
     { prop: 'name', label: 'Deal', minWidth: '140' },
     { prop: 'clientName', label: 'Client', minWidth: '120' },
     { prop: 'stage', label: 'Stage', minWidth: '100' },
-    { prop: 'revenue', label: 'Value', minWidth: '100', format: (v: any) => (v ? `SAR ${formatLargeNumber(v)}` : '--') }
+    { prop: 'revenue', label: 'Value', minWidth: '100', format: (v: unknown) => (v ? `SAR ${formatLargeNumber(v)}` : '--') }
   ];
   const { body, success } = await useApiFetch('deal?limit=8&sort=-updatedAt');
   if (success && body) {
-    const data = body as any;
+    const data = body as unknown;
     const deals = data.docs || data || [];
-    rows.value = deals.map((d: any) => ({
+    rows.value = deals.map((d) => ({
       name: d.name || d.title || '--',
       clientName: d.client?.name || d.clientName || '--',
       stage: d.stage || d.status || '--',
@@ -87,14 +87,14 @@ async function loadTeamPerformance() {
   columns.value = [
     { prop: 'name', label: 'Team Member', minWidth: '140' },
     { prop: 'deals', label: 'Deals', minWidth: '70' },
-    { prop: 'revenue', label: 'Revenue', minWidth: '100', format: (v: any) => (v ? `SAR ${formatLargeNumber(v)}` : '--') },
-    { prop: 'conversion', label: 'Conv.', minWidth: '70', format: (v: any) => (v ? `${v}%` : '--') }
+    { prop: 'revenue', label: 'Revenue', minWidth: '100', format: (v: unknown) => (v ? `SAR ${formatLargeNumber(v)}` : '--') },
+    { prop: 'conversion', label: 'Conv.', minWidth: '70', format: (v: unknown) => (v ? `${v}%` : '--') }
   ];
   const { body, success } = await useApiFetch('dashboards/team-performance');
   if (success && body) {
-    const data = body as any;
+    const data = body as unknown;
     const members = Array.isArray(data.members) ? data.members : Array.isArray(data) ? data : [];
-    rows.value = members.map((m: any) => ({
+    rows.value = members.map((m) => ({
       name: m.name || m.userName || '--',
       deals: m.dealsCount || m.deals || 0,
       revenue: m.revenue || m.totalRevenue || 0,

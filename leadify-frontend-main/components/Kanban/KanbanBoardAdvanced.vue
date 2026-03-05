@@ -216,7 +216,7 @@ function getAllCards(): KanbanCard[] {
 }
 
 // ---- Drag handling ----
-const onDragEnd = (evt: any, toStage: string) => {
+const onDragEnd = (evt: unknown, toStage: string) => {
   if (!evt.item?._underlying_vm_) return;
   const card = evt.item._underlying_vm_ as KanbanCard;
 

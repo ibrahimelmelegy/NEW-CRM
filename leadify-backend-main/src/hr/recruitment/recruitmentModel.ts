@@ -84,7 +84,7 @@ export class Applicant extends Model {
   public notes?: string;
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public experience?: Record<string, any>;
+  public experience?: Record<string, unknown>;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public source?: string;

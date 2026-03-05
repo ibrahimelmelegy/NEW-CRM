@@ -16,7 +16,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps<{
-  items: any[];
+  items: Record<string, unknown>[];
 }>();
 
 const tickerRef = ref<HTMLElement | null>(null);

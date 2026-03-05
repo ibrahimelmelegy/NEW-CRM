@@ -28,11 +28,11 @@ const props = defineProps({
 });
 const emit = defineEmits(['confirm']);
 const dialog = defineModel();
-async function submitCategoryForm(values: any) {
+async function submitCategoryForm(values: unknown) {
   finalValues.value = { ...finalValues.value, ...values };
 }
 
-async function submitCategoryItemForm(values: any) {
+async function submitCategoryItemForm(values: unknown) {
   finalValues.value.items = [...values];
 }
 async function onSubmitMaterials() {
@@ -49,8 +49,8 @@ async function onSubmitMaterials() {
     } else {
       response = await createAdditionalMaterial(finalValues.value, false);
     }
-    emit('confirm', (response as any)?.id);
-    if (Object.keys(response as any).length) dialog.value = false;
+    emit('confirm', (response as unknown)?.id);
+    if (Object.keys(response as unknown).length) dialog.value = false;
     loading.value = false;
   } catch (error) {
     console.error('Error saving forms:', error);

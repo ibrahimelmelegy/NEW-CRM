@@ -3,7 +3,7 @@ el-form.mt-6.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myFo
   .card.m-auto.glass-card.p-10.rounded-3xl(class="w-[90%] ")
     .title.font-bold.text-xl.capitalize.mb-8 {{ $t('operations.projects.assets.title') }}
     .flex.align-center.gap-1
-      InputSelect.flex-1(:label="$t('operations.projects.assets.label')" isMultiple name="assetIds" :options="assetsOptions"  :value="filteredAssets.map((asset: any) => asset.value)" :key="filteredAssets  || assetsOptions" @change="toggleAssetSelection")
+      InputSelect.flex-1(:label="$t('operations.projects.assets.label')" isMultiple name="assetIds" :options="assetsOptions"  :value="filteredAssets.map((asset) => asset.value)" :key="filteredAssets  || assetsOptions" @change="toggleAssetSelection")
       el-button.mt-7(size='medium' :icon="Plus" native-type="button" @click="addAsset = true" class="!rounded-2xl !border-[#e9e8eb] !color-[#e9e8eb] !py-7 !px-4")
     .glass-card.rounded-3xl.mt-3.border
       .title.font-bold.text-xl.capitalize.flex-1.p-10.pb-0 {{ $t('operations.projects.assets.preview') }}
@@ -58,7 +58,7 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit(async (values: any, actions: any) => {
+const onSubmit = handleSubmit(async (values: unknown, actions: unknown) => {
   try {
     // Attempt to create the project
     if (values.assetIds.length) {
@@ -139,10 +139,10 @@ const assetsTotal = reactive({
       width: 150
     }
   ],
-  data: [] as any
+  data: [] as unknown
 });
 if (project.value?.projectAssets?.length) {
-  assetsId.value = project.value?.projectAssets?.map((projectAsset: any) => projectAsset.assetId);
+  assetsId.value = project.value?.projectAssets?.map((projectAsset: unknown) => projectAsset.assetId);
   updateTableData();
 }
 
@@ -206,7 +206,7 @@ function updateTableData() {
 /**
  * Toggles the selection of a asset by its ID.
  */
-function toggleAssetSelection(val: any) {
+function toggleAssetSelection(val: unknown) {
   const assetId = val.value || val;
   const index = assetsId.value?.indexOf(assetId);
 

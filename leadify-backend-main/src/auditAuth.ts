@@ -17,7 +17,7 @@ const auditAuth = async () => {
     leadAssignments.forEach(la => {
       // Lead assignment entry processed
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('❌ Audit Error:', e.message);
   }
   process.exit();

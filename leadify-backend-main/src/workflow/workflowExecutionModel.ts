@@ -5,7 +5,7 @@ import WorkflowRule from './workflowModel';
 export interface ActionExecutionResult {
   actionType: string;
   status: 'SUCCESS' | 'FAILED' | 'SKIPPED';
-  result?: any;
+  result?: unknown;
   error?: string;
 }
 

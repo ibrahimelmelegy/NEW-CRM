@@ -23,7 +23,7 @@ class SavedReport extends Model {
   @Column({ type: DataType.JSONB, allowNull: false })
   public config!: {
     columns: string[];
-    filters: { field: string; operator: string; value: any }[];
+    filters: { field: string; operator: string; value: unknown }[];
     groupBy?: string;
     chartType?: string;
     sortBy?: string;

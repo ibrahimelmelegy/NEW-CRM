@@ -55,7 +55,7 @@ class GoogleDriveConnector {
       throw new Error(`Failed to refresh token: ${error}`);
     }
 
-    const data: any = await response.json();
+    const data = await response.json();
     return data.access_token;
   }
 
@@ -82,7 +82,7 @@ class GoogleDriveConnector {
       const targetFolder = folderId || config.folderId;
 
       // Create multipart upload
-      const metadata: Record<string, any> = {
+      const metadata: Record<string, unknown> = {
         name: file.name,
         mimeType: file.mimeType
       };
@@ -116,7 +116,7 @@ class GoogleDriveConnector {
         return { success: false, message: `Upload failed: ${errorText}` };
       }
 
-      const result: any = await response.json();
+      const result = await response.json();
       return {
         success: true,
         file: {
@@ -127,7 +127,7 @@ class GoogleDriveConnector {
         },
         message: 'File uploaded successfully'
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       return { success: false, message: error.message || 'Failed to upload file' };
     }
   }
@@ -153,13 +153,13 @@ class GoogleDriveConnector {
         return { success: false, files: [], message: `List files failed: ${errorText}` };
       }
 
-      const data: any = await response.json();
+      const data = await response.json();
       return {
         success: true,
         files: data.files || [],
         message: `Found ${(data.files || []).length} files`
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       return { success: false, files: [], message: error.message || 'Failed to list files' };
     }
   }
@@ -182,11 +182,11 @@ class GoogleDriveConnector {
         });
 
         if (response.ok) {
-          const data: any = await response.json();
+          const data = await response.json();
           return { success: true, message: `Connected as ${data.user?.displayName || 'Unknown user'}` };
         }
         return { success: false, message: `Google API error: ${response.status}` };
-      } catch (error: any) {
+      } catch (error: unknown) {
         return { success: false, message: error.message || 'Connection test failed' };
       }
     }

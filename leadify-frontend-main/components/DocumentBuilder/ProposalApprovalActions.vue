@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-3">
     <!-- Status Badge -->
-    <el-tag :type="statusConfig.type as any" effect="dark" round size="default" class="!text-xs !font-bold !px-3">
+    <el-tag :type="statusConfig.type as unknown" effect="dark" round size="default" class="!text-xs !font-bold !px-3">
       <Icon :name="statusConfig.icon" size="14" class="mr-1 align-middle" />
       {{ statusConfig.label }}
     </el-tag>

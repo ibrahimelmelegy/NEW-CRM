@@ -89,10 +89,10 @@ router.get('/', authenticateUser, async (req: AuthenticatedRequest, res: Respons
 router.get('/:model/:id', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const responseFromService = await getActivityLogs(
-      req.params?.model as any,
+      req.params?.model as unknown,
       req.params?.id as string,
-      req.query?.page as any,
-      req.query?.limit as any
+      req.query?.page as unknown,
+      req.query?.limit as unknown
     );
     wrapResult(res, responseFromService);
   } catch (error) {

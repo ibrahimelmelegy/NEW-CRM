@@ -197,7 +197,7 @@ const widgets = ref([...defaultWidgets]);
 const getMetricValue = (key: string) => {
   if (!leadStats.value || !leadStats.value.firstCards || leadStats.value.firstCards.length === 0) return 0;
   try {
-    const map: any = {
+    const map: unknown = {
       leads: leadStats.value.firstCards[0]?.value ?? 0,
       conversion: leadStats.value.firstCards[1]?.value ?? 0,
       opportunities: leadStats.value.firstCards[2]?.value ?? 0,
@@ -219,7 +219,7 @@ const getChartOption = (type: string) => {
   return {};
 };
 
-const onChartClick = (params: any) => {
+const onChartClick = (params: unknown) => {
   // Drill-down logic
   if (params.seriesType === 'pie') {
     const stage = params.name.toLowerCase();
@@ -241,7 +241,7 @@ const loadLayout = () => {
     const parsed = JSON.parse(saved);
     // Merge saved layout with default widgets to ensure new widgets are added
     const merged = [...defaultWidgets].map(dw => {
-      const sw = parsed.find((p: any) => p.id === dw.id);
+      const sw = parsed.find((p) => p.id === dw.id);
       if (sw) {
         return { ...dw, ...sw, visible: sw.visible === undefined ? true : sw.visible };
       }

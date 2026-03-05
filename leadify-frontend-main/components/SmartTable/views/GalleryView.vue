@@ -63,7 +63,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  'row-click': [row: any];
+  'row-click': [row: unknown];
 }>();
 
 // Find image column (if any)
@@ -85,7 +85,7 @@ const displayFields = computed(() =>
     .slice(0, 4)
 );
 
-const getCardTitle = (row: any) => {
+const getCardTitle = (row: unknown) => {
   if (!titleColumn.value) return 'Record';
   const val = row[titleColumn.value.prop];
   if (val && typeof val === 'object' && val.title) return val.title;
@@ -101,7 +101,7 @@ const getStatusType = (status: string): string => {
   return '';
 };
 
-const formatDate = (val: any) => {
+const formatDate = (val: unknown) => {
   if (!val) return '-';
   try {
     return new Date(val).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
@@ -110,7 +110,7 @@ const formatDate = (val: any) => {
   }
 };
 
-const formatNumber = (val: any) => {
+const formatNumber = (val: unknown) => {
   if (val == null || val === '') return '-';
   const num = Number(val);
   return isNaN(num) ? val : num.toLocaleString();

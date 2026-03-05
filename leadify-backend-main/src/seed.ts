@@ -14,7 +14,7 @@ async function seed() {
     // Permissions loaded
 
     // 0. RESET ALL ROLES (Delete all roles except SUPER_ADMIN if needed, or just delete ALL and recreate)
-    const roleModel = Role as any;
+    const roleModel = Role as unknown;
 
     // Delete all roles NOT named SUPER_ADMIN
     const { Op } = require('sequelize');
@@ -47,7 +47,7 @@ async function seed() {
     await sequelize.query('TRUNCATE TABLE "Users" RESTART IDENTITY CASCADE');
     // Truncated Users table and all dependent records
 
-    const userModel = User as any;
+    const userModel = User as unknown;
 
     // 3. Create Fresh Super Admin (credentials from environment variables)
     const adminEmail = process.env.ADMIN_EMAIL;

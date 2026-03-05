@@ -21,7 +21,7 @@ export interface TemplateEmailInput {
   to: string;
   from?: string;
   templateId: string;
-  dynamicData?: Record<string, any>;
+  dynamicData?: Record<string, unknown>;
 }
 
 export interface EmailResult<T> {
@@ -32,7 +32,7 @@ export interface EmailResult<T> {
 }
 
 export class SendGridProvider {
-  private sgMail: any = null;
+  private sgMail: unknown = null;
 
   static isConfigured(): boolean {
     return !!process.env.SENDGRID_API_KEY;
@@ -69,7 +69,7 @@ export class SendGridProvider {
         return { success: true, data: { messageId: response.headers['x-message-id'] || `sg_${Date.now()}` }, mock: false };
       }
       return { success: true, data: { messageId: `mock_msg_${Date.now()}` }, mock: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[SendGridProvider] sendEmail error:', err.message);
       return { success: false, data: null, error: err.message, mock: !SendGridProvider.isConfigured() };
     }
@@ -91,7 +91,7 @@ export class SendGridProvider {
       }
       const ids = input.recipients.map((_, i) => `mock_bulk_${Date.now()}_${i}`);
       return { success: true, data: { messageCount: input.recipients.length, messageIds: ids }, mock: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[SendGridProvider] sendBulkEmail error:', err.message);
       return { success: false, data: null, error: err.message, mock: !SendGridProvider.isConfigured() };
     }
@@ -110,7 +110,7 @@ export class SendGridProvider {
         return { success: true, data: { messageId: response.headers['x-message-id'] || `sg_tpl_${Date.now()}` }, mock: false };
       }
       return { success: true, data: { messageId: `mock_tpl_${Date.now()}` }, mock: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[SendGridProvider] sendTemplateEmail error:', err.message);
       return { success: false, data: null, error: err.message, mock: !SendGridProvider.isConfigured() };
     }
@@ -121,12 +121,12 @@ export class SendGridProvider {
       if (SendGridProvider.isConfigured()) {
         const sgClient = require('@sendgrid/client');
         sgClient.setApiKey(process.env.SENDGRID_API_KEY);
-        const queryParams: any = {};
+        const queryParams: unknown = {};
         if (startDate) queryParams.start_date = startDate;
         if (endDate) queryParams.end_date = endDate;
         const [, body] = await sgClient.request({ method: 'GET', url: '/v3/stats', qs: queryParams });
-        const totals = (body as any[]).reduce(
-          (acc: any, day: any) => {
+        const totals = (body as unknown[]).reduce(
+          (acc: unknown, day: unknown) => {
             const m = day.stats?.[0]?.metrics || {};
             acc.delivered += m.delivered || 0;
             acc.opens += m.unique_opens || 0;
@@ -139,7 +139,7 @@ export class SendGridProvider {
         return { success: true, data: totals, mock: false };
       }
       return { success: true, data: { delivered: 1250, opens: 430, clicks: 85, bounces: 12 }, mock: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[SendGridProvider] getEmailStats error:', err.message);
       return { success: false, data: null, error: err.message, mock: !SendGridProvider.isConfigured() };
     }

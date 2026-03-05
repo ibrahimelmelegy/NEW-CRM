@@ -1920,7 +1920,7 @@ interface ProposalData {
   type?: 'FINANCIAL' | 'TECHNICAL' | 'MIXED';
   themeColor: string;
   font: 'sans' | 'serif' | 'mono';
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const props = defineProps<{

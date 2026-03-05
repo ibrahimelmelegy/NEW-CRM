@@ -20,7 +20,7 @@ export interface JobOptions {
 
 export interface JobDefinition {
   name: string;
-  handler: (data: any) => Promise<any>;
+  handler: (data: unknown) => Promise<any>;
   options?: JobOptions;
 }
 
@@ -29,11 +29,11 @@ export type JobStatus = 'waiting' | 'active' | 'completed' | 'failed' | 'delayed
 interface InternalJob {
   id: string;
   queueName: string;
-  data: any;
+  data: unknown;
   options: Required<JobOptions>;
   status: JobStatus;
   attempts: number;
-  result?: any;
+  result?: unknown;
   error?: string;
   createdAt: number;
   startedAt?: number;
@@ -43,7 +43,7 @@ interface InternalJob {
 interface QueueConfig {
   name: string;
   concurrency: number;
-  handler?: (data: any) => Promise<any>;
+  handler?: (data: unknown) => Promise<any>;
   activeCount: number;
 }
 
@@ -75,7 +75,7 @@ class JobQueue {
    * Register a handler for a specific queue.
    * Call this during app startup to define how jobs in each queue are processed.
    */
-  registerHandler(queueName: string, handler: (data: any) => Promise<any>): void {
+  registerHandler(queueName: string, handler: (data: unknown) => Promise<any>): void {
     const queue = this.queues.get(queueName);
     if (!queue) {
       // Auto-register the queue if it does not exist
@@ -89,7 +89,7 @@ class JobQueue {
    * Add a job to the specified queue.
    * Returns a unique job ID for tracking.
    */
-  async addJob(queueName: string, data: any, options?: JobOptions): Promise<string> {
+  async addJob(queueName: string, data: unknown, options?: JobOptions): Promise<string> {
     if (!this.queues.has(queueName)) {
       this.registerQueue(queueName);
     }
@@ -240,7 +240,7 @@ class JobQueue {
     attempts: number;
     maxAttempts: number;
     error?: string;
-    result?: any;
+    result?: unknown;
     createdAt: number;
     startedAt?: number;
     completedAt?: number;

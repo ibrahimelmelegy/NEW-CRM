@@ -182,7 +182,7 @@ export class PricingRule extends Model {
   public type!: 'DISCOUNT' | 'MARKUP' | 'BUNDLE' | 'VOLUME';
 
   @Column({ type: DataType.JSONB, allowNull: true, defaultValue: {} })
-  public conditions?: Record<string, any>;
+  public conditions?: Record<string, unknown>;
 
   @Column({ type: DataType.DECIMAL(5, 2), allowNull: true, defaultValue: 0 })
   public discountPercent?: number;

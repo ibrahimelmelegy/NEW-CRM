@@ -32,7 +32,7 @@
         :tipNote="false",
         class="md:col-span-2",
         innerClass="!mb-0"
-        :value="folder?.refs?.map((file: any) => ({name: file, response: file }))"
+        :value="folder?.refs?.map((file) => ({name: file, response: file }))"
       )
   </template>
 
@@ -58,7 +58,7 @@ const formSchema = yup.object({
     .string()
     .trim()
     .nullable()
-    .test('min-length-if-entered', 'Folder Name must be at least 2 characters', (value: any) => !value || value.length >= 2)
+    .test('min-length-if-entered', 'Folder Name must be at least 2 characters', (value: unknown) => !value || value.length >= 2)
     .trim()
     .max(250)
     .label('Folder Name'),
@@ -70,7 +70,7 @@ const { handleSubmit, errors, validate, values, resetForm } = useForm({
   validationSchema: formSchema,
   initialValues: {
     name: props.folder?.name || '',
-    file: props.folder?.refs?.map((file: any) => ({ name: file, response: file })) || []
+    file: props.folder?.refs?.map((file) => ({ name: file, response: file })) || []
   }
 });
 
@@ -82,7 +82,7 @@ watch(
       resetForm({
         values: {
           name: newFolder.name || '',
-          file: newFolder.refs?.map((file: any) => ({ name: file, response: file })) || []
+          file: newFolder.refs?.map((file) => ({ name: file, response: file })) || []
         }
       });
     }
@@ -93,7 +93,7 @@ watch(
 const formRef = ref();
 
 //  Emit submittion values
-const onSubmit = handleSubmit(async (values: any) => {
+const onSubmit = handleSubmit(async (values: unknown) => {
   emit('onSubmit', { ...values });
   if (!props.editMode) {
     await resetForm();

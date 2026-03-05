@@ -6,13 +6,13 @@ import 'reflect-metadata';
 
 // Type definition for ClassConstructor
 type ClassConstructor<T> = {
-  new (...args: any[]): T;
+  new (...args: unknown[]): T;
 };
 
 // Helper function to format errors recursively
-function formatValidationErrors(errors: any[]): any[] {
+function formatValidationErrors(errors: unknown[]): unknown[] {
   return errors.map(error => {
-    const formattedError: any = {
+    const formattedError: unknown = {
       property: error.property,
       constraints: error.constraints || {}
     };

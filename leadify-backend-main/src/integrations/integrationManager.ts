@@ -94,7 +94,7 @@ class IntegrationManager {
           break;
       }
       return { provider, reachable: true, latencyMs: Date.now() - start };
-    } catch (err: any) {
+    } catch (err: unknown) {
       return { provider, reachable: false, latencyMs: Date.now() - start, error: err.message };
     }
   }

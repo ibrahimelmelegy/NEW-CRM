@@ -23,8 +23,8 @@
 
 <script setup lang="ts">
 defineProps<{
-  sellers: any[];
-  buyers: any[];
+  sellers: Record<string, unknown>[];
+  buyers: Record<string, unknown>[];
 }>();
 </script>
 

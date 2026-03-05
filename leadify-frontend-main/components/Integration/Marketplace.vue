@@ -53,7 +53,7 @@ export interface MarketplaceIntegration {
   category: string;
   status: 'connected' | 'disconnected' | 'error';
   isConfigured: boolean;
-  configFields?: any[];
+  configFields?: Record<string, unknown>[];
 }
 
 const props = defineProps<{

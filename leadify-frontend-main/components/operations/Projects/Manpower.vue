@@ -62,7 +62,7 @@ const { handleSubmit, values } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit(async (values: any, actions: any) => {
+const onSubmit = handleSubmit(async (values: unknown, actions: unknown) => {
   const formattedValues = cleanObject({
     accommodationCost: Number(values.accommodationCost),
     foodCostPerDay: Number(values.foodCost),
@@ -183,7 +183,7 @@ const manPowerPreview = ref({
       width: 120
     }
   ],
-  data: [] as any
+  data: [] as unknown
 });
 const manPowertotal = ref({
   columns: [
@@ -212,23 +212,23 @@ const manPowertotal = ref({
       width: 150
     }
   ],
-  data: [] as any
+  data: [] as unknown
 });
 
-const totalManpowerCost = (data: any) => {
-  return data?.reduce((sum: number, manpower: any) => sum + Number(manpower.totalCost || 0), 0) ?? 0;
+const totalManpowerCost = (data: unknown) => {
+  return data?.reduce((sum: number, manpower: unknown) => sum + Number(manpower.totalCost || 0), 0) ?? 0;
 };
 
-const finalManpowerTotalCost = (data: any) => {
+const finalManpowerTotalCost = (data: unknown) => {
   return (totalManpowerCost(data) + (totalManpowerCost(data) * Number(values.managementAddition)) / 100)?.toFixed(2) || 0;
 };
 
-const totalCarRent = (data: any) => {
-  // return data?.reduce((sum: number, manpower: any) => sum + manpower.carRentPerManpower, 0)?.toFixed(2) ?? 0;
+const totalCarRent = (data: unknown) => {
+  // return data?.reduce((sum: number, manpower: unknown) => sum + manpower.carRentPerManpower, 0)?.toFixed(2) ?? 0;
   return project.value?.totalCarRent ?? 0;
 };
 
-const totalCarRentDuration = (data: any) => {
+const totalCarRentDuration = (data: unknown) => {
   // const carRent = totalCarRent(data);
   // const projectDuration = project.value?.duration ?? 0;
 
@@ -236,10 +236,10 @@ const totalCarRentDuration = (data: any) => {
   return project.value?.totalCarRentPerDuration?.toFixed(2);
 };
 
-let filteredData: any = [];
+let filteredData: unknown = [];
 const fetchProjectsManpowers = async () => {
   const response = await getProjectManpowers();
-  filteredData = response.filter((item: any) => item?.projectId === projectId.value);
+  filteredData = response.filter((item) => item?.projectId === projectId.value);
   if (response) {
     const accommodationCost =
       typeof Number(values.accommodationCost) === 'number' && !isNaN(Number(values.accommodationCost)) ? Number(values.accommodationCost) : 0;
@@ -247,7 +247,7 @@ const fetchProjectsManpowers = async () => {
 
     // Ensure data is an array and get its length
     const numManpowers = Array.isArray(filteredData) ? filteredData.length : 0;
-    manpowers.value.data = filteredData?.map((manpower: any) => {
+    manpowers.value.data = filteredData?.map((manpower) => {
       const accommodationCostPerManpower = numManpowers ? accommodationCost / numManpowers : 0;
       const estimatedWorkDays =
         typeof Number(manpower?.estimatedWorkDays) === 'number' && !isNaN(Number(manpower?.estimatedWorkDays))
@@ -313,7 +313,7 @@ watch(
     // Ensure data is an array and get its length
     const numManpowers = Array.isArray(filteredData) ? filteredData.length : 0;
     // Map each manpower entry with extra numeric checks
-    manpowers.value.data = filteredData?.map((manpower: any) => {
+    manpowers.value.data = filteredData?.map((manpower) => {
       const estimatedWorkDays =
         typeof Number(manpower?.estimatedWorkDays) === 'number' && !isNaN(Number(manpower?.estimatedWorkDays))
           ? Number(manpower.estimatedWorkDays)

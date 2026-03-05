@@ -140,7 +140,7 @@ const {
 const activeTab = ref('editor');
 const versions = ref<DocBuilderVersion[]>([]);
 const versionPreviewVisible = ref(false);
-const previewVersionContent = ref<any>(null);
+const previewVersionContent = ref<Record<string, unknown> | null>(null);
 const showSendDialog = ref(false);
 const generatingPdf = ref(false);
 
@@ -154,7 +154,7 @@ const parsedContent = computed(() => {
 });
 
 const availableConversions = computed(() => {
-  return getAvailableConversions(props.documentType).map((c: any) => c.type || c);
+  return getAvailableConversions(props.documentType).map((c) => c.type || c);
 });
 
 // Helpers
@@ -221,7 +221,7 @@ async function handleStatusChange(newStatus: string) {
         inputPlaceholder: 'Reason...',
         confirmButtonText: 'Reject'
       });
-      reason = (result as any).value;
+      reason = (result as unknown).value;
     }
     const response = await changeStatus(props.documentId, newStatus, reason);
     if (response?.success) {
@@ -239,7 +239,7 @@ async function handleConvert(targetType: string) {
       confirmButtonText: 'Convert',
       type: 'info'
     });
-    const response: any = await convertDocument(props.documentId, targetType);
+    const response = await convertDocument(props.documentId, targetType);
     if (response?.success && response.body) {
       ElMessage.success('Document converted successfully');
       const typeSlug = targetType.replace(/_/g, '-') + 's';
@@ -253,7 +253,7 @@ async function handleConvert(targetType: string) {
 async function handleGeneratePdf() {
   generatingPdf.value = true;
   try {
-    const response: any = await generatePdf(props.documentId);
+    const response = await generatePdf(props.documentId);
     if (response?.success && response.body?.pdfUrl) {
       const baseUrl = useRuntimeConfig().public.apiBase || '';
       window.open(`${baseUrl}${response.body.pdfUrl}`, '_blank');
@@ -272,13 +272,13 @@ function handleSent() {
   loadDocument();
 }
 
-function handleSaved(data: any) {
+function handleSaved(data: unknown) {
   loadDocument();
   loadVersions();
 }
 
 async function handleViewVersion(version: DocBuilderVersion) {
-  const response: any = await getVersionById(props.documentId, version.id);
+  const response = await getVersionById(props.documentId, version.id);
   if (response?.success && response.body?.content) {
     try {
       previewVersionContent.value = JSON.parse(response.body.content);
@@ -304,7 +304,7 @@ async function loadDocument() {
 }
 
 async function loadVersions() {
-  const response: any = await getVersions(props.documentId);
+  const response = await getVersions(props.documentId);
   if (response?.success && response.body) {
     versions.value = response.body;
   }

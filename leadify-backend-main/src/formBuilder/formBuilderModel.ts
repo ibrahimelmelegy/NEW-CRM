@@ -15,10 +15,10 @@ export class FormTemplate extends Model {
   public status!: 'DRAFT' | 'ACTIVE' | 'ARCHIVED';
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public fields?: Array<{ name: string; type: string; label: string; required: boolean; options?: string[]; conditionalLogic?: any }>;
+  public fields?: Array<{ name: string; type: string; label: string; required: boolean; options?: string[]; conditionalLogic?: unknown }>;
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public settings?: Record<string, any>;
+  public settings?: Record<string, unknown>;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public thankYouMessage?: string;
@@ -48,13 +48,13 @@ export class FormTemplate extends Model {
   public rateLimit!: number;
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public styling?: Record<string, any>;
+  public styling?: Record<string, unknown>;
 
   @Column({ type: DataType.JSONB, allowNull: true })
   public autoResponse?: { enabled: boolean; subject?: string; body?: string };
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public conditionalLogic?: Array<{ fieldId: string; condition: string; value: any; showFields: string[] }>;
+  public conditionalLogic?: Array<{ fieldId: string; condition: string; value: unknown; showFields: string[] }>;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;
@@ -72,7 +72,7 @@ export class FormSubmission extends Model {
   public formId!: number;
 
   @Column({ type: DataType.JSONB, allowNull: false })
-  public data!: Record<string, any>;
+  public data!: Record<string, unknown>;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public source?: string;
@@ -84,7 +84,7 @@ export class FormSubmission extends Model {
   public leadId?: string;
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public utmParams?: Record<string, any>;
+  public utmParams?: Record<string, unknown>;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public userAgent?: string;

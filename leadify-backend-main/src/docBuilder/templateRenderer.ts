@@ -306,7 +306,7 @@ export function renderWithTemplate(
     return renderDocumentHtml(content, type, watermark);
   }
 
-  let html = renderFromTemplate(templateHtml, content as Record<string, any>, brand);
+  let html = renderFromTemplate(templateHtml, content as Record<string, unknown>, brand);
 
   // Inject watermark overlay into template-rendered HTML
   if (watermark) {

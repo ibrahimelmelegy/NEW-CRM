@@ -22,7 +22,7 @@ import ShapeElement from './elements/ShapeElement.vue';
 
 const props = defineProps<{
   show: boolean;
-  elements: any[];
+  elements: Record<string, unknown>[];
   orientation: 'portrait' | 'landscape';
 }>();
 
@@ -48,7 +48,7 @@ const previewStyle = computed(() => ({
   borderRadius: '2px'
 }));
 
-function wrapStyle(el: any) {
+function wrapStyle(el: unknown) {
   return {
     position: 'absolute' as const,
     left: `${el.x * previewScale.value}px`,

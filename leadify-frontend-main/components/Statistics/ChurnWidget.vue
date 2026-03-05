@@ -118,7 +118,7 @@ onMounted(async () => {
   }
 });
 
-const goToLead = (row: any) => {
+const goToLead = (row: unknown) => {
   router.push(`/sales/leads/${row.id}`);
 };
 

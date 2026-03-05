@@ -26,7 +26,7 @@ export default class UsageRecord extends Model {
   public billingPeriod?: string; // e.g. '2026-03'
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public metadata?: Record<string, any>;
+  public metadata?: Record<string, unknown>;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;

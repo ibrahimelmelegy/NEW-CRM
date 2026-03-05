@@ -148,8 +148,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'create', data: any): void;
-  (e: 'update', data: { id: string; payload: any }): void;
+  (e: 'create', data: unknown): void;
+  (e: 'update', data: { id: string; payload: unknown }): void;
   (e: 'delete', id: string): void;
   (e: 'test', id: string): void;
   (e: 'toggle', data: { id: string; status: string }): void;

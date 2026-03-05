@@ -13,7 +13,7 @@
 import { Handle, Position } from '@vue-flow/core';
 
 defineProps<{
-  data: any;
+  data: unknown;
 }>();
 </script>
 

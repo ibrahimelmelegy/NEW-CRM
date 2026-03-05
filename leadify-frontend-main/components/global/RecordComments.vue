@@ -58,7 +58,7 @@ const props = defineProps<{
   entityId: string | number;
 }>();
 
-const comments = ref<any[]>([]);
+const comments = ref<Record<string, unknown>[]>([]);
 const newComment = ref('');
 const editingId = ref<number | null>(null);
 const editContent = ref('');
@@ -68,7 +68,7 @@ const loading = ref(false);
 async function fetchComments() {
   loading.value = true;
   try {
-    const { body, success } = (await useApiFetch(`comments?entityType=${props.entityType}&entityId=${props.entityId}`)) as any;
+    const { body, success } = (await useApiFetch(`comments?entityType=${props.entityType}&entityId=${props.entityId}`)) as unknown;
     if (success && body) {
       comments.value = body.docs || body || [];
     }
@@ -95,7 +95,7 @@ async function submitComment() {
   }
 }
 
-function startEdit(comment: any) {
+function startEdit(comment: unknown) {
   editingId.value = comment.id;
   editContent.value = comment.content;
 }

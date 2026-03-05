@@ -375,7 +375,7 @@
                     :class="
                       formData.coverStyle === style.id ? 'border-violet-500 ring-4 ring-violet-500/20' : 'border-gray-200 hover:border-violet-300'
                     "
-                    @click="formData.coverStyle = style.id as any"
+                    @click="formData.coverStyle = style.id as unknown"
                   >
                     <div class="absolute inset-0 bg-gray-50 flex flex-col justify-end p-3">
                       <span class="text-xs font-bold text-gray-900 group-hover:text-violet-600 transition-colors">{{ style.label }}</span>
@@ -753,7 +753,7 @@ const props = withDefaults(
       | 'sla';
     proposalId?: string;
     documentId?: string;
-    initialData?: any;
+    initialData?: unknown;
   }>(),
   {
     documentType: 'proposal'
@@ -772,7 +772,7 @@ async function handleSave() {
     // Proposals use the dedicated proposal API for backward compatibility
     saving.value = true;
     try {
-      const payload: any = {
+      const payload: unknown = {
         title: formData.title,
         reference: formData.refNumber,
         proposalFor: formData.clientCompany || formData.clientName,
@@ -790,7 +790,7 @@ async function handleSave() {
           ElMessage.error(response?.message || 'Failed to update proposal');
         }
       } else {
-        const response: any = await useApiFetch('proposal', 'POST', payload);
+        const response = await useApiFetch('proposal', 'POST', payload);
         if (response?.success) {
           ElMessage.success('Proposal created successfully');
           emit('saved', response.body);
@@ -799,7 +799,7 @@ async function handleSave() {
           ElMessage.error(response?.message || 'Failed to create proposal');
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       ElMessage.error(error?.message || 'An error occurred while saving');
     } finally {
       saving.value = false;
@@ -808,7 +808,7 @@ async function handleSave() {
     // All other document types use the universal doc-builder API
     saving.value = true;
     try {
-      const payload: any = {
+      const payload: unknown = {
         type: props.documentType,
         title: formData.title,
         reference: formData.refNumber,
@@ -834,7 +834,7 @@ async function handleSave() {
           ElMessage.error(response?.message || `Failed to update ${documentTypeTitle.value.toLowerCase()}`);
         }
       } else {
-        const response: any = await createDocument(payload);
+        const response = await createDocument(payload);
         if (response?.success) {
           ElMessage.success(`${documentTypeTitle.value} created successfully`);
           emit('saved', response.body);
@@ -845,7 +845,7 @@ async function handleSave() {
           ElMessage.error(response?.message || `Failed to create ${documentTypeTitle.value.toLowerCase()}`);
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       ElMessage.error(error?.message || 'An error occurred while saving');
     } finally {
       saving.value = false;
@@ -1086,7 +1086,7 @@ const exportPdf = async () => {
         html2canvas: { scale: 2, useCORS: true, logging: false },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak: { mode: ['css', 'legacy'], before: '.proposal-print-page' }
-      } as any)
+      } as unknown)
       .from(scaleWrapper || printArea)
       .save();
 
@@ -1231,7 +1231,7 @@ const getContent = () => {
   return formData;
 };
 
-const setContent = (content: any) => {
+const setContent = (content: unknown) => {
   if (content && typeof content === 'object') {
     Object.assign(formData, content);
   }

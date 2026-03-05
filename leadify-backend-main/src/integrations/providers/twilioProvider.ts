@@ -23,7 +23,7 @@ export interface SMSResult<T> {
 }
 
 export class TwilioProvider {
-  private client: any = null;
+  private client: unknown = null;
 
   static isConfigured(): boolean {
     return !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN);
@@ -57,7 +57,7 @@ export class TwilioProvider {
         return { success: true, data: { sid: message.sid, status: message.status }, mock: false };
       }
       return { success: true, data: { sid: `mock_sms_${Date.now()}`, status: 'queued' }, mock: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[TwilioProvider] sendSMS error:', err.message);
       return { success: false, data: null, error: err.message, mock: !TwilioProvider.isConfigured() };
     }
@@ -81,7 +81,7 @@ export class TwilioProvider {
       }
       const items = input.recipients.map((to, i) => ({ to, sid: `mock_bulk_sms_${Date.now()}_${i}`, status: 'queued' }));
       return { success: true, data: { sent: items.length, results: items }, mock: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[TwilioProvider] sendBulkSMS error:', err.message);
       return { success: false, data: null, error: err.message, mock: !TwilioProvider.isConfigured() };
     }
@@ -95,7 +95,7 @@ export class TwilioProvider {
         return { success: true, data: { sid: msg.sid, status: msg.status, to: msg.to, dateSent: msg.dateSent?.toISOString() || null }, mock: false };
       }
       return { success: true, data: { sid: messageSid, status: 'delivered', to: '+1234567890', dateSent: new Date().toISOString() }, mock: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[TwilioProvider] getMessageStatus error:', err.message);
       return { success: false, data: null, error: err.message, mock: !TwilioProvider.isConfigured() };
     }
@@ -119,7 +119,7 @@ export class TwilioProvider {
       }
       const isValid = /^\+\d{10,15}$/.test(phoneNumber);
       return { success: true, data: { valid: isValid, countryCode: 'US', phoneNumber, carrier: null }, mock: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[TwilioProvider] validatePhoneNumber error:', err.message);
       return { success: false, data: null, error: err.message, mock: !TwilioProvider.isConfigured() };
     }

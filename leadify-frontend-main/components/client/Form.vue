@@ -11,7 +11,7 @@ el-form.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" l
       InputText.mt-3(:label="$t('clients.form.email')"  name="email" :value="selectedLead?.email || data?.email" @value="val=> isEmail = !!val" is-form)
       InputPhone.mt-3(:label="$t('clients.form.phone')"  name="phone" :value="selectedLead?.phone || data?.phoneNumber" @value="val=> isPhone = !!val" @validphone="val=> validPhone = val" mode="international")
       InputSelect.mt-3(:label="$t('clients.form.clientType')" name="clientType" :options="clientTypes" :value="data?.clientType")
-      InputSelect.mt-3(:label="$t('clients.form.assignUser')" name="users" isMultiple :options="users" :value="users?.filter((user: any) => data?.users?.map((user: any) => user.id)?.includes(user.value))?.map((user: any) => user.value)" )
+      InputSelect.mt-3(:label="$t('clients.form.assignUser')" name="users" isMultiple :options="users" :value="users?.filter((user) => data?.users?.map((user) => user.id)?.includes(user.value))?.map((user) => user.value)" )
     .grid.grid-cols-2.gap-3
       InputText(:label="$t('clients.form.city')" name="city"  :placeholder="$t('clients.form.enterCity')"  :value="data?.city" )
       InputText(:label="$t('clients.form.street')" name="streetAddress"  :placeholder="$t('clients.form.enterStreet')"  :value="data?.streetAddress" )
@@ -19,7 +19,7 @@ el-form.mb-24(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" l
       InputText.mt-3(:label="$t('clients.form.zipCode')" name="zipCode"  :placeholder="$t('clients.form.enterZip')"  :value="data?.zipCode" )
       InputSelect.mt-3(:label="$t('clients.form.industry')" name="industry" :options="clientIndustries" :value="data?.industry" )
       InputSelect.mt-3(:label="$t('clients.form.clientStatus')" name="clientStatus" :options="clientStatuses" :value="data?.clientStatus" )
-    InputUploadFiles.mt-3(:label="$t('clients.form.uploadFile')" name="file" :value="data?.fileUpload?.map((file: any) => ({name: file, response: file, uid: uuidv4() }))" multiple)
+    InputUploadFiles.mt-3(:label="$t('clients.form.uploadFile')" name="file" :value="data?.fileUpload?.map((file) => ({name: file, response: file, uid: uuidv4() }))" multiple)
 </template>
 
 <script lang="ts" setup>
@@ -62,8 +62,8 @@ const formSchema = yup.object({
         .nullable()
         .test(
           'is-valid',
-          (message: any) => t('errors.invalidEmail'),
-          (value: any) => !value || isEmailValidator(value)
+          (message: unknown) => t('errors.invalidEmail'),
+          (value: unknown) => !value || isEmailValidator(value)
         )
         .label(t('clients.form.email')),
     otherwise: () =>
@@ -74,8 +74,8 @@ const formSchema = yup.object({
         .required(t('errors.required'))
         .test(
           'is-valid',
-          (message: any) => t('errors.invalidEmail'),
-          (value: any) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
+          (message: unknown) => t('errors.invalidEmail'),
+          (value: unknown) => (value ? isEmailValidator(value) : new yup.ValidationError('Invalid value'))
         )
         .label(t('clients.form.email'))
   }),
@@ -85,9 +85,9 @@ const formSchema = yup.object({
       yup
         .number()
         .nullable() // Allows the value to be null
-        .transform((value: any, originalValue: any) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
+        .transform((value: unknown, originalValue: unknown) => (originalValue === '' ? null : Number.isNaN(value) ? null : value))
         .label(t('clients.form.phone'))
-        .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+        .test('Phone number', t('errors.invalidPhone'), function (value: unknown) {
           if (value === null || value === undefined) {
             return true;
           }
@@ -96,11 +96,11 @@ const formSchema = yup.object({
     otherwise: () =>
       yup
         .number()
-        .transform((value: any) => (Number.isNaN(value) ? null : value))
+        .transform((value: unknown) => (Number.isNaN(value) ? null : value))
         .nullable()
         .required(t('errors.required'))
         .label(t('clients.form.phone'))
-        .test('Phone number', t('errors.invalidPhone'), function (value: any) {
+        .test('Phone number', t('errors.invalidPhone'), function (value: unknown) {
           return !!validPhone.value;
         })
   }),
@@ -119,10 +119,10 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit((values: any, actions: any) => {
+const onSubmit = handleSubmit((values: unknown, actions: unknown) => {
   const formattedValues = cleanObject({
     ...values,
-    ...(values.file?.length && { fileUpload: values.file?.map((file: any) => file.response) }),
+    ...(values.file?.length && { fileUpload: values.file?.map((file) => file.response) }),
     ...(selectedLead.value && switchValue.value && !props.editMode && { leadId: selectedLead.value?.id })
   });
   delete formattedValues.file;
@@ -130,17 +130,17 @@ const onSubmit = handleSubmit((values: any, actions: any) => {
   emit('submit', formattedValues);
 });
 
-let users: any = await useApiFetch('users');
-users = users?.body?.docs?.map((e: any) => ({
+let users: unknown = await useApiFetch('users');
+users = users?.body?.docs?.map((e) => ({
   label: e.name,
   value: e.id
 }));
 
-const selectedLead = ref<any>([]);
+const selectedLead = ref<Record<string, unknown>>([]);
 const response = await getLeads();
 const leads = response.leads;
 
-const mappedLeads = leads?.map((e: any) => ({
+const mappedLeads = leads?.map((e) => ({
   label: e.name,
   value: e.name,
   id: e.id
@@ -157,7 +157,7 @@ if (leadId) {
       selectedLead.value = lead;
     }
   } else {
-    selectedLead.value = leads?.find((lead: any) => lead.id === leadId);
+    selectedLead.value = leads?.find((lead) => lead.id === leadId);
   }
 
   if (selectedLead.value) {
@@ -166,8 +166,8 @@ if (leadId) {
   }
 }
 
-function getSelectedLead(e: any) {
-  selectedLead.value = leads?.find((lead: any) => lead.id === e.id);
+function getSelectedLead(e: unknown) {
+  selectedLead.value = leads?.find((lead) => lead.id === e.id);
   if (selectedLead.value?.email) {
     isEmail.value = true;
   } else if (selectedLead.value?.phone) {

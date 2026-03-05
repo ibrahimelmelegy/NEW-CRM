@@ -44,7 +44,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 interface Props {
-  activities?: any[];
+  activities?: Record<string, unknown>[];
 }
 
 const props = defineProps<Props>();

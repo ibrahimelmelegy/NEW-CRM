@@ -49,13 +49,13 @@ const emit = defineEmits<{
 }>();
 
 const digits = ref<string[]>(['', '', '', '', '', '']);
-const inputRefs = ref<any[]>([]);
+const inputRefs = ref<Record<string, unknown>[]>([]);
 const loading = ref(false);
 const error = ref('');
 
 const code = computed(() => digits.value.join(''));
 
-function setInputRef(el: any, i: number) {
+function setInputRef(el: unknown, i: number) {
   if (el) inputRefs.value[i] = el;
 }
 
@@ -100,7 +100,7 @@ async function submitCode() {
   error.value = '';
 
   try {
-    const response: any = await useApiFetch('auth/login', 'POST', {
+    const response = await useApiFetch('auth/login', 'POST', {
       email: props.email,
       password: props.password,
       twoFactorCode: code.value
@@ -113,7 +113,7 @@ async function submitCode() {
       digits.value = ['', '', '', '', '', ''];
       nextTick(() => inputRefs.value[0]?.focus?.());
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     error.value = err.message || 'Verification failed';
     digits.value = ['', '', '', '', '', ''];
   } finally {

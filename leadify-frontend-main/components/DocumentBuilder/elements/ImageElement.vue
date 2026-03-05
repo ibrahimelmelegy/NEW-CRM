@@ -16,7 +16,7 @@ const props = defineProps<{
     y: number;
     width: number;
     height: number;
-    props: Record<string, any>;
+    props: Record<string, unknown>;
   };
   scale: number;
 }>();

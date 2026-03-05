@@ -50,7 +50,7 @@ async function loadData() {
   try {
     const { body, success } = await useApiFetch('dashboards/executive-summary');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       // Build targets from summary data
       const revenueTarget = data.revenueTarget || data.targetRevenue || 500000;
       const actualRevenue = data.totalRevenue || 0;

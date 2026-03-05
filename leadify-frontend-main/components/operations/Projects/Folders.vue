@@ -42,15 +42,15 @@ interface Props {
     refs: string[];
   };
   editMode?: boolean;
-  project: Record<string, any>;
+  project: Record<string, unknown>;
 }
 
 const props = defineProps<Props>();
 
 // Reactive state
 const isSubmitting = ref(false);
-const childRefs = ref<Record<string, any>>({});
-const currentFolder = ref<any>({
+const childRefs = ref<Record<string, unknown>>({});
+const currentFolder = ref<Record<string, unknown>>({
   id: '',
   name: '',
   refs: []
@@ -104,7 +104,7 @@ function handleCancel() {
   emit('onSubmit');
 }
 
-function formattedBasicInfo(values: any) {
+function formattedBasicInfo(values: unknown) {
   if (!values) return {};
   return cleanObject({
     name: values?.name,
@@ -114,14 +114,14 @@ function formattedBasicInfo(values: any) {
     startDate: typeof values?.startDate === 'string' ? values?.startDate : values?.startDate?.toISOString(),
     endDate: typeof values?.endDate === 'string' ? values?.endDate : values?.endDate?.toISOString(),
     duration: Number(values?.duration),
-    assignedUsersIds: values?.assignedUsers?.map((el: any) => el?.id),
+    assignedUsersIds: values?.assignedUsers?.map((el) => el?.id),
     status: values?.status,
     description: values?.description,
     cancelledReason: values?.cancelReason
   });
 }
 
-function formattedEtimadProjectInfo(values: any) {
+function formattedEtimadProjectInfo(values: unknown) {
   if (!values) return {};
   return cleanObject({
     abbreviation: values?.abbreviation,
@@ -138,16 +138,16 @@ function formattedEtimadProjectInfo(values: any) {
   });
 }
 
-async function onSubmit(values: any) {
+async function onSubmit(values: unknown) {
   try {
     let data;
     if (props.editMode && props.folder) {
       // Replace existing folder
-      data = props.project.files.map((file: any, index: number) => {
+      data = props.project.files.map((file: unknown, index: number) => {
         if (file.name === props.folder?.name) {
           return {
             name: values?.name,
-            refs: values?.file?.map((el: any) => el?.response)
+            refs: values?.file?.map((el) => el?.response)
           };
         }
         return file;
@@ -158,7 +158,7 @@ async function onSubmit(values: any) {
         ...(props?.project?.files || []),
         {
           name: values?.name,
-          refs: values?.file?.map((el: any) => el?.response)
+          refs: values?.file?.map((el) => el?.response)
         }
       ];
     }

@@ -49,7 +49,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: unknown) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -62,7 +62,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: unknown) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -75,7 +75,7 @@ const formSchema = yup.object({
     .test(
       'is-valid-number',
       'Please enter a valid number.', // Custom error message
-      (value: any) => {
+      (value: unknown) => {
         if (!value) return true; // Allow empty input
         return /^\d*\.?\d*$/.test(value); // Check if value is a valid integer or float
       }
@@ -98,25 +98,25 @@ function onFetchClient(id: string) {
   emit('fetchClient', id);
 }
 //  Get Users
-const usersRes: any = await useApiFetch('users?limit=10000');
+const usersRes: unknown = await useApiFetch('users?limit=10000');
 // Map Users to Select Options
-const users = usersRes?.body?.docs?.map((e: any) => ({
+const users = usersRes?.body?.docs?.map((e) => ({
   label: e.name,
   value: e.id
 }));
 
 //  Get Clients
-const clientsRes: any = await useApiFetch('client?limit=10000');
+const clientsRes: unknown = await useApiFetch('client?limit=10000');
 // Map Clients to Select Options
 const clients = computed(() => [
   { label: t('common.add') + ' ' + t('operations.dailyTasks.form.client'), value: 0 },
-  ...(clientsRes?.body?.docs?.map((e: any) => ({
+  ...(clientsRes?.body?.docs?.map((e) => ({
     label: e.clientName,
     value: e.id
   })) || [])
 ]);
 
-const onSubmit = handleSubmit((values: any, actions: any) => {
+const onSubmit = handleSubmit((values: unknown, actions: unknown) => {
   emit('submit', {
     ...values,
     cost: Number(values.cost),

@@ -49,13 +49,13 @@ if (globalFilterOptions.value) {
   const processedFilterOptions = Object.entries(globalFilterOptions.value).reduce(
     (acc, [key, value]) => {
       if (key === 'userId') {
-        acc[key] = Array.isArray(value) ? value.map((e: any) => Number(e)) : typeof value === 'string' ? [Number(value)] : [];
+        acc[key] = Array.isArray(value) ? value.map((e) => Number(e)) : typeof value === 'string' ? [Number(value)] : [];
       } else {
         acc[key] = Array.isArray(value) ? value : typeof value === 'string' ? [value] : value;
       }
       return acc;
     },
-    {} as Record<string, any>
+    {} as Record<string, unknown>
   );
 
   checkList.value = processedFilterOptions;
@@ -77,15 +77,15 @@ interface FilterCategory {
 
 const data = ref<FilterCategory[]>([]);
 data.value = props.filterOptions.length ? props.filterOptions : [];
-activeNames.value = data.value.map((_: any, index: number) => (index + 1).toString());
+activeNames.value = data.value.map((_: unknown, index: number) => (index + 1).toString());
 
 const selectedFiltersCount = computed(() => {
-  return Object.values(checkList.value).reduce((acc: number, val: any) => {
+  return Object.values(checkList.value).reduce((acc: number, val: unknown) => {
     return acc + (Array.isArray(val) ? val.length : val ? 1 : 0);
   }, 0);
 });
 
-const handleInputChange = (value: any, type: string) => {
+const handleInputChange = (value: unknown, type: string) => {
   checkList.value[type] = value ? [Number(value)] : [];
 };
 
@@ -98,7 +98,7 @@ const resetFilters = () => {
   emit('reset', checkList.value);
 };
 
-const handleDateChange = (date: any, type: string) => {
+const handleDateChange = (date: unknown, type: string) => {
   // Date range or single date logic
 };
 
@@ -110,7 +110,7 @@ onMounted(() => {
   // numberOfFilters.value = filterLength(checkList.value);
 });
 
-const handleCollapseChange = (val: any) => {
+const handleCollapseChange = (val: unknown) => {
   activeNames.value = val;
 };
 </script>

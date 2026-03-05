@@ -107,7 +107,7 @@ class Client extends Model {
     allowNull: true,
     defaultValue: {}
   })
-  public customFields?: Record<string, any>;
+  public customFields?: Record<string, unknown>;
 
   @Column({
     type: DataType.STRING,

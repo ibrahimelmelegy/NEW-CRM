@@ -126,7 +126,7 @@ async function handleMarkAllRead() {
   await markAllRead();
 }
 
-async function handleClick(notif: any) {
+async function handleClick(notif: unknown) {
   await clickNotification(notif);
   const path = getNotificationPath(notif);
   if (path) {
@@ -135,7 +135,7 @@ async function handleClick(notif: any) {
   }
 }
 
-async function handleDismiss(notif: any) {
+async function handleDismiss(notif: unknown) {
   await markRead(notif.id);
 }
 </script>

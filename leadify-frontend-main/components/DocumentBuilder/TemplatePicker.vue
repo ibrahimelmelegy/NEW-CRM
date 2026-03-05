@@ -67,7 +67,7 @@ function selectTemplate(tpl: DocumentTemplate) {
 const SX = 120 / 210;
 const SY = 170 / 297;
 
-function thumbStyle(el: any) {
+function thumbStyle(el: unknown) {
   const base: Record<string, string | undefined> = {
     left: `${el.x * SX}px`,
     top: `${el.y * SY}px`,
@@ -87,14 +87,14 @@ function thumbStyle(el: any) {
   return base;
 }
 
-function textLines(el: any): number {
+function textLines(el: unknown): number {
   const scaledH = el.height * SY;
   if (scaledH < 3) return 1;
   if (scaledH < 5) return el.props?.fontWeight === 'bold' ? 1 : 2;
   return Math.min(Math.floor(scaledH / 2.5), 4);
 }
 
-function textLineStyle(el: any, lineIndex: number) {
+function textLineStyle(el: unknown, lineIndex: number) {
   const isBold = el.props?.fontWeight === 'bold';
   const color = el.props?.color || '#333';
   const scaledW = el.width * SX;

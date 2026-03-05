@@ -121,8 +121,8 @@ interface FilterRow {
   id: number;
   field: string;
   operator: string;
-  value: any;
-  valueTo?: any; // for "between" operator
+  value: unknown;
+  valueTo?: unknown; // for "between" operator
 }
 
 interface OperatorOption {
@@ -135,7 +135,7 @@ const props = withDefaults(
     entityType: string;
     fields: FilterField[];
     alwaysOpen?: boolean;
-    initialFilters?: any[];
+    initialFilters?: Record<string, unknown>[];
   }>(),
   {
     alwaysOpen: false
@@ -143,7 +143,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  apply: [filters: { logic: string; conditions: any[] }];
+  apply: [filters: { logic: string; conditions: Record<string, unknown>[] }];
   clear: [];
 }>();
 

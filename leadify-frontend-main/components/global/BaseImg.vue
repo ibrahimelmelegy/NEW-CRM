@@ -51,7 +51,7 @@ async function getRedirectedUrlWithHeaders(url: string) {
     const response = await fetch(url, {
       redirect: 'follow',
       headers: {
-        Authorization: `Bearer ${(authStore as any).token}`
+        Authorization: `Bearer ${(authStore as unknown).token}`
       }
     });
 

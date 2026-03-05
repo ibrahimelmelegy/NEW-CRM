@@ -55,7 +55,7 @@ const chartOption = computed(() => {
       padding: [12, 16],
       textStyle: { color: '#fff', fontSize: 13 },
       extraCssText: 'backdrop-filter: blur(12px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-radius: 12px;',
-      formatter(params: any) {
+      formatter(params: unknown) {
         const month = params[0]?.axisValue || '';
         let html = `<div style="font-weight:600;margin-bottom:8px">${month}</div>`;
         for (const p of params) {

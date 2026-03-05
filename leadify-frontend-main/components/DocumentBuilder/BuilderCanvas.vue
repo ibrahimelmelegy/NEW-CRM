@@ -59,7 +59,7 @@ import LineElement from './elements/LineElement.vue';
 import ShapeElement from './elements/ShapeElement.vue';
 
 const props = defineProps<{
-  elements: any[];
+  elements: Record<string, unknown>[];
   selectedId: string | null;
   orientation: 'portrait' | 'landscape';
   margins: { top: number; right: number; bottom: number; left: number };
@@ -114,7 +114,7 @@ function snapValue(val: number): number {
   return Math.round(val / GRID_SIZE_MM) * GRID_SIZE_MM;
 }
 
-function wrapperStyle(el: any) {
+function wrapperStyle(el: unknown) {
   return {
     position: 'absolute' as const,
     left: `${el.x * currentScale.value}px`,
@@ -128,7 +128,7 @@ function wrapperStyle(el: any) {
 // Drag state
 let dragging = false;
 let resizing = false;
-let dragEl: any = null;
+let dragEl: unknown = null;
 let startX = 0;
 let startY = 0;
 let startElX = 0;
@@ -136,7 +136,7 @@ let startElY = 0;
 let startElW = 0;
 let startElH = 0;
 
-function startDrag(el: any, e: MouseEvent) {
+function startDrag(el: unknown, e: MouseEvent) {
   emit('select', el.id);
   dragging = true;
   dragEl = el;
@@ -146,7 +146,7 @@ function startDrag(el: any, e: MouseEvent) {
   startElY = el.y;
 }
 
-function startResize(el: any, e: MouseEvent) {
+function startResize(el: unknown, e: MouseEvent) {
   resizing = true;
   dragEl = el;
   startX = e.clientX;

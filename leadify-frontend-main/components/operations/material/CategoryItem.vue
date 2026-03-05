@@ -68,11 +68,11 @@ const categoryItems = ref<CategoryItem[]>([
 ]);
 
 if (props.items?.length) {
-  categoryItems.value = props.items.map(({ name, price, id }: any) => ({ name, price, id }));
+  categoryItems.value = props.items.map(({ name, price, id }: unknown) => ({ name, price, id }));
 }
 const loading = ref(false);
 // Refs for child forms
-const childRefs = ref<Record<string, any>>({});
+const childRefs = ref<Record<string, unknown>>({});
 // Add a new categoryItem
 async function AddCategoryItem() {
   if (!(await validateForm())) return;
@@ -125,7 +125,7 @@ function onSubmit(values: CategoryItem) {
 
 // Collect validation promises from all child forms
 async function validateForm(): Promise<boolean> {
-  const childPromises = childRefs.value.map(async (child: any) => {
+  const childPromises = childRefs.value.map(async (child: unknown) => {
     if (child) {
       // Await validation result
       await child.validate();
@@ -154,7 +154,7 @@ async function onSubmitForm(): Promise<boolean> {
 
   try {
     // Collect child submission promises
-    const childPromises = childRefs.value.map(async (child: any) => {
+    const childPromises = childRefs.value.map(async (child: unknown) => {
       if (child) {
         await child.onSubmit();
       }
@@ -190,7 +190,7 @@ async function onSubmitCategoryItems(): Promise<void> {
   if (route.path.includes('edit')) {
     const cleanedCategories = categoryItems.value.map(({ id, ...data }: CategoryItem) => ({
       ...data,
-      ...(props.items?.find((item: any) => item.id === id) ? { id } : {})
+      ...(props.items?.find((item) => item.id === id) ? { id } : {})
     }));
     emit('onSubmit', cleanedCategories);
   } else {

@@ -1847,7 +1847,7 @@ import ProposalPrintPage from './ProposalPrintPage.vue';
 defineProps<{
   data: ProposalData;
   color: string;
-  typeInfo: any;
+  typeInfo: unknown;
 }>();
 </script>
 

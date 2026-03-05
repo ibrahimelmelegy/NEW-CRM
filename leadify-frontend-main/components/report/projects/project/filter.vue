@@ -20,8 +20,8 @@ const { t } = useI18n();
 const { handleSubmit, errors, values, resetForm } = useForm();
 const emit = defineEmits(['showFilter']);
 
-const onSubmit = handleSubmit(async (values: any) => {
-  const formatYear = (val: any) => {
+const onSubmit = handleSubmit(async (values: unknown) => {
+  const formatYear = (val: unknown) => {
     if (!val) return null;
     const date = new Date(val);
     return !isNaN(date.getTime()) ? date.getFullYear().toString() : null;

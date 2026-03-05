@@ -70,7 +70,7 @@ interface CalendarCell {
   isCurrentMonth: boolean;
   isToday: boolean;
   date: Date;
-  records: any[];
+  records: Record<string, unknown>[];
 }
 
 const props = defineProps({
@@ -89,7 +89,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  'row-click': [row: any];
+  'row-click': [row: unknown];
   'date-select': [date: string];
 }>();
 
@@ -248,7 +248,7 @@ const getDayCellClasses = (cell: CalendarCell) => ({
   'calendar-day--has-records': cell.records.length > 0
 });
 
-const getRecordLabel = (record: any) => {
+const getRecordLabel = (record: unknown) => {
   // Use first visible text column as label
   const textCol = props.columns.find(c => c.visible !== false && c.prop !== props.dateField && c.type !== 'image');
   if (textCol) {

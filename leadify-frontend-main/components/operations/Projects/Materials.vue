@@ -121,7 +121,7 @@ const preview = ref({
     //   width: 300,
     // },
   ],
-  data: [] as any
+  data: [] as unknown
 });
 
 const response = await useTableFilter('additional-material');
@@ -137,7 +137,7 @@ if (project.value?.materials?.length) {
 materialMargin.value = project.value?.materialMargin || 0;
 
 if (project.value?.additionalMaterialItem?.length) {
-  addMaterialItems.value = project.value.additionalMaterialItem?.reduce((acc: any, item: any) => {
+  addMaterialItems.value = project.value.additionalMaterialItem?.reduce((acc: unknown, item: unknown) => {
     const materiaId = item.AdditionalMaterialItem.additionalMateria; // Get the value of additionalMateria
     if (!acc[materiaId]) {
       acc[materiaId] = []; // If the key doesn't exist, initialize it as an array
@@ -152,7 +152,7 @@ if (project.value?.additionalMaterialItem?.length) {
   }, {});
 }
 
-const onSubmit = handleSubmit(async (values: any) => {
+const onSubmit = handleSubmit(async (values: unknown) => {
   const formattedValues = {
     materialMargin: Number(values.materialMargin),
     additionalMaterialItems: Object.keys(addMaterialItems.value).length ? addMaterialItems.value : {},
@@ -175,17 +175,17 @@ function materialMappedData() {
   return materials.value.map((material: Material) => {
     const additionalMaterials = addMaterialItems.value[material.additionalMaterialId || 0] || [];
 
-    const totalAdditionalMaterialCost = additionalMaterials.reduce((sum: number, item: any) => {
+    const totalAdditionalMaterialCost = additionalMaterials.reduce((sum: number, item: unknown) => {
       return sum + item.quantity * Number(item.price || 0);
     }, 0);
 
     const totalRelatedQuantity = materials.value
-      .filter((m: any) => m.additionalMaterialId === material.additionalMaterialId)
-      .reduce((sum: number, item: any) => sum + item.quantity, 0);
+      .filter((m) => m.additionalMaterialId === material.additionalMaterialId)
+      .reduce((sum: number, item: unknown) => sum + item.quantity, 0);
 
     const additionalMaterialCost = totalRelatedQuantity > 0 ? totalAdditionalMaterialCost / totalRelatedQuantity : 0;
     const marginCommission = (material.unitPrice + additionalMaterialCost) * (materialMargin.value / 100 || 0);
-    const servicePrice = material.serviceId ? services.value.find((s: any) => s.id === material.serviceId)?.price : 0;
+    const servicePrice = material.serviceId ? services.value.find((s) => s.id === material.serviceId)?.price : 0;
     const materialCost = material.unitPrice + additionalMaterialCost + marginCommission + (servicePrice || 0);
     const totalMaterialCost = materialCost * material.quantity;
 
@@ -194,7 +194,7 @@ function materialMappedData() {
       materialId: material.id,
       additionalMaterialId: material.additionalMaterialId,
       additionalMaterial: material.additionalMaterialId
-        ? addMaterials.value.find((item: any) => item.id === material.additionalMaterialId)?.name
+        ? addMaterials.value.find((item) => item.id === material.additionalMaterialId)?.name
         : '-',
       description: material.description,
       quantity: material.quantity,
@@ -203,14 +203,14 @@ function materialMappedData() {
       marginCommission: +marginCommission.toFixed(2),
       materialCost: +materialCost.toFixed(2),
       totalMaterialCost: +totalMaterialCost.toFixed(2),
-      service: material.serviceId ? services.value.find((s: any) => s.id === material.serviceId)?.type : '-',
+      service: material.serviceId ? services.value.find((s) => s.id === material.serviceId)?.type : '-',
       servicePrice,
       id: material.id
     };
   });
 }
 
-function removeDuplicatesKeepLast(arr: any) {
+function removeDuplicatesKeepLast(arr: unknown) {
   // Create a map to store the last occurrence of each object based on its id
   const map = new Map();
 
@@ -224,7 +224,7 @@ function removeDuplicatesKeepLast(arr: any) {
   return Array.from(map.values());
 }
 
-function handleAdditionalMaterialItem(newItem: any) {
+function handleAdditionalMaterialItem(newItem: unknown) {
   // Iterate over each key in the new item
   for (const key in newItem) {
     const numKey = Number(key);
@@ -239,7 +239,7 @@ function handleAdditionalMaterialItem(newItem: any) {
   }
 }
 
-async function getMaterial(addedMaterial?: Material, finalMaterialsItems?: any) {
+async function getMaterial(addedMaterial?: Material, finalMaterialsItems?: unknown) {
   const response = await useTableFilter('additional-material');
   addMaterials.value = response?.formattedData || [];
   const serviceResponse = await useTableFilter('service');
@@ -258,36 +258,36 @@ async function getMaterial(addedMaterial?: Material, finalMaterialsItems?: any) 
     {
       totalMaterialCost: formatNumber(
         materialMappedData()
-          ?.reduce((sum: number, item: any) => sum + item.totalMaterialCost, 0)
+          ?.reduce((sum: number, item: unknown) => sum + item.totalMaterialCost, 0)
           ?.toFixed(2)
       ),
       totalAdditionalMaterialCost: formatNumber(
         materialMappedData()
-          ?.reduce((sum: number, item: any) => sum + item.additionalMaterialCost, 0)
+          ?.reduce((sum: number, item: unknown) => sum + item.additionalMaterialCost, 0)
           .toFixed(2)
       )
     }
   ];
 }
-function excludeNameProperty(data: any) {
+function excludeNameProperty(data: unknown) {
   if (!data || typeof data !== 'object') return {};
   return Object.entries(data).reduce(
-    (acc, [key, value]: any) => {
-      acc[key] = value.map(({ name, ...rest }: any) => rest);
+    (acc, [key, value]: unknown) => {
+      acc[key] = value.map(({ name, ...rest }: unknown) => rest);
       return acc;
     },
-    {} as Record<string, any>
+    {} as Record<string, unknown>
   );
 }
 
-function convertArrayToObject(inputArray: any) {
+function convertArrayToObject(inputArray: unknown) {
   if (!Array.isArray(inputArray)) return {};
   return inputArray.reduce(
-    (acc: any, current: any) => {
+    (acc: unknown, current: unknown) => {
       Object.keys(current).forEach(key => (acc[key] = current[key]));
       return acc;
     },
-    {} as Record<string, any>
+    {} as Record<string, unknown>
   );
 }
 
@@ -329,7 +329,7 @@ interface Service {
   type?: string;
 }
 
-function getMaterialMargin(val: any) {
+function getMaterialMargin(val: unknown) {
   materialMargin.value = Number(val);
   getMaterial();
 }

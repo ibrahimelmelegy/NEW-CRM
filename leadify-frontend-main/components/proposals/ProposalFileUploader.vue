@@ -220,7 +220,7 @@ const processFiles = async (fileList: FileList | null) => {
       formData.append('file', file);
       formData.append('model', 'PROPOSAL');
 
-      const response = await useApiFetch('upload', 'POST', formData as any, false, true);
+      const response = await useApiFetch('upload', 'POST', formData as unknown, false, true);
 
       if (response.success && response.body) {
         const fileName = response.body as string;
@@ -233,7 +233,7 @@ const processFiles = async (fileList: FileList | null) => {
         fileEntry.status = 'error';
         fileEntry.errorMessage = response.message || 'Upload failed';
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       fileEntry.status = 'error';
       fileEntry.errorMessage = error.message || 'Upload failed';
     }

@@ -73,7 +73,7 @@ import { fetchSavedViews, createSavedView, updateSavedView, deleteSavedView, set
 
 const props = defineProps<{
   entityType: string;
-  currentFilters: Record<string, any>;
+  currentFilters: Record<string, unknown>;
 }>();
 
 const emit = defineEmits<{
@@ -104,14 +104,14 @@ const contextMenu = reactive({
 
 // Custom directive for click outside
 const vClickOutside = {
-  mounted(el: HTMLElement, binding: any) {
-    (el as any).__clickOutside = (e: MouseEvent) => {
+  mounted(el: HTMLElement, binding: unknown) {
+    (el as unknown).__clickOutside = (e: MouseEvent) => {
       if (!el.contains(e.target as Node)) binding.value();
     };
-    setTimeout(() => document.addEventListener('click', (el as any).__clickOutside), 0);
+    setTimeout(() => document.addEventListener('click', (el as unknown).__clickOutside), 0);
   },
   unmounted(el: HTMLElement) {
-    document.removeEventListener('click', (el as any).__clickOutside);
+    document.removeEventListener('click', (el as unknown).__clickOutside);
   }
 };
 

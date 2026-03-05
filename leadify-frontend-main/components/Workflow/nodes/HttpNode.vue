@@ -24,7 +24,7 @@ import { computed } from 'vue';
 import { Handle, Position } from '@vue-flow/core';
 
 const props = defineProps<{
-  data: any;
+  data: unknown;
 }>();
 
 const truncatedUrl = computed(() => {

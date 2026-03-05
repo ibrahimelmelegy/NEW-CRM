@@ -178,17 +178,17 @@ const srcOverlay = ref('');
 
 const limit = ref(10);
 const currentPage = ref<number>(1);
-const sort = ref<any>({});
-const filters = ref<any>({});
-const search = ref<string | any>('');
+const sort = ref<Record<string, unknown>>({});
+const filters = ref<Record<string, unknown>>({});
+const search = ref<string | <unknown>('');
 search.value = route.query.searchKey || '';
-const pagintaion = ref<any>({});
+const pagintaion = ref<Record<string, unknown>>({});
 pagintaion.value = props.pageInfo;
 sort.value = {
   prop: route.query.sortBy || '',
   order: route.query.sort === 'ASC' ? 'ascending' : 'descending'
 };
-function showfile(value: any) {
+function showfile(value: unknown) {
   fileShow.value = true;
   srcOverlay.value = value;
 }
@@ -205,7 +205,7 @@ function handleSortChange({ prop, order }: { prop: string; order: string }) {
 }
 
 // search
-let timer: any;
+let timer: unknown;
 function searchTimeOut() {
   clearTimeout(timer);
   timer = setTimeout(async () => {
@@ -214,7 +214,7 @@ function searchTimeOut() {
   }, 500);
 }
 
-const finalData = ref<any>([]);
+const finalData = ref<Record<string, unknown>>([]);
 finalData.value = props.data || [];
 async function getData() {
   isLoading.value = true;
@@ -223,11 +223,11 @@ async function getData() {
   pagintaion.value = data.pagination;
   isLoading.value = false;
 }
-function handleFilterChange(value: any) {
+function handleFilterChange(value: unknown) {
   // filters.value = value;
 }
 
-const handleSizeChange = (val: any) => {
+const handleSizeChange = (val: unknown) => {
   filters.value.limit = val;
   getData();
 };
@@ -240,7 +240,7 @@ watch(
   }
 );
 
-const handleFilter = async (filteration: any) => {
+const handleFilter = async (filteration: unknown) => {
   if (isObjectValid(filteration)) {
     filters.value = { ...filters.value, ...filteration };
   } else {

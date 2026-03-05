@@ -172,7 +172,7 @@ const emit = defineEmits<{
 interface LocalFilter {
   field: string;
   operator: string;
-  value: any;
+  value: unknown;
   logic: 'AND' | 'OR';
 }
 

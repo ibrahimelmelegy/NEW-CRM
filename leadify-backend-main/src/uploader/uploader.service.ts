@@ -23,7 +23,7 @@ class UploaderService {
 
   private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
-  public async createFile(input: any, model: FileModel): Promise<string> {
+  public async createFile(input: unknown, model: FileModel): Promise<string> {
     // Validate file exists
     if (!input || !input.name) {
       throw new BaseError(ERRORS.FILE_ERROR);

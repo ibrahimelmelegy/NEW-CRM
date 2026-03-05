@@ -66,7 +66,7 @@ watch(
   () => props.value,
   () => {
     if (props.value) {
-      listData.value = props.value as any;
+      listData.value = props.value as unknown;
     }
   }
 );
