@@ -1,5 +1,4 @@
-import { Column, DataType, Default, ForeignKey, BelongsTo, Model, Table } from 'sequelize-typescript';
-import Ticket from './ticketModel';
+import { Column, DataType, Default, BelongsTo, Model, Table } from 'sequelize-typescript';
 
 export enum SenderType {
   AGENT = 'AGENT',
@@ -16,7 +15,6 @@ class TicketMessage extends Model {
   @Column({ primaryKey: true, type: DataType.UUID, defaultValue: DataType.UUIDV4 })
   public id!: string;
 
-  @ForeignKey(() => Ticket)
   @Column({ type: DataType.UUID, allowNull: false })
   public ticketId!: string;
 
@@ -37,8 +35,9 @@ class TicketMessage extends Model {
   @Column({ type: DataType.JSON, allowNull: true })
   public attachments?: Array<{ name: string; url: string }>;
 
-  @BelongsTo(() => Ticket, { as: 'ticket', foreignKey: 'ticketId' })
-  public ticket?: Ticket;
+  // Use require() to break circular dependency with ticketModel
+  @BelongsTo(() => require('./ticketModel').default, { as: 'ticket', foreignKey: 'ticketId' })
+  public ticket?: Model;
 }
 
 export default TicketMessage;
