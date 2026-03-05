@@ -8,7 +8,7 @@ class SessionSecurityController {
 
   public async getActiveSessions(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
+      const userId = req.user!.id;
       const currentToken = req.header('Authorization')?.replace('Bearer ', '') || undefined;
       const sessions = await sessionSecurityService.getActiveSessions(userId, currentToken);
       wrapResult(res, sessions);
@@ -19,7 +19,7 @@ class SessionSecurityController {
 
   public async terminateSession(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
+      const userId = req.user!.id;
       const sessionId = parseInt(req.params.id as string, 10);
       await sessionSecurityService.terminateSession(sessionId, userId);
       wrapResult(res, { terminated: true });
@@ -30,7 +30,7 @@ class SessionSecurityController {
 
   public async terminateAllSessions(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
+      const userId = req.user!.id;
       const currentToken = req.header('Authorization')?.replace('Bearer ', '') || undefined;
       const count = await sessionSecurityService.terminateAllSessions(userId, currentToken);
       wrapResult(res, { terminated: count });
@@ -43,7 +43,7 @@ class SessionSecurityController {
 
   public async getLoginHistory(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
+      const userId = req.user!.id;
       const tenantId = req.headers['x-tenant-id'] as string | undefined;
       const filters = {
         page: req.query.page ? Number(req.query.page) : undefined,
@@ -73,7 +73,7 @@ class SessionSecurityController {
 
   public async addIPWhitelist(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
+      const userId = req.user!.id;
       const tenantId = req.headers['x-tenant-id'] as string | undefined;
       const { ip, label } = req.body;
       const entry = await sessionSecurityService.addIPWhitelist(ip, label, userId, tenantId);
@@ -109,7 +109,7 @@ class SessionSecurityController {
 
   public async exportData(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
+      const userId = req.user!.id;
       const tenantId = req.headers['x-tenant-id'] as string | undefined;
       const data = await sessionSecurityService.exportUserData(userId, tenantId);
       wrapResult(res, data);

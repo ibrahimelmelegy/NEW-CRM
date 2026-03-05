@@ -4,7 +4,7 @@ import fieldOpsService from './fieldOpsService';
 import { AuthenticatedRequest } from '../types';
 
 class FieldOpsController {
-  async getCheckIns(req: Request, res: Response, next: NextFunction) {
+  async getCheckIns(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await fieldOpsService.getCheckIns(req.query));
     } catch (error) {
@@ -28,7 +28,7 @@ class FieldOpsController {
     }
   }
 
-  async getTeamLocations(req: Request, res: Response, next: NextFunction) {
+  async getTeamLocations(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await fieldOpsService.getTeamLocations());
     } catch (error) {

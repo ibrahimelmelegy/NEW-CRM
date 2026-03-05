@@ -8,8 +8,8 @@ class CommunicationController {
   // ─── Log Activity ────────────────────────────────────────────────────────
   public async logActivity(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
-      const tenantId = (req.user as any)?.tenantId;
+      const userId = req.user!.id;
+      const tenantId = req.user!.tenantId!;
       const activity = await communicationService.logActivity(req.body, userId, tenantId);
       io.emit('activity:created', {
         id: activity.id,
@@ -26,8 +26,8 @@ class CommunicationController {
   // ─── Log Call ────────────────────────────────────────────────────────────
   public async logCall(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
-      const tenantId = (req.user as any)?.tenantId;
+      const userId = req.user!.id;
+      const tenantId = req.user!.tenantId!;
       const result = await communicationService.logCall(req.body, userId, tenantId);
       io.emit('activity:call_logged', {
         id: result.activity.id,
@@ -58,8 +58,8 @@ class CommunicationController {
   // ─── Get Activity Stats ──────────────────────────────────────────────────
   public async getStats(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = req.query.userId ? Number(req.query.userId) : (req.user as any)?.id;
-      const tenantId = (req.user as any)?.tenantId || null;
+      const userId = req.query.userId ? Number(req.query.userId) : req.user!.id;
+      const tenantId = req.user?.tenantId || null;
       const dateRange =
         req.query.start && req.query.end
           ? {
@@ -77,8 +77,8 @@ class CommunicationController {
   // ─── Get Recent Activities ───────────────────────────────────────────────
   public async getRecent(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
-      const tenantId = (req.user as any)?.tenantId || null;
+      const userId = req.user!.id;
+      const tenantId = req.user?.tenantId || null;
       const limit = Number(req.query.limit) || 20;
       const activities = await communicationService.getRecentActivities(userId, tenantId, limit);
       wrapResult(res, activities);
@@ -90,7 +90,7 @@ class CommunicationController {
   // ─── Update Activity ─────────────────────────────────────────────────────
   public async updateActivity(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
+      const userId = req.user!.id;
       const id = Number(req.params.id);
       const activity = await communicationService.updateActivity(id, req.body, userId);
       io.emit('activity:updated', {
@@ -107,7 +107,7 @@ class CommunicationController {
   // ─── Get Call Logs ───────────────────────────────────────────────────────
   public async getCallLogs(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const tenantId = (req.user as any)?.tenantId || null;
+      const tenantId = req.user?.tenantId || null;
       const result = await communicationService.getCallLogs(tenantId, {
         page: Number(req.query.page) || 1,
         limit: Number(req.query.limit) || 20,
@@ -122,7 +122,7 @@ class CommunicationController {
   // ─── Get Meeting Notes ─────────────────────────────────────────────────────
   public async getMeetingNotes(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const tenantId = (req.user as any)?.tenantId || null;
+      const tenantId = req.user?.tenantId || null;
       const result = await communicationService.getMeetingNotes(tenantId, {
         page: Number(req.query.page) || 1,
         limit: Number(req.query.limit) || 20,
@@ -137,8 +137,8 @@ class CommunicationController {
   // ─── Create Meeting Note ─────────────────────────────────────────────────
   public async createMeetingNote(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
-      const tenantId = (req.user as any)?.tenantId;
+      const userId = req.user!.id;
+      const tenantId = req.user!.tenantId!;
       const result = await communicationService.createMeetingNote(req.body, userId, tenantId);
       io.emit('meeting:created', { id: result.activity.id });
       wrapResult(res, result, 201);
@@ -150,7 +150,7 @@ class CommunicationController {
   // ─── Update Meeting Note ─────────────────────────────────────────────────
   public async updateMeetingNote(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
+      const userId = req.user!.id;
       const activityId = Number(req.params.id);
       const result = await communicationService.updateMeetingNote(activityId, req.body, userId);
       io.emit('meeting:updated', { id: activityId });
@@ -163,7 +163,7 @@ class CommunicationController {
   // ─── Delete Meeting Note ─────────────────────────────────────────────────
   public async deleteMeetingNote(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
+      const userId = req.user!.id;
       const activityId = Number(req.params.id);
       await communicationService.deleteMeetingNote(activityId, userId);
       io.emit('meeting:deleted', { id: activityId });
@@ -176,11 +176,8 @@ class CommunicationController {
   // ─── Get Call Analytics ──────────────────────────────────────────────────
   public async getCallAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const tenantId = (req.user as any)?.tenantId || null;
-      const dateRange =
-        req.query.start && req.query.end
-          ? { start: req.query.start as string, end: req.query.end as string }
-          : undefined;
+      const tenantId = req.user?.tenantId || null;
+      const dateRange = req.query.start && req.query.end ? { start: req.query.start as string, end: req.query.end as string } : undefined;
       const analytics = await communicationService.getCallAnalytics(tenantId, dateRange);
       wrapResult(res, analytics);
     } catch (error) {
@@ -191,8 +188,8 @@ class CommunicationController {
   // ─── Search Participants ─────────────────────────────────────────────────
   public async searchParticipants(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const tenantId = (req.user as any)?.tenantId || null;
-      const search = req.query.search as string || '';
+      const tenantId = req.user?.tenantId || null;
+      const search = (req.query.search as string) || '';
       const limit = Number(req.query.limit) || 10;
       const participants = await communicationService.searchParticipants(search, tenantId, limit);
       wrapResult(res, participants);
@@ -204,7 +201,7 @@ class CommunicationController {
   // ─── Delete Activity ─────────────────────────────────────────────────────
   public async deleteActivity(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
+      const userId = req.user!.id;
       const id = Number(req.params.id);
       await communicationService.deleteActivity(id, userId);
       io.emit('activity:deleted', { id });

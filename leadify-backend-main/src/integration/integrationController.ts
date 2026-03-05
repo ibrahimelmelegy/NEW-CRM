@@ -8,7 +8,7 @@ class IntegrationController {
   public async getIntegrations(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const isSuperAdmin = req.user?.role?.name === 'SUPER_ADMIN';
-      const response = await integrationService.getIntegrations(isSuperAdmin ? undefined : req.user?.id);
+      const response = await integrationService.getIntegrations(isSuperAdmin ? undefined : req.user!.id);
       wrapResult(res, response);
     } catch (error) {
       next(error);
@@ -18,7 +18,7 @@ class IntegrationController {
   public async upsertIntegration(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const isSuperAdmin = req.user?.role?.name === 'SUPER_ADMIN';
-      const userId = isSuperAdmin && req.body.systemWide ? undefined : req.user?.id;
+      const userId = isSuperAdmin && req.body.systemWide ? undefined : req.user!.id;
       const response = await integrationService.upsertIntegration(req.body, userId);
       wrapResult(res, response);
     } catch (error) {
@@ -45,7 +45,7 @@ class IntegrationController {
     }
   }
 
-  public async handleGoogleCallback(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async handleGoogleCallback(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { code } = req.query;
       // In a better flow, we'd exchange tokens here
@@ -55,7 +55,7 @@ class IntegrationController {
     }
   }
 
-  public async handleOutlookCallback(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async handleOutlookCallback(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { code } = req.query;
       res.redirect(`${process.env.FRONTEND_URL}/settings/integrations?status=success&provider=outlook&code=${code}`);

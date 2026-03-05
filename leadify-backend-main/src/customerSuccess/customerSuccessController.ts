@@ -2,15 +2,16 @@ import { Request, Response } from 'express';
 import customerSuccessService from './customerSuccessService';
 import { wrapResult } from '../utils/response/responseWrapper';
 
+import { AuthenticatedRequest } from '../types';
 class CustomerSuccessController {
   // GET /api/customer-success/dashboard
-  public async getDashboard(req: Request, res: Response) {
+  public async getDashboard(req: AuthenticatedRequest, res: Response) {
     try {
-      const tenantId = (req as any).user?.tenantId;
+      const tenantId = req.user!.tenantId!;
       const dashboard = await customerSuccessService.getDashboard(tenantId);
       wrapResult(res, dashboard, 200);
-    } catch (error: any) {
-      console.error('[CustomerSuccess] Dashboard error:', error.message);
+    } catch (error: unknown) {
+      console.error('[CustomerSuccess] Dashboard error:', error instanceof Error ? error.message : String(error));
       // Return empty dashboard matching frontend shape instead of 500
       wrapResult(
         res,
@@ -28,10 +29,10 @@ class CustomerSuccessController {
   }
 
   // GET /api/customer-success/client/:id/health
-  public async getClientHealth(req: Request, res: Response) {
+  public async getClientHealth(req: AuthenticatedRequest, res: Response) {
     try {
       const { id } = req.params;
-      const tenantId: string | undefined = (req as any).user?.tenantId;
+      const tenantId = req.user!.tenantId!;
       const health = await customerSuccessService.getClientHealth(id as string, tenantId);
 
       if (!health) {
@@ -39,8 +40,8 @@ class CustomerSuccessController {
       }
 
       wrapResult(res, health, 200);
-    } catch (error: any) {
-      console.error('[CustomerSuccess] Client health error:', error.message);
+    } catch (error: unknown) {
+      console.error('[CustomerSuccess] Client health error:', error instanceof Error ? error.message : String(error));
       wrapResult(res, null, 500);
     }
   }

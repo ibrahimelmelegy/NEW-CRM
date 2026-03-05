@@ -14,7 +14,7 @@ class SearchController {
       const entity = req.query.entity as string | undefined;
       const page = parseInt(req.query.page as string, 10) || 1;
       const limit = parseInt(req.query.limit as string, 10) || 20;
-      const tenantId = req.user?.tenantId;
+      const tenantId = req.user!.tenantId!;
 
       // Auto-save the search query
       if (q && req.user?.id) {
@@ -28,9 +28,7 @@ class SearchController {
       }
 
       // Global search across all entities
-      const entityTypes = req.query.entityTypes
-        ? (req.query.entityTypes as string).split(',').map(t => t.trim())
-        : undefined;
+      const entityTypes = req.query.entityTypes ? (req.query.entityTypes as string).split(',').map(t => t.trim()) : undefined;
 
       const results = await searchService.globalSearch(q, tenantId, {
         entities: entityTypes,
@@ -50,7 +48,7 @@ class SearchController {
    */
   async getRecentSearches(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const userId = req.user?.id;
+      const userId = req.user!.id;
       if (!userId) {
         return wrapResult(res, []);
       }
@@ -67,7 +65,7 @@ class SearchController {
    */
   async clearRecentSearches(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const userId = req.user?.id;
+      const userId = req.user!.id;
       if (userId) {
         searchService.clearRecentSearches(userId);
       }

@@ -15,7 +15,7 @@ class SettingController {
     }
   }
 
-  public async getSetting(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async getSetting(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await settingService.getSetting();
       wrapResult(res, responseFromService);

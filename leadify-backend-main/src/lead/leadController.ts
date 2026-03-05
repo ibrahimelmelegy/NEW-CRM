@@ -44,7 +44,7 @@ class LeadController {
     }
   }
 
-  public async importLeadSheet(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async importLeadSheet(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const uploadedFile = (<any>req).files.file;
       const responseFromService = await leadService.importFile(uploadedFile);

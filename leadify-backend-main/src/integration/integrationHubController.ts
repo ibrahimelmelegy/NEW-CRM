@@ -52,7 +52,7 @@ class IntegrationHubController {
       }
 
       const tenantId = req.headers['x-tenant-id'] as string | undefined;
-      const userId = req.user?.id;
+      const userId = req.user!.id;
 
       const result = await integrationHubService.configureIntegration(type, config, userId, tenantId);
       wrapResult(res, result, 201);
@@ -132,7 +132,7 @@ class IntegrationHubController {
       }
 
       const tenantId = req.headers['x-tenant-id'] as string | undefined;
-      const userId = req.user?.id;
+      const userId = req.user!.id;
 
       const webhook = await integrationHubService.createWebhook(req.body, userId, tenantId);
       wrapResult(res, webhook, 201);

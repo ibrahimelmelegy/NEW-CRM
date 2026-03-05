@@ -8,7 +8,7 @@ class PayrollController {
 
   async createPayrollRun(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const data = { ...req.body, tenantId: (req.user as any)?.tenantId };
+      const data = { ...req.body, tenantId: req.user?.tenantId };
       wrapResult(res, await payrollService.createPayrollRun(data), 201);
     } catch (error) {
       next(error);
@@ -41,7 +41,7 @@ class PayrollController {
 
   async approveRun(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      wrapResult(res, await payrollService.approveRun(req.params.id as string, String((req.user as any)!.id)));
+      wrapResult(res, await payrollService.approveRun(req.params.id as string, String(req.user!.id)));
     } catch (error) {
       next(error);
     }
@@ -49,7 +49,7 @@ class PayrollController {
 
   async processRun(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      wrapResult(res, await payrollService.processRun(req.params.id as string, String((req.user as any)!.id)));
+      wrapResult(res, await payrollService.processRun(req.params.id as string, String(req.user!.id)));
     } catch (error) {
       next(error);
     }
@@ -77,7 +77,7 @@ class PayrollController {
 
   async createSalaryStructure(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const data = { ...req.body, tenantId: (req.user as any)?.tenantId };
+      const data = { ...req.body, tenantId: req.user?.tenantId };
       wrapResult(res, await payrollService.createSalaryStructure(data), 201);
     } catch (error) {
       next(error);

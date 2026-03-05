@@ -25,7 +25,7 @@ class ProposalFinanceTableController {
     }
   }
 
-  public async getFinanceTables(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async getFinanceTables(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await proposalFinanceTableService.getFinanceTables(req.query);
       wrapResult(res, responseFromService);
@@ -34,7 +34,7 @@ class ProposalFinanceTableController {
     }
   }
 
-  public async financeTableById(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async financeTableById(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await proposalFinanceTableService.financeTableById(req.params.id as string);
       wrapResult(res, responseFromService);

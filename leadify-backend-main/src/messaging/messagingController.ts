@@ -50,7 +50,7 @@ class MessagingController {
     }
   }
 
-  async webhook(req: any, res: Response, next: NextFunction) {
+  async webhook(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       // WhatsApp webhook verification (GET)
       if (req.method === 'GET') {

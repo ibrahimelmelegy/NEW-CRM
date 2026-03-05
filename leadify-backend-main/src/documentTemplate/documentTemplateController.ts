@@ -2,10 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import { wrapResult } from '../utils/response/responseWrapper';
 import documentTemplateService from './documentTemplateService';
 
+import { AuthenticatedRequest } from '../types';
 class DocumentTemplateController {
-  public async createTemplate(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async createTemplate(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req as any).user?.id;
+      const userId = String(req.user!.id);
       const result = await documentTemplateService.createTemplate(req.body, userId);
       wrapResult(res, result, 201);
     } catch (error) {
@@ -13,7 +14,7 @@ class DocumentTemplateController {
     }
   }
 
-  public async updateTemplate(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async updateTemplate(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await documentTemplateService.updateTemplate(req.params.id as string, req.body);
       wrapResult(res, result);
@@ -22,7 +23,7 @@ class DocumentTemplateController {
     }
   }
 
-  public async getTemplates(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async getTemplates(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await documentTemplateService.getTemplates(req.query);
       wrapResult(res, result);
@@ -31,7 +32,7 @@ class DocumentTemplateController {
     }
   }
 
-  public async getTemplateById(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async getTemplateById(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await documentTemplateService.getTemplateById(req.params.id as string);
       wrapResult(res, result);
@@ -40,7 +41,7 @@ class DocumentTemplateController {
     }
   }
 
-  public async deleteTemplate(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async deleteTemplate(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       await documentTemplateService.deleteTemplate(req.params.id as string);
       wrapResult(res, null, 200);
@@ -49,9 +50,9 @@ class DocumentTemplateController {
     }
   }
 
-  public async cloneTemplate(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async cloneTemplate(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req as any).user?.id;
+      const userId = String(req.user!.id);
       const result = await documentTemplateService.cloneTemplate(req.params.id as string, userId);
       wrapResult(res, result, 201);
     } catch (error) {

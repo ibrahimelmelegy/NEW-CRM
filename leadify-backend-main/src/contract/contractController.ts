@@ -55,7 +55,7 @@ class ContractController {
   }
 
   // Public endpoints (no auth)
-  async getByToken(req: Request, res: Response, next: NextFunction) {
+  async getByToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await contractService.getByToken(req.params.token as string));
     } catch (error) {
@@ -63,7 +63,7 @@ class ContractController {
     }
   }
 
-  async sign(req: Request, res: Response, next: NextFunction) {
+  async sign(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const { signatureData, signerName } = req.body;
       wrapResult(res, await contractService.sign(req.params.token as string, signatureData, signerName));

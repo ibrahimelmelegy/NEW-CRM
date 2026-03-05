@@ -27,7 +27,7 @@ class WorkflowController {
 
   async createRule(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const userId = req.user?.id;
+      const userId = req.user!.id;
       const rule = await workflowService.createRule(req.body, userId!);
       wrapResult(res, rule, 201);
     } catch (error) {
@@ -84,7 +84,7 @@ class WorkflowController {
   async manualExecute(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const id = parseInt(req.params.id as string, 10);
-      const userId = req.user?.id;
+      const userId = req.user!.id;
       const execution = await workflowService.manualExecute(id, userId!);
       wrapResult(res, execution, 201);
     } catch (error) {

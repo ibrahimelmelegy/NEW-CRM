@@ -28,7 +28,7 @@ class CalendarController {
     }
   }
 
-  async deleteEvent(req: Request, res: Response, next: NextFunction) {
+  async deleteEvent(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await calendarService.deleteEvent(Number(req.params.id)));
     } catch (error) {
@@ -36,7 +36,7 @@ class CalendarController {
     }
   }
 
-  async getEventById(req: Request, res: Response, next: NextFunction) {
+  async getEventById(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await calendarService.getEventById(Number(req.params.id)));
     } catch (error) {
@@ -63,12 +63,10 @@ class CalendarController {
   async checkConflicts(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const { startDate, endDate, excludeId } = req.query;
-      wrapResult(res, await calendarService.checkConflicts(
-        req.user!.id,
-        startDate as string,
-        endDate as string,
-        excludeId ? Number(excludeId) : undefined
-      ));
+      wrapResult(
+        res,
+        await calendarService.checkConflicts(req.user!.id, startDate as string, endDate as string, excludeId ? Number(excludeId) : undefined)
+      );
     } catch (error) {
       next(error);
     }
@@ -77,11 +75,7 @@ class CalendarController {
   async updateAttendeeStatus(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const { status } = req.body;
-      wrapResult(res, await calendarService.updateAttendeeStatus(
-        Number(req.params.id),
-        req.user!.id,
-        status
-      ));
+      wrapResult(res, await calendarService.updateAttendeeStatus(Number(req.params.id), req.user!.id, status));
     } catch (error) {
       next(error);
     }
@@ -90,11 +84,7 @@ class CalendarController {
   async getAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const { startDate, endDate } = req.query;
-      wrapResult(res, await calendarService.getAnalytics(
-        req.user!.id,
-        startDate as string | undefined,
-        endDate as string | undefined
-      ));
+      wrapResult(res, await calendarService.getAnalytics(req.user!.id, startDate as string | undefined, endDate as string | undefined));
     } catch (error) {
       next(error);
     }

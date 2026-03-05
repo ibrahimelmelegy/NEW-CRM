@@ -112,7 +112,7 @@ class InvoiceBillingController {
         throw new BaseError(ERRORS.SOMETHING_WENT_WRONG, 400, 'Valid amount is required');
       }
 
-      const tenantId = (req.user as any)?.tenantId || null;
+      const tenantId = req.user?.tenantId ?? undefined;
 
       const creditNote = await invoiceBillingService.createCreditNote(invoiceId, {
         amount,

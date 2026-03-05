@@ -12,14 +12,14 @@ class WhatsAppController {
 
   public async getContacts(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const tenantId = (req.user as any)?.tenantId || null;
+      const tenantId = req.user?.tenantId || null;
       const { page, limit, search, status, tags } = req.query;
       const result = await whatsappService.getContacts(tenantId, {
         page: Number(page) || 1,
         limit: Number(limit) || 25,
         search: search as string,
         status: status as string,
-        tags: tags ? (Array.isArray(tags) ? tags as string[] : [tags as string]) : undefined
+        tags: tags ? (Array.isArray(tags) ? (tags as string[]) : [tags as string]) : undefined
       });
       wrapResult(res, result);
     } catch (error) {
@@ -39,7 +39,7 @@ class WhatsAppController {
 
   public async createContact(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const tenantId = (req.user as any)?.tenantId || null;
+      const tenantId = req.user?.tenantId || null;
       const contact = await whatsappService.createContact(req.body, tenantId);
       io.emit('whatsapp:contact_created', { id: contact.id, name: contact.name });
       wrapResult(res, contact, 201);
@@ -72,7 +72,7 @@ class WhatsAppController {
 
   public async importFromClients(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const tenantId = (req.user as any)?.tenantId || null;
+      const tenantId = req.user?.tenantId || null;
       const result = await whatsappService.importFromClients(tenantId);
       wrapResult(res, result);
     } catch (error) {
@@ -100,8 +100,8 @@ class WhatsAppController {
 
   public async sendTextMessage(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
-      const tenantId = (req.user as any)?.tenantId || null;
+      const userId = req.user!.id;
+      const tenantId = req.user?.tenantId || null;
       const { contactId, content } = req.body;
 
       if (!contactId || !content) {
@@ -124,8 +124,8 @@ class WhatsAppController {
 
   public async sendMediaMessage(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
-      const tenantId = (req.user as any)?.tenantId || null;
+      const userId = req.user!.id;
+      const tenantId = req.user?.tenantId || null;
       const { contactId, content, type, mediaUrl, mediaCaption, fileName } = req.body;
 
       if (!contactId || !mediaUrl) {
@@ -153,8 +153,8 @@ class WhatsAppController {
 
   public async sendTemplateMessage(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
-      const tenantId = (req.user as any)?.tenantId || null;
+      const userId = req.user!.id;
+      const tenantId = req.user?.tenantId || null;
       const { contactId, templateId, variables } = req.body;
 
       if (!contactId || !templateId) {
@@ -162,9 +162,7 @@ class WhatsAppController {
         return;
       }
 
-      const message = await whatsappService.sendTemplateMessage(
-        contactId, templateId, variables || {}, userId, tenantId
-      );
+      const message = await whatsappService.sendTemplateMessage(contactId, templateId, variables || {}, userId, tenantId);
       io.emit('whatsapp:message_sent', {
         id: message.id,
         contactId: message.contactId,
@@ -194,8 +192,8 @@ class WhatsAppController {
 
   public async sendBulkTemplate(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = (req.user as any)?.id;
-      const tenantId = (req.user as any)?.tenantId || null;
+      const userId = req.user!.id;
+      const tenantId = req.user?.tenantId || null;
       const { contactIds, templateId, variables } = req.body;
 
       if (!contactIds?.length || !templateId) {
@@ -203,9 +201,7 @@ class WhatsAppController {
         return;
       }
 
-      const result = await whatsappService.sendBulkTemplate(
-        contactIds, templateId, variables || {}, userId, tenantId
-      );
+      const result = await whatsappService.sendBulkTemplate(contactIds, templateId, variables || {}, userId, tenantId);
       wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -218,7 +214,7 @@ class WhatsAppController {
 
   public async getTemplates(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const tenantId = (req.user as any)?.tenantId || null;
+      const tenantId = req.user?.tenantId || null;
       const { page, limit, search, category, status } = req.query;
       const result = await whatsappService.getTemplates(tenantId, {
         page: Number(page) || 1,
@@ -245,7 +241,7 @@ class WhatsAppController {
 
   public async createTemplate(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const tenantId = (req.user as any)?.tenantId || null;
+      const tenantId = req.user?.tenantId || null;
       const template = await whatsappService.createTemplate(req.body, tenantId);
       wrapResult(res, template, 201);
     } catch (error) {
@@ -279,10 +275,8 @@ class WhatsAppController {
 
   public async getAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const tenantId = (req.user as any)?.tenantId || null;
-      const dateRange = req.query.start && req.query.end
-        ? { start: req.query.start as string, end: req.query.end as string }
-        : undefined;
+      const tenantId = req.user?.tenantId || null;
+      const dateRange = req.query.start && req.query.end ? { start: req.query.start as string, end: req.query.end as string } : undefined;
       const analytics = await whatsappService.getAnalytics(tenantId, dateRange);
       wrapResult(res, analytics);
     } catch (error) {
@@ -294,7 +288,7 @@ class WhatsAppController {
   // WEBHOOK (Public - WhatsApp Cloud API format)
   // ═══════════════════════════════════════════════════════════════════════════
 
-  public async webhookVerify(req: any, res: Response): Promise<void> {
+  public async webhookVerify(req: AuthenticatedRequest, res: Response): Promise<void> {
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
@@ -306,7 +300,7 @@ class WhatsAppController {
     }
   }
 
-  public async webhookIncoming(req: any, res: Response, _next: NextFunction): Promise<void> {
+  public async webhookIncoming(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
     try {
       const body = req.body;
 
@@ -338,9 +332,7 @@ class WhatsAppController {
                   metadata.longitude = msg.location.longitude;
                 }
 
-                const message = await whatsappService.recordInboundMessage(
-                  phoneNumber, content, msg.id, type, metadata
-                );
+                const message = await whatsappService.recordInboundMessage(phoneNumber, content, msg.id, type, metadata);
 
                 if (message) {
                   io.emit('whatsapp:message_received', {

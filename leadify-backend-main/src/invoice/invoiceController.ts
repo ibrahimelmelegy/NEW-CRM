@@ -66,7 +66,7 @@ class InvoiceController {
 
   async getAgingReport(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const tenantId = (req.user as any)?.tenantId || undefined;
+      const tenantId = req.user?.tenantId || undefined;
       const report = await invoiceService.getAgingReport(tenantId);
       wrapResult(res, report);
     } catch (error) {
@@ -76,7 +76,7 @@ class InvoiceController {
 
   async getRevenueSummary(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const tenantId = (req.user as any)?.tenantId || undefined;
+      const tenantId = req.user?.tenantId || undefined;
       const period = Number(req.query.period) || 12;
       const summary = await invoiceService.getRevenueSummary(tenantId, period);
       wrapResult(res, summary);
@@ -87,7 +87,7 @@ class InvoiceController {
 
   async getOverdueInvoices(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const tenantId = (req.user as any)?.tenantId || undefined;
+      const tenantId = req.user?.tenantId || undefined;
       const invoices = await invoiceService.getOverdueInvoices(tenantId);
       wrapResult(res, invoices);
     } catch (error) {
@@ -247,17 +247,21 @@ function buildInvoiceHtml(invoice: any, settings: any): string {
   </div>
 
   <!-- Payment Status Banner -->
-  ${invoice.collected ? `
+  ${
+    invoice.collected
+      ? `
   <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 8px; padding: 16px; margin-bottom: 24px; text-align: center;">
     <p style="font-size: 16px; font-weight: 800; color: #16a34a;">PAID</p>
     ${invoice.collectedDate ? `<p style="font-size: 12px; color: #15803d; margin-top: 4px;">Collected on ${formatDate(invoice.collectedDate)}</p>` : ''}
   </div>
-  ` : `
+  `
+      : `
   <div style="background: #fffbeb; border: 2px solid #f59e0b; border-radius: 8px; padding: 16px; margin-bottom: 24px; text-align: center;">
     <p style="font-size: 16px; font-weight: 800; color: #d97706;">PAYMENT PENDING</p>
     ${invoice.dueDate ? `<p style="font-size: 12px; color: #b45309; margin-top: 4px;">Due by ${formatDate(invoice.dueDate)}</p>` : ''}
   </div>
-  `}
+  `
+  }
 
   <!-- Footer -->
   <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center;">

@@ -89,7 +89,7 @@ class SalesOrderService {
       await transaction.commit();
 
       return await this.getOrderById(salesOrder.id);
-    } catch (error: any) {
+    } catch (error: unknown) {
       await transaction.rollback();
       throw error;
     }
@@ -105,10 +105,7 @@ class SalesOrderService {
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [
-        { orderNumber: { [Op.iLike]: `%${searchKey}%` } },
-        { notes: { [Op.iLike]: `%${searchKey}%` } }
-      ];
+      (where as any)[Op.or] = [{ orderNumber: { [Op.iLike]: `%${searchKey}%` } }, { notes: { [Op.iLike]: `%${searchKey}%` } }];
     }
     if (status) {
       (where as any).status = status;
@@ -200,7 +197,7 @@ class SalesOrderService {
 
       await transaction.commit();
       return await this.getOrderById(id);
-    } catch (error: any) {
+    } catch (error: unknown) {
       await transaction.rollback();
       throw error;
     }
@@ -453,10 +450,7 @@ class SalesOrderService {
         raw: true
       }) as any,
       SalesOrder.findAll({
-        attributes: [
-          'status',
-          [fn('COUNT', col('id')), 'count']
-        ],
+        attributes: ['status', [fn('COUNT', col('id')), 'count']],
         where,
         group: ['status'],
         raw: true
@@ -474,12 +468,12 @@ class SalesOrderService {
 
     // Build status distribution map
     const ordersByStatus: Record<string, number> = {};
-    for (const sc of (statusCounts || [])) {
+    for (const sc of statusCounts || []) {
       ordersByStatus[(sc as any).status] = parseInt((sc as any).count, 10);
     }
 
     // Revenue grouped by day of week (Mon-Sun) using SQL
-    const revenueByDow = await SalesOrder.findAll({
+    const revenueByDow = (await SalesOrder.findAll({
       attributes: [
         [fn('EXTRACT', literal(`DOW FROM "createdAt"`)), 'dow'],
         [fn('COALESCE', fn('SUM', col('total')), 0), 'revenue']
@@ -488,7 +482,7 @@ class SalesOrderService {
       group: [fn('EXTRACT', literal(`DOW FROM "createdAt"`))],
       order: [[fn('EXTRACT', literal(`DOW FROM "createdAt"`)), 'ASC']],
       raw: true
-    }) as any[];
+    })) as any[];
 
     // Map DOW (0=Sun...6=Sat) -> {Mon,Tue,...,Sun}
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -502,7 +496,7 @@ class SalesOrderService {
     }
 
     // Revenue grouped by month for trend
-    const revenueByMonth = await SalesOrder.findAll({
+    const revenueByMonth = (await SalesOrder.findAll({
       attributes: [
         [fn('to_char', col('createdAt'), 'YYYY-MM'), 'month'],
         [fn('COALESCE', fn('SUM', col('total')), 0), 'revenue'],
@@ -513,7 +507,7 @@ class SalesOrderService {
       order: [[fn('to_char', col('createdAt'), 'YYYY-MM'), 'DESC']],
       limit: 12,
       raw: true
-    }) as any[];
+    })) as any[];
 
     return {
       totalOrders,

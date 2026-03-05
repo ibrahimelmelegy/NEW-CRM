@@ -24,7 +24,7 @@ class ZakaatController {
 
   async createAssessment(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const userId = req.user?.id;
+      const userId = req.user!.id;
       if (!userId) {
         res.status(401).json({ message: 'Unauthorized' });
         return;

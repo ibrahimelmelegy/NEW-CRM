@@ -2,57 +2,58 @@ import { Request, Response, NextFunction } from 'express';
 import plannerService from './plannerService';
 import { wrapResult } from '../utils/response/responseWrapper';
 
+import { AuthenticatedRequest } from '../types';
 class PlannerController {
   // Tasks
-  async getTasksByDate(req: Request, res: Response, next: NextFunction) {
+  async getTasksByDate(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const date = (req.query.date as string) || new Date().toISOString().split('T')[0];
-      const result = await plannerService.getTasksByDate((req as any).user.id, date);
+      const result = await plannerService.getTasksByDate(req.user!.id, date);
       return wrapResult(res, result);
     } catch (error) {
       next(error);
     }
   }
 
-  async createTask(req: Request, res: Response, next: NextFunction) {
+  async createTask(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.createTask(req.body, (req as any).user.id);
+      const result = await plannerService.createTask(req.body, req.user!.id);
       return wrapResult(res, result, 201);
     } catch (error) {
       next(error);
     }
   }
 
-  async updateTask(req: Request, res: Response, next: NextFunction) {
+  async updateTask(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.updateTask(Number(req.params.id), req.body, (req as any).user.id);
+      const result = await plannerService.updateTask(Number(req.params.id), req.body, req.user!.id);
       return wrapResult(res, result);
     } catch (error) {
       next(error);
     }
   }
 
-  async toggleComplete(req: Request, res: Response, next: NextFunction) {
+  async toggleComplete(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.toggleComplete(Number(req.params.id), (req as any).user.id);
+      const result = await plannerService.toggleComplete(Number(req.params.id), req.user!.id);
       return wrapResult(res, result);
     } catch (error) {
       next(error);
     }
   }
 
-  async deleteTask(req: Request, res: Response, next: NextFunction) {
+  async deleteTask(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.deleteTask(Number(req.params.id), (req as any).user.id);
+      const result = await plannerService.deleteTask(Number(req.params.id), req.user!.id);
       return wrapResult(res, result);
     } catch (error) {
       next(error);
     }
   }
 
-  async getStats(req: Request, res: Response, next: NextFunction) {
+  async getStats(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.getStats((req as any).user.id);
+      const result = await plannerService.getStats(req.user!.id);
       return wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -60,28 +61,28 @@ class PlannerController {
   }
 
   // Focus
-  async startFocus(req: Request, res: Response, next: NextFunction) {
+  async startFocus(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.startFocus(req.body, (req as any).user.id);
+      const result = await plannerService.startFocus(req.body, req.user!.id);
       return wrapResult(res, result, 201);
     } catch (error) {
       next(error);
     }
   }
 
-  async endFocus(req: Request, res: Response, next: NextFunction) {
+  async endFocus(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.endFocus(Number(req.params.id), (req as any).user.id);
+      const result = await plannerService.endFocus(Number(req.params.id), req.user!.id);
       return wrapResult(res, result);
     } catch (error) {
       next(error);
     }
   }
 
-  async getFocusByDate(req: Request, res: Response, next: NextFunction) {
+  async getFocusByDate(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const date = (req.query.date as string) || new Date().toISOString().split('T')[0];
-      const result = await plannerService.getFocusByDate((req as any).user.id, date);
+      const result = await plannerService.getFocusByDate(req.user!.id, date);
       return wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -89,36 +90,36 @@ class PlannerController {
   }
 
   // Habits
-  async getHabits(req: Request, res: Response, next: NextFunction) {
+  async getHabits(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.getHabits((req as any).user.id);
+      const result = await plannerService.getHabits(req.user!.id);
       return wrapResult(res, result);
     } catch (error) {
       next(error);
     }
   }
 
-  async createHabit(req: Request, res: Response, next: NextFunction) {
+  async createHabit(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.createHabit(req.body, (req as any).user.id);
+      const result = await plannerService.createHabit(req.body, req.user!.id);
       return wrapResult(res, result, 201);
     } catch (error) {
       next(error);
     }
   }
 
-  async toggleHabit(req: Request, res: Response, next: NextFunction) {
+  async toggleHabit(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.toggleHabit(Number(req.params.id), (req as any).user.id);
+      const result = await plannerService.toggleHabit(Number(req.params.id), req.user!.id);
       return wrapResult(res, result);
     } catch (error) {
       next(error);
     }
   }
 
-  async deleteHabit(req: Request, res: Response, next: NextFunction) {
+  async deleteHabit(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await plannerService.deleteHabit(Number(req.params.id), (req as any).user.id);
+      const result = await plannerService.deleteHabit(Number(req.params.id), req.user!.id);
       return wrapResult(res, result);
     } catch (error) {
       next(error);

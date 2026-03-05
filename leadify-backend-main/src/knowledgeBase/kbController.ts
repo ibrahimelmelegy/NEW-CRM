@@ -13,7 +13,7 @@ class KBController {
     }
   }
 
-  async updateArticle(req: Request, res: Response, next: NextFunction) {
+  async updateArticle(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const result = await kbService.updateArticle(req.params.id as string, req.body);
       wrapResult(res, result);
@@ -22,7 +22,7 @@ class KBController {
     }
   }
 
-  async getArticles(req: Request, res: Response, next: NextFunction) {
+  async getArticles(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await kbService.getArticles(req.query));
     } catch (error) {
@@ -30,7 +30,7 @@ class KBController {
     }
   }
 
-  async getPublishedArticles(req: Request, res: Response, next: NextFunction) {
+  async getPublishedArticles(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await kbService.getPublishedArticles(req.query));
     } catch (error) {
@@ -38,7 +38,7 @@ class KBController {
     }
   }
 
-  async getArticleById(req: Request, res: Response, next: NextFunction) {
+  async getArticleById(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await kbService.getArticleById(req.params.id as string));
     } catch (error) {
@@ -46,7 +46,7 @@ class KBController {
     }
   }
 
-  async getArticleBySlug(req: Request, res: Response, next: NextFunction) {
+  async getArticleBySlug(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await kbService.getArticleBySlug(req.params.slug as string));
     } catch (error) {
@@ -54,7 +54,7 @@ class KBController {
     }
   }
 
-  async deleteArticle(req: Request, res: Response, next: NextFunction) {
+  async deleteArticle(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await kbService.deleteArticle(req.params.id as string));
     } catch (error) {
@@ -62,7 +62,7 @@ class KBController {
     }
   }
 
-  async markHelpful(req: Request, res: Response, next: NextFunction) {
+  async markHelpful(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await kbService.markHelpful(req.params.id as string));
     } catch (error) {
@@ -70,7 +70,7 @@ class KBController {
     }
   }
 
-  async getCategories(req: Request, res: Response, next: NextFunction) {
+  async getCategories(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await kbService.getCategories());
     } catch (error) {

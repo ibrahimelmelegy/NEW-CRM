@@ -42,7 +42,7 @@ class ProcurementService {
       await transaction.commit();
       await createActivityLog('purchaseOrder', 'create', purchaseOrder.id, user.id, null, `Purchase Order ${poNumber} created`);
       return purchaseOrder;
-    } catch (error: any) {
+    } catch (error: unknown) {
       await transaction.rollback();
       throw error;
     }
@@ -212,10 +212,7 @@ class ProcurementService {
 
       await transaction.commit();
 
-      await createActivityLog(
-        'purchaseOrder', 'update', po.id, user.id, null,
-        `PO ${po.poNumber} received. ${variances.length} items checked.`
-      );
+      await createActivityLog('purchaseOrder', 'update', po.id, user.id, null, `PO ${po.poNumber} received. ${variances.length} items checked.`);
 
       return Object.assign(po, { variances });
     } catch (error) {
@@ -271,9 +268,7 @@ class ProcurementService {
       })
     );
 
-    return comparison
-      .filter(Boolean)
-      .sort((a: any, b: any) => b.totalSpend - a.totalSpend);
+    return comparison.filter(Boolean).sort((a: any, b: any) => b.totalSpend - a.totalSpend);
   }
 
   async removePurchaseOrder(id: string, user: User): Promise<void> {

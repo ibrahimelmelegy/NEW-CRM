@@ -44,7 +44,7 @@ class ClientController {
     }
   }
 
-  public async clients(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async clients(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await ClientService.getClientsArray();
       wrapResult(res, responseFromService);
@@ -132,12 +132,7 @@ class ClientController {
   public async createCompanyNote(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { content, attachments } = req.body;
-      const responseFromService = await ClientService.createCompanyNote(
-        req.params.id as string,
-        content,
-        req.user!.id,
-        attachments
-      );
+      const responseFromService = await ClientService.createCompanyNote(req.params.id as string, content, req.user!.id, attachments);
       wrapResult(res, responseFromService, 201);
     } catch (error) {
       next(error);

@@ -27,7 +27,7 @@ class ProposalFinanceTableItemController {
     }
   }
 
-  public async getProposalFinanceTableItems(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async getProposalFinanceTableItems(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await proposalFinanceTableItemService.getProposalFinanceTableItems(req.query);
       wrapResult(res, responseFromService);
@@ -36,7 +36,7 @@ class ProposalFinanceTableItemController {
     }
   }
 
-  public async proposalFinanceTableItemById(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async proposalFinanceTableItemById(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const responseFromService = await proposalFinanceTableItemService.proposalFinanceTableItemById(req.params.id as string);
       wrapResult(res, responseFromService);

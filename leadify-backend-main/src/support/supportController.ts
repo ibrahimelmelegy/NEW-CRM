@@ -8,7 +8,7 @@ class SupportController {
   // ─── Tickets ──────────────────────────────────────────────────────────
   public async createTicket(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const data = { ...req.body, tenantId: (req.user as any)?.tenantId };
+      const data = { ...req.body, tenantId: req.user?.tenantId };
       const ticket = await supportService.createTicket(data);
       io.emit('ticket:created', { id: ticket.id, ticketNumber: ticket.ticketNumber });
       wrapResult(res, ticket, 201);
@@ -40,7 +40,7 @@ class SupportController {
     try {
       const data = {
         ...req.body,
-        senderId: req.body.senderId || (req.user as any)?.id
+        senderId: req.body.senderId || req.user?.id
       };
       const message = await supportService.addMessage(req.params.id as string, data);
       io.emit('ticket:message', { ticketId: req.params.id as string, messageId: message.id });
@@ -116,7 +116,7 @@ class SupportController {
 
   public async createCannedResponse(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const data = { ...req.body, tenantId: (req.user as any)?.tenantId };
+      const data = { ...req.body, tenantId: req.user?.tenantId };
       const response = await supportService.createCannedResponse(data);
       wrapResult(res, response, 201);
     } catch (error) {
@@ -154,7 +154,7 @@ class SupportController {
 
   public async createCategory(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const data = { ...req.body, tenantId: (req.user as any)?.tenantId };
+      const data = { ...req.body, tenantId: req.user?.tenantId };
       const category = await supportService.createCategory(data);
       wrapResult(res, category, 201);
     } catch (error) {
@@ -192,7 +192,7 @@ class SupportController {
 
   public async createSLAConfig(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const data = { ...req.body, tenantId: (req.user as any)?.tenantId };
+      const data = { ...req.body, tenantId: req.user?.tenantId };
       const config = await supportService.createSLAConfig(data);
       wrapResult(res, config, 201);
     } catch (error) {

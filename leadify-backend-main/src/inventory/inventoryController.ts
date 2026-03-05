@@ -89,7 +89,7 @@ class InventoryController {
     try {
       const movement = await InventoryService.addStockMovement({
         ...req.body,
-        userId: (req as any).user?.id
+        userId: req.user!.id
       });
       wrapResult(res, movement, 201);
     } catch (error) {

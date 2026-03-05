@@ -6,7 +6,7 @@ import { AuthenticatedRequest } from '../types';
 class DocumentController {
   // ==================== FOLDERS ====================
 
-  async getFolders(req: Request, res: Response, next: NextFunction) {
+  async getFolders(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const parentId = req.query.parentId ? Number(req.query.parentId) : undefined;
       const result = await documentService.getFolders(parentId);
@@ -16,7 +16,7 @@ class DocumentController {
     }
   }
 
-  async getFolderTree(req: Request, res: Response, next: NextFunction) {
+  async getFolderTree(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const result = await documentService.getFolderTree();
       wrapResult(res, result);
@@ -29,7 +29,7 @@ class DocumentController {
     try {
       const result = await documentService.createFolder({
         ...req.body,
-        createdBy: req.user?.id
+        createdBy: req.user!.id
       });
       wrapResult(res, result, 201);
     } catch (error) {
@@ -37,7 +37,7 @@ class DocumentController {
     }
   }
 
-  async updateFolder(req: Request, res: Response, next: NextFunction) {
+  async updateFolder(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const result = await documentService.updateFolder(Number(req.params.id), req.body);
       wrapResult(res, result);
@@ -46,7 +46,7 @@ class DocumentController {
     }
   }
 
-  async deleteFolder(req: Request, res: Response, next: NextFunction) {
+  async deleteFolder(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const result = await documentService.deleteFolder(Number(req.params.id));
       wrapResult(res, result);
@@ -57,7 +57,7 @@ class DocumentController {
 
   // ==================== FILES ====================
 
-  async getFiles(req: Request, res: Response, next: NextFunction) {
+  async getFiles(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const query: any = {};
       if (req.query.folderId !== undefined) query.folderId = Number(req.query.folderId);
@@ -73,7 +73,7 @@ class DocumentController {
     }
   }
 
-  async getRecentFiles(req: Request, res: Response, next: NextFunction) {
+  async getRecentFiles(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const limit = req.query.limit ? Number(req.query.limit) : 10;
       const result = await documentService.getRecentFiles(limit);
@@ -83,7 +83,7 @@ class DocumentController {
     }
   }
 
-  async getFileById(req: Request, res: Response, next: NextFunction) {
+  async getFileById(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const result = await documentService.getFileById(Number(req.params.id));
       wrapResult(res, result);
@@ -96,7 +96,7 @@ class DocumentController {
     try {
       const result = await documentService.createFile({
         ...req.body,
-        uploadedBy: req.user?.id
+        uploadedBy: req.user!.id
       });
       wrapResult(res, result, 201);
     } catch (error) {
@@ -104,7 +104,7 @@ class DocumentController {
     }
   }
 
-  async updateFile(req: Request, res: Response, next: NextFunction) {
+  async updateFile(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const result = await documentService.updateFile(Number(req.params.id), req.body);
       wrapResult(res, result);
@@ -113,7 +113,7 @@ class DocumentController {
     }
   }
 
-  async deleteFile(req: Request, res: Response, next: NextFunction) {
+  async deleteFile(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const result = await documentService.deleteFile(Number(req.params.id));
       wrapResult(res, result);

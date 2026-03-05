@@ -5,7 +5,7 @@ import { AuthenticatedRequest } from '../types';
 
 class HRController {
   // Attendance
-  async getAttendance(req: Request, res: Response, next: NextFunction) {
+  async getAttendance(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await hrService.getAttendance(req.query));
     } catch (error) {
@@ -29,7 +29,7 @@ class HRController {
     }
   }
 
-  async createAttendance(req: Request, res: Response, next: NextFunction) {
+  async createAttendance(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await hrService.createAttendance(req.body), 201);
     } catch (error) {
@@ -37,7 +37,7 @@ class HRController {
     }
   }
 
-  async updateAttendance(req: Request, res: Response, next: NextFunction) {
+  async updateAttendance(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await hrService.updateAttendance(Number(req.params.id), req.body));
     } catch (error) {
@@ -45,7 +45,7 @@ class HRController {
     }
   }
 
-  async deleteAttendance(req: Request, res: Response, next: NextFunction) {
+  async deleteAttendance(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await hrService.deleteAttendance(Number(req.params.id)));
     } catch (error) {
@@ -54,7 +54,7 @@ class HRController {
   }
 
   // Leave Requests
-  async getLeaveRequestById(req: Request, res: Response, next: NextFunction) {
+  async getLeaveRequestById(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await hrService.getLeaveRequestById(Number(req.params.id)));
     } catch (error) {
@@ -62,7 +62,7 @@ class HRController {
     }
   }
 
-  async getLeaveRequests(req: Request, res: Response, next: NextFunction) {
+  async getLeaveRequests(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await hrService.getLeaveRequests(req.query));
     } catch (error) {
@@ -86,7 +86,7 @@ class HRController {
     }
   }
 
-  async rejectLeaveRequest(req: Request, res: Response, next: NextFunction) {
+  async rejectLeaveRequest(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await hrService.rejectLeaveRequest(Number(req.params.id), req.body.reason));
     } catch (error) {
@@ -102,7 +102,7 @@ class HRController {
     }
   }
 
-  async deleteLeaveRequest(req: Request, res: Response, next: NextFunction) {
+  async deleteLeaveRequest(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await hrService.deleteLeaveRequest(Number(req.params.id)));
     } catch (error) {

@@ -2,15 +2,16 @@ import { Request, Response, NextFunction } from 'express';
 import { wrapResult } from '../utils/response/responseWrapper';
 import twilioService from '../integration/twilioService';
 import communicationService from './communicationService';
+import { AuthenticatedRequest } from '../types';
 
 class VoipController {
   /**
    * Initiate an outbound call from the CRM
    */
-  public async initiateCall(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async initiateCall(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { to, contactId, contactType } = req.body;
-      const user = (req as any).user;
+      const user = req.user;
 
       if (!to) {
         res.status(400).json({ message: 'Phone number (to) is required.' });
@@ -40,7 +41,7 @@ class VoipController {
   /**
    * Webhook endpoint for Twilio to fetch TwiML instructions when a call connects
    */
-  public twimlCallback(req: Request, res: Response, next: NextFunction): void {
+  public twimlCallback(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
     try {
       const message = (req.query.message as string) || 'Welcome to the CRM call.';
       const twiml = twilioService.generateTwiML(message);
@@ -55,7 +56,7 @@ class VoipController {
   /**
    * Webhook endpoint for Twilio call status updates
    */
-  public async statusCallback(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async statusCallback(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { CallStatus, CallDuration, To, RecordingUrl } = req.body;
       const { contactId, contactType, userId } = req.query;
