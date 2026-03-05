@@ -65,8 +65,9 @@ export class SalesforceProvider {
       }
       return { success: true, data: { synced: leads.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err: unknown) {
-      console.error('[SalesforceProvider] syncLeads error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[SalesforceProvider] syncLeads error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 
@@ -81,8 +82,9 @@ export class SalesforceProvider {
       }
       return { success: true, data: { synced: contacts.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err: unknown) {
-      console.error('[SalesforceProvider] syncContacts error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[SalesforceProvider] syncContacts error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 
@@ -97,8 +99,9 @@ export class SalesforceProvider {
       }
       return { success: true, data: { synced: deals.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err: unknown) {
-      console.error('[SalesforceProvider] syncDeals error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[SalesforceProvider] syncDeals error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 
@@ -121,8 +124,9 @@ export class SalesforceProvider {
       ];
       return { success: true, data: mockRecords, mock: true, syncedAt: new Date().toISOString() };
     } catch (err: unknown) {
-      console.error('[SalesforceProvider] importFromSalesforce error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[SalesforceProvider] importFromSalesforce error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 
@@ -136,8 +140,9 @@ export class SalesforceProvider {
       }
       return { success: true, data: { exported: records.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err: unknown) {
-      console.error('[SalesforceProvider] exportToSalesforce error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[SalesforceProvider] exportToSalesforce error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 }

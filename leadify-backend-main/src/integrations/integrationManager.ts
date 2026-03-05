@@ -7,8 +7,11 @@ import sendgridProvider, { SendGridProvider } from './providers/sendgridProvider
 import twilioProvider, { TwilioProvider } from './providers/twilioProvider';
 import salesforceProvider, { SalesforceProvider } from './providers/salesforceProvider';
 import hubspotProvider, { HubSpotProvider } from './providers/hubspotProvider';
+import mailchimpProvider, { MailchimpProvider } from './providers/mailchimpProvider';
+import slackProvider, { SlackProvider } from './providers/slackProvider';
+import whatsappProvider, { WhatsAppProvider } from './providers/whatsappProvider';
 
-export type ProviderName = 'stripe' | 'sendgrid' | 'twilio' | 'salesforce' | 'hubspot';
+export type ProviderName = 'stripe' | 'sendgrid' | 'twilio' | 'salesforce' | 'hubspot' | 'mailchimp' | 'slack' | 'whatsapp';
 
 export interface IntegrationInfo {
   provider: ProviderName;
@@ -32,14 +35,20 @@ const enabledState: Record<ProviderName, boolean> = {
   twilio: true,
   salesforce: true,
   hubspot: true,
+  mailchimp: true,
+  slack: true,
+  whatsapp: true,
 };
 
 const providerMeta: Record<ProviderName, { label: string; category: string; isConfigured: () => boolean }> = {
-  stripe:     { label: 'Stripe',     category: 'payment',  isConfigured: () => StripeProvider.isConfigured() },
-  sendgrid:   { label: 'SendGrid',   category: 'email',    isConfigured: () => SendGridProvider.isConfigured() },
-  twilio:     { label: 'Twilio',     category: 'sms',      isConfigured: () => TwilioProvider.isConfigured() },
-  salesforce: { label: 'Salesforce', category: 'crm-sync', isConfigured: () => SalesforceProvider.isConfigured() },
-  hubspot:    { label: 'HubSpot',    category: 'crm-sync', isConfigured: () => HubSpotProvider.isConfigured() },
+  stripe:     { label: 'Stripe',           category: 'payment',       isConfigured: () => StripeProvider.isConfigured() },
+  sendgrid:   { label: 'SendGrid',         category: 'email',         isConfigured: () => SendGridProvider.isConfigured() },
+  twilio:     { label: 'Twilio',           category: 'sms',           isConfigured: () => TwilioProvider.isConfigured() },
+  salesforce: { label: 'Salesforce',       category: 'crm-sync',      isConfigured: () => SalesforceProvider.isConfigured() },
+  hubspot:    { label: 'HubSpot',          category: 'crm-sync',      isConfigured: () => HubSpotProvider.isConfigured() },
+  mailchimp:  { label: 'Mailchimp',        category: 'marketing',     isConfigured: () => MailchimpProvider.isConfigured() },
+  slack:      { label: 'Slack',            category: 'communication', isConfigured: () => SlackProvider.isConfigured() },
+  whatsapp:   { label: 'WhatsApp Business', category: 'communication', isConfigured: () => WhatsAppProvider.isConfigured() },
 };
 
 class IntegrationManager {
@@ -92,10 +101,20 @@ class IntegrationManager {
         case 'hubspot':
           await hubspotProvider.importFromHubspot('contacts', 1);
           break;
+        case 'mailchimp':
+          await mailchimpProvider.getLists();
+          break;
+        case 'slack':
+          await slackProvider.listChannels();
+          break;
+        case 'whatsapp':
+          await whatsappProvider.getMessageTemplates();
+          break;
       }
       return { provider, reachable: true, latencyMs: Date.now() - start };
     } catch (err: unknown) {
-      return { provider, reachable: false, latencyMs: Date.now() - start, error: err.message };
+      const errMsg = err instanceof Error ? err.message : 'Connection test failed';
+      return { provider, reachable: false, latencyMs: Date.now() - start, error: errMsg };
     }
   }
 

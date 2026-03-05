@@ -45,8 +45,9 @@ export class HubSpotProvider {
       }
       return { success: true, data: { synced: contacts.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err: unknown) {
-      console.error('[HubSpotProvider] syncContacts error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[HubSpotProvider] syncContacts error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 
@@ -60,8 +61,9 @@ export class HubSpotProvider {
       }
       return { success: true, data: { synced: deals.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err: unknown) {
-      console.error('[HubSpotProvider] syncDeals error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[HubSpotProvider] syncDeals error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 
@@ -75,8 +77,9 @@ export class HubSpotProvider {
       }
       return { success: true, data: { synced: companies.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err: unknown) {
-      console.error('[HubSpotProvider] syncCompanies error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[HubSpotProvider] syncCompanies error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 
@@ -104,8 +107,9 @@ export class HubSpotProvider {
       ];
       return { success: true, data: mockRecords, mock: true, syncedAt: new Date().toISOString() };
     } catch (err: unknown) {
-      console.error('[HubSpotProvider] importFromHubspot error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[HubSpotProvider] importFromHubspot error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 
@@ -124,8 +128,9 @@ export class HubSpotProvider {
       }
       return { success: true, data: { exported: records.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err: unknown) {
-      console.error('[HubSpotProvider] exportToHubspot error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[HubSpotProvider] exportToHubspot error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 }

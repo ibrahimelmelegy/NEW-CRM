@@ -1094,23 +1094,6 @@
         "developer": "المطورين"
       }
     },
-    "card": {
-      "configure": "تكوين",
-      "manage": "إدارة",
-      "connected": "متصل",
-      "notConnected": "غير متصل",
-      "error": "خطأ"
-    },
-    "config": {
-      "configureTitle": "تكوين {name}",
-      "manageTitle": "إدارة {name}",
-      "save": "حفظ",
-      "cancel": "إلغاء",
-      "testConnection": "اختبار الاتصال",
-      "disconnect": "قطع الاتصال",
-      "disconnectTitle": "قطع التكامل",
-      "disconnectConfirm": "هل أنت متأكد من قطع اتصال {name}؟ سيتم حذف جميع بيانات الاعتماد المحفوظة."
-    },
     "webhooks": {
       "title": "ويب هوك الصادرة",
       "subtitle": "إرسال إشعارات الأحداث في الوقت الفعلي إلى الخدمات الخارجية",
@@ -1153,7 +1136,115 @@
     "deals": "الصفقات",
     "tasks": "المهام",
     "notes": "الملاحظات",
-    "emails": "البريد الإلكتروني"
+    "emails": "البريد الإلكتروني",
+    "connectedIntegrations": "التكاملات المتصلة",
+    "justNow": "الآن",
+    "neverSynced": "لم تتم المزامنة",
+    "healthy": "سليم",
+    "warning": "تحذير",
+    "error": "خطأ",
+    "disconnected": "غير متصل",
+    "integrationEnabled": "تم تفعيله",
+    "integrationDisabled": "تم تعطيله",
+    "statusLabels": {
+      "connected": "متصل",
+      "available": "متاح",
+      "comingSoon": "قريباً",
+      "error": "خطأ"
+    },
+    "categories": {
+      "all": "الكل",
+      "communication": "الاتصالات",
+      "email": "البريد الإلكتروني",
+      "storage": "التخزين",
+      "accounting": "المحاسبة",
+      "marketing": "التسويق",
+      "support": "الدعم",
+      "payments": "المدفوعات",
+      "social": "التواصل الاجتماعي",
+      "payment": "الدفع",
+      "productivity": "الإنتاجية",
+      "developer": "المطورين"
+    },
+    "card": {
+      "configure": "تكوين",
+      "manage": "إدارة",
+      "connect": "اتصال",
+      "connected": "متصل",
+      "notConnected": "غير متصل",
+      "error": "خطأ"
+    },
+    "configTabs": {
+      "connection": "الاتصال",
+      "syncSettings": "إعدادات المزامنة",
+      "fieldMapping": "تعيين الحقول",
+      "syncLog": "سجل المزامنة"
+    },
+    "syncDirection": "اتجاه المزامنة",
+    "bidirectional": "ثنائي الاتجاه",
+    "incoming": "وارد فقط",
+    "outgoing": "صادر فقط",
+    "syncFrequencyLabel": "تكرار المزامنة",
+    "realTime": "في الوقت الفعلي",
+    "hourly": "كل ساعة",
+    "daily": "مرة يومياً",
+    "dataToSync": "البيانات للمزامنة",
+    "fieldMappingDesc": "قم بتعيين حقول النظام مع حقول الخدمة الخارجية لمزامنة البيانات.",
+    "crmField": "حقل النظام",
+    "externalField": "الحقل الخارجي",
+    "direction": "الاتجاه",
+    "mapToField": "تعيين إلى حقل خارجي...",
+    "recentSyncEvents": "أحداث المزامنة الأخيرة لهذا التكامل.",
+    "records": "سجلات",
+    "noSyncLogs": "لا يوجد نشاط مزامنة بعد",
+    "config": {
+      "configureTitle": "تكوين {name}",
+      "manageTitle": "إدارة {name}",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "testConnection": "اختبار الاتصال",
+      "disconnect": "قطع الاتصال",
+      "disconnectTitle": "قطع التكامل",
+      "disconnectConfirm": "هل أنت متأكد من قطع اتصال {name}؟ سيتم حذف جميع بيانات الاعتماد المحفوظة."
+    },
+    "providers": {
+      "stripe": {
+        "name": "سترايب",
+        "description": "معالجة المدفوعات والفواتير عبر الإنترنت"
+      },
+      "hubspot": {
+        "name": "هاب سبوت",
+        "description": "أتمتة التسويق ومزامنة إدارة العملاء"
+      },
+      "twilio": {
+        "name": "تويليو",
+        "description": "رسائل SMS ومكالمات صوتية والتحقق من الهاتف"
+      },
+      "sendgrid": {
+        "name": "سيند غريد",
+        "description": "إرسال البريد الإلكتروني والتحليلات"
+      },
+      "mailchimp": {
+        "name": "ميل تشيمب",
+        "description": "تسويق البريد الإلكتروني وإدارة الجمهور"
+      },
+      "slack": {
+        "name": "سلاك",
+        "description": "المراسلة الجماعية والإشعارات في الوقت الفعلي"
+      },
+      "whatsapp": {
+        "name": "واتساب للأعمال",
+        "description": "إرسال الرسائل والإشعارات عبر واتساب"
+      },
+      "salesforce": {
+        "name": "سيلزفورس",
+        "description": "مزامنة ثنائية مع سيلزفورس"
+      }
+    },
+    "envVars": {
+      "title": "متغيرات البيئة المطلوبة",
+      "description": "قم بتعيين متغيرات البيئة هذه على الخادم لتفعيل هذا التكامل."
+    }
   },
   "security": {
     "title": "إعدادات الأمان",
@@ -13292,5 +13383,92 @@
   },
   "chartPicker": {
     "count": "عدد"
+  },
+  "aiAssistantExpanded": {
+    "pageSubtitle": "أدوات مدعومة بالذكاء الاصطناعي لتقييم العملاء المحتملين وتحليل الصفقات وإنشاء البريد الإلكتروني والاقتراحات الذكية",
+    "chatTab": "محادثة الذكاء الاصطناعي",
+    "leadScoringTab": "تقييم العملاء المحتملين",
+    "dealProbabilityTab": "احتمالية الصفقة",
+    "emailGeneratorTab": "مولد البريد الإلكتروني",
+    "suggestionsTab": "اقتراحات ذكية",
+    "leadScoringTitle": "تقييم جودة العميل المحتمل بالذكاء الاصطناعي",
+    "leadScoringDesc": "حلل عميلاً محتملاً واحصل على تقييم جودة مدعوم بالذكاء الاصطناعي مع التبريرات والتوصيات",
+    "leadIdLabel": "معرف العميل المحتمل",
+    "leadIdPlaceholder": "أدخل معرف العميل المحتمل للتحليل",
+    "enterLeadId": "يرجى إدخال معرف العميل المحتمل",
+    "dealProbabilityTitle": "احتمالية الفوز بالصفقة",
+    "dealProbabilityDesc": "تقدير احتمالية إغلاق صفقة مع تحليل مدعوم بالذكاء الاصطناعي للإشارات والمخاطر",
+    "dealIdLabel": "معرف الصفقة",
+    "dealIdPlaceholder": "أدخل معرف الصفقة للتحليل",
+    "enterDealId": "يرجى إدخال معرف الصفقة",
+    "emailGeneratorTitle": "مولد البريد الإلكتروني بالذكاء الاصطناعي",
+    "emailGeneratorDesc": "إنشاء مسودات بريد إلكتروني احترافية بناءً على السياق والغرض والنبرة",
+    "emailPurpose": "الغرض",
+    "emailTone": "النبرة",
+    "recipientName": "اسم المستلم",
+    "recipientNamePlaceholder": "أدخل اسم المستلم",
+    "recipientCompany": "شركة المستلم",
+    "recipientCompanyPlaceholder": "أدخل اسم الشركة",
+    "dealName": "اسم الصفقة",
+    "dealNamePlaceholder": "أدخل اسم الصفقة المرتبطة",
+    "dealStage": "مرحلة الصفقة",
+    "dealStagePlaceholder": "مثال: عرض، تفاوض",
+    "additionalContext": "سياق إضافي",
+    "additionalContextPlaceholder": "أي تفاصيل إضافية يجب أن يأخذها الذكاء الاصطناعي بعين الاعتبار...",
+    "generateEmail": "إنشاء بريد إلكتروني",
+    "generatedEmail": "البريد الإلكتروني المُنشأ",
+    "copyEmail": "نسخ",
+    "emailCopied": "تم نسخ البريد الإلكتروني إلى الحافظة",
+    "subjectLabel": "الموضوع",
+    "toneLabel": "النبرة",
+    "purposeLabel": "الغرض",
+    "purposeFollowUp": "متابعة",
+    "purposeIntroduction": "تقديم",
+    "purposeProposal": "عرض",
+    "purposeThankYou": "شكر",
+    "purposeMeetingRequest": "طلب اجتماع",
+    "purposeColdOutreach": "تواصل بارد",
+    "purposeCheckIn": "متابعة دورية",
+    "toneProfessional": "احترافي",
+    "toneFriendly": "ودي",
+    "toneFormal": "رسمي",
+    "toneCasual": "غير رسمي",
+    "smartSuggestionsTitle": "الاقتراحات الذكية",
+    "smartSuggestionsDesc": "احصل على اقتراحات إجراءات سياقية مدعومة بالذكاء الاصطناعي لأي عميل محتمل أو صفقة أو عميل",
+    "entityType": "نوع الكيان",
+    "entityIdLabel": "معرف الكيان",
+    "entityIdPlaceholder": "أدخل معرف الكيان",
+    "enterEntityId": "يرجى إدخال معرف الكيان",
+    "entityLead": "عميل محتمل",
+    "entityDeal": "صفقة",
+    "entityClient": "عميل",
+    "getSuggestions": "الحصول على اقتراحات",
+    "qualityScore": "درجة الجودة",
+    "tier_hot": "ساخن",
+    "tier_warm": "دافئ",
+    "tier_cold": "بارد",
+    "keyFactors": "العوامل الرئيسية",
+    "recommendations": "التوصيات",
+    "refreshScore": "تحديث التقييم",
+    "noLeadScore": "لا يوجد تقييم متاح. أدخل معرف العميل المحتمل وقم بالتحليل.",
+    "analyzeLeadQuality": "تحليل العميل المحتمل",
+    "scored": "تم التقييم",
+    "smartSuggestions": "اقتراحات ذكية",
+    "suggestions": "اقتراحات",
+    "priority_high": "أولوية عالية",
+    "priority_medium": "أولوية متوسطة",
+    "priority_low": "أولوية منخفضة",
+    "noSuggestions": "لا توجد اقتراحات متاحة بعد. حلل كيانًا للبدء.",
+    "winProbability": "احتمالية الفوز",
+    "grade": "الدرجة",
+    "confidence_high": "ثقة عالية",
+    "confidence_medium": "ثقة متوسطة",
+    "confidence_low": "ثقة منخفضة",
+    "positiveSignals": "إشارات إيجابية",
+    "riskFactors": "عوامل الخطر",
+    "nextSteps": "الخطوات التالية",
+    "refreshAnalysis": "تحديث التحليل",
+    "noProbability": "لا توجد بيانات احتمالية متاحة. أدخل معرف الصفقة وقم بالتحليل.",
+    "analyzeDeal": "تحليل الصفقة"
   }
 }

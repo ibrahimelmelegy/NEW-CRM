@@ -1062,23 +1062,6 @@
         "developer": "Developer"
       }
     },
-    "card": {
-      "configure": "Configure",
-      "manage": "Manage",
-      "connected": "Connected",
-      "notConnected": "Not Connected",
-      "error": "Error"
-    },
-    "config": {
-      "configureTitle": "Configure {name}",
-      "manageTitle": "Manage {name}",
-      "save": "Save",
-      "cancel": "Cancel",
-      "testConnection": "Test Connection",
-      "disconnect": "Disconnect",
-      "disconnectTitle": "Disconnect Integration",
-      "disconnectConfirm": "Are you sure you want to disconnect {name}? This will remove all saved credentials."
-    },
     "webhooks": {
       "title": "Outgoing Webhooks",
       "subtitle": "Send real-time event notifications to external services",
@@ -1121,7 +1104,115 @@
     "deals": "Deals",
     "tasks": "Tasks",
     "notes": "Notes",
-    "emails": "Emails"
+    "emails": "Emails",
+    "connectedIntegrations": "Connected Integrations",
+    "justNow": "Just now",
+    "neverSynced": "Never synced",
+    "healthy": "Healthy",
+    "warning": "Warning",
+    "error": "Error",
+    "disconnected": "Disconnected",
+    "integrationEnabled": "has been enabled",
+    "integrationDisabled": "has been disabled",
+    "statusLabels": {
+      "connected": "Connected",
+      "available": "Available",
+      "comingSoon": "Coming Soon",
+      "error": "Error"
+    },
+    "categories": {
+      "all": "All",
+      "communication": "Communication",
+      "email": "Email",
+      "storage": "Storage",
+      "accounting": "Accounting",
+      "marketing": "Marketing",
+      "support": "Support",
+      "payments": "Payments",
+      "social": "Social",
+      "payment": "Payment",
+      "productivity": "Productivity",
+      "developer": "Developer"
+    },
+    "card": {
+      "configure": "Configure",
+      "manage": "Manage",
+      "connect": "Connect",
+      "connected": "Connected",
+      "notConnected": "Not Connected",
+      "error": "Error"
+    },
+    "configTabs": {
+      "connection": "Connection",
+      "syncSettings": "Sync Settings",
+      "fieldMapping": "Field Mapping",
+      "syncLog": "Sync Log"
+    },
+    "syncDirection": "Sync Direction",
+    "bidirectional": "Bidirectional",
+    "incoming": "Incoming Only",
+    "outgoing": "Outgoing Only",
+    "syncFrequencyLabel": "Sync Frequency",
+    "realTime": "Real-time",
+    "hourly": "Every Hour",
+    "daily": "Once Daily",
+    "dataToSync": "Data to Sync",
+    "fieldMappingDesc": "Map CRM fields to external service fields for data synchronization.",
+    "crmField": "CRM Field",
+    "externalField": "External Field",
+    "direction": "Direction",
+    "mapToField": "Map to external field...",
+    "recentSyncEvents": "Recent sync events and activity for this integration.",
+    "records": "records",
+    "noSyncLogs": "No sync activity yet",
+    "config": {
+      "configureTitle": "Configure {name}",
+      "manageTitle": "Manage {name}",
+      "save": "Save",
+      "cancel": "Cancel",
+      "testConnection": "Test Connection",
+      "disconnect": "Disconnect",
+      "disconnectTitle": "Disconnect Integration",
+      "disconnectConfirm": "Are you sure you want to disconnect {name}? This will remove all saved credentials."
+    },
+    "providers": {
+      "stripe": {
+        "name": "Stripe",
+        "description": "Online payment processing and billing"
+      },
+      "hubspot": {
+        "name": "HubSpot",
+        "description": "Marketing automation and CRM sync"
+      },
+      "twilio": {
+        "name": "Twilio",
+        "description": "SMS messaging, voice calls, and phone verification"
+      },
+      "sendgrid": {
+        "name": "SendGrid",
+        "description": "Transactional email delivery and analytics"
+      },
+      "mailchimp": {
+        "name": "Mailchimp",
+        "description": "Email marketing and audience management"
+      },
+      "slack": {
+        "name": "Slack",
+        "description": "Real-time team messaging and notifications"
+      },
+      "whatsapp": {
+        "name": "WhatsApp Business",
+        "description": "Send messages and notifications via WhatsApp"
+      },
+      "salesforce": {
+        "name": "Salesforce",
+        "description": "Bi-directional CRM sync with Salesforce"
+      }
+    },
+    "envVars": {
+      "title": "Required Environment Variables",
+      "description": "Set these environment variables on your server to enable this integration."
+    }
   },
   "security": {
     "title": "Security Settings",
@@ -13288,5 +13379,92 @@
   },
   "chartPicker": {
     "count": "Count"
+  },
+  "aiAssistantExpanded": {
+    "pageSubtitle": "AI-powered tools for lead scoring, deal analysis, email generation, and smart suggestions",
+    "chatTab": "AI Chat",
+    "leadScoringTab": "Lead Scoring",
+    "dealProbabilityTab": "Deal Probability",
+    "emailGeneratorTab": "Email Generator",
+    "suggestionsTab": "Smart Suggestions",
+    "leadScoringTitle": "AI Lead Quality Scoring",
+    "leadScoringDesc": "Analyze a lead and get an AI-powered quality score with reasoning and recommendations",
+    "leadIdLabel": "Lead ID",
+    "leadIdPlaceholder": "Enter the lead ID to analyze",
+    "enterLeadId": "Please enter a lead ID",
+    "dealProbabilityTitle": "Deal Win Probability",
+    "dealProbabilityDesc": "Estimate the probability of closing a deal with AI-powered analysis of signals and risks",
+    "dealIdLabel": "Deal ID",
+    "dealIdPlaceholder": "Enter the deal ID to analyze",
+    "enterDealId": "Please enter a deal ID",
+    "emailGeneratorTitle": "AI Email Generator",
+    "emailGeneratorDesc": "Generate professional email drafts based on context, purpose, and tone",
+    "emailPurpose": "Purpose",
+    "emailTone": "Tone",
+    "recipientName": "Recipient Name",
+    "recipientNamePlaceholder": "Enter recipient name",
+    "recipientCompany": "Recipient Company",
+    "recipientCompanyPlaceholder": "Enter company name",
+    "dealName": "Deal Name",
+    "dealNamePlaceholder": "Enter related deal name",
+    "dealStage": "Deal Stage",
+    "dealStagePlaceholder": "e.g. Proposal, Negotiation",
+    "additionalContext": "Additional Context",
+    "additionalContextPlaceholder": "Any extra details for the AI to consider...",
+    "generateEmail": "Generate Email",
+    "generatedEmail": "Generated Email",
+    "copyEmail": "Copy",
+    "emailCopied": "Email copied to clipboard",
+    "subjectLabel": "Subject",
+    "toneLabel": "Tone",
+    "purposeLabel": "Purpose",
+    "purposeFollowUp": "Follow-up",
+    "purposeIntroduction": "Introduction",
+    "purposeProposal": "Proposal",
+    "purposeThankYou": "Thank You",
+    "purposeMeetingRequest": "Meeting Request",
+    "purposeColdOutreach": "Cold Outreach",
+    "purposeCheckIn": "Check-in",
+    "toneProfessional": "Professional",
+    "toneFriendly": "Friendly",
+    "toneFormal": "Formal",
+    "toneCasual": "Casual",
+    "smartSuggestionsTitle": "Smart Suggestions",
+    "smartSuggestionsDesc": "Get AI-powered contextual action suggestions for any lead, deal, or client",
+    "entityType": "Entity Type",
+    "entityIdLabel": "Entity ID",
+    "entityIdPlaceholder": "Enter the entity ID",
+    "enterEntityId": "Please enter an entity ID",
+    "entityLead": "Lead",
+    "entityDeal": "Deal",
+    "entityClient": "Client",
+    "getSuggestions": "Get Suggestions",
+    "qualityScore": "Quality Score",
+    "tier_hot": "Hot",
+    "tier_warm": "Warm",
+    "tier_cold": "Cold",
+    "keyFactors": "Key Factors",
+    "recommendations": "Recommendations",
+    "refreshScore": "Refresh Score",
+    "noLeadScore": "No lead score available. Enter a lead ID and run analysis.",
+    "analyzeLeadQuality": "Analyze Lead",
+    "scored": "Scored",
+    "smartSuggestions": "Smart Suggestions",
+    "suggestions": "suggestions",
+    "priority_high": "High Priority",
+    "priority_medium": "Medium Priority",
+    "priority_low": "Low Priority",
+    "noSuggestions": "No suggestions available yet. Analyze an entity to get started.",
+    "winProbability": "Win Probability",
+    "grade": "Grade",
+    "confidence_high": "High Confidence",
+    "confidence_medium": "Medium Confidence",
+    "confidence_low": "Low Confidence",
+    "positiveSignals": "Positive Signals",
+    "riskFactors": "Risk Factors",
+    "nextSteps": "Next Steps",
+    "refreshAnalysis": "Refresh Analysis",
+    "noProbability": "No probability data available. Enter a deal ID and run analysis.",
+    "analyzeDeal": "Analyze Deal"
   }
 }

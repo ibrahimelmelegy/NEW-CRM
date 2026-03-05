@@ -70,8 +70,9 @@ export class SendGridProvider {
       }
       return { success: true, data: { messageId: `mock_msg_${Date.now()}` }, mock: true };
     } catch (err: unknown) {
-      console.error('[SendGridProvider] sendEmail error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !SendGridProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[SendGridProvider] sendEmail error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !SendGridProvider.isConfigured() };
     }
   }
 
@@ -92,8 +93,9 @@ export class SendGridProvider {
       const ids = input.recipients.map((_, i) => `mock_bulk_${Date.now()}_${i}`);
       return { success: true, data: { messageCount: input.recipients.length, messageIds: ids }, mock: true };
     } catch (err: unknown) {
-      console.error('[SendGridProvider] sendBulkEmail error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !SendGridProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[SendGridProvider] sendBulkEmail error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !SendGridProvider.isConfigured() };
     }
   }
 
@@ -111,8 +113,9 @@ export class SendGridProvider {
       }
       return { success: true, data: { messageId: `mock_tpl_${Date.now()}` }, mock: true };
     } catch (err: unknown) {
-      console.error('[SendGridProvider] sendTemplateEmail error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !SendGridProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[SendGridProvider] sendTemplateEmail error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !SendGridProvider.isConfigured() };
     }
   }
 
@@ -140,8 +143,9 @@ export class SendGridProvider {
       }
       return { success: true, data: { delivered: 1250, opens: 430, clicks: 85, bounces: 12 }, mock: true };
     } catch (err: unknown) {
-      console.error('[SendGridProvider] getEmailStats error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !SendGridProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[SendGridProvider] getEmailStats error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !SendGridProvider.isConfigured() };
     }
   }
 }

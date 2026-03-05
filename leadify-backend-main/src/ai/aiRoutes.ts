@@ -2,6 +2,7 @@ import express from 'express';
 import { generateEmail, summarizeMeeting, getChurnDashboard } from './aiController';
 import salesCoachController from './salesCoachController';
 import { aiChatController, aiDealController, aiEmailController, aiInsightsController } from './aiEnhancedController';
+import { aiAssistantController } from './aiAssistantController';
 import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import { LeadAndSalesWidgetsPermissionsEnum } from '../role/roleEnum';
 
@@ -395,5 +396,138 @@ router.post('/email/improve', authenticateUser, aiEmailController.improveEmail);
  *         description: Server error
  */
 router.get('/insights/daily', authenticateUser, aiInsightsController.getDailyInsights);
+
+// ─── AI Assistant (expanded capabilities) ────────────────────────────────────
+
+/**
+ * @swagger
+ * /api/ai/assistant/score-lead/{leadId}:
+ *   post:
+ *     summary: Score lead quality
+ *     description: AI-powered lead quality analysis returning a score (1-100) with reasoning, factors, and recommendations
+ *     tags: [AI]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: leadId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lead quality score with analysis
+ *       404:
+ *         description: Lead not found
+ *       500:
+ *         description: Server error
+ */
+router.post('/assistant/score-lead/:leadId', authenticateUser, aiAssistantController.scoreLead);
+
+/**
+ * @swagger
+ * /api/ai/assistant/generate-email:
+ *   post:
+ *     summary: Generate email draft
+ *     description: AI-powered email draft generation based on context (lead name, deal stage, purpose, tone)
+ *     tags: [AI]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - purpose
+ *             properties:
+ *               recipientName:
+ *                 type: string
+ *               recipientCompany:
+ *                 type: string
+ *               senderName:
+ *                 type: string
+ *               dealName:
+ *                 type: string
+ *               dealStage:
+ *                 type: string
+ *               dealValue:
+ *                 type: number
+ *               purpose:
+ *                 type: string
+ *                 enum: [follow-up, introduction, proposal, thank-you, meeting-request, cold-outreach, check-in]
+ *               tone:
+ *                 type: string
+ *                 enum: [professional, friendly, formal, casual]
+ *               additionalContext:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Generated email draft with subject and body
+ *       400:
+ *         description: Invalid request
+ *       500:
+ *         description: Server error
+ */
+router.post('/assistant/generate-email', authenticateUser, aiAssistantController.generateEmailDraft);
+
+/**
+ * @swagger
+ * /api/ai/assistant/deal-probability/{dealId}:
+ *   post:
+ *     summary: Estimate deal win probability
+ *     description: AI-powered deal close probability estimation with positive signals, risk factors, and next steps
+ *     tags: [AI]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: dealId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Deal win probability with analysis
+ *       404:
+ *         description: Deal not found
+ *       500:
+ *         description: Server error
+ */
+router.post('/assistant/deal-probability/:dealId', authenticateUser, aiAssistantController.dealWinProbability);
+
+/**
+ * @swagger
+ * /api/ai/assistant/suggestions/{entityType}/{entityId}:
+ *   get:
+ *     summary: Get smart suggestions
+ *     description: AI-powered contextual action suggestions for a lead, deal, or client
+ *     tags: [AI]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: entityType
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [lead, deal, client]
+ *       - in: path
+ *         name: entityId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Smart suggestions for the entity
+ *       400:
+ *         description: Invalid entity type
+ *       404:
+ *         description: Entity not found
+ *       500:
+ *         description: Server error
+ */
+router.get('/assistant/suggestions/:entityType/:entityId', authenticateUser, aiAssistantController.smartSuggestions);
 
 export default router;

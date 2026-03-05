@@ -1,0 +1,397 @@
+// ─── Incoming Webhook Handlers ───────────────────────────────────────────────
+// Handles incoming webhooks from Stripe, HubSpot, Twilio, and WhatsApp.
+// These endpoints are public (no auth) as they're called by the third-party services.
+
+import { Router, Request, Response } from 'express';
+import crypto from 'crypto';
+import whatsappProvider from './providers/whatsappProvider';
+
+const router = Router();
+
+// ─── Stripe Webhook ─────────────────────────────────────────────────────────
+/**
+ * @swagger
+ * /api/webhooks/stripe:
+ *   post:
+ *     summary: Receive Stripe webhook events
+ *     tags: [Webhooks]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Webhook processed
+ *       400:
+ *         description: Invalid signature
+ */
+router.post('/stripe', async (req: Request, res: Response) => {
+  try {
+    const sig = req.headers['stripe-signature'] as string;
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    // Verify signature if webhook secret is configured
+    if (webhookSecret && sig) {
+      const payload = JSON.stringify(req.body);
+      const expectedSig = crypto
+        .createHmac('sha256', webhookSecret)
+        .update(payload)
+        .digest('hex');
+
+      // Simple signature check (production should use Stripe SDK's constructEvent)
+      if (!sig.includes(expectedSig)) {
+        console.warn('[Webhook:Stripe] Invalid signature');
+        res.status(400).json({ success: false, message: 'Invalid signature' });
+        return;
+      }
+    }
+
+    const event = req.body as StripeWebhookEvent;
+    console.log(`[Webhook:Stripe] Received event: ${event.type}`);
+
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        console.log('[Webhook:Stripe] Payment succeeded:', event.data?.object?.id);
+        // TODO: Update invoice/payment status in CRM
+        break;
+
+      case 'payment_intent.payment_failed':
+        console.log('[Webhook:Stripe] Payment failed:', event.data?.object?.id);
+        // TODO: Notify user of failed payment
+        break;
+
+      case 'customer.subscription.created':
+      case 'customer.subscription.updated':
+        console.log('[Webhook:Stripe] Subscription update:', event.data?.object?.id);
+        // TODO: Update subscription status in CRM
+        break;
+
+      case 'customer.subscription.deleted':
+        console.log('[Webhook:Stripe] Subscription cancelled:', event.data?.object?.id);
+        // TODO: Mark subscription as cancelled
+        break;
+
+      case 'invoice.paid':
+        console.log('[Webhook:Stripe] Invoice paid:', event.data?.object?.id);
+        // TODO: Mark invoice as paid in CRM
+        break;
+
+      case 'invoice.payment_failed':
+        console.log('[Webhook:Stripe] Invoice payment failed:', event.data?.object?.id);
+        // TODO: Send payment failure notification
+        break;
+
+      case 'charge.refunded':
+        console.log('[Webhook:Stripe] Charge refunded:', event.data?.object?.id);
+        // TODO: Record refund in CRM
+        break;
+
+      default:
+        console.log(`[Webhook:Stripe] Unhandled event type: ${event.type}`);
+    }
+
+    res.json({ received: true });
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : 'Webhook processing failed';
+    console.error('[Webhook:Stripe] Error:', errMsg);
+    res.status(500).json({ success: false, message: errMsg });
+  }
+});
+
+// ─── HubSpot Webhook ────────────────────────────────────────────────────────
+/**
+ * @swagger
+ * /api/webhooks/hubspot:
+ *   post:
+ *     summary: Receive HubSpot webhook events
+ *     tags: [Webhooks]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *     responses:
+ *       200:
+ *         description: Webhook processed
+ */
+router.post('/hubspot', async (req: Request, res: Response) => {
+  try {
+    // HubSpot sends signature in X-HubSpot-Signature-v3
+    const signature = req.headers['x-hubspot-signature-v3'] as string;
+    const clientSecret = process.env.HUBSPOT_CLIENT_SECRET;
+
+    if (clientSecret && signature) {
+      const payload = JSON.stringify(req.body);
+      const expectedSig = crypto
+        .createHmac('sha256', clientSecret)
+        .update(payload)
+        .digest('base64');
+
+      if (signature !== expectedSig) {
+        console.warn('[Webhook:HubSpot] Invalid signature');
+        res.status(400).json({ success: false, message: 'Invalid signature' });
+        return;
+      }
+    }
+
+    const events = req.body as HubSpotWebhookEvent[];
+    console.log(`[Webhook:HubSpot] Received ${Array.isArray(events) ? events.length : 0} event(s)`);
+
+    if (Array.isArray(events)) {
+      for (const event of events) {
+        switch (event.subscriptionType) {
+          case 'contact.creation':
+            console.log('[Webhook:HubSpot] Contact created:', event.objectId);
+            // TODO: Sync new HubSpot contact to CRM leads
+            break;
+
+          case 'contact.propertyChange':
+            console.log('[Webhook:HubSpot] Contact updated:', event.objectId, event.propertyName);
+            // TODO: Sync contact property change to CRM
+            break;
+
+          case 'contact.deletion':
+            console.log('[Webhook:HubSpot] Contact deleted:', event.objectId);
+            // TODO: Handle contact deletion in CRM
+            break;
+
+          case 'deal.creation':
+            console.log('[Webhook:HubSpot] Deal created:', event.objectId);
+            // TODO: Sync new HubSpot deal to CRM deals
+            break;
+
+          case 'deal.propertyChange':
+            console.log('[Webhook:HubSpot] Deal updated:', event.objectId, event.propertyName);
+            // TODO: Sync deal property change to CRM
+            break;
+
+          case 'deal.deletion':
+            console.log('[Webhook:HubSpot] Deal deleted:', event.objectId);
+            // TODO: Handle deal deletion in CRM
+            break;
+
+          case 'company.creation':
+            console.log('[Webhook:HubSpot] Company created:', event.objectId);
+            // TODO: Sync new company to CRM clients
+            break;
+
+          default:
+            console.log(`[Webhook:HubSpot] Unhandled event: ${event.subscriptionType}`);
+        }
+      }
+    }
+
+    res.json({ received: true });
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : 'Webhook processing failed';
+    console.error('[Webhook:HubSpot] Error:', errMsg);
+    res.status(500).json({ success: false, message: errMsg });
+  }
+});
+
+// ─── Twilio Webhook ─────────────────────────────────────────────────────────
+/**
+ * @swagger
+ * /api/webhooks/twilio/sms:
+ *   post:
+ *     summary: Receive Twilio SMS status callbacks and incoming messages
+ *     tags: [Webhooks]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Webhook processed
+ */
+router.post('/twilio/sms', async (req: Request, res: Response) => {
+  try {
+    const body = req.body as TwilioSMSWebhookPayload;
+    console.log(`[Webhook:Twilio] SMS event from ${body.From || 'unknown'}, status: ${body.SmsStatus || body.MessageStatus || 'unknown'}`);
+
+    if (body.Body) {
+      // Incoming SMS message
+      console.log(`[Webhook:Twilio] Incoming SMS from ${body.From}: ${body.Body}`);
+      // TODO: Create a new message record in CRM messaging
+    } else if (body.MessageStatus) {
+      // Status callback
+      console.log(`[Webhook:Twilio] Message ${body.MessageSid} status: ${body.MessageStatus}`);
+      // TODO: Update message delivery status
+    }
+
+    // Twilio expects TwiML response for incoming SMS
+    res.set('Content-Type', 'text/xml');
+    res.send('<?xml version="1.0" encoding="UTF-8"?><Response></Response>');
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : 'Webhook processing failed';
+    console.error('[Webhook:Twilio] Error:', errMsg);
+    res.status(500).json({ success: false, message: errMsg });
+  }
+});
+
+/**
+ * @swagger
+ * /api/webhooks/twilio/voice:
+ *   post:
+ *     summary: Receive Twilio voice call status callbacks
+ *     tags: [Webhooks]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Webhook processed
+ */
+router.post('/twilio/voice', async (req: Request, res: Response) => {
+  try {
+    const body = req.body as TwilioVoiceWebhookPayload;
+    console.log(`[Webhook:Twilio] Call ${body.CallSid} status: ${body.CallStatus}`);
+
+    // TODO: Update call log in CRM
+    // TODO: If call completed, record duration and status
+
+    res.set('Content-Type', 'text/xml');
+    res.send('<?xml version="1.0" encoding="UTF-8"?><Response></Response>');
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : 'Webhook processing failed';
+    console.error('[Webhook:Twilio:Voice] Error:', errMsg);
+    res.status(500).json({ success: false, message: errMsg });
+  }
+});
+
+// ─── WhatsApp Webhook ───────────────────────────────────────────────────────
+/**
+ * @swagger
+ * /api/webhooks/whatsapp:
+ *   get:
+ *     summary: WhatsApp webhook verification (Meta challenge)
+ *     tags: [Webhooks]
+ *     parameters:
+ *       - in: query
+ *         name: hub.mode
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: hub.verify_token
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: hub.challenge
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Challenge accepted
+ *       403:
+ *         description: Verification failed
+ */
+router.get('/whatsapp', (req: Request, res: Response) => {
+  const mode = req.query['hub.mode'] as string;
+  const token = req.query['hub.verify_token'] as string;
+  const challenge = req.query['hub.challenge'] as string;
+
+  const result = whatsappProvider.verifyWebhook(mode, token, challenge);
+  if (result !== null) {
+    console.log('[Webhook:WhatsApp] Verification successful');
+    res.status(200).send(result);
+  } else {
+    console.warn('[Webhook:WhatsApp] Verification failed');
+    res.status(403).send('Forbidden');
+  }
+});
+
+/**
+ * @swagger
+ * /api/webhooks/whatsapp:
+ *   post:
+ *     summary: Receive WhatsApp message and status webhooks
+ *     tags: [Webhooks]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Webhook processed
+ */
+router.post('/whatsapp', async (req: Request, res: Response) => {
+  try {
+    const events = whatsappProvider.parseWebhookPayload(req.body);
+    console.log(`[Webhook:WhatsApp] Received ${events.length} event(s)`);
+
+    for (const event of events) {
+      if (event.type === 'message') {
+        console.log(`[Webhook:WhatsApp] Incoming message from ${event.from}: ${event.text || '(media)'}`);
+        // TODO: Create incoming message record in CRM messaging
+      } else if (event.type === 'status') {
+        console.log(`[Webhook:WhatsApp] Message ${event.messageId} status: ${event.text}`);
+        // TODO: Update message delivery status
+      }
+    }
+
+    res.json({ received: true });
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : 'Webhook processing failed';
+    console.error('[Webhook:WhatsApp] Error:', errMsg);
+    res.status(500).json({ success: false, message: errMsg });
+  }
+});
+
+// ─── Types ──────────────────────────────────────────────────────────────────
+
+interface StripeWebhookEvent {
+  id: string;
+  type: string;
+  data: {
+    object: {
+      id: string;
+      [key: string]: unknown;
+    };
+  };
+}
+
+interface HubSpotWebhookEvent {
+  objectId: number;
+  subscriptionType: string;
+  propertyName?: string;
+  propertyValue?: string;
+  changeSource?: string;
+  eventId?: number;
+  occurredAt?: number;
+}
+
+interface TwilioSMSWebhookPayload {
+  MessageSid?: string;
+  SmsSid?: string;
+  AccountSid?: string;
+  From?: string;
+  To?: string;
+  Body?: string;
+  SmsStatus?: string;
+  MessageStatus?: string;
+  NumMedia?: string;
+}
+
+interface TwilioVoiceWebhookPayload {
+  CallSid: string;
+  AccountSid?: string;
+  From?: string;
+  To?: string;
+  CallStatus: string;
+  CallDuration?: string;
+  Direction?: string;
+}
+
+export default router;

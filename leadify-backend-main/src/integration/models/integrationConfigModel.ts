@@ -10,7 +10,11 @@ export enum IntegrationType {
   MAILCHIMP = 'MAILCHIMP',
   HUBSPOT = 'HUBSPOT',
   JIRA = 'JIRA',
-  TRELLO = 'TRELLO'
+  TRELLO = 'TRELLO',
+  SENDGRID = 'SENDGRID',
+  TWILIO = 'TWILIO',
+  WHATSAPP = 'WHATSAPP',
+  SALESFORCE = 'SALESFORCE'
 }
 
 export enum IntegrationStatus {

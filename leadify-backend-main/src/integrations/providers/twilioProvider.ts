@@ -58,8 +58,9 @@ export class TwilioProvider {
       }
       return { success: true, data: { sid: `mock_sms_${Date.now()}`, status: 'queued' }, mock: true };
     } catch (err: unknown) {
-      console.error('[TwilioProvider] sendSMS error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !TwilioProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[TwilioProvider] sendSMS error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !TwilioProvider.isConfigured() };
     }
   }
 
@@ -82,8 +83,9 @@ export class TwilioProvider {
       const items = input.recipients.map((to, i) => ({ to, sid: `mock_bulk_sms_${Date.now()}_${i}`, status: 'queued' }));
       return { success: true, data: { sent: items.length, results: items }, mock: true };
     } catch (err: unknown) {
-      console.error('[TwilioProvider] sendBulkSMS error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !TwilioProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[TwilioProvider] sendBulkSMS error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !TwilioProvider.isConfigured() };
     }
   }
 
@@ -96,8 +98,9 @@ export class TwilioProvider {
       }
       return { success: true, data: { sid: messageSid, status: 'delivered', to: '+1234567890', dateSent: new Date().toISOString() }, mock: true };
     } catch (err: unknown) {
-      console.error('[TwilioProvider] getMessageStatus error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !TwilioProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[TwilioProvider] getMessageStatus error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !TwilioProvider.isConfigured() };
     }
   }
 
@@ -120,8 +123,9 @@ export class TwilioProvider {
       const isValid = /^\+\d{10,15}$/.test(phoneNumber);
       return { success: true, data: { valid: isValid, countryCode: 'US', phoneNumber, carrier: null }, mock: true };
     } catch (err: unknown) {
-      console.error('[TwilioProvider] validatePhoneNumber error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !TwilioProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[TwilioProvider] validatePhoneNumber error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !TwilioProvider.isConfigured() };
     }
   }
 }

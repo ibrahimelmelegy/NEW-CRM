@@ -1,15 +1,17 @@
 import Integration from './integrationModel';
 import { encrypt, decrypt } from '../utils/encryption';
 
-const SENSITIVE_CONFIG_KEYS = ['apiKey', 'clientSecret', 'accessToken', 'refreshToken'];
+const SENSITIVE_CONFIG_KEYS = ['apiKey', 'clientSecret', 'accessToken', 'refreshToken', 'secretKey', 'webhookSecret'];
 
-function encryptSensitiveFields(config: unknown): unknown {
+type ConfigRecord = Record<string, unknown>;
+
+function encryptSensitiveFields(config: ConfigRecord): ConfigRecord {
   if (!config || typeof config !== 'object') return config;
-  const encrypted = { ...config };
+  const encrypted: ConfigRecord = { ...config };
   for (const key of SENSITIVE_CONFIG_KEYS) {
     if (encrypted[key] && typeof encrypted[key] === 'string') {
       try {
-        encrypted[key] = encrypt(encrypted[key]);
+        encrypted[key] = encrypt(encrypted[key] as string);
       } catch {
         // If encryption fails, keep original value
       }
@@ -18,13 +20,13 @@ function encryptSensitiveFields(config: unknown): unknown {
   return encrypted;
 }
 
-function decryptSensitiveFields(config: unknown): unknown {
+function decryptSensitiveFields(config: ConfigRecord): ConfigRecord {
   if (!config || typeof config !== 'object') return config;
-  const decrypted = { ...config };
+  const decrypted: ConfigRecord = { ...config };
   for (const key of SENSITIVE_CONFIG_KEYS) {
     if (decrypted[key] && typeof decrypted[key] === 'string') {
       try {
-        decrypted[key] = decrypt(decrypted[key]);
+        decrypted[key] = decrypt(decrypted[key] as string);
       } catch {
         // Value may not be encrypted yet (legacy data)
       }
@@ -33,25 +35,31 @@ function decryptSensitiveFields(config: unknown): unknown {
   return decrypted;
 }
 
+interface UpsertIntegrationInput {
+  provider: string;
+  config?: ConfigRecord;
+  [key: string]: unknown;
+}
+
 class IntegrationService {
-  async getIntegrations(userId?: number) {
+  async getIntegrations(userId?: number): Promise<Record<string, unknown>[]> {
     const integrations = await Integration.findAll({
       where: {
         userId: userId || null
       }
     });
     return integrations.map(i => {
-      const plain = i.toJSON();
+      const plain = i.toJSON() as Record<string, unknown>;
       if (plain.config) {
-        plain.config = decryptSensitiveFields(plain.config);
+        plain.config = decryptSensitiveFields(plain.config as ConfigRecord);
       }
       return plain;
     });
   }
 
-  async upsertIntegration(data: unknown, userId?: number) {
-    const { provider, ...rest } = data;
-    const configToStore = rest.config ? encryptSensitiveFields(rest.config) : encryptSensitiveFields(rest);
+  async upsertIntegration(data: UpsertIntegrationInput, userId?: number): Promise<Integration> {
+    const { provider, config, ...rest } = data;
+    const configToStore = config ? encryptSensitiveFields(config) : encryptSensitiveFields(rest as ConfigRecord);
 
     const [integration] = await Integration.findOrCreate({
       where: { provider, userId: userId || null },
@@ -64,7 +72,7 @@ class IntegrationService {
     return integration;
   }
 
-  async deleteIntegration(id: string) {
+  async deleteIntegration(id: string): Promise<{ success: boolean }> {
     const integration = await Integration.findByPk(id);
     if (integration) {
       await integration.destroy();

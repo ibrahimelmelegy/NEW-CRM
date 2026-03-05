@@ -128,7 +128,8 @@ class GoogleDriveConnector {
         message: 'File uploaded successfully'
       };
     } catch (error: unknown) {
-      return { success: false, message: error.message || 'Failed to upload file' };
+      const errMsg = error instanceof Error ? error.message : 'Failed to upload file';
+      return { success: false, message: errMsg };
     }
   }
 
@@ -160,7 +161,8 @@ class GoogleDriveConnector {
         message: `Found ${(data.files || []).length} files`
       };
     } catch (error: unknown) {
-      return { success: false, files: [], message: error.message || 'Failed to list files' };
+      const errMsg = error instanceof Error ? error.message : 'Failed to list files';
+      return { success: false, files: [], message: errMsg };
     }
   }
 
@@ -187,7 +189,8 @@ class GoogleDriveConnector {
         }
         return { success: false, message: `Google API error: ${response.status}` };
       } catch (error: unknown) {
-        return { success: false, message: error.message || 'Connection test failed' };
+        const errMsg = error instanceof Error ? error.message : 'Connection test failed';
+        return { success: false, message: errMsg };
       }
     }
 

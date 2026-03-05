@@ -791,6 +791,156 @@ const marketplaceIntegrations = ref<IntegrationItem[]>([
     flowStatus: '',
     type: 'INSTAGRAM',
     configFields: []
+  },
+
+  // Additional providers (SMS, Email, Messaging)
+  {
+    id: 'twilio',
+    name: 'Twilio',
+    description: 'SMS messaging, voice calls, and phone verification',
+    category: 'communication',
+    color: '#F22F46',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'TWILIO',
+    configFields: [
+      { key: 'accountSid', label: 'Account SID', type: 'text', placeholder: 'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', required: true },
+      { key: 'authToken', label: 'Auth Token', type: 'password', placeholder: 'Enter Twilio Auth Token', required: true },
+      { key: 'phoneNumber', label: 'Phone Number', type: 'text', placeholder: '+1234567890', required: true }
+    ]
+  },
+  {
+    id: 'sendgrid',
+    name: 'SendGrid',
+    description: 'Transactional email delivery and analytics',
+    category: 'email',
+    color: '#1A82E2',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'SENDGRID',
+    configFields: [
+      { key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'SG.xxxxxxx', required: true },
+      { key: 'fromEmail', label: 'Default From Email', type: 'text', placeholder: 'noreply@yourdomain.com', required: false }
+    ]
+  },
+  {
+    id: 'whatsapp',
+    name: 'WhatsApp Business',
+    description: 'Send messages and notifications via WhatsApp Business API',
+    category: 'communication',
+    color: '#25D366',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'WHATSAPP',
+    configFields: [
+      { key: 'phoneNumberId', label: 'Phone Number ID', type: 'text', placeholder: 'Enter WhatsApp Phone Number ID', required: true },
+      { key: 'accessToken', label: 'Access Token', type: 'password', placeholder: 'Enter Meta Access Token', required: true },
+      { key: 'webhookVerifyToken', label: 'Webhook Verify Token', type: 'text', placeholder: 'Custom verify token for webhooks', required: false }
+    ]
+  },
+  {
+    id: 'salesforce',
+    name: 'Salesforce',
+    description: 'Bi-directional CRM sync with Salesforce leads and opportunities',
+    category: 'marketing',
+    color: '#00A1E0',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'SALESFORCE',
+    configFields: [
+      { key: 'clientId', label: 'Consumer Key', type: 'text', placeholder: 'Enter Salesforce Consumer Key', required: true },
+      { key: 'clientSecret', label: 'Consumer Secret', type: 'password', placeholder: 'Enter Consumer Secret', required: true },
+      { key: 'username', label: 'Username', type: 'text', placeholder: 'user@company.com', required: true },
+      { key: 'password', label: 'Password + Security Token', type: 'password', placeholder: 'Enter Password + Token', required: true }
+    ]
+  },
+  {
+    id: 'zapier',
+    name: 'Zapier',
+    description: 'Connect to 5000+ apps with automated workflows',
+    category: 'communication',
+    color: '#FF4A00',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'ZAPIER',
+    configFields: [
+      { key: 'webhookUrl', label: 'Webhook URL', type: 'url', placeholder: 'https://hooks.zapier.com/...', required: true }
+    ]
+  },
+  {
+    id: 'jira',
+    name: 'Jira',
+    description: 'Create and track issues from CRM deals and projects',
+    category: 'support',
+    color: '#0052CC',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'JIRA',
+    configFields: [
+      { key: 'baseUrl', label: 'Jira URL', type: 'url', placeholder: 'https://your-domain.atlassian.net', required: true },
+      { key: 'email', label: 'Email', type: 'text', placeholder: 'user@example.com', required: true },
+      { key: 'apiKey', label: 'API Token', type: 'password', placeholder: 'Enter Jira API Token', required: true }
+    ]
+  },
+  {
+    id: 'trello',
+    name: 'Trello',
+    description: 'Sync boards and cards with CRM projects',
+    category: 'support',
+    color: '#0079BF',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'TRELLO',
+    configFields: [
+      { key: 'apiKey', label: 'API Key', type: 'text', placeholder: 'Enter Trello API Key', required: true },
+      { key: 'accessToken', label: 'Token', type: 'password', placeholder: 'Enter Trello Token', required: true }
+    ]
+  },
+  {
+    id: 'moyasar',
+    name: 'Moyasar',
+    description: 'Saudi Arabia payment gateway for local transactions',
+    category: 'payments',
+    color: '#2C3E50',
+    status: 'available',
+    statusType: '',
+    isConfigured: false,
+    enabled: false,
+    lastSyncLabel: '',
+    flowStatus: '',
+    type: 'MOYASAR',
+    configFields: [
+      { key: 'apiKey', label: 'API Key', type: 'password', placeholder: 'Enter Moyasar API Key', required: true },
+      { key: 'secretKey', label: 'Secret Key', type: 'password', placeholder: 'Enter Moyasar Secret Key', required: true }
+    ]
   }
 ]);
 
@@ -869,12 +1019,12 @@ onMounted(async () => {
 });
 
 // ─── Methods ────────────────────────────────────────────────────────────────
-function getFlowStatus(intg: unknown): string {
+function getFlowStatus(intg: IntegrationItem): string {
   if (!intg.isConfigured) return 'disconnected';
   return intg.flowStatus || 'healthy';
 }
 
-function getFlowClass(intg: unknown): string {
+function getFlowClass(intg: IntegrationItem): string {
   const status = getFlowStatus(intg);
   if (status === 'healthy') return 'status-healthy';
   if (status === 'warning') return 'status-warning';
@@ -882,7 +1032,7 @@ function getFlowClass(intg: unknown): string {
   return 'status-disconnected';
 }
 
-function toggleIntegration(intg: unknown) {
+function toggleIntegration(intg: IntegrationItem) {
   intg.enabled = !intg.enabled;
   ElNotification({
     type: intg.enabled ? 'success' : 'info',
@@ -891,15 +1041,16 @@ function toggleIntegration(intg: unknown) {
   });
 }
 
-function openConfigDialog(intg: unknown) {
-  selectedIntegration.value = intg;
+function openConfigDialog(intg: IntegrationItem) {
+  selectedIntegration.value = intg as unknown as Record<string, unknown>;
   configTab.value = 'connection';
   configFormData.value = {};
-  intg.configFields?.forEach((f) => {
+  intg.configFields?.forEach((f: { key: string; label: string; type: string; placeholder: string; required: boolean }) => {
     configFormData.value[f.key] = '';
   });
-  if (intg.existingConfig) {
-    Object.assign(configFormData.value, intg.existingConfig);
+  const existingConfig = (intg as unknown as Record<string, unknown>).existingConfig as Record<string, unknown> | undefined;
+  if (existingConfig) {
+    Object.assign(configFormData.value, existingConfig);
   }
   configDialogVisible.value = true;
 }

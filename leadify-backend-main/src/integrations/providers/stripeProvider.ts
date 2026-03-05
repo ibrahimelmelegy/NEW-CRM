@@ -62,8 +62,9 @@ export class StripeProvider {
       }
       return { success: true, data: { id: `mock_cus_${Date.now()}`, email: input.email }, mock: true };
     } catch (err: unknown) {
-      console.error('[StripeProvider] createCustomer error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !StripeProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[StripeProvider] createCustomer error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !StripeProvider.isConfigured() };
     }
   }
 
@@ -82,8 +83,9 @@ export class StripeProvider {
       }
       return { success: true, data: { id: `mock_pi_${Date.now()}`, clientSecret: `mock_secret_${Date.now()}`, status: 'requires_payment_method' }, mock: true };
     } catch (err: unknown) {
-      console.error('[StripeProvider] createPaymentIntent error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !StripeProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[StripeProvider] createPaymentIntent error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !StripeProvider.isConfigured() };
     }
   }
 
@@ -101,8 +103,9 @@ export class StripeProvider {
       const periodEnd = Math.floor(Date.now() / 1000) + 30 * 86400;
       return { success: true, data: { id: `mock_sub_${Date.now()}`, status: 'active', currentPeriodEnd: periodEnd }, mock: true };
     } catch (err: unknown) {
-      console.error('[StripeProvider] createSubscription error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !StripeProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[StripeProvider] createSubscription error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !StripeProvider.isConfigured() };
     }
   }
 
@@ -115,8 +118,9 @@ export class StripeProvider {
       }
       return { success: true, data: { id: subscriptionId, status: 'canceled' }, mock: true };
     } catch (err: unknown) {
-      console.error('[StripeProvider] cancelSubscription error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !StripeProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[StripeProvider] cancelSubscription error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !StripeProvider.isConfigured() };
     }
   }
 
@@ -133,8 +137,9 @@ export class StripeProvider {
       }
       return { success: true, data: { id: `mock_re_${Date.now()}`, status: 'succeeded', amount: input.amount || 0 }, mock: true };
     } catch (err: unknown) {
-      console.error('[StripeProvider] createRefund error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !StripeProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[StripeProvider] createRefund error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !StripeProvider.isConfigured() };
     }
   }
 
@@ -157,8 +162,9 @@ export class StripeProvider {
         mock: true,
       };
     } catch (err: unknown) {
-      console.error('[StripeProvider] listInvoices error:', err.message);
-      return { success: false, data: null, error: err.message, mock: !StripeProvider.isConfigured() };
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[StripeProvider] listInvoices error:', errMsg);
+      return { success: false, data: null, error: errMsg, mock: !StripeProvider.isConfigured() };
     }
   }
 }

@@ -215,7 +215,8 @@ export function useIntegrations() {
         return false;
       }
     } catch (e: unknown) {
-      ElNotification.error({ title: 'Error', message: e.message || 'Failed to configure integration' });
+      const errMsg = e instanceof Error ? e.message : 'Failed to configure integration';
+      ElNotification.error({ title: 'Error', message: errMsg });
       return false;
     }
   }
@@ -225,7 +226,7 @@ export function useIntegrations() {
     try {
       const response = await useApiFetch(`integrations/hub/${type}/test`, 'POST', config);
       if (response.success) {
-        const msg = (response.body as unknown)?.message || 'Connection successful';
+        const msg = (response.body as Record<string, unknown>)?.message as string || 'Connection successful';
         ElNotification.success({ title: 'Test Passed', message: msg });
         return true;
       } else {
@@ -233,7 +234,8 @@ export function useIntegrations() {
         return false;
       }
     } catch (e: unknown) {
-      ElNotification.error({ title: 'Test Error', message: e.message || 'Connection test failed' });
+      const errMsg = e instanceof Error ? e.message : 'Connection test failed';
+      ElNotification.error({ title: 'Test Error', message: errMsg });
       return false;
     }
   }
@@ -251,7 +253,8 @@ export function useIntegrations() {
         return false;
       }
     } catch (e: unknown) {
-      ElNotification.error({ title: 'Error', message: e.message || 'Failed to remove integration' });
+      const errMsg = e instanceof Error ? e.message : 'Failed to remove integration';
+      ElNotification.error({ title: 'Error', message: errMsg });
       return false;
     }
   }
@@ -274,7 +277,7 @@ export function useIntegrations() {
     }
   }
 
-  async function createWebhook(data: unknown): Promise<boolean> {
+  async function createWebhook(data: { name: string; url: string; events: string[]; secret?: string; headers?: Record<string, string> }): Promise<boolean> {
     try {
       const response = await useApiFetch('integrations/hub/webhooks', 'POST', data);
       if (response.success) {
@@ -286,12 +289,13 @@ export function useIntegrations() {
         return false;
       }
     } catch (e: unknown) {
-      ElNotification.error({ title: 'Error', message: e.message || 'Failed to create webhook' });
+      const errMsg = e instanceof Error ? e.message : 'Failed to create webhook';
+      ElNotification.error({ title: 'Error', message: errMsg });
       return false;
     }
   }
 
-  async function updateWebhook(id: string, data: unknown): Promise<boolean> {
+  async function updateWebhook(id: string, data: Record<string, unknown>): Promise<boolean> {
     try {
       const response = await useApiFetch(`integrations/hub/webhooks/${id}`, 'PUT', data);
       if (response.success) {
@@ -303,7 +307,8 @@ export function useIntegrations() {
         return false;
       }
     } catch (e: unknown) {
-      ElNotification.error({ title: 'Error', message: e.message || 'Failed to update webhook' });
+      const errMsg = e instanceof Error ? e.message : 'Failed to update webhook';
+      ElNotification.error({ title: 'Error', message: errMsg });
       return false;
     }
   }
@@ -320,7 +325,8 @@ export function useIntegrations() {
         return false;
       }
     } catch (e: unknown) {
-      ElNotification.error({ title: 'Error', message: e.message || 'Failed to delete webhook' });
+      const errMsg = e instanceof Error ? e.message : 'Failed to delete webhook';
+      ElNotification.error({ title: 'Error', message: errMsg });
       return false;
     }
   }
@@ -329,14 +335,15 @@ export function useIntegrations() {
     try {
       const response = await useApiFetch(`integrations/hub/webhooks/${id}/test`, 'POST');
       if (response.success) {
-        ElNotification.success({ title: 'Test Sent', message: (response.body as unknown)?.message || 'Webhook test successful' });
+        ElNotification.success({ title: 'Test Sent', message: (response.body as Record<string, unknown>)?.message as string || 'Webhook test successful' });
         return true;
       } else {
         ElNotification.warning({ title: 'Test Failed', message: response.message });
         return false;
       }
     } catch (e: unknown) {
-      ElNotification.error({ title: 'Test Error', message: e.message || 'Webhook test failed' });
+      const errMsg = e instanceof Error ? e.message : 'Webhook test failed';
+      ElNotification.error({ title: 'Test Error', message: errMsg });
       return false;
     }
   }
