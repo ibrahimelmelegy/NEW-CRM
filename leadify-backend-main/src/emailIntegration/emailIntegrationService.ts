@@ -12,7 +12,7 @@ class EmailIntegrationService {
     });
   }
 
-  async connectAccount(data: any): Promise<EmailAccount> {
+  async connectAccount(data: unknown): Promise<EmailAccount> {
     return EmailAccount.create(data);
   }
 
@@ -23,7 +23,7 @@ class EmailIntegrationService {
     await account.destroy();
   }
 
-  async getMessages(accountId: string, query: any): Promise<any> {
+  async getMessages(accountId: string, query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query, 20);
     const { folder } = query;
 
@@ -51,7 +51,7 @@ class EmailIntegrationService {
     };
   }
 
-  async sendEmail(accountId: string, data: any): Promise<EmailMessage> {
+  async sendEmail(accountId: string, data: unknown): Promise<EmailMessage> {
     const account = await EmailAccount.findByPk(accountId);
     if (!account) throw new Error('Email account not found');
 

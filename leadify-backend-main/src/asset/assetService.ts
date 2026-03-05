@@ -10,7 +10,7 @@ import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 
 class AssetService {
-  public async createAsset(data: any): Promise<Asset> {
+  public async createAsset(data: unknown): Promise<Asset> {
     if (data.name) await this.errorIfAssetWithExistName(data.name);
     return Asset.create(data);
   }
@@ -24,7 +24,7 @@ class AssetService {
     return asset;
   }
 
-  public async getAssets(query: any): Promise<any> {
+  public async getAssets(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: assets, count: totalItems } = await Asset.findAndCountAll({
@@ -78,8 +78,8 @@ class AssetService {
     if (assetWithName) throw new BaseError(ERRORS.NAME_ALREADY_EXISTS);
   }
 
-  public async sendAssetsExcelByEmail(query: any, email: string): Promise<void> {
-    const where: any = {
+  public async sendAssetsExcelByEmail(query: unknown, email: string): Promise<void> {
+    const where: Record<string, unknown> = {
       ...(query.searchKey && {
         [Op.or]: [{ name: { [Op.iLike]: `%${query.searchKey}%` } }]
       }),

@@ -6,14 +6,14 @@ class WebhookService {
     return Webhook.findAll({ order: [['createdAt', 'DESC']] });
   }
 
-  async create(data: any) {
+  async create(data: unknown) {
     if (!data.secret) {
       data.secret = crypto.randomBytes(32).toString('hex');
     }
     return Webhook.create(data);
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: unknown) {
     const webhook = await Webhook.findByPk(id);
     if (!webhook) throw new Error('Webhook not found');
     return webhook.update(data);
@@ -25,7 +25,7 @@ class WebhookService {
     await webhook.destroy();
   }
 
-  async fire(eventName: string, payload: any) {
+  async fire(eventName: string, payload: unknown) {
     const webhooks = await Webhook.findAll({
       where: { isActive: true }
     });
@@ -39,7 +39,7 @@ class WebhookService {
     }
   }
 
-  private async deliver(webhook: Webhook, event: string, payload: any, attempt: number = 1) {
+  private async deliver(webhook: Webhook, event: string, payload: unknown, attempt: number = 1) {
     const body = JSON.stringify({ event, payload, timestamp: new Date().toISOString() });
     const signature = crypto.createHmac('sha256', webhook.secret).update(body).digest('hex');
 

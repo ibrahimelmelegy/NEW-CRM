@@ -44,7 +44,7 @@ class TimeTrackingService {
 
   async getEntries(userId: number, query: { startDate?: string; endDate?: string; entityType?: string; page?: number; limit?: number }) {
     const { page, limit, offset } = clampPagination(query, 50);
-    const where: any = { userId };
+    const where: Record<string, unknown> = { userId };
 
     if (query.startDate) where.startTime = { [Op.gte]: new Date(query.startDate) };
     if (query.endDate) {
@@ -63,7 +63,7 @@ class TimeTrackingService {
     return { entries: rows, total: count, page, limit };
   }
 
-  async createManualEntry(userId: number, data: any) {
+  async createManualEntry(userId: number, data: unknown) {
     const startTime = new Date(data.startTime);
     const endTime = new Date(data.endTime);
     const duration = Math.round((endTime.getTime() - startTime.getTime()) / 1000);
@@ -80,7 +80,7 @@ class TimeTrackingService {
     });
   }
 
-  async updateEntry(id: string, userId: number, data: any) {
+  async updateEntry(id: string, userId: number, data: unknown) {
     const entry = await TimeEntry.findOne({ where: { id, userId } });
     if (!entry) throw new Error('Time entry not found');
 

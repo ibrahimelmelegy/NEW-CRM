@@ -210,7 +210,7 @@ export const aiInsightsController = {
       ]);
 
       // Calculate stalled deals (check for recent activities)
-      const stalledDealsList: any[] = [];
+      const stalledDealsList: unknown[] = [];
       for (const deal of stalledDeals as any[]) {
         const lastActivity = await DealActivity.findOne({
           where: { dealId: deal.id },
@@ -244,7 +244,7 @@ export const aiInsightsController = {
 
       // Insight 1: Stalled deals
       if (stalledDealsList.length > 0) {
-        const totalValue = stalledDealsList.reduce((sum: number, d: any) => sum + (d.price || 0), 0);
+        const totalValue = stalledDealsList.reduce((sum: number, d: unknown) => sum + (d.price || 0), 0);
         insights.push({
           id: 'stalled-deals',
           type: 'warning',
@@ -287,7 +287,7 @@ export const aiInsightsController = {
 
       // Insight 3: Overdue invoices
       if (overdueInvoices.length > 0) {
-        const totalOverdue = (overdueInvoices as any[]).reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0);
+        const totalOverdue = (overdueInvoices as any[]).reduce((sum: number, inv: unknown) => sum + (inv.amount || 0), 0);
         insights.push({
           id: 'overdue-invoices',
           type: 'danger',

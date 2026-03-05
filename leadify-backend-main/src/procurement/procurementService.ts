@@ -11,7 +11,7 @@ import { createActivityLog } from '../activity-logs/activityService';
 import { sequelize } from '../config/db';
 
 class ProcurementService {
-  async createPurchaseOrder(input: any, user: User): Promise<PurchaseOrder> {
+  async createPurchaseOrder(input: unknown, user: User): Promise<PurchaseOrder> {
     const transaction = await sequelize.transaction();
     try {
       const { items, ...poData } = input;
@@ -25,7 +25,7 @@ class ProcurementService {
           throw new BaseError(400, 400, 'Purchase Order must have at least one item');
         }
 
-        const poItems = items.map((item: any) => {
+        const poItems = items.map((item: unknown) => {
           if (Number(item.unitPrice) < 0) throw new BaseError(400, 400, `Invalid Unit Price for item: ${item.description}`);
           if (Number(item.quantity) <= 0) throw new BaseError(400, 400, `Invalid Quantity for item: ${item.description}`);
 
@@ -54,7 +54,7 @@ class ProcurementService {
     if (rejectionReason) po.rejectionReason = rejectionReason;
     await po.save();
 
-    const action: any = status === POStatusEnum.APPROVED ? 'approve' : status === POStatusEnum.REJECTED ? 'reject' : 'update';
+    const action: string = status === POStatusEnum.APPROVED ? 'approve' : status === POStatusEnum.REJECTED ? 'reject' : 'update';
     await createActivityLog('purchaseOrder', action, po.id, user.id, null, `Purchase Order ${po.poNumber} status updated to ${status}`);
     return po;
   }
@@ -73,7 +73,7 @@ class ProcurementService {
     return po;
   }
 
-  async getPurchaseOrders(query: any): Promise<any> {
+  async getPurchaseOrders(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, status, projectId, vendorId } = query;
 
@@ -110,10 +110,10 @@ class ProcurementService {
     return await this.poOrError({ id });
   }
 
-  async getDashboardStats(): Promise<any> {
+  async getDashboardStats(): Promise<unknown> {
     // 1. KPI: Total POs and Total Spend
     const totalPos = await PurchaseOrder.count();
-    const totalSpendResult: any = await PurchaseOrder.findAll({
+    const totalSpendResult = await PurchaseOrder.findAll({
       attributes: [[sequelize.fn('SUM', sequelize.col('totalAmount')), 'total']],
       raw: true
     });
@@ -123,7 +123,7 @@ class ProcurementService {
     const pendingCount = await PurchaseOrder.count({ where: { status: POStatusEnum.PENDING } });
 
     // 3. Top Suppliers by Volume (Spend)
-    const topVendors: any = await PurchaseOrder.findAll({
+    const topVendors = await PurchaseOrder.findAll({
       attributes: [
         [sequelize.col('vendor.name'), 'name'],
         [sequelize.fn('SUM', sequelize.col('totalAmount')), 'value']
@@ -141,7 +141,7 @@ class ProcurementService {
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 5);
 
-    const monthlyTrend: any = await PurchaseOrder.findAll({
+    const monthlyTrend = await PurchaseOrder.findAll({
       attributes: [
         // Extract month/year. Syntax depends on DB (Postgres here).
         [sequelize.fn('to_char', sequelize.col('createdAt'), 'Mon'), 'month'],
@@ -194,7 +194,7 @@ class ProcurementService {
       const variances: Array<{ itemId: number; ordered: number; received: number; variance: number }> = [];
       if (receivedItems && receivedItems.length > 0) {
         for (const ri of receivedItems) {
-          const poItem = po.items?.find((item: any) => item.id === ri.itemId);
+          const poItem = po.items?.find((item: unknown) => item.id === ri.itemId);
           if (poItem) {
             const variance = ri.receivedQuantity - poItem.quantity;
             variances.push({
@@ -226,11 +226,11 @@ class ProcurementService {
    * total POs, total spend, average order value, on-time delivery count,
    * rejection rate. Returns vendors sorted by total spend descending.
    */
-  async getVendorComparison(): Promise<any> {
+  async getVendorComparison(): Promise<unknown> {
     const vendors = await Vendor.findAll({ attributes: ['id', 'name'] });
 
     const comparison = await Promise.all(
-      vendors.map(async (vendor: any) => {
+      vendors.map(async (vendor: unknown) => {
         const allPOs = await PurchaseOrder.findAll({
           where: { vendorId: vendor.id }
         });
@@ -238,16 +238,16 @@ class ProcurementService {
         const totalPOs = allPOs.length;
         if (totalPOs === 0) return null;
 
-        const totalSpend = allPOs.reduce((sum: number, po: any) => sum + Number(po.totalAmount || 0), 0);
+        const totalSpend = allPOs.reduce((sum: number, po: unknown) => sum + Number(po.totalAmount || 0), 0);
         const avgOrderValue = totalPOs > 0 ? Math.round((totalSpend / totalPOs) * 100) / 100 : 0;
 
-        const approvedCount = allPOs.filter((po: any) => po.status === POStatusEnum.APPROVED || po.status === POStatusEnum.ARCHIVED).length;
-        const rejectedCount = allPOs.filter((po: any) => po.status === POStatusEnum.REJECTED).length;
-        const pendingCount = allPOs.filter((po: any) => po.status === POStatusEnum.PENDING).length;
+        const approvedCount = allPOs.filter((po: unknown) => po.status === POStatusEnum.APPROVED || po.status === POStatusEnum.ARCHIVED).length;
+        const rejectedCount = allPOs.filter((po: unknown) => po.status === POStatusEnum.REJECTED).length;
+        const pendingCount = allPOs.filter((po: unknown) => po.status === POStatusEnum.PENDING).length;
         const rejectionRate = totalPOs > 0 ? Math.round((rejectedCount / totalPOs) * 10000) / 100 : 0;
 
         // On-time: POs that were archived (received) before or on dueDate
-        const onTimeCount = allPOs.filter((po: any) => {
+        const onTimeCount = allPOs.filter((po: unknown) => {
           if (po.status !== POStatusEnum.ARCHIVED || !po.dueDate) return false;
           return new Date(po.updatedAt) <= new Date(po.dueDate);
         }).length;
@@ -268,7 +268,7 @@ class ProcurementService {
       })
     );
 
-    return comparison.filter(Boolean).sort((a: any, b: any) => b.totalSpend - a.totalSpend);
+    return comparison.filter(Boolean).sort((a: unknown, b: unknown) => b.totalSpend - a.totalSpend);
   }
 
   async removePurchaseOrder(id: string, user: User): Promise<void> {

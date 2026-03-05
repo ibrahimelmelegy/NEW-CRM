@@ -8,15 +8,15 @@ type AttributionModel = 'FIRST_TOUCH' | 'LAST_TOUCH' | 'LINEAR' | 'TIME_DECAY';
 class AttributionService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string) {
+  async create(data: unknown, tenantId?: string) {
     const tp = await Touchpoint.create({ ...data, tenantId });
     try { io.emit('touchpoint:created', { id: tp.id, dealId: tp.dealId }); } catch {}
     return tp;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.dealId) where.dealId = query.dealId;
     if (query.channel) where.channel = query.channel;
@@ -32,7 +32,7 @@ class AttributionService {
     return Touchpoint.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: unknown) {
     const item = await Touchpoint.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -58,7 +58,7 @@ class AttributionService {
    * - TIME_DECAY: More credit to touchpoints closer to conversion (half-life decay)
    */
   async calculateAttribution(dealId: string, model: AttributionModel = 'LINEAR', dealValue?: number, tenantId?: string) {
-    const where: any = { dealId };
+    const where: Record<string, unknown> = { dealId };
     if (tenantId) where.tenantId = tenantId;
 
     const touchpoints = await Touchpoint.findAll({
@@ -139,7 +139,7 @@ class AttributionService {
 
   /** Aggregate channel performance across all attributed touchpoints */
   async getChannelPerformance(tenantId?: string) {
-    const where: any = { creditPercent: { [Op.gt]: 0 } };
+    const where: Record<string, unknown> = { creditPercent: { [Op.gt]: 0 } };
     if (tenantId) where.tenantId = tenantId;
 
     const touchpoints = await Touchpoint.findAll({ where, raw: true });
@@ -173,7 +173,7 @@ class AttributionService {
 
     for (const model of models) {
       const result = await this.calculateAttribution(dealId, model, dealValue, tenantId);
-      results[model] = result.touchpoints.map((tp: any) => ({
+      results[model] = result.touchpoints.map((tp: unknown) => ({
         id: tp.id,
         channel: tp.channel,
         creditPercent: tp.creditPercent,

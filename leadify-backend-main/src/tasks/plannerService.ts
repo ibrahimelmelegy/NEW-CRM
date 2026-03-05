@@ -17,7 +17,7 @@ class PlannerService {
     });
   }
 
-  async createTask(data: any, userId: number) {
+  async createTask(data: unknown, userId: number) {
     return Task.create({
       title: data.title,
       description: data.description || null,
@@ -34,7 +34,7 @@ class PlannerService {
     });
   }
 
-  async updateTask(id: number, data: any, userId: number) {
+  async updateTask(id: number, data: unknown, userId: number) {
     const task = await Task.findOne({ where: { id, assignedTo: userId, entityType: 'planner' } });
     if (!task) throw new Error('Task not found');
 
@@ -99,7 +99,7 @@ class PlannerService {
 
   // ─── Focus Sessions ─────────────────────────────────────────────────
 
-  async startFocus(data: any, userId: number) {
+  async startFocus(data: unknown, userId: number) {
     return FocusSession.create({
       userId,
       taskId: data.taskId || null,
@@ -148,7 +148,7 @@ class PlannerService {
     });
   }
 
-  async createHabit(data: any, userId: number) {
+  async createHabit(data: unknown, userId: number) {
     return DailyHabit.create({
       userId,
       name: data.name,

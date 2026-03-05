@@ -12,11 +12,11 @@ class SubscriptionService {
   // Plan CRUD
   // =====================
 
-  async createPlan(data: any): Promise<SubscriptionPlan> {
+  async createPlan(data: unknown): Promise<SubscriptionPlan> {
     return SubscriptionPlan.create(data);
   }
 
-  async getPlans(query: any): Promise<SubscriptionPlan[]> {
+  async getPlans(query: unknown): Promise<SubscriptionPlan[]> {
     const where: WhereOptions = { isActive: true };
 
     if (query.includeInactive === 'true') {
@@ -33,7 +33,7 @@ class SubscriptionService {
     });
   }
 
-  async updatePlan(id: string, data: any): Promise<SubscriptionPlan> {
+  async updatePlan(id: string, data: unknown): Promise<SubscriptionPlan> {
     const plan = await SubscriptionPlan.findByPk(id);
     if (!plan) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Subscription plan not found');
     await plan.update(data);
@@ -72,7 +72,7 @@ class SubscriptionService {
     return end;
   }
 
-  async createSubscription(data: any): Promise<CustomerSubscription> {
+  async createSubscription(data: unknown): Promise<CustomerSubscription> {
     const plan = await SubscriptionPlan.findByPk(data.planId);
     if (!plan) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Subscription plan not found');
     if (!plan.isActive) throw new BaseError(400, 400, 'Plan is inactive');
@@ -128,7 +128,7 @@ class SubscriptionService {
     return this.getSubscriptionById(subscription.id);
   }
 
-  async getSubscriptions(query: any): Promise<any> {
+  async getSubscriptions(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { status, clientId, searchKey } = query;
 
@@ -141,7 +141,7 @@ class SubscriptionService {
       (where as any).clientId = clientId;
     }
 
-    const includeOptions: any[] = [
+    const includeOptions: unknown[] = [
       {
         model: Client,
         as: 'client',
@@ -413,7 +413,7 @@ class SubscriptionService {
     return parseFloat(((cancelledInPeriod / activeAtStart) * 100).toFixed(2));
   }
 
-  async getSubscriptionMetrics(): Promise<any> {
+  async getSubscriptionMetrics(): Promise<unknown> {
     const mrr = await this.getMRR();
     const arr = mrr * 12;
 

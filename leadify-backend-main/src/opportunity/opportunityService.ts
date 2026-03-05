@@ -47,7 +47,7 @@ const OPP_STAGE_PROBABILITY: Record<string, number> = {
 };
 
 class OpportunityService {
-  async createOpportunity(input: any, admin: User): Promise<Opportunity | void> {
+  async createOpportunity(input: unknown, admin: User): Promise<Opportunity | void> {
     const transaction = await sequelize.transaction();
     let lead: Lead | null = null;
     let client: Client | null = null;
@@ -98,7 +98,7 @@ class OpportunityService {
     }
   }
 
-  async convertLeadToOpportunity(input: any, admin: User): Promise<Opportunity> {
+  async convertLeadToOpportunity(input: unknown, admin: User): Promise<Opportunity> {
     const user = await User.findAll({
       where: {
         id: {
@@ -137,7 +137,7 @@ class OpportunityService {
     }
   }
 
-  async updateOpportunity(id: string, input: any, user: User): Promise<Opportunity> {
+  async updateOpportunity(id: string, input: unknown, user: User): Promise<Opportunity> {
     await this.validateOpportunityAccess(id, user);
 
     const opportunity = await this.opportunityOrError({ id });
@@ -169,7 +169,7 @@ class OpportunityService {
   }
 
   async getKanbanOpportunities(user: User): Promise<Record<string, Opportunity[]>> {
-    const where: any = {
+    const where: Record<string, unknown> = {
       ...tenantWhere(user),
       stage: { [Op.ne]: OpportunityStageEnums.CONVERTED }
     };
@@ -258,7 +258,7 @@ class OpportunityService {
     return opportunity;
   }
 
-  async getOpportunities(query: any, user: User): Promise<any> {
+  async getOpportunities(query: unknown, user: User): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(OpportunityPermissionsEnum.VIEW_GLOBAL_OPPORTUNITIES)) query.userId = user.id;
@@ -379,8 +379,8 @@ class OpportunityService {
     return !!assignment; // Returns true if assigned, false otherwise
   }
 
-  async sendOpportunitiesExcelByEmail(query: any, user: User, email: string): Promise<void> {
-    const where: any = {
+  async sendOpportunitiesExcelByEmail(query: unknown, user: User, email: string): Promise<void> {
+    const where: Record<string, unknown> = {
       ...tenantWhere(user),
       stage: { [Op.ne]: OpportunityStageEnums.CONVERTED },
       ...(query.searchKey && {

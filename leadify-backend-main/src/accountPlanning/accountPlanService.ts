@@ -9,15 +9,15 @@ import { io } from '../server';
 class AccountPlanService {
   // ─── Account Plan CRUD ────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string, ownerId?: number) {
+  async create(data: unknown, tenantId?: string, ownerId?: number) {
     const plan = await AccountPlan.create({ ...data, tenantId, ownerId });
     try { io.emit('accountPlan:created', { id: plan.id, name: plan.name }); } catch {}
     return plan;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.tier) where.tier = query.tier;
     if (query.status) where.status = query.status;
@@ -45,7 +45,7 @@ class AccountPlanService {
     });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: unknown) {
     const item = await AccountPlan.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -64,7 +64,7 @@ class AccountPlanService {
 
   // ─── Stakeholder CRUD ────────────────────────────────────────────────────────
 
-  async addStakeholder(data: any, tenantId?: string) {
+  async addStakeholder(data: unknown, tenantId?: string) {
     const stakeholder = await Stakeholder.create({ ...data, tenantId });
     try { io.emit('stakeholder:created', { id: stakeholder.id, accountPlanId: stakeholder.accountPlanId }); } catch {}
     return stakeholder;
@@ -77,7 +77,7 @@ class AccountPlanService {
     });
   }
 
-  async updateStakeholder(id: number, data: any) {
+  async updateStakeholder(id: number, data: unknown) {
     const item = await Stakeholder.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -99,7 +99,7 @@ class AccountPlanService {
    * Returns accounts with highest expansion potential and nearest renewal dates.
    */
   async getWhitespaceAnalysis(tenantId?: string) {
-    const where: any = { status: 'ACTIVE' };
+    const where: Record<string, unknown> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     const plans = await AccountPlan.findAll({
@@ -110,8 +110,8 @@ class AccountPlanService {
       nest: true
     });
 
-    const opportunities = plans.map((p: any) => {
-      const goalsCompleted = (p.goals || []).filter((g: any) => g.status === 'COMPLETED').length;
+    const opportunities = plans.map((p: unknown) => {
+      const goalsCompleted = (p.goals || []).filter((g: unknown) => g.status === 'COMPLETED').length;
       const totalGoals = (p.goals || []).length;
       return {
         accountPlanId: p.id,
@@ -136,7 +136,7 @@ class AccountPlanService {
 
   /** Forecast revenue across all active account plans grouped by tier */
   async getForecast(tenantId?: string) {
-    const where: any = { status: 'ACTIVE' };
+    const where: Record<string, unknown> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     const plans = await AccountPlan.findAll({ where, raw: true });

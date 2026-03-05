@@ -18,11 +18,11 @@ const DEFAULT_TIERS: TierDefinition[] = [
 ];
 
 class LoyaltyService {
-  async createProgram(data: any, tenantId?: string) { return LoyaltyProgram.create({ ...data, tenantId }); }
+  async createProgram(data: unknown, tenantId?: string) { return LoyaltyProgram.create({ ...data, tenantId }); }
 
-  async getPrograms(query: any, tenantId?: string) {
+  async getPrograms(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
@@ -30,7 +30,7 @@ class LoyaltyService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateProgram(id: number, data: any) {
+  async updateProgram(id: number, data: unknown) {
     const item = await LoyaltyProgram.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -44,11 +44,11 @@ class LoyaltyService {
     return true;
   }
 
-  async addPoints(data: any, tenantId?: string) { return LoyaltyPoints.create({ ...data, tenantId }); }
+  async addPoints(data: unknown, tenantId?: string) { return LoyaltyPoints.create({ ...data, tenantId }); }
 
-  async getPointsHistory(query: any, tenantId?: string) {
+  async getPointsHistory(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.clientId) where.clientId = query.clientId;
     if (query.programId) where.programId = query.programId;
@@ -72,7 +72,7 @@ class LoyaltyService {
    * Returns the current tier and the threshold needed to reach the next tier.
    */
   async calculateTier(clientId: string, programId?: number) {
-    const where: any = { clientId, transactionType: 'EARN' };
+    const where: Record<string, unknown> = { clientId, transactionType: 'EARN' };
     if (programId) where.programId = programId;
 
     const totalEarned = await LoyaltyPoints.sum('points', { where }) || 0;
@@ -105,7 +105,7 @@ class LoyaltyService {
     const twelveMonthsAgo = new Date();
     twelveMonthsAgo.setFullYear(twelveMonthsAgo.getFullYear() - 1);
 
-    const where: any = {
+    const where: Record<string, unknown> = {
       clientId,
       transactionType: 'EARN',
       createdAt: { [Op.lt]: twelveMonthsAgo },

@@ -10,7 +10,7 @@ import { clampPagination } from '../utils/pagination';
 class PayrollService {
   // ─── Payroll Runs ────────────────────────────────────────────────────
 
-  async createPayrollRun(data: any) {
+  async createPayrollRun(data: unknown) {
     return PayrollRun.create({
       month: data.month,
       year: data.year,
@@ -19,10 +19,10 @@ class PayrollService {
     });
   }
 
-  async getPayrollRuns(query: any, user?: any) {
+  async getPayrollRuns(query: unknown, user?: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { month, year, status } = query;
-    const where: any = { ...(user ? tenantWhere(user) : {}) };
+    const where: Record<string, unknown> = { ...(user ? tenantWhere(user) : {}) };
     if (month) where.month = month;
     if (year) where.year = year;
     if (status) where.status = status;
@@ -179,7 +179,7 @@ class PayrollService {
 
   // ─── Payslips ────────────────────────────────────────────────────────
 
-  async getEmployeePayslips(employeeId: string, query: any = {}) {
+  async getEmployeePayslips(employeeId: string, query: Record<string, unknown> = {}) {
     const { page, limit, offset } = clampPagination(query, 20);
 
     const { rows, count } = await Payslip.findAndCountAll({
@@ -209,10 +209,10 @@ class PayrollService {
 
   // ─── Salary Structures ──────────────────────────────────────────────
 
-  async getSalaryStructures(query: any) {
+  async getSalaryStructures(query: unknown) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { employeeId } = query;
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (employeeId) where.employeeId = employeeId;
 
     const { rows, count } = await SalaryStructure.findAndCountAll({
@@ -240,7 +240,7 @@ class PayrollService {
     };
   }
 
-  async createSalaryStructure(data: any) {
+  async createSalaryStructure(data: unknown) {
     const structure = await SalaryStructure.create(data);
     return SalaryStructure.findByPk(structure.id, {
       include: [
@@ -253,7 +253,7 @@ class PayrollService {
     });
   }
 
-  async updateSalaryStructure(id: string, data: any) {
+  async updateSalaryStructure(id: string, data: unknown) {
     const structure = await SalaryStructure.findByPk(id);
     if (!structure) throw new Error('Salary structure not found');
     await structure.update(data);

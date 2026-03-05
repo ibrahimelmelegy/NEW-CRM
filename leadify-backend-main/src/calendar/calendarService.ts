@@ -4,9 +4,9 @@ import User from '../user/userModel';
 
 class CalendarService {
   // ─── Get Events with Date Range & Filters ─────────────────────────────────
-  async getEvents(query: any) {
+  async getEvents(query: unknown) {
     const { start, end, userId, eventType, status, priority, search } = query;
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (start && end) {
       where[Op.or] = [
@@ -38,12 +38,12 @@ class CalendarService {
   }
 
   // ─── Create Event ─────────────────────────────────────────────────────────
-  async createEvent(data: any, userId: number) {
+  async createEvent(data: unknown, userId: number) {
     return CalendarEvent.create({ ...data, userId });
   }
 
   // ─── Update Event ─────────────────────────────────────────────────────────
-  async updateEvent(id: number, data: any, userId: number) {
+  async updateEvent(id: number, data: unknown, userId: number) {
     const event = await CalendarEvent.findByPk(id);
     if (!event) throw new Error('Event not found');
     return event.update(data);
@@ -112,7 +112,7 @@ class CalendarService {
 
   // ─── Conflict Detection ──────────────────────────────────────────────────
   async checkConflicts(userId: number, startDate: string, endDate: string, excludeId?: number) {
-    const where: any = {
+    const where: Record<string, unknown> = {
       userId,
       status: 'SCHEDULED',
       allDay: false,
@@ -152,7 +152,7 @@ class CalendarService {
 
   // ─── Analytics ────────────────────────────────────────────────────────────
   async getAnalytics(userId: number, startDate?: string, endDate?: string) {
-    const where: any = { userId };
+    const where: Record<string, unknown> = { userId };
     if (startDate && endDate) {
       where.startDate = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }

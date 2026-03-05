@@ -3,7 +3,7 @@ import Sequence, { SequenceEnrollment } from './sequenceModel';
 import { clampPagination } from '../utils/pagination';
 
 class SequenceService {
-  async getSequences(query: any): Promise<any> {
+  async getSequences(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, isActive } = query;
 
@@ -35,11 +35,11 @@ class SequenceService {
     };
   }
 
-  async createSequence(data: any): Promise<Sequence> {
+  async createSequence(data: unknown): Promise<Sequence> {
     return Sequence.create(data);
   }
 
-  async updateSequence(id: string, data: any): Promise<Sequence> {
+  async updateSequence(id: string, data: unknown): Promise<Sequence> {
     const sequence = await Sequence.findByPk(id);
     if (!sequence) throw new Error('Sequence not found');
     return sequence.update(data);
@@ -105,7 +105,7 @@ class SequenceService {
     });
   }
 
-  async getStats(sequenceId: string): Promise<any> {
+  async getStats(sequenceId: string): Promise<unknown> {
     const enrollments = await SequenceEnrollment.findAll({ where: { sequenceId } });
     const sequence = await Sequence.findByPk(sequenceId);
 

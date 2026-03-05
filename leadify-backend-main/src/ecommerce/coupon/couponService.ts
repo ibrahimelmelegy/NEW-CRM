@@ -10,7 +10,7 @@ interface ValidateCouponResult {
 }
 
 class CouponService {
-  async getCoupons(query: any): Promise<any> {
+  async getCoupons(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, type, status } = query;
 
@@ -115,7 +115,7 @@ class CouponService {
     return validation;
   }
 
-  async createCoupon(data: any): Promise<EcCoupon> {
+  async createCoupon(data: unknown): Promise<EcCoupon> {
     // Uppercase the code
     if (data.code) {
       data.code = data.code.toUpperCase().trim();
@@ -123,7 +123,7 @@ class CouponService {
     return EcCoupon.create(data);
   }
 
-  async updateCoupon(id: string, data: any): Promise<EcCoupon> {
+  async updateCoupon(id: string, data: unknown): Promise<EcCoupon> {
     const coupon = await EcCoupon.findByPk(id);
     if (!coupon) throw new Error('Coupon not found');
 

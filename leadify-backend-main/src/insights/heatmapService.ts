@@ -20,7 +20,7 @@ class HeatmapService {
       ORDER BY activity_date
     `;
 
-    const replacements: any = { startDate, endDate };
+    const replacements: Record<string, unknown> = { startDate, endDate };
     if (userId) replacements.userId = userId;
 
     const results = await sequelize.query(sql, {

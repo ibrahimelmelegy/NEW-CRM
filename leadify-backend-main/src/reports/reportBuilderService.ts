@@ -249,7 +249,7 @@ class ReportBuilderService {
     }
 
     const where = this.buildWhereClause(config.filters);
-    const queryOptions: any = {
+    const queryOptions: Record<string, unknown> = {
       where,
       raw: true,
       limit: config.limit || 5000,
@@ -259,7 +259,7 @@ class ReportBuilderService {
     if (config.groupBy) {
       const aggAttributes = this.buildAggregationAttributes(config.aggregations || []);
       // Always include count when grouping
-      if (!aggAttributes.some((a: any) => a[1]?.startsWith('count_'))) {
+      if (!aggAttributes.some((a: unknown) => a[1]?.startsWith('count_'))) {
         aggAttributes.push([fn('COUNT', col(config.groupBy)), 'count']);
       }
       queryOptions.attributes = [config.groupBy, ...aggAttributes];
@@ -305,7 +305,7 @@ class ReportBuilderService {
   /**
    * Compute summary statistics (totals, averages) for numeric columns
    */
-  private computeSummary(data: any[], config: ReportBuilderConfig) {
+  private computeSummary(data: Record<string, unknown>[], config: ReportBuilderConfig) {
     if (!data.length) return {};
 
     const moduleKey = config.modules[0];
@@ -319,7 +319,7 @@ class ReportBuilderService {
     const summary: Record<string, { sum: number; avg: number; min: number; max: number; count: number }> = {};
 
     for (const field of activeNumericFields) {
-      const values = data.map((row: any) => Number(row[field])).filter(v => !isNaN(v));
+      const values = data.map((row: unknown) => Number(row[field])).filter(v => !isNaN(v));
 
       if (values.length > 0) {
         summary[field] = {
@@ -338,10 +338,10 @@ class ReportBuilderService {
   /**
    * Build WHERE clause from filter definitions
    */
-  private buildWhereClause(filters: ReportFilter[]): any {
+  private buildWhereClause(filters: ReportFilter[]): unknown {
     if (!filters || !filters.length) return {};
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     for (const filter of filters) {
       const { field, operator, value } = filter;
       switch (operator) {
@@ -391,7 +391,7 @@ class ReportBuilderService {
   /**
    * Build aggregation attributes for grouped queries
    */
-  private buildAggregationAttributes(aggregations: { field: string; function: string }[]): any[] {
+  private buildAggregationAttributes(aggregations: { field: string; function: string }[]): unknown[] {
     if (!aggregations || !aggregations.length) return [];
 
     return aggregations.map(agg => {
@@ -429,11 +429,11 @@ class ReportBuilderService {
   /**
    * Generate CSV string from report data
    */
-  generateCSV(data: any[], fields?: string[]): string {
+  generateCSV(data: Record<string, unknown>[], fields?: string[]): string {
     if (!data || !data.length) return '';
 
     const headers = fields && fields.length > 0 ? fields : Object.keys(data[0]);
-    const rows = data.map((row: any) =>
+    const rows = data.map((row: unknown) =>
       headers
         .map(h => {
           const val = row[h];
@@ -453,11 +453,11 @@ class ReportBuilderService {
   /**
    * Generate structured data for Excel export
    */
-  generateExcelData(data: any[], fields?: string[]) {
+  generateExcelData(data: Record<string, unknown>[], fields?: string[]) {
     if (!data || !data.length) return { headers: [], rows: [] };
 
     const headers = fields && fields.length > 0 ? fields : Object.keys(data[0]);
-    const rows = data.map((row: any) => headers.map(h => row[h] ?? ''));
+    const rows = data.map((row: unknown) => headers.map(h => row[h] ?? ''));
 
     return { headers, rows };
   }

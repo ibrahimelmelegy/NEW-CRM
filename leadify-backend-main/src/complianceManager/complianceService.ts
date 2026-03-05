@@ -8,16 +8,16 @@ import { io } from '../server';
 class ComplianceService {
   // ─── Consent Record CRUD ──────────────────────────────────────────────────────
 
-  async createConsent(data: any, tenantId?: string) {
+  async createConsent(data: unknown, tenantId?: string) {
     if (!data.consentDate) data.consentDate = new Date();
     const record = await ConsentRecord.create({ ...data, tenantId });
     try { io.emit('consent:created', { id: record.id, contactId: record.contactId }); } catch {}
     return record;
   }
 
-  async getAllConsents(query: any, tenantId?: string) {
+  async getAllConsents(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.contactId) where.contactId = query.contactId;
@@ -34,7 +34,7 @@ class ComplianceService {
     return ConsentRecord.findByPk(id);
   }
 
-  async updateConsent(id: number, data: any) {
+  async updateConsent(id: number, data: unknown) {
     const item = await ConsentRecord.findByPk(id);
     if (!item) return null;
     // If withdrawing consent, set withdrawnAt
@@ -55,7 +55,7 @@ class ComplianceService {
 
   // ─── Data Request CRUD ────────────────────────────────────────────────────────
 
-  async createDataRequest(data: any, tenantId?: string) {
+  async createDataRequest(data: unknown, tenantId?: string) {
     // Default deadline: 30 days from now (GDPR requirement)
     if (!data.deadline) {
       const deadline = new Date();
@@ -67,9 +67,9 @@ class ComplianceService {
     return request;
   }
 
-  async getAllDataRequests(query: any, tenantId?: string) {
+  async getAllDataRequests(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -94,7 +94,7 @@ class ComplianceService {
     const request = await DataRequest.findByPk(id);
     if (!request) return null;
 
-    const updateData: any = { status: data.status };
+    const updateData: Record<string, unknown> = { status: data.status };
     if (data.resolution) updateData.resolution = data.resolution;
     if (data.assignedTo) updateData.assignedTo = data.assignedTo;
     if (data.status === 'COMPLETED') updateData.completedAt = new Date();
@@ -111,7 +111,7 @@ class ComplianceService {
    * Checks for expired consents, overdue data requests, and missing consent coverage.
    */
   async runAudit(tenantId?: string) {
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const now = new Date();
@@ -159,7 +159,7 @@ class ComplianceService {
 
   /** Calculate an overall compliance score based on consent coverage and request resolution */
   async getComplianceScore(tenantId?: string) {
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const totalConsents = await ConsentRecord.count({ where });

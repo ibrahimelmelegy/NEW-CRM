@@ -20,7 +20,7 @@ export interface JobOptions {
 
 export interface JobDefinition {
   name: string;
-  handler: (data: unknown) => Promise<any>;
+  handler: (data: unknown) => Promise<unknown>;
   options?: JobOptions;
 }
 
@@ -43,7 +43,7 @@ interface InternalJob {
 interface QueueConfig {
   name: string;
   concurrency: number;
-  handler?: (data: unknown) => Promise<any>;
+  handler?: (data: unknown) => Promise<unknown>;
   activeCount: number;
 }
 
@@ -75,7 +75,7 @@ class JobQueue {
    * Register a handler for a specific queue.
    * Call this during app startup to define how jobs in each queue are processed.
    */
-  registerHandler(queueName: string, handler: (data: unknown) => Promise<any>): void {
+  registerHandler(queueName: string, handler: (data: unknown) => Promise<unknown>): void {
     const queue = this.queues.get(queueName);
     if (!queue) {
       // Auto-register the queue if it does not exist

@@ -12,7 +12,7 @@ import Notification from './notificationModel';
 import { io } from '../server';
 
 class NotificationService {
-  async getNotifications(input: any, user: User): Promise<any> {
+  async getNotifications(input: unknown, user: User): Promise<unknown> {
     const page = input.page || 1;
     const limit = input.limit || 10;
     const offset = (page - 1) * limit;
@@ -38,7 +38,7 @@ class NotificationService {
     };
   }
 
-  async updateNotificationsToRead(user: User): Promise<any> {
+  async updateNotificationsToRead(user: User): Promise<unknown> {
     await Notification.update(
       { read: NotificationReadEnums.READ },
       {
@@ -48,7 +48,7 @@ class NotificationService {
     try { io.emit('notification:read', { userId: user.id, readAll: true }); } catch {}
   }
 
-  async updateNotificationToClicked(id: string, user: User): Promise<any> {
+  async updateNotificationToClicked(id: string, user: User): Promise<unknown> {
     const notification = await Notification.findOne({
       where: { userId: user.id, id }
     });
@@ -57,7 +57,7 @@ class NotificationService {
     await notification.save();
   }
 
-  async sendAssignLeadNotification(input: any): Promise<any> {
+  async sendAssignLeadNotification(input: unknown): Promise<unknown> {
     const notification = await Notification.create({
       ...input,
       body_en: 'New Lead assigned to you.',
@@ -68,7 +68,7 @@ class NotificationService {
     try { io.emit('notification:new', { userId: input.userId, notification: { id: notification.id, type: NotificationTypeEnums.LEAD_ASSIGNED } }); } catch {}
   }
 
-  async sendAssignOpportunityNotification(input: any, opportunity: Opportunity, admin: User): Promise<any> {
+  async sendAssignOpportunityNotification(input: unknown, opportunity: Opportunity, admin: User): Promise<unknown> {
     await Notification.create({
       ...input,
       body_en: `The Opportunity ${opportunity.name} at stage ${opportunity.stage}. Assigned by ${admin.name}.`,
@@ -77,7 +77,7 @@ class NotificationService {
     });
   }
 
-  async sendProposalAssignUsersNotification(proposal: Proposal, users: number[]): Promise<any> {
+  async sendProposalAssignUsersNotification(proposal: Proposal, users: number[]): Promise<unknown> {
     for (const user of users) {
       await Notification.create({
         userId: user,
@@ -89,7 +89,7 @@ class NotificationService {
     }
   }
 
-  async sendApproveProposalNotification(proposal: Proposal): Promise<any> {
+  async sendApproveProposalNotification(proposal: Proposal): Promise<unknown> {
     for (const user of proposal.users) {
       await Notification.create({
         userId: user.id,
@@ -101,7 +101,7 @@ class NotificationService {
     }
   }
 
-  async sendRejectProposalNotification(proposal: Proposal): Promise<any> {
+  async sendRejectProposalNotification(proposal: Proposal): Promise<unknown> {
     for (const user of proposal.users) {
       await Notification.create({
         userId: user.id,
@@ -113,7 +113,7 @@ class NotificationService {
     }
   }
 
-  async sendAssignDealNotification(input: any, deal: Deal, admin: User): Promise<any> {
+  async sendAssignDealNotification(input: unknown, deal: Deal, admin: User): Promise<unknown> {
     const companyName = deal.companyName;
     const dealInfo = companyName ? `The Deal ${deal.name} for ${companyName} at stage ${deal.stage}` : `The Deal ${deal.name} at stage ${deal.stage}`;
 
@@ -127,7 +127,7 @@ class NotificationService {
     });
   }
 
-  async sendAssignProjectNotification(input: any, project: Project, admin: User): Promise<any> {
+  async sendAssignProjectNotification(input: unknown, project: Project, admin: User): Promise<unknown> {
     const category = project.category || 'Project';
     const clientName = project.client?.clientName || 'Unknown Client';
     const message = `The ${category} ${project.name} for Client ${clientName}. Assigned by ${admin.name}.`;
@@ -140,7 +140,7 @@ class NotificationService {
     });
   }
 
-  async sendAssignClientNotification(input: any, client: Client, admin: User): Promise<any> {
+  async sendAssignClientNotification(input: unknown, client: Client, admin: User): Promise<unknown> {
     const clientType = client.clientType || 'Client';
     const clientName = client.clientName;
     const companyName = client.companyName;
@@ -158,7 +158,7 @@ class NotificationService {
   }
 
   // Generic Notification Creator for System Events
-  async createNotification(userId: number, title: string, body: string, metadata: any = {}): Promise<any> {
+  async createNotification(userId: number, title: string, body: string, metadata: Record<string, unknown> = {}): Promise<unknown> {
     return await Notification.create({
       userId,
       title: title, // Make sure Model has title or use body

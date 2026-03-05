@@ -51,12 +51,12 @@ class ApprovalService {
     requesterId?: number;
     page?: number;
     limit?: number;
-  }): Promise<{ docs: ApprovalRequest[]; pagination: any }> {
+  }): Promise<{ docs: ApprovalRequest[]; pagination: unknown }> {
     const page = filters.page || 1;
     const limit = filters.limit || 20;
     const offset = (page - 1) * limit;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (filters.status) where.status = filters.status;
     if (filters.entityType) where.entityType = filters.entityType;
     if (filters.requesterId) where.requesterId = filters.requesterId;
@@ -97,7 +97,7 @@ class ApprovalService {
     return pendingRequests.filter(request => {
       const workflow = request.workflow;
       if (!workflow || !workflow.steps) return false;
-      const currentStepDef = workflow.steps.find((s: any) => s.order === request.currentStep);
+      const currentStepDef = workflow.steps.find((s: unknown) => s.order === request.currentStep);
       return currentStepDef && currentStepDef.approverUserId === userId;
     });
   }
@@ -131,7 +131,7 @@ class ApprovalService {
     const workflow = request.workflow;
     if (!workflow || !workflow.steps) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
 
-    const currentStepDef = workflow.steps.find((s: any) => s.order === request.currentStep);
+    const currentStepDef = workflow.steps.find((s: unknown) => s.order === request.currentStep);
     if (!currentStepDef || currentStepDef.approverUserId !== userId) {
       throw new BaseError(ERRORS.ACCESS_DENIED);
     }
@@ -146,7 +146,7 @@ class ApprovalService {
     });
 
     const nextStep = request.currentStep + 1;
-    const hasNextStep = workflow.steps.some((s: any) => s.order === nextStep);
+    const hasNextStep = workflow.steps.some((s: unknown) => s.order === nextStep);
 
     if (hasNextStep) {
       await request.update({ currentStep: nextStep, stepResults });
@@ -173,7 +173,7 @@ class ApprovalService {
     const workflow = request.workflow;
     if (!workflow || !workflow.steps) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
 
-    const currentStepDef = workflow.steps.find((s: any) => s.order === request.currentStep);
+    const currentStepDef = workflow.steps.find((s: unknown) => s.order === request.currentStep);
     if (!currentStepDef || currentStepDef.approverUserId !== userId) {
       throw new BaseError(ERRORS.ACCESS_DENIED);
     }

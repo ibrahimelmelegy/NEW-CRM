@@ -16,7 +16,7 @@ interface TransitionRule {
 
 class PipelineConfigService {
   async getStages(entityType?: string): Promise<PipelineStage[]> {
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (entityType) where.entityType = entityType;
     return PipelineStage.findAll({ where, order: [['order', 'ASC']] });
   }
@@ -27,7 +27,7 @@ class PipelineConfigService {
     return stage;
   }
 
-  async createStage(data: any): Promise<PipelineStage> {
+  async createStage(data: unknown): Promise<PipelineStage> {
     const maxOrder =
       ((await PipelineStage.max('order', {
         where: { entityType: data.entityType || 'deal' }
@@ -36,7 +36,7 @@ class PipelineConfigService {
     return PipelineStage.create(data);
   }
 
-  async updateStage(id: string, data: any): Promise<PipelineStage> {
+  async updateStage(id: string, data: unknown): Promise<PipelineStage> {
     return sequelize.transaction(async (t) => {
       const stage = await PipelineStage.findByPk(id, { transaction: t, lock: true });
       if (!stage) throw new BaseError(ERRORS.NOT_FOUND);

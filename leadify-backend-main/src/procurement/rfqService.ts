@@ -11,7 +11,7 @@ import Project from '../project/models/projectModel';
 import { clampPagination } from '../utils/pagination';
 
 class RFQService {
-  async createRFQ(input: any, user: User): Promise<RFQ> {
+  async createRFQ(input: unknown, user: User): Promise<RFQ> {
     const transaction = await sequelize.transaction();
     try {
       const { items, ...rfqData } = input;
@@ -29,7 +29,7 @@ class RFQService {
       );
 
       if (items && Array.isArray(items)) {
-        const rfqItems = items.map((item: any) => ({
+        const rfqItems = items.map((item: unknown) => ({
           ...item,
           rfqId: rfq.id
         }));
@@ -78,7 +78,7 @@ class RFQService {
     }
   }
 
-  async addVendorResponse(rfqId: string, vendorId: number, input: any): Promise<RFQVendor> {
+  async addVendorResponse(rfqId: string, vendorId: number, input: unknown): Promise<RFQVendor> {
     const transaction = await sequelize.transaction();
     try {
       const rfqVendor = await RFQVendor.findOne({
@@ -94,7 +94,7 @@ class RFQService {
         // Delete existing response items if any
         await RFQVendorItem.destroy({ where: { rfqVendorId: rfqVendor.id }, transaction });
 
-        const responseItems = items.map((item: any) => {
+        const responseItems = items.map((item: unknown) => {
           totalOffer += Number(item.price) || 0;
           return {
             rfqVendorId: rfqVendor.id,
@@ -120,7 +120,7 @@ class RFQService {
     }
   }
 
-  async getComparison(rfqId: string): Promise<any> {
+  async getComparison(rfqId: string): Promise<unknown> {
     const rfq = await RFQ.findByPk(rfqId, {
       include: [
         { model: RFQItem },
@@ -134,7 +134,7 @@ class RFQService {
     return rfq;
   }
 
-  async getRFQs(query: any): Promise<any> {
+  async getRFQs(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: docs, count: totalItems } = await RFQ.findAndCountAll({

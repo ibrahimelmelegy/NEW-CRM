@@ -28,7 +28,7 @@ class ProposalFinanceTableService {
     let grandTotalPrice = 0;
 
     const calculatedItems = await Promise.all(
-      items.map(async (item: any) => {
+      items.map(async (item: unknown) => {
         const material = await materialService.materialOrError({ id: item.materialId });
         const marginAmount = (material.unitPrice * marginPercentage) / 100;
         const unitPrice = material.unitPrice + marginAmount;
@@ -59,7 +59,7 @@ class ProposalFinanceTableService {
     });
 
     if (calculatedItems.length > 0) {
-      const financeTableItems = calculatedItems.map((item: any) => ({
+      const financeTableItems = calculatedItems.map((item: unknown) => ({
         ...item,
         financeTableId: financeTable.id
       }));
@@ -127,7 +127,7 @@ class ProposalFinanceTableService {
     return table;
   }
 
-  public async getFinanceTables(query: any): Promise<any> {
+  public async getFinanceTables(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: tables, count: totalItems } = await ProposalFinanceTable.findAndCountAll({

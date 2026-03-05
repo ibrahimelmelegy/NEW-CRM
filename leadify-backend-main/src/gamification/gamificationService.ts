@@ -21,7 +21,7 @@ class GamificationService {
       raw: false
     });
 
-    return leaderboard.map((entry: any, index: number) => ({
+    return leaderboard.map((entry: unknown, index: number) => ({
       rank: index + 1,
       userId: entry.userId,
       user: entry.user,
@@ -44,7 +44,7 @@ class GamificationService {
     return userPoints;
   }
 
-  async getUserPoints(userId: number): Promise<any> {
+  async getUserPoints(userId: number): Promise<unknown> {
     const user = await User.findByPk(userId);
     if (!user) throw new BaseError(ERRORS.USER_NOT_FOUND);
 

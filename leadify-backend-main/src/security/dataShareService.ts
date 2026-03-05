@@ -53,7 +53,7 @@ export async function shareRecord(
   }
 
   // Check for existing share with same target
-  const existingWhere: any = { entityType, entityId };
+  const existingWhere: Record<string, unknown> = { entityType, entityId };
   if (sharedWith.userId) existingWhere.sharedWithUserId = sharedWith.userId;
   if (sharedWith.roleId) existingWhere.sharedWithRoleId = sharedWith.roleId;
 

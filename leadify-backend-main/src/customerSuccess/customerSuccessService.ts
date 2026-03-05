@@ -36,14 +36,14 @@ export interface CustomerSuccessDashboard {
   healthDistribution: Array<{ name: string; value: number; color: string }>;
   topClients: HealthScore[];
   atRiskClients: HealthScore[];
-  recentActivity: any[];
+  recentActivity: unknown[];
   revenueByMonth: Array<{ month: string; revenue: number }>;
   engagementTrend: Array<{ month: string; activities: number }>;
 }
 
 class CustomerSuccessService {
   // ─── Calculate Health Score for a Single Client ─────────────────────────────
-  private async calculateHealthScore(client: any, tenantId?: string): Promise<HealthScore> {
+  private async calculateHealthScore(client: unknown, tenantId?: string): Promise<HealthScore> {
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
@@ -57,10 +57,10 @@ class CustomerSuccessService {
       attributes: ['id', 'price', 'stage', 'createdAt']
     });
 
-    const activeDeals = deals.filter((d: any) => !['CLOSED_WON', 'CLOSED_LOST'].includes(d.stage)).length;
+    const activeDeals = deals.filter((d: unknown) => !['CLOSED_WON', 'CLOSED_LOST'].includes(d.stage)).length;
 
-    const wonDeals = deals.filter((d: any) => d.stage === 'CLOSED_WON');
-    const totalRevenue = wonDeals.reduce((sum: number, d: any) => sum + (d.price || 0), 0);
+    const wonDeals = deals.filter((d: unknown) => d.stage === 'CLOSED_WON');
+    const totalRevenue = wonDeals.reduce((sum: number, d: unknown) => sum + (d.price || 0), 0);
 
     // Get recent communication activities
     const recentActivities = await CommActivity.count({
@@ -141,7 +141,7 @@ class CustomerSuccessService {
     // Get assigned users
     const assignedUsers: Array<{ id: number; name: string }> = [];
     if (client.users && client.users.length > 0) {
-      client.users.forEach((u: any) => {
+      client.users.forEach((u: unknown) => {
         assignedUsers.push({ id: u.id, name: u.name });
       });
     }
@@ -167,7 +167,7 @@ class CustomerSuccessService {
 
   // ─── Get Full Customer Success Dashboard ────────────────────────────────────
   public async getDashboard(tenantId?: string): Promise<CustomerSuccessDashboard> {
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     // Get all active clients
@@ -248,7 +248,7 @@ class CustomerSuccessService {
         .filter(h => h.riskLevel !== 'HEALTHY')
         .sort((a, b) => a.overallScore - b.overallScore)
         .slice(0, 10),
-      recentActivity: recentActivity.map((a: any) => a.toJSON()),
+      recentActivity: recentActivity.map((a: unknown) => a.toJSON()),
       revenueByMonth,
       engagementTrend
     };
@@ -281,7 +281,7 @@ class CustomerSuccessService {
       const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
       const monthName = date.toLocaleString('en', { month: 'short', year: '2-digit' });
 
-      const where: any = {
+      const where: Record<string, unknown> = {
         stage: 'CLOSED_WON',
         updatedAt: { [Op.gte]: date, [Op.lt]: nextMonth }
       };
@@ -304,7 +304,7 @@ class CustomerSuccessService {
       const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
       const monthName = date.toLocaleString('en', { month: 'short', year: '2-digit' });
 
-      const where: any = {
+      const where: Record<string, unknown> = {
         contactType: 'CLIENT',
         createdAt: { [Op.gte]: date, [Op.lt]: nextMonth }
       };

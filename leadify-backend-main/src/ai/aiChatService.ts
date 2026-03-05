@@ -16,7 +16,7 @@ interface ChatMessage {
 interface ChatResponse {
   answer: string;
   context?: string;
-  data?: any;
+  data?: unknown;
 }
 
 const CRM_SYSTEM_PROMPT = `You are a CRM data assistant for High Point CRM. You help users query and understand their CRM data.
@@ -118,14 +118,14 @@ class AIChatService {
     }
   }
 
-  private async analyzeQuestion(question: string, history: ChatMessage[]): Promise<any> {
+  private async analyzeQuestion(question: string, history: ChatMessage[]): Promise<unknown> {
     try {
       const client = await this.getOpenAIClient();
       if (!client) {
         return this.analyzeQuestionFallback(question);
       }
 
-      const messages: any[] = [
+      const messages: Record<string, unknown>[] = [
         { role: 'system', content: CRM_SYSTEM_PROMPT },
         ...history.slice(-6), // Include last 3 exchanges for context
         { role: 'user', content: question }
@@ -157,7 +157,7 @@ class AIChatService {
     }
   }
 
-  private analyzeQuestionFallback(question: string): any {
+  private analyzeQuestionFallback(question: string): unknown {
     const q = question.toLowerCase();
 
     // Simple keyword-based intent detection
@@ -203,7 +203,7 @@ class AIChatService {
     };
   }
 
-  private extractTimeRange(q: string): any | undefined {
+  private extractTimeRange(q: string): unknown | undefined {
     const now = new Date();
     if (q.includes('this month')) {
       const start = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -228,7 +228,7 @@ class AIChatService {
     return undefined;
   }
 
-  private async executeQuery(plan: any): Promise<any> {
+  private async executeQuery(plan: unknown): Promise<unknown> {
     const modelMap: Record<string, any> = {
       leads: Lead,
       deals: Deal,
@@ -241,7 +241,7 @@ class AIChatService {
     const model = modelMap[plan.module];
     if (!model) return null;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     // Apply filters
     if (plan.filters) {
@@ -267,7 +267,7 @@ class AIChatService {
       if (to) where[dateField][Op.lte] = new Date(to);
     }
 
-    const queryOptions: any = { where };
+    const queryOptions: Record<string, unknown> = { where };
 
     // Execute based on intent
     switch (plan.intent) {
@@ -335,7 +335,7 @@ class AIChatService {
     }
   }
 
-  private async generateResponse(question: string, plan: any, data: any): Promise<string> {
+  private async generateResponse(question: string, plan: unknown, data: unknown): Promise<string> {
     try {
       const client = await this.getOpenAIClient();
       if (!client) {
@@ -365,7 +365,7 @@ class AIChatService {
     }
   }
 
-  private formatResponseFallback(plan: any, data: any): string {
+  private formatResponseFallback(plan: unknown, data: unknown): string {
     if (!data) return 'No data found for your query.';
 
     switch (plan.intent) {
@@ -385,7 +385,7 @@ class AIChatService {
           const names = data.items
             .slice(0, 5)
             .map(
-              (item: any) =>
+              (item: unknown) =>
                 `- ${item.name || item.clientName || item.invoiceNumber || 'Item'}${item.price ? ` ($${item.price.toLocaleString()})` : ''}${item.amount ? ` ($${item.amount.toLocaleString()})` : ''}`
             )
             .join('\n');
@@ -396,7 +396,7 @@ class AIChatService {
       case 'status':
         if (data.breakdown?.length > 0) {
           const lines = data.breakdown
-            .map((item: any) => {
+            .map((item: unknown) => {
               const key = Object.keys(item).find(k => k !== 'count') || 'status';
               return `- **${item[key]}**: ${item.count}`;
             })
@@ -424,7 +424,7 @@ class AIChatService {
     }
 
     if (q.includes('pipeline') || (q.includes('deal') && q.includes('value'))) {
-      const result: any = await Deal.findOne({
+      const result = await Deal.findOne({
         where: { stage: 'PROGRESS' },
         attributes: [[fn('SUM', col('price')), 'total']],
         raw: true
@@ -441,7 +441,7 @@ class AIChatService {
     return null;
   }
 
-  private async getOpenAIClient(): Promise<any> {
+  private async getOpenAIClient(): Promise<unknown> {
     // Access the private openai client through the aiService singleton
     // We mirror the getClient pattern
     const OpenAI = require('openai').default;

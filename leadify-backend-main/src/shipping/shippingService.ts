@@ -14,14 +14,14 @@ const STATUS_ORDER: Record<string, string[]> = {
 };
 
 class ShippingService {
-  async createShipment(data: any, tenantId?: string) {
+  async createShipment(data: unknown, tenantId?: string) {
     const shipmentNumber = `SHP-${Date.now().toString(36).toUpperCase()}`;
     return Shipment.create({ ...data, shipmentNumber, tenantId });
   }
 
-  async getShipments(query: any, tenantId?: string) {
+  async getShipments(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.carrier) where.carrier = query.carrier;
@@ -34,7 +34,7 @@ class ShippingService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateShipment(id: number, data: any) {
+  async updateShipment(id: number, data: unknown) {
     const item = await Shipment.findByPk(id);
     if (!item) return null;
     if (data.status === 'DELIVERED' && !item.actualDelivery) data.actualDelivery = new Date();
@@ -49,17 +49,17 @@ class ShippingService {
     return true;
   }
 
-  async createRate(data: any, tenantId?: string) { return ShippingRate.create({ ...data, tenantId }); }
+  async createRate(data: unknown, tenantId?: string) { return ShippingRate.create({ ...data, tenantId }); }
 
-  async getRates(query: any, tenantId?: string) {
-    const where: any = {};
+  async getRates(query: unknown, tenantId?: string) {
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.carrier) where.carrier = query.carrier;
     if (query.isActive !== undefined) where.isActive = query.isActive === 'true';
     return ShippingRate.findAll({ where, order: [['carrier', 'ASC'], ['weightMin', 'ASC']] });
   }
 
-  async updateRate(id: number, data: any) {
+  async updateRate(id: number, data: unknown) {
     const item = await ShippingRate.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -84,7 +84,7 @@ class ShippingService {
   async calculateShippingRate(weight: number, zone?: string, tenantId?: string) {
     if (!weight || weight <= 0) throw new Error('Weight must be a positive number');
 
-    const where: any = {
+    const where: Record<string, unknown> = {
       isActive: true,
       weightMin: { [Op.lte]: weight },
       weightMax: { [Op.gte]: weight }
@@ -139,7 +139,7 @@ class ShippingService {
       );
     }
 
-    const updateData: any = { status: newStatus };
+    const updateData: Record<string, unknown> = { status: newStatus };
 
     // Auto-set timestamps based on the new status
     if (newStatus === 'SHIPPED') {
@@ -204,7 +204,7 @@ class ShippingService {
   async getCarrierRates(weight: number, zone?: string, tenantId?: string) {
     if (!weight || weight <= 0) throw new Error('Weight must be a positive number');
 
-    const where: any = {
+    const where: Record<string, unknown> = {
       isActive: true,
       weightMin: { [Op.lte]: weight },
       weightMax: { [Op.gte]: weight }
@@ -248,13 +248,13 @@ class ShippingService {
    * Returns a list of results with success/failure per shipment.
    */
   async bulkUpdateStatus(updates: Array<{ id: number; status: string }>) {
-    const results: Array<{ id: number; success: boolean; error?: string; shipment?: any }> = [];
+    const results: Array<{ id: number; success: boolean; error?: string; shipment?: unknown }> = [];
 
     for (const update of updates) {
       try {
         const shipment = await this.updateShipmentStatus(update.id, update.status);
         results.push({ id: update.id, success: true, shipment });
-      } catch (err: any) {
+      } catch (err: unknown) {
         results.push({ id: update.id, success: false, error: err.message });
       }
     }
@@ -272,7 +272,7 @@ class ShippingService {
    * total shipments, breakdown by status, on-time rate, average delivery time.
    */
   async getShippingAnalytics(tenantId: string) {
-    const where: any = { tenantId };
+    const where: Record<string, unknown> = { tenantId };
 
     // Total count
     const totalShipments = await Shipment.count({ where });

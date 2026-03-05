@@ -7,10 +7,10 @@ import { io } from '../server';
 class CartRecoveryService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string) {
+  async create(data: unknown, tenantId?: string) {
     // Auto-calculate totalValue from items if not provided
     if (data.items && Array.isArray(data.items) && !data.totalValue) {
-      data.totalValue = data.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+      data.totalValue = data.items.reduce((sum: number, item: unknown) => sum + (item.price * item.quantity), 0);
     }
     if (!data.abandonedAt) data.abandonedAt = new Date();
     const cart = await AbandonedCart.create({ ...data, tenantId });
@@ -18,9 +18,9 @@ class CartRecoveryService {
     return cart;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.recoveryStatus) where.recoveryStatus = query.recoveryStatus;
     if (query.customerId) where.customerId = query.customerId;
@@ -47,7 +47,7 @@ class CartRecoveryService {
     });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: unknown) {
     const item = await AbandonedCart.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -112,7 +112,7 @@ class CartRecoveryService {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - days);
 
-    const where: any = {
+    const where: Record<string, unknown> = {
       recoveryStatus: { [Op.in]: ['ABANDONED', 'REMINDED'] },
       abandonedAt: { [Op.lt]: cutoff }
     };
@@ -130,7 +130,7 @@ class CartRecoveryService {
 
   /** Get recovery funnel statistics */
   async getRecoveryStats(tenantId?: string) {
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const all = await AbandonedCart.findAll({ where, raw: true });

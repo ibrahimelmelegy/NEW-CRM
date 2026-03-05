@@ -7,15 +7,15 @@ import { io } from '../server';
 class SegmentService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string, createdBy?: number) {
+  async create(data: unknown, tenantId?: string, createdBy?: number) {
     const segment = await Segment.create({ ...data, tenantId, createdBy });
     try { io.emit('segment:created', { id: segment.id, name: segment.name }); } catch {}
     return segment;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -31,7 +31,7 @@ class SegmentService {
     return Segment.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: unknown) {
     const item = await Segment.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -59,7 +59,7 @@ class SegmentService {
     if (!segment) return null;
 
     const criteria = segment.criteria || [];
-    const sequelizeWhere: any = {};
+    const sequelizeWhere: Record<string, unknown> = {};
     if (tenantId) sequelizeWhere.tenantId = tenantId;
 
     for (const rule of criteria) {
@@ -104,7 +104,7 @@ class SegmentService {
 
   /** Get distribution of customers across all active segments */
   async getDistribution(tenantId?: string) {
-    const where: any = { status: 'ACTIVE' };
+    const where: Record<string, unknown> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     const segments = await Segment.findAll({

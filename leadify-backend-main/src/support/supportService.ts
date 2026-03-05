@@ -42,7 +42,7 @@ class SupportService {
   }
 
   // ─── Tickets ──────────────────────────────────────────────────────────
-  public async createTicket(data: any): Promise<Ticket> {
+  public async createTicket(data: unknown): Promise<Ticket> {
     const ticketNumber = await this.generateTicketNumber();
     const priority = data.priority || TicketPriority.MEDIUM;
     const slaDeadline = await this.calculateSLADeadline(priority);
@@ -57,11 +57,11 @@ class SupportService {
     return ticket;
   }
 
-  public async getTickets(query: any): Promise<IPaginationRes<Ticket>> {
+  public async getTickets(query: unknown): Promise<IPaginationRes<Ticket>> {
     const { page, limit, offset } = clampPagination(query, 20);
     const { status, priority, assignedTo, categoryId, search, clientId } = query;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (status) where.status = status;
     if (priority) where.priority = priority;
@@ -117,7 +117,7 @@ class SupportService {
     return ticket;
   }
 
-  public async updateTicket(id: string, data: any): Promise<Ticket> {
+  public async updateTicket(id: string, data: unknown): Promise<Ticket> {
     const ticket = await Ticket.findByPk(id);
     if (!ticket) throw new BaseError(ERRORS.NOT_FOUND);
     await ticket.update(data);
@@ -125,7 +125,7 @@ class SupportService {
   }
 
   // ─── Messages ─────────────────────────────────────────────────────────
-  public async addMessage(ticketId: string, data: any): Promise<TicketMessage> {
+  public async addMessage(ticketId: string, data: unknown): Promise<TicketMessage> {
     const ticket = await Ticket.findByPk(ticketId);
     if (!ticket) throw new BaseError(ERRORS.NOT_FOUND);
 
@@ -154,7 +154,7 @@ class SupportService {
     const user = await User.findByPk(userId);
     if (!user) throw new BaseError(ERRORS.USER_NOT_FOUND);
 
-    const updateData: any = { assignedTo: userId };
+    const updateData: Record<string, unknown> = { assignedTo: userId };
 
     // Set firstResponseAt on first assignment
     if (!ticket.firstResponseAt) {
@@ -183,7 +183,7 @@ class SupportService {
     if (!agents.length) throw new BaseError(ERRORS.USER_NOT_FOUND);
 
     let minCount = Infinity;
-    let selectedAgent: any = null;
+    let selectedAgent: unknown = null;
 
     for (const agent of agents) {
       const count = await Ticket.count({
@@ -226,7 +226,7 @@ class SupportService {
       ? priorityLadder[currentIndex + 1]
       : TicketPriority.URGENT;
 
-    const updateData: any = { priority: newPriority };
+    const updateData: Record<string, unknown> = { priority: newPriority };
 
     // Recalculate SLA deadline based on new priority
     const newSlaDeadline = await this.calculateSLADeadline(newPriority);
@@ -302,7 +302,7 @@ class SupportService {
    * Generate a detailed SLA compliance report.
    * Returns compliance rates by priority, breach trends, and at-risk tickets.
    */
-  public async getSLAComplianceReport(): Promise<any> {
+  public async getSLAComplianceReport(): Promise<unknown> {
     // Per-priority compliance
     const priorities = Object.values(TicketPriority);
     const complianceByPriority: Record<string, { total: number; compliant: number; breached: number; rate: number }> = {};
@@ -440,7 +440,7 @@ class SupportService {
   }
 
   // ─── Metrics / Dashboard ──────────────────────────────────────────────
-  public async getTicketMetrics(): Promise<any> {
+  public async getTicketMetrics(): Promise<unknown> {
     const openCount = await Ticket.count({
       where: { status: { [Op.in]: [TicketStatus.OPEN, TicketStatus.IN_PROGRESS, TicketStatus.WAITING_CUSTOMER] } }
     });
@@ -603,8 +603,8 @@ class SupportService {
   }
 
   // ─── Canned Responses ─────────────────────────────────────────────────
-  public async getCannedResponses(query: any): Promise<CannedResponse[]> {
-    const where: any = {};
+  public async getCannedResponses(query: unknown): Promise<CannedResponse[]> {
+    const where: Record<string, unknown> = {};
     if (query.category) where.category = query.category;
     if (query.search) {
       where[Op.or] = [{ title: { [Op.iLike]: `%${query.search}%` } }, { body: { [Op.iLike]: `%${query.search}%` } }];
@@ -613,11 +613,11 @@ class SupportService {
     return CannedResponse.findAll({ where, order: [['title', 'ASC']] });
   }
 
-  public async createCannedResponse(data: any): Promise<CannedResponse> {
+  public async createCannedResponse(data: unknown): Promise<CannedResponse> {
     return CannedResponse.create(data);
   }
 
-  public async updateCannedResponse(id: string, data: any): Promise<CannedResponse> {
+  public async updateCannedResponse(id: string, data: unknown): Promise<CannedResponse> {
     const response = await CannedResponse.findByPk(id);
     if (!response) throw new BaseError(ERRORS.NOT_FOUND);
     await response.update(data);
@@ -639,11 +639,11 @@ class SupportService {
     });
   }
 
-  public async createCategory(data: any): Promise<TicketCategory> {
+  public async createCategory(data: unknown): Promise<TicketCategory> {
     return TicketCategory.create(data);
   }
 
-  public async updateCategory(id: string, data: any): Promise<TicketCategory> {
+  public async updateCategory(id: string, data: unknown): Promise<TicketCategory> {
     const category = await TicketCategory.findByPk(id);
     if (!category) throw new BaseError(ERRORS.NOT_FOUND);
     await category.update(data);
@@ -661,11 +661,11 @@ class SupportService {
     return SLAConfig.findAll({ order: [['priority', 'ASC']] });
   }
 
-  public async createSLAConfig(data: any): Promise<SLAConfig> {
+  public async createSLAConfig(data: unknown): Promise<SLAConfig> {
     return SLAConfig.create(data);
   }
 
-  public async updateSLAConfig(id: string, data: any): Promise<SLAConfig> {
+  public async updateSLAConfig(id: string, data: unknown): Promise<SLAConfig> {
     const config = await SLAConfig.findByPk(id);
     if (!config) throw new BaseError(ERRORS.NOT_FOUND);
     await config.update(data);

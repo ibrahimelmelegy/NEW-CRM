@@ -63,8 +63,8 @@ const DEAL_STAGE_PROBABILITY: Record<string, number> = {
 
 class DealService {
   public async convertLeadTODeal(input: ConvertLeadToDealInput & { userId: string }, admin: User): Promise<Deal> {
-    let lead: any,
-      client: any = null;
+    let lead: unknown,
+      client: unknown = null;
     const transaction = await sequelize.transaction();
     try {
       lead = await leadService.leadOrError({ id: input.leadId });
@@ -451,7 +451,7 @@ class DealService {
   }
 
   public async getKanbanDeals(user: User): Promise<Record<string, Deal[]>> {
-    const where: any = {
+    const where: Record<string, unknown> = {
       stage: { [Op.ne]: DealStageEnums.CONVERTED }
     };
 
@@ -540,7 +540,7 @@ class DealService {
           user
         );
         await createActivityLog('deal', 'update', deal.id, user.id, null, `Auto-generated Project for Winning Deal`);
-      } catch (err: any) {
+      } catch (err: unknown) {
         // Log but don't fail the deal update if project creation fails (graceful degradation)
         console.error('Failed to auto-create project from deal:', err.message);
       }
@@ -593,7 +593,7 @@ class DealService {
     dealCount: number;
     byStage: Record<string, { count: number; totalValue: number; weightedValue: number; avgProbability: number }>;
   }> {
-    const where: any = {
+    const where: Record<string, unknown> = {
       stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.ARCHIVED, DealStageEnums.CONVERTED] },
       ...(tenantId ? { tenantId } : {})
     };
@@ -686,7 +686,7 @@ class DealService {
     avgDaysToClose: number;
     byMonth: Array<{ month: string; won: number; lost: number; winRate: number }>;
   }> {
-    const where: any = {
+    const where: Record<string, unknown> = {
       stage: { [Op.in]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED] },
       ...(tenantId ? { tenantId } : {})
     };
@@ -767,7 +767,7 @@ class DealService {
   }
 
   public async sendDealsExcelByEmail(query: GetPaginatedDealsInput, user: User, email: string): Promise<void> {
-    const where: any = {
+    const where: Record<string, unknown> = {
       stage: {
         [Op.ne]: DealStageEnums.CONVERTED
       },

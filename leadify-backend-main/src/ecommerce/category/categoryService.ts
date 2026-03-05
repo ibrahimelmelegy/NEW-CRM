@@ -13,7 +13,7 @@ function slugify(text: string): string {
 }
 
 class CategoryService {
-  async getCategories(query: any): Promise<any> {
+  async getCategories(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, parentId, isActive } = query;
 
@@ -88,7 +88,7 @@ class CategoryService {
     return categories;
   }
 
-  async createCategory(data: any): Promise<EcCategory> {
+  async createCategory(data: unknown): Promise<EcCategory> {
     const slug = slugify(data.name);
 
     // Ensure slug uniqueness by appending a suffix if needed
@@ -102,7 +102,7 @@ class CategoryService {
     return EcCategory.create({ ...data, slug: finalSlug });
   }
 
-  async updateCategory(id: string, data: any): Promise<EcCategory> {
+  async updateCategory(id: string, data: unknown): Promise<EcCategory> {
     const category = await EcCategory.findByPk(id);
     if (!category) throw new Error('Category not found');
 

@@ -3,7 +3,7 @@ import { encrypt, decrypt } from '../utils/encryption';
 
 const SENSITIVE_CONFIG_KEYS = ['apiKey', 'clientSecret', 'accessToken', 'refreshToken'];
 
-function encryptSensitiveFields(config: any): any {
+function encryptSensitiveFields(config: unknown): unknown {
   if (!config || typeof config !== 'object') return config;
   const encrypted = { ...config };
   for (const key of SENSITIVE_CONFIG_KEYS) {
@@ -18,7 +18,7 @@ function encryptSensitiveFields(config: any): any {
   return encrypted;
 }
 
-function decryptSensitiveFields(config: any): any {
+function decryptSensitiveFields(config: unknown): unknown {
   if (!config || typeof config !== 'object') return config;
   const decrypted = { ...config };
   for (const key of SENSITIVE_CONFIG_KEYS) {
@@ -49,7 +49,7 @@ class IntegrationService {
     });
   }
 
-  async upsertIntegration(data: any, userId?: number) {
+  async upsertIntegration(data: unknown, userId?: number) {
     const { provider, ...rest } = data;
     const configToStore = rest.config ? encryptSensitiveFields(rest.config) : encryptSensitiveFields(rest);
 

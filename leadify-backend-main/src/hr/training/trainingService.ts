@@ -6,7 +6,7 @@ import { io } from '../../server';
 
 class TrainingService {
   // ──────────── Programs CRUD ────────────
-  async createProgram(data: any, tenantId?: string) {
+  async createProgram(data: unknown, tenantId?: string) {
     return TrainingProgram.create({ ...data, tenantId });
   }
 
@@ -20,9 +20,9 @@ class TrainingService {
     });
   }
 
-  async getPrograms(query: any, tenantId?: string) {
+  async getPrograms(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -34,7 +34,7 @@ class TrainingService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateProgram(id: number, data: any) {
+  async updateProgram(id: number, data: unknown) {
     const program = await TrainingProgram.findByPk(id);
     if (!program) return null;
     await program.update(data);
@@ -49,13 +49,13 @@ class TrainingService {
   }
 
   // ──────────── Enrollments CRUD ────────────
-  async enroll(data: any, tenantId?: string) {
+  async enroll(data: unknown, tenantId?: string) {
     return TrainingEnrollment.create({ ...data, tenantId });
   }
 
-  async getEnrollments(query: any, tenantId?: string) {
+  async getEnrollments(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.programId) where.programId = query.programId;
     if (query.employeeId) where.employeeId = query.employeeId;
@@ -73,7 +73,7 @@ class TrainingService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateEnrollment(id: number, data: any) {
+  async updateEnrollment(id: number, data: unknown) {
     const enrollment = await TrainingEnrollment.findByPk(id);
     if (!enrollment) return null;
     if (data.status === 'COMPLETED' && !enrollment.completedAt) {
@@ -364,7 +364,7 @@ class TrainingService {
       raw: true
     });
 
-    const completedIds = new Set(completedPrereqs.map((e: any) => e.programId));
+    const completedIds = new Set(completedPrereqs.map((e: unknown) => e.programId));
     const missingIds = prerequisiteIds.filter(id => !completedIds.has(id));
 
     if (missingIds.length > 0) {
@@ -375,7 +375,7 @@ class TrainingService {
         raw: true
       });
 
-      const missingTitles = missingPrograms.map((p: any) => `"${p.title}" (ID: ${p.id})`).join(', ');
+      const missingTitles = missingPrograms.map((p: unknown) => `"${p.title}" (ID: ${p.id})`).join(', ');
       throw new Error(`Prerequisites not met. Employee must first complete: ${missingTitles}`);
     }
 

@@ -7,7 +7,7 @@ import { ERRORS } from '../utils/error/errors';
 import { clampPagination } from '../utils/pagination';
 
 class InventoryService {
-  async getProducts(query: any): Promise<any> {
+  async getProducts(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, category, warehouse, isActive } = query;
 
@@ -59,11 +59,11 @@ class InventoryService {
     return product;
   }
 
-  async createProduct(data: any): Promise<Product> {
+  async createProduct(data: unknown): Promise<Product> {
     return await Product.create(data);
   }
 
-  async updateProduct(id: string, data: any): Promise<Product> {
+  async updateProduct(id: string, data: unknown): Promise<Product> {
     const product = await this.productOrError({ id });
     product.set(data);
     await product.save();
@@ -83,7 +83,7 @@ class InventoryService {
     });
   }
 
-  async addStockMovement(data: any): Promise<StockMovement> {
+  async addStockMovement(data: unknown): Promise<StockMovement> {
     const product = await this.productOrError({ id: data.productId });
 
     const movement = await StockMovement.create(data);
@@ -121,7 +121,7 @@ class InventoryService {
       where: { category: { [Op.ne]: null } },
       raw: true
     });
-    return results.map((r: any) => r.category).filter(Boolean);
+    return results.map((r: unknown) => r.category).filter(Boolean);
   }
 
   async getWarehouses(): Promise<string[]> {
@@ -130,7 +130,7 @@ class InventoryService {
       where: { warehouse: { [Op.ne]: null } },
       raw: true
     });
-    return results.map((r: any) => r.warehouse).filter(Boolean);
+    return results.map((r: unknown) => r.warehouse).filter(Boolean);
   }
 
   private async productOrError(filter: WhereOptions): Promise<Product> {

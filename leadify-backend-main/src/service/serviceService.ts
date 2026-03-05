@@ -8,7 +8,7 @@ import { sendEmail } from '../utils/emailHelper';
 import { clampPagination } from '../utils/pagination';
 
 class ServiceService {
-  public async createService(data: any): Promise<Service> {
+  public async createService(data: unknown): Promise<Service> {
     if (data.type) await this.errorIfServiceWithExistType(data.type);
     return await Service.create(data);
   }
@@ -22,7 +22,7 @@ class ServiceService {
     return service;
   }
 
-  public async getServices(query: any): Promise<any> {
+  public async getServices(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: services, count: totalItems } = await Service.findAndCountAll({
@@ -65,8 +65,8 @@ class ServiceService {
     if (serviceWithType) throw new BaseError(ERRORS.TYPE_ALREADY_EXISTS);
   }
 
-  public async sendServicesExcelByEmail(query: any, email: string): Promise<void> {
-    const where: any = {
+  public async sendServicesExcelByEmail(query: unknown, email: string): Promise<void> {
+    const where: Record<string, unknown> = {
       ...(query.searchKey && {
         [Op.or]: [{ type: { [Op.iLike]: `%${query.searchKey}%` } }]
       }),

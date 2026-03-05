@@ -51,7 +51,7 @@ class LocalStorageProvider implements StorageProvider {
 // ─── DigitalOcean Spaces Provider (S3-compatible) ─────────────────────────────
 
 class SpacesStorageProvider implements StorageProvider {
-  private s3: any;
+  private s3: unknown;
   private bucket: string;
   private cdnUrl: string;
 

@@ -118,7 +118,7 @@ class ZakaatService {
    */
   async getAssessments(query: AssessmentQuery) {
     const { page, limit, offset } = clampPagination(query, 20);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (query.status) {
       where.status = query.status;
@@ -173,7 +173,7 @@ class ZakaatService {
       throw new Error('Cannot update a paid assessment');
     }
 
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
 
     if (data.fiscalYear !== undefined) updateData.fiscalYear = data.fiscalYear;
     if (data.companyId !== undefined) updateData.companyId = data.companyId;

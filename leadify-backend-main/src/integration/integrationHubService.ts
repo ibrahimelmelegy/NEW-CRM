@@ -279,7 +279,7 @@ class IntegrationHubService {
         default:
           return { success: false, message: `Unknown integration type: ${type}` };
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Update status to ERROR if this is a saved integration
       const existing = await IntegrationConfig.findOne({ where: { type } });
       if (existing) {
@@ -310,7 +310,7 @@ class IntegrationHubService {
     return OutgoingWebhook.findAll({ where, order: [['createdAt', 'DESC']] });
   }
 
-  async createWebhook(data: any, userId?: number, tenantId?: string): Promise<OutgoingWebhook> {
+  async createWebhook(data: unknown, userId?: number, tenantId?: string): Promise<OutgoingWebhook> {
     const secret = data.secret || crypto.randomBytes(32).toString('hex');
     return OutgoingWebhook.create({
       name: data.name,
@@ -324,7 +324,7 @@ class IntegrationHubService {
     });
   }
 
-  async updateWebhook(id: string, data: any, tenantId?: string): Promise<OutgoingWebhook> {
+  async updateWebhook(id: string, data: unknown, tenantId?: string): Promise<OutgoingWebhook> {
     const where: Record<string, any> = { id };
     if (tenantId) where.tenantId = tenantId;
 
@@ -389,13 +389,13 @@ class IntegrationHubService {
         status: response.status,
         message: response.ok ? 'Webhook test successful' : `Webhook returned HTTP ${response.status}`
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       return { success: false, status: 0, message: error.message || 'Webhook test failed' };
     }
   }
 
   // ── Trigger webhooks for a given event ───────────────────────────────────
-  async triggerWebhooks(event: string, payload: any, tenantId?: string): Promise<void> {
+  async triggerWebhooks(event: string, payload: unknown, tenantId?: string): Promise<void> {
     const where: Record<string, any> = { status: OutgoingWebhookStatus.ACTIVE };
     if (tenantId) where.tenantId = tenantId;
 
@@ -409,7 +409,7 @@ class IntegrationHubService {
     }
   }
 
-  private async deliverWebhook(webhook: OutgoingWebhook, event: string, payload: any, attempt: number = 1): Promise<void> {
+  private async deliverWebhook(webhook: OutgoingWebhook, event: string, payload: unknown, attempt: number = 1): Promise<void> {
     const body = JSON.stringify({ event, payload, timestamp: new Date().toISOString() });
     const signature = crypto.createHmac('sha256', webhook.secret).update(body).digest('hex');
 

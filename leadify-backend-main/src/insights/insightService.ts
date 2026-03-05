@@ -31,7 +31,7 @@ class InsightService {
     const startDate = startOfMonth(new Date());
     const endDate = endOfMonth(new Date());
 
-    const query: any = {};
+    const query: Record<string, unknown> = {};
     if (!user.role.permissions.includes(LeadAndSalesWidgetsPermissionsEnum.VIEW_GLOBAL_LEAD_SALES_WIDGETS)) query.userId = user.id;
     const [
       leadCount,
@@ -158,8 +158,8 @@ class InsightService {
 
     const leadConversionRate = leadCount > 0 ? Number(((convertedOpportunityFromLeadsCount / leadCount) * 100).toFixed(2)) : 0;
 
-    const opportunityStages = Object.values(OpportunityStageEnums).reduce((acc: any, stage) => {
-      const found = opportunityStageCounts.find((item: any) => item.dataValues.stage === stage);
+    const opportunityStages = Object.values(OpportunityStageEnums).reduce((acc: unknown, stage) => {
+      const found = opportunityStageCounts.find((item: unknown) => item.dataValues.stage === stage);
       const count = found ? Number(found.dataValues.count) : 0;
       acc[stage] = opportunityCount > 0 ? Number(((count / opportunityCount) * 100).toFixed(2)) : 0;
       return acc;
@@ -218,7 +218,7 @@ class InsightService {
     const cachedData = await cacheService.get(cacheKey);
     if (cachedData) return cachedData;
 
-    const query: any = {};
+    const query: Record<string, unknown> = {};
     if (!user.role.permissions.includes(ProjectsAndOperationsWidgetsPermissionsEnum.VIEW_GLOBAL_PROJECTS_OPERATIONS_WIDGETS)) query.userId = user.id;
 
     const [projectCount, projectsByStatusRaw, totalManpowerCount, assignedManpowerCount, totalAssetCount, assignedAssetCount, eitmadProjectsCount] =
@@ -276,7 +276,7 @@ class InsightService {
         })
       ]);
 
-    const projectsByStatus = Object.values(ProjectStatusEnum).reduce((acc: any, status) => {
+    const projectsByStatus = Object.values(ProjectStatusEnum).reduce((acc: unknown, status) => {
       const found = projectsByStatusRaw.find(item => item.dataValues.status === status);
       const count = found ? Number(found.dataValues.count) : 0;
       acc[status] = count;
@@ -304,7 +304,7 @@ class InsightService {
     const cachedData = await cacheService.get(cacheKey);
     if (cachedData) return cachedData;
 
-    const query: any = {};
+    const query: Record<string, unknown> = {};
     if (!user.role.permissions.includes(FinancialAndBusinessMetricsWidgetsPermissionsEnum.VIEW_GLOBAL_FINANCIAL_BUSINESS_METRICS_WIDGETS))
       query.userId = user.id;
 
@@ -357,7 +357,7 @@ class InsightService {
     const cachedData = await cacheService.get(cacheKey);
     if (cachedData) return cachedData;
 
-    const query: any = {};
+    const query: Record<string, unknown> = {};
     if (!user.role.permissions.includes(PerformanceAndHRWidgetsPermissionsEnum.VIEW_GLOBAL_PERFORMANCE_HR_WIDGETS)) query.userId = user.id;
 
     const [leadCount, opportunityCount, convertedDealsFromOpportunityCount, dealsCount] = await Promise.all([

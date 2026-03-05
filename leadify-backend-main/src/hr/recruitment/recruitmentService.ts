@@ -9,13 +9,13 @@ const STAGE_ORDER: Array<Applicant['stage']> = ['APPLIED', 'SCREENING', 'INTERVI
 
 class RecruitmentService {
   // ──────────── Job Postings CRUD ────────────
-  async createPosting(data: any, tenantId?: string) {
+  async createPosting(data: unknown, tenantId?: string) {
     return JobPosting.create({ ...data, tenantId });
   }
 
-  async getPostings(query: any, tenantId?: string) {
+  async getPostings(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.title = { [Op.iLike]: `%${query.search}%` };
@@ -29,7 +29,7 @@ class RecruitmentService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updatePosting(id: number, data: any) {
+  async updatePosting(id: number, data: unknown) {
     const posting = await JobPosting.findByPk(id);
     if (!posting) return null;
     await posting.update(data);
@@ -44,13 +44,13 @@ class RecruitmentService {
   }
 
   // ──────────── Applicants CRUD ────────────
-  async createApplicant(data: any, tenantId?: string) {
+  async createApplicant(data: unknown, tenantId?: string) {
     return Applicant.create({ ...data, tenantId });
   }
 
-  async getApplicants(query: any, tenantId?: string) {
+  async getApplicants(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.jobPostingId) where.jobPostingId = query.jobPostingId;
     if (query.stage) where.stage = query.stage;
@@ -65,7 +65,7 @@ class RecruitmentService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateApplicant(id: number, data: any) {
+  async updateApplicant(id: number, data: unknown) {
     const applicant = await Applicant.findByPk(id);
     if (!applicant) return null;
     await applicant.update(data);
@@ -225,7 +225,7 @@ class RecruitmentService {
       const stageHistory = exp?.stageHistory || [];
 
       // Find the HIRED transition timestamp
-      const hiredEntry = stageHistory.find((h: any) => h.to === 'HIRED');
+      const hiredEntry = stageHistory.find((h: unknown) => h.to === 'HIRED');
       const hiredDate = hiredEntry?.timestamp
         ? new Date(hiredEntry.timestamp)
         : null;

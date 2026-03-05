@@ -30,7 +30,7 @@ function canSendEmail(userId: number): boolean {
   return true;
 }
 
-let ioInstance: any = null;
+let ioInstance: unknown = null;
 
 function getIO() {
   if (!ioInstance) {
@@ -242,7 +242,7 @@ class NotificationCenterService {
       for (const sub of subscriptions) {
         try {
           await webpush.sendNotification(sub.subscription, payload);
-        } catch (err: any) {
+        } catch (err: unknown) {
           // If subscription expired (410 Gone), remove it
           if (err?.statusCode === 410) {
             await sub.destroy();
@@ -294,7 +294,7 @@ class NotificationCenterService {
     const limit = query.limit || 10;
     const offset = (page - 1) * limit;
 
-    const where: any = { userId };
+    const where: Record<string, unknown> = { userId };
 
     // Filter by read status
     if (query.read === 'unread') {
@@ -554,7 +554,7 @@ class NotificationCenterService {
   async registerPushSubscription(
     userId: number,
     subscription: { endpoint: string; keys: { p256dh: string; auth: string } }
-  ): Promise<any> {
+  ): Promise<unknown> {
     try {
       const PushSubscription = require('./pushSubscriptionModel').default;
 

@@ -21,11 +21,11 @@ class ReportService {
     });
   }
 
-  async createReport(userId: number, data: any) {
+  async createReport(userId: number, data: unknown) {
     return SavedReport.create({ ...data, userId });
   }
 
-  async updateReport(id: string, userId: number, data: any) {
+  async updateReport(id: string, userId: number, data: unknown) {
     const report = await SavedReport.findOne({ where: { id, userId } });
     if (!report) throw new Error('Report not found');
     return report.update(data);
@@ -37,11 +37,11 @@ class ReportService {
     await report.destroy();
   }
 
-  async executeReport(config: any) {
+  async executeReport(config: unknown) {
     const Model = modelMap[config.entityType];
     if (!Model) throw new Error('Invalid entity type');
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     // Handle date range filters
     if (config.startDate || config.endDate) {
@@ -76,7 +76,7 @@ class ReportService {
       }
     }
 
-    const queryOptions: any = {
+    const queryOptions: Record<string, unknown> = {
       where,
       attributes: config.columns || undefined,
       order: config.sortBy ? [[config.sortBy, config.sortOrder || 'ASC']] : [['createdAt', 'DESC']],
@@ -98,7 +98,7 @@ class ReportService {
     const Model = modelMap[entityType];
     if (!Model) throw new Error('Invalid entity type');
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (startDate || endDate) {
       where.createdAt = {};
       if (startDate) where.createdAt[Op.gte] = new Date(startDate);
@@ -153,12 +153,12 @@ class ReportService {
     };
   }
 
-  async exportCSV(config: any): Promise<string> {
+  async exportCSV(config: unknown): Promise<string> {
     const data = await this.executeReport(config);
     if (!data.length) return '';
 
     const headers = Object.keys(data[0]);
-    const rows = data.map((row: any) =>
+    const rows = data.map((row: unknown) =>
       headers
         .map(h => {
           const val = row[h];
@@ -172,7 +172,7 @@ class ReportService {
     return [headers.join(','), ...rows].join('\n');
   }
 
-  async exportExcel(config: any): Promise<Buffer> {
+  async exportExcel(config: unknown): Promise<Buffer> {
     const data = await this.executeReport(config);
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Report');
@@ -194,15 +194,15 @@ class ReportService {
     headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
 
     // Add data rows
-    data.forEach((row: any) => {
+    data.forEach((row: unknown) => {
       const values = headers.map(h => row[h]);
       worksheet.addRow(values);
     });
 
     // Auto-size columns
-    worksheet.columns.forEach((column: any) => {
+    worksheet.columns.forEach((column: unknown) => {
       let maxLength = 0;
-      column.eachCell({ includeEmpty: true }, (cell: any) => {
+      column.eachCell({ includeEmpty: true }, (cell: unknown) => {
         const length = cell.value ? String(cell.value).length : 10;
         if (length > maxLength) maxLength = length;
       });

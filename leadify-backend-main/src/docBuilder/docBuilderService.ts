@@ -38,7 +38,7 @@ class DocBuilderService {
     return `${prefix}-${year}-${random}`;
   }
 
-  public async createDocument(data: any, user: User): Promise<DocBuilderDocument> {
+  public async createDocument(data: unknown, user: User): Promise<DocBuilderDocument> {
     if (!data.reference) {
       data.reference = this.generateReference(data.type);
       // Ensure uniqueness
@@ -67,7 +67,7 @@ class DocBuilderService {
     return document;
   }
 
-  public async updateDocument(id: string, data: any, user: User): Promise<DocBuilderDocument> {
+  public async updateDocument(id: string, data: unknown, user: User): Promise<DocBuilderDocument> {
     const document = await this.documentOrError({ id, ...tenantWhere(user) });
 
     if (data.reference && data.reference !== document.reference) {
@@ -97,7 +97,7 @@ class DocBuilderService {
     return document;
   }
 
-  public async getDocuments(query: any, user: User): Promise<any> {
+  public async getDocuments(query: unknown, user: User): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query, 20);
 
     const where: WhereOptions = {
@@ -241,7 +241,7 @@ class DocBuilderService {
   public async changeStatus(id: string, status: DocStatusEnum, reason: string | undefined, user: User): Promise<DocBuilderDocument> {
     const document = await this.documentOrError({ id, ...tenantWhere(user) });
 
-    const updateData: any = { status };
+    const updateData: Record<string, unknown> = { status };
     if (reason) updateData.rejectionReason = reason;
     if (status === DocStatusEnum.SENT) updateData.sentAt = new Date();
 
@@ -345,7 +345,7 @@ class DocBuilderService {
     return document;
   }
 
-  public async getStats(query: any, user: User): Promise<any> {
+  public async getStats(query: unknown, user: User): Promise<unknown> {
     const where: WhereOptions = { ...tenantWhere(user) };
 
     if (!user.role?.permissions?.includes(DocBuilderPermissionsEnum.VIEW_GLOBAL_DOCUMENTS)) {
@@ -491,7 +491,7 @@ class DocBuilderService {
    * an explicit watermark string is provided.
    */
   public async renderDocument(document: DocBuilderDocument, watermark?: string): Promise<string> {
-    let content: any = {};
+    let content: Record<string, unknown> = {};
     try {
       content = document.content ? JSON.parse(document.content) : {};
     } catch {

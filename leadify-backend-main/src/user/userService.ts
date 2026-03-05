@@ -48,7 +48,7 @@ class UserService {
    * @param data - User data
    * @returns Created user
    */
-  public async createUser(data: any): Promise<User> {
+  public async createUser(data: unknown): Promise<User> {
     // Check if email is already taken
     await this.errorIfUserWithExistingEmail(data.email);
     if (data.roleId) await roleService.roleOrError({ id: data.roleId });
@@ -86,7 +86,7 @@ class UserService {
    * @param query - Query parameters for pagination and filtering
    * @returns Paginated users
    */
-  public async getUsers(query: any): Promise<any> {
+  public async getUsers(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, status, roleId } = query;
 
@@ -154,8 +154,8 @@ class UserService {
     return user;
   }
 
-  public async sendUsersExcelByEmail(query: any, email: string): Promise<void> {
-    const where: any = {
+  public async sendUsersExcelByEmail(query: unknown, email: string): Promise<void> {
+    const where: Record<string, unknown> = {
       ...(query.status && { status: query.status }),
       ...(query.roleId && { roleId: query.roleId }),
       ...(query.searchKey && {

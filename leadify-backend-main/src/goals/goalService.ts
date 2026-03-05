@@ -4,13 +4,13 @@ import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 
 class GoalService {
-  async create(data: any, tenantId?: string) {
+  async create(data: unknown, tenantId?: string) {
     return Goal.create({ ...data, tenantId });
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.level) where.level = query.level;
     if (query.status) where.status = query.status;
@@ -34,7 +34,7 @@ class GoalService {
     return Goal.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: unknown) {
     const goal = await Goal.findByPk(id);
     if (!goal) return null;
     await goal.update(data);
@@ -61,7 +61,7 @@ class GoalService {
     if (!goal) throw new Error('Goal not found');
 
     const clampedProgress = Math.max(0, Math.min(100, progress));
-    const updateData: any = { progress: clampedProgress };
+    const updateData: Record<string, unknown> = { progress: clampedProgress };
 
     if (clampedProgress >= 100 && goal.status !== 'COMPLETED') {
       updateData.status = 'COMPLETED';
@@ -105,7 +105,7 @@ class GoalService {
       children.reduce((sum, child) => sum + (child.progress || 0), 0) / children.length
     );
 
-    const updateData: any = { progress: avgProgress };
+    const updateData: Record<string, unknown> = { progress: avgProgress };
     if (avgProgress >= 100 && parent.status !== 'COMPLETED') {
       updateData.status = 'COMPLETED';
     } else if (avgProgress > 0 && parent.status === 'NOT_STARTED') {
@@ -125,7 +125,7 @@ class GoalService {
    * Returns total, completed, in-progress, overdue counts, avg progress, completion rate.
    */
   async getGoalStats(tenantId: string, owner?: string) {
-    const where: any = { tenantId };
+    const where: Record<string, unknown> = { tenantId };
     if (owner) where.owner = owner;
 
     const today = new Date().toISOString().split('T')[0];
@@ -145,7 +145,7 @@ class GoalService {
         where,
         attributes: [[fn('AVG', col('progress')), 'avgProgress']],
         raw: true
-      }) as Promise<any>
+      }) as Promise<unknown>
     ]);
 
     const avgProgress = parseFloat(avgResult?.avgProgress) || 0;

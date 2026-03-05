@@ -16,7 +16,7 @@ interface ValidationError {
 }
 
 class FormBuilderService {
-  async createTemplate(data: any, tenantId?: string) {
+  async createTemplate(data: unknown, tenantId?: string) {
     const embedToken = this.generateEmbedToken();
     return FormTemplate.create({ ...data, tenantId, embedToken });
   }
@@ -25,9 +25,9 @@ class FormBuilderService {
     return `emb_${Math.random().toString(36).substring(2, 15)}${Date.now().toString(36)}`;
   }
 
-  async getTemplates(query: any, tenantId?: string) {
+  async getTemplates(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
@@ -35,7 +35,7 @@ class FormBuilderService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateTemplate(id: number, data: any) {
+  async updateTemplate(id: number, data: unknown) {
     const item = await FormTemplate.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -50,7 +50,7 @@ class FormBuilderService {
     return true;
   }
 
-  async submitForm(formId: number, data: any, meta?: { source?: string; ipAddress?: string; utmParams?: Record<string, any>; userAgent?: string }) {
+  async submitForm(formId: number, data: unknown, meta?: { source?: string; ipAddress?: string; utmParams?: Record<string, any>; userAgent?: string }) {
     const form = await FormTemplate.findByPk(formId);
     if (!form) return null;
 
@@ -107,9 +107,9 @@ class FormBuilderService {
     return FormTemplate.findOne({ where: { embedToken: token, status: 'ACTIVE' } });
   }
 
-  async getSubmissions(query: any, tenantId?: string) {
+  async getSubmissions(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.formId) where.formId = query.formId;
     const { rows, count } = await FormSubmission.findAndCountAll({ where, order: [['createdAt', 'DESC']], limit, offset });
@@ -331,7 +331,7 @@ class FormBuilderService {
     });
 
     if (format === 'csv') {
-      const escapeCsv = (val: any) => {
+      const escapeCsv = (val: unknown) => {
         const str = String(val);
         if (str.includes(',') || str.includes('"') || str.includes('\n')) {
           return `"${str.replace(/"/g, '""')}"`;

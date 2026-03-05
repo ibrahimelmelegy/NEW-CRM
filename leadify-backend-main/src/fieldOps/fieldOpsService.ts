@@ -5,10 +5,10 @@ import User from '../user/userModel';
 import { sequelize } from '../config/db';
 
 class FieldOpsService {
-  async getCheckIns(query: any) {
+  async getCheckIns(query: unknown) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { userId, type, startDate, endDate } = query;
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (userId) where.userId = userId;
     if (type) where.type = type;
@@ -39,7 +39,7 @@ class FieldOpsService {
     };
   }
 
-  async createCheckIn(data: any, userId: number) {
+  async createCheckIn(data: unknown, userId: number) {
     return FieldCheckIn.create({
       ...data,
       userId

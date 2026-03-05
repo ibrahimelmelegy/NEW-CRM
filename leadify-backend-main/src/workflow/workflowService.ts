@@ -81,7 +81,7 @@ async function getRules(query: RulesQuery) {
   const limit = Math.min(100, Math.max(1, parseInt(query.limit || '20', 10)));
   const offset = (page - 1) * limit;
 
-  const where: any = {};
+  const where: Record<string, unknown> = {};
   if (query.entityType) where.entityType = query.entityType;
   if (query.triggerType) where.triggerType = query.triggerType;
   if (query.isActive !== undefined) where.isActive = query.isActive === 'true';
@@ -153,7 +153,7 @@ async function getExecutions(query: ExecutionQuery) {
   const limit = Math.min(100, Math.max(1, parseInt(query.limit || '20', 10)));
   const offset = (page - 1) * limit;
 
-  const where: any = {};
+  const where: Record<string, unknown> = {};
   if (query.workflowRuleId) where.workflowRuleId = parseInt(query.workflowRuleId, 10);
   if (query.entityType) where.entityType = query.entityType;
   if (query.entityId) where.entityId = query.entityId;
@@ -259,7 +259,7 @@ function evaluateSingleCondition(entity: Record<string, any>, cond: WorkflowCond
 }
 
 /** Retrieve a potentially nested value like "client.name" from an object */
-function getNestedValue(obj: Record<string, any>, path: string): any {
+function getNestedValue(obj: Record<string, any>, path: string): unknown {
   return path.split('.').reduce((current, key) => {
     if (current === null || current === undefined) return undefined;
     return current[key];
@@ -286,7 +286,7 @@ async function executeUpdateField(
   entityType: string,
   entityId: string,
   entity: Record<string, any>
-): Promise<any> {
+): Promise<unknown> {
   const registry = getModelRegistry();
   const Model = registry[entityType];
   if (!Model) throw new Error(`Unknown entity type: ${entityType}`);
@@ -297,7 +297,7 @@ async function executeUpdateField(
   return { field: action.field, newValue: resolvedValue };
 }
 
-async function executeCreateRecord(action: Extract<WorkflowAction, { type: 'CREATE_RECORD' }>, entity: Record<string, any>): Promise<any> {
+async function executeCreateRecord(action: Extract<WorkflowAction, { type: 'CREATE_RECORD' }>, entity: Record<string, any>): Promise<unknown> {
   const registry = getModelRegistry();
   const Model = registry[action.entityType];
   if (!Model) throw new Error(`Unknown entity type for record creation: ${action.entityType}`);
@@ -312,7 +312,7 @@ async function executeCreateRecord(action: Extract<WorkflowAction, { type: 'CREA
   return { entityType: action.entityType, id: created.id };
 }
 
-async function executeSendEmail(action: Extract<WorkflowAction, { type: 'SEND_EMAIL' }>, entity: Record<string, any>): Promise<any> {
+async function executeSendEmail(action: Extract<WorkflowAction, { type: 'SEND_EMAIL' }>, entity: Record<string, any>): Promise<unknown> {
   const to = resolveTemplate(action.to, entity);
   const subject = resolveTemplate(action.subject, entity);
   const body = resolveTemplate(action.body, entity);
@@ -331,7 +331,7 @@ async function executeSendNotification(
   action: Extract<WorkflowAction, { type: 'SEND_NOTIFICATION' }>,
   entity: Record<string, any>,
   triggerUserId?: number
-): Promise<any> {
+): Promise<unknown> {
   const title = resolveTemplate(action.title, entity);
   const message = resolveTemplate(action.message, entity);
   const notifiedUserIds: number[] = [];
@@ -369,7 +369,7 @@ async function executeCreateTask(
   action: Extract<WorkflowAction, { type: 'CREATE_TASK' }>,
   entity: Record<string, any>,
   triggerUserId?: number
-): Promise<any> {
+): Promise<unknown> {
   const title = resolveTemplate(action.title, entity);
   const assignedTo = Number(action.assignedTo) || triggerUserId;
 
@@ -394,7 +394,7 @@ async function executeCreateTask(
   return { taskId: task.id, title, assignedTo, dueDate };
 }
 
-async function executeWebhook(action: Extract<WorkflowAction, { type: 'WEBHOOK' }>, entity: Record<string, any>): Promise<any> {
+async function executeWebhook(action: Extract<WorkflowAction, { type: 'WEBHOOK' }>, entity: Record<string, any>): Promise<unknown> {
   const url = resolveTemplate(action.url, entity);
   const method = (action.method || 'POST').toUpperCase();
 
@@ -438,13 +438,13 @@ async function executeWebhook(action: Extract<WorkflowAction, { type: 'WEBHOOK' 
       ok: response.ok,
       body: responseText.substring(0, 1000) // truncate large responses
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     clearTimeout(timeout);
     throw new Error(`Webhook failed: ${err.message}`);
   }
 }
 
-async function executeAssignment(action: Extract<WorkflowAction, { type: 'ASSIGN_TO' }>, entityType: string, entityId: string): Promise<any> {
+async function executeAssignment(action: Extract<WorkflowAction, { type: 'ASSIGN_TO' }>, entityType: string, entityId: string): Promise<unknown> {
   const registry = getModelRegistry();
   const Model = registry[entityType];
   if (!Model) throw new Error(`Unknown entity type: ${entityType}`);
@@ -543,7 +543,7 @@ async function executeAction(
   action: WorkflowAction,
   entity: Record<string, any>,
   context: { entityType: string; entityId: string; userId?: number }
-): Promise<any> {
+): Promise<unknown> {
   switch (action.type) {
     case 'UPDATE_FIELD':
       return executeUpdateField(action, context.entityType, context.entityId, entity);
@@ -579,7 +579,7 @@ async function executeWorkflow(
   let overallStatus: ExecutionStatus = ExecutionStatus.SUCCESS;
 
   let hasDelayedActions = false;
-  let actionsToQueue: any[] = [];
+  let actionsToQueue: unknown[] = [];
 
   for (let i = 0; i < rule.actions.length; i++) {
     const action = rule.actions[i];
@@ -610,7 +610,7 @@ async function executeWorkflow(
         status: 'SUCCESS',
         result
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       actionResults.push({
         actionType: action.type,
         status: 'FAILED',
@@ -698,7 +698,7 @@ async function processEntityEvent(
 ): Promise<WorkflowExecution[]> {
   try {
     // Build query for matching rules
-    const where: any = {
+    const where: Record<string, unknown> = {
       entityType,
       isActive: true,
       [Op.or]: [
@@ -754,7 +754,7 @@ async function processEntityEvent(
         );
 
         executions.push(execution);
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Log failed execution but continue with other rules
         console.error(`Workflow rule ${rule.id} (${rule.name}) failed:`, error.message);
 
@@ -774,7 +774,7 @@ async function processEntityEvent(
     }
 
     return executions;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Workflow engine processEntityEvent error:', error.message);
     return [];
   }
@@ -828,7 +828,7 @@ async function executeDelayedActions(
   executionId: number,
   ruleId: number,
   entity: Record<string, any>,
-  actions: any[],
+  actions: unknown[],
   userId?: number
 ): Promise<void> {
   const execution = await WorkflowExecution.findByPk(executionId);
@@ -850,7 +850,7 @@ async function executeDelayedActions(
         status: 'SUCCESS',
         result
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       actionResults.push({
         actionType: action.type,
         status: 'FAILED',

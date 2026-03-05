@@ -9,11 +9,11 @@ class CustomFieldService {
     });
   }
 
-  async createField(data: any) {
+  async createField(data: unknown) {
     return CustomField.create(data);
   }
 
-  async updateField(id: string, data: any) {
+  async updateField(id: string, data: unknown) {
     const field = await CustomField.findByPk(id);
     if (!field) throw new Error('Custom field not found');
     return field.update(data);
@@ -37,7 +37,7 @@ class CustomFieldService {
     });
   }
 
-  async saveValues(entityId: string, entityType: string, values: { customFieldId: string; value: any }[]) {
+  async saveValues(entityId: string, entityType: string, values: { customFieldId: string; value: unknown }[]) {
     for (const v of values) {
       const existing = await CustomFieldValue.findOne({
         where: { entityId, entityType, customFieldId: v.customFieldId }

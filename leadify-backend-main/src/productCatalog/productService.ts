@@ -11,7 +11,7 @@ class ProductService {
   /**
    * Get paginated products with advanced filtering
    */
-  async getProducts(query: any): Promise<any> {
+  async getProducts(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, category, isActive, minPrice, maxPrice, lowStock, sortBy, sortOrder: sortDir } = query;
 
@@ -48,7 +48,7 @@ class ProductService {
     }
 
     // Sorting
-    const orderClause: any[] = [];
+    const orderClause: unknown[] = [];
     if (sortBy) {
       orderClause.push([sortBy, (sortDir || 'ASC').toUpperCase()]);
     } else {
@@ -89,7 +89,7 @@ class ProductService {
   /**
    * Create a new product, recording initial price in priceHistory
    */
-  async createProduct(data: any): Promise<CatalogProduct> {
+  async createProduct(data: unknown): Promise<CatalogProduct> {
     // Build initial price history entry
     if (data.unitPrice !== undefined && data.unitPrice > 0) {
       data.priceHistory = [{ price: data.unitPrice, date: new Date().toISOString() }];
@@ -100,7 +100,7 @@ class ProductService {
   /**
    * Update a product. If unitPrice changed, append to priceHistory.
    */
-  async updateProduct(id: string, data: any): Promise<CatalogProduct> {
+  async updateProduct(id: string, data: unknown): Promise<CatalogProduct> {
     const product = await CatalogProduct.findByPk(id);
     if (!product) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Product not found');
 
@@ -129,7 +129,7 @@ class ProductService {
   /**
    * Get products that are low in stock
    */
-  async getLowStockProducts(query: any): Promise<any> {
+  async getLowStockProducts(query: unknown): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: docs, count: totalItems } = await CatalogProduct.findAndCountAll({
@@ -188,7 +188,7 @@ class ProductService {
   /**
    * Create a price rule for a product
    */
-  async createPriceRule(productId: string, data: any): Promise<PriceRule> {
+  async createPriceRule(productId: string, data: unknown): Promise<PriceRule> {
     // Verify product exists
     await this.getProductById(productId);
 
@@ -206,7 +206,7 @@ class ProductService {
   /**
    * Update a price rule
    */
-  async updatePriceRule(productId: string, ruleId: string, data: any): Promise<PriceRule> {
+  async updatePriceRule(productId: string, ruleId: string, data: unknown): Promise<PriceRule> {
     const rule = await PriceRule.findOne({ where: { id: ruleId, productId } });
     if (!rule) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Price rule not found');
     return rule.update(data);
@@ -226,7 +226,7 @@ class ProductService {
   /**
    * Get reviews for a specific product
    */
-  async getProductReviews(productId: string): Promise<any> {
+  async getProductReviews(productId: string): Promise<unknown> {
     const reviews = await EcReview.findAll({
       where: { productId },
       include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] }],
@@ -244,7 +244,7 @@ class ProductService {
     const product = await CatalogProduct.findByPk(productId);
     if (!product) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Product not found');
 
-    const activity: any[] = [];
+    const activity: unknown[] = [];
 
     // Creation event
     activity.push({
@@ -289,7 +289,7 @@ class ProductService {
   /**
    * Bulk import products
    */
-  async bulkImport(products: any[]): Promise<{ created: number; errors: string[] }> {
+  async bulkImport(products: Record<string, unknown>[]): Promise<{ created: number; errors: string[] }> {
     let created = 0;
     const errors: string[] = [];
 
@@ -304,7 +304,7 @@ class ProductService {
           priceHistory: product.unitPrice ? [{ price: product.unitPrice, date: new Date().toISOString() }] : []
         });
         created++;
-      } catch (err: any) {
+      } catch (err: unknown) {
         errors.push(`Failed to create "${product.name}": ${err.message}`);
       }
     }
@@ -317,7 +317,7 @@ class ProductService {
   /**
    * Product analytics: stock value, category distribution, etc.
    */
-  async getProductAnalytics(): Promise<any> {
+  async getProductAnalytics(): Promise<unknown> {
     const [totalProducts, activeProducts, lowStockProducts] = await Promise.all([
       CatalogProduct.count(),
       CatalogProduct.count({ where: { isActive: true } }),
@@ -330,7 +330,7 @@ class ProductService {
     ]);
 
     // Stock value (SUM of unitPrice * stockQuantity)
-    const stockValueResult: any = await CatalogProduct.findOne({
+    const stockValueResult = await CatalogProduct.findOne({
       attributes: [
         [fn('COALESCE', fn('SUM', literal('"unitPrice" * "stockQuantity"')), 0), 'stockValue']
       ],
@@ -339,7 +339,7 @@ class ProductService {
     });
 
     // Category distribution
-    const categoryDist: any[] = await CatalogProduct.findAll({
+    const categoryDist: Record<string, unknown>[] = await CatalogProduct.findAll({
       attributes: [
         'category',
         [fn('COUNT', col('id')), 'count']

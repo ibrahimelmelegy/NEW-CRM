@@ -5,11 +5,11 @@ import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 
 class WarrantyService {
-  async createWarranty(data: any, tenantId?: string) { return Warranty.create({ ...data, tenantId }); }
+  async createWarranty(data: unknown, tenantId?: string) { return Warranty.create({ ...data, tenantId }); }
 
-  async getWarranties(query: any, tenantId?: string) {
+  async getWarranties(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -25,7 +25,7 @@ class WarrantyService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateWarranty(id: number, data: any) {
+  async updateWarranty(id: number, data: unknown) {
     const item = await Warranty.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -40,15 +40,15 @@ class WarrantyService {
     return true;
   }
 
-  async createClaim(data: any, tenantId?: string) {
+  async createClaim(data: unknown, tenantId?: string) {
     const claim = await WarrantyClaim.create({ ...data, tenantId });
     try { io.emit('warranty:claim_created', { id: claim.id, warrantyId: claim.warrantyId, status: claim.status }); } catch {}
     return claim;
   }
 
-  async getClaims(query: any, tenantId?: string) {
+  async getClaims(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.warrantyId) where.warrantyId = query.warrantyId;
     if (query.status) where.status = query.status;
@@ -60,7 +60,7 @@ class WarrantyService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateClaim(id: number, data: any) {
+  async updateClaim(id: number, data: unknown) {
     const claim = await WarrantyClaim.findByPk(id);
     if (!claim) return null;
     if (data.status === 'RESOLVED' && !claim.resolvedAt) data.resolvedAt = new Date();
@@ -89,7 +89,7 @@ class WarrantyService {
     currentEnd.setDate(currentEnd.getDate() + data.extensionDays);
     const newEndDate = currentEnd.toISOString().slice(0, 10);
 
-    const updateData: any = { endDate: newEndDate };
+    const updateData: Record<string, unknown> = { endDate: newEndDate };
     if (data.upgradeType) {
       updateData.type = 'EXTENDED';
     }
@@ -119,7 +119,7 @@ class WarrantyService {
    */
   async expireOverdueWarranties(tenantId?: string) {
     const today = new Date().toISOString().slice(0, 10);
-    const where: any = { status: 'ACTIVE', endDate: { [Op.lt]: today } };
+    const where: Record<string, unknown> = { status: 'ACTIVE', endDate: { [Op.lt]: today } };
     if (tenantId) where.tenantId = tenantId;
 
     const [affectedCount] = await Warranty.update(
@@ -180,13 +180,13 @@ class WarrantyService {
    * Create a warranty claim with automatic coverage validation.
    * If the warranty is not active or the claim date falls outside coverage, throws an error.
    */
-  async createClaimWithValidation(data: any, tenantId?: string) {
+  async createClaimWithValidation(data: unknown, tenantId?: string) {
     const { warrantyId } = data;
     if (!warrantyId) throw new Error('warrantyId is required');
 
     const coverage = await this.checkWarrantyCoverage(warrantyId);
     if (!coverage.covered) {
-      const err: any = new Error(`Warranty does not cover this claim: ${coverage.reason}`);
+      const err: Record<string, unknown> = new Error(`Warranty does not cover this claim: ${coverage.reason}`);
       err.statusCode = 400;
       err.coverage = coverage;
       throw err;
@@ -246,7 +246,7 @@ class WarrantyService {
    * total active, total expired, claims filed / resolved, average resolution time.
    */
   async getWarrantyAnalytics(tenantId: string) {
-    const where: any = { tenantId };
+    const where: Record<string, unknown> = { tenantId };
 
     // Count by status
     const statusCounts = await Warranty.findAll({

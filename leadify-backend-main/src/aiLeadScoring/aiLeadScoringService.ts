@@ -7,15 +7,15 @@ import { io } from '../server';
 class AiLeadScoringService {
   // ─── Model Config CRUD ────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string, createdBy?: number) {
+  async create(data: unknown, tenantId?: string, createdBy?: number) {
     const model = await ScoringModelConfig.create({ ...data, tenantId, createdBy });
     try { io.emit('scoringModel:created', { id: model.id, name: model.name }); } catch {}
     return model;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: unknown, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -31,7 +31,7 @@ class AiLeadScoringService {
     return ScoringModelConfig.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: unknown) {
     const item = await ScoringModelConfig.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -61,7 +61,7 @@ class AiLeadScoringService {
     if (parameters.length === 0) return { modelId, scored: 0, results: [], error: 'No scoring parameters defined' };
 
     // Fetch leads to score
-    const leadWhere: any = {};
+    const leadWhere: Record<string, unknown> = {};
     if (leadIds && leadIds.length > 0) leadWhere.id = { [Op.in]: leadIds };
     if (tenantId) leadWhere.tenantId = tenantId;
 
@@ -160,7 +160,7 @@ class AiLeadScoringService {
     if (parameters.length === 0) return { modelId, features: [] };
 
     // Fetch sample leads to test rules against
-    const leadWhere: any = {};
+    const leadWhere: Record<string, unknown> = {};
     if (tenantId) leadWhere.tenantId = tenantId;
 
     const leads = await Lead.findAll({ where: leadWhere, limit: 100, raw: true });
@@ -227,7 +227,7 @@ class AiLeadScoringService {
       raw: true
     });
 
-    const comparison = models.map((m: any) => ({
+    const comparison = models.map((m: unknown) => ({
       id: m.id,
       name: m.name,
       type: m.type,
@@ -235,7 +235,7 @@ class AiLeadScoringService {
       accuracy: m.accuracy,
       leadsScored: m.leadsScored || 0,
       parameterCount: (m.parameters || []).length,
-      features: (m.parameters || []).map((p: any) => p.feature).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i),
+      features: (m.parameters || []).map((p: unknown) => p.feature).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i),
       lastTrainedAt: m.lastTrainedAt
     }));
 
