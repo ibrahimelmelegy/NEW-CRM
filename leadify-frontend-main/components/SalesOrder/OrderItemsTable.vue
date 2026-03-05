@@ -95,7 +95,7 @@
 import { Delete } from '@element-plus/icons-vue';
 
 const props = defineProps<{
-  items: Array<<unknown>;
+  items: Array<any>;
   editable?: boolean;
 }>();
 

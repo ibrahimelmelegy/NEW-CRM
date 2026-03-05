@@ -3,7 +3,35 @@ import { sequelize } from '../config/db';
 
 const router = Router();
 
-// Basic health check — always responds (for load balancer)
+/**
+ * @swagger
+ * /api/health:
+ *   get:
+ *     summary: Basic health check
+ *     description: Returns service status, uptime, and version. Used by load balancers.
+ *     tags: [Health]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: Service is healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: ok
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 uptime:
+ *                   type: number
+ *                   example: 12345.67
+ *                 version:
+ *                   type: string
+ *                   example: 2.0.0
+ */
 router.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({
     status: 'ok',
@@ -13,7 +41,46 @@ router.get('/health', (_req: Request, res: Response) => {
   });
 });
 
-// Deep health check — tests database connectivity
+/**
+ * @swagger
+ * /api/health/ready:
+ *   get:
+ *     summary: Deep health check (database connectivity)
+ *     description: Tests database connectivity and reports memory usage. Used for readiness probes.
+ *     tags: [Health]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: All systems ready
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: ok
+ *                 checks:
+ *                   type: object
+ *                   properties:
+ *                     database:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           example: ok
+ *                     memory:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           example: ok
+ *                         usage:
+ *                           type: string
+ *                           example: 128MB
+ *       503:
+ *         description: Service unavailable (database connection failed)
+ */
 router.get('/health/ready', async (_req: Request, res: Response) => {
   try {
     await sequelize.authenticate();
@@ -43,7 +110,26 @@ router.get('/health/ready', async (_req: Request, res: Response) => {
   }
 });
 
-// Liveness probe (Kubernetes-style)
+/**
+ * @swagger
+ * /api/health/live:
+ *   get:
+ *     summary: Liveness probe
+ *     description: Simple liveness check for Kubernetes-style orchestrators.
+ *     tags: [Health]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: Service is alive
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: alive
+ */
 router.get('/health/live', (_req: Request, res: Response) => {
   res.status(200).json({ status: 'alive' });
 });

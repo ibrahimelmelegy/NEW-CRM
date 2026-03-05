@@ -119,23 +119,23 @@ export async function fetchZatcaInvoice(id: number | string): Promise<ZatcaInvoi
   return success && body ? (body as ZatcaInvoice) : null;
 }
 
-export async function createZatcaInvoice(data: Partial<ZatcaInvoice>): Promise<<unknown> {
+export async function createZatcaInvoice(data: Partial<ZatcaInvoice>): Promise<unknown> {
   return useApiFetch('zatca/invoices', 'POST', data as Record<string, unknown>);
 }
 
-export async function updateZatcaInvoice(id: number | string, data: Partial<ZatcaInvoice>): Promise<<unknown> {
+export async function updateZatcaInvoice(id: number | string, data: Partial<ZatcaInvoice>): Promise<unknown> {
   return useApiFetch(`zatca/invoices/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
-export async function submitToZatca(id: number | string): Promise<<unknown> {
+export async function submitToZatca(id: number | string): Promise<unknown> {
   return useApiFetch(`zatca/invoices/${id}/submit`, 'POST');
 }
 
-export async function validateZatcaInvoice(data: Partial<ZatcaInvoice>): Promise<<unknown> {
+export async function validateZatcaInvoice(data: Partial<ZatcaInvoice>): Promise<unknown> {
   return useApiFetch('zatca/validate', 'POST', data as Record<string, unknown>);
 }
 
-export async function downloadZatcaXml(id: number | string): Promise<<unknown> {
+export async function downloadZatcaXml(id: number | string): Promise<unknown> {
   const { body, success } = await useApiFetch(`zatca/invoices/${id}/xml`);
   if (success && body) {
     // body should contain the XML string or a download URL

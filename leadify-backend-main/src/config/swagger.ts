@@ -1,5 +1,6 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import path from 'path';
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -38,7 +39,10 @@ All data is tenant-isolated. The tenant is determined from the authenticated use
       },
     },
     servers: [
-      { url: '/api', description: 'API Server' },
+      {
+        url: process.env.API_BASE_URL || 'http://localhost:3061',
+        description: 'API Server',
+      },
     ],
     components: {
       securitySchemes: {
@@ -123,160 +127,42 @@ All data is tenant-isolated. The tenant is determined from the authenticated use
     security: [{ bearerAuth: [] }],
     tags: [
       { name: 'Health', description: 'Health check endpoints' },
-      { name: 'Auth', description: 'Authentication & authorization' },
-      { name: 'Leads', description: 'Lead management' },
-      { name: 'Deals', description: 'Deal pipeline management' },
-      { name: 'Clients', description: 'Client/contact management' },
+      { name: 'Authentication', description: 'Authentication & authorization' },
+      { name: 'Two-Factor Authentication', description: 'Two-factor authentication setup & validation' },
+      { name: 'Lead', description: 'Lead management' },
+      { name: 'Deal', description: 'Deal pipeline management' },
+      { name: 'Client', description: 'Client/contact management' },
+      { name: 'Invoice', description: 'Invoice management' },
+      { name: 'Communication', description: 'Activity logging, calls, timelines, and stats' },
+      { name: 'Support', description: 'Support ticket system' },
+      { name: 'Employee', description: 'Employee & department management' },
+      { name: 'Finance', description: 'Expenses, budgets, and expense categories' },
+      { name: 'Setting', description: 'Application settings & configuration' },
       { name: 'Opportunities', description: 'Opportunity tracking' },
-      { name: 'Invoices', description: 'Invoice management' },
       { name: 'Projects', description: 'Project management' },
       { name: 'Tasks', description: 'Task management' },
-      { name: 'HR', description: 'Human resources' },
-      { name: 'Finance', description: 'Financial management' },
       { name: 'Procurement', description: 'Procurement & vendors' },
       { name: 'Marketing', description: 'Marketing automation' },
-      { name: 'Support', description: 'Customer support' },
       { name: 'E-Commerce', description: 'E-commerce operations' },
       { name: 'Inventory', description: 'Inventory & supply chain' },
       { name: 'Documents', description: 'Document management' },
-      { name: 'Communication', description: 'Messaging & communication' },
       { name: 'Reports', description: 'Reports & analytics' },
-      { name: 'Settings', description: 'System settings & configuration' },
     ],
-    paths: {
-      '/health': {
-        get: {
-          tags: ['Health'],
-          summary: 'Basic health check',
-          security: [],
-          responses: {
-            200: { description: 'Service is healthy', content: { 'application/json': { schema: { type: 'object', properties: { status: { type: 'string', example: 'ok' }, uptime: { type: 'number' }, timestamp: { type: 'string' } } } } } },
-          },
-        },
-      },
-      '/health/ready': {
-        get: {
-          tags: ['Health'],
-          summary: 'Deep health check (database connectivity)',
-          security: [],
-          responses: {
-            200: { description: 'All systems ready' },
-            503: { description: 'Service unavailable' },
-          },
-        },
-      },
-      '/auth/login': {
-        post: {
-          tags: ['Auth'],
-          summary: 'Login with email and password',
-          security: [],
-          requestBody: { content: { 'application/json': { schema: { type: 'object', required: ['email', 'password'], properties: { email: { type: 'string', example: 'admin@example.com' }, password: { type: 'string', example: 'password123' } } } } } },
-          responses: {
-            200: { description: 'Login successful, returns JWT token' },
-            401: { description: 'Invalid credentials' },
-          },
-        },
-      },
-      '/auth/me': {
-        get: {
-          tags: ['Auth'],
-          summary: 'Get current authenticated user',
-          responses: {
-            200: { description: 'Current user profile' },
-            401: { description: 'Not authenticated' },
-          },
-        },
-      },
-      '/lead': {
-        get: {
-          tags: ['Leads'],
-          summary: 'List all leads',
-          parameters: [
-            { name: 'limit', in: 'query', schema: { type: 'integer', default: 20 } },
-            { name: 'offset', in: 'query', schema: { type: 'integer', default: 0 } },
-            { name: 'search', in: 'query', schema: { type: 'string' } },
-            { name: 'status', in: 'query', schema: { type: 'string' } },
-          ],
-          responses: { 200: { description: 'Paginated list of leads' } },
-        },
-        post: {
-          tags: ['Leads'],
-          summary: 'Create a new lead',
-          requestBody: { content: { 'application/json': { schema: { $ref: '#/components/schemas/Lead' } } } },
-          responses: { 201: { description: 'Lead created' } },
-        },
-      },
-      '/lead/{id}': {
-        get: { tags: ['Leads'], summary: 'Get lead by ID', parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Lead details' }, 404: { description: 'Lead not found' } } },
-        put: { tags: ['Leads'], summary: 'Update lead', parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Lead updated' } } },
-        delete: { tags: ['Leads'], summary: 'Delete lead', parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Lead deleted' } } },
-      },
-      '/deal': {
-        get: { tags: ['Deals'], summary: 'List all deals', responses: { 200: { description: 'Paginated list of deals' } } },
-        post: { tags: ['Deals'], summary: 'Create a new deal', responses: { 201: { description: 'Deal created' } } },
-      },
-      '/deal/{id}': {
-        get: { tags: ['Deals'], summary: 'Get deal by ID', parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Deal details' } } },
-        put: { tags: ['Deals'], summary: 'Update deal', parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }], responses: { 200: { description: 'Deal updated' } } },
-      },
-      '/client': {
-        get: { tags: ['Clients'], summary: 'List all clients', responses: { 200: { description: 'Paginated list of clients' } } },
-        post: { tags: ['Clients'], summary: 'Create a new client', responses: { 201: { description: 'Client created' } } },
-      },
-      '/opportunity': {
-        get: { tags: ['Opportunities'], summary: 'List opportunities', responses: { 200: { description: 'List of opportunities' } } },
-        post: { tags: ['Opportunities'], summary: 'Create opportunity', responses: { 201: { description: 'Opportunity created' } } },
-      },
-      '/invoice': {
-        get: { tags: ['Invoices'], summary: 'List invoices', responses: { 200: { description: 'List of invoices' } } },
-        post: { tags: ['Invoices'], summary: 'Create invoice', responses: { 201: { description: 'Invoice created' } } },
-      },
-      '/project': {
-        get: { tags: ['Projects'], summary: 'List projects', responses: { 200: { description: 'List of projects' } } },
-        post: { tags: ['Projects'], summary: 'Create project', responses: { 201: { description: 'Project created' } } },
-      },
-      '/task': {
-        get: { tags: ['Tasks'], summary: 'List tasks', responses: { 200: { description: 'List of tasks' } } },
-        post: { tags: ['Tasks'], summary: 'Create task', responses: { 201: { description: 'Task created' } } },
-      },
-      '/hr/employee': {
-        get: { tags: ['HR'], summary: 'List employees', responses: { 200: { description: 'List of employees' } } },
-        post: { tags: ['HR'], summary: 'Create employee', responses: { 201: { description: 'Employee created' } } },
-      },
-      '/finance/expense': {
-        get: { tags: ['Finance'], summary: 'List expenses', responses: { 200: { description: 'List of expenses' } } },
-        post: { tags: ['Finance'], summary: 'Create expense', responses: { 201: { description: 'Expense created' } } },
-      },
-      '/procurement/purchase-order': {
-        get: { tags: ['Procurement'], summary: 'List purchase orders', responses: { 200: { description: 'List of purchase orders' } } },
-        post: { tags: ['Procurement'], summary: 'Create purchase order', responses: { 201: { description: 'PO created' } } },
-      },
-      '/campaign': {
-        get: { tags: ['Marketing'], summary: 'List campaigns', responses: { 200: { description: 'List of campaigns' } } },
-        post: { tags: ['Marketing'], summary: 'Create campaign', responses: { 201: { description: 'Campaign created' } } },
-      },
-      '/support/ticket': {
-        get: { tags: ['Support'], summary: 'List support tickets', responses: { 200: { description: 'List of tickets' } } },
-        post: { tags: ['Support'], summary: 'Create ticket', responses: { 201: { description: 'Ticket created' } } },
-      },
-      '/ecommerce/product': {
-        get: { tags: ['E-Commerce'], summary: 'List products', responses: { 200: { description: 'List of products' } } },
-      },
-      '/inventory/product': {
-        get: { tags: ['Inventory'], summary: 'List inventory products', responses: { 200: { description: 'Inventory list' } } },
-      },
-      '/document': {
-        get: { tags: ['Documents'], summary: 'List documents', responses: { 200: { description: 'List of documents' } } },
-      },
-      '/report': {
-        get: { tags: ['Reports'], summary: 'List reports', responses: { 200: { description: 'List of reports' } } },
-      },
-      '/setting': {
-        get: { tags: ['Settings'], summary: 'Get settings', responses: { 200: { description: 'System settings' } } },
-      },
-    },
   },
-  apis: [], // We define paths inline above
+  // Scan all route files for @swagger JSDoc annotations
+  apis: [
+    path.join(__dirname, '../user/authenticationRoutes.{ts,js}'),
+    path.join(__dirname, '../lead/leadRoutes.{ts,js}'),
+    path.join(__dirname, '../deal/dealRoutes.{ts,js}'),
+    path.join(__dirname, '../client/clientRoutes.{ts,js}'),
+    path.join(__dirname, '../invoice/invoiceRoutes.{ts,js}'),
+    path.join(__dirname, '../communication/communicationRoutes.{ts,js}'),
+    path.join(__dirname, '../support/supportRoutes.{ts,js}'),
+    path.join(__dirname, '../hr/employeeRoutes.{ts,js}'),
+    path.join(__dirname, '../finance/financeRoutes.{ts,js}'),
+    path.join(__dirname, '../setting/settingRoutes.{ts,js}'),
+    path.join(__dirname, '../health/healthRoutes.{ts,js}'),
+  ],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);

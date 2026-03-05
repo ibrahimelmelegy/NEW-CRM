@@ -21,13 +21,7 @@ export default defineNuxtConfig({
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' }
       ],
-      script: [
-        {
-          innerHTML:
-            "if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(reg){reg.unregister()})});caches.keys().then(function(n){n.forEach(function(k){caches.delete(k)})})}",
-          type: 'text/javascript'
-        }
-      ],
+      script: [],
       meta: [
         { 'http-equiv': 'x-ua-compatible', content: 'IE=edge' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
@@ -98,10 +92,74 @@ export default defineNuxtConfig({
         '@vue/devtools-kit',
         'errx'
       ]
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            // Split heavy vendor libraries into separate chunks for better caching
+            if (id.includes('node_modules/echarts') || id.includes('node_modules/vue-echarts') || id.includes('node_modules/zrender')) {
+              return 'vendor-charts';
+            }
+            if (id.includes('node_modules/element-plus')) {
+              return 'vendor-element-plus';
+            }
+            if (id.includes('node_modules/@tiptap') || id.includes('node_modules/prosemirror') || id.includes('node_modules/@vueup/vue-quill') || id.includes('node_modules/quill')) {
+              return 'vendor-editor';
+            }
+            if (id.includes('node_modules/jspdf') || id.includes('node_modules/xlsx')) {
+              return 'vendor-export';
+            }
+            if (id.includes('node_modules/lodash')) {
+              return 'vendor-lodash';
+            }
+          }
+        }
+      }
     }
   },
 
-  modules: ['@element-plus/nuxt', '@nuxt/icon', '@nuxtjs/tailwindcss', '@pinia/nuxt', '@nuxt/image', '@vueuse/nuxt', '@nuxtjs/i18n'],
+  modules: ['@vite-pwa/nuxt', '@element-plus/nuxt', '@nuxt/icon', '@nuxtjs/tailwindcss', '@pinia/nuxt', '@nuxt/image', '@vueuse/nuxt', '@nuxtjs/i18n'],
+
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'Leadify CRM',
+      short_name: 'Leadify',
+      description: 'Complete CRM Solution',
+      theme_color: '#6366f1',
+      background_color: '#0f172a',
+      display: 'standalone',
+      orientation: 'portrait',
+      scope: '/',
+      start_url: '/',
+      icons: [
+        { src: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+        { src: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+        { src: '/icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+      ]
+    },
+    workbox: {
+      navigateFallback: '/',
+      globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/api\..*/i,
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'api-cache',
+            expiration: { maxEntries: 100, maxAgeSeconds: 300 }
+          }
+        }
+      ]
+    },
+    client: {
+      installPrompt: true
+    },
+    devOptions: {
+      enabled: false
+    }
+  },
 
   // ✅ الحل النهائي لمشكلة ENOENT في Nuxt 4
   i18n: {
@@ -129,8 +187,25 @@ export default defineNuxtConfig({
   },
 
   image: {
-    format: ['webp'],
-    quality: 80
+    format: ['webp', 'avif'],
+    quality: 80,
+    screens: {
+      xs: 320,
+      sm: 640,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
+      xxl: 1536
+    },
+    densities: [1, 2],
+    presets: {
+      avatar: {
+        modifiers: { fit: 'cover', format: 'webp', quality: 75, width: 80, height: 80 }
+      },
+      thumbnail: {
+        modifiers: { fit: 'cover', format: 'webp', quality: 70, width: 200, height: 200 }
+      }
+    }
   },
 
   runtimeConfig: {

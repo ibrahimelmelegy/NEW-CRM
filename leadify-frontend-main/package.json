@@ -73,6 +73,7 @@
     "@tiptap/extension-underline": "^3.18.0",
     "@tiptap/starter-kit": "^3.18.0",
     "@tiptap/vue-3": "^3.18.0",
+    "@vite-pwa/nuxt": "^1.1.1",
     "@vue-flow/background": "^1.3.2",
     "@vue-flow/controls": "^1.1.3",
     "@vue-flow/core": "^1.48.2",

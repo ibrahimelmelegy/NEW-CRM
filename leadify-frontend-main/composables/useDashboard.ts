@@ -48,23 +48,23 @@ export async function deleteDashboard(id: number) {
   return useApiFetch(`dashboards/${id}`, 'DELETE');
 }
 
-export async function fetchWidgetData(widgetConfig: Record<string, unknown>): Promise<<unknown> {
+export async function fetchWidgetData(widgetConfig: Record<string, unknown>): Promise<unknown> {
   const { body, success } = await useApiFetch('dashboards/widget-data', 'POST', widgetConfig);
   return success && body ? body : null;
 }
 
-export async function fetchExecutiveSummary(): Promise<<unknown> {
+export async function fetchExecutiveSummary(): Promise<unknown> {
   const { body, success } = await useApiFetch('dashboards/executive-summary');
   return success && body ? body : null;
 }
 
-export async function fetchPipelineData(dateRange?: { start: string; end: string }): Promise<<unknown> {
+export async function fetchPipelineData(dateRange?: { start: string; end: string }): Promise<unknown> {
   const qs = dateRange ? `?startDate=${dateRange.start}&endDate=${dateRange.end}` : '';
   const { body, success } = await useApiFetch(`dashboards/pipeline${qs}`);
   return success && body ? body : null;
 }
 
-export async function fetchRevenueChart(period: string = 'monthly', dateRange?: { start: string; end: string }): Promise<<unknown> {
+export async function fetchRevenueChart(period: string = 'monthly', dateRange?: { start: string; end: string }): Promise<unknown> {
   const params = new URLSearchParams({ period });
   if (dateRange) {
     params.set('startDate', dateRange.start);
@@ -74,7 +74,7 @@ export async function fetchRevenueChart(period: string = 'monthly', dateRange?: 
   return success && body ? body : null;
 }
 
-export async function fetchTeamPerformance(dateRange?: { start: string; end: string }): Promise<<unknown> {
+export async function fetchTeamPerformance(dateRange?: { start: string; end: string }): Promise<unknown> {
   const qs = dateRange ? `?startDate=${dateRange.start}&endDate=${dateRange.end}` : '';
   const { body, success } = await useApiFetch(`dashboards/team-performance${qs}`);
   return success && body ? body : null;

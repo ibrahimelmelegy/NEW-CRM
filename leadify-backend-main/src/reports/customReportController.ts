@@ -1,6 +1,7 @@
 import { Response, NextFunction } from 'express';
 import { wrapResult } from '../utils/response/responseWrapper';
 import customReportService from './customReportService';
+import reportBuilderService from './reportBuilderService';
 import { AuthenticatedRequest } from '../types';
 
 class CustomReportController {
@@ -63,18 +64,20 @@ class CustomReportController {
   async exportReport(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const format = req.params.format as string;
+
+      if (format === 'pdf') {
+        const { buffer, filename } = await reportBuilderService.generatePdfFromReport(Number(req.params.id), req.user!.id);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        return res.send(buffer);
+      }
+
       const result = await customReportService.exportReport(Number(req.params.id), format);
 
       if (format === 'csv' || format === 'excel') {
         res.setHeader('Content-Type', 'text/csv');
         res.setHeader('Content-Disposition', `attachment; filename=report-${req.params.id}.csv`);
         return res.send(result);
-      }
-
-      if (format === 'pdf') {
-        // Return JSON data that the frontend can use to generate a PDF
-        res.setHeader('Content-Type', 'application/json');
-        return res.json(result);
       }
 
       wrapResult(res, result);

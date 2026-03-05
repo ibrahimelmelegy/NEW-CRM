@@ -150,13 +150,23 @@ div
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import { BarChart, PieChart } from 'echarts/charts';
-import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
-import VChart from 'vue-echarts';
-import { graphic } from 'echarts/core';
 import { getPieChartsData } from '~/composables/charts';
+
+// Lazy-load heavy chart dependencies for faster initial page load
+let graphic: any;
+const VChart = defineAsyncComponent(() =>
+  Promise.all([
+    import('echarts/core'),
+    import('echarts/renderers'),
+    import('echarts/charts'),
+    import('echarts/components'),
+    import('vue-echarts')
+  ]).then(([echartsCore, { CanvasRenderer }, { BarChart, PieChart }, { TitleComponent, TooltipComponent, LegendComponent, GridComponent }, VChartModule]) => {
+    echartsCore.use([CanvasRenderer, BarChart, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
+    graphic = echartsCore.graphic;
+    return VChartModule;
+  })
+);
 import {
   fetchExpenses,
   fetchExpenseSummary,

@@ -133,7 +133,7 @@ const {
   handleBlur,
   handleChange,
   meta
-} = useField<<unknown>(props.name, undefined, {
+} = useField<any>(props.name, undefined, {
   initialValue: props.value ? props.value : []
 });
 watchEffect(() => {

@@ -15,6 +15,9 @@ import { ProjectStatusEnum } from '../project/projectEnum';
 import { DailyTaskStatusEnum } from '../dailyTask/dailyTaskEnum';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import cacheService from '../infrastructure/cacheService';
+
+const DASHBOARD_CACHE_TTL = 120; // 2 minutes
 
 // Maps entity type strings to Sequelize model classes
 function getModelByEntityType(entityType: string): unknown {
@@ -443,6 +446,12 @@ class DashboardService {
 
   // ─── PREDEFINED ANALYTICS ENDPOINTS ───────────────────
   async getExecutiveSummary() {
+    return cacheService.getOrSet('dashboard:executive_summary', async () => {
+      return this._computeExecutiveSummary();
+    }, DASHBOARD_CACHE_TTL);
+  }
+
+  private async _computeExecutiveSummary() {
     const [totalRevenueResult, activeDealsCount, totalLeads, convertedLeads, pendingTasks, overdueProjects] = await Promise.all([
       Deal.findOne({
         where: { stage: DealStageEnums.CLOSED },
@@ -484,6 +493,13 @@ class DashboardService {
   }
 
   async getSalesPipelineData(dateRange?: string) {
+    const cacheKey = `dashboard:sales_pipeline:${dateRange || 'all'}`;
+    return cacheService.getOrSet(cacheKey, async () => {
+      return this._computeSalesPipelineData(dateRange);
+    }, DASHBOARD_CACHE_TTL);
+  }
+
+  private async _computeSalesPipelineData(dateRange?: string) {
     const dateWhere = buildDateRangeWhere(dateRange);
 
     const stageResults = await Deal.findAll({
@@ -506,6 +522,13 @@ class DashboardService {
   }
 
   async getRevenueChart(period: string = 'monthly', dateRange?: string) {
+    const cacheKey = `dashboard:revenue_chart:${period}:${dateRange || 'all'}`;
+    return cacheService.getOrSet(cacheKey, async () => {
+      return this._computeRevenueChart(period, dateRange);
+    }, DASHBOARD_CACHE_TTL);
+  }
+
+  private async _computeRevenueChart(period: string = 'monthly', dateRange?: string) {
     const dateWhere = buildDateRangeWhere(dateRange);
 
     let truncUnit: string;
@@ -545,6 +568,13 @@ class DashboardService {
   }
 
   async getActivitySummary(userId?: number, dateRange?: string) {
+    const cacheKey = `dashboard:activity_summary:${userId || 'all'}:${dateRange || 'all'}`;
+    return cacheService.getOrSet(cacheKey, async () => {
+      return this._computeActivitySummary(userId, dateRange);
+    }, DASHBOARD_CACHE_TTL);
+  }
+
+  private async _computeActivitySummary(userId?: number, dateRange?: string) {
     const dateWhere = buildDateRangeWhere(dateRange);
     const userFilter = userId ? { userId } : {};
 

@@ -121,6 +121,7 @@ class ClientService {
     if (!user.role.permissions.includes(ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS)) query.userId = user.id;
 
     const { rows: clients, count: totalItems } = await Client.findAndCountAll({
+      attributes: ['id', 'clientName', 'companyName', 'email', 'phoneNumber', 'clientStatus', 'clientType', 'industry', 'createdAt', 'updatedAt'],
       where: {
         ...tenantWhere(user),
         ...(query.searchKey && {

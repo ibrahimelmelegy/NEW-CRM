@@ -203,6 +203,38 @@ export async function addPerformanceIndexes(sequelize: Sequelize): Promise<void>
       to_tsvector('english', COALESCE(name, '') || ' ' || COALESCE(description, ''))
     )`,
 
+    // ──────────────────────────────────────────────────────────────────
+    // Additional High-Impact Indexes for Common Query Patterns
+    // ──────────────────────────────────────────────────────────────────
+
+    // Leads: standalone status index for simple WHERE status = ? queries
+    'CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status)',
+    // Leads: assigned-to filter via join table (covers getLeads with userId filter)
+    'CREATE INDEX IF NOT EXISTS idx_lead_users_composite ON "leadUsers"("userId", "leadId")',
+
+    // Deals: standalone stage index for dashboard widget queries
+    'CREATE INDEX IF NOT EXISTS idx_deals_stage_standalone ON deals(stage)',
+    // Deals: updatedAt for stale deal detection
+    'CREATE INDEX IF NOT EXISTS idx_deals_updated_at ON deals("updatedAt" DESC)',
+    // Deals: composite for pipeline funnel (stage + createdAt)
+    'CREATE INDEX IF NOT EXISTS idx_deals_stage_created ON deals(stage, "createdAt" DESC)',
+    // Deals: owner filter via join table
+    'CREATE INDEX IF NOT EXISTS idx_deal_users_composite ON "dealUsers"("userId", "dealId")',
+
+    // Clients: composite for list with user filter
+    'CREATE INDEX IF NOT EXISTS idx_client_users_composite ON "clientUsers"("userId", "clientId")',
+
+    // Invoices: composite for invoice queries with deal join
+    'CREATE INDEX IF NOT EXISTS idx_invoices_deal_collected ON invoices("dealId", collected)',
+
+    // Daily Tasks: composite status + created for dashboard queries
+    'CREATE INDEX IF NOT EXISTS idx_daily_tasks_status_created ON "dailyTasks"(status, "createdAt" DESC)',
+    // Daily Tasks: sales rep + status for activity summary
+    'CREATE INDEX IF NOT EXISTS idx_daily_tasks_rep_status ON "dailyTasks"("salesRepresentativeId", status)',
+
+    // Pipeline stages: entityType + order for sorted lookups
+    'CREATE INDEX IF NOT EXISTS idx_pipeline_stages_entity_order ON pipeline_stages("entityType", "order" ASC)',
+
     // ─── Planner & Focus ───
     `CREATE INDEX IF NOT EXISTS idx_tasks_planner ON tasks ("assignedTo", "entityType", date) WHERE "entityType" = 'planner'`,
     `CREATE INDEX IF NOT EXISTS idx_focus_sessions_user_date ON focus_sessions ("userId", "startedAt" DESC)`,

@@ -320,8 +320,17 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { graphic } from 'echarts/core';
-import VChart from 'vue-echarts';
+// Lazy-load heavy chart dependencies for faster initial page load
+let graphic: any;
+const VChart = defineAsyncComponent(() =>
+  Promise.all([
+    import('echarts/core'),
+    import('vue-echarts')
+  ]).then(([echartsCore, VChartModule]) => {
+    graphic = echartsCore.graphic;
+    return VChartModule;
+  })
+);
 import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Team Performance' });

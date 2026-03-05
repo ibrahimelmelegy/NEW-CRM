@@ -1,26 +1,28 @@
 <template lang="pug">
-el-dropdown(trigger="click" @command="handleExport")
-  el-button(size="large" class="premium-btn-secondary")
-    Icon(name="IconExport" size="20")
-    span.mx-1 {{ $t('common.export') }}
+el-dropdown(trigger="click" @command="handleExport" :disabled="isExporting")
+  el-button(size="large" class="premium-btn-secondary" :loading="isExporting")
+    Icon(v-if="!isExporting" name="IconExport" size="20")
+    span.mx-1 {{ isExporting ? $t('export.exporting') : $t('common.export') }}
   template(#dropdown)
     el-dropdown-menu
       el-dropdown-item(command="csv")
         .flex.items-center
           Icon(name="ph:file-csv-bold" size="16" class="mr-2")
-          span CSV
+          span {{ $t('export.csv') }}
       el-dropdown-item(command="xlsx")
         .flex.items-center
           Icon(name="ph:file-xls-bold" size="16" class="mr-2")
-          span Excel (.xlsx)
+          span {{ $t('export.excel') }}
       el-dropdown-item(command="pdf")
         .flex.items-center
           Icon(name="ph:file-pdf-bold" size="16" class="mr-2")
-          span PDF
+          span {{ $t('export.pdf') }}
 </template>
 
 <script setup lang="ts">
-/* eslint-disable require-await */
+const { t } = useI18n();
+const { exportToPDF, exportToCSV, exportToExcel, exporting: composableExporting } = useExport();
+
 const props = defineProps<{
   data?: Record<string, unknown>[];
   columns?: { prop: string; label: string }[];
@@ -28,18 +30,37 @@ const props = defineProps<{
   apiEndpoint?: string;
   companyName?: string;
   title?: string;
+  /** When true, PDF is generated server-side via Puppeteer (higher quality) */
+  serverPdf?: boolean;
 }>();
 
 const emit = defineEmits<{
   export: [format: string];
 }>();
 
+const localExporting = ref(false);
+const isExporting = computed(() => localExporting.value || composableExporting.value);
+
 async function handleExport(format: string) {
   emit('export', format);
 
   if (props.data && props.columns) {
-    exportClientSide(format);
+    await exportClientSide(format);
   }
+}
+
+function getColumnKeys(): string[] {
+  return props.columns?.map(c => c.prop) || [];
+}
+
+function getColumnLabels(): Record<string, string> {
+  const labels: Record<string, string> = {};
+  if (props.columns) {
+    for (const col of props.columns) {
+      labels[col.prop] = col.label;
+    }
+  }
+  return labels;
 }
 
 function getHeaders(): string[] {
@@ -52,60 +73,41 @@ function getRows(): string[][] {
     props.columns!.map(c => {
       const val = row[c.prop];
       if (val === null || val === undefined) return '';
-      if (typeof val === 'object' && val.title) return val.title;
-      if (typeof val === 'object' && val.name) return val.name;
+      if (typeof val === 'object' && (val as Record<string, unknown>).title) return (val as Record<string, unknown>).title as string;
+      if (typeof val === 'object' && (val as Record<string, unknown>).name) return (val as Record<string, unknown>).name as string;
       return String(val);
     })
   );
 }
 
-function exportClientSide(format: string) {
+async function exportClientSide(format: string) {
   if (!props.data || !props.columns) return;
 
-  const headers = getHeaders();
-  const rows = getRows();
+  localExporting.value = true;
   const baseName = props.filename || 'export';
 
-  if (format === 'csv') {
-    exportCSV(headers, rows, baseName);
-  } else if (format === 'xlsx') {
-    exportExcel(headers, rows, baseName);
-  } else if (format === 'pdf') {
-    exportPDF(headers, rows, baseName);
-  }
-}
-
-function exportCSV(headers: string[], rows: string[][], baseName: string) {
-  const csvContent = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-  downloadFile(csvContent, `${baseName}.csv`, 'text/csv');
-}
-
-async function exportExcel(headers: string[], rows: string[][], baseName: string) {
   try {
-    // Try using SheetJS (xlsx) if available
-    const XLSX = await import('xlsx').catch(() => null);
-    if (XLSX) {
-      const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-
-      // Auto-size columns
-      const colWidths = headers.map((h, i) => {
-        const maxLen = Math.max(h.length, ...rows.map(r => String(r[i] || '').length));
-        return { wch: Math.min(maxLen + 2, 50) };
-      });
-      worksheet['!cols'] = colWidths;
-
-      XLSX.writeFile(workbook, `${baseName}.xlsx`);
-      return;
+    if (format === 'csv') {
+      exportToCSV(props.title || baseName, props.data, getColumnKeys(), { columnLabels: getColumnLabels(), filename: `${baseName}.csv` });
+    } else if (format === 'xlsx') {
+      await exportToExcel(props.title || baseName, props.data, getColumnKeys(), { columnLabels: getColumnLabels(), filename: `${baseName}.xlsx` });
+    } else if (format === 'pdf') {
+      if (props.serverPdf) {
+        // Use server-side PDF generation (Puppeteer - higher quality)
+        await exportToPDF(props.title || baseName, props.data, getColumnKeys(), { columnLabels: getColumnLabels(), filename: `${baseName}.pdf` });
+      } else {
+        // Use existing client-side PDF generation (jspdf)
+        await exportPDFLegacy(getHeaders(), getRows(), baseName);
+      }
     }
-  } catch {
-    // SheetJS not available, fall back to CSV with xls extension
-  }
 
-  // Fallback: export as CSV with .xls extension (opens in Excel)
-  const csvContent = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join('\t')).join('\n');
-  downloadFile(csvContent, `${baseName}.xls`, 'application/vnd.ms-excel');
+    ElMessage.success(t('export.success'));
+  } catch (err) {
+    console.error('Export failed:', err);
+    ElMessage.error(t('export.failed'));
+  } finally {
+    localExporting.value = false;
+  }
 }
 
 async function loadLogoBase64(): Promise<string | null> {
@@ -124,7 +126,7 @@ async function loadLogoBase64(): Promise<string | null> {
   }
 }
 
-async function exportPDF(headers: string[], rows: string[][], baseName: string) {
+async function exportPDFLegacy(headers: string[], rows: string[][], baseName: string) {
   try {
     const { default: JsPDF } = await import('jspdf');
     const autoTable = (await import('jspdf-autotable')).default;
@@ -139,8 +141,8 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
     const pageW = doc.internal.pageSize.getWidth();
     const logoBase64 = await loadLogoBase64();
 
-    // ─── Header band ──────────────────────────────────────────────────────
-    doc.setFillColor(120, 73, 255); // #7849ff
+    // Header band
+    doc.setFillColor(120, 73, 255);
     doc.rect(0, 0, pageW, 28, 'F');
 
     // Logo (left side)
@@ -150,18 +152,17 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
         doc.addImage(logoBase64, 'PNG', 10, 4, 40, 18);
         logoEndX = 56;
       } catch {
-        // logo failed to load — fall back to text
         doc.setFontSize(11);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(255, 255, 255);
-        doc.text('High Point Technology', 12, 17);
+        doc.text(props.companyName || 'High Point Technology', 12, 17);
         logoEndX = 70;
       }
     } else {
       doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(255, 255, 255);
-      doc.text('High Point Technology', 12, 17);
+      doc.text(props.companyName || 'High Point Technology', 12, 17);
       logoEndX = 70;
     }
 
@@ -193,7 +194,7 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
       body: rows,
       theme: 'grid',
       headStyles: {
-        fillColor: [120, 73, 255], // accent-color #7849ff
+        fillColor: [120, 73, 255],
         textColor: [255, 255, 255],
         fontSize: 9,
         fontStyle: 'bold',
@@ -213,7 +214,7 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
       },
       margin: { left: 10, right: 10 },
       didDrawPage: (data: unknown) => {
-        const pageCount = (doc as unknown).internal.getNumberOfPages();
+        const pageCount = (doc as unknown as Record<string, Record<string, () => number>>).internal.getNumberOfPages();
         const ph = doc.internal.pageSize.getHeight();
         // Footer line
         doc.setDrawColor(220, 220, 230);
@@ -222,8 +223,8 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
         // Company name left, page number right
         doc.setFontSize(7);
         doc.setTextColor(150);
-        doc.text('High Point Technology', 10, ph - 6);
-        doc.text(`Page ${data.pageNumber} of ${pageCount}`, pageW - 10, ph - 6, { align: 'right' });
+        doc.text(props.companyName || 'High Point Technology', 10, ph - 6);
+        doc.text(`Page ${(data as Record<string, number>).pageNumber} of ${pageCount}`, pageW - 10, ph - 6, { align: 'right' });
       }
     });
 
@@ -231,15 +232,5 @@ async function exportPDF(headers: string[], rows: string[][], baseName: string) 
   } catch (err) {
     console.error('PDF export failed:', err);
   }
-}
-
-function downloadFile(content: string, filename: string, mimeType: string) {
-  const blob = new Blob(['\uFEFF' + content], { type: `${mimeType};charset=utf-8;` });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
 }
 </script>

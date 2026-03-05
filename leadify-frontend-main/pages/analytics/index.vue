@@ -113,17 +113,25 @@ div
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
-import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import { BarChart, LineChart, PieChart, FunnelChart } from 'echarts/charts';
-import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
-import VChart from 'vue-echarts';
-import { graphic } from 'echarts/core';
 import { getBarChartData, getPieChartsData, getIncreaseLineChart } from '~/composables/charts';
 import { fetchPipelineData, fetchRevenueChart, fetchTeamPerformance } from '~/composables/useDashboard';
 import { formatLargeNumber } from '~/composables/format';
 
-use([CanvasRenderer, BarChart, LineChart, PieChart, FunnelChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
+// Lazy-load heavy chart dependencies for faster initial page load
+let graphic: any;
+const VChart = defineAsyncComponent(() =>
+  Promise.all([
+    import('echarts/core'),
+    import('echarts/renderers'),
+    import('echarts/charts'),
+    import('echarts/components'),
+    import('vue-echarts')
+  ]).then(([echartsCore, { CanvasRenderer }, { BarChart, LineChart, PieChart, FunnelChart }, { TitleComponent, TooltipComponent, LegendComponent, GridComponent }, VChartModule]) => {
+    echartsCore.use([CanvasRenderer, BarChart, LineChart, PieChart, FunnelChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
+    graphic = echartsCore.graphic;
+    return VChartModule;
+  })
+);
 
 definePageMeta({ middleware: 'permissions' });
 

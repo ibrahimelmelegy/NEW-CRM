@@ -2,6 +2,10 @@ import { Transaction } from 'sequelize';
 import { CreateOrUpdateSettingInput } from './inputs/createSettingInput';
 import Setting from './settingModel';
 import uploaderService from '../uploader/uploader.service';
+import cacheService from '../infrastructure/cacheService';
+
+const SETTINGS_CACHE_KEY = 'settings:global';
+const SETTINGS_CACHE_TTL = 300; // 5 minutes
 
 class SettingService {
   async createOrUpdateSetting(input: CreateOrUpdateSettingInput, adminId: number, t?: Transaction): Promise<Setting> {
@@ -18,12 +22,23 @@ class SettingService {
       }
     }
     existingSetting.set(input);
-    return existingSetting.save();
+    const saved = await existingSetting.save();
+
+    // Invalidate settings cache after update
+    await cacheService.del(SETTINGS_CACHE_KEY);
+
+    return saved;
   }
 
   async getSetting(): Promise<Setting | null> {
-    const existingSetting = await Setting.findOne({});
-    return existingSetting;
+    return cacheService.getOrSet<Setting | null>(
+      SETTINGS_CACHE_KEY,
+      async () => {
+        const existingSetting = await Setting.findOne({});
+        return existingSetting;
+      },
+      SETTINGS_CACHE_TTL
+    );
   }
 }
 

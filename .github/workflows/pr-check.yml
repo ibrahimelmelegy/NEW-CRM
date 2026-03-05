@@ -1,0 +1,39 @@
+name: PR Check
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache Backend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: leadify-backend-main/node_modules
+          key: backend-${{ hashFiles('leadify-backend-main/package-lock.json') }}
+
+      - name: Cache Frontend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: leadify-frontend-main/node_modules
+          key: frontend-${{ hashFiles('leadify-frontend-main/package-lock.json') }}
+
+      - name: Install & Lint
+        run: |
+          cd leadify-backend-main && npm ci && npx eslint src/ --quiet
+          cd ../leadify-frontend-main && npm ci --legacy-peer-deps && npx eslint --quiet .
+
+      - name: Type Check
+        run: |
+          cd leadify-backend-main && npx tsc --noEmit
+
+      - name: Tests
+        run: |
+          cd leadify-backend-main && npx jest --passWithNoTests
+          cd ../leadify-frontend-main && npx vitest run --passWithNoTests

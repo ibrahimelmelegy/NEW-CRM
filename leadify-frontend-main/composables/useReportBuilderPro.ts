@@ -465,7 +465,7 @@ export function useReportBuilderPro() {
 
   // ─── Save / Load Reports ───────────────────────────────
 
-  async function saveReport(name: string, description?: string): Promise<<unknown> {
+  async function saveReport(name: string, description?: string): Promise<unknown> {
     saving.value = true;
     try {
       const moduleKey = config.value.modules[0] as string | undefined;

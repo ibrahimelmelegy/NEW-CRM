@@ -54,17 +54,26 @@ class ReportBuilderController {
    */
   async exportFromConfig(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const { config, format } = req.body;
-      const result = await reportBuilderService.executeReport(config, req.user!.id);
+      const { config, format, title } = req.body;
 
       if (format === 'csv') {
+        const result = await reportBuilderService.executeReport(config, req.user!.id);
         const csv = reportBuilderService.generateCSV(result.data, config.fields);
         res.setHeader('Content-Type', 'text/csv');
         res.setHeader('Content-Disposition', 'attachment; filename=report.csv');
         return res.send(csv);
       }
 
-      // For Excel and PDF, return JSON data for frontend generation
+      if (format === 'pdf') {
+        const pdfBuffer = await reportBuilderService.generatePdfFromConfig(config, req.user!.id, title);
+        const filename = title ? `${title.replace(/\s+/g, '-').toLowerCase()}.pdf` : 'report.pdf';
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        return res.send(pdfBuffer);
+      }
+
+      // For Excel and others, return JSON data for frontend generation
+      const result = await reportBuilderService.executeReport(config, req.user!.id);
       wrapResult(res, {
         data: result.data,
         totalCount: result.totalCount,
@@ -82,6 +91,14 @@ class ReportBuilderController {
   async exportReport(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const format = req.body.format || 'csv';
+
+      if (format === 'pdf') {
+        const { buffer, filename } = await reportBuilderService.generatePdfFromReport(Number(req.params.id), req.user!.id);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        return res.send(buffer);
+      }
+
       const result = await reportBuilderService.exportReport(Number(req.params.id), format, req.user!.id);
 
       if (format === 'csv') {

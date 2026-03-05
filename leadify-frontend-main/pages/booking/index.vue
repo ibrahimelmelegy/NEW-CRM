@@ -655,7 +655,7 @@ async function fetchStaffAvailability() {
     if (res?.success && res?.body) {
       // Group slots by staff member for the UI
       const slotData = Array.isArray(res.body) ? res.body : [];
-      const staffMap = new Map<number, <unknown>();
+      const staffMap = new Map<number, any>();
       for (const slot of slotData) {
         const staffId = slot.staffId;
         if (!staffMap.has(staffId)) {

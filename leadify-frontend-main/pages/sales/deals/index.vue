@@ -146,9 +146,11 @@ div(class="animate-fade-in")
 import { Plus } from '@element-plus/icons-vue';
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import { computed, reactive, ref } from 'vue';
-import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
-import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
+
+// Lazy-load premium UI components for faster initial page load
+const PremiumPageHeader = defineAsyncComponent(() => import('~/components/UI/PremiumPageHeader.vue'));
+const PremiumKPICards = defineAsyncComponent(() => import('~/components/UI/PremiumKPICards.vue'));
 
 const router = useRouter();
 const { hasPermission } = await usePermissions();

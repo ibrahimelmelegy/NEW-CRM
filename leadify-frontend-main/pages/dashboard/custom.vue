@@ -145,11 +145,19 @@ div
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import { BarChart, PieChart, LineChart } from 'echarts/charts';
-import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
-import VChart from 'vue-echarts';
+// Lazy-load heavy chart dependencies for faster initial page load
+const VChart = defineAsyncComponent(() =>
+  Promise.all([
+    import('echarts/core'),
+    import('echarts/renderers'),
+    import('echarts/charts'),
+    import('echarts/components'),
+    import('vue-echarts')
+  ]).then(([{ use }, { CanvasRenderer }, { BarChart, PieChart, LineChart }, { TitleComponent, TooltipComponent, LegendComponent, GridComponent }, VChartModule]) => {
+    use([CanvasRenderer, BarChart, PieChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
+    return VChartModule;
+  })
+);
 import {
   fetchDashboards,
   createDashboard,

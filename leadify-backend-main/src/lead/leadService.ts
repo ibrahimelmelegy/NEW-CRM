@@ -200,6 +200,7 @@ class LeadService {
     if (!user.role.permissions.includes(LeadPermissionsEnum.VIEW_GLOBAL_LEADS)) query.userId = user.id;
 
     const { rows: leads, count: totalItems } = await Lead.findAndCountAll({
+      attributes: ['id', 'name', 'email', 'phone', 'companyName', 'status', 'leadSource', 'score', 'otherSource', 'lastContactDate', 'createdAt', 'updatedAt'],
       where: {
         ...tenantWhere(user),
         status: {

@@ -73,19 +73,19 @@ export async function fetchAssessment(id: number | string): Promise<ZakaatAssess
   return success && body ? (body as ZakaatAssessment) : null;
 }
 
-export async function createAssessment(data: Partial<ZakaatAssessment>): Promise<<unknown> {
+export async function createAssessment(data: Partial<ZakaatAssessment>): Promise<unknown> {
   return useApiFetch('zakaat/assessments', 'POST', data as Record<string, unknown>);
 }
 
-export async function updateAssessment(id: number | string, data: Partial<ZakaatAssessment>): Promise<<unknown> {
+export async function updateAssessment(id: number | string, data: Partial<ZakaatAssessment>): Promise<unknown> {
   return useApiFetch(`zakaat/assessments/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
-export async function calculateZakaat(id: number | string): Promise<<unknown> {
+export async function calculateZakaat(id: number | string): Promise<unknown> {
   return useApiFetch(`zakaat/assessments/${id}/calculate`, 'POST');
 }
 
-export async function getZakaatReport(id: number | string): Promise<<unknown> {
+export async function getZakaatReport(id: number | string): Promise<unknown> {
   const { body, success } = await useApiFetch(`zakaat/assessments/${id}/report`);
   return success && body ? body : null;
 }

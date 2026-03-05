@@ -110,15 +110,22 @@ div
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import { BarChart, LineChart } from 'echarts/charts';
-import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
-import VChart from 'vue-echarts';
 import { getIncreaseLineChart, getBarChartData } from '~/composables/charts';
 import { fetchExecutiveSummary, fetchPipelineData, fetchRevenueChart } from '~/composables/useDashboard';
 
-use([CanvasRenderer, BarChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
+// Lazy-load heavy chart dependencies for faster initial page load
+const VChart = defineAsyncComponent(() =>
+  Promise.all([
+    import('echarts/core'),
+    import('echarts/renderers'),
+    import('echarts/charts'),
+    import('echarts/components'),
+    import('vue-echarts')
+  ]).then(([{ use }, { CanvasRenderer }, { BarChart, LineChart }, { TitleComponent, TooltipComponent, LegendComponent, GridComponent }, VChartModule]) => {
+    use([CanvasRenderer, BarChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
+    return VChartModule;
+  })
+);
 
 definePageMeta({ middleware: 'permissions' });
 

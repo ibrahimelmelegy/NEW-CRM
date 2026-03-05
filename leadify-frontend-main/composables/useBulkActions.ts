@@ -44,7 +44,7 @@ export function useBulkActions<T extends BulkActionItem>(items: Ref<T[]>) {
     return selectedIds.value.has(id);
   }
 
-  async function bulkDelete(deleteFn: (id: string) => Promise<<unknown>, entityName: string = 'items'): Promise<boolean> {
+  async function bulkDelete(deleteFn: (id: string) => Promise<unknown>, entityName: string = 'items'): Promise<boolean> {
     if (!hasSelection.value) return false;
 
     try {
@@ -82,7 +82,7 @@ export function useBulkActions<T extends BulkActionItem>(items: Ref<T[]>) {
   }
 
   async function bulkUpdate(
-    updateFn: (id: string, data: Partial<T>) => Promise<<unknown>,
+    updateFn: (id: string, data: Partial<T>) => Promise<unknown>,
     data: Partial<T>,
     entityName: string = 'items'
   ): Promise<boolean> {

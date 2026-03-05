@@ -147,7 +147,7 @@ export function useFormBuilder() {
     return updateForm(id, { status: newStatus });
   }
 
-  async function getFormAnalytics(formId: number): Promise<<unknown> {
+  async function getFormAnalytics(formId: number): Promise<unknown> {
     const { body, success } = await useApiFetch(`form-builder/templates/${formId}/analytics`);
     if (success && body) return body;
     return null;

@@ -1,10 +1,20 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
+ * Playwright Test Configuration
  * See https://playwright.dev/docs/test-configuration.
+ *
+ * Test directories:
+ *   - tests/e2e/  : Comprehensive module tests with shared auth setup
+ *   - e2e/        : Focused user-flow tests (auth, leads, deals, navigation, responsive)
+ *
+ * Running tests:
+ *   npx playwright test                       # Run all tests in both directories
+ *   npx playwright test --project=chromium    # Run only chromium (includes both dirs)
+ *   npx playwright test --project=e2e-quick   # Run only e2e/ directory tests
+ *   npx playwright test e2e/auth.spec.ts      # Run a specific test file
  */
 export default defineConfig({
-  testDir: './tests/e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -40,17 +50,34 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    // Auth setup - runs once before all tests
+    // Auth setup - runs once before all tests (for tests/e2e/ directory)
     {
       name: 'setup',
+      testDir: './tests/e2e',
       testMatch: /auth\.setup\.ts/,
     },
 
+    // Main test suite - tests/e2e/ directory (comprehensive module tests)
     {
       name: 'chromium',
+      testDir: './tests/e2e',
       use: {
         ...devices['Desktop Chrome'],
         // Reuse auth state from setup
+        storageState: 'tests/e2e/.auth/user.json',
+      },
+      dependencies: ['setup'],
+    },
+
+    // Focused user-flow tests - e2e/ directory
+    // These tests handle auth inline (storageState or re-login fallback)
+    {
+      name: 'e2e-quick',
+      testDir: './e2e',
+      testIgnore: /example\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        // Reuse auth state from setup for authenticated tests
         storageState: 'tests/e2e/.auth/user.json',
       },
       dependencies: ['setup'],
@@ -60,6 +87,7 @@ export default defineConfig({
     // To enable: npx playwright install firefox webkit
     // {
     //   name: 'firefox',
+    //   testDir: './tests/e2e',
     //   use: {
     //     ...devices['Desktop Firefox'],
     //     storageState: 'tests/e2e/.auth/user.json',
@@ -69,6 +97,7 @@ export default defineConfig({
 
     // {
     //   name: 'webkit',
+    //   testDir: './tests/e2e',
     //   use: {
     //     ...devices['Desktop Safari'],
     //     storageState: 'tests/e2e/.auth/user.json',

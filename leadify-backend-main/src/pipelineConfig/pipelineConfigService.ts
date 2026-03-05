@@ -2,6 +2,10 @@ import PipelineStage from './pipelineConfigModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import { sequelize } from '../config/db';
+import cacheService from '../infrastructure/cacheService';
+
+const PIPELINE_CACHE_TTL = 600; // 10 minutes
+const PIPELINE_CACHE_PREFIX = 'pipeline:stages';
 
 /**
  * Transition rule derived from pipeline stage configuration.
@@ -16,9 +20,16 @@ interface TransitionRule {
 
 class PipelineConfigService {
   async getStages(entityType?: string): Promise<PipelineStage[]> {
-    const where: Record<string, unknown> = {};
-    if (entityType) where.entityType = entityType;
-    return PipelineStage.findAll({ where, order: [['order', 'ASC']] });
+    const cacheKey = `${PIPELINE_CACHE_PREFIX}:${entityType || 'all'}`;
+    return cacheService.getOrSet<PipelineStage[]>(
+      cacheKey,
+      async () => {
+        const where: Record<string, unknown> = {};
+        if (entityType) where.entityType = entityType;
+        return PipelineStage.findAll({ where, order: [['order', 'ASC']] });
+      },
+      PIPELINE_CACHE_TTL
+    );
   }
 
   async getStageById(id: string): Promise<PipelineStage> {
@@ -33,11 +44,13 @@ class PipelineConfigService {
         where: { entityType: data.entityType || 'deal' }
       })) as number) || 0;
     data.order = maxOrder + 1;
-    return PipelineStage.create(data);
+    const stage = await PipelineStage.create(data);
+    await this.invalidatePipelineCache();
+    return stage;
   }
 
   async updateStage(id: string, data: unknown): Promise<PipelineStage> {
-    return sequelize.transaction(async (t) => {
+    const result = await sequelize.transaction(async (t) => {
       const stage = await PipelineStage.findByPk(id, { transaction: t, lock: true });
       if (!stage) throw new BaseError(ERRORS.NOT_FOUND);
       if (data.isDefault) {
@@ -49,17 +62,21 @@ class PipelineConfigService {
       stage.set(data);
       return stage.save({ transaction: t });
     });
+    await this.invalidatePipelineCache();
+    return result;
   }
 
   async deleteStage(id: string): Promise<void> {
     const stage = await this.getStageById(id);
     await stage.destroy();
+    await this.invalidatePipelineCache();
   }
 
   async reorderStages(entityType: string, stageIds: string[]): Promise<PipelineStage[]> {
     for (let i = 0; i < stageIds.length; i++) {
       await PipelineStage.update({ order: i + 1 }, { where: { id: stageIds[i] } });
     }
+    await this.invalidatePipelineCache();
     return this.getStages(entityType);
   }
 
@@ -159,6 +176,14 @@ class PipelineConfigService {
     if (rules.length === 0) return true;
 
     return rules.some(rule => rule.fromStage === fromStage && rule.toStage === toStage);
+  }
+
+  /**
+   * Invalidate all pipeline stage caches.
+   * Called after any mutation (create, update, delete, reorder).
+   */
+  private async invalidatePipelineCache(): Promise<void> {
+    await cacheService.invalidatePattern(`${PIPELINE_CACHE_PREFIX}:*`);
   }
 }
 

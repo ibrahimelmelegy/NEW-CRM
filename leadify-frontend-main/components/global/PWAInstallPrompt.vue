@@ -1,24 +1,43 @@
 <template lang="pug">
 teleport(to="body")
+  //- Install prompt banner
   transition(name="pwa-slide")
-    .pwa-install-prompt(v-if="showPrompt")
+    .pwa-install-prompt(v-if="showInstall")
       .pwa-prompt-card
         .pwa-prompt-content
           .pwa-app-icon
-            img(src="/images/logo-shape.png" alt="High Point Technology" width="40" height="40")
+            img(src="/images/logo-shape.png" alt="Leadify CRM" width="40" height="40")
           .pwa-prompt-text
             h4.pwa-title {{ $t('pwa.installTitle') }}
             p.pwa-desc {{ $t('pwa.installDescription') }}
         .pwa-prompt-actions
-          button.pwa-btn-dismiss(@click="dismiss") {{ $t('pwa.notNow') }}
-          button.pwa-btn-install(@click="install") {{ $t('pwa.installApp') }}
+          button.pwa-btn-dismiss(@click="dismissInstall") {{ $t('pwa.notNow') }}
+          button.pwa-btn-install(@click="handleInstall") {{ $t('pwa.installApp') }}
+
+  //- Update available banner
+  transition(name="pwa-slide")
+    .pwa-install-prompt.pwa-update-prompt(v-if="showUpdate")
+      .pwa-prompt-card.pwa-update-card
+        .pwa-prompt-content
+          .pwa-app-icon.pwa-update-icon
+            Icon(name="ph:arrow-circle-up-bold" size="28")
+          .pwa-prompt-text
+            h4.pwa-title {{ $t('pwa.updateAvailable') }}
+            p.pwa-desc {{ $t('pwa.updateDescription') }}
+        .pwa-prompt-actions
+          button.pwa-btn-dismiss(@click="dismissUpdate") {{ $t('pwa.notNow') }}
+          button.pwa-btn-install(@click="handleUpdate") {{ $t('pwa.updateNow') }}
 </template>
 
 <script setup lang="ts">
 const { t } = useI18n();
+const { $pwa } = useNuxtApp();
 
-const showPrompt = ref(false);
-let deferredPrompt: unknown = null;
+// --- Install prompt state ---
+const showInstall = computed(() => {
+  if (!$pwa) return false;
+  return $pwa.showInstallPrompt && !isDismissed();
+});
 
 const DISMISS_KEY = 'pwa-install-dismissed';
 const DISMISS_DAYS = 7;
@@ -37,60 +56,34 @@ function isDismissed(): boolean {
   }
 }
 
-function isStandalone(): boolean {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(display-mode: standalone)').matches || (window.navigator as unknown).standalone === true;
+async function handleInstall() {
+  if (!$pwa) return;
+  await $pwa.install();
 }
 
-function onBeforeInstallPrompt(e: Event) {
-  e.preventDefault();
-  deferredPrompt = e;
-
-  if (!isDismissed() && !isStandalone()) {
-    showPrompt.value = true;
-  }
-}
-
-async function install() {
-  if (!deferredPrompt) return;
-
-  try {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-
-    if (outcome === 'accepted') {
-      showPrompt.value = false;
-    }
-  } catch {
-    // prompt failed, hide silently
-    showPrompt.value = false;
-  }
-
-  deferredPrompt = null;
-}
-
-function dismiss() {
-  showPrompt.value = false;
+function dismissInstall() {
+  if (!$pwa) return;
+  $pwa.cancelInstall();
   if (typeof localStorage !== 'undefined') {
     localStorage.setItem(DISMISS_KEY, String(Date.now()));
   }
 }
 
-// Handle appinstalled event
-function onAppInstalled() {
-  showPrompt.value = false;
-  deferredPrompt = null;
+// --- Update prompt state ---
+const showUpdate = computed(() => {
+  if (!$pwa) return false;
+  return $pwa.needRefresh;
+});
+
+async function handleUpdate() {
+  if (!$pwa) return;
+  await $pwa.updateServiceWorker(true);
 }
 
-onMounted(() => {
-  window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
-  window.addEventListener('appinstalled', onAppInstalled);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
-  window.removeEventListener('appinstalled', onAppInstalled);
-});
+async function dismissUpdate() {
+  if (!$pwa) return;
+  await $pwa.cancelPrompt();
+}
 </script>
 
 <style lang="scss" scoped>
@@ -111,6 +104,15 @@ onUnmounted(() => {
   }
 }
 
+.pwa-update-prompt {
+  // Stack above install prompt if both visible
+  bottom: 80px;
+
+  @media (min-width: 768px) {
+    bottom: 20px;
+  }
+}
+
 .pwa-prompt-card {
   width: 100%;
   background: var(--glass-bg-primary);
@@ -123,6 +125,10 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.pwa-update-card {
+  border-color: rgba(99, 102, 241, 0.3);
 }
 
 .pwa-prompt-content {
@@ -148,6 +154,11 @@ onUnmounted(() => {
     height: 100%;
     object-fit: contain;
   }
+}
+
+.pwa-update-icon {
+  color: #ffffff;
+  padding: 0;
 }
 
 .pwa-prompt-text {

@@ -596,6 +596,20 @@
     "ascending": "تصاعدي",
     "descending": "تنازلي"
   },
+  "export": {
+    "title": "تصدير",
+    "pdf": "تصدير كملف PDF",
+    "csv": "تصدير كملف CSV",
+    "excel": "تصدير كملف Excel",
+    "exporting": "جاري التصدير...",
+    "success": "تم التصدير بنجاح",
+    "failed": "فشل التصدير. يرجى المحاولة مرة أخرى.",
+    "noData": "لا توجد بيانات للتصدير",
+    "generating": "جاري إنشاء الملف...",
+    "downloading": "جاري التحميل...",
+    "serverPdf": "إنشاء PDF (الخادم)",
+    "clientPdf": "إنشاء PDF (محلي)"
+  },
   "activities": {
     "types": {
       "assigned": "تعيين مستخدم",
@@ -5976,10 +5990,13 @@
     "refreshing": "جاري التحديث..."
   },
   "pwa": {
-    "installTitle": "تثبيت High Point Technology CRM",
-    "installDescription": "أضف إلى شاشتك الرئيسية للوصول السريع والعمل بدون إنترنت.",
-    "installApp": "تثبيت التطبيق",
-    "notNow": "ليس الآن"
+    "installTitle": "تثبيت Leadify CRM",
+    "installDescription": "ثبت التطبيق لتجربة أفضل مع دعم العمل بدون إنترنت.",
+    "installApp": "تثبيت",
+    "notNow": "ليس الآن",
+    "updateAvailable": "تحديث متاح",
+    "updateDescription": "يتوفر إصدار جديد. قم بالتحديث الآن للحصول على أحدث الميزات.",
+    "updateNow": "حدث الآن"
   },
   "communication": {
     "timeline": "الجدول الزمني للنشاط",

@@ -280,8 +280,10 @@
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import draggable from 'vuedraggable';
 import { useReportBuilderPro, MODULE_DEFINITIONS, type FieldDefinition, type ChartConfig } from '~/composables/useReportBuilderPro';
+
+// Lazy-load heavy drag-and-drop component for faster initial page load
+const draggable = defineAsyncComponent(() => import('vuedraggable'));
 
 definePageMeta({ title: 'Report Builder' });
 

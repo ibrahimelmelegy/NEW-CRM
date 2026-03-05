@@ -239,6 +239,7 @@ class DealService {
     if (!user.role.permissions.includes(DealPermissionsEnum.VIEW_GLOBAL_DEALS)) query.userId = user.id;
 
     const { rows: deals, count: totalItems } = await Deal.findAndCountAll({
+      attributes: ['id', 'name', 'companyName', 'price', 'stage', 'contractType', 'probability', 'signatureDate', 'leadId', 'clientId', 'createdAt', 'updatedAt'],
       where: {
         ...tenantWhere(user),
         stage: {
@@ -294,8 +295,7 @@ class DealService {
           query.sortBy && Object.keys(DealSortByEnum).includes(query.sortBy) ? query.sortBy : 'createdAt',
           query.sort && Object.values(SortEnum).includes(query.sort) ? query.sort : SortEnum.DESC
         ]
-      ],
-      attributes: { exclude: ['cancelledReason'] }
+      ]
     });
 
     return {

@@ -11,6 +11,7 @@ import Ticket from '../support/models/ticketModel';
 import Employee from '../hr/models/employeeModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import reportPdfService from './pdfService';
 
 // ─── Field Type Definitions ─────────────────────────────────
 
@@ -514,6 +515,61 @@ class ReportBuilderService {
     }
 
     throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
+  }
+
+  /**
+   * Generate a PDF buffer from a report configuration.
+   * Executes the report query, then renders data into a styled PDF via Puppeteer.
+   */
+  async generatePdfFromConfig(config: ReportBuilderConfig, userId: number, title?: string): Promise<Buffer> {
+    const result = await this.executeReport(config, userId);
+    const moduleKey = config.modules[0];
+    const moduleDef = MODULE_FIELDS[moduleKey];
+
+    // Build column labels from module field definitions
+    const columnLabels: Record<string, string> = {};
+    if (moduleDef) {
+      for (const field of moduleDef.fields) {
+        columnLabels[field.name] = field.label;
+      }
+    }
+
+    const columns = config.fields && config.fields.length > 0 ? config.fields : result.data.length > 0 ? Object.keys(result.data[0]) : [];
+
+    const reportTitle = title || `${moduleDef?.label || moduleKey} Report`;
+
+    return reportPdfService.generateReportPdf({
+      title: reportTitle,
+      subtitle: config.groupBy ? `Grouped by ${columnLabels[config.groupBy] || config.groupBy}` : undefined,
+      data: result.data,
+      columns,
+      columnLabels,
+      summary: result.summary as Record<string, { sum: number; avg: number; min: number; max: number; count: number }>,
+      orientation: columns.length > 5 ? 'landscape' : 'portrait'
+    });
+  }
+
+  /**
+   * Generate a PDF buffer from a saved report ID.
+   */
+  async generatePdfFromReport(reportId: number, userId: number): Promise<{ buffer: Buffer; filename: string }> {
+    const report = await CustomReport.findByPk(reportId);
+    if (!report) throw new BaseError(ERRORS.REPORT_NOT_FOUND, 404);
+
+    const config: ReportBuilderConfig = {
+      modules: [this.entityTypeToModule(report.entityType)],
+      fields: report.fields,
+      filters: report.filters,
+      groupBy: report.groupBy || undefined,
+      aggregations: report.aggregations,
+      sortBy: report.sortBy || undefined,
+      sortOrder: report.sortOrder
+    };
+
+    const buffer = await this.generatePdfFromConfig(config, userId, report.name);
+    const filename = `report-${report.name.replace(/\s+/g, '-').toLowerCase()}.pdf`;
+
+    return { buffer, filename };
   }
 
   /**

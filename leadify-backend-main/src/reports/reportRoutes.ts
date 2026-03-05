@@ -349,6 +349,54 @@ router.post('/export-csv', authenticateUser, reportController.exportCSV);
 
 /**
  * @swagger
+ * /api/report-builder/export-pdf:
+ *   post:
+ *     summary: Generate a PDF from provided data and columns
+ *     tags: [Report Builder]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - data
+ *               - columns
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Report title for the PDF header
+ *               data:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                 description: Array of row objects to render in the PDF table
+ *               columns:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Column keys to include
+ *               columnLabels:
+ *                 type: object
+ *                 description: Optional mapping of column keys to display labels
+ *               summary:
+ *                 type: object
+ *                 description: Optional summary statistics for numeric fields
+ *     responses:
+ *       200:
+ *         description: PDF file download
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ */
+router.post('/export-pdf', authenticateUser, reportController.exportPDF);
+
+/**
+ * @swagger
  * /api/report-builder/export-excel:
  *   post:
  *     summary: Execute a report and export results as Excel

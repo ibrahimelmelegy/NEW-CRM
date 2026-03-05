@@ -596,6 +596,20 @@
     "ascending": "Ascending",
     "descending": "Descending"
   },
+  "export": {
+    "title": "Export",
+    "pdf": "Export as PDF",
+    "csv": "Export as CSV",
+    "excel": "Export as Excel",
+    "exporting": "Exporting...",
+    "success": "Export completed successfully",
+    "failed": "Export failed. Please try again.",
+    "noData": "No data available to export",
+    "generating": "Generating file...",
+    "downloading": "Downloading...",
+    "serverPdf": "Generate PDF (Server)",
+    "clientPdf": "Generate PDF (Local)"
+  },
   "auth": {
     "login": "Sign In",
     "logout": "Sign Out",
@@ -5944,10 +5958,13 @@
     "refreshing": "Refreshing..."
   },
   "pwa": {
-    "installTitle": "Install High Point Technology CRM",
-    "installDescription": "Add to your home screen for quick access and offline support.",
-    "installApp": "Install App",
-    "notNow": "Not now"
+    "installTitle": "Install Leadify CRM",
+    "installDescription": "Install the app for a better experience with offline support.",
+    "installApp": "Install",
+    "notNow": "Not now",
+    "updateAvailable": "Update available",
+    "updateDescription": "A new version is available. Update now for the latest features.",
+    "updateNow": "Update now"
   },
   "communication": {
     "timeline": "Activity Timeline",

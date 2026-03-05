@@ -1,6 +1,7 @@
 import { Response, NextFunction } from 'express';
 import { wrapResult } from '../utils/response/responseWrapper';
 import reportService from './reportService';
+import reportPdfService from './pdfService';
 import { AuthenticatedRequest } from '../types';
 
 class ReportController {
@@ -71,6 +72,33 @@ class ReportController {
     }
   }
 
+  async exportPDF(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { title, data, columns, columnLabels, summary } = req.body;
+
+      if (!data || !columns || !Array.isArray(data) || !Array.isArray(columns)) {
+        res.status(400).json({ message: 'data (array) and columns (array) are required' });
+        return;
+      }
+
+      const pdfBuffer = await reportPdfService.generateReportPdf({
+        title: title || 'Report',
+        data,
+        columns,
+        columnLabels,
+        summary,
+        orientation: columns.length > 5 ? 'landscape' : 'portrait'
+      });
+
+      const filename = title ? `${title.replace(/\s+/g, '-').toLowerCase()}.pdf` : 'report.pdf';
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(pdfBuffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const { entityType, startDate, endDate } = req.query;
@@ -78,11 +106,7 @@ class ReportController {
         res.status(400).json({ message: 'entityType is required' });
         return;
       }
-      const analytics = await reportService.getAnalytics(
-        entityType as string,
-        startDate as string,
-        endDate as string
-      );
+      const analytics = await reportService.getAnalytics(entityType as string, startDate as string, endDate as string);
       wrapResult(res, analytics);
     } catch (error) {
       next(error);

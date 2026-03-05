@@ -251,7 +251,14 @@ const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
 app.use('/api', healthRoutes);
 
 // Swagger API docs — no auth required
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+// Relax CSP for Swagger UI (needs inline scripts/styles)
+app.use('/api/docs', (_req: Request, res: Response, next: NextFunction) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+  );
+  next();
+}, swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'Leadify CRM API Documentation',
 }));
@@ -340,6 +347,7 @@ app.use('/api/webhooks', webhookLimiter, webhookRoutes);
 app.use('/api/time-tracking', timeTrackingRoutes);
 app.use('/api/report-builder', apiIntensiveLimiter, reportBuilderRoutes);
 app.use('/api/report-builder/export-csv', exportLimiter);
+app.use('/api/report-builder/export-pdf', exportLimiter);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/invoices/billing', invoiceBillingRoutes);
 app.use('/api/workflows', workflowRoutes);

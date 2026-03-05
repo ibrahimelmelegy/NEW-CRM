@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  fulfillments: Array<<unknown>;
+  fulfillments: Array<any>;
 }>();
 
 function formatDate(date: unknown) {

@@ -19,7 +19,7 @@ interface RetryOptions {
 
 // Global cache store with LRU eviction
 const MAX_CACHE_ENTRIES = 200;
-const cache = new Map<string, CacheEntry<<unknown>>();
+const cache = new Map<string, CacheEntry<unknown>>();
 
 /**
  * Evict oldest entries when cache exceeds max size
@@ -65,7 +65,7 @@ const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(r
 /**
  * useApiCache - Composable for caching API responses
  */
-export const useApiCache = <T = <unknown>(fetcher: () => Promise<T>, cacheKey: string, options: CacheOptions = {}) => {
+export const useApiCache = <T = unknown>(fetcher: () => Promise<T>, cacheKey: string, options: CacheOptions = {}) => {
   const { ttl = 5 * 60 * 1000 } = options; // Default: 5 minutes
 
   const data = ref<T | null>(null);

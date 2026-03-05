@@ -26,6 +26,18 @@ jobs:
             leadify-frontend-main/package-lock.json
             leadify-backend-main/package-lock.json
 
+      - name: Cache Frontend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: leadify-frontend-main/node_modules
+          key: frontend-${{ hashFiles('leadify-frontend-main/package-lock.json') }}
+
+      - name: Cache Backend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: leadify-backend-main/node_modules
+          key: backend-${{ hashFiles('leadify-backend-main/package-lock.json') }}
+
       - name: Install frontend dependencies
         run: npm ci --legacy-peer-deps
         working-directory: leadify-frontend-main
@@ -75,13 +87,20 @@ jobs:
           cache: npm
           cache-dependency-path: leadify-backend-main/package-lock.json
 
+      - name: Cache Backend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: leadify-backend-main/node_modules
+          key: backend-${{ hashFiles('leadify-backend-main/package-lock.json') }}
+
       - name: Install dependencies
         run: npm ci
         working-directory: leadify-backend-main
 
-      - name: Run tests
-        run: npm test -- --ci --forceExit
+      - name: Backend Tests with Coverage
+        run: npx jest --ci --forceExit --coverage --coverageReporters=text --coverageReporters=lcov
         working-directory: leadify-backend-main
+        continue-on-error: false
         env:
           NODE_OPTIONS: --max-old-space-size=4096
           NODE_ENV: test
@@ -92,6 +111,10 @@ jobs:
           DB_USER: test
           DB_PASSWORD: testpass123
           DB_NAME: crm_test
+
+      - name: Backend Type Check
+        run: npx tsc --noEmit
+        working-directory: leadify-backend-main
 
   test-frontend:
     name: Frontend Tests
@@ -106,6 +129,12 @@ jobs:
           cache: npm
           cache-dependency-path: leadify-frontend-main/package-lock.json
 
+      - name: Cache Frontend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: leadify-frontend-main/node_modules
+          key: frontend-${{ hashFiles('leadify-frontend-main/package-lock.json') }}
+
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
         working-directory: leadify-frontend-main
@@ -114,8 +143,13 @@ jobs:
         run: npx nuxi prepare
         working-directory: leadify-frontend-main
 
-      - name: Run tests
-        run: npm test -- --run
+      - name: Frontend Tests with Coverage
+        run: npx vitest run --coverage
+        working-directory: leadify-frontend-main
+        continue-on-error: false
+
+      - name: Frontend Type Check
+        run: npx nuxi typecheck
         working-directory: leadify-frontend-main
 
   build:
@@ -132,6 +166,18 @@ jobs:
           cache-dependency-path: |
             leadify-frontend-main/package-lock.json
             leadify-backend-main/package-lock.json
+
+      - name: Cache Backend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: leadify-backend-main/node_modules
+          key: backend-${{ hashFiles('leadify-backend-main/package-lock.json') }}
+
+      - name: Cache Frontend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: leadify-frontend-main/node_modules
+          key: frontend-${{ hashFiles('leadify-frontend-main/package-lock.json') }}
 
       - name: Install backend dependencies
         run: npm ci
@@ -153,6 +199,30 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=4096
           NUXT_PUBLIC_API_BASE_URL: /api/
+
+      - name: Check Bundle Size
+        working-directory: leadify-frontend-main
+        continue-on-error: true
+        run: |
+          du -sh .output/public/ || true
+          echo "Build artifacts size check complete"
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Security Audit
+        run: |
+          cd leadify-backend-main && npm audit --production --audit-level=high || true
+          cd ../leadify-frontend-main && npm audit --production --audit-level=high || true
+        continue-on-error: true
 
   deploy:
     name: Deploy to Production
