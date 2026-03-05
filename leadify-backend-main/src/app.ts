@@ -324,7 +324,6 @@ app.use('/api/client', clientRoutes);
 app.use('/api/client/excel', exportLimiter);
 app.use('/api/activity', ActivityRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/staff', userRoutes);
 app.use('/api/users/excel', exportLimiter);
 app.use('/api/setting', settingRoutes);
 app.use('/api/daily-task', dailyTaskRoutes);

@@ -74,16 +74,16 @@ div
 
   //- Create/Edit Dialog
   el-dialog(v-model="showForm" :title="editingId ? $t('inventory.editProduct') : $t('inventory.addProduct')" width="600px")
-    el-form(ref="formRef" :model="form" label-position="top" size="large")
+    el-form(ref="formRef" :model="form" :rules="formRules" label-position="top" size="large")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('inventory.product')" prop="name")
           el-input(v-model="form.name")
-        el-form-item(:label="$t('inventory.sku')")
+        el-form-item(:label="$t('inventory.sku')" prop="sku")
           el-input(v-model="form.sku")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('inventory.quantity')")
           el-input-number(v-model="form.quantity" :min="0" class="w-full")
-        el-form-item(:label="$t('inventory.price')")
+        el-form-item(:label="$t('inventory.price')" prop="price")
           el-input-number(v-model="form.price" :min="0" :precision="2" class="w-full")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('inventory.category')")
@@ -100,18 +100,18 @@ div
 
   //- Movement Dialog
   el-dialog(v-model="showMovementDialog" :title="$t('inventory.addMovement')" width="500px")
-    el-form(label-position="top" size="large")
+    el-form(ref="movementFormRef" :model="movementForm" :rules="movementRules" label-position="top" size="large")
       el-form-item(:label="$t('inventory.product')" v-if="!selectedProduct")
         el-select(v-model="movementForm.productId" class="w-full")
           el-option(v-for="p in products" :key="p.id" :label="p.name" :value="p.id")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('inventory.type')")
+        el-form-item(:label="$t('inventory.type')" prop="type")
           el-select(v-model="movementForm.type" class="w-full")
             el-option(value="IN" :label="$t('inventory.stockIn')")
             el-option(value="OUT" :label="$t('inventory.stockOut')")
             el-option(value="ADJUSTMENT" :label="$t('inventory.adjustment')")
             el-option(value="TRANSFER" :label="$t('inventory.transfer')")
-        el-form-item(:label="$t('inventory.quantity')")
+        el-form-item(:label="$t('inventory.quantity')" prop="quantity")
           el-input-number(v-model="movementForm.quantity" :min="1" class="w-full")
       el-form-item(:label="$t('inventory.notes')")
         el-input(v-model="movementForm.notes" type="textarea" :rows="2")
@@ -160,8 +160,21 @@ const deleteId = ref<number | null>(null);
 const editingId = ref<number | null>(null);
 const selectedProduct = ref<Record<string, unknown> | null>(null);
 
+const formRef = ref();
+const movementFormRef = ref();
+
 const form = reactive({ name: '', sku: '', quantity: 0, price: 0, category: '', warehouse: '', reorderPoint: 5, description: '' });
 const movementForm = reactive({ productId: null as number | null, type: 'IN', quantity: 1, notes: '' });
+
+const formRules = {
+  name: [{ required: true, message: t('inventory.nameRequired'), trigger: 'blur' }],
+  sku: [{ required: true, message: t('inventory.skuRequired'), trigger: 'blur' }],
+};
+
+const movementRules = {
+  type: [{ required: true, message: t('inventory.typeRequired'), trigger: 'change' }],
+  quantity: [{ required: true, message: t('inventory.quantityRequired'), trigger: 'blur' }],
+};
 
 const headerActions = computed(() => [{ label: t('inventory.addProduct'), onClick: () => openForm(), type: 'primary' }]);
 
@@ -209,8 +222,8 @@ async function loadCategories() {
   if (success && body) categories.value = body as string[];
 }
 
-function handleRowClick(row: unknown) {
-  editProduct(row);
+function handleRowClick(row: Record<string, unknown>) {
+  router.push(`/inventory/${row.id}`);
 }
 
 function openForm() {
@@ -235,6 +248,8 @@ function editProduct(row: unknown) {
 }
 
 async function saveProduct() {
+  const valid = await formRef.value?.validate().catch(() => false);
+  if (!valid) return;
   saving.value = true;
   try {
     const res = editingId.value ? await updateProduct(editingId.value, form) : await createProduct(form);
@@ -264,6 +279,8 @@ async function confirmDelete() {
 }
 
 async function submitMovement() {
+  const valid = await movementFormRef.value?.validate().catch(() => false);
+  if (!valid) return;
   movementSaving.value = true;
   try {
     const productId = selectedProduct.value?.id || movementForm.productId;

@@ -2755,6 +2755,33 @@
       "entityLabel": "بائع",
       "dialogTitle": "نموذج بائع جديد"
     },
+    "detail": {
+      "notFound": "الكيان غير موجود",
+      "loadError": "فشل تحميل تفاصيل الكيان",
+      "businessDetails": "تفاصيل الأعمال",
+      "companyName": "اسم الشركة",
+      "entityType": "نوع الكيان",
+      "serviceType": "نوع الخدمة",
+      "taxId": "الرقم الضريبي",
+      "crNumber": "رقم السجل التجاري",
+      "paymentMethod": "طريقة الدفع الافتراضية",
+      "brands": "العلامات التجارية",
+      "contactInfo": "معلومات الاتصال",
+      "contactPerson": "جهة الاتصال",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "address": "العنوان",
+      "street": "الشارع",
+      "street2": "سطر العنوان الثاني",
+      "city": "المدينة",
+      "state": "المنطقة / المحافظة",
+      "zip": "الرمز البريدي",
+      "quickInfo": "معلومات سريعة",
+      "created": "تاريخ الإنشاء",
+      "lastUpdated": "آخر تحديث",
+      "recentPurchaseOrders": "أوامر الشراء الأخيرة",
+      "noPurchaseOrders": "لا توجد أوامر شراء لهذا الكيان"
+    },
     "statistics": {
       "title": "تحليلات المشتريات",
       "subtitle": "رؤى فورية حول سلسلة التوريد",
@@ -4093,7 +4120,31 @@
     "stockIn": "إدخال مخزون",
     "stockOut": "إخراج مخزون",
     "adjustment": "تعديل",
-    "transfer": "نقل"
+    "transfer": "نقل",
+    "nameRequired": "اسم المنتج مطلوب",
+    "skuRequired": "رمز المنتج مطلوب",
+    "typeRequired": "نوع الحركة مطلوب",
+    "quantityRequired": "الكمية مطلوبة",
+    "price": "السعر",
+    "reorderPoint": "نقطة إعادة الطلب",
+    "allCategories": "جميع الفئات",
+    "notes": "ملاحظات",
+    "type": "النوع",
+    "detail": {
+      "notFound": "المنتج غير موجود",
+      "loadError": "فشل تحميل تفاصيل المنتج",
+      "productDetails": "تفاصيل المنتج",
+      "stockAndPricing": "المخزون والتسعير",
+      "sellingPrice": "سعر البيع",
+      "totalValue": "القيمة الإجمالية",
+      "reorderPoint": "نقطة إعادة الطلب",
+      "timestamps": "التواريخ",
+      "movementHistory": "سجل حركات المخزون",
+      "movementType": "نوع الحركة",
+      "notes": "ملاحظات",
+      "date": "التاريخ",
+      "noMovements": "لا توجد حركات مخزون مسجلة"
+    }
   },
   "approvals": {
     "title": "مركز الموافقات",
@@ -9815,7 +9866,8 @@
     "sendCampaign": "إرسال الآن",
     "previous": "السابق",
     "next": "التالي",
-    "step": "خطوة"
+    "step": "خطوة",
+    "subjectRequired": "سطر موضوع البريد الإلكتروني مطلوب"
   },
   "dataEnrichment": {
     "title": "إثراء البيانات",

@@ -73,6 +73,15 @@ import { usePermissions } from '@/composables/usePermissions';
 import useTableFilter from '@/composables/useTableFilter';
 import { useApiFetch } from '@/composables/useApiFetch';
 
+const router = useRouter();
+
+const entityTypeRouteMap: Record<string, string> = {
+  Vendor: 'vendors',
+  Distributor: 'distributors',
+  LocalSupplier: 'local-suppliers',
+  Showroom: 'showrooms'
+};
+
 const props = defineProps({
   title: { type: String, required: true },
   subtitle: { type: String, default: '' },
@@ -119,8 +128,9 @@ function openDialog(data: unknown = null) {
   dialog.visible = true;
 }
 
-function handleRowClick(val: unknown) {
-  // Option to go to details if needed
+function handleRowClick(val: Record<string, unknown>) {
+  const routeSlug = entityTypeRouteMap[props.entityType] || 'vendors';
+  router.push(`/procurement/${routeSlug}/${val.id}`);
 }
 
 async function fetchData() {

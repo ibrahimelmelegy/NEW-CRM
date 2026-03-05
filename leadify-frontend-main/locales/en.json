@@ -2723,6 +2723,33 @@
       "entityLabel": "Vendor",
       "dialogTitle": "New Vendor Form"
     },
+    "detail": {
+      "notFound": "Entity not found",
+      "loadError": "Failed to load entity details",
+      "businessDetails": "Business Details",
+      "companyName": "Company Name",
+      "entityType": "Entity Type",
+      "serviceType": "Service Type",
+      "taxId": "Tax ID",
+      "crNumber": "C.R. Number",
+      "paymentMethod": "Default Payment Method",
+      "brands": "Brands",
+      "contactInfo": "Contact Information",
+      "contactPerson": "Contact Person",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "street": "Street",
+      "street2": "Street Line 2",
+      "city": "City",
+      "state": "State / Province",
+      "zip": "Postal Code",
+      "quickInfo": "Quick Info",
+      "created": "Created",
+      "lastUpdated": "Last Updated",
+      "recentPurchaseOrders": "Recent Purchase Orders",
+      "noPurchaseOrders": "No purchase orders found for this entity"
+    },
     "statistics": {
       "title": "Procurement Analytics",
       "subtitle": "Real-time insights into your supply chain",
@@ -4061,7 +4088,31 @@
     "stockIn": "Stock In",
     "stockOut": "Stock Out",
     "adjustment": "Adjustment",
-    "transfer": "Transfer"
+    "transfer": "Transfer",
+    "nameRequired": "Product name is required",
+    "skuRequired": "SKU is required",
+    "typeRequired": "Movement type is required",
+    "quantityRequired": "Quantity is required",
+    "price": "Price",
+    "reorderPoint": "Reorder Point",
+    "allCategories": "All Categories",
+    "notes": "Notes",
+    "type": "Type",
+    "detail": {
+      "notFound": "Product not found",
+      "loadError": "Failed to load product details",
+      "productDetails": "Product Details",
+      "stockAndPricing": "Stock & Pricing",
+      "sellingPrice": "Selling Price",
+      "totalValue": "Total Value",
+      "reorderPoint": "Reorder Point",
+      "timestamps": "Timestamps",
+      "movementHistory": "Stock Movement History",
+      "movementType": "Movement Type",
+      "notes": "Notes",
+      "date": "Date",
+      "noMovements": "No stock movements recorded"
+    }
   },
   "approvals": {
     "title": "Approval Center",
@@ -9811,7 +9862,8 @@
     "sendCampaign": "Send Now",
     "previous": "Previous",
     "next": "Next",
-    "step": "Step"
+    "step": "Step",
+    "subjectRequired": "Email subject line is required"
   },
   "customerPortal": {
     "title": "Customer Portal",

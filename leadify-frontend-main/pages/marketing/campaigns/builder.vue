@@ -1078,6 +1078,10 @@ async function saveDraft() {
     ElMessage.warning(t('campaignBuilder.enterCampaignName'));
     return;
   }
+  if (!campaign.subject?.trim()) {
+    ElMessage.warning(t('campaignBuilder.subjectRequired'));
+    return;
+  }
   saving.value = true;
   try {
     const payload: unknown = {
@@ -1101,6 +1105,14 @@ async function saveDraft() {
 }
 
 async function confirmSendNow() {
+  if (!campaign.name.trim()) {
+    ElMessage.warning(t('campaignBuilder.enterCampaignName'));
+    return;
+  }
+  if (!campaign.subject?.trim()) {
+    ElMessage.warning(t('campaignBuilder.subjectRequired'));
+    return;
+  }
   try {
     await ElMessageBox.confirm(t('campaignBuilder.confirmSend'), t('common.warning'), {
       type: 'warning',
