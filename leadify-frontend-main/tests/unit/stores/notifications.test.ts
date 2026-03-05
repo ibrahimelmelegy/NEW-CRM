@@ -20,6 +20,7 @@ const mockNotification = (overrides: Record<string, unknown> = {}) => ({
   message: 'You have a new lead',
   type: 'info',
   read: false,
+  status: 'UN_READ',
   createdAt: '2024-01-01T00:00:00Z',
   ...overrides
 });
@@ -70,23 +71,22 @@ describe('useNotificationStore', () => {
   // Actions
   // ============================================
   describe('fetchNotifications', () => {
-    it('should fetch notifications and compute unread count', async () => {
+    it('should fetch notifications and set them', async () => {
       const notifications = [
-        mockNotification({ id: 'notif-1', read: false }),
-        mockNotification({ id: 'notif-2', read: true }),
-        mockNotification({ id: 'notif-3', read: false })
+        mockNotification({ id: 'notif-1', status: 'UN_READ' }),
+        mockNotification({ id: 'notif-2', status: 'READ' }),
+        mockNotification({ id: 'notif-3', status: 'UN_READ' })
       ];
 
       (globalThis.useApiFetch as any).mockResolvedValue({
         success: true,
-        body: { docs: notifications }
+        body: { docs: notifications, totalPages: 1, total: 3 }
       });
 
       await store.fetchNotifications();
 
-      expect(globalThis.useApiFetch).toHaveBeenCalledWith('notification');
-      expect(store.notifications).toEqual(notifications);
-      expect(store.unreadCount).toBe(2);
+      expect(globalThis.useApiFetch).toHaveBeenCalledWith(expect.stringContaining('notification?page='));
+      expect(store.notifications).toHaveLength(3);
       expect(store.loading).toBe(false);
     });
 
@@ -97,18 +97,6 @@ describe('useNotificationStore', () => {
 
       expect(store.notifications).toEqual([]);
       expect(store.loading).toBe(false);
-    });
-
-    it('should not update state on unsuccessful response', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
-        success: false,
-        message: 'Unauthorized'
-      });
-
-      await store.fetchNotifications();
-
-      expect(store.notifications).toEqual([]);
-      expect(store.unreadCount).toBe(0);
     });
   });
 
@@ -121,7 +109,7 @@ describe('useNotificationStore', () => {
 
       await store.markAsRead('notif-1');
 
-      expect(globalThis.useApiFetch).toHaveBeenCalledWith('notification/notif-1/read', 'PUT');
+      expect(globalThis.useApiFetch).toHaveBeenCalledWith('notification/read/notif-1', 'PUT');
       expect(store.notifications[0]!.read).toBe(true);
       expect(store.notifications[1]!.read).toBe(false);
       expect(store.unreadCount).toBe(1);

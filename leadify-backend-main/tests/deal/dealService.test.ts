@@ -333,6 +333,7 @@ describe('DealService', () => {
             (Deal.create as jest.Mock<any>).mockResolvedValue({
                 id: 'deal-new',
                 $set: jest.fn(),
+                toJSON: jest.fn(() => ({ id: 'deal-new' })),
             });
 
             // Should not throw USER_NOT_FOUND since no users were provided
@@ -440,7 +441,7 @@ describe('DealService', () => {
         it('should not fail if auto-project creation fails (graceful degradation)', async () => {
             const projectService = require('../../src/project/projectService').default;
             projectService.createProject = (jest.fn() as jest.Mock<any>).mockRejectedValue(new Error('Project creation failed'));
-            const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+            const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
             (Deal.findOne as jest.Mock<any>).mockResolvedValue(mockDealData);
 

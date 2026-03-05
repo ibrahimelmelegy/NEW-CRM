@@ -66,7 +66,7 @@ describe('LeadService', () => {
         // Mock instance methods
         $set: jest.fn(),
         set: jest.fn(),
-        save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
+        save: jest.fn(),
         toJSON: jest.fn(() => ({
             id: 'lead-123',
             name: 'Test Lead',
@@ -75,6 +75,9 @@ describe('LeadService', () => {
             status: 'NEW',
         }))
     };
+
+    // save() returns the instance itself (like Sequelize does)
+    mockLeadData.save.mockImplementation(() => Promise.resolve(mockLeadData));
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -212,8 +215,10 @@ describe('LeadService', () => {
                 ...mockLeadData,
                 $set: jest.fn(), // Explicitly re-mock
                 set: jest.fn(),
-                save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true)
+                save: jest.fn(),
+                toJSON: jest.fn(() => ({ id: 'lead-123', name: 'Updated Name' })),
             };
+            mockLeadInstance.save.mockImplementation(() => Promise.resolve(mockLeadInstance));
             (Lead.findOne as jest.Mock<any>).mockResolvedValue(mockLeadInstance);
 
             // Act
@@ -299,9 +304,10 @@ describe('LeadService', () => {
                 users: [],
                 toJSON: jest.fn(() => ({ id: 'lead-123' })),
                 set: jest.fn(),
-                save: (jest.fn() as jest.Mock<any>).mockResolvedValue({ id: 'lead-123' }),
+                save: jest.fn(),
                 $set: jest.fn(),
             };
+            mockLead.save.mockImplementation(() => Promise.resolve(mockLead));
             (Lead.findOne as jest.Mock<any>).mockResolvedValue(mockLead);
 
             await leadService.updateLead('lead-123', { name: 'Updated' }, mockAdminUser);

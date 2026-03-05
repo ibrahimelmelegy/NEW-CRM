@@ -55,9 +55,19 @@ describe('ClientService', () => {
         $get: jest.fn(),
         $add: jest.fn(),
         set: jest.fn(),
-        save: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
+        save: jest.fn(),
         destroy: jest.fn(),
+        toJSON: jest.fn(() => ({
+            id: 'client-123',
+            clientName: 'Test Client',
+            email: 'client@test.com',
+            phoneNumber: '+123456789',
+            companyName: 'Test Corp',
+        })),
     };
+
+    // save() returns the instance itself (like Sequelize does)
+    mockClientData.save.mockImplementation(() => Promise.resolve(mockClientData));
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -389,8 +399,11 @@ describe('ClientService', () => {
             const { io } = require('../../src/server');
             const savedClient: any = {
                 ...mockClientData,
-                save: (jest.fn() as jest.Mock<any>).mockResolvedValue(mockClientData),
+                toJSON: jest.fn(() => ({ id: mockClientData.id, clientName: mockClientData.clientName })),
+                set: jest.fn(),
+                save: jest.fn(),
             };
+            savedClient.save.mockImplementation(() => Promise.resolve(savedClient));
             (Client.findOne as jest.Mock<any>).mockResolvedValue(savedClient);
 
             await clientService.updateClient('client-123', { clientName: 'Updated' }, mockAdminUser);
