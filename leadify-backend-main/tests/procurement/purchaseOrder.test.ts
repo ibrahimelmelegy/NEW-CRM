@@ -1,3 +1,15 @@
+// Mock db before any imports to prevent Sequelize model initialization
+jest.mock('../../src/config/db', () => ({
+    __esModule: true,
+    sequelize: {
+        define: jest.fn(),
+        model: jest.fn(),
+        models: {},
+        transaction: jest.fn(),
+        literal: jest.fn(),
+    },
+}));
+
 import { sequelize } from '../../src/config/db';
 import ProcurementService from '../../src/procurement/procurementService';
 import PurchaseOrder from '../../src/procurement/models/purchaseOrderModel';

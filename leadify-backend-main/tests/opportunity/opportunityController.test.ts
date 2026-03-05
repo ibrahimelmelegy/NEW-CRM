@@ -6,6 +6,16 @@ import { wrapResult } from '../../src/utils/response/responseWrapper';
 import { NextFunction, Response } from 'express';
 
 // Mocks
+jest.mock('../../src/config/db', () => ({
+    __esModule: true,
+    sequelize: {
+        define: jest.fn(),
+        model: jest.fn(),
+        models: {},
+        transaction: jest.fn(),
+        literal: jest.fn(),
+    },
+}));
 jest.mock('../../src/opportunity/opportunityService');
 jest.mock('../../src/utils/response/responseWrapper');
 jest.mock('../../src/server', () => ({
