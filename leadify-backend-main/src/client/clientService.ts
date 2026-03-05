@@ -86,7 +86,7 @@ class ClientService {
     if (clientWithPhone) throw new BaseError(ERRORS.PHONE_ALREADY_EXISTS);
   }
 
-  async updateClient(id: string, input: unknown, user: User): Promise<unknown> {
+  async updateClient(id: string, input: any, user: User): Promise<any> {
     await this.validateClientAccess(id, user);
     const client = await this.clientOrError({ id });
 
@@ -134,7 +134,7 @@ class ClientService {
     return client;
   }
 
-  async getClients(query: unknown, user: User): Promise<unknown> {
+  async getClients(query: any, user: User): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS)) query.userId = user.id;
@@ -198,7 +198,7 @@ class ClientService {
     };
   }
 
-  async clientById(id: string, user: User): Promise<unknown> {
+  async clientById(id: string, user: User): Promise<any> {
     await this.validateClientAccess(id, user);
     const client = await this.clientOrError({ id }, [
       {
@@ -211,7 +211,7 @@ class ClientService {
     return client;
   }
 
-  async getClientsArray(): Promise<unknown> {
+  async getClientsArray(): Promise<any> {
     const clients = await Client.findAll({
       attributes: ['id', 'clientName', 'companyName']
     });
@@ -329,7 +329,7 @@ class ClientService {
     segments: Record<string, { count: number; clients: Array<{ id: string; clientName: string; score: number }> }>;
     totalClients: number;
   }> {
-    const where: Record<string, unknown> = tenantId ? { tenantId } : {};
+    const where: Record<string, any> = tenantId ? { tenantId } : {};
     const clients = await Client.findAll({
       where,
       attributes: ['id', 'clientName']
@@ -372,7 +372,7 @@ class ClientService {
     segmentDistribution: Record<string, number>;
     topByDealValue: Array<{ id: string; clientName: string; totalDealValue: number }>;
   }> {
-    const where: Record<string, unknown> = tenantId ? { tenantId } : {};
+    const where: Record<string, any> = tenantId ? { tenantId } : {};
 
     // Total clients
     const totalClients = await Client.count({ where });
@@ -461,8 +461,8 @@ class ClientService {
     };
   }
 
-  public async sendClientsExcelByEmail(query: unknown, user: User, email: string): Promise<void> {
-    const where: Record<string, unknown> = {
+  public async sendClientsExcelByEmail(query: any, user: User, email: string): Promise<void> {
+    const where: Record<string, any> = {
       ...(query.searchKey && {
         [Op.or]: [
           { clientName: { [Op.iLike]: `%${query.searchKey}%` } },
@@ -547,7 +547,7 @@ class ClientService {
   }
 
   // ─── Company Hierarchy ───────────────────────────────────────────────────
-  async getCompanyHierarchy(companyId: string): Promise<unknown> {
+  async getCompanyHierarchy(companyId: string): Promise<any> {
     const company = await this.clientOrError({ id: companyId });
 
     // Get all subsidiaries (recursive)
@@ -593,7 +593,7 @@ class ClientService {
     let currentId: string | undefined = companyId;
 
     while (currentId) {
-      const company = await Client.findOne({
+      const company: any = await Client.findOne({
         where: { id: currentId },
         attributes: ['id', 'clientName', 'companyName', 'parentCompanyId']
       });
@@ -660,7 +660,7 @@ class ClientService {
 
     // Combine and sort all timeline items
     const timeline = [
-      ...deals.map((d: unknown) => ({
+      ...deals.map((d: any) => ({
         id: d.id,
         type: 'DEAL',
         title: d.name,
@@ -668,7 +668,7 @@ class ClientService {
         timestamp: d.createdAt,
         data: d.toJSON()
       })),
-      ...activities.map((a: unknown) => ({
+      ...activities.map((a: any) => ({
         id: a.id,
         type: 'ACTIVITY',
         title: a.subject || a.type,
@@ -677,7 +677,7 @@ class ClientService {
         user: a.user,
         data: a.toJSON()
       })),
-      ...calls.map((c: unknown) => ({
+      ...calls.map((c: any) => ({
         id: c.id,
         type: 'CALL',
         title: `${c.direction} Call`,
@@ -685,7 +685,7 @@ class ClientService {
         timestamp: c.createdAt,
         data: c.toJSON()
       })),
-      ...meetings.map((m: unknown) => ({
+      ...meetings.map((m: any) => ({
         id: m.id,
         type: 'MEETING',
         title: m.title,
@@ -790,7 +790,7 @@ class ClientService {
   }
 
   // ─── Bulk Operations ─────────────────────────────────────────────────────
-  async bulkUpdateCompanies(companyIds: string[], updates: unknown, user: User): Promise<number> {
+  async bulkUpdateCompanies(companyIds: string[], updates: any, user: User): Promise<number> {
     const updateCount = await Client.update(updates, {
       where: {
         id: { [Op.in]: companyIds },

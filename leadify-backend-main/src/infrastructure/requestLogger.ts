@@ -228,12 +228,12 @@ export function requestLoggerMiddleware(req: Request, res: Response, next: NextF
   // Capture original end to intercept status code
   const originalEnd = res.end;
 
-  res.end = function (this: Response, ...args: unknown[]) {
+  res.end = function (this: Response, ...args: any[]) {
     const durationNs = process.hrtime.bigint() - startTime;
     const durationMs = Number(durationNs) / 1_000_000;
     const slow = durationMs > SLOW_THRESHOLD_MS;
 
-    const user = (req as unknown).user;
+    const user = (req as any).user;
     const userId = user?.id;
 
     const entry: RequestLogEntry = {
@@ -257,8 +257,8 @@ export function requestLoggerMiddleware(req: Request, res: Response, next: NextF
       );
     }
 
-    return originalEnd.apply(this, args as unknown);
-  } as unknown;
+    return originalEnd.apply(this, args as any);
+  } as any;
 
   next();
 }

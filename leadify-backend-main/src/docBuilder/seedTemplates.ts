@@ -37,9 +37,9 @@ interface SeedTemplate {
     variables: string[];
     templateHtml: string;
   };
-  headerConfig: Record<string, unknown>;
-  footerConfig: Record<string, unknown>;
-  tableConfig: Record<string, unknown>;
+  headerConfig: Record<string, any>;
+  footerConfig: Record<string, any>;
+  tableConfig: Record<string, any>;
 }
 
 const COMMON_VARS = [

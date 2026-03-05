@@ -23,11 +23,11 @@ export interface SalesforceRecord {
   name: string;
   email?: string;
   phone?: string;
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
 export class SalesforceProvider {
-  private connection: unknown = null;
+  private connection: any = null;
 
   static isConfigured(): boolean {
     return !!(process.env.SALESFORCE_CLIENT_ID && process.env.SALESFORCE_CLIENT_SECRET);
@@ -60,11 +60,11 @@ export class SalesforceProvider {
       if (conn) {
         const records = leads.map(l => ({ LastName: l.name, Email: l.email, Company: l.company || 'Unknown', Phone: l.phone }));
         const results = await conn.sobject('Lead').create(records);
-        const synced = (results as unknown[]).filter((r) => r.success).length;
+        const synced = (results as any[]).filter((r) => r.success).length;
         return { success: true, data: { synced, failed: leads.length - synced }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: leads.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: unknown) {
+    } catch (err: any) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[SalesforceProvider] syncLeads error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
@@ -77,11 +77,11 @@ export class SalesforceProvider {
       if (conn) {
         const records = contacts.map(c => ({ LastName: c.name, Email: c.email, Phone: c.phone }));
         const results = await conn.sobject('Contact').create(records);
-        const synced = (results as unknown[]).filter((r) => r.success).length;
+        const synced = (results as any[]).filter((r) => r.success).length;
         return { success: true, data: { synced, failed: contacts.length - synced }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: contacts.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: unknown) {
+    } catch (err: any) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[SalesforceProvider] syncContacts error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
@@ -94,11 +94,11 @@ export class SalesforceProvider {
       if (conn) {
         const records = deals.map(d => ({ Name: d.name, Amount: d.amount, StageName: d.stage, CloseDate: d.closeDate }));
         const results = await conn.sobject('Opportunity').create(records);
-        const synced = (results as unknown[]).filter((r) => r.success).length;
+        const synced = (results as any[]).filter((r) => r.success).length;
         return { success: true, data: { synced, failed: deals.length - synced }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: deals.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: unknown) {
+    } catch (err: any) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[SalesforceProvider] syncDeals error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
@@ -115,7 +115,7 @@ export class SalesforceProvider {
           Opportunity: 'Id, Name, Amount, StageName, CloseDate',
         };
         const records = await conn.sobject(objectType).find({}, fieldMap[objectType]).limit(limit).execute();
-        const mapped = records.map((r) => ({ id: r.Id, name: r.Name, email: r.Email, phone: r.Phone, ...r }));
+        const mapped = records.map((r: any) => ({ id: r.Id, name: r.Name, email: r.Email, phone: r.Phone, ...r }));
         return { success: true, data: mapped, mock: false, syncedAt: new Date().toISOString() };
       }
       const mockRecords: SalesforceRecord[] = [
@@ -123,23 +123,23 @@ export class SalesforceProvider {
         { id: 'sf_002', name: 'Mock Lead B', email: 'leadb@example.com' },
       ];
       return { success: true, data: mockRecords, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: unknown) {
+    } catch (err: any) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[SalesforceProvider] importFromSalesforce error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
 
-  async exportToSalesforce(objectType: 'Lead' | 'Contact' | 'Opportunity', records: Record<string, unknown>[]): Promise<SyncResult<{ exported: number; failed: number }>> {
+  async exportToSalesforce(objectType: 'Lead' | 'Contact' | 'Opportunity', records: Record<string, any>[]): Promise<SyncResult<{ exported: number; failed: number }>> {
     try {
       const conn = await this.getConnection();
       if (conn) {
         const results = await conn.sobject(objectType).create(records);
-        const exported = (results as unknown[]).filter((r) => r.success).length;
+        const exported = (results as any[]).filter((r) => r.success).length;
         return { success: true, data: { exported, failed: records.length - exported }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { exported: records.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: unknown) {
+    } catch (err: any) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[SalesforceProvider] exportToSalesforce error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };

@@ -10,12 +10,12 @@ class QuoteService {
     });
   }
 
-  async addQuoteLine(data: unknown): Promise<QuoteLine> {
+  async addQuoteLine(data: any): Promise<QuoteLine> {
     const total = Number(data.quantity) * Number(data.unitPrice) - Number(data.discount || 0);
     return QuoteLine.create({ ...data, total });
   }
 
-  async updateQuoteLine(id: string, data: unknown): Promise<QuoteLine> {
+  async updateQuoteLine(id: string, data: any): Promise<QuoteLine> {
     const line = await QuoteLine.findByPk(id);
     if (!line) throw new Error('Quote line not found');
 

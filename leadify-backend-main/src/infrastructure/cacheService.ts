@@ -75,7 +75,7 @@ class CacheService {
   /**
    * Set a cached value with optional TTL (seconds). Defaults to 5 minutes.
    */
-  async set(key: string, value: unknown, ttlSeconds: number = this.defaultTTL): Promise<void> {
+  async set(key: string, value: any, ttlSeconds: number = this.defaultTTL): Promise<void> {
     if (!(await this.ensureConnection())) return;
     try {
       await redisClient.setEx(key, ttlSeconds, JSON.stringify(value));
@@ -178,7 +178,7 @@ class CacheService {
    * Cache dropdown/select options (e.g., lead sources, deal stages, industries).
    * Default TTL: 30 minutes (these rarely change).
    */
-  async cacheDropdownOptions(key: string, options: unknown[], ttl: number = 1800): Promise<void> {
+  async cacheDropdownOptions(key: string, options: any[], ttl: number = 1800): Promise<void> {
     await this.set(`dropdown:${key}`, options, ttl);
   }
 
@@ -193,7 +193,7 @@ class CacheService {
    * Cache a paginated list result (e.g., lead listing page 1).
    * Short TTL since list data changes frequently.
    */
-  async cacheListResult(entity: string, queryHash: string, data: unknown, ttl: number = 60): Promise<void> {
+  async cacheListResult(entity: string, queryHash: string, data: any, ttl: number = 60): Promise<void> {
     await this.set(`list:${entity}:${queryHash}`, data, ttl);
   }
 

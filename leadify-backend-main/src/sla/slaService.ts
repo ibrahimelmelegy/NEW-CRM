@@ -91,7 +91,7 @@ class SLAService {
     const limit = query.limit || 20;
     const offset = (page - 1) * limit;
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (query.entityType) where.entityType = query.entityType;
     if (query.isActive !== undefined) where.isActive = query.isActive;
 
@@ -203,7 +203,7 @@ class SLAService {
     const resolutionBreached = now > instance.resolutionDeadline;
 
     // Also check response if not yet responded
-    const updates: Record<string, unknown> = {
+    const updates: Record<string, any> = {
       resolvedAt: now,
       resolutionBreached,
       status: resolutionBreached ? SLAInstanceStatus.BREACHED : SLAInstanceStatus.COMPLETED
@@ -450,7 +450,7 @@ class SLAService {
    * Get aggregate SLA metrics for a given entity type within a date range.
    */
   async getSLAMetrics(entityType: string, dateRange?: { from?: string; to?: string }): Promise<SLAMetrics> {
-    const where: Record<string, unknown> = { entityType };
+    const where: Record<string, any> = { entityType };
 
     if (dateRange?.from || dateRange?.to) {
       where.startedAt = {};

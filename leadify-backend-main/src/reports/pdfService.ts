@@ -8,7 +8,7 @@
 interface PdfReportOptions {
   title: string;
   subtitle?: string;
-  data: Record<string, unknown>[];
+  data: Record<string, any>[];
   columns: string[];
   columnLabels?: Record<string, string>;
   summary?: Record<string, { sum: number; avg: number; min: number; max: number; count: number }>;
@@ -74,7 +74,7 @@ class ReportPdfService {
         .trim();
     };
 
-    const escapeHtml = (val: unknown): string => {
+    const escapeHtml = (val: any): string => {
       if (val === null || val === undefined) return '-';
       const str = String(val);
       return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

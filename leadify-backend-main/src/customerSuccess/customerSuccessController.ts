@@ -10,7 +10,7 @@ class CustomerSuccessController {
       const tenantId = req.user!.tenantId!;
       const dashboard = await customerSuccessService.getDashboard(tenantId);
       wrapResult(res, dashboard, 200);
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('[CustomerSuccess] Dashboard error:', error instanceof Error ? error.message : String(error));
       // Return empty dashboard matching frontend shape instead of 500
       wrapResult(
@@ -40,7 +40,7 @@ class CustomerSuccessController {
       }
 
       wrapResult(res, health, 200);
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('[CustomerSuccess] Client health error:', error instanceof Error ? error.message : String(error));
       wrapResult(res, null, 500);
     }

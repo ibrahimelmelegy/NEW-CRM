@@ -5,7 +5,7 @@ import { diffObjects, logChange } from './auditService';
 
 /** Any Sequelize model class that has findByPk and toJSON on its instances */
 interface AuditableModel {
-  findByPk(id: string | number): Promise<{ toJSON(): Record<string, unknown> } | null>;
+  findByPk(id: string | number): Promise<{ toJSON(): Record<string, any> } | null>;
 }
 
 /**
@@ -30,7 +30,7 @@ export function auditUpdate(
     /** Human-readable labels for field names, e.g. { firstName: 'First Name' } */
     fieldLabels?: Record<string, string>;
     /** Override how the action is determined. Default: 'UPDATE' */
-    actionResolver?: (req: AuthenticatedRequest, oldRecord: Record<string, unknown>) => AuditAction;
+    actionResolver?: (req: AuthenticatedRequest, oldRecord: Record<string, any>) => AuditAction;
   }
 ) {
   const idParam = options?.idParam || 'id';
@@ -51,19 +51,19 @@ export function auditUpdate(
         return next();
       }
 
-      const oldValues = currentRecord.toJSON() as Record<string, unknown>;
+      const oldValues = currentRecord.toJSON() as Record<string, any>;
 
       // Store old values on the request so the handler can proceed normally
-      (req as unknown)._auditOldValues = oldValues;
-      (req as unknown)._auditEntityType = entityType;
-      (req as unknown)._auditEntityId = entityId;
-      (req as unknown)._auditFieldLabels = fieldLabels;
-      (req as unknown)._auditActionResolver = actionResolver;
-      (req as unknown)._auditModelClass = modelClass;
+      (req as any)._auditOldValues = oldValues;
+      (req as any)._auditEntityType = entityType;
+      (req as any)._auditEntityId = entityId;
+      (req as any)._auditFieldLabels = fieldLabels;
+      (req as any)._auditActionResolver = actionResolver;
+      (req as any)._auditModelClass = modelClass;
 
       // Hook into res.json/res.send to capture when the response is sent (success path)
       const originalJson = _res.json.bind(_res);
-      _res.json = function auditedJson(body: unknown) {
+      _res.json = function auditedJson(body: any) {
         // Only log if the response indicates success (2xx)
         if (_res.statusCode >= 200 && _res.statusCode < 300) {
           // Fire-and-forget: do not block the response
@@ -75,7 +75,7 @@ export function auditUpdate(
       };
 
       const originalSend = _res.send.bind(_res);
-      _res.send = function auditedSend(body: unknown) {
+      _res.send = function auditedSend(body: any) {
         if (_res.statusCode >= 200 && _res.statusCode < 300) {
           captureAuditAfterUpdate(req).catch(err => {
             console.error('[AuditMiddleware] Failed to write audit log:', err);
@@ -98,24 +98,24 @@ export function auditUpdate(
  * and diff it against the snapshot we took before the update.
  */
 async function captureAuditAfterUpdate(req: AuthenticatedRequest): Promise<void> {
-  const oldValues = (req as unknown)._auditOldValues as Record<string, unknown> | undefined;
-  const entityType = (req as unknown)._auditEntityType as string | undefined;
-  const entityId = (req as unknown)._auditEntityId as string | undefined;
-  const fieldLabels = (req as unknown)._auditFieldLabels as Record<string, string> | undefined;
-  const actionResolver = (req as unknown)._auditActionResolver as ((req: AuthenticatedRequest, old: Record<string, unknown>) => AuditAction) | undefined;
-  const modelClass = (req as unknown)._auditModelClass as AuditableModel | undefined;
+  const oldValues = (req as any)._auditOldValues as Record<string, any> | undefined;
+  const entityType = (req as any)._auditEntityType as string | undefined;
+  const entityId = (req as any)._auditEntityId as string | undefined;
+  const fieldLabels = (req as any)._auditFieldLabels as Record<string, string> | undefined;
+  const actionResolver = (req as any)._auditActionResolver as ((req: AuthenticatedRequest, old: Record<string, any>) => AuditAction) | undefined;
+  const modelClass = (req as any)._auditModelClass as AuditableModel | undefined;
 
   if (!oldValues || !entityType || !entityId || !modelClass) return;
 
   // Prevent double-logging (send + json both fire)
-  if ((req as unknown)._auditLogged) return;
-  (req as unknown)._auditLogged = true;
+  if ((req as any)._auditLogged) return;
+  (req as any)._auditLogged = true;
 
   // Re-fetch the updated record
   const updatedRecord = await modelClass.findByPk(entityId);
   if (!updatedRecord) return;
 
-  const newValues = updatedRecord.toJSON() as Record<string, unknown>;
+  const newValues = updatedRecord.toJSON() as Record<string, any>;
   const changes = diffObjects(oldValues, newValues, fieldLabels);
 
   // If nothing actually changed, skip the audit entry
@@ -157,7 +157,7 @@ export async function auditCreate(
   req: AuthenticatedRequest,
   fieldLabels?: Record<string, string>
 ): Promise<void> {
-  const changes: { field: string; oldValue: null; newValue: unknown; fieldLabel?: string }[] = [];
+  const changes: { field: string; oldValue: null; newValue: any; fieldLabel?: string }[] = [];
 
   // Log all non-meta fields from the request body as "created" values
   const body = req.body || {};
@@ -189,9 +189,9 @@ export async function auditDelete(
   entityType: string,
   entityId: string | number,
   req: AuthenticatedRequest,
-  deletedData?: Record<string, unknown>
+  deletedData?: Record<string, any>
 ): Promise<void> {
-  const changes: { field: string; oldValue: unknown; newValue: null }[] = [];
+  const changes: { field: string; oldValue: any; newValue: null }[] = [];
 
   if (deletedData) {
     for (const [key, value] of Object.entries(deletedData)) {

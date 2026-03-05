@@ -14,7 +14,7 @@ interface CreateFieldData {
   isRequired?: boolean;
   sortOrder?: number;
   isActive?: boolean;
-  validationRules?: Record<string, unknown>;
+  validationRules?: Record<string, any>;
   createdBy?: string;
 }
 
@@ -26,7 +26,7 @@ interface UpdateFieldData {
   isRequired?: boolean;
   sortOrder?: number;
   isActive?: boolean;
-  validationRules?: Record<string, unknown>;
+  validationRules?: Record<string, any>;
 }
 
 class CustomFieldService {
@@ -94,7 +94,7 @@ class CustomFieldService {
       data.sortOrder = ((maxOrder as number) || 0) + 1;
     }
 
-    return CustomField.create(data as unknown as Record<string, unknown>);
+    return CustomField.create(data as unknown as Record<string, any>);
   }
 
   /**
@@ -183,7 +183,7 @@ class CustomFieldService {
       entityType,
       customFieldId,
       value
-    } as Record<string, unknown>);
+    } as Record<string, any>);
   }
 
   /**
@@ -242,7 +242,7 @@ class CustomFieldService {
           entityType,
           customFieldId: v.customFieldId,
           value: v.value
-        } as Record<string, unknown>);
+        } as Record<string, any>);
       }
     }
 

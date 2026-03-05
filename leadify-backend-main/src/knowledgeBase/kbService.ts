@@ -4,12 +4,12 @@ import User from '../user/userModel';
 import { clampPagination } from '../utils/pagination';
 
 class KBService {
-  async createArticle(data: unknown, authorId?: number) {
+  async createArticle(data: any, authorId?: number) {
     const slug = this.generateSlug(data.title);
     return KBArticle.create({ ...data, slug, authorId });
   }
 
-  async updateArticle(id: string, data: unknown) {
+  async updateArticle(id: string, data: any) {
     const article = await KBArticle.findByPk(id);
     if (!article) throw new Error('Article not found');
     if (data.title && data.title !== article.title) {
@@ -18,10 +18,10 @@ class KBService {
     return article.update(data);
   }
 
-  async getArticles(query: unknown) {
+  async getArticles(query: any) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { search, category, status, tag } = query;
-    const where: Record<string, unknown> = {};
+    const where: any = {};
 
     if (search) {
       where[Op.or] = [
@@ -55,7 +55,7 @@ class KBService {
     };
   }
 
-  async getPublishedArticles(query: unknown) {
+  async getPublishedArticles(query: any) {
     return this.getArticles({ ...query, status: ArticleStatus.PUBLISHED });
   }
 

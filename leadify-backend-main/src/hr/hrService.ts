@@ -6,10 +6,10 @@ import User from '../user/userModel';
 
 class HRService {
   // Attendance
-  async getAttendance(query: unknown) {
+  async getAttendance(query: any) {
     const { page, limit, offset } = clampPagination(query, 30);
     const { userId, date, startDate, endDate, status, searchKey, sortBy, sort } = query;
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (userId) where.userId = userId;
     if (date) where.date = date;
     if (status) where.status = status;
@@ -57,11 +57,11 @@ class HRService {
     return record;
   }
 
-  async createAttendance(data: unknown) {
+  async createAttendance(data: any) {
     return Attendance.create(data);
   }
 
-  async updateAttendance(id: number, data: unknown) {
+  async updateAttendance(id: number, data: any) {
     const record = await Attendance.findByPk(id);
     if (!record) throw new Error('Attendance record not found');
     return record.update(data);
@@ -83,10 +83,10 @@ class HRService {
     return request;
   }
 
-  async getLeaveRequests(query: unknown) {
+  async getLeaveRequests(query: any) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { userId, status, leaveType, searchKey, sortBy, sort } = query;
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (userId) where.userId = userId;
     if (status) where.status = status;
     if (leaveType) where.leaveType = leaveType;
@@ -105,7 +105,7 @@ class HRService {
     };
   }
 
-  async createLeaveRequest(data: unknown, userId: number) {
+  async createLeaveRequest(data: any, userId: number) {
     return LeaveRequest.create({ ...data, userId });
   }
 

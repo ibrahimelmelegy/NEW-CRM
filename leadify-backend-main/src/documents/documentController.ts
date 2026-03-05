@@ -59,7 +59,7 @@ class DocumentController {
 
   async getFiles(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const query: Record<string, unknown> = {};
+      const query: Record<string, any> = {};
       if (req.query.folderId !== undefined) query.folderId = Number(req.query.folderId);
       if (req.query.search) query.search = req.query.search as string;
       if (req.query.tags) query.tags = req.query.tags as string;

@@ -28,11 +28,11 @@ interface TestResultVariant extends VariantResults {
 }
 
 class ABTestService {
-  async create(data: unknown, tenantId?: string) { return ABTest.create({ ...data, tenantId }); }
+  async create(data: any, tenantId?: string) { return ABTest.create({ ...data, tenantId }); }
 
-  async getAll(query: unknown, tenantId?: string) {
+  async getAll(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -41,7 +41,7 @@ class ABTestService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async update(id: number, data: unknown) {
+  async update(id: number, data: any) {
     const item = await ABTest.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -299,8 +299,8 @@ class ABTestService {
         status: test.status,
         startDate: test.startDate,
         variants,
-        totalImpressions: variants.reduce((sum: number, v: unknown) => sum + v.impressions, 0),
-        totalConversions: variants.reduce((sum: number, v: unknown) => sum + v.conversions, 0),
+        totalImpressions: variants.reduce((sum: number, v: any) => sum + v.impressions, 0),
+        totalConversions: variants.reduce((sum: number, v: any) => sum + v.conversions, 0),
       };
     });
   }

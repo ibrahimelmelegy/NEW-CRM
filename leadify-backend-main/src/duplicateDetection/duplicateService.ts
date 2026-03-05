@@ -94,13 +94,13 @@ class DuplicateService {
     entityType: string
   ): {
     score: number;
-    matchedFields: Array<{ field: string; value1: unknown; value2: unknown; similarity: number }>;
+    matchedFields: Array<{ field: string; value1: any; value2: any; similarity: number }>;
   } {
     const fields = entityFieldMap[entityType];
     if (!fields) return { score: 0, matchedFields: [] };
 
     let highestScore = 0;
-    const matchedFields: Array<{ field: string; value1: unknown; value2: unknown; similarity: number }> = [];
+    const matchedFields: Array<{ field: string; value1: any; value2: any; similarity: number }> = [];
 
     switch (entityType) {
       case 'lead': {
@@ -205,7 +205,7 @@ class DuplicateService {
     if (!fields) throw new Error(`No field mapping for entity type: ${entityType}`);
 
     // Build a broad WHERE to find candidates (email or phone or name match)
-    const orConditions: unknown[] = [];
+    const orConditions: any[] = [];
 
     if (fields.email && entityData[fields.email]) {
       orConditions.push({ [fields.email]: { [Op.iLike]: entityData[fields.email] } });
@@ -227,7 +227,7 @@ class DuplicateService {
       limit: 50
     });
 
-    const duplicates: Array<{ record: unknown; matchScore: number; matchedFields: unknown[] }> = [];
+    const duplicates: Array<{ record: any; matchScore: number; matchedFields: any[] }> = [];
 
     for (const candidate of candidates) {
       const candidateData = candidate.toJSON();
@@ -252,8 +252,8 @@ class DuplicateService {
     if (!Model) throw new Error(`Unsupported entity type: ${entityType}`);
 
     const records = await Model.findAll();
-    const recordData = records.map((r: unknown) => r.toJSON());
-    const detectedSets: Array<{ masterRecordId: string; duplicateRecordIds: string[]; matchScore: number; matchedFields: unknown[] }> = [];
+    const recordData = records.map((r: any) => r.toJSON());
+    const detectedSets: Array<{ masterRecordId: string; duplicateRecordIds: string[]; matchScore: number; matchedFields: any[] }> = [];
     const processedPairs = new Set<string>();
 
     for (let i = 0; i < recordData.length; i++) {
@@ -303,10 +303,10 @@ class DuplicateService {
 
   // ---- List duplicate sets with filters ----
 
-  async getDuplicateSets(query: unknown) {
+  async getDuplicateSets(query: any) {
     const { page, limit, offset } = clampPagination(query, 30);
     const { entityType, status, sortBy = 'createdAt', sort = 'DESC' } = query;
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (entityType) where.entityType = entityType;
     if (status) where.status = status;
     const { rows, count } = await DuplicateSet.findAndCountAll({

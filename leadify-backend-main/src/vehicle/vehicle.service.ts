@@ -123,7 +123,7 @@ class VehicleService {
   }
 
   public async sendVehiclesExcelByEmail(query: GetPaginatedVehicleInput, email: string): Promise<void> {
-    const where: unknown = {
+    const where: any = {
       ...(query.searchKey && {
         [Op.or]: [
           {

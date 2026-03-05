@@ -234,7 +234,7 @@ export async function canAddUser(tenantId: string): Promise<boolean> {
  * Get the tenant associated with the current user (for non-admin use).
  * Returns a safe subset of tenant info (no internal settings).
  */
-export async function getMyTenant(tenantId: string): Promise<Record<string, unknown> | null> {
+export async function getMyTenant(tenantId: string): Promise<Record<string, any> | null> {
   const tenant = await getTenantById(tenantId);
   if (!tenant) return null;
 

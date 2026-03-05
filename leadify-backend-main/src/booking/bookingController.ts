@@ -73,7 +73,7 @@ class BookingController {
   async createBookingWithValidation(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await service.createBookingWithValidation(req.body, req.user!.tenantId!), 201);
-    } catch (e: unknown) {
+    } catch (e: any) {
       if ((e as any).statusCode === 409) {
         return res.status(409).send({ success: false, message: e instanceof Error ? e.message : String(e), conflicts: (e as any).conflicts });
       }

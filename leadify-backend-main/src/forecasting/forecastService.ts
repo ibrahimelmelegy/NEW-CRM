@@ -15,7 +15,7 @@ class ForecastService {
   async getForecasts(query: ForecastQuery) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { userId, period } = query;
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
 
     if (userId) where.userId = userId;
     if (period) where.period = period;
@@ -55,11 +55,11 @@ class ForecastService {
     });
   }
 
-  async createForecast(data: unknown) {
+  async createForecast(data: any) {
     return ForecastPeriod.create(data);
   }
 
-  async updateForecast(id: string, data: unknown) {
+  async updateForecast(id: string, data: any) {
     const forecast = await ForecastPeriod.findByPk(id);
     if (!forecast) throw new Error('Forecast not found');
     return forecast.update(data);

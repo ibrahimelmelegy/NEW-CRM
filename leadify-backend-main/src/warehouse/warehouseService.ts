@@ -5,11 +5,11 @@ import { sequelize } from '../config/db';
 import { io } from '../server';
 
 class WarehouseService {
-  async createWarehouse(data: unknown, tenantId?: string) { return Warehouse.create({ ...data, tenantId }); }
+  async createWarehouse(data: any, tenantId?: string) { return Warehouse.create({ ...data, tenantId }); }
 
-  async getWarehouses(query: unknown, tenantId?: string) {
+  async getWarehouses(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
@@ -25,7 +25,7 @@ class WarehouseService {
     return Warehouse.findByPk(id, { include: [{ model: WarehouseZone, as: 'zones' }] });
   }
 
-  async updateWarehouse(id: number, data: unknown) {
+  async updateWarehouse(id: number, data: any) {
     const item = await Warehouse.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -40,18 +40,18 @@ class WarehouseService {
     return true;
   }
 
-  async getZones(query: unknown, tenantId?: string) {
+  async getZones(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     const { rows, count } = await WarehouseZone.findAndCountAll({ where, limit, offset, order: [['createdAt', 'DESC']] });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async createZone(data: unknown, tenantId?: string) { return WarehouseZone.create({ ...data, tenantId }); }
+  async createZone(data: any, tenantId?: string) { return WarehouseZone.create({ ...data, tenantId }); }
 
   async getStockCount(tenantId?: string) {
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     const count = await StockTransfer.count({ where });
     return { count, total: count };
@@ -64,14 +64,14 @@ class WarehouseService {
     return true;
   }
 
-  async createTransfer(data: unknown, tenantId?: string) {
+  async createTransfer(data: any, tenantId?: string) {
     const transferNumber = `TRF-${Date.now().toString(36).toUpperCase()}`;
     return StockTransfer.create({ ...data, transferNumber, tenantId });
   }
 
-  async getTransfers(query: unknown, tenantId?: string) {
+  async getTransfers(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     const { rows, count } = await StockTransfer.findAndCountAll({
@@ -80,7 +80,7 @@ class WarehouseService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateTransfer(id: number, data: unknown) {
+  async updateTransfer(id: number, data: any) {
     const transfer = await StockTransfer.findByPk(id);
     if (!transfer) return null;
     await transfer.update(data);

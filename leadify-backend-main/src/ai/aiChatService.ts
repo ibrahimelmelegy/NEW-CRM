@@ -16,7 +16,7 @@ interface ChatMessage {
 interface ChatResponse {
   answer: string;
   context?: string;
-  data?: unknown;
+  data?: any;
 }
 
 const CRM_SYSTEM_PROMPT = `You are a CRM data assistant for High Point CRM. You help users query and understand their CRM data.
@@ -118,14 +118,14 @@ class AIChatService {
     }
   }
 
-  private async analyzeQuestion(question: string, history: ChatMessage[]): Promise<unknown> {
+  private async analyzeQuestion(question: string, history: ChatMessage[]): Promise<any> {
     try {
       const client = await this.getOpenAIClient();
       if (!client) {
         return this.analyzeQuestionFallback(question);
       }
 
-      const messages: Record<string, unknown>[] = [
+      const messages: Record<string, any>[] = [
         { role: 'system', content: CRM_SYSTEM_PROMPT },
         ...history.slice(-6), // Include last 3 exchanges for context
         { role: 'user', content: question }
@@ -228,7 +228,7 @@ class AIChatService {
     return undefined;
   }
 
-  private async executeQuery(plan: unknown): Promise<unknown> {
+  private async executeQuery(plan: any): Promise<any> {
     const modelMap: Record<string, any> = {
       leads: Lead,
       deals: Deal,
@@ -241,7 +241,7 @@ class AIChatService {
     const model = modelMap[plan.module];
     if (!model) return null;
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
 
     // Apply filters
     if (plan.filters) {
@@ -267,7 +267,7 @@ class AIChatService {
       if (to) where[dateField][Op.lte] = new Date(to);
     }
 
-    const queryOptions: Record<string, unknown> = { where };
+    const queryOptions: Record<string, any> = { where };
 
     // Execute based on intent
     switch (plan.intent) {
@@ -335,7 +335,7 @@ class AIChatService {
     }
   }
 
-  private async generateResponse(question: string, plan: unknown, data: unknown): Promise<string> {
+  private async generateResponse(question: string, plan: any, data: any): Promise<string> {
     try {
       const client = await this.getOpenAIClient();
       if (!client) {
@@ -365,7 +365,7 @@ class AIChatService {
     }
   }
 
-  private formatResponseFallback(plan: unknown, data: unknown): string {
+  private formatResponseFallback(plan: any, data: any): string {
     if (!data) return 'No data found for your query.';
 
     switch (plan.intent) {
@@ -385,7 +385,7 @@ class AIChatService {
           const names = data.items
             .slice(0, 5)
             .map(
-              (item: unknown) =>
+              (item: any) =>
                 `- ${item.name || item.clientName || item.invoiceNumber || 'Item'}${item.price ? ` ($${item.price.toLocaleString()})` : ''}${item.amount ? ` ($${item.amount.toLocaleString()})` : ''}`
             )
             .join('\n');
@@ -396,7 +396,7 @@ class AIChatService {
       case 'status':
         if (data.breakdown?.length > 0) {
           const lines = data.breakdown
-            .map((item: unknown) => {
+            .map((item: any) => {
               const key = Object.keys(item).find(k => k !== 'count') || 'status';
               return `- **${item[key]}**: ${item.count}`;
             })
@@ -429,7 +429,7 @@ class AIChatService {
         attributes: [[fn('SUM', col('price')), 'total']],
         raw: true
       });
-      const total = result?.total || 0;
+      const total = (result as any)?.total || 0;
       return { answer: `The current pipeline value (deals in progress) is **$${Number(total).toLocaleString()}**.` };
     }
 
@@ -441,7 +441,7 @@ class AIChatService {
     return null;
   }
 
-  private async getOpenAIClient(): Promise<unknown> {
+  private async getOpenAIClient(): Promise<any> {
     // Access the private openai client through the aiService singleton
     // We mirror the getClient pattern
     const OpenAI = require('openai').default;

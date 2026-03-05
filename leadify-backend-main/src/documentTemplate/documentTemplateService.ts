@@ -1086,7 +1086,7 @@ const DEFAULT_TEMPLATES = [
  * Map frontend email template fields (body -> emailBody, category -> emailCategory)
  * to model column names to avoid conflicts with existing model columns.
  */
-function mapEmailFields(data: unknown): unknown {
+function mapEmailFields(data: any): any {
   const mapped = { ...data };
   if (mapped.body !== undefined && mapped.type === 'EMAIL') {
     mapped.emailBody = mapped.body;
@@ -1103,7 +1103,7 @@ function mapEmailFields(data: unknown): unknown {
  * Reshape a document template record to expose email-friendly field names
  * for email-type templates (emailBody -> body, emailCategory -> category).
  */
-function reshapeForEmail(doc: unknown): unknown {
+function reshapeForEmail(doc: any): unknown {
   if (!doc) return doc;
   const plain = doc.toJSON ? doc.toJSON() : { ...doc };
   if (plain.type === 'EMAIL') {
@@ -1114,13 +1114,13 @@ function reshapeForEmail(doc: unknown): unknown {
 }
 
 class DocumentTemplateService {
-  public async createTemplate(data: unknown, userId?: string): Promise<unknown> {
+  public async createTemplate(data: any, userId?: string): Promise<any> {
     const mapped = mapEmailFields(data);
     const created = await DocumentTemplate.create({ ...mapped, userId });
     return reshapeForEmail(created);
   }
 
-  public async updateTemplate(id: string, data: unknown): Promise<unknown> {
+  public async updateTemplate(id: string, data: any): Promise<any> {
     const template = await DocumentTemplate.findByPk(id);
     if (!template) throw new BaseError(ERRORS.DOCUMENT_TEMPLATE_NOT_FOUND);
     const mapped = mapEmailFields({ ...data, type: data.type || template.type });
@@ -1128,11 +1128,11 @@ class DocumentTemplateService {
     return reshapeForEmail(template);
   }
 
-  public async getTemplates(query: unknown): Promise<unknown> {
+  public async getTemplates(query: any): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { type, searchKey } = query;
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (type) where.type = type;
     if (searchKey) {
       where.name = { [Op.iLike]: `%${searchKey}%` };
@@ -1159,7 +1159,7 @@ class DocumentTemplateService {
     };
   }
 
-  public async getTemplateById(id: string): Promise<unknown> {
+  public async getTemplateById(id: string): Promise<any> {
     const template = await DocumentTemplate.findByPk(id);
     if (!template) throw new BaseError(ERRORS.DOCUMENT_TEMPLATE_NOT_FOUND);
     return reshapeForEmail(template);

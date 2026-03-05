@@ -42,7 +42,7 @@ export function runWithTenantContext<T>(store: TenantStore, fn: () => T): T {
  */
 export function withoutTenantScope<T>(fn: () => T): T {
   // Run with an empty store (undefined) so getTenantContext() returns null
-  return tenantStorage.run(undefined as unknown, fn);
+  return tenantStorage.run(undefined as any, fn);
 }
 
 /**

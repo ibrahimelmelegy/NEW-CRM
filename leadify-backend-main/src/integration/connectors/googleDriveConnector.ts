@@ -82,7 +82,7 @@ class GoogleDriveConnector {
       const targetFolder = folderId || config.folderId;
 
       // Create multipart upload
-      const metadata: Record<string, unknown> = {
+      const metadata: Record<string, any> = {
         name: file.name,
         mimeType: file.mimeType
       };
@@ -127,7 +127,7 @@ class GoogleDriveConnector {
         },
         message: 'File uploaded successfully'
       };
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errMsg = error instanceof Error ? error.message : 'Failed to upload file';
       return { success: false, message: errMsg };
     }
@@ -160,7 +160,7 @@ class GoogleDriveConnector {
         files: data.files || [],
         message: `Found ${(data.files || []).length} files`
       };
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errMsg = error instanceof Error ? error.message : 'Failed to list files';
       return { success: false, files: [], message: errMsg };
     }
@@ -188,7 +188,7 @@ class GoogleDriveConnector {
           return { success: true, message: `Connected as ${data.user?.displayName || 'Unknown user'}` };
         }
         return { success: false, message: `Google API error: ${response.status}` };
-      } catch (error: unknown) {
+      } catch (error: any) {
         const errMsg = error instanceof Error ? error.message : 'Connection test failed';
         return { success: false, message: errMsg };
       }

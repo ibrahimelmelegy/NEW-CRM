@@ -24,7 +24,7 @@ import workflowService from '../workflow/workflowService';
 export interface ScoringRule {
   field: string;
   condition: 'exists' | 'equals' | 'contains' | 'greater_than';
-  value?: unknown;
+  value?: any;
   points: number;
   /** Optional group key. When multiple rules share a group, only the highest-
    *  scoring match within that group is counted (e.g. source quality tiers). */
@@ -54,7 +54,7 @@ export const DEFAULT_SCORING_RULES: ScoringRule[] = [
  * Evaluate a single rule condition against a lead data object.
  * Returns true when the rule's condition is satisfied.
  */
-function evaluateCondition(lead: unknown, rule: ScoringRule): boolean {
+function evaluateCondition(lead: any, rule: ScoringRule): boolean {
   const fieldValue = lead[rule.field];
 
   switch (rule.condition) {
@@ -83,7 +83,7 @@ function evaluateCondition(lead: unknown, rule: ScoringRule): boolean {
  *
  * The final score is capped at 100.
  */
-export function evaluateScore(lead: unknown, rules: ScoringRule[] = DEFAULT_SCORING_RULES): number {
+export function evaluateScore(lead: any, rules: ScoringRule[] = DEFAULT_SCORING_RULES): number {
   let total = 0;
 
   // Collect the best score per group
@@ -109,7 +109,7 @@ export function evaluateScore(lead: unknown, rules: ScoringRule[] = DEFAULT_SCOR
 }
 
 class LeadService {
-  async createLead(input: unknown, adminId: number, t?: Transaction): Promise<Lead> {
+  async createLead(input: any, adminId: number, t?: Transaction): Promise<Lead> {
     const { users: inputUsers, ...leadData } = input;
 
     if (input.email) await this.errorIfLeadWithExistEmail(input.email);
@@ -169,7 +169,7 @@ class LeadService {
     if (leadWithPhone) throw new BaseError(ERRORS.PHONE_ALREADY_EXISTS);
   }
 
-  async updateLead(id: string, input: unknown, user: User): Promise<unknown> {
+  async updateLead(id: string, input: any, user: User): Promise<any> {
     await this.validateLeadAccess(id, user);
     const lead = await this.leadOrError({ id });
 
@@ -212,7 +212,7 @@ class LeadService {
     return lead;
   }
 
-  async getLeads(query: unknown, user: User): Promise<unknown> {
+  async getLeads(query: any, user: User): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(LeadPermissionsEnum.VIEW_GLOBAL_LEADS)) query.userId = user.id;
@@ -292,7 +292,7 @@ class LeadService {
     };
   }
 
-  async leadById(id: string, user: User): Promise<unknown> {
+  async leadById(id: string, user: User): Promise<any> {
     await this.validateLeadAccess(id, user);
 
     const lead = await Lead.findByPk(id, {
@@ -309,7 +309,7 @@ class LeadService {
     return lead;
   }
 
-  public async importFile(file: unknown): Promise<string> {
+  public async importFile(file: any): Promise<string> {
     const workbook = xlsx.read(file.data);
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
@@ -361,7 +361,7 @@ class LeadService {
     const createdLeads = await Lead.bulkCreate(leadArray);
     // Set user associations for each lead
     for (const lead of createdLeads) {
-      const leadData = leadArray.find((l: unknown) => l.name === lead.name);
+      const leadData = leadArray.find((l: any) => l.name === lead.name);
       if (leadData?.userIds && leadData.userIds.length > 0) {
         await (lead as any).$set('users', leadData.userIds);
       }
@@ -369,12 +369,12 @@ class LeadService {
 
     return leadArray.length + ' leads created succesfully';
   }
-  streamToBuffer(stream: unknown) {
+  streamToBuffer(stream: any) {
     return new Promise((resolve, reject) => {
       const _buf = Array<any>();
-      stream.on('data', (chunk: unknown) => _buf.push(chunk));
+      stream.on('data', (chunk: any) => _buf.push(chunk));
       stream.on('end', () => resolve(Buffer.concat(_buf)));
-      stream.on('error', (err: unknown) => reject(err));
+      stream.on('error', (err: any) => reject(err));
     });
   }
 
@@ -408,7 +408,7 @@ class LeadService {
    *
    * Accepts an optional custom rule set; defaults to DEFAULT_SCORING_RULES.
    */
-  calculateScore(lead: unknown, rules?: ScoringRule[]): number {
+  calculateScore(lead: any, rules?: ScoringRule[]): number {
     // Normalise lead fields to the canonical names used by the scoring rules
     const normalised: Record<string, any> = {
       ...lead,
@@ -421,8 +421,8 @@ class LeadService {
     return evaluateScore(normalised, rules);
   }
 
-  async sendLeadsExcelByEmail(query: unknown, user: User, email: string): Promise<void> {
-    const where: Record<string, unknown> = {
+  async sendLeadsExcelByEmail(query: any, user: User, email: string): Promise<void> {
+    const where: Record<string, any> = {
       status: { [Op.ne]: LeadStatusEnums.CONVERTED },
       ...(query.searchKey && {
         [Op.or]: [

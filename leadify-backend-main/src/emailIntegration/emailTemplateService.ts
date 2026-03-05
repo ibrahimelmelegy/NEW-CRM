@@ -16,11 +16,11 @@ class EmailTemplateService {
     return template;
   }
 
-  async createTemplate(data: unknown, tenantId?: string): Promise<ComposerTemplate> {
+  async createTemplate(data: any, tenantId?: string): Promise<ComposerTemplate> {
     return ComposerTemplate.create({ ...data, tenantId });
   }
 
-  async updateTemplate(id: string, data: unknown): Promise<ComposerTemplate> {
+  async updateTemplate(id: string, data: any): Promise<ComposerTemplate> {
     const template = await ComposerTemplate.findByPk(id);
     if (!template) throw new BaseError(ERRORS.NOT_FOUND);
     await template.update(data);

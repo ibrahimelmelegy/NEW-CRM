@@ -70,7 +70,7 @@ class WarrantyController {
   async createClaimWithValidation(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       wrapResult(res, await service.createClaimWithValidation(req.body, req.user!.tenantId!), 201);
-    } catch (e: unknown) {
+    } catch (e: any) {
       if (e instanceof Error && (e as Error & { statusCode?: number }).statusCode === 400) {
         return res.status(400).send({ success: false, message: e.message, coverage: (e as any).coverage });
       }

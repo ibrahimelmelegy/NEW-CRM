@@ -19,7 +19,7 @@ import { TriggerType } from './workflowModel';
  * the new processEntityEvent() API.
  */
 class WorkflowEngineLegacy {
-  async evaluate(trigger: string, entityData: unknown, entityId?: string) {
+  async evaluate(trigger: string, entityData: any, entityId?: string) {
     // Derive entityType from trigger string (e.g. LEAD_CREATED -> lead)
     const entityType = trigger.split('_')[0].toLowerCase();
     const triggerType = this.mapTrigger(trigger);

@@ -16,7 +16,7 @@ export class LoyaltyProgram extends Model {
   public status!: 'ACTIVE' | 'PAUSED' | 'ENDED';
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public rules?: Record<string, unknown>;
+  public rules?: Record<string, any>;
 
   @Column({ type: DataType.JSONB, allowNull: true })
   public tiers?: Array<{ name: string; minPoints: number; benefits: string[] }>;

@@ -7,7 +7,7 @@ import { ValidationArguments, ValidationOptions, registerDecorator, validateSync
  * @param validationOptions - Optional validation options
  * @returns A decorator function that registers nested validation
  */
-export function CustomValidateNested(schema: unknown, validationOptions?: ValidationOptions) {
+export function CustomValidateNested(schema: any, validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'ValidateNested',
@@ -22,7 +22,7 @@ export function CustomValidateNested(schema: unknown, validationOptions?: Valida
          * @param args - Validation arguments
          * @returns boolean indicating if validation passed
          */
-        validate(value: unknown, args: ValidationArguments) {
+        validate(value: any, args: ValidationArguments) {
           args.value;
           if (Array.isArray(value)) {
             // Validate each item in the array

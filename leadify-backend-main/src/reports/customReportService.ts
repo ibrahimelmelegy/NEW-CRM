@@ -42,7 +42,7 @@ const entityModelMap: Record<string, any> = {
   campaigns: Campaign
 };
 
-function getModelByEntityType(entityType: string): unknown {
+function getModelByEntityType(entityType: string): any {
   const model = entityModelMap[entityType?.toLowerCase()];
   if (!model) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
   return model;
@@ -67,10 +67,10 @@ function getEntityTypeModels(): Record<string, string> {
 }
 
 // ─── Build Filter WHERE Clause ───────────────────────────
-function buildFilterWhere(filters: ReportFilter[]): unknown {
+function buildFilterWhere(filters: ReportFilter[]): any {
   if (!filters || !filters.length) return {};
 
-  const where: Record<string, unknown> = {};
+  const where: Record<string, any> = {};
   for (const filter of filters) {
     const { field, operator, value } = filter;
     switch (operator) {
@@ -118,7 +118,7 @@ function buildFilterWhere(filters: ReportFilter[]): unknown {
 }
 
 // ─── Build Aggregation Attributes ────────────────────────
-function buildAggregationAttributes(aggregations: ReportAggregation[]): unknown[] {
+function buildAggregationAttributes(aggregations: ReportAggregation[]): any[] {
   if (!aggregations || !aggregations.length) return [];
 
   return aggregations.map(agg => {
@@ -141,11 +141,11 @@ function buildAggregationAttributes(aggregations: ReportAggregation[]): unknown[
 
 class CustomReportService {
   // ─── CRUD ─────────────────────────────────────────────
-  async createReport(data: unknown, userId: number) {
+  async createReport(data: any, userId: number) {
     return CustomReport.create({ ...data, userId });
   }
 
-  async updateReport(id: number, data: unknown, userId: number) {
+  async updateReport(id: number, data: any, userId: number) {
     const report = await CustomReport.findOne({ where: { id, userId } });
     if (!report) throw new BaseError(ERRORS.REPORT_NOT_FOUND, 404);
     return report.update(data);
@@ -158,7 +158,7 @@ class CustomReportService {
   }
 
   async getReports(userId: number, entityType?: string) {
-    const where: Record<string, unknown> = {
+    const where: Record<string, any> = {
       [Op.or]: [{ userId }, { isShared: true }]
     };
     if (entityType) {
@@ -211,10 +211,10 @@ class CustomReportService {
     const where = buildFilterWhere(filters);
 
     // Build attributes
-    const attributes: unknown = fields && fields.length > 0 ? fields : undefined;
+    const attributes: any = fields && fields.length > 0 ? fields : undefined;
 
     // Build query options
-    const queryOptions: Record<string, unknown> = {
+    const queryOptions: Record<string, any> = {
       where,
       raw: true,
       limit: 5000
@@ -258,7 +258,7 @@ class CustomReportService {
     const Model = getModelByEntityType(report.entityType);
     const where = buildFilterWhere(report.filters);
 
-    const queryOptions: Record<string, unknown> = {
+    const queryOptions: Record<string, any> = {
       where,
       raw: true
     };
@@ -326,11 +326,11 @@ class CustomReportService {
     throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
   }
 
-  private generateCSV(data: Record<string, unknown>[]): string {
+  private generateCSV(data: Record<string, any>[]): string {
     if (!data || !data.length) return '';
 
     const headers = Object.keys(data[0]);
-    const rows = data.map((row: unknown) =>
+    const rows = data.map((row: any) =>
       headers
         .map(h => {
           const val = row[h];

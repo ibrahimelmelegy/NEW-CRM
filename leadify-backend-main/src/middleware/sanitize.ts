@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import xss from 'xss';
 
-function sanitizeValue(value: unknown): unknown {
+function sanitizeValue(value: any): unknown {
   if (typeof value === 'string') {
     return xss(value);
   }
@@ -14,8 +14,8 @@ function sanitizeValue(value: unknown): unknown {
   return value;
 }
 
-function sanitizeObject(obj: Record<string, unknown>): Record<string, unknown> {
-  const sanitized: Record<string, unknown> = {};
+function sanitizeObject(obj: Record<string, any>): Record<string, any> {
+  const sanitized: Record<string, any> = {};
   for (const [key, value] of Object.entries(obj)) {
     sanitized[key] = sanitizeValue(value);
   }
@@ -27,10 +27,10 @@ export function sanitizeInput(req: Request, _res: Response, next: NextFunction):
     req.body = sanitizeObject(req.body);
   }
   if (req.query && typeof req.query === 'object') {
-    req.query = sanitizeObject(req.query) as unknown;
+    req.query = sanitizeObject(req.query) as any;
   }
   if (req.params && typeof req.params === 'object') {
-    req.params = sanitizeObject(req.params) as unknown;
+    req.params = sanitizeObject(req.params) as any;
   }
   next();
 }

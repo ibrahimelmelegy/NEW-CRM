@@ -10,7 +10,7 @@ import proposalLogService from '../proposalLog/proposalLogService';
 import { ProposalActionEnum } from '../proposalLog/proposalLogEnum';
 
 class ProposalService {
-  public async createProposalContent(data: unknown, user: User): Promise<ProposalContent> {
+  public async createProposalContent(data: any, user: User): Promise<ProposalContent> {
     await proposalService.validateProposalAccess(data.proposalId, user);
     await proposalService.proposalOrError({ id: data.proposalId });
     if (data.parentId) await this.contentOrError({ id: data.parentId });
@@ -24,7 +24,7 @@ class ProposalService {
     return content;
   }
 
-  public async updateProposalContent(id: string, data: unknown, user: User): Promise<ProposalContent> {
+  public async updateProposalContent(id: string, data: any, user: User): Promise<ProposalContent> {
     const content = await this.contentOrError({ id });
     await proposalService.validateProposalAccess(content.proposalId, user);
     if (data.parentId) await this.contentOrError({ id: data.parentId });

@@ -16,11 +16,11 @@ class PlaybookService {
     return pb;
   }
 
-  async createPlaybook(data: unknown, tenantId?: string): Promise<Playbook> {
+  async createPlaybook(data: any, tenantId?: string): Promise<Playbook> {
     return Playbook.create({ ...data, tenantId });
   }
 
-  async updatePlaybook(id: string, data: unknown): Promise<Playbook> {
+  async updatePlaybook(id: string, data: any): Promise<Playbook> {
     const pb = await Playbook.findByPk(id);
     if (!pb) throw new BaseError(ERRORS.NOT_FOUND);
     await pb.update(data);

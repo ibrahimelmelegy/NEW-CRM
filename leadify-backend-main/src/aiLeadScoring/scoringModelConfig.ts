@@ -26,7 +26,7 @@ export default class ScoringModelConfig extends Model {
     feature: string;
     weight: number;
     condition: string;
-    value?: unknown;
+    value?: any;
     points: number;
   }>;
 

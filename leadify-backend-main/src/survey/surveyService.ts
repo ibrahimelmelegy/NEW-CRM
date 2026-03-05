@@ -12,11 +12,11 @@ interface SurveyQuestion {
 }
 
 class SurveyService {
-  async create(data: unknown, tenantId?: string) { return Survey.create({ ...data, tenantId }); }
+  async create(data: any, tenantId?: string) { return Survey.create({ ...data, tenantId }); }
 
-  async getAll(query: unknown, tenantId?: string) {
+  async getAll(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.title = { [Op.iLike]: `%${query.search}%` };
@@ -26,7 +26,7 @@ class SurveyService {
 
   async getById(id: number) { return Survey.findByPk(id, { include: [{ model: SurveyResponse, as: 'responses' }] }); }
 
-  async update(id: number, data: unknown) {
+  async update(id: number, data: any) {
     const item = await Survey.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -41,7 +41,7 @@ class SurveyService {
     return true;
   }
 
-  async submitResponse(surveyId: number, data: unknown) {
+  async submitResponse(surveyId: number, data: any) {
     const survey = await Survey.findByPk(surveyId);
     if (!survey) return null;
     if (survey.status === 'CLOSED' || survey.status === 'ARCHIVED') return null;
@@ -51,9 +51,9 @@ class SurveyService {
     return response;
   }
 
-  async getResponses(query: unknown, tenantId?: string) {
+  async getResponses(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.surveyId) where.surveyId = query.surveyId;
     const { rows, count } = await SurveyResponse.findAndCountAll({ where, order: [['createdAt', 'DESC']], limit, offset });
@@ -135,7 +135,7 @@ class SurveyService {
 
     for (const question of questions) {
       const qId = question.id;
-      const values: unknown[] = [];
+      const values: any[] = [];
 
       for (const resp of responses) {
         const answers = resp.answers as Record<string, any>;

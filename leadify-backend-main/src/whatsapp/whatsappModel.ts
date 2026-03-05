@@ -142,7 +142,7 @@ export class WhatsAppMessage extends Model {
 
   @Default({})
   @Column({ type: DataType.JSONB, allowNull: false })
-  public metadata!: Record<string, unknown>;
+  public metadata!: Record<string, any>;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;
@@ -191,7 +191,7 @@ export class WhatsAppTemplate extends Model {
 
   @Default([])
   @Column({ type: DataType.JSONB, allowNull: false })
-  public buttons!: unknown[];
+  public buttons!: any[];
 
   @Default(WATemplateStatus.APPROVED)
   @Column({ type: DataType.ENUM(...Object.values(WATemplateStatus)), allowNull: false })

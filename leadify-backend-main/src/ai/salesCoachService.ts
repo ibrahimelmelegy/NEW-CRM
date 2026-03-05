@@ -163,7 +163,7 @@ class SalesCoachService {
     };
   }
 
-  async getWeeklySummary(): Promise<unknown> {
+  async getWeeklySummary(): Promise<any> {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 

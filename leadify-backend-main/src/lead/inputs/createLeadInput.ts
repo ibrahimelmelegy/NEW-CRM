@@ -92,8 +92,8 @@ export function IsEmailOrPhone(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: unknown, args: ValidationArguments) {
-          const { email, phone } = args.object as unknown;
+        validate(value: any, args: ValidationArguments) {
+          const { email, phone } = args.object as any;
           // Ensure either email or phone is provided
           return !!email || !!phone;
         },

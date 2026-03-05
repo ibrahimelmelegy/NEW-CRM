@@ -15,8 +15,8 @@ export interface SlackMessage {
   channel?: string;
   username?: string;
   icon_emoji?: string;
-  blocks?: unknown[];
-  attachments?: unknown[];
+  blocks?: any[];
+  attachments?: any[];
 }
 
 class SlackConnector {
@@ -50,7 +50,7 @@ class SlackConnector {
       }
 
       return { success: true, message: 'Message sent to Slack successfully' };
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errMsg = error instanceof Error ? error.message : 'Failed to send Slack message';
       return { success: false, message: errMsg };
     }

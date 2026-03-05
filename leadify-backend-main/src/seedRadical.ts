@@ -75,7 +75,7 @@ const seedRadical = async () => {
     // 5 Projects created
 
     // RADICAL SEEDING COMPLETE
-  } catch (e: unknown) {
+  } catch (e: any) {
     console.error('❌ Seeding Error:', e.message);
   }
   process.exit();

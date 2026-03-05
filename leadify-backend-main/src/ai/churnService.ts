@@ -66,7 +66,7 @@ class ChurnService {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(now.getDate() - 7);
 
-    const baseWhere: Record<string, unknown> = {
+    const baseWhere: Record<string, any> = {
       status: { [Op.ne]: LeadStatusEnums.CONVERTED }
     };
 

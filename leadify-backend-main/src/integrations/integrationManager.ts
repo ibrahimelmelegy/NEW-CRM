@@ -112,7 +112,7 @@ class IntegrationManager {
           break;
       }
       return { provider, reachable: true, latencyMs: Date.now() - start };
-    } catch (err: unknown) {
+    } catch (err: any) {
       const errMsg = err instanceof Error ? err.message : 'Connection test failed';
       return { provider, reachable: false, latencyMs: Date.now() - start, error: errMsg };
     }

@@ -21,7 +21,7 @@ function analyzeSentiment(text: string): { sentiment: string; score: number } {
 class SocialListeningService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: unknown, tenantId?: string) {
+  async create(data: any, tenantId?: string) {
     // Auto-analyse sentiment if not provided
     if (!data.sentiment && data.content) {
       const analysis = analyzeSentiment(data.content);
@@ -33,9 +33,9 @@ class SocialListeningService {
     return mention;
   }
 
-  async getAll(query: unknown, tenantId?: string) {
+  async getAll(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.platform) where.platform = query.platform;
     if (query.sentiment) where.sentiment = query.sentiment;
@@ -58,7 +58,7 @@ class SocialListeningService {
     return SocialMention.findByPk(id);
   }
 
-  async update(id: number, data: unknown) {
+  async update(id: number, data: any) {
     const item = await SocialMention.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -81,7 +81,7 @@ class SocialListeningService {
     const since = new Date();
     since.setDate(since.getDate() - days);
 
-    const where: Record<string, unknown> = { mentionDate: { [Op.gte]: since } };
+    const where: Record<string, any> = { mentionDate: { [Op.gte]: since } };
     if (tenantId) where.tenantId = tenantId;
 
     const mentions = await SocialMention.findAll({ where, raw: true });
@@ -105,8 +105,8 @@ class SocialListeningService {
     for (const p of Object.keys(byPlatform)) {
       const group = byPlatform[p];
       // Compute average sentiment score per platform from raw mentions
-      const platformMentions = mentions.filter((m: unknown) => m.platform === p);
-      const platformScoreSum = platformMentions.reduce((s: number, m: unknown) => s + (Number(m.sentimentScore) || 0), 0);
+      const platformMentions = mentions.filter((m: any) => m.platform === p);
+      const platformScoreSum = platformMentions.reduce((s: number, m: any) => s + (Number(m.sentimentScore) || 0), 0);
       group.avgScore = platformMentions.length > 0 ? parseFloat((platformScoreSum / platformMentions.length).toFixed(2)) : 0;
     }
 
@@ -128,7 +128,7 @@ class SocialListeningService {
     const since = new Date();
     since.setDate(since.getDate() - 7);
 
-    const where: Record<string, unknown> = { mentionDate: { [Op.gte]: since }, keyword: { [Op.ne]: null } };
+    const where: Record<string, any> = { mentionDate: { [Op.gte]: since }, keyword: { [Op.ne]: null } };
     if (tenantId) where.tenantId = tenantId;
 
     const results = await SocialMention.findAll({

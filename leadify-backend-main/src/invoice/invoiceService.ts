@@ -43,9 +43,9 @@ class InvoiceService {
   // Existing CRUD methods (unchanged)
   // -------------------------------------------------------------------------
 
-  async getInvoices(query: { page?: number; limit?: number; status?: string; search?: string }, user?: Record<string, unknown>) {
+  async getInvoices(query: { page?: number; limit?: number; status?: string; search?: string }, user?: Record<string, any>) {
     const { page, limit, offset } = clampPagination(query, 20);
-    const where: Record<string, unknown> = { ...(user ? tenantWhere(user) : {}) };
+    const where: Record<string, any> = { ...(user ? tenantWhere(user) : {}) };
 
     if (query.status === 'collected') where.collected = true;
     else if (query.status === 'pending') where.collected = { [Op.or]: [false, null] };
@@ -96,7 +96,7 @@ class InvoiceService {
     return invoice.update({ collected: false, collectedDate: null });
   }
 
-  async getSummary(user?: Record<string, unknown>) {
+  async getSummary(user?: Record<string, any>) {
     const result = await Invoice.findOne({
       where: { ...(user ? tenantWhere(user) : {}) },
       attributes: [
@@ -223,7 +223,7 @@ class InvoiceService {
     const replacements: Record<string, any> = {};
     if (tenantId) replacements.tenantId = tenantId;
 
-    const rows: Record<string, unknown>[] = await sequelize.query(query, {
+    const rows: Record<string, any>[] = await sequelize.query(query, {
       replacements,
       type: QueryTypes.SELECT,
     });
@@ -284,7 +284,7 @@ class InvoiceService {
     const replacements: Record<string, any> = {};
     if (tenantId) replacements.tenantId = tenantId;
 
-    const rows: Record<string, unknown>[] = await sequelize.query(query, {
+    const rows: Record<string, any>[] = await sequelize.query(query, {
       replacements,
       type: QueryTypes.SELECT,
     });
@@ -308,7 +308,7 @@ class InvoiceService {
    * Falls back to `invoiceDate` if `dueDate` is NULL.
    */
   async getOverdueInvoices(tenantId?: string): Promise<any[]> {
-    const where: Record<string, unknown> = {
+    const where: Record<string, any> = {
       collected: { [Op.or]: [false, null] },
       [Op.and]: [
         literal(`COALESCE("Invoice"."dueDate", "Invoice"."invoiceDate") < NOW()`)

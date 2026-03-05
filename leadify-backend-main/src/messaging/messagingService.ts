@@ -50,7 +50,7 @@ class MessagingService {
 
     // For each contact, get the latest message and unread count
     const conversations = await Promise.all(
-      messages.map(async (m: unknown) => {
+      messages.map(async (m: any) => {
         const lastMessage = await Message.findOne({
           where: { contactPhone: m.contactPhone, userId },
           order: [['createdAt', 'DESC']]

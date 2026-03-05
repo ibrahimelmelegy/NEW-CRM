@@ -10,8 +10,8 @@ const IGNORED_FIELDS = new Set(['updatedAt', 'createdAt', 'deletedAt', 'password
  * Handles null/undefined, date normalization, and nested JSON.
  */
 export function diffObjects(
-  oldObj: Record<string, unknown>,
-  newObj: Record<string, unknown>,
+  oldObj: Record<string, any>,
+  newObj: Record<string, any>,
   fieldLabels?: Record<string, string>
 ): AuditFieldChange[] {
   const changes: AuditFieldChange[] = [];
@@ -51,7 +51,7 @@ export function diffObjects(
   return changes;
 }
 
-function normalizeValue(val: unknown): unknown {
+function normalizeValue(val: any): unknown {
   if (val instanceof Date) return val.toISOString();
   return val;
 }

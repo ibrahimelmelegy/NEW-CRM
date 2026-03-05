@@ -21,7 +21,7 @@ class SalesOrderService {
   /**
    * Calculate totals from line items
    */
-  calculateTotals(items: Record<string, unknown>[]): { subtotal: number; taxAmount: number; discountAmount: number; total: number } {
+  calculateTotals(items: Record<string, any>[]): { subtotal: number; taxAmount: number; discountAmount: number; total: number } {
     let subtotal = 0;
     let taxAmount = 0;
     let discountAmount = 0;
@@ -56,7 +56,7 @@ class SalesOrderService {
   /**
    * Create a new sales order
    */
-  async createOrder(input: unknown): Promise<SalesOrder> {
+  async createOrder(input: any): Promise<SalesOrder> {
     const transaction = await sequelize.transaction();
     try {
       const { items, ...orderData } = input;
@@ -79,7 +79,7 @@ class SalesOrderService {
         { transaction }
       );
 
-      const orderItems = items.map((item: unknown) => ({
+      const orderItems = items.map((item: any) => ({
         ...item,
         salesOrderId: salesOrder.id,
         lineTotal: item.lineTotal
@@ -89,7 +89,7 @@ class SalesOrderService {
       await transaction.commit();
 
       return await this.getOrderById(salesOrder.id);
-    } catch (error: unknown) {
+    } catch (error: any) {
       await transaction.rollback();
       throw error;
     }
@@ -98,7 +98,7 @@ class SalesOrderService {
   /**
    * Get paginated list of orders with filters
    */
-  async getOrders(query: unknown): Promise<unknown> {
+  async getOrders(query: any): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, status, clientId, paymentStatus, startDate, endDate } = query;
 
@@ -170,7 +170,7 @@ class SalesOrderService {
   /**
    * Update a sales order
    */
-  async updateOrder(id: string, input: unknown): Promise<SalesOrder> {
+  async updateOrder(id: string, input: any): Promise<SalesOrder> {
     const transaction = await sequelize.transaction();
     try {
       const order = await this.getOrderById(id);
@@ -182,7 +182,7 @@ class SalesOrderService {
         // Remove old items and recreate
         await SalesOrderItem.destroy({ where: { salesOrderId: id }, transaction });
 
-        const orderItems = items.map((item: unknown) => ({
+        const orderItems = items.map((item: any) => ({
           ...item,
           salesOrderId: id,
           lineTotal: item.lineTotal
@@ -197,7 +197,7 @@ class SalesOrderService {
 
       await transaction.commit();
       return await this.getOrderById(id);
-    } catch (error: unknown) {
+    } catch (error: any) {
       await transaction.rollback();
       throw error;
     }
@@ -288,7 +288,7 @@ class SalesOrderService {
   /**
    * Add a fulfillment record to an order
    */
-  async addFulfillment(orderId: string, data: unknown): Promise<Fulfillment> {
+  async addFulfillment(orderId: string, data: any): Promise<Fulfillment> {
     // Verify order exists
     await this.getOrderById(orderId);
 
@@ -304,7 +304,7 @@ class SalesOrderService {
   /**
    * Update a fulfillment record
    */
-  async updateFulfillment(orderId: string, fulfillmentId: string, data: unknown): Promise<Fulfillment> {
+  async updateFulfillment(orderId: string, fulfillmentId: string, data: any): Promise<Fulfillment> {
     // Verify order exists
     await this.getOrderById(orderId);
 
@@ -357,7 +357,7 @@ class SalesOrderService {
   /**
    * Get orders for a specific client
    */
-  async getClientOrders(clientId: string, query: unknown): Promise<unknown> {
+  async getClientOrders(clientId: string, query: any): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: docs, count: totalItems } = await SalesOrder.findAndCountAll({
@@ -386,14 +386,14 @@ class SalesOrderService {
   /**
    * Convert cart to a sales order
    */
-  async convertCartToOrder(cartData: unknown): Promise<SalesOrder> {
+  async convertCartToOrder(cartData: any): Promise<SalesOrder> {
     const { clientId, items, currency, notes, shippingAddress, couponDiscount } = cartData;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       throw new BaseError(400, 400, 'Cart must have at least one item');
     }
 
-    const orderItems = items.map((item: unknown) => ({
+    const orderItems = items.map((item: any) => ({
       productId: item.productId,
       description: item.productName || item.description || 'Cart item',
       quantity: item.quantity || 1,
@@ -402,7 +402,7 @@ class SalesOrderService {
       discountRate: item.discountRate || 0
     }));
 
-    const orderData: Record<string, unknown> = {
+    const orderData: Record<string, any> = {
       clientId,
       currency: currency || 'SAR',
       notes: notes || 'Converted from cart',
@@ -421,7 +421,7 @@ class SalesOrderService {
   /**
    * Order analytics: revenue, counts, averages, status distribution
    */
-  async getOrderAnalytics(query?: Record<string, unknown>): Promise<unknown> {
+  async getOrderAnalytics(query?: Record<string, any>): Promise<any> {
     const where: WhereOptions = {};
 
     // Optional date range

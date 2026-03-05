@@ -40,7 +40,7 @@ class SubscriptionEvent extends Model {
     type: DataType.JSON,
     allowNull: true
   })
-  public metadata?: Record<string, unknown>;
+  public metadata?: Record<string, any>;
 
   @Column({
     type: DataType.DATE,

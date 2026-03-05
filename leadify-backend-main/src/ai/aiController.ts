@@ -13,7 +13,7 @@ export const summarizeMeeting = async (req: AuthenticatedRequest, res: Response)
 
     const summary = await summarizerService.summarizeMeeting(text);
     return wrapResult(res, summary);
-  } catch (error: unknown) {
+  } catch (error: any) {
     return res.status(500).json({ success: false, message: error instanceof Error ? error.message : String(error) });
   }
 };
@@ -41,7 +41,7 @@ export const getChurnDashboard = async (req: AuthenticatedRequest, res: Response
   try {
     const data = await churnService.getChurnDashboard(req.user as User);
     return wrapResult(res, data);
-  } catch (error: unknown) {
+  } catch (error: any) {
     return res.status(500).json({ success: false, message: error instanceof Error ? error.message : String(error) });
   }
 };

@@ -8,15 +8,15 @@ import { io } from '../server';
 class CompetitorService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: unknown, tenantId?: string, createdBy?: number) {
+  async create(data: any, tenantId?: string, createdBy?: number) {
     const competitor = await Competitor.create({ ...data, tenantId, createdBy });
     try { io.emit('competitor:created', { id: competitor.id, name: competitor.name }); } catch {}
     return competitor;
   }
 
-  async getAll(query: unknown, tenantId?: string) {
+  async getAll(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.industry) where.industry = { [Op.iLike]: `%${query.industry}%` };
@@ -34,7 +34,7 @@ class CompetitorService {
     return Competitor.findByPk(id);
   }
 
-  async update(id: number, data: unknown) {
+  async update(id: number, data: any) {
     const item = await Competitor.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -79,7 +79,7 @@ class CompetitorService {
 
   /** Get all deals linked to a competitor */
   async getCompetitorDeals(competitorId: number, tenantId?: string) {
-    const where: Record<string, unknown> = { competitorId };
+    const where: Record<string, any> = { competitorId };
     if (tenantId) where.tenantId = tenantId;
     return CompetitorDeal.findAll({
       where,
@@ -95,7 +95,7 @@ class CompetitorService {
    * Uses the dealsWon / dealsLost counters on the Competitor model.
    */
   async getCompetitorAnalysis(competitorId: number, tenantId?: string) {
-    const where: Record<string, unknown> = { id: competitorId };
+    const where: Record<string, any> = { id: competitorId };
     if (tenantId) where.tenantId = tenantId;
 
     const competitor = await Competitor.findOne({ where });
@@ -134,7 +134,7 @@ class CompetitorService {
    * Sorted by threat severity, then by loss rate descending.
    */
   async getThreatMatrix(tenantId?: string) {
-    const where: Record<string, unknown> = { status: 'ACTIVE' };
+    const where: Record<string, any> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     const competitors = await Competitor.findAll({
@@ -185,7 +185,7 @@ class CompetitorService {
     else if (lossRate >= 40) threatLevel = 'MEDIUM';
     else threatLevel = 'LOW';
 
-    const updatePayload: Record<string, unknown> = { threatLevel };
+    const updatePayload: Record<string, any> = { threatLevel };
     if (data?.strengths !== undefined) updatePayload.strengths = data.strengths;
     if (data?.weaknesses !== undefined) updatePayload.weaknesses = data.weaknesses;
     if (data?.notes !== undefined) updatePayload.notes = data.notes;
@@ -200,7 +200,7 @@ class CompetitorService {
    * Competitive landscape: market share comparison across all active competitors.
    */
   async getMarketLandscape(tenantId?: string) {
-    const where: Record<string, unknown> = { status: 'ACTIVE' };
+    const where: Record<string, any> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     const competitors = await Competitor.findAll({
@@ -223,7 +223,7 @@ class CompetitorService {
    * Top threats: competitors with the highest threat level and engagement count.
    */
   async getTopThreats(tenantId?: string, limit = 5) {
-    const where: Record<string, unknown> = { status: 'ACTIVE' };
+    const where: Record<string, any> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     return Competitor.findAll({
@@ -248,7 +248,7 @@ class CompetitorService {
    * Win rate by competitor: summary stats for all competitors.
    */
   async getWinRateStats(tenantId?: string) {
-    const where: Record<string, unknown> = { status: 'ACTIVE' };
+    const where: Record<string, any> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     return Competitor.findAll({
@@ -272,7 +272,7 @@ class CompetitorService {
    * Returns recent creations, updates, and win/loss events.
    */
   async getRecentActivity(tenantId?: string, limit = 10) {
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const recent = await Competitor.findAll({

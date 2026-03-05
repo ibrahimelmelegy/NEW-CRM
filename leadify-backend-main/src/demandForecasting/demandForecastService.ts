@@ -6,15 +6,15 @@ import { io } from '../server';
 class DemandForecastService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: unknown, tenantId?: string, createdBy?: number) {
+  async create(data: any, tenantId?: string, createdBy?: number) {
     const forecast = await DemandForecast.create({ ...data, tenantId, createdBy });
     try { io.emit('forecast:created', { id: forecast.id, product: forecast.product }); } catch {}
     return forecast;
   }
 
-  async getAll(query: unknown, tenantId?: string) {
+  async getAll(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.product) where.product = { [Op.iLike]: `%${query.product}%` };
     if (query.status) where.status = query.status;
@@ -31,7 +31,7 @@ class DemandForecastService {
     return DemandForecast.findByPk(id);
   }
 
-  async update(id: number, data: unknown) {
+  async update(id: number, data: any) {
     const item = await DemandForecast.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -138,7 +138,7 @@ class DemandForecastService {
 
   /** Compare predicted vs actual for confirmed forecasts to compute accuracy metrics */
   async getAccuracyReport(tenantId?: string) {
-    const where: Record<string, unknown> = { status: 'CONFIRMED', actualDemand: { [Op.ne]: null } };
+    const where: Record<string, any> = { status: 'CONFIRMED', actualDemand: { [Op.ne]: null } };
     if (tenantId) where.tenantId = tenantId;
 
     const forecasts = await DemandForecast.findAll({ where, raw: true });
@@ -148,7 +148,7 @@ class DemandForecastService {
     let totalAbsError = 0;
     let totalBias = 0;
 
-    const details = forecasts.map((f: unknown) => {
+    const details = forecasts.map((f: any) => {
       const error = f.actualDemand - f.predictedDemand;
       const absPercError = f.actualDemand > 0 ? Math.abs(error) / f.actualDemand : 0;
       totalAbsError += absPercError;

@@ -53,7 +53,7 @@ class MaterialService {
     return material;
   }
 
-  public async getMaterials(input: unknown): Promise<IPaginationRes<Material>> {
+  public async getMaterials(input: any): Promise<IPaginationRes<Material>> {
     const page = input.page || 1;
     const limit = input.limit || 10;
     const offset = (page - 1) * limit;

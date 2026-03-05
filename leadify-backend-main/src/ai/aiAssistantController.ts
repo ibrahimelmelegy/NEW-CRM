@@ -19,9 +19,9 @@ export const aiAssistantController = {
         return;
       }
 
-      const result = await aiAssistantService.scoreLeadQuality(leadId);
+      const result = await aiAssistantService.scoreLeadQuality(leadId as string);
       wrapResult(res, result);
-    } catch (error: unknown) {
+    } catch (error: any) {
       const msg = error instanceof Error ? error.message : String(error);
       if (msg === 'Lead not found') {
         res.status(404).json({ success: false, message: 'Lead not found' });
@@ -105,9 +105,9 @@ export const aiAssistantController = {
         return;
       }
 
-      const result = await aiAssistantService.calculateDealWinProbability(dealId);
+      const result = await aiAssistantService.calculateDealWinProbability(dealId as string);
       wrapResult(res, result);
-    } catch (error: unknown) {
+    } catch (error: any) {
       const msg = error instanceof Error ? error.message : String(error);
       if (msg === 'Deal not found') {
         res.status(404).json({ success: false, message: 'Deal not found' });
@@ -131,7 +131,7 @@ export const aiAssistantController = {
       }
 
       const validTypes = ['lead', 'deal', 'client'];
-      if (!validTypes.includes(entityType)) {
+      if (!validTypes.includes(entityType as string)) {
         res.status(400).json({
           success: false,
           message: `Invalid entity type. Must be one of: ${validTypes.join(', ')}`
@@ -141,11 +141,11 @@ export const aiAssistantController = {
 
       const result = await aiAssistantService.getSmartSuggestions(
         entityType as 'lead' | 'deal' | 'client',
-        entityId
+        entityId as string
       );
 
       wrapResult(res, result);
-    } catch (error: unknown) {
+    } catch (error: any) {
       const msg = error instanceof Error ? error.message : String(error);
       if (msg.includes('not found')) {
         res.status(404).json({ success: false, message: msg });

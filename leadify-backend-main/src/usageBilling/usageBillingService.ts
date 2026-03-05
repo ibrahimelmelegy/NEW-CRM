@@ -7,15 +7,15 @@ import { io } from '../server';
 class UsageBillingService {
   // ─── Meter CRUD ───────────────────────────────────────────────────────────────
 
-  async createMeter(data: unknown, tenantId?: string) {
+  async createMeter(data: any, tenantId?: string) {
     const meter = await UsageMeter.create({ ...data, tenantId });
     try { io.emit('usageMeter:created', { id: meter.id, name: meter.name }); } catch {}
     return meter;
   }
 
-  async getAllMeters(query: unknown, tenantId?: string) {
+  async getAllMeters(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
@@ -30,7 +30,7 @@ class UsageBillingService {
     return UsageMeter.findByPk(id);
   }
 
-  async updateMeter(id: number, data: unknown) {
+  async updateMeter(id: number, data: any) {
     const item = await UsageMeter.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -47,7 +47,7 @@ class UsageBillingService {
 
   // ─── Usage Record CRUD ────────────────────────────────────────────────────────
 
-  async recordUsage(data: unknown, tenantId?: string) {
+  async recordUsage(data: any, tenantId?: string) {
     if (!data.recordedAt) data.recordedAt = new Date();
     if (!data.billingPeriod) {
       const d = new Date(data.recordedAt);
@@ -58,9 +58,9 @@ class UsageBillingService {
     return record;
   }
 
-  async getUsageRecords(query: unknown, tenantId?: string) {
+  async getUsageRecords(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.meterId) where.meterId = Number(query.meterId);
     if (query.customerId) where.customerId = query.customerId;
@@ -82,7 +82,7 @@ class UsageBillingService {
    * Supports billing models: PER_UNIT, TIERED, VOLUME.
    */
   async calculateUsageCharges(customerId: string, billingPeriod: string, tenantId?: string) {
-    const recordWhere: Record<string, unknown> = { customerId, billingPeriod };
+    const recordWhere: Record<string, any> = { customerId, billingPeriod };
     if (tenantId) recordWhere.tenantId = tenantId;
 
     const records = await UsageRecord.findAll({
@@ -91,7 +91,7 @@ class UsageBillingService {
     });
 
     // Group by meter
-    const meterUsage: Record<number, { meter: unknown; totalQuantity: number }> = {};
+    const meterUsage: Record<number, { meter: any; totalQuantity: number }> = {};
     for (const r of records) {
       const rec = r as any;
       if (!meterUsage[rec.meterId]) {

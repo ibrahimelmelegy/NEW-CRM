@@ -79,7 +79,7 @@ class User extends Model {
   }
 
   // Override toJSON to exclude the password field
-  public toJSON(): Record<string, unknown> {
+  public toJSON(): Record<string, any> {
     const userInstance = { ...this.get() };
     delete userInstance.password;
     delete userInstance.twoFactorSecret;

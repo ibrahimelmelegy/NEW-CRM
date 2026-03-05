@@ -12,7 +12,7 @@ import { ERRORS } from '../utils/error/errors';
 // ─── Entity Configuration ───────────────────────────────────────────────────────
 
 interface EntityConfig {
-  model: unknown;
+  model: any;
   tableName: string;
   searchFields: string[];
   titleField: string;
@@ -105,7 +105,7 @@ interface EntitySearchFilters {
   limit?: number;
   sortBy?: string;
   sortOrder?: 'ASC' | 'DESC';
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
 // ─── Search Service ──────────────────────────────────────────────────────────
@@ -142,7 +142,7 @@ class SearchService {
         if (!config) return;
 
         const offset = (page - 1) * perEntity;
-        let rows: unknown[] = [];
+        let rows: any[] = [];
         let count = 0;
 
         // Try tsvector-based full-text search first
@@ -193,7 +193,7 @@ class SearchService {
 
         totalByEntity[entityType] = count;
 
-        rows.forEach((row: unknown, index: number) => {
+        rows.forEach((row: any, index: number) => {
           const plain = row.get ? row.get({ plain: true }) : row;
           allResults.push({
             entityType,
@@ -234,7 +234,7 @@ class SearchService {
     const tenantFilter = tenantId ? { tenantId } : {};
 
     // Build where clause
-    const where: Record<string, unknown> = { ...tenantFilter };
+    const where: any = { ...tenantFilter };
 
     // Text search conditions
     if (searchTerm) {
@@ -250,7 +250,7 @@ class SearchService {
       }
     }
 
-    const order: unknown = sortBy ? [[sortBy, sortOrder]] : [['createdAt', 'DESC']];
+    const order: any = sortBy ? [[sortBy, sortOrder]] : [['createdAt', 'DESC']];
 
     const { count, rows } = await config.model.findAndCountAll({
       where,
@@ -259,7 +259,7 @@ class SearchService {
       order
     });
 
-    const docs: SearchResultItem[] = rows.map((row: unknown, index: number) => {
+    const docs: SearchResultItem[] = rows.map((row: any, index: number) => {
       const plain = row.get ? row.get({ plain: true }) : row;
       return {
         entityType: entity,

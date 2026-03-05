@@ -487,7 +487,7 @@ class ZatcaService {
    */
   async getZatcaInvoices(query: ZatcaInvoiceQuery) {
     const { page, limit, offset } = clampPagination(query, 20);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
 
     if (query.status) {
       where.status = query.status;

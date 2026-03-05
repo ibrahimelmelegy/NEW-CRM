@@ -113,14 +113,14 @@ export function setupVirtualOfficeHandlers(io: Server) {
     socket.on('vo:status', (data: { status: string; statusMessage?: string }) => {
       const presence = userPresence.get(socket.id);
       if (presence) {
-        presence.status = data.status as unknown;
+        presence.status = data.status as any;
         if (data.statusMessage !== undefined) presence.statusMessage = data.statusMessage;
         presence.lastSeen = new Date().toISOString();
       }
 
       const occupant = roomOccupants.get(socket.id);
       if (occupant) {
-        occupant.status = data.status as unknown;
+        occupant.status = data.status as any;
         io.emit('vo:room-update', { roomId: occupant.roomId, occupants: getRoomOccupants(occupant.roomId) });
       }
 

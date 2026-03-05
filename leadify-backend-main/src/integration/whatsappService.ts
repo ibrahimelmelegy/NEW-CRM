@@ -6,7 +6,7 @@ interface WhatsAppConfig {
 }
 
 class WhatsAppService {
-  async sendMessage(to: string, message: string): Promise<Record<string, unknown>> {
+  async sendMessage(to: string, message: string): Promise<Record<string, any>> {
     const integration = await Integration.findOne({ where: { provider: 'whatsapp', isActive: true } });
     if (!integration) throw new Error('WhatsApp integration not configured');
 
@@ -35,7 +35,7 @@ class WhatsAppService {
       throw new Error(`WhatsApp API error: ${response.status}`);
     }
 
-    return response.json() as Promise<Record<string, unknown>>;
+    return response.json() as Promise<Record<string, any>>;
   }
 }
 

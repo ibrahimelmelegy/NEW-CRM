@@ -5,17 +5,17 @@ import User from '../user/userModel';
 export interface WorkflowCondition {
   field: string;
   operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'is_empty' | 'is_not_empty' | 'in' | 'not_in';
-  value: unknown;
+  value: any;
 }
 
 // ── Action object types stored in the actions JSONB column ──
 export type WorkflowAction =
   | { type: 'UPDATE_FIELD'; field: string; value: string }
-  | { type: 'CREATE_RECORD'; entityType: string; data: Record<string, unknown> }
+  | { type: 'CREATE_RECORD'; entityType: string; data: Record<string, any> }
   | { type: 'SEND_EMAIL'; templateId?: string; to: string; subject: string; body: string }
   | { type: 'SEND_NOTIFICATION'; userId?: string; role?: string; title: string; message: string }
   | { type: 'CREATE_TASK'; title: string; assignedTo: string; dueInDays: number }
-  | { type: 'WEBHOOK'; url: string; method: string; headers: Record<string, string>; body: Record<string, unknown> }
+  | { type: 'WEBHOOK'; url: string; method: string; headers: Record<string, string>; body: Record<string, any> }
   | { type: 'ASSIGN_TO'; userId?: string; method?: 'round_robin' | 'least_loaded' }
   | { type: 'DELAY'; days?: number; hours?: number };
 
@@ -115,10 +115,10 @@ class WorkflowRule extends Model {
 
   @AllowNull(true)
   @Column({ type: DataType.JSONB })
-  public graphData?: Record<string, unknown>;
+  public graphData?: Record<string, any>;
 
   // Virtual association – defined in execution model
-  public executions?: unknown[];
+  public executions?: any[];
 }
 
 export default WorkflowRule;

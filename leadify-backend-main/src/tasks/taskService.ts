@@ -23,7 +23,7 @@ class TaskService {
   /**
    * List tasks with filters, search, sorting and pagination.
    */
-  public async getTasks(query: unknown) {
+  public async getTasks(query: any) {
     const {
       page = 1,
       limit = 10,
@@ -117,7 +117,7 @@ class TaskService {
   /**
    * Create a new task.
    */
-  public async createTask(data: unknown, userId: number) {
+  public async createTask(data: any, userId: number) {
     const task = await Task.create({
       ...data,
       createdBy: userId
@@ -129,7 +129,7 @@ class TaskService {
   /**
    * Update an existing task.
    */
-  public async updateTask(id: number, data: unknown, userId: number) {
+  public async updateTask(id: number, data: any, userId: number) {
     const task = await this.taskOrError({ id });
 
     // If status is being changed to COMPLETED, set completedAt
@@ -177,7 +177,7 @@ class TaskService {
   /**
    * Get tasks assigned to a specific user with filters.
    */
-  public async getMyTasks(userId: number, query: unknown) {
+  public async getMyTasks(userId: number, query: any) {
     return this.getTasks({ ...query, assignedTo: userId });
   }
 

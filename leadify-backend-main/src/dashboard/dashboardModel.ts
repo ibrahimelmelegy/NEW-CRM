@@ -4,7 +4,7 @@ import User from '../user/userModel';
 export interface WidgetFilter {
   field: string;
   operator: string;
-  value: unknown;
+  value: any;
 }
 
 export interface WidgetConfig {

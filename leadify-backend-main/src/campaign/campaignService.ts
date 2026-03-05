@@ -23,12 +23,12 @@ class CampaignService {
     return campaign;
   }
 
-  async create(userId: number, data: unknown) {
+  async create(userId: number, data: any) {
     const campaign = await Campaign.create({ ...data, userId, status: CampaignStatus.DRAFT });
 
     if (data.recipients?.length) {
       await CampaignRecipient.bulkCreate(
-        data.recipients.map((r: unknown) => ({
+        data.recipients.map((r: any) => ({
           campaignId: campaign.id,
           contactEmail: r.email,
           contactName: r.name
@@ -39,7 +39,7 @@ class CampaignService {
     return campaign;
   }
 
-  async update(id: string, userId: number, data: unknown) {
+  async update(id: string, userId: number, data: any) {
     const campaign = await Campaign.findOne({ where: { id, userId } });
     if (!campaign) throw new Error('Campaign not found');
     if (campaign.status !== CampaignStatus.DRAFT) throw new Error('Can only edit draft campaigns');
@@ -47,7 +47,7 @@ class CampaignService {
     if (data.recipients) {
       await CampaignRecipient.destroy({ where: { campaignId: id } });
       await CampaignRecipient.bulkCreate(
-        data.recipients.map((r: unknown) => ({
+        data.recipients.map((r: any) => ({
           campaignId: id,
           contactEmail: r.email,
           contactName: r.name
@@ -130,7 +130,7 @@ class CampaignService {
     return EmailTemplate.findAll({ where: { userId }, order: [['createdAt', 'DESC']] });
   }
 
-  async createTemplate(userId: number, data: unknown) {
+  async createTemplate(userId: number, data: any) {
     return EmailTemplate.create({ ...data, userId });
   }
 

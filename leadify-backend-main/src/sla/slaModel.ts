@@ -7,7 +7,7 @@ export interface SLAConditions {
   priority?: string;
   type?: string;
   category?: string;
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
 export interface EscalationRule {

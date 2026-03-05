@@ -45,7 +45,7 @@ async function seedDelayedWorkflow() {
   // Hack for testing: set a 1 minute delay in milliseconds manually since our model only takes days/hours.
   // We'll update the action graph directly in JSONB.
   const actions = [...sampleRule.actions];
-  actions[1] = { type: 'DELAY', _testMs: 60000 } as unknown;
+  actions[1] = { type: 'DELAY', _testMs: 60000 } as any;
   await sampleRule.update({ actions });
 
   // Test workflow rule created

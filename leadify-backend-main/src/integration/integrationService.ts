@@ -3,7 +3,7 @@ import { encrypt, decrypt } from '../utils/encryption';
 
 const SENSITIVE_CONFIG_KEYS = ['apiKey', 'clientSecret', 'accessToken', 'refreshToken', 'secretKey', 'webhookSecret'];
 
-type ConfigRecord = Record<string, unknown>;
+type ConfigRecord = Record<string, any>;
 
 function encryptSensitiveFields(config: ConfigRecord): ConfigRecord {
   if (!config || typeof config !== 'object') return config;
@@ -38,18 +38,18 @@ function decryptSensitiveFields(config: ConfigRecord): ConfigRecord {
 interface UpsertIntegrationInput {
   provider: string;
   config?: ConfigRecord;
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
 class IntegrationService {
-  async getIntegrations(userId?: number): Promise<Record<string, unknown>[]> {
+  async getIntegrations(userId?: number): Promise<Record<string, any>[]> {
     const integrations = await Integration.findAll({
       where: {
         userId: userId || null
       }
     });
     return integrations.map(i => {
-      const plain = i.toJSON() as Record<string, unknown>;
+      const plain = i.toJSON() as Record<string, any>;
       if (plain.config) {
         plain.config = decryptSensitiveFields(plain.config as ConfigRecord);
       }

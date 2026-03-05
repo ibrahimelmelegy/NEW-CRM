@@ -93,7 +93,7 @@ router.post('/stripe', async (req: Request, res: Response) => {
     }
 
     res.json({ received: true });
-  } catch (error: unknown) {
+  } catch (error: any) {
     const errMsg = error instanceof Error ? error.message : 'Webhook processing failed';
     console.error('[Webhook:Stripe] Error:', errMsg);
     res.status(500).json({ success: false, message: errMsg });
@@ -187,7 +187,7 @@ router.post('/hubspot', async (req: Request, res: Response) => {
     }
 
     res.json({ received: true });
-  } catch (error: unknown) {
+  } catch (error: any) {
     const errMsg = error instanceof Error ? error.message : 'Webhook processing failed';
     console.error('[Webhook:HubSpot] Error:', errMsg);
     res.status(500).json({ success: false, message: errMsg });
@@ -229,7 +229,7 @@ router.post('/twilio/sms', async (req: Request, res: Response) => {
     // Twilio expects TwiML response for incoming SMS
     res.set('Content-Type', 'text/xml');
     res.send('<?xml version="1.0" encoding="UTF-8"?><Response></Response>');
-  } catch (error: unknown) {
+  } catch (error: any) {
     const errMsg = error instanceof Error ? error.message : 'Webhook processing failed';
     console.error('[Webhook:Twilio] Error:', errMsg);
     res.status(500).json({ success: false, message: errMsg });
@@ -262,7 +262,7 @@ router.post('/twilio/voice', async (req: Request, res: Response) => {
 
     res.set('Content-Type', 'text/xml');
     res.send('<?xml version="1.0" encoding="UTF-8"?><Response></Response>');
-  } catch (error: unknown) {
+  } catch (error: any) {
     const errMsg = error instanceof Error ? error.message : 'Webhook processing failed';
     console.error('[Webhook:Twilio:Voice] Error:', errMsg);
     res.status(500).json({ success: false, message: errMsg });
@@ -342,7 +342,7 @@ router.post('/whatsapp', async (req: Request, res: Response) => {
     }
 
     res.json({ received: true });
-  } catch (error: unknown) {
+  } catch (error: any) {
     const errMsg = error instanceof Error ? error.message : 'Webhook processing failed';
     console.error('[Webhook:WhatsApp] Error:', errMsg);
     res.status(500).json({ success: false, message: errMsg });
@@ -357,7 +357,7 @@ interface StripeWebhookEvent {
   data: {
     object: {
       id: string;
-      [key: string]: unknown;
+      [key: string]: any;
     };
   };
 }

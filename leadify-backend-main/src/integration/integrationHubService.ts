@@ -8,7 +8,7 @@ import { googleDriveConnector } from './connectors/googleDriveConnector';
 // ─── Sensitive keys that should be encrypted at rest ─────────────────────────
 const SENSITIVE_KEYS = ['apiKey', 'secretKey', 'webhookSecret', 'clientSecret', 'accessToken', 'secret', 'publishableKey'];
 
-type ConfigRecord = Record<string, unknown>;
+type ConfigRecord = Record<string, any>;
 
 function encryptConfig(config: ConfigRecord): ConfigRecord {
   if (!config || typeof config !== 'object') return config;
@@ -230,14 +230,14 @@ class IntegrationHubService {
   }
 
   // ── Configured integrations ──────────────────────────────────────────────
-  async getConfiguredIntegrations(tenantId?: string): Promise<Record<string, unknown>[]> {
-    const where: Record<string, unknown> = {};
+  async getConfiguredIntegrations(tenantId?: string): Promise<Record<string, any>[]> {
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const configs = await IntegrationConfig.findAll({ where, order: [['createdAt', 'DESC']] });
 
     return configs.map(c => {
-      const plain = c.toJSON() as Record<string, unknown>;
+      const plain = c.toJSON() as Record<string, any>;
       if (plain.config) {
         plain.config = decryptConfig(plain.config as ConfigRecord);
       }
@@ -389,7 +389,7 @@ class IntegrationHubService {
         default:
           return { success: false, message: `Unknown integration type: ${type}` };
       }
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errMsg = error instanceof Error ? error.message : 'Connection test failed';
       // Update status to ERROR if this is a saved integration
       const existing = await IntegrationConfig.findOne({ where: { type } });
@@ -402,7 +402,7 @@ class IntegrationHubService {
 
   // ── Remove integration ───────────────────────────────────────────────────
   async removeIntegration(id: string, tenantId?: string): Promise<void> {
-    const where: Record<string, unknown> = { id };
+    const where: Record<string, any> = { id };
     if (tenantId) where.tenantId = tenantId;
 
     const integration = await IntegrationConfig.findOne({ where });
@@ -416,7 +416,7 @@ class IntegrationHubService {
   // ═══════════════════════════════════════════════════════════════════════════
 
   async getWebhooks(tenantId?: string): Promise<OutgoingWebhook[]> {
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     return OutgoingWebhook.findAll({ where, order: [['createdAt', 'DESC']] });
   }
@@ -436,13 +436,13 @@ class IntegrationHubService {
   }
 
   async updateWebhook(id: string, data: WebhookUpdateInput, tenantId?: string): Promise<OutgoingWebhook> {
-    const where: Record<string, unknown> = { id };
+    const where: Record<string, any> = { id };
     if (tenantId) where.tenantId = tenantId;
 
     const webhook = await OutgoingWebhook.findOne({ where });
     if (!webhook) throw new Error('Webhook not found');
 
-    const updates: Record<string, unknown> = {};
+    const updates: Record<string, any> = {};
     if (data.name !== undefined) updates.name = data.name;
     if (data.url !== undefined) updates.url = data.url;
     if (data.events !== undefined) updates.events = data.events;
@@ -454,7 +454,7 @@ class IntegrationHubService {
   }
 
   async deleteWebhook(id: string, tenantId?: string): Promise<void> {
-    const where: Record<string, unknown> = { id };
+    const where: Record<string, any> = { id };
     if (tenantId) where.tenantId = tenantId;
 
     const webhook = await OutgoingWebhook.findOne({ where });
@@ -500,15 +500,15 @@ class IntegrationHubService {
         status: response.status,
         message: response.ok ? 'Webhook test successful' : `Webhook returned HTTP ${response.status}`
       };
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errMsg = error instanceof Error ? error.message : 'Webhook test failed';
       return { success: false, status: 0, message: errMsg };
     }
   }
 
   // ── Trigger webhooks for a given event ───────────────────────────────────
-  async triggerWebhooks(event: string, payload: unknown, tenantId?: string): Promise<void> {
-    const where: Record<string, unknown> = { status: OutgoingWebhookStatus.ACTIVE };
+  async triggerWebhooks(event: string, payload: any, tenantId?: string): Promise<void> {
+    const where: Record<string, any> = { status: OutgoingWebhookStatus.ACTIVE };
     if (tenantId) where.tenantId = tenantId;
 
     const webhooks = await OutgoingWebhook.findAll({ where });
@@ -521,7 +521,7 @@ class IntegrationHubService {
     }
   }
 
-  private async deliverWebhook(webhook: OutgoingWebhook, event: string, payload: unknown, attempt: number = 1): Promise<void> {
+  private async deliverWebhook(webhook: OutgoingWebhook, event: string, payload: any, attempt: number = 1): Promise<void> {
     const body = JSON.stringify({ event, payload, timestamp: new Date().toISOString() });
     const signature = crypto.createHmac('sha256', webhook.secret).update(body).digest('hex');
 

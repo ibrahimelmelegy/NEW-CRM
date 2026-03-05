@@ -5,11 +5,11 @@ import Client from '../../client/clientModel';
 import { clampPagination } from '../../utils/pagination';
 
 class CartService {
-  async getCarts(query: unknown): Promise<unknown> {
+  async getCarts(query: any): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { clientId, status } = query;
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (clientId) where.clientId = clientId;
     if (status) where.status = status;
 
@@ -40,7 +40,7 @@ class CartService {
     };
   }
 
-  async getCartById(id: string): Promise<unknown> {
+  async getCartById(id: string): Promise<any> {
     const cart = await EcCart.findByPk(id, {
       include: [
         { model: Client, as: 'client' },
@@ -149,7 +149,7 @@ class CartService {
     return cart.update({ couponCode });
   }
 
-  async convertToOrder(cartId: string): Promise<unknown> {
+  async convertToOrder(cartId: string): Promise<any> {
     const cart = await EcCart.findByPk(cartId, {
       include: [
         { model: Client, as: 'client' },
@@ -198,13 +198,13 @@ class CartService {
     };
   }
 
-  async getAbandonedCarts(query: unknown): Promise<unknown> {
+  async getAbandonedCarts(query: any): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     const twentyFourHoursAgo = new Date();
     twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
 
-    const where: Record<string, unknown> = {
+    const where: Record<string, any> = {
       status: CartStatusEnum.ABANDONED,
       updatedAt: { [Op.lt]: twentyFourHoursAgo }
     };

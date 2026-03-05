@@ -136,9 +136,9 @@ async function seedDemo() {
       { name: 'HR_MANAGER', description: 'Human resources manager', permissions: hrPerms }
     ];
 
-    const createdRoles: unknown[] = [];
+    const createdRoles: any[] = [];
     for (const r of rolesData) {
-      const [role] = await (Role as unknown).findOrCreate({
+      const [role] = await (Role as any).findOrCreate({
         where: { name: r.name },
         defaults: r
       });
@@ -148,7 +148,7 @@ async function seedDemo() {
 
     // ── 2. STAFF / USERS (8) ──
     // Seeding Staff
-    const superAdminRole = await (Role as unknown).findOne({ where: { name: 'SUPER_ADMIN' } });
+    const superAdminRole = await (Role as any).findOne({ where: { name: 'SUPER_ADMIN' } });
     const staffData = [
       { name: 'Khalid Al-Rashid', email: 'khalid@hp-tech.com', phone: '0501234001', roleId: createdRoles[0].id, status: 'ACTIVE' },
       { name: 'Omar Al-Dosari', email: 'omar@hp-tech.com', phone: '0501234002', roleId: createdRoles[0].id, status: 'ACTIVE' },
@@ -160,9 +160,9 @@ async function seedDemo() {
       { name: 'Youssef Al-Zahrani', email: 'youssef@hp-tech.com', phone: '0501234008', roleId: createdRoles[3].id, status: 'ACTIVE' }
     ];
 
-    const createdUsers: unknown[] = [admin]; // Admin is user[0]
+    const createdUsers: any[] = [admin]; // Admin is user[0]
     for (const s of staffData) {
-      const [user] = await (User as unknown).findOrCreate({
+      const [user] = await (User as any).findOrCreate({
         where: { email: s.email },
         defaults: { ...s, password: hashedPw }
       });
@@ -234,7 +234,7 @@ async function seedDemo() {
     const oppStages = [OpportunityStageEnums.DISCOVERY, OpportunityStageEnums.PROPOSAL, OpportunityStageEnums.NEGOTIATION, OpportunityStageEnums.WON, OpportunityStageEnums.LOST];
     const priorities = Object.values(OpportunityPriorityEnums);
 
-    const qualifiedLeads = createdLeads.filter(l => ['QUALIFIED', 'CONVERTED', 'CONTACTED'].includes((l as unknown).status));
+    const qualifiedLeads = createdLeads.filter(l => ['QUALIFIED', 'CONVERTED', 'CONTACTED'].includes((l as any).status));
     const oppsData = Array.from({ length: 30 }, (_, i) => {
       const lead = qualifiedLeads[i % qualifiedLeads.length];
       return {
@@ -256,7 +256,7 @@ async function seedDemo() {
 
     // ── 7. DEALS (25) ──
     // Seeding Deals
-    const wonOpps = createdOpps.filter(o => ['WON', 'NEGOTIATION', 'PROPOSAL'].includes((o as unknown).stage));
+    const wonOpps = createdOpps.filter(o => ['WON', 'NEGOTIATION', 'PROPOSAL'].includes((o as any).stage));
     const dealsData = Array.from({ length: 25 }, (_, i) => {
       const opp = wonOpps[i % wonOpps.length];
       return {
@@ -280,7 +280,7 @@ async function seedDemo() {
 
     // ── 8. INVOICES (20) ──
     // Seeding Invoices
-    const closedDeals = createdDeals.filter(d => ['CLOSED', 'PROGRESS'].includes((d as unknown).stage));
+    const closedDeals = createdDeals.filter(d => ['CLOSED', 'PROGRESS'].includes((d as any).stage));
     const invoicesData = Array.from({ length: 20 }, (_, i) => {
       const deal = closedDeals[i % closedDeals.length];
       return {
@@ -320,7 +320,7 @@ async function seedDemo() {
     // ── 10. SALES ORDERS (8) ──
     // Seeding Sales Orders
     const soStatuses = ['DRAFT', 'CONFIRMED', 'CONFIRMED', 'PROCESSING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'DELIVERED'];
-    const createdSOs: unknown[] = [];
+    const createdSOs: any[] = [];
     for (let i = 0; i < 8; i++) {
       const client = createdClients[i % createdClients.length];
       const so = await SalesOrder.create({
@@ -428,9 +428,9 @@ async function seedDemo() {
       { name: 'Finance', code: 'FIN', description: 'Finance & Accounting' },
       { name: 'Support', code: 'SUP', description: 'Customer Support' }
     ];
-    const createdDepts: unknown[] = [];
+    const createdDepts: any[] = [];
     for (const d of deptsData) {
-      const [dept] = await (Department as unknown).findOrCreate({
+      const [dept] = await (Department as any).findOrCreate({
         where: { code: d.code },
         defaults: d
       });
@@ -452,11 +452,11 @@ async function seedDemo() {
       { firstName: 'Lama', lastName: 'Al-Shehri', email: 'lama@hp-tech.com', jobTitle: 'Support Agent', departmentId: createdDepts[4].id, salary: 12000, employmentType: 'FULL_TIME' }
     ];
 
-    const createdEmployees: unknown[] = [];
+    const createdEmployees: any[] = [];
     for (let i = 0; i < employeeData.length; i++) {
       const emp = employeeData[i];
       const user = createdUsers.find(u => u.email === emp.email);
-      const [employee] = await (Employee as unknown).findOrCreate({
+      const [employee] = await (Employee as any).findOrCreate({
         where: { employeeNumber: `EMP-${(i + 1).toString().padStart(4, '0')}` },
         defaults: {
           employeeNumber: `EMP-${(i + 1).toString().padStart(4, '0')}`,
@@ -487,7 +487,7 @@ async function seedDemo() {
       { name: 'AWS Saudi Region', type: 'Distributor', firstName: 'Alex', lastName: 'Johnson', phone: '0112345005', email: 'aws-sa@amazon.com', serviceType: 'Software', evaluation: 97, defaultPaymentMethod: 'Credit' },
       { name: 'HP Enterprise ME', type: 'Vendor', firstName: 'Lisa', lastName: 'Wang', phone: '0112345006', email: 'enterprise@hpe-me.com', serviceType: 'Both', evaluation: 90, defaultPaymentMethod: 'Credit' }
     ];
-    const createdVendors = await Vendor.bulkCreate(vendorsData as unknown);
+    const createdVendors = await Vendor.bulkCreate(vendorsData as any);
     // Vendors created
 
     // ── 15. PURCHASE ORDERS (5) ──
@@ -499,7 +499,7 @@ async function seedDemo() {
         poNumber: `PO-2026-${(i + 1).toString().padStart(4, '0')}`,
         vendorId: vendor.id,
         status: poStatuses[i],
-        paymentMethod: (vendor as unknown).defaultPaymentMethod || 'Cash',
+        paymentMethod: (vendor as any).defaultPaymentMethod || 'Cash',
         dueDate: days(rand(15, 60)),
         totalAmount: 0,
         createdBy: adminId,
@@ -532,9 +532,9 @@ async function seedDemo() {
       { name: 'Marketing & Advertising', color: '#f59e0b', description: 'Marketing campaigns and ads' },
       { name: 'Training & Development', color: '#ec4899', description: 'Team training programs' }
     ];
-    const createdCats: unknown[] = [];
+    const createdCats: any[] = [];
     for (const c of catData) {
-      const [cat] = await (ExpenseCategory as unknown).findOrCreate({
+      const [cat] = await (ExpenseCategory as any).findOrCreate({
         where: { name: c.name },
         defaults: c
       });
@@ -570,9 +570,9 @@ async function seedDemo() {
       { name: 'Feature Request', description: 'New feature suggestions' },
       { name: 'Account Management', description: 'Account setup and configuration' }
     ];
-    const createdTicketCats: unknown[] = [];
+    const createdTicketCats: any[] = [];
     for (const tc of ticketCatsData) {
-      const [cat] = await (TicketCategory as unknown).findOrCreate({
+      const [cat] = await (TicketCategory as any).findOrCreate({
         where: { name: tc.name },
         defaults: tc
       });
@@ -692,9 +692,9 @@ async function seedDemo() {
         isActive: true
       }
     ];
-    const createdWorkflows: unknown[] = [];
+    const createdWorkflows: any[] = [];
     for (const wf of workflows) {
-      const created = await ApprovalWorkflow.create(wf as unknown);
+      const created = await ApprovalWorkflow.create(wf as any);
       createdWorkflows.push(created);
     }
 
@@ -710,7 +710,7 @@ async function seedDemo() {
         currentStep: approvalStatuses[i] === 'PENDING' ? 0 : 1,
         stepResults: approvalStatuses[i] !== 'PENDING' ? [{ step: 1, approverUserId: adminId, status: approvalStatuses[i], comment: approvalStatuses[i] === 'REJECTED' ? 'Over budget' : 'Looks good', date: new Date().toISOString() }] : [],
         requesterId: createdUsers[rand(1, 5)].id
-      } as unknown);
+      } as any);
     }
     // Workflows and approval requests created
 
@@ -760,7 +760,7 @@ async function seedDemo() {
         createdBy: adminId
       }
     ];
-    await WorkflowRule.bulkCreate(workflowRules as unknown);
+    await WorkflowRule.bulkCreate(workflowRules as any);
     // Workflow rules created
 
     // ── 23. NOTIFICATIONS (20) ──
@@ -846,7 +846,7 @@ async function seedDemo() {
     // ── DONE ──
     // DEMO SEED COMPLETE
     process.exit(0);
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error('❌ Seed failed:', error.message);
     console.error(error.stack);
     process.exit(1);

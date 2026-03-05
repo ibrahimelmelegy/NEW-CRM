@@ -70,7 +70,7 @@ import Contract from '../contract/contractModel';
 import PortalUser from '../portal/portalUserModel';
 import SupportTicket from '../portal/supportTicketModel';
 import PortalToken from '../portal/portalTokenModel';
-import TicketMessage from '../portal/ticketMessageModel';
+import PortalTicketMessage from '../portal/ticketMessageModel';
 import DocumentTemplate from '../documentTemplate/documentTemplateModel';
 import KBArticle from '../knowledgeBase/kbArticleModel';
 import Attendance from '../hr/attendanceModel';
@@ -317,7 +317,7 @@ const sequelize = new Sequelize({
     PortalUser,
     SupportTicket,
     PortalToken,
-    TicketMessage,
+    PortalTicketMessage,
     DocumentTemplate,
     KBArticle,
     Attendance,

@@ -24,7 +24,7 @@ interface TerritoryNode {
 
 class TerritoryService {
   async getTerritories(query: TerritoryQuery): Promise<Territory[]> {
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
 
     if (query.parentId !== undefined) {
       where.parentId = query.parentId;
@@ -77,7 +77,7 @@ class TerritoryService {
     return territory;
   }
 
-  async createTerritory(data: unknown): Promise<Territory> {
+  async createTerritory(data: any): Promise<Territory> {
     if (data.parentId) {
       const parent = await Territory.findByPk(data.parentId);
       if (!parent) throw new BaseError(ERRORS.TERRITORY_NOT_FOUND);
@@ -86,7 +86,7 @@ class TerritoryService {
     return Territory.create(data);
   }
 
-  async updateTerritory(id: string, data: unknown): Promise<Territory> {
+  async updateTerritory(id: string, data: any): Promise<Territory> {
     const territory = await Territory.findByPk(id);
     if (!territory) throw new BaseError(ERRORS.TERRITORY_NOT_FOUND);
 

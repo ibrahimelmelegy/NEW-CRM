@@ -11,7 +11,7 @@ import { ProposalActionEnum } from '../proposalLog/proposalLogEnum';
 import proposalService from '../proposal/proposalService';
 import { clampPagination } from '../utils/pagination';
 class ProposalFinanceTableItemService {
-  public async createProposalFinanceTableItem(data: unknown, user: User): Promise<ProposalFinanceTableItem> {
+  public async createProposalFinanceTableItem(data: any, user: User): Promise<ProposalFinanceTableItem> {
     const material = await materialService.materialOrError({ id: data.materialId });
     const financeTable = await proposalFinanceTableService.proposalFinanceTableOrError({ id: data.financeTableId }, [
       // {
@@ -34,7 +34,7 @@ class ProposalFinanceTableItemService {
     return await ProposalFinanceTableItem.create({ ...data, marginAmount, unitPrice, description, totalPrice: parseFloat(totalPrice.toFixed(2)) });
   }
 
-  public async updateProposalFinanceTableItem(id: string, data: unknown, user: User): Promise<ProposalFinanceTableItem> {
+  public async updateProposalFinanceTableItem(id: string, data: any, user: User): Promise<ProposalFinanceTableItem> {
     const item = await this.proposalFinanceTableItemOrError({ id });
     const financeTable = await proposalFinanceTableService.proposalFinanceTableOrError({ id: item.financeTableId }, [
       // {
@@ -57,7 +57,7 @@ class ProposalFinanceTableItemService {
     return item;
   }
 
-  public async getProposalFinanceTableItems(query: unknown): Promise<unknown> {
+  public async getProposalFinanceTableItems(query: any): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: items, count: totalItems } = await ProposalFinanceTableItem.findAndCountAll({

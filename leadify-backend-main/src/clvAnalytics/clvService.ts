@@ -7,15 +7,15 @@ import { io } from '../server';
 class ClvService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: unknown, tenantId?: string) {
+  async create(data: any, tenantId?: string) {
     const record = await ClvRecord.create({ ...data, tenantId, calculatedAt: new Date() });
     try { io.emit('clv:created', { id: record.id, customerId: record.customerId }); } catch {}
     return record;
   }
 
-  async getAll(query: unknown, tenantId?: string) {
+  async getAll(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.segment) where.segment = query.segment;
     if (query.customerId) where.customerId = query.customerId;
@@ -37,7 +37,7 @@ class ClvService {
     });
   }
 
-  async update(id: number, data: unknown) {
+  async update(id: number, data: any) {
     const item = await ClvRecord.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -120,7 +120,7 @@ class ClvService {
 
   /** Group customers by segment and compute aggregated metrics */
   async getCohortAnalysis(tenantId?: string) {
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const records = await ClvRecord.findAll({ where, raw: true });
@@ -157,7 +157,7 @@ class ClvService {
 
   /** Get customers at highest risk of churn, sorted by risk descending */
   async getChurnPredictions(tenantId?: string, limit = 20) {
-    const where: Record<string, unknown> = { churnRisk: { [Op.gt]: 0.3 } };
+    const where: Record<string, any> = { churnRisk: { [Op.gt]: 0.3 } };
     if (tenantId) where.tenantId = tenantId;
 
     const atRisk = await ClvRecord.findAll({

@@ -156,7 +156,7 @@ function formatDate(dateStr?: string | Date): string {
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
-function buildProposalHtml(proposal: unknown, settings: unknown): string {
+function buildProposalHtml(proposal: any, settings: any): string {
   const color = settings?.primaryColor || '#7c3aed';
   const companyName = settings?.name || '';
   const companyAddress = settings?.companyAddress || '';
@@ -176,7 +176,7 @@ function buildProposalHtml(proposal: unknown, settings: unknown): string {
   const financeTable = proposal.financeTable;
   const items = financeTable?.items || [];
 
-  const subtotal = financeTable?.grandTotalPrice || items.reduce((sum: number, item: unknown) => sum + (item.totalPrice || 0), 0);
+  const subtotal = financeTable?.grandTotalPrice || items.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0);
   const discount = financeTable?.discount || 0;
   const vat = financeTable?.vat || 0;
   const total = financeTable?.finalTotalPrice || (subtotal - discount + vat);
@@ -199,7 +199,7 @@ function buildProposalHtml(proposal: unknown, settings: unknown): string {
         contentSections += `<div style="margin-bottom: 24px;"><h3 style="font-size: 16px; font-weight: 700; color: ${color}; margin-bottom: 8px;">Methodology</h3><div style="color: #475569; line-height: 1.7;">${parsed.methodology}</div></div>`;
       }
       if (parsed.customSections && Array.isArray(parsed.customSections)) {
-        parsed.customSections.forEach((section: unknown) => {
+        parsed.customSections.forEach((section: any) => {
           contentSections += `<div style="margin-bottom: 24px;"><h3 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">${escapeHtml(section.title)}</h3><div style="color: #475569; line-height: 1.6;">${section.content || ''}</div></div>`;
         });
       }
@@ -209,7 +209,7 @@ function buildProposalHtml(proposal: unknown, settings: unknown): string {
     }
   }
 
-  const itemRows = items.map((item: unknown, i: number) => `
+  const itemRows = items.map((item: any, i: number) => `
     <tr>
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${i + 1}</td>
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-weight: 600;">${escapeHtml(item.description)}</td>
@@ -335,7 +335,7 @@ function buildProposalHtml(proposal: unknown, settings: unknown): string {
   ${proposal.users && proposal.users.length > 0 ? `
   <div style="margin-bottom: 20px;">
     <h3 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Prepared By</h3>
-    <p style="font-size: 13px; color: #475569;">${proposal.users.map((u: unknown) => escapeHtml(u.name)).join(', ')}</p>
+    <p style="font-size: 13px; color: #475569;">${proposal.users.map((u: any) => escapeHtml(u.name)).join(', ')}</p>
   </div>
   ` : ''}
 

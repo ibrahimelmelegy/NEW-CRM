@@ -20,7 +20,7 @@ import cacheService from '../infrastructure/cacheService';
 const DASHBOARD_CACHE_TTL = 120; // 2 minutes
 
 // Maps entity type strings to Sequelize model classes
-function getModelByEntityType(entityType: string): unknown {
+function getModelByEntityType(entityType: string): any {
   const map: Record<string, any> = {
     lead: Lead,
     leads: Lead,
@@ -45,7 +45,7 @@ function getModelByEntityType(entityType: string): unknown {
 }
 
 // Build a date range WHERE clause from dateRange string
-function buildDateRangeWhere(dateRange?: string, customFrom?: string, customTo?: string): unknown {
+function buildDateRangeWhere(dateRange?: string, customFrom?: string, customTo?: string): any {
   if (!dateRange) return {};
 
   const now = new Date();
@@ -96,10 +96,10 @@ function buildDateRangeWhere(dateRange?: string, customFrom?: string, customTo?:
 }
 
 // Build filter WHERE clause from widget filters
-function buildFilterWhere(filters?: Array<{ field: string; operator: string; value: unknown }>): unknown {
+function buildFilterWhere(filters?: Array<{ field: string; operator: string; value: unknown }>): any {
   if (!filters || !filters.length) return {};
 
-  const where: Record<string, unknown> = {};
+  const where: Record<string, any> = {};
   for (const filter of filters) {
     const { field, operator, value } = filter;
     switch (operator) {
@@ -153,11 +153,11 @@ function buildFilterWhere(filters?: Array<{ field: string; operator: string; val
 
 class DashboardService {
   // ─── CRUD ─────────────────────────────────────────────
-  async createDashboard(data: unknown, userId: number) {
+  async createDashboard(data: any, userId: number) {
     return Dashboard.create({ ...data, userId });
   }
 
-  async updateDashboard(id: number, data: unknown, userId: number) {
+  async updateDashboard(id: number, data: any, userId: number) {
     const dashboard = await Dashboard.findOne({ where: { id, userId } });
     if (!dashboard) throw new BaseError(ERRORS.DASHBOARD_NOT_FOUND, 404);
     return dashboard.update(data);
@@ -170,7 +170,7 @@ class DashboardService {
   }
 
   async getDashboards(userId: number, role?: string) {
-    const whereClause: Record<string, unknown> = {
+    const whereClause: any = {
       [Op.or]: [{ userId }, { isShared: true }]
     };
     if (role) {
@@ -232,7 +232,7 @@ class DashboardService {
     const Model = getModelByEntityType(config.entityType || '');
     if (!Model) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
 
-    const where: Record<string, unknown> = {
+    const where: any = {
       ...buildDateRangeWhere(config.dateRange, config.customDateFrom, config.customDateTo),
       ...buildFilterWhere(config.filters)
     };
@@ -261,7 +261,7 @@ class DashboardService {
     const Model = getModelByEntityType(config.entityType || '');
     if (!Model) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
 
-    const where: Record<string, unknown> = {
+    const where: any = {
       ...buildDateRangeWhere(config.dateRange, config.customDateFrom, config.customDateTo),
       ...buildFilterWhere(config.filters)
     };
@@ -274,7 +274,7 @@ class DashboardService {
     const metric = config.metric || 'count';
     const field = config.field || 'id';
 
-    let aggAttr: unknown;
+    let aggAttr: any;
     switch (metric) {
       case 'sum':
         aggAttr = [fn('SUM', col(field)), 'value'];
@@ -298,10 +298,10 @@ class DashboardService {
     });
 
     return {
-      labels: results.map((r: unknown) => r[groupBy]),
+      labels: results.map((r: any) => r[groupBy]),
       datasets: [
         {
-          data: results.map((r: unknown) => Number(r.value || 0)),
+          data: results.map((r: any) => Number(r.value || 0)),
           chartType: config.chartType || 'bar'
         }
       ]
@@ -312,7 +312,7 @@ class DashboardService {
     const Model = getModelByEntityType(config.entityType || '');
     if (!Model) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
 
-    const where: Record<string, unknown> = {
+    const where: any = {
       ...buildDateRangeWhere(config.dateRange, config.customDateFrom, config.customDateTo),
       ...buildFilterWhere(config.filters)
     };
@@ -377,9 +377,9 @@ class DashboardService {
     ]);
 
     const activities = [
-      ...recentLeads.map((l: unknown) => ({ entityType: 'lead', ...l })),
-      ...recentDeals.map((d: unknown) => ({ entityType: 'deal', ...d })),
-      ...recentOpportunities.map((o: unknown) => ({ entityType: 'opportunity', ...o }))
+      ...recentLeads.map((l: any) => ({ entityType: 'lead', ...l })),
+      ...recentDeals.map((d: any) => ({ entityType: 'deal', ...d })),
+      ...recentOpportunities.map((o: any) => ({ entityType: 'opportunity', ...o }))
     ]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, limit);
@@ -430,7 +430,7 @@ class DashboardService {
     });
 
     const leaderboard = results
-      .map((r: unknown) => {
+      .map((r: any) => {
         const userData = r.users?.[0];
         return {
           userId: userData?.id,
@@ -439,7 +439,7 @@ class DashboardService {
           dealCount: Number(r.getDataValue('dealCount') || 0)
         };
       })
-      .filter((entry: unknown) => entry.userId);
+      .filter((entry: any) => entry.userId);
 
     return { leaderboard };
   }
@@ -510,7 +510,7 @@ class DashboardService {
     });
 
     const stages = Object.values(DealStageEnums).map(stage => {
-      const found = stageResults.find((r: unknown) => r.stage === stage);
+      const found = stageResults.find((r: any) => r.stage === stage);
       return {
         stage,
         count: found ? Number((found as any).count) : 0,
@@ -561,9 +561,9 @@ class DashboardService {
     });
 
     return {
-      labels: results.map((r: unknown) => r.period),
-      revenue: results.map((r: unknown) => Number(r.revenue || 0)),
-      dealCount: results.map((r: unknown) => Number(r.dealCount || 0))
+      labels: results.map((r: any) => r.period),
+      revenue: results.map((r: any) => Number(r.revenue || 0)),
+      dealCount: results.map((r: any) => Number(r.dealCount || 0))
     };
   }
 
@@ -612,7 +612,7 @@ class DashboardService {
     });
 
     const performance = await Promise.all(
-      users.map(async (user: unknown) => {
+      users.map(async (user: any) => {
         const [dealsWon, dealRevenue, leadsCreated, tasksCompleted] = await Promise.all([
           Deal.count({
             where: { ...dateWhere, stage: DealStageEnums.CLOSED },
@@ -683,7 +683,7 @@ class DashboardService {
   // ─── ANALYTICS PAGE ENDPOINTS ──────────────────────────
 
   async getAnalyticsSummary(startDate?: string, endDate?: string) {
-    const dateWhere: Record<string, unknown> = {};
+    const dateWhere: Record<string, any> = {};
     if (startDate && endDate) {
       dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }
@@ -714,7 +714,7 @@ class DashboardService {
   }
 
   async getLeadSources(startDate?: string, endDate?: string) {
-    const dateWhere: Record<string, unknown> = {};
+    const dateWhere: Record<string, any> = {};
     if (startDate && endDate) {
       dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }
@@ -726,14 +726,14 @@ class DashboardService {
       raw: true
     });
 
-    return results.map((r: unknown) => ({
+    return results.map((r: any) => ({
       source: r.leadSource,
       count: Number(r.count)
     }));
   }
 
   async getWinLoss(startDate?: string, endDate?: string) {
-    const dateWhere: Record<string, unknown> = {};
+    const dateWhere: Record<string, any> = {};
     if (startDate && endDate) {
       dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }
@@ -747,7 +747,7 @@ class DashboardService {
   }
 
   async getAvgDealSize(startDate?: string, endDate?: string) {
-    const dateWhere: Record<string, unknown> = {};
+    const dateWhere: Record<string, any> = {};
     if (startDate && endDate) {
       dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }
@@ -764,7 +764,7 @@ class DashboardService {
       raw: true
     });
 
-    return results.map((r: unknown) => ({
+    return results.map((r: any) => ({
       month: r.month,
       avgValue: Math.round(Number(r.avgValue || 0)),
       dealCount: Number(r.dealCount)
@@ -772,7 +772,7 @@ class DashboardService {
   }
 
   async getConversionFunnel(startDate?: string, endDate?: string) {
-    const dateWhere: Record<string, unknown> = {};
+    const dateWhere: Record<string, any> = {};
     if (startDate && endDate) {
       dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }

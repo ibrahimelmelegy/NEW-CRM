@@ -8,7 +8,7 @@ import { ERPNextConfig } from './erpnextConfig';
 // ---------------------------------------------------------------------------
 
 export interface ERPNextListParams {
-  filters?: Record<string, unknown> | Array<[string, string, any]>;
+  filters?: Record<string, any> | Array<[string, string, any]>;
   fields?: string[];
   orderBy?: string;
   limit?: number;
@@ -104,7 +104,7 @@ export class ERPNextClient {
 
   // ---- Low-level request ----
 
-  private async request(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, data?: unknown, params?: Record<string, string>): Promise<unknown> {
+  private async request(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, data?: any, params?: Record<string, string>): Promise<any> {
     let url = `${this.baseUrl}${path}`;
     if (params && Object.keys(params).length > 0) {
       const qs = new URLSearchParams(params).toString();
@@ -129,7 +129,7 @@ export class ERPNextClient {
     let response: { statusCode: number; body: string };
     try {
       response = await makeRequest({ method, url, headers, body, timeout: this.timeout });
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error(`[ERPNext] Request failed: ${err.message}`);
       throw new ERPNextApiError({
         httpCode: 0,
@@ -141,7 +141,7 @@ export class ERPNextClient {
     // ERPNext response received
 
     // Parse response body
-    let parsed: unknown;
+    let parsed: any;
     try {
       parsed = JSON.parse(response.body);
     } catch {
@@ -169,7 +169,7 @@ export class ERPNextClient {
     return parsed;
   }
 
-  private parseServerMessages(parsed: unknown): string[] {
+  private parseServerMessages(parsed: any): string[] {
     const messages: string[] = [];
     if (parsed._server_messages) {
       try {
@@ -203,7 +203,7 @@ export class ERPNextClient {
    * Get a single document by doctype and name.
    * GET /api/resource/{doctype}/{name}
    */
-  async get(doctype: string, name?: string, filters?: Record<string, unknown>, fields?: string[], limit?: number): Promise<unknown> {
+  async get(doctype: string, name?: string, filters?: Record<string, any>, fields?: string[], limit?: number): Promise<any> {
     if (name) {
       const res = await this.request('GET', `/api/resource/${encodeURIComponent(doctype)}/${encodeURIComponent(name)}`);
       return res.data;
@@ -218,7 +218,7 @@ export class ERPNextClient {
    */
   async getList(
     doctype: string,
-    filters?: Record<string, unknown> | Array<[string, string, any]>,
+    filters?: Record<string, any> | Array<[string, string, any]>,
     fields?: string[],
     orderBy?: string,
     limit?: number,
@@ -250,7 +250,7 @@ export class ERPNextClient {
    * Create a new document.
    * POST /api/resource/{doctype}
    */
-  async create(doctype: string, data: Record<string, unknown>): Promise<unknown> {
+  async create(doctype: string, data: Record<string, any>): Promise<any> {
     const res = await this.request('POST', `/api/resource/${encodeURIComponent(doctype)}`, data);
     return res.data;
   }
@@ -259,7 +259,7 @@ export class ERPNextClient {
    * Update an existing document.
    * PUT /api/resource/{doctype}/{name}
    */
-  async update(doctype: string, name: string, data: Record<string, unknown>): Promise<unknown> {
+  async update(doctype: string, name: string, data: Record<string, any>): Promise<any> {
     const res = await this.request('PUT', `/api/resource/${encodeURIComponent(doctype)}/${encodeURIComponent(name)}`, data);
     return res.data;
   }
@@ -268,7 +268,7 @@ export class ERPNextClient {
    * Delete a document.
    * DELETE /api/resource/{doctype}/{name}
    */
-  async delete(doctype: string, name: string): Promise<unknown> {
+  async delete(doctype: string, name: string): Promise<any> {
     const res = await this.request('DELETE', `/api/resource/${encodeURIComponent(doctype)}/${encodeURIComponent(name)}`);
     return res;
   }
@@ -277,7 +277,7 @@ export class ERPNextClient {
    * Call a server-side whitelisted method.
    * POST /api/method/{method}
    */
-  async runMethod(method: string, params?: Record<string, unknown>): Promise<unknown> {
+  async runMethod(method: string, params?: Record<string, any>): Promise<any> {
     const res = await this.request('POST', `/api/method/${method}`, params);
     return res;
   }
@@ -286,7 +286,7 @@ export class ERPNextClient {
    * Call a GET-based API method (for reports etc.).
    * GET /api/method/{method}?...params
    */
-  async getMethod(method: string, params?: Record<string, string>): Promise<unknown> {
+  async getMethod(method: string, params?: Record<string, string>): Promise<any> {
     const res = await this.request('GET', `/api/method/${method}`, undefined, params);
     return res;
   }

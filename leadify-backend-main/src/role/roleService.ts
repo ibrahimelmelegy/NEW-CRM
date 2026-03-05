@@ -19,7 +19,7 @@ class RoleService {
     return role;
   }
 
-  public async createRole(data: unknown): Promise<Role> {
+  public async createRole(data: any): Promise<Role> {
     // Check if role with the same name already exists
     await this.errorIfRoleWithNameExists(data.name);
 
@@ -44,9 +44,9 @@ class RoleService {
   /**
    * @desc Get all roles (with pagination & filtering)
    * @param {any} query - Query parameters (pagination & search)
-   * @returns {Promise<unknown>}
+   * @returns {Promise<any>}
    */
-  public async getRoles(query: unknown): Promise<unknown> {
+  public async getRoles(query: any): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey } = query;
 
@@ -128,7 +128,7 @@ class RoleService {
     return role;
   }
 
-  public async getPermissions(): Promise<unknown> {
+  public async getPermissions(): Promise<any> {
     return getPermissionsGroupedByName();
   }
 }

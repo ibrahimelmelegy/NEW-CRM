@@ -97,7 +97,7 @@ async function migrate() {
     for (const sql of queries) {
       try {
         await sequelize.query(sql);
-      } catch (err: unknown) {
+      } catch (err: any) {
         console.error(`  Error: ${err.message}`);
       }
     }

@@ -300,7 +300,7 @@ class DealScoringService {
     // ===== Factor 8: Invoice/Payment Progress =====
     const invoices = deal.invoice || [];
     if (invoices.length > 0) {
-      const collectedCount = invoices.filter((inv: unknown) => inv.collected).length;
+      const collectedCount = invoices.filter((inv: any) => inv.collected).length;
       if (collectedCount > 0) {
         factors.push({
           factor: 'Payment Progress',
@@ -370,7 +370,7 @@ class DealScoringService {
     };
   }
 
-  private async getAISuggestions(deal: unknown, factors: ScoreFactor[], score: number): Promise<string[]> {
+  private async getAISuggestions(deal: any, factors: ScoreFactor[], score: number): Promise<string[]> {
     try {
       const OpenAI = require('openai').default;
       const Integration = require('../integration/integrationModel').default;
@@ -456,7 +456,7 @@ class DealScoringService {
       attributes: [[fn('AVG', col('price')), 'avgPrice']],
       raw: true
     });
-    return result?.avgPrice || 10000;
+    return (result as any)?.avgPrice || 10000;
   }
 
   private async getUserWinRate(userId: number): Promise<number | null> {

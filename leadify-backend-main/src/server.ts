@@ -40,7 +40,7 @@ async function runTypoMigration(sequelize: Sequelize) {
 
   for (const table of tables) {
     try {
-      const [results]: unknown = await sequelize.query(
+      const [results]: any = await sequelize.query(
         `SELECT column_name FROM information_schema.columns WHERE table_name = :tableName AND column_name = 'descripion'`,
         { replacements: { tableName: table } }
       );

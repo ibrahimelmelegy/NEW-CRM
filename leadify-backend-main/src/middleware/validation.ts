@@ -6,13 +6,13 @@ import 'reflect-metadata';
 
 // Type definition for ClassConstructor
 type ClassConstructor<T> = {
-  new (...args: unknown[]): T;
+  new (...args: any[]): T;
 };
 
 // Helper function to format errors recursively
-function formatValidationErrors(errors: unknown[]): unknown[] {
+function formatValidationErrors(errors: any[]): any[] {
   return errors.map(error => {
-    const formattedError: unknown = {
+    const formattedError: any = {
       property: error.property,
       constraints: error.constraints || {}
     };
@@ -27,7 +27,7 @@ function formatValidationErrors(errors: unknown[]): unknown[] {
 
 // Main validation middleware
 export function validateBody<T extends object>(dtoClass: ClassConstructor<T>) {
-  return async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
       // Step 1: Transform the body into an instance of the DTO class
       const dtoObject = plainToInstance(dtoClass, req.body, {
@@ -59,7 +59,7 @@ export function validateBody<T extends object>(dtoClass: ClassConstructor<T>) {
 
 // Middleware for validating the query
 export function validateQuery<T extends object>(dtoClass: ClassConstructor<T>) {
-  return async (req: Request<{}, {}, {}, ParsedQs>, res: Response, next: NextFunction): Promise<unknown> => {
+  return async (req: Request<{}, {}, {}, ParsedQs>, res: Response, next: NextFunction): Promise<any> => {
     try {
       // Step 1: Transform the query params into an instance of the DTO class
       const dtoObject = plainToInstance(dtoClass, req.query, {

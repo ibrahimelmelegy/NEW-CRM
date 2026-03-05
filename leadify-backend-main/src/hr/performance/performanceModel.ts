@@ -31,7 +31,7 @@ export default class PerformanceReview extends Model {
   public overallRating?: number;
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public ratings?: Record<string, unknown>;
+  public ratings?: Record<string, any>;
 
   @Column({ type: DataType.JSONB, allowNull: true })
   public goals?: Array<{ title: string; status: string; weight: number }>;

@@ -35,7 +35,7 @@ class CacheService {
     }
   }
 
-  async set(key: string, value: unknown, ttl: number = this.defaultTTL): Promise<void> {
+  async set(key: string, value: any, ttl: number = this.defaultTTL): Promise<void> {
     if (!(await this.ensureConnection())) return;
     try {
       await redisClient.setEx(key, ttl, JSON.stringify(value));

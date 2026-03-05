@@ -6,13 +6,13 @@ import { clampPagination } from '../../utils/pagination';
 import { io } from '../../server';
 
 class PerformanceService {
-  async create(data: unknown, tenantId?: string) {
+  async create(data: any, tenantId?: string) {
     return PerformanceReview.create({ ...data, tenantId });
   }
 
-  async getAll(query: unknown, tenantId?: string) {
+  async getAll(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, unknown> = {};
+    const where: any = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.period) where.period = query.period;
@@ -42,7 +42,7 @@ class PerformanceService {
     });
   }
 
-  async update(id: number, data: unknown) {
+  async update(id: number, data: any) {
     const review = await PerformanceReview.findByPk(id);
     if (!review) return null;
     await review.update(data);
@@ -113,7 +113,7 @@ class PerformanceService {
    * Buckets: 1-2 = Needs Improvement, 2-3 = Meets Expectations, 3-4 = Exceeds, 4-5 = Outstanding.
    */
   async getPerformanceDistribution(tenantId: string, period: string) {
-    const where: Record<string, unknown> = {
+    const where: Record<string, any> = {
       tenantId,
       period,
       overallRating: { [Op.ne]: null }

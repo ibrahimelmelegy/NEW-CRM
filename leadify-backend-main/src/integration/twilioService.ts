@@ -26,7 +26,7 @@ class TwilioService {
    * @param twimlUrl The URL Twilio will request when the call connects to get TwiML instructions
    * @param webhookUrl The URL Twilio will send call status updates to
    */
-  public async makeCall(to: string, twimlUrl: string, webhookUrl?: string): Promise<unknown> {
+  public async makeCall(to: string, twimlUrl: string, webhookUrl?: string): Promise<any> {
     if (!this.client || !this.twilioPhoneNumber) {
       throw new Error('Twilio integration is not fully configured.');
     }

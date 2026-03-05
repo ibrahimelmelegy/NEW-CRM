@@ -43,7 +43,7 @@ export class ChatConversation extends Model {
   public departmentId?: number;
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public metadata?: Record<string, unknown>;
+  public metadata?: Record<string, any>;
 
   @Column({ type: DataType.STRING(10), allowNull: false, defaultValue: 'NORMAL' })
   public priority!: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';

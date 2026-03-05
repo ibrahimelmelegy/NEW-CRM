@@ -16,11 +16,11 @@ const entityModelMap: Record<string, any> = {
 class LeadScoringService {
   // ---- Rule CRUD ----
 
-  async createRule(data: unknown, userId: number) {
+  async createRule(data: any, userId: number) {
     return LeadScoringRule.create({ ...data, createdBy: userId });
   }
 
-  async updateRule(id: number, data: unknown) {
+  async updateRule(id: number, data: any) {
     const rule = await LeadScoringRule.findByPk(id);
     if (!rule) throw new Error('Scoring rule not found');
     return rule.update(data);
@@ -33,10 +33,10 @@ class LeadScoringService {
     return { deleted: true };
   }
 
-  async getRules(query: unknown) {
+  async getRules(query: any) {
     const { page, limit, offset } = clampPagination(query, 30);
     const { entityType, isActive, sortBy = 'createdAt', sort = 'DESC' } = query;
-    const where: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
     if (entityType) where.entityType = entityType;
     if (isActive !== undefined) where.isActive = isActive === 'true' || isActive === true;
 
@@ -186,7 +186,7 @@ class LeadScoringService {
 
       case 'in':
         if (Array.isArray(value) && fieldValue !== undefined && fieldValue !== null) {
-          const lowerValues = value.map((v: unknown) => String(v).toLowerCase());
+          const lowerValues = value.map((v: any) => String(v).toLowerCase());
           if (lowerValues.includes(String(fieldValue).toLowerCase())) {
             return points;
           }
@@ -196,7 +196,7 @@ class LeadScoringService {
       case 'not_in':
         if (Array.isArray(value)) {
           if (fieldValue === undefined || fieldValue === null) return points;
-          const lowerValues = value.map((v: unknown) => String(v).toLowerCase());
+          const lowerValues = value.map((v: any) => String(v).toLowerCase());
           if (!lowerValues.includes(String(fieldValue).toLowerCase())) {
             return points;
           }
