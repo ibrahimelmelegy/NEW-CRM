@@ -39,7 +39,7 @@ class SupportTicket extends Model {
   @BelongsTo(() => PortalUser)
   public portalUser?: PortalUser;
 
-  @HasMany(() => PortalTicketMessage)
+  @HasMany(() => PortalTicketMessage, { foreignKey: 'ticketId' })
   public messages?: PortalTicketMessage[];
 }
 
