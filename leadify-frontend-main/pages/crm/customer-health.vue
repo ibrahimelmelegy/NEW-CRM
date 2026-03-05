@@ -292,10 +292,10 @@ const sortProp = ref('healthScore');
 const sortOrder = ref<'ascending' | 'descending'>('ascending');
 
 // Raw data
-const allClients = ref<any[]>([]);
-const allDeals = ref<any[]>([]);
-const allInvoices = ref<any[]>([]);
-const allTickets = ref<any[]>([]);
+const allClients = ref<Record<string, unknown>[]>([]);
+const allDeals = ref<Record<string, unknown>[]>([]);
+const allInvoices = ref<Record<string, unknown>[]>([]);
+const allTickets = ref<Record<string, unknown>[]>([]);
 
 // ── Computed: Health-scored customers ──
 const customers = computed(() => {
@@ -472,7 +472,7 @@ const distributionChartOption = computed(() => {
       padding: [12, 16],
       textStyle: { color: '#fff' },
       extraCssText: 'backdrop-filter: blur(12px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-radius: 16px;',
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const p = params[0];
         return `<strong>${t('customerHealth.scoreRange')}: ${p.name}</strong><br/>${t('customerHealth.customers')}: <strong>${p.value}</strong>`;
       }
@@ -518,7 +518,7 @@ const distributionChartOption = computed(() => {
 
 // ── Alerts ──
 const alertItems = computed(() => {
-  const alerts: any[] = [];
+  const alerts: Record<string, unknown>[] = [];
 
   const inactiveCount = customers.value.filter(c => {
     if (!c.lastActivity) return true;
@@ -651,20 +651,20 @@ function formatRelativeTime(date: string): string {
   return t('customerHealth.monthsAgo', { count: Math.floor(days / 30) });
 }
 
-function handleSortChange({ prop, order }: any) {
+function handleSortChange({ prop, order }: unknown) {
   sortProp.value = prop || 'healthScore';
   sortOrder.value = order || 'ascending';
 }
 
-function navigateTo360(row: any) {
+function navigateTo360(row: unknown) {
   router.push({ path: '/crm/customer-360', query: { contactId: row.id } });
 }
 
-function createTaskForCustomer(row: any) {
+function createTaskForCustomer(row: unknown) {
   router.push({ path: '/tasks', query: { clientId: row.id, clientName: row.name } });
 }
 
-function handleAlertAction(alert: any) {
+function handleAlertAction(alert: unknown) {
   if (alert.type === 'inactive') {
     riskFilter.value = '';
     searchQuery.value = '';
@@ -688,7 +688,7 @@ async function loadClients() {
   try {
     const { body, success } = await useApiFetch('client?limit=500');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       allClients.value = data.docs || data || [];
     }
   } catch {
@@ -700,7 +700,7 @@ async function loadDeals() {
   try {
     const { body, success } = await useApiFetch('deal?limit=500');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       allDeals.value = data.docs || data || [];
     }
   } catch {
@@ -712,7 +712,7 @@ async function loadInvoices() {
   try {
     const { body, success } = await useApiFetch('invoices/billing?limit=500');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       allInvoices.value = data.docs || data || [];
     }
   } catch {
@@ -724,7 +724,7 @@ async function loadTickets() {
   try {
     const { body, success } = await useApiFetch('support/tickets?limit=500');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       allTickets.value = data.docs || data || [];
     }
   } catch {

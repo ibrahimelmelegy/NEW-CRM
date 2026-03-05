@@ -11,7 +11,7 @@ export interface BuilderWidget {
   type: string;
   colSpan: number; // 1-4 (grid columns)
   rowSpan: number; // 1-2
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
 }
 
 export interface BuilderLayout {
@@ -226,7 +226,7 @@ export function useDashboardBuilder() {
     try {
       const widgets = dashboardWidgets.value.map(w => ({
         id: w.id,
-        type: w.type as any,
+        type: w.type as unknown,
         title: availableWidgets.find(d => d.type === w.type)?.label || w.type,
         config: { colSpan: w.colSpan, rowSpan: w.rowSpan, ...w.config }
       }));
@@ -248,7 +248,7 @@ export function useDashboardBuilder() {
           isDefault: true
         });
         if (success && body) {
-          dashboardId.value = (body as any).id;
+          dashboardId.value = (body as unknown).id;
         }
       }
       const { t } = useI18n();
@@ -265,12 +265,12 @@ export function useDashboardBuilder() {
     try {
       const { body, success } = await useApiFetch('dashboards');
       if (success && body) {
-        const data = body as any;
+        const data = body as unknown;
         const dashboards = data.docs || data || [];
-        const defaultDb = dashboards.find((d: any) => d.isDefault) || dashboards[0];
+        const defaultDb = dashboards.find((d) => d.isDefault) || dashboards[0];
         if (defaultDb && defaultDb.widgets?.length) {
           dashboardId.value = defaultDb.id;
-          dashboardWidgets.value = defaultDb.widgets.map((w: any) => ({
+          dashboardWidgets.value = defaultDb.widgets.map((w) => ({
             id: w.id || generateId(),
             type: w.type,
             colSpan: w.config?.colSpan || 1,

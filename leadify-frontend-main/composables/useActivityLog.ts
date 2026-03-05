@@ -41,9 +41,9 @@ export function useActivityLog() {
     try {
       const { body, success } = await useApiFetch(`audit?page=${page}&limit=100`);
       if (success && body) {
-        const data = body as any;
+        const data = body as unknown;
         const docs = data.docs || data || [];
-        activities.value = docs.map((a: any) => ({
+        activities.value = docs.map((a) => ({
           id: a.id,
           action: actionMap[a.action] || 'updated',
           entityType: (a.entityType || '').toLowerCase(),
@@ -64,9 +64,9 @@ export function useActivityLog() {
     const url = entityId ? `audit/${entityType}/${entityId}` : `audit?entityType=${entityType}&limit=100`;
     const { body, success } = await useApiFetch(url);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       const docs = data.docs || data || [];
-      return docs.map((a: any) => ({
+      return docs.map((a) => ({
         id: a.id,
         action: actionMap[a.action] || 'updated',
         entityType: (a.entityType || '').toLowerCase(),
@@ -96,7 +96,7 @@ export function useActivityLog() {
   }
 
   function getByContact(contactId: string | number): ActivityEntry[] {
-    return sorted.value.filter(a => (a.entityType === 'contact' && a.entityId === contactId) || (a.metadata as any)?.contactId === contactId);
+    return sorted.value.filter(a => (a.entityType === 'contact' && a.entityId === contactId) || (a.metadata as unknown)?.contactId === contactId);
   }
 
   function clearAll() {

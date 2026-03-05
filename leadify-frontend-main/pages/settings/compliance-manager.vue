@@ -380,7 +380,7 @@ const auditCategoryFilter = ref('');
 const auditViewMode = ref('table');
 const showRequestDetailDialog = ref(false);
 const showNewPiaDialog = ref(false);
-const selectedRequest = ref<any>(null);
+const selectedRequest = ref<Record<string, unknown> | null>(null);
 const overallScore = ref(87);
 const loading = ref(false);
 
@@ -399,7 +399,7 @@ const overallScoreClass = computed(() => {
 });
 
 // --- Consent Records ---
-const consentRecords = ref<any[]>([]);
+const consentRecords = ref<Record<string, unknown>[]>([]);
 
 const fallbackConsentRecords = [
   {
@@ -534,7 +534,7 @@ const filteredConsentRecords = computed(() => {
 });
 
 // --- Data Requests ---
-const dataRequests = ref<any[]>([]);
+const dataRequests = ref<Record<string, unknown>[]>([]);
 
 const fallbackDataRequests = [
   {
@@ -716,7 +716,7 @@ const piaList = ref([
 ]);
 
 // --- Audit Entries ---
-const auditEntries = ref<any[]>([]);
+const auditEntries = ref<Record<string, unknown>[]>([]);
 
 const fallbackAuditEntries = [
   {
@@ -1110,7 +1110,7 @@ async function loadConsentRecords() {
   try {
     const res = await useApiFetch('compliance/consents');
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       consentRecords.value = Array.isArray(data) ? data : data.docs || [];
     } else {
       consentRecords.value = fallbackConsentRecords;
@@ -1124,7 +1124,7 @@ async function loadDataRequests() {
   try {
     const res = await useApiFetch('compliance/data-requests');
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       dataRequests.value = Array.isArray(data) ? data : data.docs || [];
     } else {
       dataRequests.value = fallbackDataRequests;
@@ -1138,7 +1138,7 @@ async function loadAuditEntries() {
   try {
     const res = await useApiFetch('compliance/audit', 'POST');
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       auditEntries.value = Array.isArray(data) ? data : data.entries || data.docs || [];
     } else {
       auditEntries.value = fallbackAuditEntries;
@@ -1152,7 +1152,7 @@ async function loadComplianceScore() {
   try {
     const res = await useApiFetch('compliance/score');
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       if (typeof data.score === 'number') {
         overallScore.value = data.score;
       } else if (typeof data === 'number') {
@@ -1183,7 +1183,7 @@ async function runAudit() {
   try {
     const res = await useApiFetch('compliance/audit', 'POST');
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       if (Array.isArray(data) || data.entries || data.docs) {
         auditEntries.value = Array.isArray(data) ? data : data.entries || data.docs || [];
       }
@@ -1228,16 +1228,16 @@ function exportReport() {
   ElMessage.success(t('complianceManager.exportSuccess'));
 }
 
-function viewConsentDetail(record: any) {
+function viewConsentDetail(record: unknown) {
   ElMessage.info(`${t('complianceManager.viewingConsent')}: ${record.name}`);
 }
 
-function revokeConsent(record: any) {
+function revokeConsent(record: unknown) {
   record.status = 'Withdrawn';
   ElMessage.success(`${t('complianceManager.consentRevoked')}: ${record.name}`);
 }
 
-function openRequestDetail(request: any) {
+function openRequestDetail(request: unknown) {
   selectedRequest.value = request;
   requestChecklist.value.forEach((step, idx) => {
     step.done = idx < 2;

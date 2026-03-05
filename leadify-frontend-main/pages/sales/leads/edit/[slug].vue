@@ -23,7 +23,7 @@ const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
 
-const lead = ref<any>(null);
+const lead = ref<Record<string, unknown> | null>(null);
 
 onMounted(async () => {
   loading.value = true;

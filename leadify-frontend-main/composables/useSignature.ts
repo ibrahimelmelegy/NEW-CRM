@@ -36,8 +36,8 @@ export function useSignature() {
       const url = documentId ? `portal/signatures/${documentId}` : 'portal/signatures/all';
       const { body, success } = await useApiFetch(url);
       if (success && body) {
-        const docs = Array.isArray(body) ? body : (body as any).docs || [];
-        signatures.value = docs.map((s: any) => ({
+        const docs = Array.isArray(body) ? body : (body as unknown).docs || [];
+        signatures.value = docs.map((s) => ({
           id: s.id,
           documentRef: s.documentId || '',
           documentType: s.signatureType || 'DRAWN',

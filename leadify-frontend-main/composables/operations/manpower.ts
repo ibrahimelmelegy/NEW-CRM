@@ -41,7 +41,7 @@ export interface ManpowerValues {
   tAllowance: string | number;
   vAllowance: string | number;
   visaFees: string | number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export enum ManpowerRoleEnums {
@@ -278,7 +278,7 @@ export async function getManpowers(): Promise<UseManpowersResult> {
 
     if (success) {
       // Return the docs (manpowers) from the response
-      const manpowers = body?.docs?.map((manpower: any) => ({
+      const manpowers = body?.docs?.map((manpower) => ({
         ...manpower,
         manpowerContacts: { title: manpower?.email, text: manpower?.phone },
         role: manpower?.role?.join(', '),

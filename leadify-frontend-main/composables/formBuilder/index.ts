@@ -70,9 +70,9 @@ export function useFormBuilder() {
     try {
       const { body, success } = await useApiFetch('form-builder/templates?limit=100');
       if (success && body) {
-        const data = body as any;
-        const docs: any[] = data.docs || data || [];
-        forms.value = docs.map((f: any) => ({
+        const data = body as unknown;
+        const docs: Record<string, unknown>[] = data.docs || data || [];
+        forms.value = docs.map((f) => ({
           id: f.id,
           name: f.name || f.title || 'Untitled Form',
           title: f.title || f.name || '',
@@ -147,7 +147,7 @@ export function useFormBuilder() {
     return updateForm(id, { status: newStatus });
   }
 
-  async function getFormAnalytics(formId: number): Promise<any> {
+  async function getFormAnalytics(formId: number): Promise<<unknown> {
     const { body, success } = await useApiFetch(`form-builder/templates/${formId}/analytics`);
     if (success && body) return body;
     return null;
@@ -157,7 +157,7 @@ export function useFormBuilder() {
     const qs = params?.formId ? `?formId=${params.formId}&limit=${params?.limit ?? 50}` : `?limit=${params?.limit ?? 50}`;
     const { body, success } = await useApiFetch(`form-builder/submissions${qs}`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       return data.docs || data || [];
     }
     return [];

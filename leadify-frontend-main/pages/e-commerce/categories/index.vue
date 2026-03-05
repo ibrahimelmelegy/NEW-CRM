@@ -146,11 +146,11 @@ const t = $i18n.t;
 const loading = ref(false);
 const saving = ref(false);
 const deleting = ref(false);
-const treeData = ref<any[]>([]);
-const selectedCategory = ref<any>(null);
+const treeData = ref<Record<string, unknown>[]>([]);
+const selectedCategory = ref<Record<string, unknown> | null>(null);
 const showCreateDialog = ref(false);
 const showDeleteDialog = ref(false);
-const deleteTarget = ref<any>(null);
+const deleteTarget = ref<Record<string, unknown> | null>(null);
 
 const treeProps = {
   label: 'name',
@@ -177,8 +177,8 @@ const createForm = reactive({
 
 // Flatten tree for parent select options
 const flatCategories = computed(() => {
-  const result: any[] = [];
-  function flatten(nodes: any[]) {
+  const result: Record<string, unknown>[] = [];
+  function flatten(nodes: Record<string, unknown>[]) {
     for (const node of nodes) {
       result.push(node);
       if (node.children?.length) flatten(node.children);
@@ -198,7 +198,7 @@ async function loadTree() {
   loading.value = true;
   try {
     const res = await fetchEcCategoryTree();
-    treeData.value = (res as any)?.body?.docs || (res as any)?.body || (res as any)?.docs || res || [];
+    treeData.value = (res as unknown)?.body?.docs || (res as unknown)?.body || (res as unknown)?.docs || res || [];
   } finally {
     loading.value = false;
   }
@@ -221,7 +221,7 @@ function autoGenerateCreateSlug() {
   createForm.slug = slugify(createForm.name);
 }
 
-function onNodeClick(data: any) {
+function onNodeClick(data: unknown) {
   selectedCategory.value = data;
   Object.assign(editForm, {
     name: data.name || '',
@@ -233,13 +233,13 @@ function onNodeClick(data: any) {
   });
 }
 
-function allowDrop(draggingNode: any, dropNode: any, type: string) {
+function allowDrop(draggingNode: unknown, dropNode: unknown, type: string) {
   return type !== 'inner' || true;
 }
 
-async function onNodeDrop(draggingNode: any, dropNode: any, type: string) {
+async function onNodeDrop(draggingNode: unknown, dropNode: unknown, type: string) {
   try {
-    const data: any = { sortOrder: dropNode.data.sortOrder || 0 };
+    const data = { sortOrder: dropNode.data.sortOrder || 0 };
     if (type === 'inner') {
       data.parentId = dropNode.data.id;
     } else if (type === 'before' || type === 'after') {
@@ -272,7 +272,7 @@ async function handleCreate() {
   }
   saving.value = true;
   try {
-    const res = await createEcCategory({ ...createForm } as any);
+    const res = await createEcCategory({ ...createForm } as unknown);
     if (res?.success !== false) {
       showCreateDialog.value = false;
       await loadTree();
@@ -290,11 +290,11 @@ async function handleUpdate() {
   }
   saving.value = true;
   try {
-    const res = await updateEcCategory(selectedCategory.value.id, { ...editForm } as any);
+    const res = await updateEcCategory(selectedCategory.value.id, { ...editForm } as unknown);
     if (res?.success !== false) {
       await loadTree();
       // Re-select the updated category
-      const updated = flatCategories.value.find((c: any) => c.id === selectedCategory.value.id);
+      const updated = flatCategories.value.find((c) => c.id === selectedCategory.value.id);
       if (updated) onNodeClick(updated);
       ElMessage.success(t('common.saved'));
     }
@@ -303,7 +303,7 @@ async function handleUpdate() {
   }
 }
 
-function handleDelete(category: any) {
+function handleDelete(category: unknown) {
   deleteTarget.value = category;
   showDeleteDialog.value = true;
 }

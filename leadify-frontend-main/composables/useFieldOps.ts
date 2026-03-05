@@ -17,7 +17,7 @@ export async function fetchCheckIns(params?: Record<string, string>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`field-ops${query}`);
   if (success && body) {
-    return body as { docs: FieldCheckIn[]; pagination: any };
+    return body as { docs: FieldCheckIn[]; pagination: unknown };
   }
   return {
     docs: [],
@@ -25,7 +25,7 @@ export async function fetchCheckIns(params?: Record<string, string>) {
   };
 }
 
-export async function createCheckIn(data: any) {
+export async function createCheckIn(data: unknown) {
   return useApiFetch('field-ops', 'POST', data);
 }
 

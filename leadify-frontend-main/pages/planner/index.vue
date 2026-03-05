@@ -277,7 +277,7 @@ async function endCurrentFocus() {
   }
 }
 
-async function quickFocus(task: any) {
+async function quickFocus(task: unknown) {
   await startFocus(task.title, task.duration || 25, task.id);
   ElMessage.success(`Focus: ${task.title}`);
 }

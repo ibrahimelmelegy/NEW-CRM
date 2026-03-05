@@ -744,7 +744,7 @@ const completionByTemplateOption = computed(() => {
       borderWidth: 1,
       textStyle: { color: '#fff' },
       extraCssText: 'backdrop-filter: blur(12px); border-radius: 16px;',
-      formatter: (params: any) => `<strong>${params.name}</strong><br/>${t('customerOnboarding.used')}: ${params.value} (${params.percent}%)`
+      formatter: (params: unknown) => `<strong>${params.name}</strong><br/>${t('customerOnboarding.used')}: ${params.value} (${params.percent}%)`
     },
     legend: {
       orient: 'vertical',
@@ -961,7 +961,7 @@ function saveTemplate() {
         description: templateForm.value.description,
         phasesCount: templateForm.value.phases.length,
         phases: templateForm.value.phases.map(p => ({ ...p, checklistItems: p.checklistItems.filter(Boolean) }))
-      } as any;
+      } as unknown;
     }
     ElNotification({ type: 'success', title: t('customerOnboarding.updated'), message: t('customerOnboarding.templateUpdated') });
   } else {

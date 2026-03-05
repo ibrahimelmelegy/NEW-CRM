@@ -13,11 +13,11 @@ export interface CatalogProduct {
   stockQuantity?: number;
   lowStockThreshold?: number;
   images?: string[];
-  variants?: Record<string, any>[];
+  variants?: Record<string, unknown>[];
   weight?: number;
   weightUnit?: string;
   priceHistory?: { price: number; date: string }[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -34,11 +34,11 @@ export interface QuoteLine {
   createdAt?: string;
 }
 
-export async function fetchProducts(query?: Record<string, string>): Promise<{ docs: CatalogProduct[]; pagination: any }> {
+export async function fetchProducts(query?: Record<string, string>): Promise<{ docs: CatalogProduct[]; pagination: unknown }> {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`catalog/products${qs}`);
   if (success && body) {
-    return body as { docs: CatalogProduct[]; pagination: any };
+    return body as { docs: CatalogProduct[]; pagination: unknown };
   }
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
@@ -52,11 +52,11 @@ export async function fetchProductById(id: string): Promise<CatalogProduct | nul
 }
 
 export async function createProduct(data: Partial<CatalogProduct>) {
-  return useApiFetch('catalog/products', 'POST', data as Record<string, any>);
+  return useApiFetch('catalog/products', 'POST', data as Record<string, unknown>);
 }
 
 export async function updateProduct(id: string, data: Partial<CatalogProduct>) {
-  return useApiFetch(`catalog/products/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`catalog/products/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 export async function deleteProduct(id: string) {
@@ -66,18 +66,18 @@ export async function deleteProduct(id: string) {
 export async function fetchQuoteLines(quoteId: string): Promise<QuoteLine[]> {
   const { body, success } = await useApiFetch(`catalog/quotes/${quoteId}/lines`);
   if (success && body) {
-    const data = body as any;
+    const data = body as unknown;
     return data.docs || data || [];
   }
   return [];
 }
 
 export async function addQuoteLine(data: Partial<QuoteLine>) {
-  return useApiFetch('catalog/quotes/lines', 'POST', data as Record<string, any>);
+  return useApiFetch('catalog/quotes/lines', 'POST', data as Record<string, unknown>);
 }
 
 export async function updateQuoteLine(id: string, data: Partial<QuoteLine>) {
-  return useApiFetch(`catalog/quotes/lines/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`catalog/quotes/lines/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 export async function removeQuoteLine(id: string) {
@@ -86,11 +86,11 @@ export async function removeQuoteLine(id: string) {
 
 // ─── Inventory ──────────────────────────────────────────────────────────────
 
-export async function fetchLowStockProducts(query?: Record<string, string>): Promise<{ docs: CatalogProduct[]; pagination: any }> {
+export async function fetchLowStockProducts(query?: Record<string, string>): Promise<{ docs: CatalogProduct[]; pagination: unknown }> {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`catalog/products/low-stock${qs}`);
   if (success && body) {
-    return body as { docs: CatalogProduct[]; pagination: any };
+    return body as { docs: CatalogProduct[]; pagination: unknown };
   }
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
@@ -102,7 +102,7 @@ export async function updateProductStock(id: string, quantity: number, operation
 // ─── Bulk Import ────────────────────────────────────────────────────────────
 
 export async function bulkImportProducts(products: Partial<CatalogProduct>[]) {
-  return useApiFetch('catalog/products/bulk-import', 'POST', { products } as Record<string, any>);
+  return useApiFetch('catalog/products/bulk-import', 'POST', { products } as Record<string, unknown>);
 }
 
 // ─── Analytics ──────────────────────────────────────────────────────────────

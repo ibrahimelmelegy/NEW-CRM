@@ -415,7 +415,7 @@ const createNewForm = () => {
   activeTab.value = 'builder';
 };
 
-const editForm = (form: any) => {
+const editForm = (form: unknown) => {
   editingFormId.value = form.id;
   currentForm.value = {
     title: form.title || form.name || '',
@@ -430,16 +430,16 @@ const editForm = (form: any) => {
   ElMessage.info(`${t('formBuilder.editingForm')}: ${form.name}`);
 };
 
-const previewForm = (form: any) => ElMessage.info(`${t('formBuilder.previewForm')}: ${form.name}`);
+const previewForm = (form: unknown) => ElMessage.info(`${t('formBuilder.previewForm')}: ${form.name}`);
 
-const copyFormLink = (form: any) => {
+const copyFormLink = (form: unknown) => {
   navigator.clipboard?.writeText(`https://forms.example.com/${form.id}`);
   ElMessage.success(t('common.copied'));
 };
 
-const viewSubmissions = (form: any) => ElMessage.info(`${form.submissions} ${t('formBuilder.submissionsFor')} ${form.name}`);
+const viewSubmissions = (form: unknown) => ElMessage.info(`${form.submissions} ${t('formBuilder.submissionsFor')} ${form.name}`);
 
-const useTemplate = (tmpl: any) => {
+const useTemplate = (tmpl: unknown) => {
   ElMessage.info(`${t('formBuilder.editingForm')}: ${tmpl.name}`);
   resetCurrentForm();
   currentForm.value.title = tmpl.name;

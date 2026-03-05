@@ -383,7 +383,7 @@ async function loadData() {
 async function handleExport(format: 'csv' | 'excel') {
   exporting.value = true;
   try {
-    const config: any = {
+    const config: unknown = {
       entityType: 'DEAL', // You can make this dynamic
       columns: ['id', 'title', 'price', 'stage', 'createdAt']
     };

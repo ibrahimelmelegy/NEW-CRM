@@ -217,12 +217,12 @@ await loadData().catch(() => {
 
 function stepTypeTag(type: string) {
   const map: Record<string, string> = { email: 'primary', wait: 'warning', task: 'success' };
-  return (map[type] || 'info') as any;
+  return (map[type] || 'info') as unknown;
 }
 
 function enrollmentStatusType(status: string) {
   const map: Record<string, string> = { active: 'success', paused: 'warning', completed: 'primary', cancelled: 'danger' };
-  return (map[status] || 'info') as any;
+  return (map[status] || 'info') as unknown;
 }
 
 async function handleSaveEdit() {
@@ -332,7 +332,7 @@ async function handlePause(enrollment: SequenceEnrollment) {
   try {
     await pauseEnrollment(enrollment.id);
     enrollment.status = 'paused';
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -341,7 +341,7 @@ async function handleResume(enrollment: SequenceEnrollment) {
   try {
     await resumeEnrollment(enrollment.id);
     enrollment.status = 'active';
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -350,7 +350,7 @@ async function handleAdvance(enrollment: SequenceEnrollment) {
   try {
     await advanceStep(enrollment.id);
     enrollment.currentStep += 1;
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }

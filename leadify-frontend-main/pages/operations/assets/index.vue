@@ -132,7 +132,7 @@ const table = reactive({
 const response = await useTableFilter('asset');
 table.data = response.formattedData;
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/operations/assets/${val.id}`);
 }
 
@@ -155,7 +155,7 @@ async function confirmDelete() {
   try {
     const response = await deleteAssetById(deleteId.value);
     if (response?.success) {
-      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+      table.data = table.data.filter((r) => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -172,7 +172,7 @@ const mobileFilteredData = computed(() => {
   const data = table.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((a: any) => {
+  return data.filter((a) => {
     const name = (a.name || '').toLowerCase();
     return name.includes(q);
   });
@@ -189,7 +189,7 @@ async function handleMobileRefresh() {
   }
 }
 
-function getSwipeLeftActions(_asset: any) {
+function getSwipeLeftActions(_asset: unknown) {
   const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#8b5cf6' }];
   if (hasPermission('EDIT_ASSETS'))
     actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
@@ -197,7 +197,7 @@ function getSwipeLeftActions(_asset: any) {
   return actions;
 }
 
-function handleSwipeAction(name: string, asset: any) {
+function handleSwipeAction(name: string, asset: unknown) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/assets/${asset.id}`);
   if (name === 'edit') navigateTo(`/operations/assets/edit/${asset.id}`);

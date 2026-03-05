@@ -36,8 +36,8 @@ const activeStep = ref<number>(0);
 const loading = ref(false);
 const isFinished = ref(false);
 const isCanceling = ref(false);
-const values = ref<any>({});
-const finalvalues = ref<any>({});
+const values = ref<Record<string, unknown>>({});
+const finalvalues = ref<Record<string, unknown>>({});
 
 onMounted(async () => {
   await fetchExistingProject();
@@ -56,7 +56,7 @@ async function submitCancel() {
   loading.value = false;
 }
 
-function confirmCompeleteForm(val: any) {
+function confirmCompeleteForm(val: unknown) {
   isFinished.value = true;
   values.value = val;
 }

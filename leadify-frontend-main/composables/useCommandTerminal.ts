@@ -4,7 +4,7 @@ export interface TerminalLine {
   type: 'command' | 'result' | 'error' | 'info' | 'table';
   content: string;
   timestamp: Date;
-  data?: any[];
+  data?: Record<string, unknown>[];
 }
 
 const HISTORY_KEY = 'crm_terminal_history';
@@ -107,7 +107,7 @@ function saveHistory() {
   }
 }
 
-function addLine(type: TerminalLine['type'], content: string, data?: any[]) {
+function addLine(type: TerminalLine['type'], content: string, data?: Record<string, unknown>[]) {
   output.value.push({ type, content, timestamp: new Date(), data });
 }
 
@@ -258,10 +258,10 @@ export function useCommandTerminal() {
     addLine('info', `Fetching ${entity}...`);
 
     try {
-      const response = await useApiFetch(`${endpoint}${queryParams}` as any);
+      const response = await useApiFetch(`${endpoint}${queryParams}` as unknown);
       if (response?.success && response.body) {
-        const body = response.body as any;
-        const items: any[] = Array.isArray(body) ? body : body?.docs || body?.rows || [];
+        const body = response.body as unknown;
+        const items: Record<string, unknown>[] = Array.isArray(body) ? body : body?.docs || body?.rows || [];
 
         if (items.length === 0) {
           addLine('result', 'No results found.');
@@ -269,7 +269,7 @@ export function useCommandTerminal() {
         }
 
         // Show as table
-        const displayItems = items.slice(0, 10).map((item: any) => ({
+        const displayItems = items.slice(0, 10).map((item) => ({
           ID: item.id || '-',
           Name: item.name || item.title || item.companyName || '-',
           Status: item.status || item.stage || '-',
@@ -280,7 +280,7 @@ export function useCommandTerminal() {
       } else {
         addLine('error', response?.message || `Failed to fetch ${entity}.`);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       addLine('error', `Error fetching ${entity}: ${err.message || 'Unknown error'}`);
     }
   }
@@ -301,18 +301,18 @@ export function useCommandTerminal() {
     addLine('info', `Searching for "${query}"...`);
 
     try {
-      const response = await useApiFetch(`search?q=${encodeURIComponent(query)}&limit=10` as any);
+      const response = await useApiFetch(`search?q=${encodeURIComponent(query)}&limit=10` as unknown);
       if (response?.success && response.body) {
-        const body = response.body as any;
+        const body = response.body as unknown;
         const results = body?.docs || body || [];
-        const items: any[] = Array.isArray(results) ? results : [];
+        const items: Record<string, unknown>[] = Array.isArray(results) ? results : [];
 
         if (items.length === 0) {
           addLine('result', 'No results found.');
           return;
         }
 
-        const displayItems = items.slice(0, 10).map((item: any) => ({
+        const displayItems = items.slice(0, 10).map((item) => ({
           Type: item.entityType || '-',
           Name: item.name || item.title || item.email || '-',
           ID: item.id || '-'

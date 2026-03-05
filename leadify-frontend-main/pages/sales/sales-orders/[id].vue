@@ -202,7 +202,7 @@ const { goBack } = useSafeBack('/sales/sales-orders');
 const { hasPermission } = await usePermissions();
 
 const loading = ref(true);
-const order = ref<any>(null);
+const order = ref<Record<string, unknown> | null>(null);
 const showFulfillmentDialog = ref(false);
 const fulfillmentLoading = ref(false);
 
@@ -238,7 +238,7 @@ const availableStatuses = computed(() => {
   return salesOrderStatusOptions.filter(opt => opt.value !== current);
 });
 
-function formatDate(date: any) {
+function formatDate(date: unknown) {
   if (!date) return 'N/A';
   const d = new Date(date);
   return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });

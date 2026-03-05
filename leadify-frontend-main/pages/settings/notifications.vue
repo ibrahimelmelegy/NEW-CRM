@@ -118,7 +118,7 @@ onMounted(async () => {
   try {
     const response = await useApiFetch('notification/preferences');
     if (response?.success && response?.body) {
-      const prefs = response.body as Record<string, any>;
+      const prefs = response.body as Record<string, unknown>;
       // Map backend prefs to our reactive object
       for (const key of allTypeKeys) {
         if (prefs[key + '_inApp'] !== undefined) preferences[key + '_inApp'] = !!prefs[key + '_inApp'];
@@ -144,7 +144,7 @@ onMounted(async () => {
 async function savePreferences() {
   try {
     // Convert flat preferences back to nested format for backend
-    const payload: Record<string, any> = {};
+    const payload: Record<string, unknown> = {};
     for (const key of allTypeKeys) {
       payload[key] = {
         inApp: preferences[key + '_inApp'],

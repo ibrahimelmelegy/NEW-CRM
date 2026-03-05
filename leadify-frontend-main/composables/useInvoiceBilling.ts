@@ -119,7 +119,7 @@ export async function createInvoice(data: {
   dueDate?: string;
   lineItems?: Omit<InvoiceLineItem, 'lineTotal'>[];
 }): Promise<InvoiceDetail | null> {
-  const response = await useApiFetch('invoices/billing/create', 'POST', data as any);
+  const response = await useApiFetch('invoices/billing/create', 'POST', data as unknown);
   if (response.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Invoice created successfully' });
     return response.body as InvoiceDetail;
@@ -143,7 +143,7 @@ export async function updateInvoice(
     lineItems?: Omit<InvoiceLineItem, 'lineTotal'>[];
   }
 ): Promise<InvoiceDetail | null> {
-  const response = await useApiFetch(`invoices/billing/${id}`, 'PUT', data as any);
+  const response = await useApiFetch(`invoices/billing/${id}`, 'PUT', data as unknown);
   if (response.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Invoice updated successfully' });
     return response.body as InvoiceDetail;
@@ -189,7 +189,7 @@ export async function createCreditNote(
     date?: string;
   }
 ): Promise<CreditNote | null> {
-  const response = await useApiFetch(`invoices/billing/${invoiceId}/credit-note`, 'POST', data as any);
+  const response = await useApiFetch(`invoices/billing/${invoiceId}/credit-note`, 'POST', data as unknown);
   if (response.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Credit note created successfully' });
     return response.body as CreditNote;

@@ -147,7 +147,7 @@ async function handleSave() {
 
   saving.value = true;
   try {
-    const payload: Record<string, any> = {
+    const payload: Record<string, unknown> = {
       title: form.title,
       body: form.body,
       category: form.category || undefined

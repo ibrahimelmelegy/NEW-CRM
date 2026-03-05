@@ -174,7 +174,7 @@ export function useEnhancedPortal() {
       } else {
         error.value = res.message || 'Failed to fetch dashboard';
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to fetch dashboard';
     } finally {
       loading.value = false;
@@ -197,7 +197,7 @@ export function useEnhancedPortal() {
       } else {
         error.value = res.message || 'Failed to fetch invoices';
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to fetch invoices';
     } finally {
       loading.value = false;
@@ -214,7 +214,7 @@ export function useEnhancedPortal() {
       } else {
         error.value = res.message || 'Failed to fetch projects';
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to fetch projects';
     } finally {
       loading.value = false;
@@ -231,7 +231,7 @@ export function useEnhancedPortal() {
       } else {
         error.value = res.message || 'Failed to fetch documents';
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to fetch documents';
     } finally {
       loading.value = false;
@@ -256,7 +256,7 @@ export function useEnhancedPortal() {
         error.value = msg;
         return { success: false, message: msg };
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       const msg = e.message || 'Failed to sign document';
       error.value = msg;
       ElNotification({ type: 'error', title: 'Error', message: msg });

@@ -282,13 +282,13 @@ const loading = ref(false);
 const saving = ref(false);
 const searchQuery = ref('');
 const statusFilter = ref('');
-const bookings = ref<any[]>([]);
-const staffList = ref<any[]>([]);
+const bookings = ref<Record<string, unknown>[]>([]);
+const staffList = ref<Record<string, unknown>[]>([]);
 const dialogVisible = ref(false);
-const editingBooking = ref<any>(null);
+const editingBooking = ref<Record<string, unknown> | null>(null);
 
 const form = reactive({
-  staffId: '' as any,
+  staffId: '' as unknown,
   clientName: '',
   clientEmail: '',
   date: '',
@@ -300,10 +300,10 @@ const form = reactive({
 
 // Upcoming Bookings
 const loadingUpcoming = ref(false);
-const upcomingBookings = ref<any[]>([]);
+const upcomingBookings = ref<Record<string, unknown>[]>([]);
 
 // Availability Checker
-const availStaffId = ref('' as any);
+const availStaffId = ref('' as unknown);
 const availDate = ref('');
 const loadingAvailability = ref(false);
 const availableSlots = ref<any[] | null>(null);
@@ -314,9 +314,9 @@ const stats = computed(() => {
   const today = new Date().toISOString().split('T')[0]!;
   return {
     total: data.length,
-    today: data.filter((b: any) => b.date === today).length,
-    upcoming: data.filter((b: any) => b.date > today && b.status !== 'CANCELLED').length,
-    completed: data.filter((b: any) => b.status === 'COMPLETED').length
+    today: data.filter((b) => b.date === today).length,
+    upcoming: data.filter((b) => b.date > today && b.status !== 'CANCELLED').length,
+    completed: data.filter((b) => b.status === 'COMPLETED').length
   };
 });
 
@@ -336,11 +336,11 @@ function getStatusType(status: string): string {
 const filteredBookings = computed(() => {
   let data = bookings.value;
   if (statusFilter.value) {
-    data = data.filter((b: any) => b.status === statusFilter.value);
+    data = data.filter((b) => b.status === statusFilter.value);
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    data = data.filter((b: any) => {
+    data = data.filter((b) => {
       const name = (b.clientName || '').toLowerCase();
       const email = (b.clientEmail || '').toLowerCase();
       const staff = (b.staffName || '').toLowerCase();
@@ -365,7 +365,7 @@ async function loadBookings() {
     if (res?.success) {
       bookings.value = res.body?.docs || res.body || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
@@ -378,7 +378,7 @@ async function loadStaff() {
     if (res?.body?.docs) {
       staffList.value = res.body.docs;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -396,7 +396,7 @@ function openCreateDialog() {
   dialogVisible.value = true;
 }
 
-function openEditDialog(booking: any) {
+function openEditDialog(booking: unknown) {
   editingBooking.value = booking;
   form.staffId = booking.staffId || '';
   form.clientName = booking.clientName || '';
@@ -409,7 +409,7 @@ function openEditDialog(booking: any) {
   dialogVisible.value = true;
 }
 
-function handleRowClick(row: any) {
+function handleRowClick(row: unknown) {
   openEditDialog(row);
 }
 
@@ -439,7 +439,7 @@ async function handleSave() {
   }
 }
 
-async function handleDelete(booking: any) {
+async function handleDelete(booking: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`bookings/${booking.id}`, 'DELETE');
@@ -458,7 +458,7 @@ async function loadUpcoming() {
     if (res?.success) {
       upcomingBookings.value = res.body?.docs || res.body || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingUpcoming.value = false;
@@ -484,7 +484,7 @@ async function checkAvailability() {
   }
 }
 
-function prefillSlot(slot: any) {
+function prefillSlot(slot: unknown) {
   const start = slot.startTime || slot.start || (typeof slot === 'string' ? slot : '');
   const end = slot.endTime || slot.end || '';
   form.staffId = availStaffId.value;

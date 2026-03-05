@@ -467,7 +467,7 @@ async function loadOrder() {
   loading.value = true;
   try {
     order.value = await getSalesOrderById(orderId.value);
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;

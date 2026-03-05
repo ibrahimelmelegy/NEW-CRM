@@ -302,7 +302,7 @@ const formRules: FormRules = {
 const categories = ref<string[]>(['Electronics', 'Software', 'Services', 'Hardware', 'Accessories', 'General']);
 
 // Reviews
-const reviews = ref<any[]>([]);
+const reviews = ref<Record<string, unknown>[]>([]);
 
 const avgRating = computed(() => {
   if (reviews.value.length === 0) return 0;
@@ -331,7 +331,7 @@ function getStarCount(star: number): number {
 }
 
 // Price Rules
-const priceRules = ref<any[]>([]);
+const priceRules = ref<Record<string, unknown>[]>([]);
 const priceRuleForm = reactive({
   name: '',
   discountType: 'percentage',
@@ -341,7 +341,7 @@ const priceRuleForm = reactive({
 });
 
 // Activity
-const activityLog = ref<any[]>([]);
+const activityLog = ref<Record<string, unknown>[]>([]);
 
 // Helpers
 function formatDate(dateStr?: string): string {
@@ -398,7 +398,7 @@ async function loadProduct() {
         isActive: product.value.isActive !== false
       });
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
@@ -410,10 +410,10 @@ async function loadReviews() {
   try {
     const res = await useApiFetch(`ecommerce/products/${productId.value}/reviews`);
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       reviews.value = data?.docs || data?.rows || data || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingReviews.value = false;
@@ -425,10 +425,10 @@ async function loadPriceRules() {
   try {
     const res = await useApiFetch(`ecommerce/products/${productId.value}/price-rules`);
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       priceRules.value = data?.docs || data?.rows || data || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingPriceRules.value = false;
@@ -440,10 +440,10 @@ async function loadActivity() {
   try {
     const res = await useApiFetch(`ecommerce/products/${productId.value}/activity`);
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       activityLog.value = data?.docs || data?.rows || data || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingActivity.value = false;
@@ -454,13 +454,13 @@ async function loadCategories() {
   try {
     const res = await useApiFetch('ecommerce/categories');
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       const cats = data?.docs || data?.rows || data || [];
       if (cats.length > 0) {
-        categories.value = cats.map((c: any) => c.name || c);
+        categories.value = cats.map((c) => c.name || c);
       }
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }

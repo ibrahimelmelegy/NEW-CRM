@@ -143,7 +143,7 @@ const table = reactive({
 const response = await useTableFilter('role');
 table.data = response.formattedData;
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/roles/${val.id}`);
 }
 
@@ -156,7 +156,7 @@ const mobileFilteredData = computed(() => {
   const data = table.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((r: any) => {
+  return data.filter((r) => {
     const name = (r.name || '').toLowerCase();
     const desc = (r.description || '').toLowerCase();
     return name.includes(q) || desc.includes(q);
@@ -174,13 +174,13 @@ async function handleMobileRefresh() {
   }
 }
 
-function getSwipeLeftActions(_role: any) {
+function getSwipeLeftActions(_role: unknown) {
   const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#8b5cf6' }];
   if (hasPermission('EDIT_ROLES')) actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
   return actions;
 }
 
-function handleSwipeAction(name: string, role: any) {
+function handleSwipeAction(name: string, role: unknown) {
   vibrate();
   switch (name) {
     case 'view':

@@ -196,7 +196,7 @@ const agingReport = ref<AgingReport | null>(null);
 
 const analyticsStats = computed(() => {
   const s = summary.value;
-  const overdueCount = (table.value.data || []).filter((r: any) => {
+  const overdueCount = (table.value.data || []).filter((r) => {
     if (r.statusLabel === 'COLLECTED') return false;
     if (!r.invoiceDate) return false;
     const dueDate = new Date(r.invoiceDate);
@@ -258,8 +258,8 @@ const summaryStats = computed(() => [
 ]);
 
 const table = ref({
-  columns: [] as any[],
-  data: [] as any[],
+  columns: [] as unknown[],
+  data: [] as unknown[],
   sort: []
 });
 
@@ -336,7 +336,7 @@ function formatRow(inv: InvoiceItem) {
   };
 }
 
-function handleRowClick(row: any) {
+function handleRowClick(row: unknown) {
   // Navigate to deal detail for now
   if (row.dealId) router.push(`/sales/deals/${row.dealId}`);
 }
@@ -365,7 +365,7 @@ async function handleUncollect(id: number) {
 
 function handleExport() {
   const csvHeaders = ['Invoice #', 'Deal', 'Amount', 'Date', 'Status', 'Collected Date'];
-  const rows = (table.value.data || []).map((r: any) => [
+  const rows = (table.value.data || []).map((r) => [
     r.invoiceNumber,
     r.dealDetails?.title,
     r.formattedAmount,
@@ -373,7 +373,7 @@ function handleExport() {
     r.statusLabel,
     r.formattedCollectedDate
   ]);
-  const csv = [csvHeaders, ...rows].map(r => r.map((v: any) => `"${String(v || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+  const csv = [csvHeaders, ...rows].map(r => r.map((v) => `"${String(v || '').replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -385,10 +385,10 @@ function handleExport() {
 
 // Template-based PDF export
 const showTemplateSelector = ref(false);
-const invoiceTemplates = ref<any[]>([]);
-const selectedInvoice = ref<any>(null);
+const invoiceTemplates = ref<Record<string, unknown>[]>([]);
+const selectedInvoice = ref<Record<string, unknown> | null>(null);
 
-async function exportInvoicePDF(row: any) {
+async function exportInvoicePDF(row: unknown) {
   const { fetchDocumentTemplates } = await import('~/composables/useDocumentTemplates');
   const result = await fetchDocumentTemplates({ type: 'INVOICE', limit: '50' });
   invoiceTemplates.value = result.docs || [];
@@ -396,7 +396,7 @@ async function exportInvoicePDF(row: any) {
   showTemplateSelector.value = true;
 }
 
-async function downloadServerPdf(inv: any) {
+async function downloadServerPdf(inv: unknown) {
   showTemplateSelector.value = false;
   const success = await downloadInvoicePdf(inv.id, inv.invoiceNumber);
   if (success) {
@@ -406,7 +406,7 @@ async function downloadServerPdf(inv: any) {
   }
 }
 
-async function downloadInvoiceWithTemplate(template: any) {
+async function downloadInvoiceWithTemplate(template: unknown) {
   showTemplateSelector.value = false;
   const { generatePDF } = await import('~/utils/pdfExporter');
   const inv = selectedInvoice.value;
@@ -450,29 +450,29 @@ const advancedSearchFields = [
   { key: 'invoiceDate', label: t('invoices.table.date'), type: 'date' }
 ];
 
-async function handleApplyView(view: any) {
+async function handleApplyView(view: unknown) {
   if (view?.filters) {
     try {
       const qs = '?' + new URLSearchParams(view.filters).toString();
       const res = await useApiFetch(`invoice${qs}`);
       if (res?.success && res?.body) {
-        const data = res.body as any;
+        const data = res.body as unknown;
         table.value.data = data.docs || [];
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       ElMessage.error(t('common.error'));
     }
   }
 }
 
-async function handleAdvancedFilter(filterPayload: any) {
+async function handleAdvancedFilter(filterPayload: unknown) {
   try {
     const res = await useApiFetch('search/advanced/invoice', 'POST', filterPayload);
     if (res?.success && res?.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       table.value.data = data.docs || data || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -491,17 +491,17 @@ const mobileInvFilters = computed(() => {
   const data = table.value.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
-    { value: 'COLLECTED', label: t('invoices.collected'), color: '#22c55e', count: data.filter((i: any) => i.statusLabel === 'COLLECTED').length },
-    { value: 'PENDING', label: t('invoices.pending'), color: '#f59e0b', count: data.filter((i: any) => i.statusLabel === 'PENDING').length }
+    { value: 'COLLECTED', label: t('invoices.collected'), color: '#22c55e', count: data.filter((i) => i.statusLabel === 'COLLECTED').length },
+    { value: 'PENDING', label: t('invoices.pending'), color: '#f59e0b', count: data.filter((i) => i.statusLabel === 'PENDING').length }
   ];
 });
 
 const mobileFilteredInvoices = computed(() => {
   let data = table.value.data || [];
-  if (mobileInvStatus.value !== 'ALL') data = data.filter((i: any) => i.statusLabel === mobileInvStatus.value);
+  if (mobileInvStatus.value !== 'ALL') data = data.filter((i) => i.statusLabel === mobileInvStatus.value);
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((i: any) => {
+  return data.filter((i) => {
     const num = (i.invoiceNumber || '').toLowerCase();
     const deal = (i.dealDetails?.title || '').toLowerCase();
     return num.includes(q) || deal.includes(q);
@@ -518,7 +518,7 @@ async function handleMobileRefresh() {
   }
 }
 
-function handleInvSwipe(name: string, inv: any) {
+function handleInvSwipe(name: string, inv: unknown) {
   vibrate();
   switch (name) {
     case 'collect':

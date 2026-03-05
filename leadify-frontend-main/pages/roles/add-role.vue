@@ -29,7 +29,7 @@ definePageMeta({
   permission: 'CREATE_ROLES'
 });
 
-async function submitForm(values: any) {
+async function submitForm(values: unknown) {
   loading.value = true;
   await createRole({ ...values, permissions: Object.values(checkList.value).flat() });
   loading.value = false;

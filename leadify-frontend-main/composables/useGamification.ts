@@ -28,7 +28,7 @@ export interface UserPointsEntry {
 
 export interface UserPointsResponse {
   userId: number;
-  user: any;
+  user: unknown;
   totalPoints: number;
   recentPoints: UserPointsEntry[];
 }

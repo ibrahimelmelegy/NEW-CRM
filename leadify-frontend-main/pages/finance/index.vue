@@ -345,7 +345,7 @@ async function loadExpenses() {
   loadingExpenses.value = true;
   try {
     // Build filters
-    const filters: any = { limit: '50', sort: 'DATE_DESC' };
+    const filters: unknown = { limit: '50', sort: 'DATE_DESC' };
     if (dateRange.value) {
       filters.startDate = dateRange.value[0].toISOString();
       filters.endDate = dateRange.value[1].toISOString();
@@ -358,7 +358,7 @@ async function loadExpenses() {
     expenseSummary.value = summaryRes;
     recentExpenses.value = expensesRes.docs;
     categories.value = cats;
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Failed to load expenses:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {
@@ -371,7 +371,7 @@ async function loadBudgets() {
   try {
     const result = await fetchBudgets();
     budgets.value = result.docs;
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Failed to load budgets:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {
@@ -384,7 +384,7 @@ async function loadCollectionData() {
   loadingCashFlow.value = true;
   try {
     collectionData.value = await getCollectionDashboard();
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Failed to load collection data:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {

@@ -364,7 +364,7 @@ const agents = ref<{ id: number; name: string; activeChats: number }[]>([]);
 const quickReplies = ref<{ id: number; label: string; text: string }[]>([]);
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-const normalizeConversation = (raw: any): Chat => ({
+const normalizeConversation = (raw: unknown): Chat => ({
   id: raw.id,
   visitorName: raw.visitorName || raw.visitorInfo?.name || 'Visitor',
   visitorEmail: raw.visitorEmail || raw.visitorInfo?.email || '',
@@ -385,7 +385,7 @@ const normalizeConversation = (raw: any): Chat => ({
   messages: []
 });
 
-const normalizeMessage = (raw: any): ChatMessage => ({
+const normalizeMessage = (raw: unknown): ChatMessage => ({
   id: raw.id,
   sender: raw.senderType === 'STAFF' || raw.sender === 'agent' ? 'agent' : 'visitor',
   text: raw.content || raw.text || '',
@@ -410,7 +410,7 @@ const loadConversations = async () => {
 
     const res = await getConversations(params);
     if (res.success && res.body) {
-      const raw = Array.isArray(res.body) ? res.body : (res.body as any).rows || (res.body as any).data || [];
+      const raw = Array.isArray(res.body) ? res.body : (res.body as unknown).rows || (res.body as unknown).data || [];
       chats.value = raw.map(normalizeConversation);
     }
   } catch (e) {
@@ -425,7 +425,7 @@ const loadMessages = async (conversationId: number) => {
   try {
     const res = await getMessages(conversationId);
     if (res.success && res.body) {
-      const raw = Array.isArray(res.body) ? res.body : (res.body as any).rows || (res.body as any).data || [];
+      const raw = Array.isArray(res.body) ? res.body : (res.body as unknown).rows || (res.body as unknown).data || [];
       const chat = chats.value.find(c => c.id === conversationId);
       if (chat) {
         chat.messages = raw.map(normalizeMessage);
@@ -443,8 +443,8 @@ const loadAgents = async () => {
   try {
     const res = await useApiFetch('users?role=support', 'GET');
     if (res.success && res.body) {
-      const raw = Array.isArray(res.body) ? res.body : (res.body as any).rows || (res.body as any).data || (res.body as any).users || [];
-      agents.value = raw.map((u: any) => ({
+      const raw = Array.isArray(res.body) ? res.body : (res.body as unknown).rows || (res.body as unknown).data || (res.body as unknown).users || [];
+      agents.value = raw.map((u) => ({
         id: u.id,
         name: u.name || `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.email,
         activeChats: u.activeChats ?? 0
@@ -459,8 +459,8 @@ const loadCannedResponses = async () => {
   try {
     const res = await getCannedResponses();
     if (res.success && res.body) {
-      const raw = Array.isArray(res.body) ? res.body : (res.body as any).rows || (res.body as any).data || [];
-      quickReplies.value = raw.map((r: any, idx: number) => ({
+      const raw = Array.isArray(res.body) ? res.body : (res.body as unknown).rows || (res.body as unknown).data || [];
+      quickReplies.value = raw.map((r: unknown, idx: number) => ({
         id: r.id || idx + 1,
         label: r.label || r.name || r.shortcut || `Reply ${idx + 1}`,
         text: r.text || r.content || r.message || ''
@@ -475,7 +475,7 @@ const loadMetrics = async () => {
   try {
     const res = await getMetrics();
     if (res.success && res.body) {
-      metrics.value = res.body as any;
+      metrics.value = res.body as unknown;
     }
   } catch (e) {
     console.error('Failed to load metrics', e);
@@ -488,7 +488,7 @@ const { socket } = useSocket();
 watch(socket, sock => {
   if (!sock) return;
 
-  sock.on('chat:message', (data: any) => {
+  sock.on('chat:message', (data: unknown) => {
     const conversationId = data.conversationId || data.conversation_id;
     const chat = chats.value.find(c => c.id === conversationId);
     if (chat) {
@@ -508,7 +508,7 @@ watch(socket, sock => {
     }
   });
 
-  sock.on('chat:conversation_updated', (data: any) => {
+  sock.on('chat:conversation_updated', (data: unknown) => {
     const id = data.id || data.conversationId;
     const chat = chats.value.find(c => c.id === id);
     if (chat) {
@@ -519,7 +519,7 @@ watch(socket, sock => {
     }
   });
 
-  sock.on('chat:typing', (data: any) => {
+  sock.on('chat:typing', (data: unknown) => {
     const chat = chats.value.find(c => c.id === data.conversationId);
     if (chat) {
       chat.isTyping = data.isTyping ?? true;
@@ -614,7 +614,7 @@ const sendMessage = async () => {
 
     if (res.success && res.body) {
       // Replace temp message with server response
-      const serverMsg = normalizeMessage(res.body as any);
+      const serverMsg = normalizeMessage(res.body as unknown);
       const idx = chat.messages.findIndex(m => m.id === tempMsg.id);
       if (idx !== -1) {
         chat.messages.splice(idx, 1, serverMsg);

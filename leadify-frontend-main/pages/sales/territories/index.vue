@@ -514,19 +514,19 @@ const saving = ref(false);
 const activeView = ref<'map' | 'table' | 'compare'>('map');
 const searchQuery = ref('');
 const regionFilter = ref('');
-const selectedRows = ref<any[]>([]);
+const selectedRows = ref<Record<string, unknown>[]>([]);
 
 // Data
 const territories = ref<Territory[]>([]);
-const staffList = ref<any[]>([]);
+const staffList = ref<Record<string, unknown>[]>([]);
 
 // Dialog state
 const createDialogVisible = ref(false);
 const assignDialogVisible = ref(false);
 const detailDrawerVisible = ref(false);
 const editingTerritory = ref<Territory | null>(null);
-const assigningTerritory = ref<any>(null);
-const detailTerritory = ref<any>(null);
+const assigningTerritory = ref<Record<string, unknown> | null>(null);
+const detailTerritory = ref<Record<string, unknown> | null>(null);
 
 // Assign dialog
 const selectedStaffIds = ref<string[]>([]);
@@ -564,16 +564,16 @@ const enrichedTerritories = computed(() => {
       _reps: reps.length
         ? reps
         : staffList.value.length
-          ? staffList.value.filter((_s: any, i: number) => (i + seed) % 5 === 0).slice(0, Math.max(1, seed % 3))
+          ? staffList.value.filter((_s: unknown, i: number) => (i + seed) % 5 === 0).slice(0, Math.max(1, seed % 3))
           : [],
-      _leadsCount: (ter as any)._leadsCount ?? (seed * 17 + 23) % 120,
-      _dealsCount: (ter as any)._dealsCount ?? (seed * 7 + 11) % 45,
-      _pipelineValue: (ter as any)._pipelineValue ?? (seed * 12347 + 50000) % 500000,
-      _revenue: (ter as any)._revenue ?? (seed * 9823 + 30000) % 350000,
-      _coverage: (ter as any)._coverage ?? 30 + ((seed * 13) % 70),
-      _revenueTarget: (ter as any)._revenueTarget ?? ter.boundaries?.revenueTarget ?? 200000,
-      _winRate: (ter as any)._winRate ?? 15 + ((seed * 11) % 60),
-      _avgDealSize: (ter as any)._avgDealSize ?? 5000 + ((seed * 3571) % 40000)
+      _leadsCount: (ter as unknown)._leadsCount ?? (seed * 17 + 23) % 120,
+      _dealsCount: (ter as unknown)._dealsCount ?? (seed * 7 + 11) % 45,
+      _pipelineValue: (ter as unknown)._pipelineValue ?? (seed * 12347 + 50000) % 500000,
+      _revenue: (ter as unknown)._revenue ?? (seed * 9823 + 30000) % 350000,
+      _coverage: (ter as unknown)._coverage ?? 30 + ((seed * 13) % 70),
+      _revenueTarget: (ter as unknown)._revenueTarget ?? ter.boundaries?.revenueTarget ?? 200000,
+      _winRate: (ter as unknown)._winRate ?? 15 + ((seed * 11) % 60),
+      _avgDealSize: (ter as unknown)._avgDealSize ?? 5000 + ((seed * 3571) % 40000)
     };
   });
 });
@@ -611,7 +611,7 @@ const territoriesByRegion = computed(() => {
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = enrichedTerritories.value;
   const total = data.length;
-  const assignedReps = new Set(data.flatMap(t => (t._reps || []).map((r: any) => r.id || r.name)));
+  const assignedReps = new Set(data.flatMap(t => (t._reps || []).map((r) => r.id || r.name)));
   const unassignedLeads = data.reduce((sum, t) => sum + Math.max(0, (t._leadsCount || 0) - (t._reps?.length || 0) * 10), 0);
   const totalRevenue = data.reduce((sum, t) => sum + (t._revenue || 0), 0);
 
@@ -731,7 +731,7 @@ const filteredStaff = computed(() => {
   let data = staffList.value;
   if (staffSearch.value) {
     const q = staffSearch.value.toLowerCase();
-    data = data.filter((s: any) => (s.name || '').toLowerCase().includes(q) || (s.email || '').toLowerCase().includes(q));
+    data = data.filter((s) => (s.name || '').toLowerCase().includes(q) || (s.email || '').toLowerCase().includes(q));
   }
   return data;
 });
@@ -739,7 +739,7 @@ const filteredStaff = computed(() => {
 const autoSuggestedStaff = computed(() => {
   // Suggest staff with the lowest territory count (workload balancing)
   if (!staffList.value.length) return [];
-  const sorted = [...staffList.value].sort((a: any, b: any) => (a._territoryCount || 0) - (b._territoryCount || 0));
+  const sorted = [...staffList.value].sort((a, b) => (a._territoryCount || 0) - (b._territoryCount || 0));
   return sorted.slice(0, 2);
 });
 
@@ -758,28 +758,28 @@ function getRepColor(index: number): string {
   return repColors[index % repColors.length] || '';
 }
 
-function getPerformanceColor(territory: any): string {
+function getPerformanceColor(territory: unknown): string {
   const coverage = territory._coverage ?? 0;
   if (coverage >= 70) return '#10b981';
   if (coverage >= 40) return '#f59e0b';
   return '#ef4444';
 }
 
-function getPerformanceClass(territory: any): string {
+function getPerformanceClass(territory: unknown): string {
   const coverage = territory._coverage ?? 0;
   if (coverage >= 70) return 'performance-exceeding';
   if (coverage >= 40) return 'performance-on-target';
   return 'performance-below';
 }
 
-function getPerformanceTagType(territory: any): string {
+function getPerformanceTagType(territory: unknown): string {
   const coverage = territory._coverage ?? 0;
   if (coverage >= 70) return 'success';
   if (coverage >= 40) return 'warning';
   return 'danger';
 }
 
-function getPerformanceLabel(territory: any): string {
+function getPerformanceLabel(territory: unknown): string {
   const coverage = territory._coverage ?? 0;
   if (coverage >= 70) return t('territoryManagement.exceeding');
   if (coverage >= 40) return t('territoryManagement.onTarget');
@@ -796,10 +796,10 @@ function getLoadColor(count: number): string {
 async function loadData() {
   loading.value = true;
   try {
-    const [territoryData, usersRes]: any[] = await Promise.all([fetchTerritories(), useApiFetch('users')]);
+    const [territoryData, usersRes]: Record<string, unknown>[] = await Promise.all([fetchTerritories(), useApiFetch('users')]);
     territories.value = territoryData;
     if (usersRes?.body?.docs) {
-      staffList.value = usersRes.body.docs.map((u: any, idx: number) => ({
+      staffList.value = usersRes.body.docs.map((u: unknown, idx: number) => ({
         id: u.id,
         name: u.name,
         email: u.email,
@@ -831,7 +831,7 @@ function openCreateDialog() {
   createDialogVisible.value = true;
 }
 
-function openEditDialog(territory: any) {
+function openEditDialog(territory: unknown) {
   editingTerritory.value = territory;
   territoryForm.name = territory.name;
   territoryForm.description = territory.description || '';
@@ -881,9 +881,9 @@ async function handleSaveTerritory() {
 }
 
 // ──────────── Assignment ────────────
-function openAssignDialog(territory: any) {
+function openAssignDialog(territory: unknown) {
   assigningTerritory.value = territory;
-  selectedStaffIds.value = (territory._reps || []).map((r: any) => r.id);
+  selectedStaffIds.value = (territory._reps || []).map((r) => r.id);
   staffSearch.value = '';
   assignDialogVisible.value = true;
 }
@@ -897,7 +897,7 @@ function toggleStaffSelection(staffId: string) {
   }
 }
 
-function removeRep(rep: any) {
+function removeRep(rep: unknown) {
   const idx = selectedStaffIds.value.indexOf(rep.id);
   if (idx >= 0) selectedStaffIds.value.splice(idx, 1);
 }
@@ -934,13 +934,13 @@ function handleBulkAssign() {
 }
 
 // ──────────── Detail ────────────
-function openTerritoryDetail(territory: any) {
+function openTerritoryDetail(territory: unknown) {
   detailTerritory.value = territory;
   detailDrawerVisible.value = true;
 }
 
 // ──────────── Table selection ────────────
-function handleSelectionChange(rows: any[]) {
+function handleSelectionChange(rows: Record<string, unknown>[]) {
   selectedRows.value = rows;
 }
 
@@ -950,7 +950,7 @@ async function handleBulkExport() {
     const data = selectedRows.value.length ? selectedRows.value : enrichedTerritories.value;
     const csvRows = [
       ['Name', 'Region', 'Leads', 'Deals', 'Pipeline Value', 'Revenue', 'Coverage %'].join(','),
-      ...data.map((t: any) =>
+      ...data.map((t) =>
         [t.name, t.type || '', t._leadsCount || 0, t._dealsCount || 0, t._pipelineValue || 0, t._revenue || 0, (t._coverage || 0).toFixed(0)].join(
           ','
         )

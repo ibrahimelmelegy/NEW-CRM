@@ -4,16 +4,16 @@ import { useApiFetch } from './useApiFetch';
 export interface WorkflowNodeData {
   label: string;
   type: 'trigger' | 'action' | 'condition';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
 }
 
 export function useWorkflowBuilder() {
   const workflowId = ref<number | null>(null);
   const workflowName = ref('New Workflow');
   const isActive = ref(true);
-  const nodes = ref<any[]>([]);
-  const edges = ref<any[]>([]);
-  const selectedNode = ref<any>(null);
+  const nodes = ref<Record<string, unknown>[]>([]);
+  const edges = ref<Record<string, unknown>[]>([]);
+  const selectedNode = ref<Record<string, unknown> | null>(null);
   const saving = ref(false);
   const loading = ref(false);
 
@@ -49,7 +49,7 @@ export function useWorkflowBuilder() {
     return id;
   }
 
-  function loadFromTemplate(templateData: { nodes: any[]; edges: any[] }) {
+  function loadFromTemplate(templateData: { nodes: Record<string, unknown>[]; edges: Record<string, unknown>[] }) {
     nodes.value = templateData.nodes.map(n => ({ ...n, position: { ...n.position } }));
     edges.value = templateData.edges.map(e => ({
       ...e,
@@ -64,7 +64,7 @@ export function useWorkflowBuilder() {
     if (selectedNode.value?.id === nodeId) selectedNode.value = null;
   }
 
-  function addEdge(params: any) {
+  function addEdge(params: unknown) {
     edges.value.push({
       id: `edge-${params.source}-${params.target}`,
       source: params.source,
@@ -76,7 +76,7 @@ export function useWorkflowBuilder() {
     });
   }
 
-  function updateNodeConfig(nodeId: string, config: Record<string, any>) {
+  function updateNodeConfig(nodeId: string, config: Record<string, unknown>) {
     const node = nodes.value.find(n => n.id === nodeId);
     if (node) {
       node.data = { ...node.data, config: { ...node.data.config, ...config } };
@@ -116,8 +116,8 @@ export function useWorkflowBuilder() {
       await useApiFetch(`workflows/${workflowId.value}`, 'PUT', data);
     } else {
       const res = await useApiFetch('workflows', 'POST', data);
-      if (res.success && (res.body as any)?.id) {
-        workflowId.value = (res.body as any).id;
+      if (res.success && (res.body as unknown)?.id) {
+        workflowId.value = (res.body as unknown).id;
       }
     }
     saving.value = false;
@@ -127,7 +127,7 @@ export function useWorkflowBuilder() {
     loading.value = true;
     const res = await useApiFetch(`workflows/${id}`);
     if (res.success && res.body) {
-      const wf = res.body as any;
+      const wf = res.body as unknown;
       workflowId.value = wf.id;
       workflowName.value = wf.name;
       isActive.value = wf.isActive;

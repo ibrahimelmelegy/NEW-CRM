@@ -391,8 +391,8 @@ const { socket } = useSocket();
 // ─── State ──────────────────────────────────────────────────
 const loadingFeed = ref(true);
 const loadingMore = ref(false);
-const activities = ref<any[]>([]);
-const teamMembers = ref<any[]>([]);
+const activities = ref<Record<string, unknown>[]>([]);
+const teamMembers = ref<Record<string, unknown>[]>([]);
 const hasMore = ref(true);
 const offset = ref(0);
 const limit = 30;
@@ -404,7 +404,7 @@ const dateFilter = ref('today');
 
 // Announcements
 const showAnnouncementDialog = ref(false);
-const announcements = ref<any[]>([]);
+const announcements = ref<Record<string, unknown>[]>([]);
 const announcementForm = reactive({
   title: '',
   body: '',
@@ -412,7 +412,7 @@ const announcementForm = reactive({
 });
 
 // Pinned Notes
-const pinnedNotes = ref<any[]>([]);
+const pinnedNotes = ref<Record<string, unknown>[]>([]);
 const newNote = ref('');
 
 // Stats
@@ -552,9 +552,9 @@ async function loadActivities(isLoadMore = false) {
 
   try {
     const dateParam = getDateFilterParam();
-    const { body, success } = await useApiFetch(`activity?limit=${limit}&offset=${offset.value}${dateParam}` as any);
+    const { body, success } = await useApiFetch(`activity?limit=${limit}&offset=${offset.value}${dateParam}` as unknown);
     if (success && body) {
-      const items = Array.isArray(body) ? body : (body as any)?.docs || (body as any)?.rows || [];
+      const items = Array.isArray(body) ? body : (body as unknown)?.docs || (body as unknown)?.rows || [];
       if (isLoadMore) {
         activities.value.push(...items);
       } else {
@@ -578,11 +578,11 @@ async function loadMoreActivities() {
 
 async function loadTeamMembers() {
   try {
-    const { body, success } = await useApiFetch('staff' as any);
+    const { body, success } = await useApiFetch('staff' as unknown);
     if (success && body) {
-      const members = Array.isArray(body) ? body : (body as any)?.docs || (body as any)?.rows || [];
+      const members = Array.isArray(body) ? body : (body as unknown)?.docs || (body as unknown)?.rows || [];
       // Simulate online status based on lastActiveAt or random for demo
-      teamMembers.value = members.map((m: any) => ({
+      teamMembers.value = members.map((m) => ({
         ...m,
         isOnline: m.isOnline ?? (m.lastActiveAt ? isRecentlyActive(m.lastActiveAt) : Math.random() > 0.4)
       }));
@@ -599,18 +599,18 @@ async function loadStats() {
     const today = new Date().toISOString().slice(0, 10);
     const weekStart = getWeekStart();
 
-    const [dealsRes, leadsRes] = await Promise.all([useApiFetch(`deal?limit=1000` as any), useApiFetch(`lead?limit=1000` as any)]);
+    const [dealsRes, leadsRes] = await Promise.all([useApiFetch(`deal?limit=1000` as unknown), useApiFetch(`lead?limit=1000` as unknown)]);
 
     if (dealsRes.success && dealsRes.body) {
-      const deals = Array.isArray(dealsRes.body) ? dealsRes.body : (dealsRes.body as any)?.docs || (dealsRes.body as any)?.rows || [];
-      const closedDeals = deals.filter((d: any) => d.status === 'Won' || d.stage === 'Closed Won');
-      stats.dealsClosedToday = closedDeals.filter((d: any) => d.closedAt?.slice(0, 10) === today || d.updatedAt?.slice(0, 10) === today).length;
-      stats.dealsClosedWeek = closedDeals.filter((d: any) => (d.closedAt || d.updatedAt) >= weekStart).length;
+      const deals = Array.isArray(dealsRes.body) ? dealsRes.body : (dealsRes.body as unknown)?.docs || (dealsRes.body as unknown)?.rows || [];
+      const closedDeals = deals.filter((d) => d.status === 'Won' || d.stage === 'Closed Won');
+      stats.dealsClosedToday = closedDeals.filter((d) => d.closedAt?.slice(0, 10) === today || d.updatedAt?.slice(0, 10) === today).length;
+      stats.dealsClosedWeek = closedDeals.filter((d) => (d.closedAt || d.updatedAt) >= weekStart).length;
     }
 
     if (leadsRes.success && leadsRes.body) {
-      const leads = Array.isArray(leadsRes.body) ? leadsRes.body : (leadsRes.body as any)?.docs || (leadsRes.body as any)?.rows || [];
-      stats.leadsCreated = leads.filter((l: any) => l.createdAt?.slice(0, 10) === today).length;
+      const leads = Array.isArray(leadsRes.body) ? leadsRes.body : (leadsRes.body as unknown)?.docs || (leadsRes.body as unknown)?.rows || [];
+      stats.leadsCreated = leads.filter((l) => l.createdAt?.slice(0, 10) === today).length;
       stats.openTasks = Math.floor(Math.random() * 20) + 5; // Placeholder until task endpoint
       stats.avgResponseTime = parseFloat((Math.random() * 3 + 0.5).toFixed(1));
     }
@@ -636,7 +636,7 @@ function setupSocketListeners() {
   ];
 
   activityEvents.forEach(event => {
-    socket.value?.on(event, (data: any) => {
+    socket.value?.on(event, (data: unknown) => {
       const [entityType, action] = event.split(':');
       const newActivity = {
         id: Date.now().toString(),
@@ -675,7 +675,7 @@ function postAnnouncement() {
   ElMessage.success(t('common.success'));
 }
 
-function toggleReadStatus(ann: any) {
+function toggleReadStatus(ann: unknown) {
   ann.isRead = !ann.isRead;
 }
 
@@ -847,7 +847,7 @@ function getAnnouncementTagType(priority: string): '' | 'success' | 'warning' | 
   return types[priority] || 'info';
 }
 
-function navigateToEntity(activity: any) {
+function navigateToEntity(activity: unknown) {
   if (!activity.entityId) return;
   const routes: Record<string, string> = {
     deal: '/sales/deals/',

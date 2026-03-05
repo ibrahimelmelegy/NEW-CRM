@@ -157,7 +157,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
 
   //- Product List View
   .rounded-2xl.border.overflow-hidden(v-if="viewMode === 'list'" style="border-color: var(--border-default); background: var(--bg-elevated);")
-    el-table(:data="products" v-loading="loading" style="width: 100%" :row-style="{ cursor: 'pointer' }" @row-click="(row: any) => navigateTo(`/e-commerce/products/${row.id}`)")
+    el-table(:data="products" v-loading="loading" style="width: 100%" :row-style="{ cursor: 'pointer' }" @row-click="(row: unknown) => navigateTo(`/e-commerce/products/${row.id}`)")
       el-table-column(type="index" width="50")
       el-table-column(:label="$t('ecommerce.products.product')" min-width="240")
         template(#default="{ row }")
@@ -274,7 +274,7 @@ const deleting = ref(false);
 
 // Data
 const products = ref<CatalogProduct[]>([]);
-const categories = ref<any[]>([]);
+const categories = ref<Record<string, unknown>[]>([]);
 
 // Filters
 const search = ref('');
@@ -359,7 +359,7 @@ async function loadCategories() {
   try {
     const res = await useApiFetch('ecommerce/categories');
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       categories.value = data?.docs || data?.rows || data || [];
     }
   } catch {

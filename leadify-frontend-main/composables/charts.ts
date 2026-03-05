@@ -18,7 +18,7 @@ const THEME = {
   }
 };
 
-export function getPieChartsData(data: any, colorpallete: any, position = '0%', left = 'center') {
+export function getPieChartsData(data: unknown, colorpallete: unknown, position = '0%', left = 'center') {
   if (!data) return {};
   return {
     tooltip: {
@@ -71,14 +71,14 @@ export function getPieChartsData(data: any, colorpallete: any, position = '0%', 
   };
 }
 
-export function getBarChartData(data: any, colorpallete: any) {
+export function getBarChartData(data: unknown, colorpallete: unknown) {
   if (!data) return {};
   return {
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, ...THEME.glassTooltip },
     grid: { top: 20, right: 20, bottom: 20, left: 20, containLabel: true },
     xAxis: {
       type: 'category',
-      data: data.map((val: any) => val.name),
+      data: data.map((val) => val.name),
       axisLabel: { color: '#94A3B8', fontWeight: 500 },
       axisLine: { show: false },
       axisTick: { show: false }
@@ -92,7 +92,7 @@ export function getBarChartData(data: any, colorpallete: any) {
       {
         type: 'bar',
         barWidth: '30%',
-        data: data.map((val: any) => Number(val.value)),
+        data: data.map((val) => Number(val.value)),
         itemStyle: {
           borderRadius: [6, 6, 6, 6], // Fully rounded
           color: new graphic.LinearGradient(0, 0, 0, 1, [
@@ -121,7 +121,7 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-export function getBarHorizontalChartData(data: any, colorpallete: any) {
+export function getBarHorizontalChartData(data: unknown, colorpallete: unknown) {
   if (!data) return {};
   return {
     tooltip: { trigger: 'item', ...THEME.glassTooltip },
@@ -133,7 +133,7 @@ export function getBarHorizontalChartData(data: any, colorpallete: any) {
     },
     yAxis: {
       type: 'category',
-      data: data.map((val: any) => val.name),
+      data: data.map((val) => val.name),
       inverse: true,
       axisLabel: {
         color: '#94A3B8',
@@ -147,7 +147,7 @@ export function getBarHorizontalChartData(data: any, colorpallete: any) {
     series: [
       {
         type: 'bar',
-        data: data.map((val: any) => val.value),
+        data: data.map((val) => val.value),
         barWidth: 16,
         showBackground: true,
         backgroundStyle: {
@@ -210,7 +210,7 @@ export function getConversionGauge(value: number) {
   };
 }
 
-export function getIncreaseLineChart(data: any, colorPalette: any) {
+export function getIncreaseLineChart(data: unknown, colorPalette: unknown) {
   if (!data) return {};
   return {
     tooltip: { trigger: 'axis', ...THEME.glassTooltip },
@@ -218,7 +218,7 @@ export function getIncreaseLineChart(data: any, colorPalette: any) {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: data.map((val: any) => val.name),
+      data: data.map((val) => val.name),
       axisLabel: { color: '#94A3B8' },
       axisLine: { show: false },
       axisTick: { show: false }
@@ -231,7 +231,7 @@ export function getIncreaseLineChart(data: any, colorPalette: any) {
     series: [
       {
         type: 'line',
-        data: data.map((val: any) => val.value),
+        data: data.map((val) => val.value),
         smooth: true, // Smooth curves for organic feel
         showSymbol: false,
         symbolSize: 10,
@@ -297,11 +297,11 @@ export async function getLeadsStatics() {
             : capitalizeName(name),
         value
       })),
-      salesPerformance: (body.salesPerformance || []).map((i: any) => ({ name: i.date, value: i.revenue }))
+      salesPerformance: (body.salesPerformance || []).map((i) => ({ name: i.date, value: i.revenue }))
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     statsLoading.value = false;
-    (ElNotification as any).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Leads stats' });
+    (ElNotification as unknown).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Leads stats' });
     return getDefaultLeadsStats();
   }
 }
@@ -346,9 +346,9 @@ export async function getProjectOperationsStatics() {
         value
       }))
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     statsLoading.value = false;
-    (ElNotification as any).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Project stats' });
+    (ElNotification as unknown).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Project stats' });
     return getDefaultProjectStats();
   }
 }
@@ -371,9 +371,9 @@ export async function getBussinesStatics() {
         { name: 'Collected Payments', value: formatLargeNumber(body.collectedPaymentsCount || 0) }
       ]
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     statsLoading.value = false;
-    (ElNotification as any).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Business stats' });
+    (ElNotification as unknown).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Business stats' });
     return { firstCards: [] };
   }
 }
@@ -392,14 +392,14 @@ export async function getPerformanceStatics() {
         { name: 'Total Deals Closed', value: formatLargeNumber(body.dealsCount || 0) }
       ]
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     statsLoading.value = false;
-    (ElNotification as any).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Performance stats' });
+    (ElNotification as unknown).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Performance stats' });
     return { firstCards: [] };
   }
 }
 
-export function getBarChartWithLineData(data: any, legend: string[], colorpallete: any) {
+export function getBarChartWithLineData(data: unknown, legend: string[], colorpallete: unknown) {
   if (!data) return {};
   return {
     tooltip: { trigger: 'axis', axisPointer: { type: 'cross' }, ...THEME.glassTooltip },
@@ -407,7 +407,7 @@ export function getBarChartWithLineData(data: any, legend: string[], colorpallet
     grid: { top: 40, right: 40, bottom: 40, left: 40, containLabel: true },
     xAxis: {
       type: 'category',
-      data: data.map((val: any) => val.name),
+      data: data.map((val) => val.name),
       axisLabel: { color: '#94A3B8' },
       axisLine: { show: false }
     },
@@ -420,7 +420,7 @@ export function getBarChartWithLineData(data: any, legend: string[], colorpallet
         name: legend[0],
         type: 'bar',
         barWidth: '20%',
-        data: data.map((val: any) => val.value),
+        data: data.map((val) => val.value),
         itemStyle: {
           borderRadius: [4, 4, 0, 0],
           color: colorpallete[0] || THEME.purple
@@ -431,7 +431,7 @@ export function getBarChartWithLineData(data: any, legend: string[], colorpallet
         type: 'line',
         yAxisIndex: 1,
         smooth: true,
-        data: data.map((val: any) => val.totalPaid || 0),
+        data: data.map((val) => val.totalPaid || 0),
         lineStyle: { width: 3, color: THEME.green },
         itemStyle: { color: THEME.green }
       }
@@ -439,7 +439,7 @@ export function getBarChartWithLineData(data: any, legend: string[], colorpallet
   };
 }
 
-export function getCenterPieChartsData(data: any, colorpallete: any, title = '') {
+export function getCenterPieChartsData(data: unknown, colorpallete: unknown, title = '') {
   if (!data) return {};
   return {
     tooltip: {

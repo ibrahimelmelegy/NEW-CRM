@@ -317,8 +317,8 @@ const activeTab = ref('predictions');
 const dateRange = ref<[Date, Date] | null>(null);
 
 // Raw data
-const rawDeals = ref<any[]>([]);
-const rawLeads = ref<any[]>([]);
+const rawDeals = ref<Record<string, unknown>[]>([]);
+const rawLeads = ref<Record<string, unknown>[]>([]);
 
 // Filters
 const churnFilter = ref('all');
@@ -327,7 +327,7 @@ const recCategoryFilter = ref('all');
 
 // Dialog
 const showRecDialog = ref(false);
-const selectedRec = ref<any>(null);
+const selectedRec = ref<Record<string, unknown> | null>(null);
 
 // ─── Derived AI Data ────────────────────────────────────────
 const predictionAccuracy = ref(87.3);
@@ -336,21 +336,21 @@ const recommendationsGenerated = ref(34);
 const actionsTaken = ref(21);
 
 // Churn data
-const churnData = ref<any[]>([]);
+const churnData = ref<Record<string, unknown>[]>([]);
 
 // Win probability
-const winProbabilityGroups = ref<any[]>([]);
+const winProbabilityGroups = ref<Record<string, unknown>[]>([]);
 
 // Anomaly data
-const anomalyLog = ref<any[]>([]);
-const severitySummary = ref<any[]>([]);
+const anomalyLog = ref<Record<string, unknown>[]>([]);
+const severitySummary = ref<Record<string, unknown>[]>([]);
 
 // Recommendations
-const recommendations = ref<any[]>([]);
+const recommendations = ref<Record<string, unknown>[]>([]);
 const pendingRecommendations = computed(() => recommendations.value.filter(r => !r.dismissed && !r.applied).length);
 
 // Model performance
-const modelComparisonData = ref<any[]>([]);
+const modelComparisonData = ref<Record<string, unknown>[]>([]);
 
 // ─── Chart Tooltip Style ────────────────────────────────────
 const tooltipStyle = {
@@ -441,10 +441,10 @@ function getMonthLabel(key: string): string {
   return date.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
 
-function getFilteredDeals(): any[] {
+function getFilteredDeals(): Record<string, unknown>[] {
   if (!dateRange.value) return rawDeals.value;
   const [start, end] = dateRange.value;
-  return rawDeals.value.filter((d: any) => {
+  return rawDeals.value.filter((d) => {
     const created = new Date(d.createdAt || d.created_at);
     return created >= start && created <= end;
   });
@@ -459,8 +459,8 @@ async function loadData() {
       useApiFetch('lead').catch(() => ({ body: [] }))
     ]);
 
-    rawDeals.value = Array.isArray(dealsRes?.body) ? dealsRes.body : Array.isArray((dealsRes?.body as any)?.docs) ? (dealsRes.body as any).docs : [];
-    rawLeads.value = Array.isArray(leadsRes?.body) ? leadsRes.body : Array.isArray((leadsRes?.body as any)?.docs) ? (leadsRes.body as any).docs : [];
+    rawDeals.value = Array.isArray(dealsRes?.body) ? dealsRes.body : Array.isArray((dealsRes?.body as unknown)?.docs) ? (dealsRes.body as unknown).docs : [];
+    rawLeads.value = Array.isArray(leadsRes?.body) ? leadsRes.body : Array.isArray((leadsRes?.body as unknown)?.docs) ? (leadsRes.body as unknown).docs : [];
 
     computeAll();
   } catch (e) {
@@ -490,7 +490,7 @@ function refreshData() {
 // ─── Compute KPIs ───────────────────────────────────────────
 function computeKPIs() {
   const deals = getFilteredDeals();
-  const wonDeals = deals.filter((d: any) => {
+  const wonDeals = deals.filter((d) => {
     const s = (d.status || d.stage || '').toLowerCase();
     return s.includes('won') || s.includes('closed');
   });
@@ -501,7 +501,7 @@ function computeKPIs() {
   predictionAccuracy.value = parseFloat(Math.min(95, Math.max(72, 80 + winRate * 0.2)).toFixed(1));
 
   // Derive anomalies from data variance
-  const values = deals.map((d: any) => parseFloat(d.value || d.amount || d.dealValue || 0)).filter(v => v > 0);
+  const values = deals.map((d) => parseFloat(d.value || d.amount || d.dealValue || 0)).filter(v => v > 0);
   const mean = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
   const variance = values.length > 0 ? values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length : 0;
   const stdDev = Math.sqrt(variance);
@@ -515,7 +515,7 @@ function computeKPIs() {
 // ─── Win Probability ────────────────────────────────────────
 function computeWinProbability() {
   const deals = getFilteredDeals();
-  const scoredDeals = deals.map((d: any) => {
+  const scoredDeals = deals.map((d) => {
     const value = parseFloat(d.value || d.amount || d.dealValue || 0);
     const stage = (d.status || d.stage || d.dealStage || '').toLowerCase();
     const name = d.name || d.title || d.dealName || 'Untitled Deal';
@@ -551,8 +551,8 @@ function computeChurnRisk() {
   const now = new Date();
 
   // Build customer profiles from deals and leads
-  const customers = new Map<string, any>();
-  deals.forEach((d: any) => {
+  const customers = new Map<string, unknown>();
+  deals.forEach((d) => {
     const name = d.company?.name || d.companyName || d.client || d.name || 'Unknown';
     if (!customers.has(name)) {
       customers.set(name, {
@@ -570,7 +570,7 @@ function computeChurnRisk() {
 
   // If not enough real data, supplement with leads
   if (customers.size < 5) {
-    leads.slice(0, 10).forEach((l: any) => {
+    leads.slice(0, 10).forEach((l) => {
       const name = l.company || l.name || l.fullName || 'Lead Customer';
       if (!customers.has(name)) {
         customers.set(name, {
@@ -638,7 +638,7 @@ const revenueForecastOption = computed(() => {
     const key = getMonthKey(d);
     monthMap.set(key, 0);
   }
-  deals.forEach((d: any) => {
+  deals.forEach((d) => {
     const created = new Date(d.createdAt || d.created_at || Date.now());
     const key = getMonthKey(created);
     const val = parseFloat(d.value || d.amount || d.dealValue || 0);
@@ -687,9 +687,9 @@ const revenueForecastOption = computed(() => {
     tooltip: {
       trigger: 'axis',
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         let result = `<strong>${params[0]?.axisValue}</strong><br/>`;
-        params.forEach((p: any) => {
+        params.forEach((p) => {
           if (p.value !== null && p.value !== undefined) {
             result += `${p.marker} ${p.seriesName}: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(p.value)}<br/>`;
           }
@@ -800,7 +800,7 @@ function computeAnomalies() {
   const statuses: ('new' | 'investigating' | 'resolved')[] = ['new', 'investigating', 'resolved'];
 
   // Generate anomaly entries based on data variance
-  const anomalyEntries: any[] = [];
+  const anomalyEntries: Record<string, unknown>[] = [];
   const count = Math.max(8, Math.min(20, anomaliesDetected.value + 5));
 
   for (let i = 0; i < count; i++) {
@@ -879,7 +879,7 @@ const anomalyScatterOption = computed(() => {
   return {
     tooltip: {
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const a = anomalyLog.value[params.data[0]];
         if (!a) return '';
         return `<strong>${a.metricName}</strong><br/>${t('aiInsights.deviation')}: ${a.deviationPct > 0 ? '+' : ''}${a.deviationPct}%<br/>${t('aiInsights.severity')}: ${a.severity}<br/>${t('aiInsights.detected')}: ${a.detectedDate}`;
@@ -1229,7 +1229,7 @@ const confidenceDistOption = computed(() => {
     tooltip: {
       trigger: 'axis',
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         return `<strong>${params[0]?.axisValue}%</strong><br/>${t('aiInsights.predictions')}: ${params[0]?.value}`;
       }
     },

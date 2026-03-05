@@ -69,7 +69,7 @@ import AchievementUnlock from '~/components/Gamification/AchievementUnlock.vue';
 const { state, challenges, loading, unlockedCount, totalCount, fetchAchievements, fetchChallenges } = useAchievements();
 
 const showUnlock = ref(false);
-const unlockedAchievement = ref<any>(null);
+const unlockedAchievement = ref<Record<string, unknown> | null>(null);
 
 onMounted(async () => {
   await Promise.all([fetchAchievements(), fetchChallenges()]);

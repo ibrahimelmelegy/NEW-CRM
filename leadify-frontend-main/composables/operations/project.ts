@@ -117,7 +117,7 @@ interface BasicInfoValues {
   description?: string;
   cancelledReason?: string;
   etimadInfo?: EtimadProjectInfoValues;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface EtimadProjectInfoValues {
@@ -142,7 +142,7 @@ export interface ProjectManpower {
   foodAllowanceCost?: number;
   otherCosts?: number;
   otherCostsReason?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface CombinedProjectValues extends BasicInfoValues, EtimadProjectInfoValues {}
@@ -161,7 +161,7 @@ export async function getProjects(all?: false): Promise<CombinedProjectValues> {
 
     if (success) {
       // Return the docs (c) from the response
-      const projects = body?.docs?.map((project: any) => ({
+      const projects = body?.docs?.map((project) => ({
         ...project,
         createdAt: formatDate(project.createdAt)
       }));
@@ -312,7 +312,7 @@ export async function createProject(values: ProjectInfo): Promise<void> {
   }
 }
 
-export async function updateProject(values: any): Promise<void> {
+export async function updateProject(values: unknown): Promise<void> {
   try {
     // Call API to create the project
     const response = await useApiFetch(`project/create`, 'POST', values);

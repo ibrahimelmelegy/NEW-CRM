@@ -134,7 +134,7 @@ const table = reactive({
 const activeTab = ref('active');
 const router = useRouter();
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/procurement/purchase-orders/${val.id}`);
 }
 
@@ -152,7 +152,7 @@ const mobileRefreshing = ref(false);
 
 const mobileFilters = computed(() => {
   const data = table.data || [];
-  const statuses = [...new Set(data.map((po: any) => po.status).filter(Boolean))] as string[];
+  const statuses = [...new Set(data.map((po) => po.status).filter(Boolean))] as string[];
   const statusColors: Record<string, string> = {
     PENDING: '#f59e0b',
     APPROVED: '#10b981',
@@ -168,7 +168,7 @@ const mobileFilters = computed(() => {
       value: s,
       label: s.charAt(0) + s.slice(1).toLowerCase(),
       color: statusColors[s] || '#94a3b8',
-      count: data.filter((po: any) => po.status === s).length
+      count: data.filter((po) => po.status === s).length
     }))
   ];
 });
@@ -176,11 +176,11 @@ const mobileFilters = computed(() => {
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((po: any) => po.status === mobileStatusFilter.value);
+    data = data.filter((po) => po.status === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((po: any) => {
+  return data.filter((po) => {
     const poNum = (po.poNumber || '').toLowerCase();
     const vendor = (po.vendor?.name || po['vendor.name'] || '').toLowerCase();
     const project = (po.project?.name || po['project.name'] || '').toLowerCase();
@@ -199,7 +199,7 @@ async function handleMobileRefresh() {
   }
 }
 
-function handleSwipeAction(name: string, po: any) {
+function handleSwipeAction(name: string, po: unknown) {
   vibrate();
   if (name === 'view') navigateTo(`/procurement/purchase-orders/${po.id}`);
 }

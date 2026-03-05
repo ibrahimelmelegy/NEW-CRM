@@ -28,7 +28,7 @@ export interface Asset {
   name: string;
   buyPrice: string | number;
   rentPrice: string | number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface UseAssetsResult {
@@ -48,7 +48,7 @@ export async function getAssets(): Promise<UseAssetsResult> {
 
     if (success) {
       // Return the docs (assets) from the response
-      const assets = body?.docs?.map((asset: any) => ({
+      const assets = body?.docs?.map((asset) => ({
         ...asset,
         createdAt: formatDate(asset.createdAt),
         // updatedAt: formatDate(asset.updatedAt),

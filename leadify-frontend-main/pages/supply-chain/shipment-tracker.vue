@@ -877,7 +877,7 @@ const carrierDataFallback = [
   { name: 'SMSA', color: '#0066B3', totalShipments: 5680, onTimePercent: 94.2, avgTransitDays: 2.1, costPerShipment: 18.5, rating: 4.4 }
 ];
 
-const carrierData = ref<any[]>([]);
+const carrierData = ref<Record<string, unknown>[]>([]);
 
 // ─── Carrier Performance Trend Chart ────────────────────────
 const carrierTrendChartOption = computed(() => {
@@ -1220,11 +1220,11 @@ async function loadData() {
   try {
     const res = await useApiFetch('shipping');
     if (res.success && Array.isArray(res.body)) {
-      liveShipments.value = res.body as any;
-      tableShipments.value = res.body as any;
+      liveShipments.value = res.body as unknown;
+      tableShipments.value = res.body as unknown;
       // Aggregate carrier data from shipments if available
-      const carrierMap = new Map<string, any>();
-      (res.body as any[]).forEach((s: any) => {
+      const carrierMap = new Map<string, unknown>();
+      (res.body as unknown[]).forEach((s) => {
         if (s.carrier && !carrierMap.has(s.carrier)) {
           carrierMap.set(s.carrier, {
             name: s.carrier,

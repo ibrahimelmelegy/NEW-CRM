@@ -95,7 +95,7 @@ const { fetchWorkflows, createWorkflow, updateWorkflow, deleteWorkflow } = useAp
 
 const ENTITY_TYPES = ['PURCHASE_ORDER', 'INVOICE', 'EXPENSE', 'LEAVE_REQUEST', 'CONTRACT', 'GENERAL'];
 
-const workflows = ref<any[]>([]);
+const workflows = ref<Record<string, unknown>[]>([]);
 const loading = ref(true);
 const saving = ref(false);
 const showDialog = ref(false);
@@ -124,7 +124,7 @@ onMounted(() => loadWorkflows());
 
 async function loadWorkflows() {
   loading.value = true;
-  const res: any = await fetchWorkflows();
+  const res = await fetchWorkflows();
   if (res.success && res.body) {
     workflows.value = res.body;
   }
@@ -141,13 +141,13 @@ function openCreate() {
   showDialog.value = true;
 }
 
-function openEdit(wf: any) {
+function openEdit(wf: unknown) {
   editingId.value = wf.id;
   form.name = wf.name;
   form.description = wf.description || '';
   form.entityType = wf.entityType;
   form.isActive = wf.isActive;
-  form.steps = (wf.steps || []).map((s: any, idx: number) => ({ ...s, order: idx }));
+  form.steps = (wf.steps || []).map((s: unknown, idx: number) => ({ ...s, order: idx }));
   if (form.steps.length === 0) form.steps = [{ order: 0, approverUserId: 1, approverName: '', required: true }];
   showDialog.value = true;
 }

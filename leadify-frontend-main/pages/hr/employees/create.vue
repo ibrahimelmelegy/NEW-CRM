@@ -174,7 +174,7 @@ async function handleSubmit() {
 
   saving.value = true;
   try {
-    const payload: Record<string, any> = { ...form };
+    const payload: Record<string, unknown> = { ...form };
     // Remove empty optional fields
     if (!payload.departmentId) delete payload.departmentId;
     if (!payload.managerId) delete payload.managerId;

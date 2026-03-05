@@ -347,9 +347,9 @@ const showAddTagDialog = ref(false);
 const showBulkReassignDialog = ref(false);
 const showQualityRatingDialog = ref(false);
 const saving = ref(false);
-const selectedCall = ref<any>(null);
-const selectedCalls = ref<any[]>([]);
-const callForRating = ref<any>(null);
+const selectedCall = ref<Record<string, unknown> | null>(null);
+const selectedCalls = ref<Record<string, unknown>[]>([]);
+const callForRating = ref<Record<string, unknown> | null>(null);
 
 const form = reactive({
   contactName: '',
@@ -369,7 +369,7 @@ const filters = reactive({
   outcome: '',
   disposition: '',
   agent: '',
-  dateRange: null as any,
+  dateRange: null as unknown,
   durationMin: null as number | null,
   durationMax: null as number | null,
   search: '',
@@ -390,14 +390,14 @@ const qualityRatingForm = reactive({
   notes: ''
 });
 
-const availableTags = ref<any[]>([
+const availableTags = ref<Record<string, unknown>[]>([
   { id: 1, name: 'Hot Lead', color: 'danger', count: 12 },
   { id: 2, name: 'Follow-up', color: 'warning', count: 8 },
   { id: 3, name: 'Qualified', color: 'success', count: 15 },
   { id: 4, name: 'Cold Call', color: 'info', count: 20 }
 ]);
 
-const availableAgents = ref<any[]>([
+const availableAgents = ref<Record<string, unknown>[]>([
   { id: 1, name: 'John Smith' },
   { id: 2, name: 'Sarah Johnson' },
   { id: 3, name: 'Mike Wilson' }
@@ -414,42 +414,42 @@ const filteredCalls = computed(() => {
   let result = calls.value;
 
   if (filters.outcome) {
-    result = result.filter((c: any) => c.outcome === filters.outcome);
+    result = result.filter((c) => c.outcome === filters.outcome);
   }
 
   if (filters.disposition) {
-    result = result.filter((c: any) => c.disposition === filters.disposition);
+    result = result.filter((c) => c.disposition === filters.disposition);
   }
 
   if (filters.agent) {
-    result = result.filter((c: any) => c.agentId === filters.agent);
+    result = result.filter((c) => c.agentId === filters.agent);
   }
 
   if (filters.dateRange && filters.dateRange.length === 2) {
     const [start, end] = filters.dateRange;
-    result = result.filter((c: any) => {
+    result = result.filter((c) => {
       const callDate = new Date(c.createdAt);
       return callDate >= start && callDate <= end;
     });
   }
 
   if (filters.durationMin !== null) {
-    result = result.filter((c: any) => c.duration >= filters.durationMin! * 60);
+    result = result.filter((c) => c.duration >= filters.durationMin! * 60);
   }
 
   if (filters.durationMax !== null) {
-    result = result.filter((c: any) => c.duration <= filters.durationMax! * 60);
+    result = result.filter((c) => c.duration <= filters.durationMax! * 60);
   }
 
   if (filters.search) {
     const query = filters.search.toLowerCase();
     result = result.filter(
-      (c: any) => c.contactName?.toLowerCase().includes(query) || c.phone?.toLowerCase().includes(query) || c.notes?.toLowerCase().includes(query)
+      (c: unknown) => c.contactName?.toLowerCase().includes(query) || c.phone?.toLowerCase().includes(query) || c.notes?.toLowerCase().includes(query)
     );
   }
 
   if (filters.tagId) {
-    result = result.filter((c: any) => c.tags?.some((t: any) => t.id === filters.tagId));
+    result = result.filter((c) => c.tags?.some((t) => t.id === filters.tagId));
   }
 
   return result;
@@ -486,8 +486,8 @@ async function saveCall() {
     const success = await logCall({
       contactName: form.contactName,
       phone: form.phone,
-      direction: form.direction as any,
-      outcome: form.outcome as any,
+      direction: form.direction as unknown,
+      outcome: form.outcome as unknown,
       disposition: form.disposition,
       duration: form.durationMin * 60,
       recordingUrl: form.recordingUrl || undefined,
@@ -550,17 +550,17 @@ function handleDial(phone: string) {
   }
 }
 
-function viewDetails(call: any) {
+function viewDetails(call: unknown) {
   selectedCall.value = call;
   showDetailsDialog.value = true;
 }
 
-function playRecording(call: any) {
+function playRecording(call: unknown) {
   selectedCall.value = call;
   showDetailsDialog.value = true;
 }
 
-function handleSelectionChange(selection: any[]) {
+function handleSelectionChange(selection: Record<string, unknown>[]) {
   selectedCalls.value = selection;
 }
 
@@ -610,7 +610,7 @@ async function bulkExport() {
       Notes: call.notes || ''
     }));
 
-    const csv = [Object.keys(data[0] as any).join(','), ...data.map(row => Object.values(row).join(','))].join('\n');
+    const csv = [Object.keys(data[0] as unknown).join(','), ...data.map(row => Object.values(row).join(','))].join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -647,7 +647,7 @@ async function bulkReassign() {
   }
 }
 
-function addTagToCall(call: any) {
+function addTagToCall(call: unknown) {
   selectedCall.value = call;
   showAddTagDialog.value = true;
 }
@@ -672,11 +672,11 @@ function removeTag(tagId: number) {
   availableTags.value = availableTags.value.filter(t => t.id !== tagId);
 }
 
-function filterByTag(tag: any) {
+function filterByTag(tag: unknown) {
   filters.tagId = filters.tagId === tag.id ? null : tag.id;
 }
 
-function rateCallQuality(call: any) {
+function rateCallQuality(call: unknown) {
   callForRating.value = call;
   qualityRatingForm.score = call.qualityScore || 5;
   qualityRatingForm.notes = '';

@@ -290,7 +290,7 @@ interface UIBooking {
   timezone?: string;
 }
 
-function mapBooking(raw: any, index: number): UIBooking {
+function mapBooking(raw: unknown, index: number): UIBooking {
   const type = raw.type || '';
   const clientName = raw.clientName || raw.client?.clientName || '';
   const host = raw.staff?.name || '';
@@ -339,7 +339,7 @@ const newBooking = ref({
   reminderMinutes: 15
 });
 
-const staffAvailability = ref<any[]>([]);
+const staffAvailability = ref<Record<string, unknown>[]>([]);
 
 const newPage = ref({
   name: '',
@@ -351,8 +351,8 @@ const newPage = ref({
 
 const timeSlots = Array.from({ length: 12 }, (_, i) => i + 8);
 const bookings = ref<UIBooking[]>([]);
-const bookingPages = ref<any[]>([]);
-const analyticsData = ref<any>({ popularSlots: [], dailyTrend: [] });
+const bookingPages = ref<Record<string, unknown>[]>([]);
+const analyticsData = ref<Record<string, unknown>>({ popularSlots: [], dailyTrend: [] });
 
 const timezones = [
   'UTC',
@@ -440,14 +440,14 @@ const goToToday = () => {
 async function fetchBookings() {
   loading.value = true;
   try {
-    const res: any = await useApiFetch('bookings?limit=500');
+    const res = await useApiFetch('bookings?limit=500');
     if (res?.success) {
-      const raw: any[] = res.body?.docs || res.body || [];
+      const raw: Record<string, unknown>[] = res.body?.docs || res.body || [];
       bookings.value = raw.map((b, i) => mapBooking(b, i));
     } else {
       ElMessage.error(res?.message || t('booking.fetchError'));
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('booking.fetchError'));
   } finally {
     loading.value = false;
@@ -456,7 +456,7 @@ async function fetchBookings() {
 
 async function fetchBookingPages() {
   try {
-    const res: any = await useApiFetch('bookings/pages');
+    const res = await useApiFetch('bookings/pages');
     if (res?.success) {
       bookingPages.value = res.body || [];
     }
@@ -485,18 +485,18 @@ function renderCharts() {
     const chart = echarts.init(popularSlotsChartRef.value);
     chart.setOption({
       tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: analyticsData.value.popularSlots.map((s: any) => s.slot) },
+      xAxis: { type: 'category', data: analyticsData.value.popularSlots.map((s) => s.slot) },
       yAxis: { type: 'value' },
-      series: [{ data: analyticsData.value.popularSlots.map((s: any) => s.count), type: 'bar', itemStyle: { color: '#10B981' } }]
+      series: [{ data: analyticsData.value.popularSlots.map((s) => s.count), type: 'bar', itemStyle: { color: '#10B981' } }]
     });
   }
   if (trendChartRef.value && analyticsData.value.dailyTrend?.length) {
     const chart = echarts.init(trendChartRef.value);
     chart.setOption({
       tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: analyticsData.value.dailyTrend.map((d: any) => d.date) },
+      xAxis: { type: 'category', data: analyticsData.value.dailyTrend.map((d) => d.date) },
       yAxis: { type: 'value' },
-      series: [{ data: analyticsData.value.dailyTrend.map((d: any) => d.count), type: 'line', smooth: true, itemStyle: { color: '#6366F1' } }]
+      series: [{ data: analyticsData.value.dailyTrend.map((d) => d.count), type: 'line', smooth: true, itemStyle: { color: '#6366F1' } }]
     });
   }
 }
@@ -520,8 +520,8 @@ const createBooking = async () => {
     const t = newBooking.value.time;
     if (typeof t === 'string') {
       startTime = t;
-    } else if ((t as any) instanceof Date) {
-      startTime = `${String((t as any).getHours()).padStart(2, '0')}:${String((t as any).getMinutes()).padStart(2, '0')}`;
+    } else if ((t as unknown) instanceof Date) {
+      startTime = `${String((t as unknown).getHours()).padStart(2, '0')}:${String((t as unknown).getMinutes()).padStart(2, '0')}`;
     }
   }
 
@@ -539,8 +539,8 @@ const createBooking = async () => {
     const d = newBooking.value.date;
     if (typeof d === 'string') {
       dateStr = d;
-    } else if ((d as any) instanceof Date) {
-      dateStr = toDateString(d as any);
+    } else if ((d as unknown) instanceof Date) {
+      dateStr = toDateString(d as unknown);
     }
   }
 
@@ -580,7 +580,7 @@ const createBooking = async () => {
     } else {
       ElMessage.error(res?.message || t('booking.bookingFailed'));
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('booking.bookingFailed'));
   } finally {
     submitting.value = false;
@@ -596,7 +596,7 @@ const confirmBooking = async (b: UIBooking) => {
     } else {
       ElMessage.error(res?.message || t('booking.confirmFailed'));
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('booking.confirmFailed'));
   }
 };
@@ -610,7 +610,7 @@ const cancelBooking = async (b: UIBooking) => {
     } else {
       ElMessage.error(res?.message || t('booking.cancelFailed'));
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('booking.cancelFailed'));
   }
 };
@@ -623,7 +623,7 @@ const quickBook = (hour: number) => {
   showBookingDialog.value = true;
 };
 
-const copyBookingLink = (page: any) => {
+const copyBookingLink = (page: unknown) => {
   const baseUrl = (config.public.BOOKING_BASE_URL || config.public.BASE_URL || '').replace(/\/$/, '');
   navigator.clipboard?.writeText(`${baseUrl}/book/${page.slug || page.id}`);
   ElMessage.success(t('booking.linkCopied'));
@@ -655,7 +655,7 @@ async function fetchStaffAvailability() {
     if (res?.success && res?.body) {
       // Group slots by staff member for the UI
       const slotData = Array.isArray(res.body) ? res.body : [];
-      const staffMap = new Map<number, any>();
+      const staffMap = new Map<number, <unknown>();
       for (const slot of slotData) {
         const staffId = slot.staffId;
         if (!staffMap.has(staffId)) {

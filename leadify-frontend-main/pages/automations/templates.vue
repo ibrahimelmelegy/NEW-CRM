@@ -316,7 +316,7 @@ const sortBy = ref('popular');
 const detailDialogVisible = ref(false);
 const successDialogVisible = ref(false);
 const activating = ref(false);
-const selectedTemplate = ref<any>(null);
+const selectedTemplate = ref<Record<string, unknown> | null>(null);
 const stepToggles = ref<boolean[]>([]);
 const config = reactive({
   triggerCondition: 'default',
@@ -1047,7 +1047,7 @@ function stepColor(type: string): string {
 }
 
 // ─── Actions ──────────────────────────────────────────────────────
-function openTemplateDetail(tpl: any) {
+function openTemplateDetail(tpl: unknown) {
   selectedTemplate.value = tpl;
   stepToggles.value = tpl.steps.map(() => true);
   config.triggerCondition = 'default';

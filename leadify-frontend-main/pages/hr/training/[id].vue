@@ -269,9 +269,9 @@ const route = useRoute();
 
 const loading = ref(false);
 const saving = ref(false);
-const program = ref<any>(null);
-const enrollments = ref<any[]>([]);
-const employees = ref<any[]>([]);
+const program = ref<Record<string, unknown> | null>(null);
+const enrollments = ref<Record<string, unknown>[]>([]);
+const employees = ref<Record<string, unknown>[]>([]);
 const participantStatusFilter = ref('');
 
 // Dialogs
@@ -279,7 +279,7 @@ const enrollDialogVisible = ref(false);
 const editEnrollmentVisible = ref(false);
 const editProgramVisible = ref(false);
 const showAddMaterial = ref(false);
-const editingEnrollment = ref<any>(null);
+const editingEnrollment = ref<Record<string, unknown> | null>(null);
 
 const ENROLLMENT_STATUSES = [
   { value: 'ENROLLED', label: 'Enrolled', type: '' },
@@ -311,22 +311,22 @@ const materialForm = reactive({ name: '', url: '', type: 'PDF' });
 const statusCounts = computed(() => {
   const e = enrollments.value;
   return {
-    enrolled: e.filter((x: any) => x.status === 'ENROLLED').length,
-    inProgress: e.filter((x: any) => x.status === 'IN_PROGRESS').length,
-    completed: e.filter((x: any) => x.status === 'COMPLETED').length,
-    dropped: e.filter((x: any) => x.status === 'DROPPED').length
+    enrolled: e.filter((x) => x.status === 'ENROLLED').length,
+    inProgress: e.filter((x) => x.status === 'IN_PROGRESS').length,
+    completed: e.filter((x) => x.status === 'COMPLETED').length,
+    dropped: e.filter((x) => x.status === 'DROPPED').length
   };
 });
 
 const completionRate = computed(() => {
-  const active = enrollments.value.filter((e: any) => e.status !== 'DROPPED').length;
+  const active = enrollments.value.filter((e) => e.status !== 'DROPPED').length;
   if (!active) return 0;
   return Math.round((statusCounts.value.completed / active) * 100);
 });
 
 const filteredParticipants = computed(() => {
   if (!participantStatusFilter.value) return enrollments.value;
-  return enrollments.value.filter((e: any) => e.status === participantStatusFilter.value);
+  return enrollments.value.filter((e) => e.status === participantStatusFilter.value);
 });
 
 // Helpers
@@ -362,12 +362,12 @@ function getScoreColor(score: number | null): string {
   return '#ef4444';
 }
 
-function getInitial(row: any): string {
+function getInitial(row: unknown): string {
   const name = row.employee?.firstName || row.employeeName || '?';
   return name.charAt(0).toUpperCase();
 }
 
-function getEmployeeName(row: any): string {
+function getEmployeeName(row: unknown): string {
   if (row.employee) return `${row.employee.firstName || ''} ${row.employee.lastName || ''}`.trim() || `Employee #${row.employeeId}`;
   return row.employeeName || `Employee #${row.employeeId}`;
 }
@@ -408,7 +408,7 @@ async function loadProgram() {
     const id = route.params.id;
     const res = await useApiFetch(`hr/training/programs/${id}`);
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       program.value = data;
       enrollments.value = data.enrollments || [];
     }
@@ -423,8 +423,8 @@ async function loadEmployees() {
   try {
     const res = await useApiFetch('hr/employees?limit=500');
     if (res?.success && res.body) {
-      const docs = (res.body as any).docs || res.body || [];
-      employees.value = docs.map((e: any) => ({
+      const docs = (res.body as unknown).docs || res.body || [];
+      employees.value = docs.map((e) => ({
         id: e.id,
         name: e.firstName ? `${e.firstName} ${e.lastName || ''}`.trim() : e.name || `Employee #${e.id}`
       }));
@@ -454,14 +454,14 @@ async function handleEnroll() {
     enrollDialogVisible.value = false;
     ElNotification({ type: 'success', title: t('common.success'), message: t('hr.training.enrolled') });
     await loadProgram();
-  } catch (err: any) {
+  } catch (err: unknown) {
     ElNotification({ type: 'error', title: t('common.error'), message: err?.message || t('common.error') });
   } finally {
     saving.value = false;
   }
 }
 
-function openEditEnrollment(row: any) {
+function openEditEnrollment(row: unknown) {
   editingEnrollment.value = row;
   editEnrollForm.status = row.status || 'ENROLLED';
   editEnrollForm.progress = row.progress || 0;
@@ -486,7 +486,7 @@ async function handleUpdateEnrollment() {
   }
 }
 
-async function handleComplete(row: any) {
+async function handleComplete(row: unknown) {
   try {
     await ElMessageBox.confirm(t('hr.training.confirmComplete'), t('common.confirm'), { type: 'info' });
     await useApiFetch(`hr/training/enrollments/${row.id}/complete`, 'PUT');
@@ -497,7 +497,7 @@ async function handleComplete(row: any) {
   }
 }
 
-async function handleDeleteEnrollment(row: any) {
+async function handleDeleteEnrollment(row: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`hr/training/enrollments/${row.id}`, 'DELETE');

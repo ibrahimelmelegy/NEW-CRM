@@ -130,7 +130,7 @@ const [tasksResponse, statsResponse, usersResponse] = await Promise.all([fetchTa
 
 const tasks = ref<Task[]>(tasksResponse.docs || []);
 const pagination = ref(tasksResponse.pagination);
-const stats = ref<any>(statsResponse || {});
+const stats = ref<Record<string, unknown>>(statsResponse || {});
 
 // Stat cards
 const statCards = computed(() => [
@@ -162,7 +162,7 @@ const statCards = computed(() => [
 
 // Table config
 const table = ref({
-  columns: [] as any[],
+  columns: [] as unknown[],
   data: tasks.value.map(formatTask)
 });
 
@@ -216,7 +216,7 @@ const updateTableColumns = () => {
 updateTableColumns();
 
 const mappedUsers =
-  usersResponse?.body?.docs?.map((e: any) => ({
+  usersResponse?.body?.docs?.map((e) => ({
     label: e.name,
     value: e.id
   })) || [];
@@ -254,7 +254,7 @@ const filterOptions = computed(() => [
   }
 ]);
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/tasks/${val.id}`);
 }
 
@@ -271,7 +271,7 @@ async function handleTabChange(tab: string) {
   }
 }
 
-async function handleComplete(data: any) {
+async function handleComplete(data: unknown) {
   try {
     if (data.status === 'DONE') {
       await updateTask(data.id, { status: 'TODO' });
@@ -287,7 +287,7 @@ async function handleComplete(data: any) {
   }
 }
 
-async function handleDelete(data: any) {
+async function handleDelete(data: unknown) {
   try {
     await ElMessageBox.confirm(t('tasks.confirmDelete'), t('common.warning'), { type: 'warning' });
     await deleteTask(data.id);
@@ -295,7 +295,7 @@ async function handleDelete(data: any) {
     const newStats = await fetchTaskStats();
     stats.value = newStats || {};
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   }
 }
@@ -310,23 +310,23 @@ const mobileTaskFilters = computed(() => {
   const data = table.value.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
-    { value: 'TODO', label: t('tasks.status.TODO'), color: '#94a3b8', count: data.filter((t: any) => t.status === 'TODO').length },
+    { value: 'TODO', label: t('tasks.status.TODO'), color: '#94a3b8', count: data.filter((t) => t.status === 'TODO').length },
     {
       value: 'IN_PROGRESS',
       label: t('tasks.status.IN_PROGRESS'),
       color: '#3b82f6',
-      count: data.filter((t: any) => t.status === 'IN_PROGRESS').length
+      count: data.filter((t) => t.status === 'IN_PROGRESS').length
     },
-    { value: 'DONE', label: t('tasks.status.DONE'), color: '#10b981', count: data.filter((t: any) => t.status === 'DONE').length }
+    { value: 'DONE', label: t('tasks.status.DONE'), color: '#10b981', count: data.filter((t) => t.status === 'DONE').length }
   ];
 });
 
 const mobileFilteredTasks = computed(() => {
   let data = table.value.data || [];
-  if (mobileTaskStatus.value !== 'ALL') data = data.filter((tk: any) => tk.status === mobileTaskStatus.value);
+  if (mobileTaskStatus.value !== 'ALL') data = data.filter((tk) => tk.status === mobileTaskStatus.value);
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((tk: any) => {
+  return data.filter((tk) => {
     const name = (tk.taskDetails?.name || tk.title || '').toLowerCase();
     const assign = (tk.assign || '').toLowerCase();
     return name.includes(q) || assign.includes(q);
@@ -343,7 +343,7 @@ async function handleMobileRefresh() {
   }
 }
 
-function handleTaskSwipe(name: string, task: any) {
+function handleTaskSwipe(name: string, task: unknown) {
   vibrate();
   if (name === 'view') navigateTo(`/tasks/${task.id}`);
   if (name === 'complete') handleComplete(task);

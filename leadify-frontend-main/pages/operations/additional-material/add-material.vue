@@ -30,11 +30,11 @@ const finalValues = ref<AdditionalMaterial>({
   items: []
 });
 
-async function submitCategoryForm(values: any) {
+async function submitCategoryForm(values: unknown) {
   finalValues.value = { ...finalValues.value, ...values };
 }
 
-async function submitCategoryItemForm(values: any) {
+async function submitCategoryItemForm(values: unknown) {
   finalValues.value.items = [...values];
 }
 async function onSubmitMaterials() {

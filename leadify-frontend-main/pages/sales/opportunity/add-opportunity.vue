@@ -32,18 +32,18 @@ async function submitForm(values: FormattedValues) {
       response = await createOpportunity(values);
     } else if (route.query.leadId || leadId.value) {
       response = await convertLeadToOpportunity({
-        ...(values.opportunity as any),
+        ...(values.opportunity as unknown),
         ...((route.query.leadId || leadId.value) && { leadId: route.query.leadId || leadId.value }),
         ...(values.clientId && { clientId: values.clientId })
-      } as any);
+      } as unknown);
     } else {
       response = await createOpportunity(values);
     }
     if (response?.success) {
       navigateTo('/sales/opportunity');
     }
-  } catch (error: any) {
-    (useNuxtApp() as any).$notify?.error?.({ message: error?.message || 'Failed to create opportunity' });
+  } catch (error: unknown) {
+    (useNuxtApp() as unknown).$notify?.error?.({ message: error?.message || 'Failed to create opportunity' });
   } finally {
     loading.value = false;
   }

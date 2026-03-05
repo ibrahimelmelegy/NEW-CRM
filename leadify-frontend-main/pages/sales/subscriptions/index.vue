@@ -173,7 +173,7 @@ const loading = ref(false);
 const creating = ref(false);
 const subscriptions = ref<CustomerSubscription[]>([]);
 const plans = ref<SubscriptionPlan[]>([]);
-const clients = ref<any[]>([]);
+const clients = ref<Record<string, unknown>[]>([]);
 const activeTab = ref('ALL');
 const searchKey = ref('');
 const currentPage = ref(1);
@@ -270,7 +270,7 @@ async function handleCancelSubscription(row: CustomerSubscription) {
     });
     const result = await cancelSubscription(String(row.id));
     if (result) {
-      const sub = subscriptions.value.find((s: any) => s.id === row.id);
+      const sub = subscriptions.value.find((s) => s.id === row.id);
       if (sub) sub.status = 'CANCELLED';
       ElMessage.success(t('subscriptions.cancelSuccess'));
     }

@@ -182,12 +182,12 @@ const t = $i18n.t;
 const loading = ref(false);
 const saving = ref(false);
 const dialogVisible = ref(false);
-const editingItem = ref<any>(null);
+const editingItem = ref<Record<string, unknown> | null>(null);
 const search = ref('');
 const statusFilter = ref('');
 
-const reviews = ref<any[]>([]);
-const employees = ref<any[]>([]);
+const reviews = ref<Record<string, unknown>[]>([]);
+const employees = ref<Record<string, unknown>[]>([]);
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
 
 // Distribution state
@@ -220,7 +220,7 @@ const form = reactive({
 const avgRating = computed(() => {
   const rated = reviews.value.filter(r => r.overallRating > 0);
   if (!rated.length) return '0.0';
-  return (rated.reduce((sum: number, r: any) => sum + r.overallRating, 0) / rated.length).toFixed(1);
+  return (rated.reduce((sum, r) => sum + r.overallRating, 0) / rated.length).toFixed(1);
 });
 
 const filteredReviews = computed(() => {
@@ -255,7 +255,7 @@ function formatDate(d: string) {
   return new Date(d).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function handleRowClick(row: any) {
+function handleRowClick(row: unknown) {
   openDialog(row);
 }
 
@@ -269,7 +269,7 @@ function resetForm() {
   form.goals = '';
 }
 
-function openDialog(item?: any) {
+function openDialog(item?: unknown) {
   if (item?.id) {
     editingItem.value = item;
     form.employeeId = item.employeeId || '';
@@ -309,7 +309,7 @@ async function handleSave() {
   }
 }
 
-async function handleDelete(row: any) {
+async function handleDelete(row: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     loading.value = true;
@@ -331,14 +331,14 @@ async function loadData() {
       useApiFetch('hr/employees?limit=500')
     ]);
     if (reviewsRes?.success && reviewsRes.body) {
-      const data = reviewsRes.body as any;
+      const data = reviewsRes.body as unknown;
       reviews.value = data.rows || data.docs || data || [];
       pagination.total = data.count ?? data.total ?? reviews.value.length;
     }
     if (empRes?.success && empRes.body) {
-      const data = empRes.body as any;
+      const data = empRes.body as unknown;
       const docs = data.docs || data || [];
-      employees.value = docs.map((e: any) => ({
+      employees.value = docs.map((e) => ({
         id: e.id,
         name: e.firstName ? `${e.firstName} ${e.lastName || ''}`.trim() : e.name || `Employee #${e.id}`
       }));
@@ -370,7 +370,7 @@ async function loadDistribution() {
   try {
     const res = await useApiFetch(`hr/performance/distribution?period=${distributionPeriod.value}`);
     if (res?.success && res.body) {
-      const d = res.body as any;
+      const d = res.body as unknown;
       distribution.outstanding = d.outstanding ?? 0;
       distribution.exceeds = d.exceeds ?? 0;
       distribution.meets = d.meets ?? 0;

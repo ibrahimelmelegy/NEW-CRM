@@ -150,18 +150,18 @@ const exportColumns = [{ prop: 'name', label: 'Category' }];
 const limit = ref(10);
 const isLoading = ref(false);
 const currentPage = ref<number>(1);
-const sort = ref<any>({});
-const pagintaion = ref<any>({});
-const finalData = ref<any>([]);
+const sort = ref<Record<string, unknown>>({});
+const pagintaion = ref<Record<string, unknown>>({});
+const finalData = ref<Record<string, unknown>>([]);
 const router = useRouter();
 const deleteLeadPopup = ref(false);
 const deleteId = ref<string | null>(null);
 const deleting = ref(false);
-const handleSizeChange = (val: any) => {
+const handleSizeChange = (val: unknown) => {
   getData();
 };
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/operations/additional-material/${val.id}`);
 }
 
@@ -178,7 +178,7 @@ async function confirmDelete() {
   try {
     const response = await deleteAdditionalMaterialById(deleteId.value);
     if (response?.success) {
-      finalData.value = finalData.value.filter((r: any) => r.id !== deleteId.value);
+      finalData.value = finalData.value.filter((r) => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;

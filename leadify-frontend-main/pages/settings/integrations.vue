@@ -247,9 +247,9 @@ const hub = useIntegrations();
 const searchQuery = ref('');
 const activeCategory = ref('all');
 const configDialogVisible = ref(false);
-const selectedIntegration = ref<any>(null);
+const selectedIntegration = ref<Record<string, unknown> | null>(null);
 const configTab = ref('connection');
-const configFormData = ref<Record<string, any>>({});
+const configFormData = ref<Record<string, unknown>>({});
 const testingConnection = ref(false);
 const savingConfig = ref(false);
 const disconnecting = ref(false);
@@ -869,12 +869,12 @@ onMounted(async () => {
 });
 
 // ─── Methods ────────────────────────────────────────────────────────────────
-function getFlowStatus(intg: any): string {
+function getFlowStatus(intg: unknown): string {
   if (!intg.isConfigured) return 'disconnected';
   return intg.flowStatus || 'healthy';
 }
 
-function getFlowClass(intg: any): string {
+function getFlowClass(intg: unknown): string {
   const status = getFlowStatus(intg);
   if (status === 'healthy') return 'status-healthy';
   if (status === 'warning') return 'status-warning';
@@ -882,7 +882,7 @@ function getFlowClass(intg: any): string {
   return 'status-disconnected';
 }
 
-function toggleIntegration(intg: any) {
+function toggleIntegration(intg: unknown) {
   intg.enabled = !intg.enabled;
   ElNotification({
     type: intg.enabled ? 'success' : 'info',
@@ -891,11 +891,11 @@ function toggleIntegration(intg: any) {
   });
 }
 
-function openConfigDialog(intg: any) {
+function openConfigDialog(intg: unknown) {
   selectedIntegration.value = intg;
   configTab.value = 'connection';
   configFormData.value = {};
-  intg.configFields?.forEach((f: any) => {
+  intg.configFields?.forEach((f) => {
     configFormData.value[f.key] = '';
   });
   if (intg.existingConfig) {
@@ -904,7 +904,7 @@ function openConfigDialog(intg: any) {
   configDialogVisible.value = true;
 }
 
-async function handleConfigSave(data: { type: string; config: Record<string, any> }) {
+async function handleConfigSave(data: { type: string; config: Record<string, unknown> }) {
   savingConfig.value = true;
   try {
     const success = await hub.configure(data.type, data.config);
@@ -919,7 +919,7 @@ async function handleConfigSave(data: { type: string; config: Record<string, any
   }
 }
 
-async function handleConfigTest(data: { type: string; config: Record<string, any> }) {
+async function handleConfigTest(data: { type: string; config: Record<string, unknown> }) {
   testingConnection.value = true;
   try {
     await hub.testConnection(data.type, data.config);

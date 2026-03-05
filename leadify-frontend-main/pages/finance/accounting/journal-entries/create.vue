@@ -199,7 +199,7 @@ async function handleSave() {
       }))
     };
 
-    const res = await createJournalEntry(payload as any);
+    const res = await createJournalEntry(payload as unknown);
     if (res.success) {
       ElNotification({ type: 'success', title: t('accounting.journalCreate.successTitle'), message: t('accounting.journalCreate.successMessage') });
       router.push('/finance/accounting/journal-entries');

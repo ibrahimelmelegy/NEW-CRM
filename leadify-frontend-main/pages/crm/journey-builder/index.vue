@@ -511,8 +511,8 @@ interface TouchpointStat {
 }
 
 // ── Data ─────────────────────────────────────────────────
-const allDeals = ref<any[]>([]);
-const allLeads = ref<any[]>([]);
+const allDeals = ref<Record<string, unknown>[]>([]);
+const allLeads = ref<Record<string, unknown>[]>([]);
 const journeyTemplates = ref<JourneyTemplate[]>([]);
 const journeys = ref<Journey[]>([]);
 
@@ -692,7 +692,7 @@ const funnelChartOption = computed(() => {
       borderWidth: 1,
       textStyle: { color: '#fff' },
       extraCssText: 'backdrop-filter: blur(12px); border-radius: 12px;',
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const rate = totalLeads > 0 ? ((params.value / totalLeads) * 100).toFixed(1) : '0';
         return `<strong>${params.name}</strong><br/>${t('journeyBuilder.contacts')}: <strong>${formatNumber(params.value)}</strong><br/>${t('journeyBuilder.rate')}: <strong>${rate}%</strong>`;
       }
@@ -720,7 +720,7 @@ const funnelChartOption = computed(() => {
         label: {
           show: true,
           position: 'inside',
-          formatter: (params: any) => `${params.name}\n${formatNumber(params.value)}`,
+          formatter: (params: unknown) => `${params.name}\n${formatNumber(params.value)}`,
           color: '#fff',
           fontSize: 11,
           fontWeight: 'bold',
@@ -776,7 +776,7 @@ const channelChartOption = computed(() => {
       borderWidth: 1,
       textStyle: { color: '#fff' },
       extraCssText: 'backdrop-filter: blur(12px); border-radius: 12px;',
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const p = params[0];
         const label = channelMetric.value === 'engagement' ? t('journeyBuilder.engagementRate') : t('journeyBuilder.conversionRate');
         return `<strong>${p.name}</strong><br/>${label}: <strong>${p.value}%</strong>`;
@@ -889,7 +889,7 @@ function toggleJourneyStatus(journey: Journey) {
   const newStatus = journey.status === 'active' ? 'paused' : 'active';
   const idx = journeys.value.findIndex(j => j.id === journey.id);
   if (idx >= 0) {
-    journeys.value[idx] = { ...journeys.value[idx], status: newStatus, lastModified: new Date().toISOString() } as any;
+    journeys.value[idx] = { ...journeys.value[idx], status: newStatus, lastModified: new Date().toISOString() } as unknown;
     ElNotification({
       type: 'success',
       title: t('journeyBuilder.statusUpdated'),
@@ -924,7 +924,7 @@ function saveJourney() {
         name: journeyForm.value.name,
         status: journeyForm.value.status,
         lastModified: new Date().toISOString()
-      } as any;
+      } as unknown;
     }
     ElNotification({ type: 'success', title: t('journeyBuilder.updated'), message: t('journeyBuilder.journeyUpdated') });
   } else {
@@ -1061,7 +1061,7 @@ function saveStage() {
       description: stageForm.value.description,
       icon: stageForm.value.icon,
       color: stageForm.value.color
-    } as any;
+    } as unknown;
   }
   showStageDialog.value = false;
   ElNotification({ type: 'success', title: t('journeyBuilder.updated'), message: t('journeyBuilder.stageUpdated') });
@@ -1597,7 +1597,7 @@ async function loadDeals() {
   try {
     const { body, success } = await useApiFetch('deal?limit=500');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       allDeals.value = data.docs || data || [];
     }
   } catch {
@@ -1609,7 +1609,7 @@ async function loadLeads() {
   try {
     const { body, success } = await useApiFetch('lead?limit=500');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       allLeads.value = data.docs || data || [];
     }
   } catch {

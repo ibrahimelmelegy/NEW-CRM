@@ -443,7 +443,7 @@ const activeTab = ref('plans');
 const stakeholderAccountFilter = ref<number | string>('');
 const showPlanDetailDialog = ref(false);
 const showNewPlanDialog = ref(false);
-const selectedPlan = ref<any>(null);
+const selectedPlan = ref<Record<string, unknown> | null>(null);
 const loading = ref(false);
 
 const newPlanForm = ref({
@@ -474,7 +474,7 @@ const products = [
 ];
 
 // ---- Data: Account Plans ----
-const accountPlans = ref<any[]>([]);
+const accountPlans = ref<Record<string, unknown>[]>([]);
 
 // ---- Fallback Mock Data ----
 const fallbackAccountPlans = [
@@ -799,7 +799,7 @@ const fallbackAccountPlans = [
 ];
 
 // ---- Data: Stakeholders ----
-const stakeholders = ref<any[]>([]);
+const stakeholders = ref<Record<string, unknown>[]>([]);
 
 const fallbackStakeholders = [
   {
@@ -1005,7 +1005,7 @@ const fallbackStakeholders = [
 ];
 
 // ---- Data: Forecast ----
-const forecastData = ref<any[]>([]);
+const forecastData = ref<Record<string, unknown>[]>([]);
 
 const fallbackForecastData = [
   {
@@ -1055,7 +1055,7 @@ async function loadAccountPlans() {
   try {
     const res = await useApiFetch('account-plans');
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       // API returns { docs, pagination } for paginated results
       accountPlans.value = data.docs || data || [];
     } else {
@@ -1070,12 +1070,12 @@ async function loadStakeholders() {
   try {
     // Load stakeholders for all plans; if a specific plan is selected, filter later
     // The API needs an account plan ID, so we aggregate from all plans
-    const allStakeholders: any[] = [];
+    const allStakeholders: Record<string, unknown>[] = [];
     for (const plan of accountPlans.value) {
       try {
         const res = await useApiFetch(`account-plans/${plan.id}/stakeholders`);
         if (res.success && res.body) {
-          const data = Array.isArray(res.body) ? res.body : (res.body as any).docs || [];
+          const data = Array.isArray(res.body) ? res.body : (res.body as unknown).docs || [];
           allStakeholders.push(...data);
         }
       } catch {
@@ -1096,7 +1096,7 @@ async function loadForecastData() {
   try {
     const res = await useApiFetch('account-plans/forecast');
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       forecastData.value = Array.isArray(data) ? data : data.docs || [];
     } else {
       forecastData.value = fallbackForecastData;
@@ -1255,7 +1255,7 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-function openPlanDetail(plan: any) {
+function openPlanDetail(plan: unknown) {
   selectedPlan.value = plan;
   showPlanDetailDialog.value = true;
 }
@@ -1290,16 +1290,16 @@ async function createNewPlan() {
   };
 }
 
-function getForecastSummary({ columns, data }: { columns: any[]; data: any[] }) {
+function getForecastSummary({ columns, data }: { columns: Record<string, unknown>[]; data: Record<string, unknown>[] }) {
   const sums: string[] = [];
-  columns.forEach((col: any, index: number) => {
+  columns.forEach((col: unknown, index: number) => {
     if (index === 0) {
       sums.push(t('accountPlanning.total'));
       return;
     }
     const prop = col.property;
     if (prop && typeof data[0]?.[prop] === 'number') {
-      const total = data.reduce((sum: number, row: any) => sum + (row[prop] || 0), 0);
+      const total = data.reduce((sum, row) => sum + (row[prop] || 0), 0);
       if (prop === 'probability') {
         sums.push(Math.round(total / data.length) + '%');
       } else {

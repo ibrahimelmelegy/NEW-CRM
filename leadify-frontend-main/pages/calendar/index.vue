@@ -487,8 +487,8 @@ const miniDate = ref(new Date());
 const form = reactive({
   title: '',
   description: '',
-  startDate: '' as any,
-  endDate: '' as any,
+  startDate: '' as unknown,
+  endDate: '' as unknown,
   allDay: false,
   color: '',
   eventType: 'OTHER',
@@ -645,7 +645,7 @@ const miniCells = computed(() => {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const startOffset = firstDay.getDay();
-  const cells: any[] = [];
+  const cells: Record<string, unknown>[] = [];
 
   // Previous month padding
   for (let i = startOffset - 1; i >= 0; i--) {
@@ -690,7 +690,7 @@ function miniPrev() {
 function miniNext() {
   miniDate.value = new Date(miniDate.value.getFullYear(), miniDate.value.getMonth() + 1, 1);
 }
-function onMiniDateClick(cell: any) {
+function onMiniDateClick(cell: unknown) {
   selectedDateStr.value = cell.dateStr;
   currentDate.value = new Date(cell.dateStr + 'T00:00:00');
   if (viewMode.value === 'month') {
@@ -724,7 +724,7 @@ const monthCells = computed(() => {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const startOffset = firstDay.getDay();
-  const cells: any[] = [];
+  const cells: Record<string, unknown>[] = [];
 
   for (let i = startOffset - 1; i >= 0; i--) {
     const d = new Date(year, month, -i);
@@ -760,7 +760,7 @@ function getEventsForDate(dateStr: string): CalendarEvent[] {
   });
 }
 
-function onMonthCellClick(cell: any) {
+function onMonthCellClick(cell: unknown) {
   selectedDateStr.value = cell.dateStr;
 }
 
@@ -770,7 +770,7 @@ const weekDayHeaders = computed(() => {
   const dow = d.getDay();
   const weekStart = new Date(d);
   weekStart.setDate(d.getDate() - dow);
-  const days: any[] = [];
+  const days: Record<string, unknown>[] = [];
   for (let i = 0; i < 7; i++) {
     const dt = new Date(weekStart);
     dt.setDate(weekStart.getDate() + i);

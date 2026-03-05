@@ -34,9 +34,9 @@ export function useNotifications() {
     try {
       const { body, success } = await useApiFetch('notification?limit=100');
       if (success && body) {
-        const data = body as any;
+        const data = body as unknown;
         const docs = data.docs || data || [];
-        notifications.value = docs.map((n: any) => ({
+        notifications.value = docs.map((n) => ({
           id: n.id,
           type: n.type || 'info',
           category: n.category || 'system',

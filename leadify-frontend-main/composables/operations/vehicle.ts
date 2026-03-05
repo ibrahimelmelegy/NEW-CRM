@@ -31,7 +31,7 @@ export interface Vehicle {
   manufacturer: string;
   plate: string;
   regularMaintenanceCost: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 enum Manufacturer {
@@ -63,7 +63,7 @@ export async function getVehicles(): Promise<UseVehicleResult> {
 
     if (success) {
       // Return the docs (vehicles) from the response
-      const vehicles = body?.docs?.map((vehicle: any) => ({
+      const vehicles = body?.docs?.map((vehicle) => ({
         ...vehicle,
         createdAt: formatDate(vehicle.createdAt),
         // updatedAt: formatDate(vehicle.updatedAt),

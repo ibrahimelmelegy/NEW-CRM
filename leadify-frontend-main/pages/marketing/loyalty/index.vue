@@ -505,8 +505,8 @@ const saving = ref(false);
 const activeTab = ref('programs');
 
 // ─── Bulk Selection ──────────────────────────────────────
-const selectedMembers = ref<any[]>([]);
-const handleMemberSelectionChange = (rows: any[]) => {
+const selectedMembers = ref<Record<string, unknown>[]>([]);
+const handleMemberSelectionChange = (rows: Record<string, unknown>[]) => {
   selectedMembers.value = rows;
 };
 
@@ -515,7 +515,7 @@ const programDialogVisible = ref(false);
 const pointsDialogVisible = ref(false);
 const adjustDialogVisible = ref(false);
 const memberDetailVisible = ref(false);
-const editingProgram = ref<any>(null);
+const editingProgram = ref<Record<string, unknown> | null>(null);
 
 const programSearch = ref('');
 const programStatusFilter = ref('');
@@ -523,14 +523,14 @@ const pointsSearch = ref('');
 const memberSearch = ref('');
 const memberTierFilter = ref('');
 
-const programs = ref<any[]>([]);
+const programs = ref<Record<string, unknown>[]>([]);
 const programsPagination = reactive({ page: 1, limit: 20, total: 0 });
-const points = ref<any[]>([]);
+const points = ref<Record<string, unknown>[]>([]);
 const pointsPagination = reactive({ page: 1, limit: 20, total: 0 });
-const dashboardData = ref<any>(null);
-const members = ref<any[]>([]);
-const memberDetail = ref<any>(null);
-const memberHistory = ref<any[]>([]);
+const dashboardData = ref<Record<string, unknown> | null>(null);
+const members = ref<Record<string, unknown>[]>([]);
+const memberDetail = ref<Record<string, unknown> | null>(null);
+const memberHistory = ref<Record<string, unknown>[]>([]);
 
 // ─── Forms ───────────────────────────────────────────────
 const defaultProgramForm = () => ({
@@ -540,13 +540,13 @@ const defaultProgramForm = () => ({
   pointsPerCurrency: 1,
   enableExpiration: false,
   expirationDays: 365,
-  accrualRules: [{ name: 'Purchase', pointsPerUnit: 1 }] as any[],
+  accrualRules: [{ name: 'Purchase', pointsPerUnit: 1 }] as unknown[],
   tiers: [
     { name: 'Bronze', minPoints: 0, benefits: [] },
     { name: 'Silver', minPoints: 1000, benefits: [] },
     { name: 'Gold', minPoints: 5000, benefits: [] },
     { name: 'Platinum', minPoints: 20000, benefits: [] }
-  ] as any[]
+  ] as unknown[]
 });
 
 const defaultPointsForm = () => ({
@@ -603,11 +603,11 @@ const tierTotal = computed(() => tierData.value.reduce((sum, t) => sum + t.count
 const filteredPrograms = computed(() => {
   let data = programs.value;
   if (programStatusFilter.value) {
-    data = data.filter((p: any) => p.status === programStatusFilter.value);
+    data = data.filter((p) => p.status === programStatusFilter.value);
   }
   if (programSearch.value) {
     const q = programSearch.value.toLowerCase();
-    data = data.filter((p: any) => (p.name || '').toLowerCase().includes(q));
+    data = data.filter((p) => (p.name || '').toLowerCase().includes(q));
   }
   return data;
 });
@@ -616,24 +616,24 @@ const filteredPoints = computed(() => {
   if (!pointsSearch.value) return points.value;
   const q = pointsSearch.value.toLowerCase();
   return points.value.filter(
-    (p: any) => (p.client?.name || p.clientId || '').toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q)
+    (p: unknown) => (p.client?.name || p.clientId || '').toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q)
   );
 });
 
 const filteredMembers = computed(() => {
   let data = members.value;
   if (memberTierFilter.value) {
-    data = data.filter((m: any) => m.tier === memberTierFilter.value);
+    data = data.filter((m) => m.tier === memberTierFilter.value);
   }
   if (memberSearch.value) {
     const q = memberSearch.value.toLowerCase();
-    data = data.filter((m: any) => (m.clientName || m.clientId || '').toLowerCase().includes(q));
+    data = data.filter((m) => (m.clientName || m.clientId || '').toLowerCase().includes(q));
   }
   return data;
 });
 
 const redemptions = computed(() => {
-  return points.value.filter((p: any) => p.transactionType === 'REDEEM');
+  return points.value.filter((p) => p.transactionType === 'REDEEM');
 });
 
 // ─── Helpers ─────────────────────────────────────────────
@@ -683,7 +683,7 @@ async function fetchPrograms() {
   try {
     const res = await useApiFetch(`loyalty/programs?page=${programsPagination.page}&limit=${programsPagination.limit}`);
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       programs.value = data.docs || data.rows || (Array.isArray(data) ? data : []);
       if (data.pagination) {
         programsPagination.total = data.pagination.totalItems ?? 0;
@@ -700,7 +700,7 @@ async function fetchPoints() {
   try {
     const res = await useApiFetch(`loyalty/points?page=${pointsPagination.page}&limit=${pointsPagination.limit}`);
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       points.value = data.docs || data.rows || (Array.isArray(data) ? data : []);
       if (data.pagination) {
         pointsPagination.total = data.pagination.totalItems ?? 0;
@@ -708,7 +708,7 @@ async function fetchPoints() {
         pointsPagination.total = data.count ?? data.total ?? points.value.length;
       }
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -726,7 +726,7 @@ async function fetchDashboard() {
 
 async function buildMembersList() {
   // Build members from points history
-  const memberMap = new Map<string, any>();
+  const memberMap = new Map<string, unknown>();
 
   for (const tx of points.value) {
     const cId = tx.clientId;
@@ -776,7 +776,7 @@ async function loadAll() {
 }
 
 // ─── Program CRUD ────────────────────────────────────────
-function openProgramDialog(program?: any) {
+function openProgramDialog(program?: unknown) {
   if (program) {
     editingProgram.value = program;
     programForm.value = {
@@ -785,9 +785,9 @@ function openProgramDialog(program?: any) {
       status: program.status || 'ACTIVE',
       pointsPerCurrency: program.pointsPerCurrency || 1,
       tiers: program.tiers?.length
-        ? program.tiers.map((t: any) => ({ name: t.name, minPoints: t.minPoints || 0, benefits: t.benefits || [] }))
+        ? program.tiers.map((t) => ({ name: t.name, minPoints: t.minPoints || 0, benefits: t.benefits || [] }))
         : defaultProgramForm().tiers
-    } as any;
+    } as unknown;
   } else {
     editingProgram.value = null;
     programForm.value = defaultProgramForm();
@@ -821,7 +821,7 @@ async function handleSaveProgram() {
   }
 }
 
-async function handleDeleteProgram(program: any) {
+async function handleDeleteProgram(program: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`loyalty/programs/${program.id}`, 'DELETE');
@@ -898,18 +898,18 @@ async function handleAdjustPoints() {
 }
 
 // ─── Member Detail ───────────────────────────────────────
-async function openMemberDetail(member: any) {
+async function openMemberDetail(member: unknown) {
   memberDetail.value = { ...member };
   memberHistory.value = points.value
-    .filter((p: any) => p.clientId === member.clientId)
-    .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    .filter((p) => p.clientId === member.clientId)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   // Try to get tier info from API
   try {
     if (programs.value.length > 0) {
       const res = await useApiFetch(`loyalty/balance/${member.clientId}/${programs.value[0].id}`);
       if (res.success && res.body) {
-        const data = res.body as any;
+        const data = res.body as unknown;
         memberDetail.value.balance = data.balance ?? member.balance;
         memberDetail.value.totalEarned = data.earned ?? member.totalEarned;
         memberDetail.value.totalRedeemed = Math.abs(data.redeemed ?? member.totalRedeemed);
@@ -962,7 +962,7 @@ async function bulkChangeTier() {
       `Change tier for ${selectedMembers.value.length} member(s). Enter: BRONZE, SILVER, GOLD, or PLATINUM`,
       t('common.changeStatus'),
       { inputPattern: /^(BRONZE|SILVER|GOLD|PLATINUM)$/i, inputErrorMessage: 'Must be BRONZE, SILVER, GOLD, or PLATINUM' }
-    )) as any;
+    )) as unknown;
     if (!newTier) return;
     // Tier changes are reflected through points adjustments - recalculate
     ElMessage.success(t('common.saved'));
@@ -978,7 +978,7 @@ function exportMembersCSV() {
   const headers = ['Client Name', 'Client ID', 'Tier', 'Points Balance', 'Lifetime Points', 'Join Date'];
   const csv = [
     headers.join(','),
-    ...data.map((row: any) =>
+    ...data.map((row) =>
       [
         `"${row.clientName || row.clientId || ''}"`,
         `"${row.clientId || ''}"`,

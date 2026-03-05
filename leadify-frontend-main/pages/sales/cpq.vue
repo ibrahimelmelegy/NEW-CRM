@@ -261,9 +261,9 @@ definePageMeta({
 
 const activeTab = ref('quotes');
 const loading = ref(true);
-const quotes = ref<any[]>([]);
-const products = ref<any[]>([]);
-const pricingRules = ref<any[]>([]);
+const quotes = ref<Record<string, unknown>[]>([]);
+const products = ref<Record<string, unknown>[]>([]);
+const pricingRules = ref<Record<string, unknown>[]>([]);
 const showProductDialog = ref(false);
 const showPricingDialog = ref(false);
 
@@ -299,9 +299,9 @@ const getStatusType = (status: string): 'success' | 'warning' | 'info' | 'danger
 const fetchQuotes = async () => {
   loading.value = true;
   try {
-    const res: any = await useApiFetch('proposal');
+    const res = await useApiFetch('proposal');
     if (res?.success) {
-      quotes.value = (res.body?.docs || res.body || []).map((p: any) => ({
+      quotes.value = (res.body?.docs || res.body || []).map((p) => ({
         id: p.id,
         name: p.name || p.title || `Quote #${p.id}`,
         clientName: p.client?.name || p.clientName || '',
@@ -318,7 +318,7 @@ const fetchQuotes = async () => {
 
 const fetchProducts = async () => {
   try {
-    const res: any = await useApiFetch('catalog/products');
+    const res = await useApiFetch('catalog/products');
     if (res?.success) {
       products.value = res.body?.docs || res.body || [];
     }
@@ -328,12 +328,12 @@ const fetchProducts = async () => {
 };
 
 const createQuote = () => ElMessage.info(t('cpq.quoteOpening'));
-const editQuote = (quote: any) => ElMessage.info(`Editing quote: ${quote.name}`);
-const duplicateQuote = (quote: any) => ElMessage.info(`Cloning quote: ${quote.name}`);
-const exportQuote = (quote: any) => ElMessage.info(`Generating PDF for: ${quote.name}`);
+const editQuote = (quote: unknown) => ElMessage.info(`Editing quote: ${quote.name}`);
+const duplicateQuote = (quote: unknown) => ElMessage.info(`Cloning quote: ${quote.name}`);
+const exportQuote = (quote: unknown) => ElMessage.info(`Generating PDF for: ${quote.name}`);
 
 const saveProduct = async () => {
-  const res: any = await useApiFetch('catalog/products', 'POST', newProduct.value);
+  const res = await useApiFetch('catalog/products', 'POST', newProduct.value);
   if (res?.success) {
     ElMessage.success(t('common.saved'));
     showProductDialog.value = false;

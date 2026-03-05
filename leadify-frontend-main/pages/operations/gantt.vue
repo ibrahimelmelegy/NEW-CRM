@@ -376,8 +376,8 @@ const timelineHeaderRef = ref<HTMLElement>();
 
 const taskForm = ref({
   name: '',
-  start: '' as any,
-  end: '' as any,
+  start: '' as unknown,
+  end: '' as unknown,
   progress: 0,
   isMilestone: false,
   priority: 'MEDIUM',
@@ -403,7 +403,7 @@ interface GanttMeta {
   isMilestone?: boolean;
 }
 
-function parseGanttMeta(tags: any[]): GanttMeta {
+function parseGanttMeta(tags: Record<string, unknown>[]): GanttMeta {
   if (!Array.isArray(tags)) return {};
   for (const tag of tags) {
     if (typeof tag === 'string') {
@@ -437,7 +437,7 @@ function statusToProgress(status: string, duration?: number | null): number {
   }
 }
 
-function mapApiTaskToGantt(apiTask: any, index: number): GanttTask {
+function mapApiTaskToGantt(apiTask: unknown, index: number): GanttTask {
   const meta = parseGanttMeta(apiTask.tags || []);
   const today = new Date().toISOString().slice(0, 10);
   const start = apiTask.date || (apiTask.dueDate ? apiTask.dueDate.slice(0, 10) : today);
@@ -465,9 +465,9 @@ async function fetchTasks() {
   try {
     const { body, success } = await useApiFetch('tasks?limit=200&entityType=GANTT&sortBy=createdAt&sort=ASC');
     if (success && body) {
-      const data = (body as any).docs || body;
+      const data = (body as unknown).docs || body;
       if (Array.isArray(data)) {
-        tasks.value = data.map((t: any, i: number) => mapApiTaskToGantt(t, i));
+        tasks.value = data.map((t: unknown, i: number) => mapApiTaskToGantt(t, i));
       }
     }
   } catch (e) {
@@ -739,7 +739,7 @@ onUnmounted(() => {
 // Date formatting helper
 // ---------------------------------------------------------------------------
 
-function formatDateStr(val: any): string {
+function formatDateStr(val: unknown): string {
   if (!val) return '';
   if (typeof val === 'string') return val.slice(0, 10);
   if (val instanceof Date) return val.toISOString().slice(0, 10);
@@ -788,7 +788,7 @@ function editTask(task: GanttTask) {
 // Build the API payload from form values
 // ---------------------------------------------------------------------------
 
-function buildPayload(colorOverride?: string): Record<string, any> {
+function buildPayload(colorOverride?: string): Record<string, unknown> {
   const startStr = formatDateStr(taskForm.value.start) || new Date().toISOString().slice(0, 10);
   const endStr = formatDateStr(taskForm.value.end) || startStr;
   const color = colorOverride || GANTT_COLORS[tasks.value.length % GANTT_COLORS.length]!;
@@ -802,7 +802,7 @@ function buildPayload(colorOverride?: string): Record<string, any> {
     isMilestone: taskForm.value.isMilestone
   };
 
-  const payload: Record<string, any> = {
+  const payload: Record<string, unknown> = {
     title: taskForm.value.name,
     date: startStr,
     dueDate: endStr,
@@ -862,7 +862,7 @@ const saveTask = async () => {
       const payload = buildPayload();
       const { body, success } = await useApiFetch('tasks', 'POST', payload);
       if (success && body) {
-        const created = body as any;
+        const created = body as unknown;
         tasks.value.push(mapApiTaskToGantt(created, tasks.value.length));
         showTaskDialog.value = false;
         ElMessage.success(t('common.saved'));

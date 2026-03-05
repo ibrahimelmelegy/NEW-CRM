@@ -492,15 +492,15 @@ function getDifficultyType(difficulty: string): 'success' | 'warning' | 'danger'
   return map[difficulty] ?? undefined;
 }
 
-function enrollCourse(course: any) {
+function enrollCourse(course: unknown) {
   ElMessage.success(`Enrolled in: ${course.title}`);
 }
 
-function resumeCourse(enrollment: any) {
+function resumeCourse(enrollment: unknown) {
   ElMessage.info(`Resuming: ${enrollment.title}`);
 }
 
-function downloadCert(cert: any) {
+function downloadCert(cert: unknown) {
   ElMessage.success(`Downloading certificate: ${cert.name}`);
 }
 

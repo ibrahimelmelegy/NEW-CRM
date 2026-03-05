@@ -98,7 +98,7 @@ async function loadCategories() {
 async function loadClients() {
   const { body, success } = await useApiFetch('client?limit=200');
   if (success && body) {
-    clients.value = Array.isArray(body) ? body : (body as any)?.docs || [];
+    clients.value = Array.isArray(body) ? body : (body as unknown)?.docs || [];
   }
 }
 
@@ -109,7 +109,7 @@ async function handleSubmit() {
 
   submitting.value = true;
   try {
-    const payload: Record<string, any> = {
+    const payload: Record<string, unknown> = {
       subject: form.subject,
       description: form.description || undefined,
       priority: form.priority,
@@ -121,7 +121,7 @@ async function handleSubmit() {
     if (form.clientId) payload.clientId = form.clientId;
     if (form.slaDeadline) payload.slaDeadline = form.slaDeadline;
 
-    const { body, success }: any = await createTicket(payload);
+    const { body, success }: unknown = await createTicket(payload);
     if (success && body) {
       ElNotification({
         type: 'success',

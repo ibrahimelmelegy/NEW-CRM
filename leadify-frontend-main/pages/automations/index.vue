@@ -131,7 +131,7 @@ definePageMeta({
 const { t } = useI18n();
 const router = useRouter();
 
-const workflows = ref<any[]>([]);
+const workflows = ref<Record<string, unknown>[]>([]);
 const loading = ref(true);
 const fetchError = ref('');
 
@@ -139,14 +139,14 @@ const fetchWorkflows = async () => {
   loading.value = true;
   fetchError.value = '';
   try {
-    const res: any = await useApiFetch('workflows');
+    const res = await useApiFetch('workflows');
     if (res?.success) {
       workflows.value = res.body?.docs || res.body || [];
     } else {
       fetchError.value = res?.message || `API error (code ${res?.code || 'unknown'})`;
       console.error('[Automations] fetch failed:', res);
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     fetchError.value = err?.message || 'Network error';
     console.error('[Automations] unexpected error:', err);
   } finally {
@@ -164,9 +164,9 @@ const createNewJourney = async () => {
       customClass: 'dark-message-box'
     });
 
-    if (response && (response as any).value) {
-      const res: any = await useApiFetch('workflows/rules', 'POST', {
-        name: (response as any).value,
+    if (response && (response as unknown).value) {
+      const res = await useApiFetch('workflows/rules', 'POST', {
+        name: (response as unknown).value,
         entityType: 'lead', // default
         triggerType: 'ON_CREATE',
         conditionLogic: 'AND',
@@ -185,7 +185,7 @@ const createNewJourney = async () => {
   }
 };
 
-const handleCommand = async (command: string, workflow: any) => {
+const handleCommand = async (command: string, workflow: unknown) => {
   if (command === 'edit') {
     router.push(`/automations/${workflow.id}`);
   } else if (command === 'toggle') {

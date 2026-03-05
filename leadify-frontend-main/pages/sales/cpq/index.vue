@@ -257,7 +257,7 @@ const loadingBooks = ref(false);
 const savingBook = ref(false);
 const showBookDialog = ref(false);
 const editingBookId = ref<number | null>(null);
-const books = ref<any[]>([]);
+const books = ref<Record<string, unknown>[]>([]);
 const booksPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 const defaultBookForm = () => ({
@@ -275,7 +275,7 @@ const loadingEntries = ref(false);
 const savingEntry = ref(false);
 const showEntryDialog = ref(false);
 const editingEntryId = ref<number | null>(null);
-const entries = ref<any[]>([]);
+const entries = ref<Record<string, unknown>[]>([]);
 const entriesPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 const defaultEntryForm = () => ({
@@ -326,7 +326,7 @@ async function fetchBooks() {
   try {
     const { body, success } = await useApiFetch(`cpq/price-books?page=${booksPagination.page}&limit=${booksPagination.limit}`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       books.value = data.docs || data.rows || [];
       booksPagination.total = data.pagination?.totalItems ?? data.count ?? data.total ?? books.value.length;
     }
@@ -335,7 +335,7 @@ async function fetchBooks() {
   }
 }
 
-function openEditBookDialog(row: any) {
+function openEditBookDialog(row: unknown) {
   editingBookId.value = row.id;
   Object.assign(bookForm, {
     name: row.name || '',
@@ -388,7 +388,7 @@ async function fetchEntries() {
   try {
     const { body, success } = await useApiFetch(`cpq/entries?page=${entriesPagination.page}&limit=${entriesPagination.limit}`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       entries.value = data.docs || data.rows || [];
       entriesPagination.total = data.pagination?.totalItems ?? data.count ?? data.total ?? entries.value.length;
     }
@@ -397,7 +397,7 @@ async function fetchEntries() {
   }
 }
 
-function openEditEntryDialog(row: any) {
+function openEditEntryDialog(row: unknown) {
   editingEntryId.value = row.id;
   Object.assign(entryForm, {
     productName: row.productName || '',
@@ -451,8 +451,8 @@ const showQuoteDialog = ref(false);
 const showDiscountDialog = ref(false);
 const calculatingQuote = ref(false);
 const convertingToDeal = ref(false);
-const quoteResult = ref<any>(null);
-const discountRules = ref<any[]>([]);
+const quoteResult = ref<Record<string, unknown> | null>(null);
+const discountRules = ref<Record<string, unknown>[]>([]);
 
 const quoteForm = reactive({
   priceBookId: null as number | null,
@@ -466,7 +466,7 @@ function addQuoteLineItem() {
 
 function getLineItemPrice(item: { entryId: number | null; quantity: number }): string {
   if (!item.entryId) return '—';
-  const entry = entries.value.find((e: any) => e.id === item.entryId);
+  const entry = entries.value.find((e) => e.id === item.entryId);
   if (!entry) return '—';
   const total = Number(entry.unitPrice || 0) * item.quantity;
   return total.toLocaleString() + ' SAR';
@@ -527,12 +527,12 @@ async function fetchDiscountRules() {
     if (success && body) {
       discountRules.value = Array.isArray(body) ? body : body.docs || body.rows || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
 
-function editDiscountRule(rule: any) {
+function editDiscountRule(rule: unknown) {
   ElMessage.info(rule.name);
 }
 

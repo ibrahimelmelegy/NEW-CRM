@@ -99,7 +99,7 @@ export interface CustomerSubscription {
   cancelledAt?: string;
   cancelReason?: string;
   tenantId?: string;
-  client?: any;
+  client?: unknown;
   plan?: SubscriptionPlan;
   events?: SubscriptionEvent[];
   createdAt?: string;
@@ -110,7 +110,7 @@ export interface SubscriptionEvent {
   id?: string;
   subscriptionId: string;
   type: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   date: string;
   createdAt?: string;
 }
@@ -174,7 +174,7 @@ export async function fetchPlans(includeInactive: boolean = false): Promise<Subs
 
 export async function createPlan(data: Partial<SubscriptionPlan>): Promise<SubscriptionPlan | null> {
   try {
-    const response = await useApiFetch('subscriptions/plans', 'POST', data as any);
+    const response = await useApiFetch('subscriptions/plans', 'POST', data as unknown);
     if (response?.success) {
       handleSuccess('Plan created successfully');
       return response.body;
@@ -190,7 +190,7 @@ export async function createPlan(data: Partial<SubscriptionPlan>): Promise<Subsc
 
 export async function updatePlan(id: string, data: Partial<SubscriptionPlan>): Promise<SubscriptionPlan | null> {
   try {
-    const response = await useApiFetch(`subscriptions/plans/${id}`, 'PUT', data as any);
+    const response = await useApiFetch(`subscriptions/plans/${id}`, 'PUT', data as unknown);
     if (response?.success) {
       handleSuccess('Plan updated successfully');
       return response.body;
@@ -242,7 +242,7 @@ export async function fetchSubscriptionById(id: string): Promise<CustomerSubscri
   return null;
 }
 
-export async function createSubscription(data: any): Promise<CustomerSubscription | null> {
+export async function createSubscription(data: unknown): Promise<CustomerSubscription | null> {
   try {
     const response = await useApiFetch('subscriptions', 'POST', data);
     if (response?.success) {

@@ -112,7 +112,7 @@ async function confirmDelete() {
   try {
     const response = await deleteManpowerById(deleteId.value);
     if (response?.success) {
-      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+      table.data = table.data.filter((r) => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -205,7 +205,7 @@ const table = reactive({
 const response = await useTableFilter('manpower');
 table.data = response.formattedData;
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/operations/manpower/${val?.id}`);
 }
 
@@ -271,13 +271,13 @@ const mobileStatusFilters = computed(() => {
       value: 'AVAILABLE',
       label: useI18n().t('operations.manpower.status.available'),
       color: '#10b981',
-      count: data.filter((m: any) => m.availabilityStatus === 'AVAILABLE').length
+      count: data.filter((m) => m.availabilityStatus === 'AVAILABLE').length
     },
     {
       value: 'NOT_AVAILABLE',
       label: useI18n().t('operations.manpower.status.notAvailable'),
       color: '#ef4444',
-      count: data.filter((m: any) => m.availabilityStatus === 'NOT_AVAILABLE').length
+      count: data.filter((m) => m.availabilityStatus === 'NOT_AVAILABLE').length
     }
   ];
 });
@@ -285,11 +285,11 @@ const mobileStatusFilters = computed(() => {
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((m: any) => m.availabilityStatus === mobileStatusFilter.value);
+    data = data.filter((m) => m.availabilityStatus === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((m: any) => {
+  return data.filter((m) => {
     const name = (m.name || '').toLowerCase();
     const role = (m.role || '').toLowerCase();
     return name.includes(q) || role.includes(q);
@@ -307,7 +307,7 @@ async function handleMobileRefresh() {
   }
 }
 
-function getSwipeLeftActions(_mp: any) {
+function getSwipeLeftActions(_mp: unknown) {
   const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#10b981' }];
   if (hasPermission('EDIT_MANPOWER'))
     actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
@@ -316,7 +316,7 @@ function getSwipeLeftActions(_mp: any) {
   return actions;
 }
 
-function handleSwipeAction(name: string, mp: any) {
+function handleSwipeAction(name: string, mp: unknown) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/manpower/${mp.id}`);
   if (name === 'edit') navigateTo(`/operations/manpower/edit/${mp.id}`);

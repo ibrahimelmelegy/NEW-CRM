@@ -138,14 +138,14 @@ const exportColumns = [
 const exportData = computed(() => table.data);
 
 // Bulk actions
-const selectedRows = ref<any[]>([]);
+const selectedRows = ref<Record<string, unknown>[]>([]);
 async function confirmDelete() {
   if (!deleteId.value) return;
   deleting.value = true;
   try {
     const response = await deleteProjectById(deleteId.value);
     if (response?.success) {
-      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+      table.data = table.data.filter((r) => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -159,8 +159,8 @@ async function handleBulkDelete() {
     for (const row of selectedRows.value) {
       await deleteProjectById(row.id);
     }
-    const ids = selectedRows.value.map((r: any) => r.id);
-    table.data = table.data.filter((r: any) => !ids.includes(r.id));
+    const ids = selectedRows.value.map((r) => r.id);
+    table.data = table.data.filter((r) => !ids.includes(r.id));
   } finally {
     deleting.value = false;
     selectedRows.value = [];
@@ -267,23 +267,23 @@ table.data = response.formattedData;
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.data || [];
   const total = data.length;
-  const active = data.filter((p: any) => p.status === 'PROJECT_ACTIVE').length;
-  const completed = data.filter((p: any) => p.status === 'PROJECT_COMPLETE').length;
+  const active = data.filter((p) => p.status === 'PROJECT_ACTIVE').length;
+  const completed = data.filter((p) => p.status === 'PROJECT_COMPLETE').length;
 
   // Calculate real average duration from project data
-  const projectsWithDuration = data.filter((p: any) => p.duration && !isNaN(parseInt(p.duration)));
+  const projectsWithDuration = data.filter((p) => p.duration && !isNaN(parseInt(p.duration)));
   const avgDuration =
     projectsWithDuration.length > 0
-      ? Math.round(projectsWithDuration.reduce((sum: number, p: any) => sum + parseInt(p.duration || '0'), 0) / projectsWithDuration.length)
+      ? Math.round(projectsWithDuration.reduce((sum, p) => sum + parseInt(p.duration || '0'), 0) / projectsWithDuration.length)
       : 0;
 
   // Calculate on-time delivery rate
-  const completedProjects = data.filter((p: any) => p.status === 'PROJECT_COMPLETE');
+  const completedProjects = data.filter((p) => p.status === 'PROJECT_COMPLETE');
   const onTimeDelivery = completedProjects.length > 0 ? Math.round((completedProjects.length / total) * 100) : 0;
 
   // Calculate budget utilization (placeholder - needs actual cost data)
-  const projectsWithCost = data.filter((p: any) => p.totalCost && p.totalCost !== '--');
-  const totalBudget = projectsWithCost.reduce((sum: number, p: any) => {
+  const projectsWithCost = data.filter((p) => p.totalCost && p.totalCost !== '--');
+  const totalBudget = projectsWithCost.reduce((sum, p) => {
     const cost = typeof p.totalCost === 'string' ? parseFloat(p.totalCost.replace(/[^0-9.]/g, '')) : p.totalCost;
     return sum + (cost || 0);
   }, 0);
@@ -314,11 +314,11 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
 //   ...project,
 //   projectStartDate: getYear(project.startDate),
 //   projectEndDate: getYear(project.endDate),
-//   projectAssignedUsers: project.assignedUsers.length ? project.assignedUsers.map((user: any) => user.name).join(', ') : '-',
+//   projectAssignedUsers: project.assignedUsers.length ? project.assignedUsers.map((user) => user.name).join(', ') : '-',
 //   projectClient: project.client?.clientName || '-',
 // }));
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/operations/projects/${val.id}`);
 }
 
@@ -355,21 +355,21 @@ const advancedSearchFields = [
   { key: 'totalCost', label: t('operations.projects.table.totalCost'), type: 'number' }
 ];
 
-async function handleApplyView(view: any) {
+async function handleApplyView(view: unknown) {
   if (view?.filters) {
     const res = await useTableFilter('project', view.filters);
     table.data = res.formattedData;
   }
 }
 
-async function handleAdvancedFilter(filterPayload: any) {
+async function handleAdvancedFilter(filterPayload: unknown) {
   try {
     const res = await useApiFetch('search/advanced/project', 'POST', filterPayload);
     if (res?.success && res?.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       table.data = data.docs || data || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -390,19 +390,19 @@ const mobileStatusFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#8b5cf6', count: data.length },
-    { value: 'PROJECT_ACTIVE', label: 'Active', color: '#10b981', count: data.filter((p: any) => p.status === 'PROJECT_ACTIVE').length },
-    { value: 'PROJECT_COMPLETE', label: 'Complete', color: '#3b82f6', count: data.filter((p: any) => p.status === 'PROJECT_COMPLETE').length },
-    { value: 'PROJECT_ON_HOLD', label: 'On Hold', color: '#f59e0b', count: data.filter((p: any) => p.status === 'PROJECT_ON_HOLD').length },
-    { value: 'PROJECT_CANCELLED', label: 'Cancelled', color: '#ef4444', count: data.filter((p: any) => p.status === 'PROJECT_CANCELLED').length }
+    { value: 'PROJECT_ACTIVE', label: 'Active', color: '#10b981', count: data.filter((p) => p.status === 'PROJECT_ACTIVE').length },
+    { value: 'PROJECT_COMPLETE', label: 'Complete', color: '#3b82f6', count: data.filter((p) => p.status === 'PROJECT_COMPLETE').length },
+    { value: 'PROJECT_ON_HOLD', label: 'On Hold', color: '#f59e0b', count: data.filter((p) => p.status === 'PROJECT_ON_HOLD').length },
+    { value: 'PROJECT_CANCELLED', label: 'Cancelled', color: '#ef4444', count: data.filter((p) => p.status === 'PROJECT_CANCELLED').length }
   ];
 });
 
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
-  if (mobileProjStatus.value !== 'ALL') data = data.filter((p: any) => p.status === mobileProjStatus.value);
+  if (mobileProjStatus.value !== 'ALL') data = data.filter((p) => p.status === mobileProjStatus.value);
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((p: any) => (p.name || '').toLowerCase().includes(q) || (p.projectClient || '').toLowerCase().includes(q));
+  return data.filter((p) => (p.name || '').toLowerCase().includes(q) || (p.projectClient || '').toLowerCase().includes(q));
 });
 
 async function handleMobileRefresh() {
@@ -416,13 +416,13 @@ async function handleMobileRefresh() {
   }
 }
 
-function getProjLeftActions(_p: any) {
+function getProjLeftActions(_p: unknown) {
   const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#8b5cf6' }];
   if (hasPermission('EDIT_PROJECTS')) actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
   return actions;
 }
 
-function handleProjSwipe(name: string, proj: any) {
+function handleProjSwipe(name: string, proj: unknown) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/projects/${proj.id}`);
   if (name === 'edit') navigateTo(`/operations/projects/edit/${proj.id}`);

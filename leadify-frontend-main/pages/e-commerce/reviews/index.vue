@@ -194,7 +194,7 @@ definePageMeta({ middleware: 'permissions' });
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 
-const reviews = ref<any[]>([]);
+const reviews = ref<Record<string, unknown>[]>([]);
 const loading = ref(false);
 const actionLoading = ref<string | null>(null);
 const respondLoading = ref(false);
@@ -206,7 +206,7 @@ const pageSize = ref(20);
 const totalItems = ref(0);
 
 const showRespondDialog = ref(false);
-const respondTarget = ref<any>(null);
+const respondTarget = ref<Record<string, unknown> | null>(null);
 const respondText = ref('');
 
 // Computed stats
@@ -250,8 +250,8 @@ async function loadReviews() {
   loading.value = true;
   try {
     const res = await fetchReviews({ page: String(currentPage.value), limit: String(pageSize.value) });
-    reviews.value = (res as any)?.body?.docs || res?.docs || [];
-    totalItems.value = (res as any)?.body?.totalDocs || (res as any)?.totalDocs || reviews.value.length;
+    reviews.value = (res as unknown)?.body?.docs || res?.docs || [];
+    totalItems.value = (res as unknown)?.body?.totalDocs || (res as unknown)?.totalDocs || reviews.value.length;
   } finally {
     loading.value = false;
   }
@@ -306,7 +306,7 @@ async function handleReject(id: string) {
   }
 }
 
-function openRespondDialog(review: any) {
+function openRespondDialog(review: unknown) {
   respondTarget.value = review;
   respondText.value = review.merchantResponse || review.response || '';
   showRespondDialog.value = true;

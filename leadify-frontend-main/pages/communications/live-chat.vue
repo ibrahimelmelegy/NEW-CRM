@@ -293,19 +293,19 @@ const saving = ref(false);
 const sendingMessage = ref(false);
 const searchQuery = ref('');
 const filterStatus = ref('ALL');
-const conversations = ref<any[]>([]);
-const messages = ref<any[]>([]);
-const selectedConversation = ref<any>(null);
+const conversations = ref<Record<string, unknown>[]>([]);
+const messages = ref<Record<string, unknown>[]>([]);
+const selectedConversation = ref<Record<string, unknown> | null>(null);
 const newMessage = ref('');
 const createDialogVisible = ref(false);
 const messagesContainer = ref<HTMLElement | null>(null);
-const cannedResponses = ref<any[]>([]);
-const agents = ref<any[]>([]);
+const cannedResponses = ref<Record<string, unknown>[]>([]);
+const agents = ref<Record<string, unknown>[]>([]);
 const typingUser = ref<string | null>(null);
 let typingTimeout: ReturnType<typeof setTimeout> | null = null;
 let previousConversationId: number | null = null;
 
-const chatMetrics = ref<any>({
+const chatMetrics = ref<Record<string, unknown>>({
   activeConversations: null,
   waitingInQueue: null,
   avgResponseTime: null,
@@ -373,22 +373,22 @@ const statusFilters = computed(() => {
   const data = conversations.value;
   return [
     { value: 'ALL', label: t('common.all'), type: '', count: data.length },
-    { value: 'OPEN', label: 'Open', type: 'warning', count: data.filter((c: any) => c.status === 'OPEN').length },
-    { value: 'ACTIVE', label: 'Active', type: 'success', count: data.filter((c: any) => c.status === 'ACTIVE').length },
-    { value: 'WAITING', label: 'Waiting', type: 'info', count: data.filter((c: any) => c.status === 'WAITING').length },
-    { value: 'RESOLVED', label: 'Resolved', type: '', count: data.filter((c: any) => c.status === 'RESOLVED').length },
-    { value: 'CLOSED', label: 'Closed', type: 'info', count: data.filter((c: any) => c.status === 'CLOSED').length }
+    { value: 'OPEN', label: 'Open', type: 'warning', count: data.filter((c) => c.status === 'OPEN').length },
+    { value: 'ACTIVE', label: 'Active', type: 'success', count: data.filter((c) => c.status === 'ACTIVE').length },
+    { value: 'WAITING', label: 'Waiting', type: 'info', count: data.filter((c) => c.status === 'WAITING').length },
+    { value: 'RESOLVED', label: 'Resolved', type: '', count: data.filter((c) => c.status === 'RESOLVED').length },
+    { value: 'CLOSED', label: 'Closed', type: 'info', count: data.filter((c) => c.status === 'CLOSED').length }
   ];
 });
 
 const filteredConversations = computed(() => {
   let data = conversations.value;
   if (filterStatus.value !== 'ALL') {
-    data = data.filter((c: any) => c.status === filterStatus.value);
+    data = data.filter((c) => c.status === filterStatus.value);
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    data = data.filter((c: any) => {
+    data = data.filter((c) => {
       const name = (c.visitorName || '').toLowerCase();
       const email = (c.visitorEmail || '').toLowerCase();
       const subject = (c.subject || '').toLowerCase();
@@ -422,7 +422,7 @@ async function loadConversations() {
     if (res?.success) {
       conversations.value = res.body?.docs || res.body || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingConversations.value = false;
@@ -438,7 +438,7 @@ async function loadMessages(conversationId: number) {
       await nextTick();
       scrollToBottom();
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingMessages.value = false;
@@ -449,12 +449,12 @@ async function loadAgents() {
   try {
     const res = await useApiFetch('users?limit=100');
     if (res?.success) {
-      agents.value = (res.body?.docs || res.body || []).map((u: any) => ({
+      agents.value = (res.body?.docs || res.body || []).map((u) => ({
         id: u.id,
         name: u.name || u.email
       }));
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -465,7 +465,7 @@ async function loadCannedResponses() {
     if (res?.success) {
       cannedResponses.value = Array.isArray(res.body) ? res.body : [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -476,14 +476,14 @@ async function loadMetrics() {
     if (res?.success && res.body) {
       chatMetrics.value = res.body;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
 
 // ───────── Conversation Selection with Socket Room Management ──────────────
 
-function selectConversation(conv: any) {
+function selectConversation(conv: unknown) {
   // Leave previous conversation room
   if (previousConversationId && socket.value) {
     socket.value.emit('chat:leave', {
@@ -522,9 +522,9 @@ async function markAsRead(conversationId: number) {
   try {
     await useApiFetch(`live-chat/conversations/${conversationId}/read`, 'PUT');
     // Update local unread count
-    const conv = conversations.value.find((c: any) => c.id === conversationId);
+    const conv = conversations.value.find((c) => c.id === conversationId);
     if (conv) conv.unreadCount = 0;
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -558,7 +558,7 @@ async function sendMessage() {
       // but in case it is slow, also load from API
       await loadMessages(selectedConversation.value.id);
       // Update conversation list item
-      const conv = conversations.value.find((c: any) => c.id === selectedConversation.value.id);
+      const conv = conversations.value.find((c) => c.id === selectedConversation.value.id);
       if (conv) {
         conv.lastMessage = payload.content;
         conv.updatedAt = new Date().toISOString();
@@ -613,7 +613,7 @@ async function handleAssignAgent(command: string | number) {
     });
     await loadConversations();
     // Refresh selected conversation data
-    const updated = conversations.value.find((c: any) => c.id === convId);
+    const updated = conversations.value.find((c) => c.id === convId);
     if (updated) selectedConversation.value = updated;
   } catch {
     ElNotification({
@@ -748,10 +748,10 @@ function setupSocketListeners() {
   if (!socket.value) return;
 
   // New message received in the current conversation room
-  socket.value.on('chat:message', (data: any) => {
+  socket.value.on('chat:message', (data: unknown) => {
     if (selectedConversation.value && data.conversationId === selectedConversation.value.id) {
       // Avoid duplicate messages (already added by API response)
-      const exists = messages.value.some((m: any) => m.id === data.id);
+      const exists = messages.value.some((m) => m.id === data.id);
       if (!exists) {
         messages.value.push(data);
         nextTick(() => scrollToBottom());
@@ -762,8 +762,8 @@ function setupSocketListeners() {
   });
 
   // Global message sent event - update conversation list
-  socket.value.on('chat:message_sent', (data: any) => {
-    const conv = conversations.value.find((c: any) => c.id === data.conversationId);
+  socket.value.on('chat:message_sent', (data: unknown) => {
+    const conv = conversations.value.find((c) => c.id === data.conversationId);
     if (conv) {
       conv.lastMessage = data.content || conv.lastMessage;
       conv.updatedAt = new Date().toISOString();
@@ -774,7 +774,7 @@ function setupSocketListeners() {
   });
 
   // Typing indicator
-  socket.value.on('chat:typing', (data: any) => {
+  socket.value.on('chat:typing', (data: unknown) => {
     if (selectedConversation.value && data.conversationId === selectedConversation.value.id) {
       if (data.isTyping && data.userId !== user.value?.id) {
         typingUser.value = data.name || 'Someone';
@@ -790,8 +790,8 @@ function setupSocketListeners() {
   });
 
   // Conversation status updates
-  socket.value.on('chat:conversation_updated', (data: any) => {
-    const conv = conversations.value.find((c: any) => c.id === data.conversationId);
+  socket.value.on('chat:conversation_updated', (data: unknown) => {
+    const conv = conversations.value.find((c) => c.id === data.conversationId);
     if (conv) {
       if (data.status) conv.status = data.status;
       if (data.staffId) conv.staffId = data.staffId;
@@ -808,8 +808,8 @@ function setupSocketListeners() {
   });
 
   // Conversation deleted
-  socket.value.on('chat:conversation_deleted', (data: any) => {
-    conversations.value = conversations.value.filter((c: any) => c.id !== data.conversationId);
+  socket.value.on('chat:conversation_deleted', (data: unknown) => {
+    conversations.value = conversations.value.filter((c) => c.id !== data.conversationId);
     if (selectedConversation.value?.id === data.conversationId) {
       selectedConversation.value = null;
       messages.value = [];
@@ -818,10 +818,10 @@ function setupSocketListeners() {
   });
 
   // Messages read
-  socket.value.on('chat:messages_read', (data: any) => {
+  socket.value.on('chat:messages_read', (data: unknown) => {
     if (selectedConversation.value && data.conversationId === selectedConversation.value.id) {
       // Mark all messages as read in the UI
-      messages.value.forEach((m: any) => {
+      messages.value.forEach((m) => {
         if (!m.isRead && m.senderId !== String(data.readerId)) {
           m.isRead = true;
           m.readAt = data.readAt;
@@ -831,8 +831,8 @@ function setupSocketListeners() {
   });
 
   // Agent assigned
-  socket.value.on('chat:assigned', (data: any) => {
-    const conv = conversations.value.find((c: any) => c.id === data.conversationId);
+  socket.value.on('chat:assigned', (data: unknown) => {
+    const conv = conversations.value.find((c) => c.id === data.conversationId);
     if (conv) {
       conv.staffId = data.agentId;
       if (data.status) conv.status = data.status;

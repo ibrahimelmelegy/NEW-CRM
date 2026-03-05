@@ -210,14 +210,14 @@ const submissionsDialogVisible = ref(false);
 const analyticsDialogVisible = ref(false);
 const loadingSubmissions = ref(false);
 const loadingAnalytics = ref(false);
-const editingItem = ref<any>(null);
-const selectedForm = ref<any>(null);
-const analyticsForm = ref<any>(null);
-const formAnalytics = ref<any>(null);
+const editingItem = ref<Record<string, unknown> | null>(null);
+const selectedForm = ref<Record<string, unknown> | null>(null);
+const analyticsForm = ref<Record<string, unknown> | null>(null);
+const formAnalytics = ref<Record<string, unknown> | null>(null);
 const search = ref('');
-const items = ref<any[]>([]);
+const items = ref<Record<string, unknown>[]>([]);
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
-const submissions = ref<any[]>([]);
+const submissions = ref<Record<string, unknown>[]>([]);
 
 const defaultForm = () => ({
   name: '',
@@ -229,14 +229,14 @@ const defaultForm = () => ({
 });
 
 const form = ref(defaultForm());
-const formFieldsPreview = ref<any[]>([]);
+const formFieldsPreview = ref<Record<string, unknown>[]>([]);
 
 // Stats
 const summaryStats = computed(() => {
   const data = items.value;
   const total = data.length;
-  const active = data.filter((i: any) => i.status === 'ACTIVE').length;
-  const totalSubs = data.reduce((sum: number, i: any) => sum + (i.submissionCount || 0), 0);
+  const active = data.filter((i) => i.status === 'ACTIVE').length;
+  const totalSubs = data.reduce((sum, i) => sum + (i.submissionCount || 0), 0);
   return [
     { label: t('marketing.formBuilder.totalForms'), value: total, icon: 'ph:note-pencil-bold', color: '#7849ff' },
     { label: t('marketing.formBuilder.activeForms'), value: active, icon: 'ph:check-circle-bold', color: '#22c55e' },
@@ -247,7 +247,7 @@ const summaryStats = computed(() => {
 const filteredData = computed(() => {
   if (!search.value) return items.value;
   const q = search.value.toLowerCase();
-  return items.value.filter((i: any) => (i.name || '').toLowerCase().includes(q) || (i.description || '').toLowerCase().includes(q));
+  return items.value.filter((i) => (i.name || '').toLowerCase().includes(q) || (i.description || '').toLowerCase().includes(q));
 });
 
 function formatDate(d: string): string {
@@ -265,9 +265,9 @@ async function fetchData() {
   try {
     const res = await useApiFetch(`form-builder/templates?page=${pagination.page}&limit=${pagination.limit}`);
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       const rawItems = data.rows || data.docs || (Array.isArray(data) ? data : []);
-      items.value = rawItems.map((item: any) => ({
+      items.value = rawItems.map((item) => ({
         ...item,
         fieldsCount: item.fieldsCount ?? (Array.isArray(item.fields) ? item.fields.length : 0)
       }));
@@ -286,7 +286,7 @@ function openCreateDialog() {
   dialogVisible.value = true;
 }
 
-function openEditDialog(item: any) {
+function openEditDialog(item: unknown) {
   editingItem.value = item;
   formFieldsPreview.value = item.fields && Array.isArray(item.fields) ? item.fields : [];
   form.value = {
@@ -295,7 +295,7 @@ function openEditDialog(item: any) {
     status: item.status || 'DRAFT',
     thankYouMessage: item.thankYouMessage || '',
     createLead: item.createLead || false,
-    fields: formFieldsPreview.value as any
+    fields: formFieldsPreview.value as unknown
   };
   dialogVisible.value = true;
 }
@@ -337,7 +337,7 @@ async function handleSave() {
   }
 }
 
-async function handleDelete(item: any) {
+async function handleDelete(item: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), {
       type: 'warning',
@@ -356,14 +356,14 @@ async function handleDelete(item: any) {
   }
 }
 
-async function openSubmissionsDialog(formItem: any) {
+async function openSubmissionsDialog(formItem: unknown) {
   selectedForm.value = formItem;
   submissionsDialogVisible.value = true;
   loadingSubmissions.value = true;
   try {
     const res = await useApiFetch(`form-builder/submissions?formId=${formItem.id}`);
     if (res.success && res.body) {
-      submissions.value = Array.isArray(res.body) ? res.body : (res.body as any).docs || [];
+      submissions.value = Array.isArray(res.body) ? res.body : (res.body as unknown).docs || [];
     } else {
       submissions.value = [];
     }
@@ -376,7 +376,7 @@ async function openSubmissionsDialog(formItem: any) {
 }
 
 // Analytics
-async function openAnalyticsDialog(formItem: any) {
+async function openAnalyticsDialog(formItem: unknown) {
   analyticsForm.value = formItem;
   formAnalytics.value = null;
   analyticsDialogVisible.value = true;
@@ -395,7 +395,7 @@ async function openAnalyticsDialog(formItem: any) {
 
 const maxDailyCount = computed(() => {
   if (!formAnalytics.value?.dailyTrend?.length) return 0;
-  return Math.max(...formAnalytics.value.dailyTrend.map((d: any) => d.count || 0));
+  return Math.max(...formAnalytics.value.dailyTrend.map((d) => d.count || 0));
 });
 
 function formatShortDate(d: string): string {

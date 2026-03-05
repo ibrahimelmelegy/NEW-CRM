@@ -41,7 +41,7 @@ export async function fetchContract(id: string): Promise<Contract | null> {
 }
 
 export async function createContract(data: Partial<Contract>) {
-  const response = await useApiFetch('contracts', 'POST', data as any);
+  const response = await useApiFetch('contracts', 'POST', data as unknown);
   if (response.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Contract created' });
   } else {
@@ -51,7 +51,7 @@ export async function createContract(data: Partial<Contract>) {
 }
 
 export async function updateContract(id: string, data: Partial<Contract>) {
-  const response = await useApiFetch(`contracts/${id}`, 'PUT', data as any);
+  const response = await useApiFetch(`contracts/${id}`, 'PUT', data as unknown);
   if (response.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Contract updated' });
   } else {

@@ -27,7 +27,7 @@ export interface ConfiguredIntegration {
   type: string;
   name: string;
   description?: string;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
   status: 'ACTIVE' | 'INACTIVE' | 'ERROR';
   lastSyncedAt?: string;
   lastError?: string;
@@ -58,7 +58,7 @@ export interface MergedIntegration {
   status: 'connected' | 'disconnected' | 'error';
   isConfigured: boolean;
   configId?: string;
-  existingConfig?: Record<string, any>;
+  existingConfig?: Record<string, unknown>;
 }
 
 // ─── Existing / Legacy provider integrations ─────────────────────────────────
@@ -203,7 +203,7 @@ export function useIntegrations() {
   }
 
   // ── Configure integration ──────────────────────────────────────────────
-  async function configure(type: string, config: Record<string, any>): Promise<boolean> {
+  async function configure(type: string, config: Record<string, unknown>): Promise<boolean> {
     try {
       const response = await useApiFetch('integrations/hub/configure', 'POST', { type, config });
       if (response.success) {
@@ -214,25 +214,25 @@ export function useIntegrations() {
         ElNotification.error({ title: 'Configuration Failed', message: response.message });
         return false;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       ElNotification.error({ title: 'Error', message: e.message || 'Failed to configure integration' });
       return false;
     }
   }
 
   // ── Test connection ────────────────────────────────────────────────────
-  async function testConnection(type: string, config: Record<string, any>): Promise<boolean> {
+  async function testConnection(type: string, config: Record<string, unknown>): Promise<boolean> {
     try {
       const response = await useApiFetch(`integrations/hub/${type}/test`, 'POST', config);
       if (response.success) {
-        const msg = (response.body as any)?.message || 'Connection successful';
+        const msg = (response.body as unknown)?.message || 'Connection successful';
         ElNotification.success({ title: 'Test Passed', message: msg });
         return true;
       } else {
         ElNotification.warning({ title: 'Test Failed', message: response.message });
         return false;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       ElNotification.error({ title: 'Test Error', message: e.message || 'Connection test failed' });
       return false;
     }
@@ -250,7 +250,7 @@ export function useIntegrations() {
         ElNotification.error({ title: 'Error', message: response.message });
         return false;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       ElNotification.error({ title: 'Error', message: e.message || 'Failed to remove integration' });
       return false;
     }
@@ -274,7 +274,7 @@ export function useIntegrations() {
     }
   }
 
-  async function createWebhook(data: any): Promise<boolean> {
+  async function createWebhook(data: unknown): Promise<boolean> {
     try {
       const response = await useApiFetch('integrations/hub/webhooks', 'POST', data);
       if (response.success) {
@@ -285,13 +285,13 @@ export function useIntegrations() {
         ElNotification.error({ title: 'Error', message: response.message });
         return false;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       ElNotification.error({ title: 'Error', message: e.message || 'Failed to create webhook' });
       return false;
     }
   }
 
-  async function updateWebhook(id: string, data: any): Promise<boolean> {
+  async function updateWebhook(id: string, data: unknown): Promise<boolean> {
     try {
       const response = await useApiFetch(`integrations/hub/webhooks/${id}`, 'PUT', data);
       if (response.success) {
@@ -302,7 +302,7 @@ export function useIntegrations() {
         ElNotification.error({ title: 'Error', message: response.message });
         return false;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       ElNotification.error({ title: 'Error', message: e.message || 'Failed to update webhook' });
       return false;
     }
@@ -319,7 +319,7 @@ export function useIntegrations() {
         ElNotification.error({ title: 'Error', message: response.message });
         return false;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       ElNotification.error({ title: 'Error', message: e.message || 'Failed to delete webhook' });
       return false;
     }
@@ -329,13 +329,13 @@ export function useIntegrations() {
     try {
       const response = await useApiFetch(`integrations/hub/webhooks/${id}/test`, 'POST');
       if (response.success) {
-        ElNotification.success({ title: 'Test Sent', message: (response.body as any)?.message || 'Webhook test successful' });
+        ElNotification.success({ title: 'Test Sent', message: (response.body as unknown)?.message || 'Webhook test successful' });
         return true;
       } else {
         ElNotification.warning({ title: 'Test Failed', message: response.message });
         return false;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       ElNotification.error({ title: 'Test Error', message: e.message || 'Webhook test failed' });
       return false;
     }

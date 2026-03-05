@@ -103,10 +103,10 @@ export interface SalesOrder {
   notes?: string;
   items?: SalesOrderItem[];
   fulfillments?: Fulfillment[];
-  client?: any;
+  client?: unknown;
   createdAt?: string;
   updatedAt?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface Pagination {
@@ -148,7 +148,7 @@ export async function getSalesOrderById(id: string): Promise<SalesOrder> {
 /**
  * Create a new sales order
  */
-export async function createSalesOrder(data: any): Promise<SalesOrder | null> {
+export async function createSalesOrder(data: unknown): Promise<SalesOrder | null> {
   try {
     const response = await useApiFetch('sales-orders', 'POST', data);
 
@@ -168,7 +168,7 @@ export async function createSalesOrder(data: any): Promise<SalesOrder | null> {
 /**
  * Update an existing sales order
  */
-export async function updateSalesOrder(id: string, data: any): Promise<SalesOrder | null> {
+export async function updateSalesOrder(id: string, data: unknown): Promise<SalesOrder | null> {
   try {
     const response = await useApiFetch(`sales-orders/${id}`, 'PUT', data);
 
@@ -248,7 +248,7 @@ export async function convertDealToOrder(dealId: string): Promise<SalesOrder | n
 /**
  * Add fulfillment to a sales order
  */
-export async function addFulfillment(orderId: string, data: any): Promise<Fulfillment | null> {
+export async function addFulfillment(orderId: string, data: unknown): Promise<Fulfillment | null> {
   try {
     const response = await useApiFetch(`sales-orders/${orderId}/fulfillment`, 'POST', data);
 
@@ -268,7 +268,7 @@ export async function addFulfillment(orderId: string, data: any): Promise<Fulfil
 /**
  * Update a fulfillment record
  */
-export async function updateFulfillment(orderId: string, fid: string, data: any): Promise<Fulfillment | null> {
+export async function updateFulfillment(orderId: string, fid: string, data: unknown): Promise<Fulfillment | null> {
   try {
     const response = await useApiFetch(`sales-orders/${orderId}/fulfillment/${fid}`, 'PATCH', data);
 

@@ -117,7 +117,7 @@ const displayedReminders = computed(() => {
   return upcoming.value;
 });
 
-function toggleComplete(rem: any) {
+function toggleComplete(rem: unknown) {
   if (!rem.completed) completeReminder(rem.id);
 }
 
@@ -126,8 +126,8 @@ function createReminder() {
   addReminder({
     title: form.title,
     description: form.description,
-    type: form.type as any,
-    priority: form.priority as any,
+    type: form.type as unknown,
+    priority: form.priority as unknown,
     dueDate: new Date(form.dueDate).toISOString()
   });
   Object.assign(form, { title: '', description: '', type: 'follow_up', priority: 'medium', dueDate: '' });
@@ -135,7 +135,7 @@ function createReminder() {
   ElMessage.success(t('reminders.reminderCreated'));
 }
 
-function isOverdue(rem: any): boolean {
+function isOverdue(rem: unknown): boolean {
   return !rem.completed && rem.dueDate < new Date().toISOString();
 }
 

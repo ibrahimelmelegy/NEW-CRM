@@ -302,23 +302,23 @@ const { t } = useI18n();
 const loading = ref(true);
 const loadingRecent = ref(false);
 const metrics = ref<TicketMetrics | null>(null);
-const recentTickets = ref<any[]>([]);
+const recentTickets = ref<Record<string, unknown>[]>([]);
 const agentWorkload = ref<AgentWorkload[]>([]);
 const showFilters = ref(false);
 const drawerVisible = ref(false);
-const selectedTicket = ref<any>(null);
+const selectedTicket = ref<Record<string, unknown> | null>(null);
 const assigning = ref(false);
 
 // Bulk Selection
-const selectedRows = ref<any[]>([]);
-const handleSelectionChange = (rows: any[]) => {
+const selectedRows = ref<Record<string, unknown>[]>([]);
+const handleSelectionChange = (rows: Record<string, unknown>[]) => {
   selectedRows.value = rows;
 };
 
 const filters = ref({
   status: [] as string[],
   priority: [] as string[],
-  dateRange: null as any,
+  dateRange: null as unknown,
   slaStatus: ''
 });
 
@@ -439,7 +439,7 @@ const breachedLabel = computed(() => t('support.breached'));
 async function loadDashboard() {
   loading.value = true;
   try {
-    const { body, success }: any = await fetchSupportDashboard();
+    const { body, success }: unknown = await fetchSupportDashboard();
     if (success && body) {
       metrics.value = body;
     }
@@ -451,7 +451,7 @@ async function loadDashboard() {
 async function loadRecentTickets() {
   loadingRecent.value = true;
   try {
-    const query: any = { page: 1, limit: 10 };
+    const query: unknown = { page: 1, limit: 10 };
 
     if (filters.value.status.length > 0) {
       query.status = filters.value.status.join(',');
@@ -467,7 +467,7 @@ async function loadRecentTickets() {
       query.slaStatus = filters.value.slaStatus;
     }
 
-    const { body, success }: any = await fetchTickets(query);
+    const { body, success }: unknown = await fetchTickets(query);
     if (success && body) {
       recentTickets.value = body.docs || [];
     }
@@ -478,7 +478,7 @@ async function loadRecentTickets() {
 
 async function loadAgentWorkload() {
   try {
-    const { body, success }: any = await fetchAgentWorkload();
+    const { body, success }: unknown = await fetchAgentWorkload();
     if (success && body) {
       agentWorkload.value = body || [];
     }
@@ -487,7 +487,7 @@ async function loadAgentWorkload() {
   }
 }
 
-async function handleRowClick(row: any) {
+async function handleRowClick(row: unknown) {
   try {
     const { body, success } = await fetchTicketById(row.id);
     if (success && body) {
@@ -566,7 +566,7 @@ function formatDate(dateStr: string) {
   });
 }
 
-function getSLAStatus(ticket: any): string {
+function getSLAStatus(ticket: unknown): string {
   if (!ticket.slaDeadline) return '-';
   const now = new Date().getTime();
   const deadline = new Date(ticket.slaDeadline).getTime();
@@ -578,7 +578,7 @@ function getSLAStatus(ticket: any): string {
   return `${hours}h ${t('support.hoursRemaining')}`;
 }
 
-function getSLAStyle(ticket: any) {
+function getSLAStyle(ticket: unknown) {
   if (!ticket.slaDeadline) return {};
   const now = new Date().getTime();
   const deadline = new Date(ticket.slaDeadline).getTime();
@@ -590,7 +590,7 @@ function getSLAStyle(ticket: any) {
   return { color: '#22c55e' };
 }
 
-function getSLATagType(ticket: any): string {
+function getSLATagType(ticket: unknown): string {
   if (!ticket.slaDeadline) return 'info';
   const now = new Date().getTime();
   const deadline = new Date(ticket.slaDeadline).getTime();
@@ -646,7 +646,7 @@ function exportTicketsCSV() {
   ];
   const csv = [
     headers.join(','),
-    ...data.map((row: any) =>
+    ...data.map((row) =>
       [
         `"${row.ticketNumber || ''}"`,
         `"${(row.subject || '').replace(/"/g, '""')}"`,

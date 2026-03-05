@@ -104,7 +104,7 @@ interface Client {
   users: number[];
   clientStatus: 'Active' | 'Inactive';
   fileUpload: string[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface UseClientsResult {
@@ -123,13 +123,13 @@ export async function getClients(): Promise<UseClientsResult> {
 
     if (success) {
       // Return the docs (leads) from the response
-      const clients = body?.docs?.map((client: any) => ({
+      const clients = body?.docs?.map((client) => ({
         ...client,
         ClientDetails: { title: client?.clientName, text: client?.companyName },
         createdAt: formatDate(client.createdAt),
         // updatedAt: formatDate(lead.updatedAt),
         updatedAt: '-',
-        assign: client.users?.map((el: any) => el.name).join(', ')
+        assign: client.users?.map((el) => el.name).join(', ')
       }));
       const pagination = body?.pagination;
       return { clients, pagination };
@@ -183,7 +183,7 @@ export async function getClientActivity(id: string | string[]): Promise<Lead> {
  * @returns {Promise<void>} A promise that resolves when the client is successfully created.
  * @throws {Error} If the API call is unsuccessful, an error is handled and logged.
  */
-export async function createClient(values: any) {
+export async function createClient(values: unknown) {
   try {
     // Normalize the phone number before sending
     const normalizedPhone = normalizePhoneNumber(values.phone);
@@ -218,7 +218,7 @@ export async function createClient(values: any) {
  * @returns A response object with success status.
  * @throws {Error} If the API call is unsuccessful, an error is handled and logged.
  */
-export async function updateClient(values: any) {
+export async function updateClient(values: unknown) {
   try {
     // Normalize the phone number before sending
     const normalizedPhone = normalizePhoneNumber(values.phone);

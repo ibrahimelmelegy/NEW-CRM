@@ -28,8 +28,8 @@ async function submitForm(values: FormattedValues) {
     if (response?.success) {
       navigateTo('/sales/clients');
     }
-  } catch (error: any) {
-    (useNuxtApp() as any).$notify?.error?.({ message: error?.message || t('clients.errors.createFailed') });
+  } catch (error: unknown) {
+    (useNuxtApp() as unknown).$notify?.error?.({ message: error?.message || t('clients.errors.createFailed') });
   } finally {
     loading.value = false;
   }

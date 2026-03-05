@@ -29,9 +29,9 @@
 const limit = ref(10);
 const isLoading = ref(false);
 const currentPage = ref<number>(1);
-const pagintaion = ref<any>({});
-const filters = ref<any>({});
-const finalData = ref<any>([]);
+const pagintaion = ref<Record<string, unknown>>({});
+const filters = ref<Record<string, unknown>>({});
+const finalData = ref<Record<string, unknown>>([]);
 const unreadNotificationsCount = ref(0);
 
 const response = await useTableFilter('notification');
@@ -49,7 +49,7 @@ async function getData() {
   unreadNotificationsCount.value = data?.unreadNotificationsCount;
 }
 
-let intervalId: any;
+let intervalId: unknown;
 
 const startPolling = () => {
   if (intervalId) return;
@@ -91,7 +91,7 @@ const readNotifications = async () => {
   }
 };
 
-const readNotification = async (data: any) => {
+const readNotification = async (data: unknown) => {
   try {
     let typeAssign = data.type.split('_')[0]?.split(' ')?.[0].toLowerCase();
     if (typeAssign !== 'opportunity') {
@@ -105,7 +105,7 @@ const readNotification = async (data: any) => {
   }
 };
 
-const handleSizeChange = (val: any) => {
+const handleSizeChange = (val: unknown) => {
   filters.value.limit = val;
   getData();
 };

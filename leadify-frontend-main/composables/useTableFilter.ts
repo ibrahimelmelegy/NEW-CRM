@@ -8,7 +8,7 @@ export default async function useTableFilter(position: string = 'lead', queryPar
   const router = useRouter();
 
   // Function to filter out null/undefined or empty values
-  const filterValidParams = (params: Record<string, any>) => {
+  const filterValidParams = (params: Record<string, unknown>) => {
     return Object.entries(params).reduce(
       (acc, [key, value]) => {
         if (
@@ -20,7 +20,7 @@ export default async function useTableFilter(position: string = 'lead', queryPar
         }
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, unknown>
     );
   };
 
@@ -38,7 +38,7 @@ export default async function useTableFilter(position: string = 'lead', queryPar
   };
 
   // Merge and normalize query parameters
-  const normalizeQueryParams = (params: Record<string, any>) => {
+  const normalizeQueryParams = (params: Record<string, unknown>) => {
     return Object.entries(params).reduce(
       (acc, [key, value]) => {
         if (typeof value === 'string' && value.includes(',')) {
@@ -69,7 +69,7 @@ export default async function useTableFilter(position: string = 'lead', queryPar
   try {
     // Fetch data based on the query parameters
     const { body: _body, success, message } = await useApiFetch(`${position}${queryString}`);
-    const body = _body as any;
+    const body = _body as unknown;
 
     // Update the URL to reflect the current query parameters
     router.replace({
@@ -85,12 +85,12 @@ export default async function useTableFilter(position: string = 'lead', queryPar
     // Handle API response
     if (success) {
       // Format the data for the table, including dates and user assignment
-      const formattedData = body?.docs?.map((data: any) => ({
+      const formattedData = body?.docs?.map((data) => ({
         ...data,
         createdAt: formatDate(data.createdAt),
         date: getYear(data?.createdAt),
         updatedAt: formatDate(data.updatedAt),
-        assign: data.users?.length ? data.users?.map((user: any) => user.name).join(', ') : 'Unassigned',
+        assign: data.users?.length ? data.users?.map((user) => user.name).join(', ') : 'Unassigned',
         ...(data?.proposalDate && { proposalDate: formatDate(data?.proposalDate) }),
         ...(data?.type && { type: formatSnakeCase(data?.type) }),
         // ...(data?.status && { status: formatSnakeCase(data?.status) }),
@@ -138,7 +138,7 @@ export default async function useTableFilter(position: string = 'lead', queryPar
         clientType: formatSnakeCase(data.clientType) || '-',
         startDate: getYear(data?.startDate),
         endDate: getYear(data?.endDate),
-        projectAssignedUsers: data?.assignedUsers?.length ? data.assignedUsers.map((user: any) => user.name).join(', ') : '-',
+        projectAssignedUsers: data?.assignedUsers?.length ? data.assignedUsers.map((user) => user.name).join(', ') : '-',
         projectClient: data?.client?.clientName || '-',
         description: data?.description || '-',
         relatedEntity: data?.relatedEntity?.name || '-',

@@ -220,7 +220,7 @@ async function handleSave() {
   try {
     const payload = { ...form };
     if (isEditing.value) {
-      const res = await updateProduct(editingId.value, payload as any);
+      const res = await updateProduct(editingId.value, payload as unknown);
       if (res?.success) {
         const idx = products.value.findIndex(p => p.id === editingId.value);
         if (idx >= 0) Object.assign(products.value[idx]!, payload);
@@ -249,7 +249,7 @@ async function handleDelete(product: CatalogProduct) {
     await deleteProduct(product.id);
     products.value = products.value.filter(p => p.id !== product.id);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deletedSuccessfully') });
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }

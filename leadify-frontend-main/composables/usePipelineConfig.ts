@@ -17,7 +17,7 @@ export async function fetchPipelineStages(entityType?: string): Promise<Pipeline
   const qs = entityType ? `?entityType=${entityType}` : '';
   const { body, success } = await useApiFetch(`pipeline-config${qs}`);
   if (success && body) {
-    const data = body as any;
+    const data = body as unknown;
     const stages: PipelineStage[] = data.docs || data || [];
     return stages.sort((a, b) => a.order - b.order);
   }
@@ -25,11 +25,11 @@ export async function fetchPipelineStages(entityType?: string): Promise<Pipeline
 }
 
 export async function createPipelineStage(data: Partial<PipelineStage>) {
-  return useApiFetch('pipeline-config', 'POST', data as Record<string, any>);
+  return useApiFetch('pipeline-config', 'POST', data as Record<string, unknown>);
 }
 
 export async function updatePipelineStage(id: string, data: Partial<PipelineStage>) {
-  return useApiFetch(`pipeline-config/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`pipeline-config/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 export async function deletePipelineStage(id: string) {

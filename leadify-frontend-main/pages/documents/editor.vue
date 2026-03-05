@@ -531,7 +531,7 @@ const form = ref({
 
 // --- Computed ---
 const currentTypeConfig = computed<DocTypeConfig>(() => {
-  return documentTypes.find(dt => dt.type === selectedType.value) || (documentTypes[0] as any);
+  return documentTypes.find(dt => dt.type === selectedType.value) || (documentTypes[0] as unknown);
 });
 
 const computedTotals = computed(() => {
@@ -643,8 +643,8 @@ async function loadTemplates(type: string) {
   try {
     const { body, success } = await useApiFetch(`document-templates?type=${type.toUpperCase()}&limit=50`);
     if (success && body) {
-      const data = body as any;
-      templates.value = (data.docs || data || []).map((t: any) => ({
+      const data = body as unknown;
+      templates.value = (data.docs || data || []).map((t) => ({
         id: t.id,
         name: t.name,
         type: t.type,
@@ -703,8 +703,8 @@ async function onDealChange() {
     try {
       const { body, success } = await useApiFetch(`sales-orders?dealId=${form.value.dealId}&limit=100`);
       if (success && body) {
-        const data = body as any;
-        salesOrders.value = (data.docs || data || []).map((o: any) => ({ id: o.id, orderNumber: o.orderNumber }));
+        const data = body as unknown;
+        salesOrders.value = (data.docs || data || []).map((o) => ({ id: o.id, orderNumber: o.orderNumber }));
       }
     } catch {
       /* silent */
@@ -765,7 +765,7 @@ async function handleSaveDraft() {
   if (!validate()) return;
   saving.value = true;
   try {
-    let result: any = null;
+    let result: unknown = null;
     switch (selectedType.value) {
       case 'INVOICE':
       case 'PROFORMA_INVOICE':
@@ -797,7 +797,7 @@ async function handleSaveDraft() {
             })),
           totalAmount: computedTotals.value.total
         };
-        const poRes = await useApiFetch('procurement', 'POST', poPayload as any);
+        const poRes = await useApiFetch('procurement', 'POST', poPayload as unknown);
         if (poRes.success) {
           ElNotification({ type: 'success', title: 'Success', message: 'Purchase order created successfully' });
           router.push('/procurement/purchase-orders');
@@ -835,7 +835,7 @@ async function handleSaveDraft() {
           carrier: form.value.carrier || undefined,
           shippedDate: form.value.shippedDate ? new Date(form.value.shippedDate).toISOString() : undefined,
           notes: form.value.notes || undefined
-        } as any);
+        } as unknown);
         if (dnRes.success) {
           ElNotification({ type: 'success', title: 'Success', message: 'Delivery note created successfully' });
           router.push(`/sales/sales-orders/${form.value.salesOrderId}`);
@@ -906,19 +906,19 @@ async function loadInitialData() {
   ]);
 
   if (dealRes.success && dealRes.body) {
-    const data = dealRes.body as any;
-    deals.value = (data.docs || data || []).map((d: any) => ({ id: d.id, name: d.name }));
+    const data = dealRes.body as unknown;
+    deals.value = (data.docs || data || []).map((d) => ({ id: d.id, name: d.name }));
   }
   if (clientRes.success && clientRes.body) {
-    const data = clientRes.body as any;
-    clients.value = (data.docs || data || []).map((c: any) => ({ id: c.id, name: c.name, companyName: c.companyName }));
+    const data = clientRes.body as unknown;
+    clients.value = (data.docs || data || []).map((c) => ({ id: c.id, name: c.name, companyName: c.companyName }));
   }
   if (vendorRes.success && vendorRes.body) {
-    vendors.value = ((vendorRes.body as any[]) || []).map((v: any) => ({ id: v.id, name: v.name, companyName: v.companyName }));
+    vendors.value = ((vendorRes.body as unknown[]) || []).map((v) => ({ id: v.id, name: v.name, companyName: v.companyName }));
   }
   if (projectRes.success && projectRes.body) {
-    const data = projectRes.body as any;
-    projects.value = (data.docs || data || []).map((p: any) => ({ id: p.id, name: p.name }));
+    const data = projectRes.body as unknown;
+    projects.value = (data.docs || data || []).map((p) => ({ id: p.id, name: p.name }));
   }
 }
 
@@ -926,8 +926,8 @@ async function loadInvoices() {
   try {
     const { body, success } = await useApiFetch('invoices?limit=100', 'GET', {}, true);
     if (success && body) {
-      const data = body as any;
-      invoicesList.value = (data.docs || data || []).map((inv: any) => ({
+      const data = body as unknown;
+      invoicesList.value = (data.docs || data || []).map((inv) => ({
         id: inv.id,
         invoiceNumber: inv.invoiceNumber || `INV-${inv.id}`,
         amount: inv.total || inv.amount || 0
@@ -942,13 +942,13 @@ async function loadRecentDocs() {
   recentDocs.value = [];
   try {
     let endpoint = '';
-    let mapFn: (item: any) => { id: string; number: string; date: string; link: string } = () => ({ id: '', number: '', date: '', link: '' });
+    let mapFn: (item: unknown) => { id: string; number: string; date: string; link: string } = () => ({ id: '', number: '', date: '', link: '' });
 
     switch (selectedType.value) {
       case 'INVOICE':
       case 'PROFORMA_INVOICE':
         endpoint = 'invoices?limit=5';
-        mapFn = (inv: any) => ({
+        mapFn = (inv: unknown) => ({
           id: inv.id,
           number: inv.invoiceNumber || `INV-${inv.id}`,
           date: inv.invoiceDate ? new Date(inv.invoiceDate).toLocaleDateString() : '',
@@ -957,7 +957,7 @@ async function loadRecentDocs() {
         break;
       case 'PURCHASE_ORDER':
         endpoint = 'procurement?limit=5';
-        mapFn = (po: any) => ({
+        mapFn = (po: unknown) => ({
           id: po.id,
           number: po.poNumber || `PO-${po.id}`,
           date: po.createdAt ? new Date(po.createdAt).toLocaleDateString() : '',
@@ -966,7 +966,7 @@ async function loadRecentDocs() {
         break;
       case 'SALES_ORDER':
         endpoint = 'sales-orders?limit=5';
-        mapFn = (so: any) => ({
+        mapFn = (so: unknown) => ({
           id: so.id,
           number: so.orderNumber || `SO-${so.id}`,
           date: so.createdAt ? new Date(so.createdAt).toLocaleDateString() : '',
@@ -978,7 +978,7 @@ async function loadRecentDocs() {
     if (endpoint) {
       const { body, success } = await useApiFetch(endpoint);
       if (success && body) {
-        const data = body as any;
+        const data = body as unknown;
         recentDocs.value = (data.docs || data || []).slice(0, 5).map(mapFn);
       }
     }

@@ -160,7 +160,7 @@ const loading = ref(false);
 const deleteLeadPopup = ref(false);
 const deleteId = ref<string | null>(null);
 const deleting = ref(false);
-const pipelineAnalytics = ref<any>(null);
+const pipelineAnalytics = ref<Record<string, unknown> | null>(null);
 
 // Export columns & data
 const exportColumns = [
@@ -174,14 +174,14 @@ const exportColumns = [
 const exportData = computed(() => table.data);
 
 // Bulk actions
-const selectedRows = ref<any[]>([]);
+const selectedRows = ref<Record<string, unknown>[]>([]);
 async function confirmDelete() {
   if (!deleteId.value) return;
   deleting.value = true;
   try {
     const response = await deleteDeal(deleteId.value);
     if (response?.success) {
-      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+      table.data = table.data.filter((r) => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -215,7 +215,7 @@ async function handleBulkExport() {
   if (!selectedRows.value.length) return;
   try {
     loading.value = true;
-    const ids = selectedRows.value.map((r: any) => r.id);
+    const ids = selectedRows.value.map((r) => r.id);
     await useApiFetch('deal/export', 'POST', { ids });
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.exportSentToEmail') });
     selectedRows.value = [];
@@ -291,13 +291,13 @@ fetchPipelineAnalytics();
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.data || [];
   const total = data.length;
-  const wonDeals = data.filter((d: any) => d.stage === 'WON').length;
+  const wonDeals = data.filter((d) => d.stage === 'WON').length;
   // Calculate total revenue from won deals
   const totalRevenue = data
-    .filter((d: any) => d.stage === 'WON')
-    .reduce((sum: number, d: any) => sum + (Number(d.price) || 0), 0)
+    .filter((d) => d.stage === 'WON')
+    .reduce((sum, d) => sum + (Number(d.price) || 0), 0)
     .toLocaleString('en-US', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 });
-  const pending = data.filter((d: any) => d.stage !== 'WON' && d.stage !== 'LOST').length;
+  const pending = data.filter((d) => d.stage !== 'WON' && d.stage !== 'LOST').length;
 
   return [
     { label: t('deals.kpi.totalDeals'), value: total, icon: 'ph:handshake-bold', color: '#10b981' },
@@ -330,12 +330,12 @@ async function fetchPipelineAnalytics() {
   }
 }
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/sales/deals/${val.id}`);
 }
 
 const mappedUsers =
-  usersResponse?.body?.docs?.map((e: any) => ({
+  usersResponse?.body?.docs?.map((e) => ({
     label: e.name,
     value: e.id
   })) || [];
@@ -371,33 +371,33 @@ const filterOptions = computed(() => [
 // SavedViews & AdvancedSearch
 const advancedSearchFields = [
   { key: 'name', label: t('deals.table.dealName'), type: 'string' },
-  { key: 'stage', label: t('deals.table.stage'), type: 'select', options: dealStageOptions.map((o: any) => ({ value: o.value, label: o.label })) },
+  { key: 'stage', label: t('deals.table.stage'), type: 'select', options: dealStageOptions.map((o) => ({ value: o.value, label: o.label })) },
   { key: 'price', label: t('deals.table.price'), type: 'number' },
   {
     key: 'contractType',
     label: t('deals.table.contractType'),
     type: 'select',
-    options: contractTypeOptions.map((o: any) => ({ value: o.value, label: o.label }))
+    options: contractTypeOptions.map((o) => ({ value: o.value, label: o.label }))
   },
   { key: 'signatureDate', label: t('deals.table.signatureDate'), type: 'date' },
   { key: 'createdAt', label: t('deals.table.created'), type: 'date' }
 ];
 
-async function handleApplyView(view: any) {
+async function handleApplyView(view: unknown) {
   if (view?.filters) {
     const res = await useTableFilter('deal', view.filters);
     table.data = res.formattedData;
   }
 }
 
-async function handleAdvancedFilter(filterPayload: any) {
+async function handleAdvancedFilter(filterPayload: unknown) {
   try {
     const res = await useApiFetch('search/advanced/deal', 'POST', filterPayload);
     if (res?.success && res?.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       table.data = data.docs || data || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -416,11 +416,11 @@ const stageFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#10b981', count: data.length },
-    { value: 'PROGRESS', label: t('kanban.stages.progress'), color: '#3b82f6', count: data.filter((d: any) => d.stage === 'PROGRESS').length },
-    { value: 'WON', label: t('kanban.stages.won'), color: '#10b981', count: data.filter((d: any) => d.stage === 'WON').length },
-    { value: 'LOST', label: t('kanban.stages.lost'), color: '#ef4444', count: data.filter((d: any) => d.stage === 'LOST').length },
-    { value: 'CLOSED', label: t('kanban.stages.closed'), color: '#8b5cf6', count: data.filter((d: any) => d.stage === 'CLOSED').length },
-    { value: 'CANCELLED', label: t('kanban.stages.cancelled'), color: '#94a3b8', count: data.filter((d: any) => d.stage === 'CANCELLED').length }
+    { value: 'PROGRESS', label: t('kanban.stages.progress'), color: '#3b82f6', count: data.filter((d) => d.stage === 'PROGRESS').length },
+    { value: 'WON', label: t('kanban.stages.won'), color: '#10b981', count: data.filter((d) => d.stage === 'WON').length },
+    { value: 'LOST', label: t('kanban.stages.lost'), color: '#ef4444', count: data.filter((d) => d.stage === 'LOST').length },
+    { value: 'CLOSED', label: t('kanban.stages.closed'), color: '#8b5cf6', count: data.filter((d) => d.stage === 'CLOSED').length },
+    { value: 'CANCELLED', label: t('kanban.stages.cancelled'), color: '#94a3b8', count: data.filter((d) => d.stage === 'CANCELLED').length }
   ];
 });
 
@@ -432,11 +432,11 @@ function setMobileStageFilter(value: string) {
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
   if (mobileStageFilter.value !== 'ALL') {
-    data = data.filter((deal: any) => deal.stage === mobileStageFilter.value);
+    data = data.filter((deal) => deal.stage === mobileStageFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((deal: any) => {
+  return data.filter((deal) => {
     const name = (deal.dealDetails?.title || deal.name || '').toLowerCase();
     const assign = (deal.assign || '').toLowerCase();
     const contractType = (deal.contractType || '').toLowerCase();
@@ -456,11 +456,11 @@ async function handleMobileRefresh() {
   }
 }
 
-function getSwipeRightActions(deal: any) {
+function getSwipeRightActions(deal: unknown) {
   return [{ name: 'kanban', label: t('kanban.kanbanView'), icon: 'ph:columns-bold', color: '#10B981' }];
 }
 
-function getSwipeLeftActions(deal: any) {
+function getSwipeLeftActions(deal: unknown) {
   const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#10b981' }];
   if (hasPermission('EDIT_DEALS')) {
     actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
@@ -468,7 +468,7 @@ function getSwipeLeftActions(deal: any) {
   return actions;
 }
 
-function handleSwipeAction(name: string, deal: any) {
+function handleSwipeAction(name: string, deal: unknown) {
   vibrate();
   switch (name) {
     case 'kanban':
@@ -483,7 +483,7 @@ function handleSwipeAction(name: string, deal: any) {
   }
 }
 
-function getDealInitial(deal: any): string {
+function getDealInitial(deal: unknown): string {
   const name = deal.dealDetails?.title || deal.name || '?';
   return name.charAt(0).toUpperCase();
 }
@@ -512,7 +512,7 @@ function getStageType(stage: string): string {
   return map[stage] || 'info';
 }
 
-function formatPrice(price: any): string {
+function formatPrice(price: unknown): string {
   const num = Number(price);
   if (isNaN(num)) return String(price);
   return num.toLocaleString('en-US', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 });

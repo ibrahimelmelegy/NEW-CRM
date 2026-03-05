@@ -526,7 +526,7 @@ const t = $i18n.t;
 const activeTab = ref('catalog');
 const viewMode = ref<'grid' | 'list'>('grid');
 const loading = ref(false);
-const products = ref<any[]>([]);
+const products = ref<Record<string, unknown>[]>([]);
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
 
 // Filters
@@ -538,7 +538,7 @@ const priceMax = ref<number | undefined>(undefined);
 const sortKey = ref('name');
 
 // Selection
-const selectedProducts = ref<any[]>([]);
+const selectedProducts = ref<Record<string, unknown>[]>([]);
 
 // Product dialog
 const showProductDialog = ref(false);
@@ -563,7 +563,7 @@ const loadingPriceLists = ref(false);
 const showPriceListDialog = ref(false);
 const savingPriceList = ref(false);
 const editingPriceListId = ref<string | null>(null);
-const priceLists = ref<any[]>([]);
+const priceLists = ref<Record<string, unknown>[]>([]);
 const expandedPriceLists = ref<string[]>([]);
 
 const defaultPriceListForm = () => ({
@@ -572,7 +572,7 @@ const defaultPriceListForm = () => ({
   validFrom: '',
   validTo: '',
   isActive: true,
-  items: [{ productId: '', productName: '', standardPrice: 0, listPrice: 0, discountPercent: 0 }] as any[]
+  items: [{ productId: '', productName: '', standardPrice: 0, listPrice: 0, discountPercent: 0 }] as unknown[]
 });
 const priceListForm = reactive(defaultPriceListForm());
 
@@ -581,7 +581,7 @@ const loadingCategories = ref(false);
 const showCategoryDialog = ref(false);
 const savingCategory = ref(false);
 const editingCategoryId = ref<string | null>(null);
-const categoryTree = ref<any[]>([]);
+const categoryTree = ref<Record<string, unknown>[]>([]);
 
 const defaultCategoryForm = () => ({
   name: '',
@@ -595,14 +595,14 @@ const loadingBundles = ref(false);
 const showBundleDialog = ref(false);
 const savingBundle = ref(false);
 const editingBundleId = ref<string | null>(null);
-const bundles = ref<any[]>([]);
+const bundles = ref<Record<string, unknown>[]>([]);
 
 const defaultBundleForm = () => ({
   name: '',
   description: '',
   bundlePrice: 0,
   discountPercent: 0,
-  items: [{ productId: '', productName: '', unitPrice: 0, quantity: 1 }] as any[]
+  items: [{ productId: '', productName: '', unitPrice: 0, quantity: 1 }] as unknown[]
 });
 const bundleForm = reactive(defaultBundleForm());
 
@@ -623,7 +623,7 @@ const uniqueCategories = computed(() => {
 
 const allCategoryNames = computed(() => {
   const names = new Set<string>();
-  const walk = (nodes: any[]) => {
+  const walk = (nodes: Record<string, unknown>[]) => {
     for (const n of nodes) {
       names.add(n.name);
       if (n.children?.length) walk(n.children);
@@ -727,7 +727,7 @@ async function loadProducts() {
   loading.value = true;
   try {
     const result = await apiFetchProducts({ page: String(pagination.page), limit: String(pagination.limit) });
-    products.value = (result.docs || []).map((p: any) => ({
+    products.value = (result.docs || []).map((p) => ({
       ...p,
       status: p.status || (p.isActive === false ? 'inactive' : 'active'),
       costPrice: p.costPrice || 0
@@ -738,7 +738,7 @@ async function loadProducts() {
   }
 }
 
-function openProductDialog(prod?: any) {
+function openProductDialog(prod?: unknown) {
   if (prod) {
     editingProductId.value = prod.id;
     Object.assign(productForm, {
@@ -807,7 +807,7 @@ async function handleDelete(id: string) {
   }
 }
 
-async function cloneProduct(prod: any) {
+async function cloneProduct(prod: unknown) {
   const cloneData = {
     name: prod.name + ' (Copy)',
     sku: prod.sku ? prod.sku + '-COPY' : '',
@@ -826,8 +826,8 @@ async function cloneProduct(prod: any) {
   }
 }
 
-async function deactivateProduct(prod: any) {
-  const res = await apiUpdateProduct(prod.id, { isActive: false, status: 'inactive' } as any);
+async function deactivateProduct(prod: unknown) {
+  const res = await apiUpdateProduct(prod.id, { isActive: false, status: 'inactive' } as unknown);
   if (res.success) {
     ElMessage.success(t('common.saved'));
     await loadProducts();
@@ -836,7 +836,7 @@ async function deactivateProduct(prod: any) {
 
 async function quickUpdatePrice(id: string, price: number) {
   if (price == null || price < 0) return;
-  const res = await apiUpdateProduct(id, { unitPrice: price } as any);
+  const res = await apiUpdateProduct(id, { unitPrice: price } as unknown);
   if (res.success) {
     const p = products.value.find(pr => pr.id === id);
     if (p) p.unitPrice = price;
@@ -851,7 +851,7 @@ function isSelected(id: string) {
   return selectedProducts.value.some(p => p.id === id);
 }
 
-function toggleSelection(prod: any) {
+function toggleSelection(prod: unknown) {
   const idx = selectedProducts.value.findIndex(p => p.id === prod.id);
   if (idx >= 0) {
     selectedProducts.value.splice(idx, 1);
@@ -860,7 +860,7 @@ function toggleSelection(prod: any) {
   }
 }
 
-function handleSelectionChange(val: any[]) {
+function handleSelectionChange(val: Record<string, unknown>[]) {
   selectedProducts.value = val;
 }
 
@@ -873,7 +873,7 @@ async function bulkDeactivate() {
       cancelButtonText: t('common.cancel')
     });
     for (const prod of selectedProducts.value) {
-      await apiUpdateProduct(prod.id, { isActive: false, status: 'inactive' } as any);
+      await apiUpdateProduct(prod.id, { isActive: false, status: 'inactive' } as unknown);
     }
     ElMessage.success(t('common.saved'));
     selectedProducts.value = [];
@@ -895,7 +895,7 @@ async function applyBulkPriceUpdate() {
         newPrice = newPrice + bulkPriceForm.value;
       }
       newPrice = Math.max(0, Math.round(newPrice * 100) / 100);
-      await apiUpdateProduct(prod.id, { unitPrice: newPrice } as any);
+      await apiUpdateProduct(prod.id, { unitPrice: newPrice } as unknown);
     }
     ElMessage.success(t('common.saved'));
     showBulkPriceDialog.value = false;
@@ -915,7 +915,7 @@ async function loadPriceLists() {
   try {
     const { body, success } = await useApiFetch('catalog/price-lists');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       priceLists.value = data.docs || data.rows || (Array.isArray(data) ? data : []);
     }
   } finally {
@@ -923,7 +923,7 @@ async function loadPriceLists() {
   }
 }
 
-function openPriceListDialog(pl?: any) {
+function openPriceListDialog(pl?: unknown) {
   if (pl) {
     editingPriceListId.value = pl.id;
     Object.assign(priceListForm, {
@@ -933,7 +933,7 @@ function openPriceListDialog(pl?: any) {
       validTo: pl.validTo || '',
       isActive: pl.isActive ?? true,
       items: pl.items?.length
-        ? pl.items.map((i: any) => ({ ...i }))
+        ? pl.items.map((i) => ({ ...i }))
         : [{ productId: '', productName: '', standardPrice: 0, listPrice: 0, discountPercent: 0 }]
     });
   } else {
@@ -947,7 +947,7 @@ function addPriceListItem() {
   priceListForm.items.push({ productId: '', productName: '', standardPrice: 0, listPrice: 0, discountPercent: 0 });
 }
 
-function onPriceListProductSelect(item: any) {
+function onPriceListProductSelect(item: unknown) {
   const prod = products.value.find(p => p.id === item.productId);
   if (prod) {
     item.productName = prod.name;
@@ -956,7 +956,7 @@ function onPriceListProductSelect(item: any) {
   }
 }
 
-function calcEffectivePrice(item: any) {
+function calcEffectivePrice(item: unknown) {
   const lp = item.listPrice || 0;
   const disc = item.discountPercent || 0;
   return lp * (1 - disc / 100);
@@ -1023,7 +1023,7 @@ async function loadCategories() {
   try {
     const { body, success } = await useApiFetch('catalog/categories');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       categoryTree.value = data.tree || data.docs || (Array.isArray(data) ? data : []);
     }
   } finally {
@@ -1033,7 +1033,7 @@ async function loadCategories() {
   }
 }
 
-function openCategoryDialog(cat?: any) {
+function openCategoryDialog(cat?: unknown) {
   if (cat) {
     editingCategoryId.value = cat.id;
     Object.assign(categoryForm, {
@@ -1092,7 +1092,7 @@ async function deleteCategory(id: string) {
   }
 }
 
-async function handleCategoryDrop(draggingNode: any, dropNode: any, dropType: string) {
+async function handleCategoryDrop(draggingNode: unknown, dropNode: unknown, dropType: string) {
   try {
     const newParentId = dropType === 'inner' ? dropNode.data.id : dropNode.data.parentId || null;
     await useApiFetch(`catalog/categories/${draggingNode.data.id}`, 'PUT', {
@@ -1113,7 +1113,7 @@ async function loadBundles() {
   try {
     const { body, success } = await useApiFetch('catalog/bundles');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       bundles.value = data.docs || data.rows || (Array.isArray(data) ? data : []);
     }
   } finally {
@@ -1121,7 +1121,7 @@ async function loadBundles() {
   }
 }
 
-function openBundleDialog(bundle?: any) {
+function openBundleDialog(bundle?: unknown) {
   if (bundle) {
     editingBundleId.value = bundle.id;
     Object.assign(bundleForm, {
@@ -1129,7 +1129,7 @@ function openBundleDialog(bundle?: any) {
       description: bundle.description || '',
       bundlePrice: bundle.bundlePrice || 0,
       discountPercent: bundle.discountPercent || 0,
-      items: bundle.items?.length ? bundle.items.map((i: any) => ({ ...i })) : [{ productId: '', productName: '', unitPrice: 0, quantity: 1 }]
+      items: bundle.items?.length ? bundle.items.map((i) => ({ ...i })) : [{ productId: '', productName: '', unitPrice: 0, quantity: 1 }]
     });
   } else {
     editingBundleId.value = null;
@@ -1142,7 +1142,7 @@ function addBundleItem() {
   bundleForm.items.push({ productId: '', productName: '', unitPrice: 0, quantity: 1 });
 }
 
-function onBundleProductSelect(item: any) {
+function onBundleProductSelect(item: unknown) {
   const prod = products.value.find(p => p.id === item.productId);
   if (prod) {
     item.productName = prod.name;
@@ -1150,11 +1150,11 @@ function onBundleProductSelect(item: any) {
   }
 }
 
-function calcBundleIndividualTotal(bundle: any) {
-  return (bundle.items || []).reduce((s: number, i: any) => s + (i.unitPrice || 0) * (i.quantity || 1), 0);
+function calcBundleIndividualTotal(bundle: unknown) {
+  return (bundle.items || []).reduce((s, i) => s + (i.unitPrice || 0) * (i.quantity || 1), 0);
 }
 
-function calcBundleSavingsPercent(bundle: any) {
+function calcBundleSavingsPercent(bundle: unknown) {
   const individual = calcBundleIndividualTotal(bundle);
   if (!individual) return 0;
   return Math.round(((individual - (bundle.bundlePrice || 0)) / individual) * 100);
@@ -1224,7 +1224,7 @@ function formatDate(date: string) {
   return new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' });
 }
 
-function calcMargin(row: any): number {
+function calcMargin(row: unknown): number {
   const unit = Number(row.unitPrice || 0);
   const cost = Number(row.costPrice || 0);
   if (unit <= 0) return 0;
@@ -1271,7 +1271,7 @@ function exportCsv() {
     p.status || 'active',
     p.stockQuantity ?? ''
   ]);
-  const csv = [headers, ...rows].map(r => r.map((c: any) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const csv = [headers, ...rows].map(r => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

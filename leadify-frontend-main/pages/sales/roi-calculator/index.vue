@@ -242,7 +242,7 @@ const breakdownChartOption = computed(() => {
       padding: [12, 16],
       textStyle: { color: '#fff' },
       extraCssText: 'backdrop-filter: blur(12px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-radius: 16px;',
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const item = params[0];
         return `<div style="font-weight:600;margin-bottom:4px">${item.name}</div>
           <div style="color:${item.color}">${formatCurrency(item.value)}</div>`;

@@ -206,7 +206,7 @@ async function handleDeleteRule(rule: ScoringRule) {
     await deleteScoringRule(rule.id);
     rules.value = await fetchScoringRules();
     ElNotification({ type: 'success', title: t('common.success'), message: t('leadScoring.deleted') });
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }

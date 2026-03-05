@@ -15,7 +15,7 @@ export interface SmartTableColumn {
 export interface SmartTableFilter {
   field: string;
   operator: 'equals' | 'contains' | 'gt' | 'lt' | 'between' | 'in';
-  value: any;
+  value: unknown;
   logic?: 'AND' | 'OR';
 }
 
@@ -51,7 +51,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
   );
   const filters = ref<SmartTableFilter[]>([]);
   const sort = ref<SmartTableSort | null>(null);
-  const selectedRows = ref<any[]>([]);
+  const selectedRows = ref<Record<string, unknown>[]>([]);
   const searchQuery = ref('');
   const savedViews = ref<SmartTableSavedView[]>([]);
   const groupByField = ref('status');
@@ -75,7 +75,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
   const visibleColumns = computed(() => [...columns.value].filter(c => c.visible).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
 
   // Computed: filtered data helper
-  const applyFiltersToData = (data: any[]) => {
+  const applyFiltersToData = (data: Record<string, unknown>[]) => {
     let result = [...data];
 
     // Apply search
@@ -182,7 +182,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
     sort.value = newSort;
   };
 
-  const setSelectedRows = (rows: any[]) => {
+  const setSelectedRows = (rows: Record<string, unknown>[]) => {
     selectedRows.value = rows;
   };
 
@@ -240,7 +240,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
     }));
   };
 
-  const exportData = (data: any[], format: 'xlsx' | 'csv' = 'xlsx') => {
+  const exportData = (data: Record<string, unknown>[], format: 'xlsx' | 'csv' = 'xlsx') => {
     const exportColumns = visibleColumns.value;
     const headers = exportColumns.map(c => c.label);
     const rows = data.map(row =>
@@ -265,7 +265,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
       XLSX.writeFile(wb, `${entityType}-export-${Date.now()}.xlsx`);
     } else {
       // CSV export
-      const escapeCsv = (val: any) => {
+      const escapeCsv = (val: unknown) => {
         const str = String(val ?? '');
         if (str.includes(',') || str.includes('"') || str.includes('\n')) {
           return `"${str.replace(/"/g, '""')}"`;

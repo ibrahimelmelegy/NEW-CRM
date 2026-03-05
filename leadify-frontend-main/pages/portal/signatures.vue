@@ -79,7 +79,7 @@ const { signDocument, fetchDashboard, dashboard, loading } = useEnhancedPortal()
 
 const showSignDialog = ref(false);
 const selectedDocument = ref<PortalSignatureDoc | null>(null);
-const allContracts = ref<any[]>([]);
+const allContracts = ref<Record<string, unknown>[]>([]);
 
 const pendingContracts = computed(() => allContracts.value.filter(c => c.status === 'SENT' || c.status === 'VIEWED'));
 
@@ -98,12 +98,12 @@ async function loadContracts() {
   loading.value = true;
   const res = await portalFetch('contracts');
   if (res.success && res.body) {
-    allContracts.value = res.body as any[];
+    allContracts.value = res.body as unknown[];
   }
   loading.value = false;
 }
 
-function openSignDialog(contract: any) {
+function openSignDialog(contract: unknown) {
   selectedDocument.value = { id: contract.id, title: contract.title, status: contract.status, deal: contract.deal || null };
   showSignDialog.value = true;
 }

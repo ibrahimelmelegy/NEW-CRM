@@ -437,7 +437,7 @@ const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { mo
 const fetchGoals = async () => {
   loading.value = true;
   try {
-    const res: any = await useApiFetch('goals?limit=100');
+    const res = await useApiFetch('goals?limit=100');
     if (res?.success) {
       allGoals.value = res.body?.docs || res.body || [];
     } else {
@@ -462,7 +462,7 @@ const createGoal = async () => {
 
   // Format dueDate to YYYY-MM-DD string if it's a Date object
   const dueDate =
-    (newGoal.value.dueDate as any) instanceof Date ? (newGoal.value.dueDate as unknown as Date).toISOString().slice(0, 10) : newGoal.value.dueDate;
+    (newGoal.value.dueDate as unknown) instanceof Date ? (newGoal.value.dueDate as unknown as Date).toISOString().slice(0, 10) : newGoal.value.dueDate;
 
   const payload = {
     title: newGoal.value.title,
@@ -541,7 +541,7 @@ const fetchStats = async () => {
   try {
     const res = await useApiFetch('goals/stats');
     if (res?.success && res.body) {
-      const d = res.body as any;
+      const d = res.body as unknown;
       statsData.value = {
         totalGoals: d.totalGoals ?? d.total ?? 0,
         completed: d.completed ?? 0,
@@ -560,8 +560,8 @@ const fetchOverdueGoals = async () => {
   try {
     const res = await useApiFetch('goals/overdue');
     if (res?.success && res.body) {
-      const docs = (res.body as any).docs || res.body || [];
-      overdueGoals.value = docs.map((g: any) => {
+      const docs = (res.body as unknown).docs || res.body || [];
+      overdueGoals.value = docs.map((g) => {
         const dueDate = new Date(g.dueDate);
         const now = new Date();
         const diffMs = now.getTime() - dueDate.getTime();

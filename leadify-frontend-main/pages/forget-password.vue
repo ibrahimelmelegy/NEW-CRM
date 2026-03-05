@@ -153,7 +153,7 @@ const formSchema = yup.object({
     .max(70)
     .required('Email is required')
     .matches(noArabicRegx, 'validEmail')
-    .test('is-valid', 'Invalid Email format', (value: any) => (value ? isEmailValidator(value) : false))
+    .test('is-valid', 'Invalid Email format', (value: unknown) => (value ? isEmailValidator(value) : false))
     .label('email')
 });
 
@@ -161,10 +161,10 @@ const { handleSubmit, resetForm } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit(async (values: any) => {
+const onSubmit = handleSubmit(async (values: unknown) => {
   loading.value = true;
   try {
-    const response: any = await useApiFetch('auth/forgot-password', 'POST', {
+    const response = await useApiFetch('auth/forgot-password', 'POST', {
       email: values.email
     });
 
@@ -184,7 +184,7 @@ const onSubmit = handleSubmit(async (values: any) => {
         message: response?.message || 'Something went wrong'
       });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElNotification({
       title: 'Error',
       type: 'error',

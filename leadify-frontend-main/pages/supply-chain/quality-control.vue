@@ -556,7 +556,7 @@ const inspectionRecordsFallback = [
   }
 ];
 
-const inspectionRecords = ref<any[]>([]);
+const inspectionRecords = ref<Record<string, unknown>[]>([]);
 
 const filteredInspections = computed(() => {
   let items = inspectionRecords.value;
@@ -686,7 +686,7 @@ const defectRecordsFallback = [
   }
 ];
 
-const defectRecords = ref<any[]>([]);
+const defectRecords = ref<Record<string, unknown>[]>([]);
 
 // ─── Checklist Templates (mock with API fallback) ───────────
 const checklistTemplatesFallback = [
@@ -698,7 +698,7 @@ const checklistTemplatesFallback = [
   { name: 'Regulatory Compliance', category: 'Compliance', itemCount: 32, lastUsed: '2026-02-20', timesUsed: 45, color: '#06b6d4' }
 ];
 
-const checklistTemplates = ref<any[]>([]);
+const checklistTemplates = ref<Record<string, unknown>[]>([]);
 
 // ─── New Inspection Form ────────────────────────────────────
 const newInspectionForm = ref({
@@ -844,7 +844,7 @@ const passRateTrendChartOption = computed(() => {
     tooltip: {
       trigger: 'axis',
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const p = params[0];
         return `<strong>${p.name}</strong><br/>${t('qualityControl.passRate')}: <strong>${p.value}%</strong>`;
       }
@@ -1004,7 +1004,7 @@ const inspectorPerformanceChartOption = computed(() => {
       trigger: 'axis',
       ...tooltipStyle,
       axisPointer: { type: 'shadow' },
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const idx = params[0]?.dataIndex ?? 0;
         const inspector = inspectors[idx];
         const rate = passRates[idx];
@@ -1051,7 +1051,7 @@ const inspectorPerformanceChartOption = computed(() => {
           position: 'right',
           color: '#94a3b8',
           fontSize: 11,
-          formatter: (params: any) => `${params.value}%`
+          formatter: (params: unknown) => `${params.value}%`
         },
         animationDuration: 1000
       }
@@ -1067,7 +1067,7 @@ const qualityCostChartOption = computed(() => {
     tooltip: {
       trigger: 'item',
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         return `<strong>${params.name}</strong><br/>${t('qualityControl.cost')}: <strong>$${params.value.toLocaleString()}</strong><br/>${t('qualityControl.share')}: <strong>${params.percent}%</strong>`;
       }
     },
@@ -1196,11 +1196,11 @@ function exportReport() {
   ElMessage.success(t('qualityControl.exportStarted'));
 }
 
-function viewInspection(row: any) {
+function viewInspection(row: unknown) {
   ElMessage.info(`${t('qualityControl.viewingInspection')}: ${row.id}`);
 }
 
-function downloadInspectionReport(row: any) {
+function downloadInspectionReport(row: unknown) {
   ElMessage.success(`${t('qualityControl.downloadingReport')}: ${row.id}`);
 }
 
@@ -1216,7 +1216,7 @@ function submitChecklist() {
   newChecklistForm.value = { name: '', category: '', items: [{ criteria: '', resultType: 'pass-fail', weight: 1 }] };
 }
 
-function useChecklist(checklist: any) {
+function useChecklist(checklist: unknown) {
   ElMessage.info(`${t('qualityControl.usingTemplate')}: ${checklist.name}`);
 }
 </script>

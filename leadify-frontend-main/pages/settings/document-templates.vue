@@ -501,7 +501,7 @@ onMounted(async () => {
 async function loadTemplates() {
   loading.value = true;
   try {
-    const query: Record<string, any> = {
+    const query: Record<string, unknown> = {
       page: pagination.value.page,
       limit: pagination.value.limit
     };
@@ -552,7 +552,7 @@ function handleRowClick(row: DocumentTemplate) {
 function openDialog(template?: DocumentTemplate) {
   if (template) {
     // System templates: show info only, not editable
-    if ((template as any).category === 'system') {
+    if ((template as unknown).category === 'system') {
       ElNotification({
         type: 'info',
         title: 'System Template',
@@ -589,7 +589,7 @@ async function handleSave() {
   try {
     const payload: Partial<DocumentTemplate> = {
       name: form.name,
-      type: form.type as any,
+      type: form.type as unknown,
       isDefault: form.isDefault
     };
 
@@ -698,7 +698,7 @@ async function handleSeedDefaults() {
 
 // Delete
 function handleDelete(template: DocumentTemplate) {
-  if ((template as any).category === 'system') {
+  if ((template as unknown).category === 'system') {
     ElNotification({
       type: 'warning',
       title: 'System Template',

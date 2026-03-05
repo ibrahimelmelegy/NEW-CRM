@@ -222,7 +222,7 @@ const emptyDashboard = {
   engagementTrend: []
 };
 
-const dashboard = ref<any>({ ...emptyDashboard });
+const dashboard = ref<Record<string, unknown>>({ ...emptyDashboard });
 
 const formatRevenue = (val: number) => {
   if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
@@ -239,7 +239,7 @@ const getScoreColor = (score: number) => {
 const fetchDashboard = async () => {
   loading.value = true;
   try {
-    const res: any = await useApiFetch('customer-success/dashboard', 'GET', {}, true);
+    const res = await useApiFetch('customer-success/dashboard', 'GET', {}, true);
     if (res?.success && res.body) {
       // Merge with defaults to guarantee all required fields exist
       dashboard.value = { ...emptyDashboard, ...res.body, summary: { ...emptyDashboard.summary, ...(res.body.summary || {}) } };
@@ -267,7 +267,7 @@ const renderCharts = () => {
           center: ['50%', '50%'],
           avoidLabelOverlap: false,
           label: { show: true, position: 'outside', color: '#94a3b8', fontSize: 12 },
-          data: dashboard.value.healthDistribution.map((d: any) => ({
+          data: dashboard.value.healthDistribution.map((d) => ({
             name: d.name,
             value: d.value,
             itemStyle: { color: d.color }
@@ -285,7 +285,7 @@ const renderCharts = () => {
       grid: { left: '3%', right: '4%', bottom: '3%', top: '8%', containLabel: true },
       xAxis: {
         type: 'category',
-        data: dashboard.value.revenueByMonth.map((d: any) => d.month),
+        data: dashboard.value.revenueByMonth.map((d) => d.month),
         axisLabel: { color: '#64748b' },
         axisLine: { lineStyle: { color: '#334155' } }
       },
@@ -297,7 +297,7 @@ const renderCharts = () => {
       series: [
         {
           type: 'bar',
-          data: dashboard.value.revenueByMonth.map((d: any) => d.revenue),
+          data: dashboard.value.revenueByMonth.map((d) => d.revenue),
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               { offset: 0, color: '#10B981' },
@@ -319,7 +319,7 @@ const renderCharts = () => {
       grid: { left: '3%', right: '4%', bottom: '3%', top: '8%', containLabel: true },
       xAxis: {
         type: 'category',
-        data: dashboard.value.engagementTrend.map((d: any) => d.month),
+        data: dashboard.value.engagementTrend.map((d) => d.month),
         axisLabel: { color: '#64748b' },
         axisLine: { lineStyle: { color: '#334155' } }
       },
@@ -327,7 +327,7 @@ const renderCharts = () => {
       series: [
         {
           type: 'line',
-          data: dashboard.value.engagementTrend.map((d: any) => d.activities),
+          data: dashboard.value.engagementTrend.map((d) => d.activities),
           smooth: true,
           lineStyle: { color: '#6366F1', width: 3 },
           areaStyle: {

@@ -1257,7 +1257,7 @@ async function loadMeters() {
   try {
     const res = await useApiFetch('usage-billing/meters');
     if (res.success && Array.isArray(res.body)) {
-      meters.value = res.body as any;
+      meters.value = res.body as unknown;
     } else {
       meters.value = fallbackMeters;
     }
@@ -1270,7 +1270,7 @@ async function loadRecords() {
   try {
     const res = await useApiFetch('usage-billing/records');
     if (res.success && Array.isArray(res.body)) {
-      usageData.value = res.body as any;
+      usageData.value = res.body as unknown;
     } else {
       usageData.value = fallbackUsageData;
     }
@@ -1283,7 +1283,7 @@ async function loadCharges() {
   try {
     const res = await useApiFetch('usage-billing/charges');
     if (res.success && Array.isArray(res.body)) {
-      invoices.value = res.body as any;
+      invoices.value = res.body as unknown;
     } else {
       invoices.value = fallbackInvoices;
     }

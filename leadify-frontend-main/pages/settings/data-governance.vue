@@ -319,7 +319,7 @@ const runAudit = () => {
   }, 2000);
 };
 
-const processErasure = (req: any) => {
+const processErasure = (req: unknown) => {
   req.status = 'COMPLETED';
   ElMessage.success(`Data erasure processed for ${req.name}`);
 };

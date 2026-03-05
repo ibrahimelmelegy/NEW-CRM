@@ -48,7 +48,7 @@
         <div class="space-y-4">
           <div v-for="mention in mentions" :key="mention.id" class="glass-panel p-5 rounded-xl hover:border-primary-500/30 transition-all">
             <div class="flex items-start gap-3">
-              <el-avatar :size="40" :src="(mention as any).avatar" class="bg-slate-700 flex-shrink-0">{{ mention.author.charAt(0) }}</el-avatar>
+              <el-avatar :size="40" :src="(mention as unknown).avatar" class="bg-slate-700 flex-shrink-0">{{ mention.author.charAt(0) }}</el-avatar>
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-1">
                   <span class="text-sm font-medium text-slate-200">{{ mention.author }}</span>
@@ -562,7 +562,7 @@ const getSentimentType = (s: string): 'success' | 'warning' | 'danger' | undefin
 async function fetchProfiles() {
   loading.value = true;
   try {
-    const res: any = await useApiFetch('social-crm');
+    const res = await useApiFetch('social-crm');
     if (res?.success) {
       profiles.value = res.body?.docs || res.body || [];
     } else {
@@ -618,18 +618,18 @@ const deleteProfile = async (id: number) => {
 };
 
 // ── Actions: Mentions ──────────────────────────────────────────────────────────
-const replyToMention = (_m: any) => ElMessage.info(t('common.saved'));
-const convertToLead = (_m: any) => ElMessage.success(t('common.saved'));
-const assignMention = (_m: any) => ElMessage.info(t('common.saved'));
+const replyToMention = (_m: unknown) => ElMessage.info(t('common.saved'));
+const convertToLead = (_m: unknown) => ElMessage.success(t('common.saved'));
+const assignMention = (_m: unknown) => ElMessage.info(t('common.saved'));
 
 // ── API: Fetch scheduled posts ──────────────────────────────────────────────
 async function fetchPosts() {
   postsLoading.value = true;
   try {
-    const res: any = await useApiFetch('social-crm/posts');
+    const res = await useApiFetch('social-crm/posts');
     if (res?.success) {
       const docs = res.body?.docs || res.body || [];
-      scheduledPosts.value = docs.map((p: any) => ({
+      scheduledPosts.value = docs.map((p) => ({
         id: p.id,
         content: p.content || '',
         platforms: p.platforms || [],
@@ -646,7 +646,7 @@ async function fetchPosts() {
 }
 
 // ── Actions: Scheduled posts (API-backed) ──────────────────────────────────
-const editPost = (p: any) => {
+const editPost = (p: unknown) => {
   newPost.value = {
     content: p.content,
     platforms: [...p.platforms],
@@ -659,7 +659,7 @@ const editPost = (p: any) => {
 
 const editingPostId = ref<number | null>(null);
 
-const deletePost = async (p: any) => {
+const deletePost = async (p: unknown) => {
   try {
     const res = await useApiFetch(`social-crm/posts/${p.id}`, 'DELETE');
     if (res?.success) {

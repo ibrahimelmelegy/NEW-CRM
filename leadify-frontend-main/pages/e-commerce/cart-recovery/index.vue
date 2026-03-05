@@ -137,7 +137,7 @@
               template(#default="{ row }")
                 div
                   span.text-sm(style="color: var(--text-primary)")
-                    | {{ row.items.slice(0, 2).map((i: any) => truncateText(i.name, 20)).join(', ') }}
+                    | {{ row.items.slice(0, 2).map((i) => truncateText(i.name, 20)).join(', ') }}
                   el-tag.ml-1(
                     v-if="row.items.length > 2"
                     size="small"
@@ -439,9 +439,9 @@ const activeTab = ref('carts');
 const dateRange = ref<[Date, Date] | null>(null);
 const cartSearch = ref('');
 const cartStatusFilter = ref('');
-const selectedCarts = ref<any[]>([]);
+const selectedCarts = ref<Record<string, unknown>[]>([]);
 const cartDetailVisible = ref(false);
-const selectedCart = ref<any>(null);
+const selectedCart = ref<Record<string, unknown> | null>(null);
 const showComparison = ref(false);
 const showCreateCampaign = ref(false);
 const revenuePeriod = ref('8weeks');
@@ -924,7 +924,7 @@ const funnelChartOption = computed(() => ({
   tooltip: {
     trigger: 'item',
     ...tooltipStyle,
-    formatter: (params: any) => {
+    formatter: (params: unknown) => {
       return `<strong>${params.name}</strong><br/>Visitors: <strong>${params.value.toLocaleString()}</strong><br/>Rate: <strong>${params.data.percentage}%</strong>`;
     }
   },
@@ -944,7 +944,7 @@ const funnelChartOption = computed(() => ({
       label: {
         show: true,
         position: 'inside',
-        formatter: (params: any) => `${params.name}\n${params.data.percentage}%`,
+        formatter: (params: unknown) => `${params.name}\n${params.data.percentage}%`,
         fontSize: 13,
         fontWeight: 'bold',
         color: '#fff',
@@ -979,7 +979,7 @@ const previousFunnelChartOption = computed(() => ({
   tooltip: {
     trigger: 'item',
     ...tooltipStyle,
-    formatter: (params: any) => {
+    formatter: (params: unknown) => {
       return `<strong>${params.name}</strong><br/>Visitors: <strong>${params.value.toLocaleString()}</strong><br/>Rate: <strong>${params.data.percentage}%</strong>`;
     }
   },
@@ -999,7 +999,7 @@ const previousFunnelChartOption = computed(() => ({
       label: {
         show: true,
         position: 'inside',
-        formatter: (params: any) => `${params.name}\n${params.data.percentage}%`,
+        formatter: (params: unknown) => `${params.name}\n${params.data.percentage}%`,
         fontSize: 13,
         fontWeight: 'bold',
         color: '#fff',
@@ -1041,11 +1041,11 @@ const revenueBarChartOption = computed(() => {
     tooltip: {
       trigger: 'axis',
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const idx = params[0]?.dataIndex ?? 0;
         const weekLabel = data[idx]?.week || '';
         let html = `<strong>${weekLabel}</strong><br/>`;
-        params.forEach((p: any) => {
+        params.forEach((p) => {
           html += `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${p.color};margin-right:6px;"></span>`;
           html += `${p.seriesName}: <strong>$${p.value.toLocaleString()}</strong><br/>`;
         });
@@ -1122,7 +1122,7 @@ const recoveryRateChartOption = computed(() => {
     tooltip: {
       trigger: 'axis',
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const idx = params[0]?.dataIndex ?? 0;
         const weekLabel = data[idx]?.week || '';
         return `<strong>${weekLabel}</strong><br/>Recovery Rate: <strong>${params[0]?.value}%</strong>`;
@@ -1214,15 +1214,15 @@ function formatDate(dateStr: string): string {
 }
 
 // ─── Actions ────────────────────────────────────────────────
-function onCartSelectionChange(rows: any[]) {
+function onCartSelectionChange(rows: Record<string, unknown>[]) {
   selectedCarts.value = rows;
 }
 
-function expandRow(_row: any, _expandedRows: any[]) {
+function expandRow(_row: unknown, _expandedRows: Record<string, unknown>[]) {
   // Track expanded rows if needed
 }
 
-function sendRecoveryEmail(cart: any) {
+function sendRecoveryEmail(cart: unknown) {
   if (cart.status === 'Recovered' || cart.status === 'Lost') {
     ElMessage.warning(t('cartRecovery.cannotRecoverCart'));
     return;
@@ -1258,21 +1258,21 @@ function bulkMarkLost() {
     });
 }
 
-function viewCartDetail(cart: any) {
+function viewCartDetail(cart: unknown) {
   selectedCart.value = cart;
   cartDetailVisible.value = true;
 }
 
-function toggleCampaign(campaign: any) {
+function toggleCampaign(campaign: unknown) {
   const status = campaign.active ? t('cartRecovery.activated') : t('cartRecovery.paused');
   ElMessage.success(`${campaign.name} ${status}`);
 }
 
-function editCampaign(campaign: any) {
+function editCampaign(campaign: unknown) {
   ElMessage.info(t('cartRecovery.editingCampaign', { name: campaign.name }));
 }
 
-function viewCampaignDetails(campaign: any) {
+function viewCampaignDetails(campaign: unknown) {
   ElMessage.info(t('cartRecovery.viewingDetails', { name: campaign.name }));
 }
 

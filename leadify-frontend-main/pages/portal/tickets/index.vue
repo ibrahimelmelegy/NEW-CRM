@@ -53,10 +53,10 @@ definePageMeta({ layout: 'portal' });
 
 const { portalFetch, init, isAuthenticated } = usePortalAuth();
 
-const tickets = ref<any[]>([]);
+const tickets = ref<Record<string, unknown>[]>([]);
 const loading = ref(true);
 const showDetail = ref(false);
-const selectedTicket = ref<any>(null);
+const selectedTicket = ref<Record<string, unknown> | null>(null);
 
 onMounted(async () => {
   init();
@@ -71,12 +71,12 @@ async function loadTickets() {
   loading.value = true;
   const res = await portalFetch('tickets');
   if (res.success && res.body) {
-    tickets.value = res.body as any[];
+    tickets.value = res.body as unknown[];
   }
   loading.value = false;
 }
 
-function viewTicket(ticket: any) {
+function viewTicket(ticket: unknown) {
   selectedTicket.value = ticket;
   showDetail.value = true;
 }

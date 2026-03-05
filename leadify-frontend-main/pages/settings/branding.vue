@@ -585,7 +585,7 @@ function onDrop(event: DragEvent) {
 // --- Save settings ---
 
 // Strip empty strings from an object so the backend @IsOptional() skips them
-function stripEmptyStrings(obj: Record<string, any>): Record<string, any> {
+function stripEmptyStrings(obj: Record<string, unknown>): Record<string, unknown> {
   return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== '' && v !== null && v !== undefined));
 }
 
@@ -598,7 +598,7 @@ async function handleSave() {
   saving.value = true;
   try {
     const payload = stripEmptyStrings({ ...form });
-    let res: any;
+    let res: unknown;
     if (settingsId.value) {
       res = await useApiFetch(`setting/${settingsId.value}`, 'PUT', payload);
     } else {
@@ -648,7 +648,7 @@ async function handleReset() {
     if (res.success) {
       ElNotification({ type: 'success', title: t('common.success'), message: t('branding.resetSuccess') });
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;

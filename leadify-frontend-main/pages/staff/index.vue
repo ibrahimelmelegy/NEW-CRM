@@ -234,11 +234,11 @@ table.data = response.formattedData;
 // Staff Analytics
 const staffAnalytics = computed(() => {
   const data = table.data || [];
-  const activeStaff = data.filter((s: any) => s.status === 'ACTIVE');
+  const activeStaff = data.filter((s) => s.status === 'ACTIVE');
 
   // Department count (extracted from role or department field)
   const departments = new Set<string>();
-  data.forEach((s: any) => {
+  data.forEach((s) => {
     const dept = s.department || s.roleDetails?.split('-')[0]?.trim() || 'Unknown';
     departments.add(dept);
   });
@@ -246,17 +246,17 @@ const staffAnalytics = computed(() => {
   // Recent hires (last 30 days)
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  const recentHires = data.filter((s: any) => {
+  const recentHires = data.filter((s) => {
     if (!s.createdAt) return false;
     return new Date(s.createdAt) > thirtyDaysAgo;
   }).length;
 
   // Average tenure (in months)
-  const staffWithDates = data.filter((s: any) => s.createdAt);
+  const staffWithDates = data.filter((s) => s.createdAt);
   const avgTenureMonths =
     staffWithDates.length > 0
       ? Math.round(
-          staffWithDates.reduce((sum: number, s: any) => {
+          staffWithDates.reduce((sum, s) => {
             const months = Math.max(0, Math.floor((new Date().getTime() - new Date(s.createdAt).getTime()) / (1000 * 60 * 60 * 24 * 30)));
             return sum + months;
           }, 0) / staffWithDates.length
@@ -277,7 +277,7 @@ const departmentChartOption = computed(() => {
   if (!data.length) return null;
 
   const deptMap = new Map<string, number>();
-  data.forEach((s: any) => {
+  data.forEach((s) => {
     const dept = s.department || s.roleDetails?.split('-')[0]?.trim() || 'Unknown';
     deptMap.set(dept, (deptMap.get(dept) || 0) + 1);
   });
@@ -295,7 +295,7 @@ const roleChartOption = computed(() => {
   if (!data.length) return null;
 
   const roleMap = new Map<string, number>();
-  data.forEach((s: any) => {
+  data.forEach((s) => {
     const role = s.roleDetails || 'Unknown';
     roleMap.set(role, (roleMap.get(role) || 0) + 1);
   });
@@ -342,7 +342,7 @@ const roleChartOption = computed(() => {
   };
 });
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/staff/${val.id}`);
 }
 
@@ -360,11 +360,11 @@ async function deleteStaffAction() {
   loadingAction.value = false;
 }
 
-const mappedRoles = ref<{ label: string; value: any }[]>();
+const mappedRoles = ref<{ label: string; value: unknown }[]>();
 //  Get roles
 const repsonse = await useApiFetch('role');
 // Map clients to Select Options
-mappedRoles.value = repsonse.body?.docs?.map((e: any) => ({
+mappedRoles.value = repsonse.body?.docs?.map((e) => ({
   label: e.name,
   value: e.id
 }));
@@ -387,26 +387,26 @@ const advancedSearchFields = [
   { key: 'name', label: t('staff.table.staffName'), type: 'string' },
   { key: 'email', label: t('staff.table.email'), type: 'string' },
   { key: 'phone', label: t('staff.table.phone'), type: 'string' },
-  { key: 'status', label: t('staff.table.status'), type: 'select', options: staffStatuses.map((s: any) => ({ value: s.value, label: s.label })) },
+  { key: 'status', label: t('staff.table.status'), type: 'select', options: staffStatuses.map((s) => ({ value: s.value, label: s.label })) },
   { key: 'roleId', label: t('staff.table.role'), type: 'select', options: mappedRoles.value || [] },
   { key: 'createdAt', label: t('common.created'), type: 'date' }
 ];
 
-async function handleApplyView(view: any) {
+async function handleApplyView(view: unknown) {
   if (view?.filters) {
     const res = await useTableFilter('users', view.filters);
     table.data = res.formattedData;
   }
 }
 
-async function handleAdvancedFilter(filterPayload: any) {
+async function handleAdvancedFilter(filterPayload: unknown) {
   try {
     const res = await useApiFetch('search/advanced/staff', 'POST', filterPayload);
     if (res?.success && res?.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       table.data = data.docs || data || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -426,19 +426,19 @@ const mobileFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
-    { value: 'ACTIVE', label: t('common.active'), color: '#10b981', count: data.filter((s: any) => s.status === 'ACTIVE').length },
-    { value: 'INACTIVE', label: t('common.inactive'), color: '#94a3b8', count: data.filter((s: any) => s.status === 'INACTIVE').length }
+    { value: 'ACTIVE', label: t('common.active'), color: '#10b981', count: data.filter((s) => s.status === 'ACTIVE').length },
+    { value: 'INACTIVE', label: t('common.inactive'), color: '#94a3b8', count: data.filter((s) => s.status === 'INACTIVE').length }
   ];
 });
 
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((s: any) => s.status === mobileStatusFilter.value);
+    data = data.filter((s) => s.status === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((s: any) => {
+  return data.filter((s) => {
     const name = (s.staffDetails?.title || s.name || '').toLowerCase();
     const email = (s.email || '').toLowerCase();
     const phone = (s.phone || '').toLowerCase();
@@ -458,21 +458,21 @@ async function handleMobileRefresh() {
   }
 }
 
-function getSwipeRightActions(staff: any) {
-  const actions: any[] = [];
+function getSwipeRightActions(staff: unknown) {
+  const actions: Record<string, unknown>[] = [];
   if (staff.phone) actions.push({ name: 'call', label: t('common.call'), icon: 'ph:phone-bold', color: '#10B981' });
   if (staff.email) actions.push({ name: 'email', label: t('common.email'), icon: 'ph:envelope-bold', color: '#3B82F6' });
   return actions;
 }
 
-function getSwipeLeftActions(staff: any) {
+function getSwipeLeftActions(staff: unknown) {
   const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#7849ff' }];
   if (hasPermission('EDIT_STAFF') && staff.id !== 1)
     actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
   return actions;
 }
 
-function handleSwipeAction(name: string, staff: any) {
+function handleSwipeAction(name: string, staff: unknown) {
   vibrate();
   switch (name) {
     case 'call':

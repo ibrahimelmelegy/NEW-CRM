@@ -207,7 +207,7 @@ interface DisplayDocument {
   totalSigners: number;
   sentDate: string;
   recipients: { name: string; email: string; status?: string; signedAt?: string | null }[];
-  _raw: any;
+  _raw: unknown;
 }
 
 const documents = ref<DisplayDocument[]>([]);
@@ -226,9 +226,9 @@ function deriveType(title: string): string {
 /**
  * Convert a raw ESignature record from the API into the display shape the template expects.
  */
-function mapRecord(record: any): DisplayDocument {
+function mapRecord(record: unknown): DisplayDocument {
   const recipients = record.recipients || [];
-  const signedCount = recipients.filter((r: any) => r.status === 'SIGNED').length;
+  const signedCount = recipients.filter((r) => r.status === 'SIGNED').length;
   const totalSigners = recipients.length;
   return {
     id: record.id,
@@ -248,7 +248,7 @@ function mapRecord(record: any): DisplayDocument {
 async function fetchDocuments() {
   loading.value = true;
   try {
-    const res: any = await useApiFetch('e-signatures?limit=100');
+    const res = await useApiFetch('e-signatures?limit=100');
     if (res?.success) {
       const raw = res.body?.docs || res.body || [];
       const list = Array.isArray(raw) ? raw : [];
@@ -256,7 +256,7 @@ async function fetchDocuments() {
     } else {
       ElMessage.error(t('common.error'));
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
     console.error(e);
   } finally {
@@ -276,10 +276,10 @@ const avgSignTime = computed(() => {
   let count = 0;
   for (const d of signed) {
     const sentTime = new Date(d._raw.sentAt || d._raw.createdAt).getTime();
-    const signedRecipients = (d._raw.recipients || []).filter((r: any) => r.signedAt);
+    const signedRecipients = (d._raw.recipients || []).filter((r) => r.signedAt);
     if (signedRecipients.length > 0) {
       // Use the last signer's time
-      const lastSignedAt = Math.max(...signedRecipients.map((r: any) => new Date(r.signedAt).getTime()));
+      const lastSignedAt = Math.max(...signedRecipients.map((r) => new Date(r.signedAt).getTime()));
       totalMs += lastSignedAt - sentTime;
       count++;
     }
@@ -385,7 +385,7 @@ const sendForSignature = async () => {
 
   sending.value = true;
   try {
-    const payload: any = {
+    const payload: unknown = {
       title: req.name,
       message: req.message || '',
       recipients: req.recipients.filter(r => r.email),
@@ -402,7 +402,7 @@ const sendForSignature = async () => {
     } else {
       ElMessage.error(t('common.error'));
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
     console.error(e);
   } finally {

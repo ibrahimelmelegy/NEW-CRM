@@ -323,7 +323,7 @@ function formatCurrency(amount: number | string): string {
   return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' SAR';
 }
 
-function getDetailUrl(row: any) {
+function getDetailUrl(row: unknown) {
   const dt = documentTypes.value.find(d => d.type === row.type);
   return dt ? `${dt.detailBase}/${row.id}` : `/sales/documents/${row.id}`;
 }
@@ -339,7 +339,7 @@ function handlePageChange(page: number) {
 }
 
 async function loadData() {
-  const params: Record<string, any> = {
+  const params: Record<string, unknown> = {
     page: currentPage.value,
     limit: 15,
     sort: 'DESC',

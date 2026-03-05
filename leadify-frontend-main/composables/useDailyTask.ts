@@ -92,7 +92,7 @@ export async function getDailyTasks(all?: boolean): Promise<UseDailyTaskResult> 
 
     if (success && body) {
       const tasks =
-        (body as any).docs?.map((task: any) => ({
+        (body as unknown).docs?.map((task) => ({
           ...task,
           createdAt: formatDate(task.createdAt ?? ''),
           updatedAt: '-',
@@ -100,7 +100,7 @@ export async function getDailyTasks(all?: boolean): Promise<UseDailyTaskResult> 
           salesRepresentativeName: task.salesRepresentative?.name,
           assignedToName: task.user?.name
         })) ?? [];
-      const pagination = (body as any).pagination;
+      const pagination = (body as unknown).pagination;
       return { tasks, pagination };
     } else {
       throw new Error(message || 'Failed to fetch Daily Tasks');
@@ -236,7 +236,7 @@ export async function getDailyTaskStatistics(): Promise<DailyTaskStatistics> {
     monthlyRevenue = [],
     taskDistributionByClient = [],
     salesPerformance = []
-  } = body as any;
+  } = body as unknown;
 
   return {
     activeTasks,
@@ -244,16 +244,16 @@ export async function getDailyTaskStatistics(): Promise<DailyTaskStatistics> {
     grantedTasks,
     totalRevenue,
     taskStatusPercentage: toNameValueArray(taskStatusPercentage),
-    taskDistributionByClient: taskDistributionByClient.map((item: any) => ({
+    taskDistributionByClient: taskDistributionByClient.map((item) => ({
       name: item.clientName,
       value: item.taskCount
     })),
-    salesPerformance: salesPerformance.map((item: any) => ({
+    salesPerformance: salesPerformance.map((item) => ({
       name: item.name,
       value: item.tasksCount,
       value2: item.totalPaid
     })),
-    monthlyRevenue: monthlyRevenue.map((item: any) => ({
+    monthlyRevenue: monthlyRevenue.map((item) => ({
       name: item.month,
       value: item.totalPaid
     }))

@@ -6,7 +6,7 @@ export interface TemplateElement {
   y: number;
   width: number;
   height: number;
-  props: Record<string, any>;
+  props: Record<string, unknown>;
 }
 
 export interface TemplateLayout {
@@ -15,7 +15,7 @@ export interface TemplateLayout {
   margins: { top: number; right: number; bottom: number; left: number };
   elements: TemplateElement[];
   variables: string[];
-  proContent?: any;
+  proContent?: unknown;
 }
 
 export type DocumentTemplateType =
@@ -37,9 +37,9 @@ export interface DocumentTemplate {
   name: string;
   type: DocumentTemplateType;
   layout: TemplateLayout;
-  headerConfig?: Record<string, any>;
-  footerConfig?: Record<string, any>;
-  tableConfig?: Record<string, any>;
+  headerConfig?: Record<string, unknown>;
+  footerConfig?: Record<string, unknown>;
+  tableConfig?: Record<string, unknown>;
   isDefault: boolean;
   category?: 'system' | 'custom';
   userId?: string;
@@ -48,7 +48,7 @@ export interface DocumentTemplate {
   updatedAt?: string;
 }
 
-export async function fetchDocumentTemplates(query?: Record<string, any>): Promise<{ docs: DocumentTemplate[]; pagination: any }> {
+export async function fetchDocumentTemplates(query?: Record<string, unknown>): Promise<{ docs: DocumentTemplate[]; pagination: unknown }> {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`document-templates${qs}`);
   if (success && body) return body;
@@ -62,11 +62,11 @@ export async function fetchDocumentTemplate(id: string): Promise<DocumentTemplat
 }
 
 export async function createDocumentTemplate(data: Partial<DocumentTemplate>) {
-  return useApiFetch('document-templates', 'POST', data as any);
+  return useApiFetch('document-templates', 'POST', data as unknown);
 }
 
 export async function updateDocumentTemplate(id: string, data: Partial<DocumentTemplate>) {
-  return useApiFetch(`document-templates/${id}`, 'PUT', data as any);
+  return useApiFetch(`document-templates/${id}`, 'PUT', data as unknown);
 }
 
 export async function deleteDocumentTemplate(id: string) {
@@ -90,7 +90,7 @@ export async function fetchDefaultConfigs(): Promise<DocumentTemplate[]> {
 // ---------------------------------------------------------------------------
 // Built-in template definitions (fallback when API is unavailable)
 // ---------------------------------------------------------------------------
-function _el(id: string, type: TemplateElement['type'], x: number, y: number, w: number, h: number, props: Record<string, any>): TemplateElement {
+function _el(id: string, type: TemplateElement['type'], x: number, y: number, w: number, h: number, props: Record<string, unknown>): TemplateElement {
   return { id, type, x, y, width: w, height: h, props };
 }
 

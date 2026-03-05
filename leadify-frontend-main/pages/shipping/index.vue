@@ -430,23 +430,23 @@ const analytics = reactive({
 // Track Shipment
 const trackingInput = ref('');
 const loadingTracking = ref(false);
-const trackedShipment = ref<any>(null);
+const trackedShipment = ref<Record<string, unknown> | null>(null);
 const trackingNotFound = ref(false);
 
 // Rate Calculator
 const calcWeight = ref(1);
 const calcZone = ref('');
 const loadingCalcRate = ref(false);
-const calculatedRate = ref<any>(null);
+const calculatedRate = ref<Record<string, unknown> | null>(null);
 
 // Shipments
 const loadingShipments = ref(false);
-const shipments = ref<any[]>([]);
+const shipments = ref<Record<string, unknown>[]>([]);
 const shipmentsPagination = reactive({ page: 1, limit: 20, total: 0 });
 const shipmentSearch = ref('');
 const shipmentStatusFilter = ref('');
 const shipmentDialogVisible = ref(false);
-const editingShipment = ref<any>(null);
+const editingShipment = ref<Record<string, unknown> | null>(null);
 const shipmentForm = reactive({
   carrier: '',
   trackingNumber: '',
@@ -461,11 +461,11 @@ const shipmentForm = reactive({
 
 // Rates
 const loadingRates = ref(false);
-const rates = ref<any[]>([]);
+const rates = ref<Record<string, unknown>[]>([]);
 const ratesPagination = reactive({ page: 1, limit: 20, total: 0 });
 const rateSearch = ref('');
 const rateDialogVisible = ref(false);
-const editingRate = ref<any>(null);
+const editingRate = ref<Record<string, unknown> | null>(null);
 const rateForm = reactive({
   carrier: '',
   zone: '',
@@ -514,9 +514,9 @@ const shipmentStats = computed(() => {
   const data = shipments.value;
   return {
     total: data.length,
-    inTransit: data.filter((s: any) => s.status === 'IN_TRANSIT' || s.status === 'SHIPPED').length,
-    delivered: data.filter((s: any) => s.status === 'DELIVERED').length,
-    returned: data.filter((s: any) => s.status === 'RETURNED').length
+    inTransit: data.filter((s) => s.status === 'IN_TRANSIT' || s.status === 'SHIPPED').length,
+    delivered: data.filter((s) => s.status === 'DELIVERED').length,
+    returned: data.filter((s) => s.status === 'RETURNED').length
   };
 });
 
@@ -524,11 +524,11 @@ const shipmentStats = computed(() => {
 const filteredShipments = computed(() => {
   let data = shipments.value;
   if (shipmentStatusFilter.value) {
-    data = data.filter((s: any) => s.status === shipmentStatusFilter.value);
+    data = data.filter((s) => s.status === shipmentStatusFilter.value);
   }
   if (shipmentSearch.value) {
     const q = shipmentSearch.value.toLowerCase();
-    data = data.filter((s: any) => {
+    data = data.filter((s) => {
       return (
         (s.shipmentNumber || '').toLowerCase().includes(q) ||
         (s.carrier || '').toLowerCase().includes(q) ||
@@ -545,7 +545,7 @@ const filteredShipments = computed(() => {
 const filteredRates = computed(() => {
   if (!rateSearch.value) return rates.value;
   const q = rateSearch.value.toLowerCase();
-  return rates.value.filter((r: any) => {
+  return rates.value.filter((r) => {
     return (r.carrier || '').toLowerCase().includes(q) || (r.zone || '').toLowerCase().includes(q);
   });
 });
@@ -556,11 +556,11 @@ async function loadShipments() {
   try {
     const res = await useApiFetch(`shipping?page=${shipmentsPagination.page}&limit=${shipmentsPagination.limit}`);
     if (res?.success) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       shipments.value = data?.rows || data?.docs || data || [];
       shipmentsPagination.total = data?.count ?? data?.total ?? shipments.value.length;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingShipments.value = false;
@@ -581,7 +581,7 @@ function openCreateShipment() {
   shipmentDialogVisible.value = true;
 }
 
-function openEditShipment(shipment: any) {
+function openEditShipment(shipment: unknown) {
   editingShipment.value = shipment;
   shipmentForm.carrier = shipment.carrier || '';
   shipmentForm.trackingNumber = shipment.trackingNumber || '';
@@ -618,7 +618,7 @@ async function saveShipment() {
   }
 }
 
-async function deleteShipment(shipment: any) {
+async function deleteShipment(shipment: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`shipping/${shipment.id}`, 'DELETE');
@@ -635,11 +635,11 @@ async function loadRates() {
   try {
     const res = await useApiFetch(`shipping/rates?page=${ratesPagination.page}&limit=${ratesPagination.limit}`);
     if (res?.success) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       rates.value = data?.rows || data?.docs || data || [];
       ratesPagination.total = data?.count ?? data?.total ?? rates.value.length;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingRates.value = false;
@@ -659,7 +659,7 @@ function openCreateRate() {
   rateDialogVisible.value = true;
 }
 
-function openEditRate(rate: any) {
+function openEditRate(rate: unknown) {
   editingRate.value = rate;
   rateForm.carrier = rate.carrier || '';
   rateForm.zone = rate.zone || '';
@@ -695,7 +695,7 @@ async function saveRate() {
   }
 }
 
-async function deleteRate(rate: any) {
+async function deleteRate(rate: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`shipping/rates/${rate.id}`, 'DELETE');
@@ -711,13 +711,13 @@ async function loadAnalytics() {
   try {
     const res = await useApiFetch('shipping/analytics');
     if (res?.success) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       analytics.totalShipments = data?.totalShipments ?? data?.total ?? 0;
       analytics.delivered = data?.delivered ?? 0;
       analytics.inTransit = data?.inTransit ?? 0;
       analytics.onTimeRate = data?.onTimeRate ?? 0;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -752,7 +752,7 @@ async function calculateRate() {
     if (res?.success && res.body) {
       calculatedRate.value = res.body;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingCalcRate.value = false;

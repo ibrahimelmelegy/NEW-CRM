@@ -34,7 +34,7 @@ export function useRelationshipGraph() {
       const typesParam = filters.value.join(',');
       const res = await useApiFetch(`insights/relationship-graph?types=${typesParam}`, 'GET', {}, true);
       if (res.success && res.body) {
-        const rb = res.body as any;
+        const rb = res.body as unknown;
         nodes.value = rb.nodes || [];
         edges.value = rb.edges || [];
       }

@@ -253,7 +253,7 @@ async function handleCheckIn() {
     const position = await getLocation();
     checkInData.value = { latitude: position.coords.latitude, longitude: position.coords.longitude, address: '', notes: '' };
     showCheckInDialog.value = true;
-  } catch (error: any) {
+  } catch (error: unknown) {
     const msg = error.code === 1 ? t('fieldOps.locationDenied') : t('fieldOps.locationError');
     ElNotification({ type: 'error', title: t('common.error'), message: msg });
   } finally {
@@ -268,7 +268,7 @@ async function handleCheckOut() {
     const position = await getLocation();
     checkInData.value = { latitude: position.coords.latitude, longitude: position.coords.longitude, address: '', notes: '' };
     showCheckInDialog.value = true;
-  } catch (error: any) {
+  } catch (error: unknown) {
     const msg = error.code === 1 ? t('fieldOps.locationDenied') : t('fieldOps.locationError');
     ElNotification({ type: 'error', title: t('common.error'), message: msg });
   } finally {

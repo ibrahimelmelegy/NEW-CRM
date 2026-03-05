@@ -902,7 +902,7 @@ const sampleContact = reactive({
 });
 
 // ── Analytics Data (populated when campaign is sent) ──
-const analyticsData = ref<any>(null);
+const analyticsData = ref<Record<string, unknown> | null>(null);
 const industryAverage = { openRate: 21.5, clickRate: 2.6 };
 
 const analyticStats = computed(() => {
@@ -963,7 +963,7 @@ const statusTagType = computed(() => {
     Sent: 'success',
     Paused: 'danger'
   };
-  return (map[campaign.status] || 'info') as any;
+  return (map[campaign.status] || 'info') as unknown;
 });
 
 // ── Step Navigation ──
@@ -1025,7 +1025,7 @@ function onEditorPaste(event: ClipboardEvent) {
 }
 
 // ── CSV Upload ──
-function handleCsvUpload(file: any) {
+function handleCsvUpload(file: unknown) {
   const reader = new FileReader();
   reader.onload = e => {
     const text = e.target?.result as string;
@@ -1080,7 +1080,7 @@ async function saveDraft() {
   }
   saving.value = true;
   try {
-    const payload: any = {
+    const payload: unknown = {
       name: campaign.name,
       subject: campaign.subject,
       htmlContent: campaign.htmlContent,
@@ -1136,7 +1136,7 @@ async function scheduleCampaign() {
       const res = await updateCampaign(campaignId.value, {
         status: 'SCHEDULED',
         scheduledAt: sendSettings.scheduledDate
-      } as any);
+      } as unknown);
       if (res.success) {
         campaign.status = 'Scheduled';
         showScheduleDialog.value = false;

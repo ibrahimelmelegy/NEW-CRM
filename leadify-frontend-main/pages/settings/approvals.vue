@@ -174,7 +174,7 @@ const showCreateRule = ref(false);
 const pageLoading = ref(false);
 
 // Data
-const pendingApprovals = ref<any[]>([
+const pendingApprovals = ref<Record<string, unknown>[]>([
   {
     id: '1',
     type: 'deal',
@@ -204,7 +204,7 @@ const pendingApprovals = ref<any[]>([
   }
 ]);
 
-const approvalRules = ref<any[]>([
+const approvalRules = ref<Record<string, unknown>[]>([
   {
     id: '1',
     name: 'High-Value Deal Discount',
@@ -225,7 +225,7 @@ const approvalRules = ref<any[]>([
   }
 ]);
 
-const approvalHistory = ref<any[]>([
+const approvalHistory = ref<Record<string, unknown>[]>([
   {
     id: '1',
     title: 'Q4 Marketing Budget',
@@ -282,7 +282,7 @@ function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function approveItem(approval: any) {
+function approveItem(approval: unknown) {
   pendingApprovals.value = pendingApprovals.value.filter(a => a.id !== approval.id);
   approvalHistory.value.unshift({
     id: approval.id,
@@ -296,7 +296,7 @@ function approveItem(approval: any) {
   ElNotification({ type: 'success', title: 'Approved', message: `"${approval.title}" has been approved` });
 }
 
-async function rejectApproval(approval: any) {
+async function rejectApproval(approval: unknown) {
   try {
     await ElMessageBox.confirm(t('approvals.confirmReject'), t('approvals.rejectApproval'), { type: 'warning' });
     pendingApprovals.value = pendingApprovals.value.filter(a => a.id !== approval.id);
@@ -315,11 +315,11 @@ async function rejectApproval(approval: any) {
   }
 }
 
-function toggleRule(rule: any) {
+function toggleRule(rule: unknown) {
   ElNotification({ type: 'success', title: 'Updated', message: `Rule "${rule.name}" ${rule.active ? 'activated' : 'deactivated'}` });
 }
 
-async function deleteRule(rule: any) {
+async function deleteRule(rule: unknown) {
   try {
     await ElMessageBox.confirm(`Delete rule "${rule.name}"?`, 'Delete', { type: 'warning' });
     approvalRules.value = approvalRules.value.filter(r => r.id !== rule.id);

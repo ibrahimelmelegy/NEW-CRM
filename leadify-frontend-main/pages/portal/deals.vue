@@ -28,7 +28,7 @@ definePageMeta({ layout: 'portal' });
 
 const { portalFetch, init, isAuthenticated } = usePortalAuth();
 
-const deals = ref<any[]>([]);
+const deals = ref<Record<string, unknown>[]>([]);
 const loading = ref(true);
 
 onMounted(async () => {
@@ -39,7 +39,7 @@ onMounted(async () => {
   }
   const res = await portalFetch('deals');
   if (res.success && res.body) {
-    deals.value = res.body as any[];
+    deals.value = res.body as unknown[];
   }
   loading.value = false;
 });

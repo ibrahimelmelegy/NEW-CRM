@@ -85,14 +85,14 @@ async function handlePageChange(page: number) {
   await fetchInvoices(page);
 }
 
-function invoiceStatusType(row: any): string {
+function invoiceStatusType(row: unknown): string {
   if (row.status === 'PAID' || row.collected) return 'success';
   if (row.status === 'OVERDUE') return 'warning';
   if (row.status === 'PARTIAL') return '';
   return 'danger';
 }
 
-function invoiceStatusLabel(row: any): string {
+function invoiceStatusLabel(row: unknown): string {
   if (row.status === 'PAID' || row.collected) return t('portal.invoices.paid');
   if (row.status === 'OVERDUE') return t('portal.invoices.overdue');
   if (row.status === 'PARTIAL') return t('portal.invoices.partial');

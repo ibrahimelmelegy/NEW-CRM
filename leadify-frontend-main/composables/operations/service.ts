@@ -27,7 +27,7 @@ function handleSuccess(message: string, id?: string, redirect: boolean = true) {
 export interface Service {
   type: string;
   price: string | number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface UseServicesResult {
@@ -47,7 +47,7 @@ export async function getServices(): Promise<UseServicesResult> {
 
     if (success) {
       // Return the docs (services) from the response
-      const services = body?.docs?.map((service: any) => ({
+      const services = body?.docs?.map((service) => ({
         ...service,
         createdAt: formatDate(service.createdAt),
         // updatedAt: formatDate(service.updatedAt),

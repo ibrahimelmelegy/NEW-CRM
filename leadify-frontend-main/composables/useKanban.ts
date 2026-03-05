@@ -12,7 +12,7 @@ export interface KanbanCard {
   users?: Array<{ id: number; name: string; email: string }>;
   lead?: { id: string; name: string; companyName?: string };
   createdAt?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export async function fetchDealKanban(): Promise<Record<string, KanbanCard[]>> {

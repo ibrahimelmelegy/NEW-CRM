@@ -19,7 +19,7 @@ interface RetryOptions {
 
 // Global cache store with LRU eviction
 const MAX_CACHE_ENTRIES = 200;
-const cache = new Map<string, CacheEntry<any>>();
+const cache = new Map<string, CacheEntry<<unknown>>();
 
 /**
  * Evict oldest entries when cache exceeds max size
@@ -44,7 +44,7 @@ const evictIfNeeded = () => {
 /**
  * Generate a cache key from URL and params
  */
-const generateCacheKey = (url: string, params?: Record<string, any>): string => {
+const generateCacheKey = (url: string, params?: Record<string, unknown>): string => {
   const paramString = params ? JSON.stringify(params) : '';
   return `${url}:${paramString}`;
 };
@@ -65,7 +65,7 @@ const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(r
 /**
  * useApiCache - Composable for caching API responses
  */
-export const useApiCache = <T = any>(fetcher: () => Promise<T>, cacheKey: string, options: CacheOptions = {}) => {
+export const useApiCache = <T = <unknown>(fetcher: () => Promise<T>, cacheKey: string, options: CacheOptions = {}) => {
   const { ttl = 5 * 60 * 1000 } = options; // Default: 5 minutes
 
   const data = ref<T | null>(null);
@@ -98,7 +98,7 @@ export const useApiCache = <T = any>(fetcher: () => Promise<T>, cacheKey: string
 
       data.value = result;
       return result;
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err;
       return null;
     } finally {
@@ -140,7 +140,7 @@ export const withRetry = async <T>(fn: () => Promise<T>, options: RetryOptions =
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await fn();
-    } catch (error: any) {
+    } catch (error: unknown) {
       lastError = error;
 
       const statusCode = error?.response?.status || error?.statusCode;

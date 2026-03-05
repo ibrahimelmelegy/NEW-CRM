@@ -62,7 +62,7 @@ definePageMeta({ layout: 'portal' });
 const { portalUser, portalFetch, init, isAuthenticated } = usePortalAuth();
 const { dashboard: enhancedDashboard, loading: enhancedLoading, fetchDashboard } = useEnhancedPortal();
 
-const dashboard = ref<{ deals: any[]; tickets: any[] }>({ deals: [], tickets: [] });
+const dashboard = ref<{ deals: Record<string, unknown>[]; tickets: Record<string, unknown>[] }>({ deals: [], tickets: [] });
 const pageLoading = ref(true);
 
 onMounted(async () => {
@@ -76,7 +76,7 @@ onMounted(async () => {
   const [basicRes] = await Promise.all([portalFetch('dashboard'), fetchDashboard()]);
 
   if (basicRes.success && basicRes.body) {
-    dashboard.value = basicRes.body as any;
+    dashboard.value = basicRes.body as unknown;
   }
 
   pageLoading.value = false;

@@ -9,7 +9,7 @@ export interface HeatmapDay {
 
 export function useHeatmap() {
   const heatmapData = ref<HeatmapDay[]>([]);
-  const recentActivity = ref<any[]>([]);
+  const recentActivity = ref<Record<string, unknown>[]>([]);
   const loading = ref(false);
   const year = ref(new Date().getFullYear());
   const isTeamView = ref(true);
@@ -51,7 +51,7 @@ export function useHeatmap() {
     const query = userId ? `insights/heatmap?year=${year.value}&userId=${userId}` : `insights/heatmap?year=${year.value}`;
     const res = await useApiFetch(query);
     if (res.success && res.body) {
-      heatmapData.value = buildYearGrid(res.body as any);
+      heatmapData.value = buildYearGrid(res.body as unknown);
     }
     loading.value = false;
   }
@@ -59,7 +59,7 @@ export function useHeatmap() {
   async function fetchRecentActivity() {
     const res = await useApiFetch('insights/heatmap/recent?limit=30');
     if (res.success && res.body) {
-      recentActivity.value = res.body as any;
+      recentActivity.value = res.body as unknown;
     }
   }
 

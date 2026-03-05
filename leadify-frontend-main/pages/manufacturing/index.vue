@@ -378,7 +378,7 @@ const showWorkOrderDialog = ref(false);
 const newBom = ref({ productName: '', code: '', version: 1, items: [{ name: '', quantity: 1, unitCost: 0 }] });
 const newWO = ref({ bomId: 0 as number, quantity: 1, priority: 'NORMAL', dueDate: '' });
 const editingBomId = ref<number | null>(null);
-const selectedWO = ref<any>(null);
+const selectedWO = ref<Record<string, unknown> | null>(null);
 const showWODetailDialog = ref(false);
 
 // Production plan is derived from active work orders
@@ -422,25 +422,25 @@ const getWOStatus = (s: string): 'success' | 'warning' | 'info' | 'danger' | und
   return m[s] || 'info';
 };
 
-const editBom = (bom: any) => {
+const editBom = (bom: unknown) => {
   editingBomId.value = bom.id;
   newBom.value = {
     productName: bom.productName,
     code: bom.code,
     version: bom.version,
-    items: (bom.items || []).map((i: any) => ({ name: i.name, quantity: i.quantity, unitCost: i.unitCost || 0 }))
+    items: (bom.items || []).map((i) => ({ name: i.name, quantity: i.quantity, unitCost: i.unitCost || 0 }))
   };
   showBomDialog.value = true;
 };
-const duplicateBom = async (bom: any) => {
+const duplicateBom = async (bom: unknown) => {
   await duplicateBOM(bom.id);
   ElMessage.success(t('manufacturing.bomDuplicated'));
 };
-const createWOFromBom = (bom: any) => {
+const createWOFromBom = (bom: unknown) => {
   newWO.value.bomId = bom.id;
   showWorkOrderDialog.value = true;
 };
-const viewWorkOrder = (wo: any) => {
+const viewWorkOrder = (wo: unknown) => {
   selectedWO.value = wo;
   showWODetailDialog.value = true;
 };

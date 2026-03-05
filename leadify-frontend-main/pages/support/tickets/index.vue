@@ -88,7 +88,7 @@ import { fetchTickets, ticketStatusOptions, ticketPriorityOptions, getStatusOpti
 const router = useRouter();
 
 const loading = ref(false);
-const tickets = ref<any[]>([]);
+const tickets = ref<Record<string, unknown>[]>([]);
 const search = ref('');
 const activeTab = ref('ALL');
 const priorityFilter = ref('');
@@ -115,7 +115,7 @@ function debounceLoad() {
 async function loadTickets() {
   loading.value = true;
   try {
-    const query: Record<string, any> = {
+    const query: Record<string, unknown> = {
       page: pagination.value.page,
       limit: pagination.value.limit,
       search: search.value || undefined
@@ -128,7 +128,7 @@ async function loadTickets() {
       query.priority = priorityFilter.value;
     }
 
-    const { body, success }: any = await fetchTickets(query);
+    const { body, success }: unknown = await fetchTickets(query);
     if (success && body) {
       tickets.value = body.docs || [];
       pagination.value = body.pagination || pagination.value;
@@ -148,7 +148,7 @@ function handlePageChange(page: number) {
   loadTickets();
 }
 
-function handleRowClick(row: any) {
+function handleRowClick(row: unknown) {
   router.push(`/support/tickets/${row.id}`);
 }
 

@@ -37,15 +37,15 @@ const isDeliveries = ref(false);
 
 const combinedValues = ref<DealValues>({});
 
-function getDealInformation(values: any) {
+function getDealInformation(values: unknown) {
   combinedValues.value = { ...combinedValues.value, ...values };
 }
 
-function getInvoices(values: any) {
+function getInvoices(values: unknown) {
   combinedValues.value.invoiceDetails = [...values];
 }
 
-function getDeliveries(values: any) {
+function getDeliveries(values: unknown) {
   combinedValues.value.deliveryDetails = [...values];
 }
 

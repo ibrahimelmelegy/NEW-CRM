@@ -96,7 +96,7 @@ function removeStep(idx: number) {
 
 function stepTypeTag(type: string) {
   const map: Record<string, string> = { email: 'primary', wait: 'warning', task: 'success' };
-  return (map[type] || 'info') as any;
+  return (map[type] || 'info') as unknown;
 }
 
 async function handleCreate() {

@@ -362,7 +362,7 @@ interface Company {
   contactCount?: number;
   healthScore?: number;
   parentCompanyId?: string;
-  customFields?: Record<string, any>;
+  customFields?: Record<string, unknown>;
 }
 
 const companies = ref<Company[]>([]);
@@ -388,7 +388,7 @@ const form = reactive({
   clientStatus: 'ACTIVE',
   annualRevenue: 0,
   parentCompanyId: '',
-  customFields: {} as Record<string, any>
+  customFields: {} as Record<string, unknown>
 });
 
 const customFieldsArray = ref<Array<{ name: string; value: string }>>([]);
@@ -398,13 +398,13 @@ const bulkForm = reactive({ industry: '', clientStatus: '' });
 const mergeForm = reactive({ sourceId: '', targetId: '' });
 
 const selectedCompany = ref<Company | null>(null);
-const companyHealthScore = ref<any>(null);
-const companyRevenue = ref<any>(null);
-const companyHierarchy = ref<any>(null);
-const companyTimeline = ref<any[]>([]);
-const companyNotes = ref<any[]>([]);
-const relatedContacts = ref<any[]>([]);
-const analytics = ref<any>({});
+const companyHealthScore = ref<Record<string, unknown> | null>(null);
+const companyRevenue = ref<Record<string, unknown> | null>(null);
+const companyHierarchy = ref<Record<string, unknown> | null>(null);
+const companyTimeline = ref<Record<string, unknown>[]>([]);
+const companyNotes = ref<Record<string, unknown>[]>([]);
+const relatedContacts = ref<Record<string, unknown>[]>([]);
+const analytics = ref<Record<string, unknown>>({});
 
 const revenueChartRef = ref<HTMLElement | null>(null);
 let revenueChart: echarts.ECharts | null = null;
@@ -496,7 +496,7 @@ function getTimelineIcon(type: string) {
 }
 
 function getTimelineIconStyle(type: string) {
-  const styles: Record<string, any> = {
+  const styles: Record<string, unknown> = {
     DEAL: { background: '#22c55e', color: 'white' },
     ACTIVITY: { background: '#3b82f6', color: 'white' },
     CALL: { background: '#f59e0b', color: 'white' },
@@ -598,7 +598,7 @@ async function saveCompany() {
   saving.value = true;
   try {
     // Convert custom fields array to object
-    const customFields: Record<string, any> = {};
+    const customFields: Record<string, unknown> = {};
     customFieldsArray.value.forEach(field => {
       if (field.name) {
         customFields[field.name] = field.value;
@@ -657,7 +657,7 @@ async function removeCompany(id: string) {
       ElMessage.success($t('companies.companyDeleted'));
       await fetchAnalytics();
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     if (e !== 'cancel') {
       console.error('Failed to delete company:', e);
       ElMessage.error($t('common.error'));
@@ -771,7 +771,7 @@ async function saveNote() {
   }
 }
 
-async function togglePinNote(note: any) {
+async function togglePinNote(note: unknown) {
   try {
     const { success } = await useApiFetch(`client/notes/${note.id}`, 'PUT', {
       isPinned: !note.isPinned
@@ -804,7 +804,7 @@ async function bulkUpdate() {
 
   bulkUpdating.value = true;
   try {
-    const updates: any = {};
+    const updates: unknown = {};
     if (bulkForm.industry) updates.industry = bulkForm.industry;
     if (bulkForm.clientStatus) updates.clientStatus = bulkForm.clientStatus;
 
@@ -866,7 +866,7 @@ function renderRevenueChart() {
     },
     xAxis: {
       type: 'category',
-      data: companyRevenue.value.revenueByMonth.map((item: any) => item.month)
+      data: companyRevenue.value.revenueByMonth.map((item) => item.month)
     },
     yAxis: {
       type: 'value'
@@ -876,7 +876,7 @@ function renderRevenueChart() {
         name: 'Revenue',
         type: 'line',
         smooth: true,
-        data: companyRevenue.value.revenueByMonth.map((item: any) => item.revenue),
+        data: companyRevenue.value.revenueByMonth.map((item) => item.revenue),
         areaStyle: {
           color: 'rgba(124, 58, 237, 0.1)'
         },

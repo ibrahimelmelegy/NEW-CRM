@@ -161,7 +161,7 @@ const errMsg = ref('');
 // Check token on mount
 onMounted(async () => {
   try {
-    const responseCheckToken: any = await useApiFetch('auth/check-reset-token', 'POST', {
+    const responseCheckToken: unknown = await useApiFetch('auth/check-reset-token', 'POST', {
       token: route.query.token
     });
     if (!responseCheckToken?.body?.userId) {
@@ -170,15 +170,15 @@ onMounted(async () => {
         if (errMsg.value) router.push('/login');
       }, 8000);
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     errMsg.value = 'Failed to verify token';
   }
 });
 
-const onSubmit = handleSubmit(async (values: any) => {
+const onSubmit = handleSubmit(async (values: unknown) => {
   loading.value = true;
   try {
-    const response: any = await useApiFetch('auth/reset-password', 'POST', {
+    const response = await useApiFetch('auth/reset-password', 'POST', {
       token: route.query.token,
       newPassword: values.password
     });
@@ -196,7 +196,7 @@ const onSubmit = handleSubmit(async (values: any) => {
         message: response.message || 'Failed to reset password'
       });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElNotification({
       title: 'Error',
       type: 'error',

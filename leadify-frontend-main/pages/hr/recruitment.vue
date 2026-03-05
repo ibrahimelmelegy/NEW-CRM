@@ -473,13 +473,13 @@ const talentPool = ref([
 
 const getCandidatesByStage = (stage: string) => candidates.value.filter(c => c.stage === stage);
 
-const openCandidate = (c: any) => ElMessage.info(`Opening: ${c.name}`);
-const viewApplicants = (j: any) => ElMessage.info(`${j.applicants} applicants for ${j.title}`);
-const editJob = (j: any) => ElMessage.info(`Editing: ${j.title}`);
-const shareJob = (j: any) => ElMessage.success(t('common.copied'));
-const joinInterview = (i: any) => ElMessage.info(`Joining interview with ${i.candidateName}`);
-const rescheduleInterview = (i: any) => ElMessage.info(`Rescheduling ${i.candidateName}'s interview`);
-const contactCandidate = (c: any) => ElMessage.info(`Contacting: ${c.name}`);
+const openCandidate = (c: unknown) => ElMessage.info(`Opening: ${c.name}`);
+const viewApplicants = (j: unknown) => ElMessage.info(`${j.applicants} applicants for ${j.title}`);
+const editJob = (j: unknown) => ElMessage.info(`Editing: ${j.title}`);
+const shareJob = (j: unknown) => ElMessage.success(t('common.copied'));
+const joinInterview = (i: unknown) => ElMessage.info(`Joining interview with ${i.candidateName}`);
+const rescheduleInterview = (i: unknown) => ElMessage.info(`Rescheduling ${i.candidateName}'s interview`);
+const contactCandidate = (c: unknown) => ElMessage.info(`Contacting: ${c.name}`);
 
 const postJob = () => {
   if (!newJob.value.title) {

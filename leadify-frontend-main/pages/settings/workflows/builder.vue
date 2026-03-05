@@ -96,12 +96,12 @@ const { workflowName, isActive, nodes, edges, selectedNode, saving, addNode, rem
 
 const configPanelOpen = ref(false);
 
-function onNodeClick(node: any) {
+function onNodeClick(node: unknown) {
   selectedNode.value = node;
   configPanelOpen.value = true;
 }
 
-function onUpdateConfig(config: Record<string, any>) {
+function onUpdateConfig(config: Record<string, unknown>) {
   if (selectedNode.value) {
     updateNodeConfig(selectedNode.value.id, config);
   }
@@ -109,7 +109,7 @@ function onUpdateConfig(config: Record<string, any>) {
 
 function onUpdateLabel(label: string) {
   if (selectedNode.value) {
-    const node = nodes.value.find((n: any) => n.id === selectedNode.value.id);
+    const node = nodes.value.find((n) => n.id === selectedNode.value.id);
     if (node) node.data = { ...node.data, label };
   }
 }

@@ -82,9 +82,9 @@ export function useDocumentStore() {
     try {
       const { body, success } = await useApiFetch('documents/files?limit=200');
       if (success && body) {
-        const data = body as any;
+        const data = body as unknown;
         const docs = data.docs || data || [];
-        documents.value = docs.map((f: any) => ({
+        documents.value = docs.map((f) => ({
           id: f.id,
           refNumber: f.name || '',
           title: f.originalName || f.name || '',

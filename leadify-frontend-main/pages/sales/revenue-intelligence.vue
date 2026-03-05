@@ -213,10 +213,10 @@ let sourceChart: echarts.ECharts | null = null;
 let trendChart: echarts.ECharts | null = null;
 
 // ── Data ──
-const deals = ref<any[]>([]);
-const leads = ref<any[]>([]);
-const staff = ref<any[]>([]);
-const opportunities = ref<any[]>([]);
+const deals = ref<Record<string, unknown>[]>([]);
+const leads = ref<Record<string, unknown>[]>([]);
+const staff = ref<Record<string, unknown>[]>([]);
+const opportunities = ref<Record<string, unknown>[]>([]);
 
 // ── Computed: Pipeline Velocity KPIs ──
 const totalPipelineValue = computed(() => {
@@ -513,7 +513,7 @@ async function loadAllData() {
   }
 }
 
-function extractArray(body: any): any[] {
+function extractArray(body: unknown): Record<string, unknown>[] {
   if (Array.isArray(body)) return body;
   if (body?.docs) return body.docs;
   if (body?.rows) return body.rows;
@@ -576,7 +576,7 @@ function renderWaterfallChart() {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const idx = params[0]?.dataIndex ?? 0;
         const name = data.categories[idx];
         const val = values[idx];
@@ -658,7 +658,7 @@ function renderSourceChart() {
     tooltip: {
       trigger: 'item',
       ...tooltipStyle,
-      formatter: (params: any) => `<strong>${params.name}</strong><br/>${formatCurrency(params.value)} (${params.percent}%)`
+      formatter: (params: unknown) => `<strong>${params.name}</strong><br/>${formatCurrency(params.value)} (${params.percent}%)`
     },
     legend: {
       orient: 'vertical',
@@ -703,9 +703,9 @@ function renderTrendChart() {
     tooltip: {
       trigger: 'axis',
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         let html = `<strong>${params[0]?.axisValue}</strong><br/>`;
-        params.forEach((p: any) => {
+        params.forEach((p) => {
           html += `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.color};margin-right:6px;"></span>${p.seriesName}: ${formatCurrency(p.value)}<br/>`;
         });
         return html;
@@ -798,15 +798,15 @@ onBeforeUnmount(() => {
 });
 
 // ── Action Handlers ──
-function handleNudge(deal: any) {
+function handleNudge(deal: unknown) {
   ElMessage.success(t('revenueIntelligence.nudgeSent', { deal: deal.title }));
 }
 
-function handleReassign(deal: any) {
+function handleReassign(deal: unknown) {
   ElMessage.info(t('revenueIntelligence.reassignStarted', { deal: deal.title }));
 }
 
-function handleArchive(deal: any) {
+function handleArchive(deal: unknown) {
   ElMessage.warning(t('revenueIntelligence.archiveStarted', { deal: deal.title }));
 }
 

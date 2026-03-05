@@ -319,7 +319,7 @@ const route = useRoute();
 const proposalId = computed(() => route.params.slug as string);
 
 const loading = ref(true);
-const proposal = ref<any>(null);
+const proposal = ref<Record<string, unknown> | null>(null);
 const deleting = ref(false);
 
 // Parse content JSON
@@ -335,7 +335,7 @@ const content = computed(() => {
 // Financial calculations
 const subtotal = computed(() => {
   const items = content.value?.finance?.items || [];
-  return items.reduce((sum: number, item: any) => sum + (item.quantity || 0) * (item.rate || 0), 0);
+  return items.reduce((sum, item) => sum + (item.quantity || 0) * (item.rate || 0), 0);
 });
 
 const discountAmount = computed(() => {
@@ -361,7 +361,7 @@ const grandTotal = computed(() => {
 // Status configuration
 const statusConfig = computed(() => {
   const status = proposal.value?.status || 'DRAFT';
-  const configs: Record<string, { color: string; icon: any; label: string }> = {
+  const configs: Record<string, { color: string; icon: unknown; label: string }> = {
     DRAFT: { color: 'bg-gray-100 text-gray-600', icon: Clock, label: 'Draft' },
     WAITING_APPROVAL: { color: 'bg-amber-100 text-amber-600', icon: Clock, label: 'Waiting Approval' },
     APPROVED: { color: 'bg-green-100 text-green-600', icon: CheckCircle, label: 'Approved' },

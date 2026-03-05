@@ -148,10 +148,10 @@ async function handleSubmit() {
   saving.value = true;
   try {
     const payload = { ...formData.value };
-    if (!payload.parentId) delete (payload as any).parentId;
+    if (!payload.parentId) delete (payload as unknown).parentId;
 
     if (editingAccount.value) {
-      const res = await updateAccount(editingAccount.value.id, payload as any);
+      const res = await updateAccount(editingAccount.value.id, payload as unknown);
       if (res.success) {
         ElNotification({ type: 'success', title: 'Success', message: 'Account updated' });
         dialogVisible.value = false;
@@ -160,7 +160,7 @@ async function handleSubmit() {
         ElNotification({ type: 'error', title: 'Error', message: res.message });
       }
     } else {
-      const res = await createAccount(payload as any);
+      const res = await createAccount(payload as unknown);
       if (res.success) {
         ElNotification({ type: 'success', title: 'Success', message: 'Account created' });
         dialogVisible.value = false;

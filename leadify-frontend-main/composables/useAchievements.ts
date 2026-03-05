@@ -30,14 +30,14 @@ export function useAchievements() {
     progressToNextLevel: 0,
     streak: { current: 0, longest: 0, lastActivity: null }
   });
-  const challenges = ref<any[]>([]);
+  const challenges = ref<Record<string, unknown>[]>([]);
   const loading = ref(false);
 
   async function fetchAchievements() {
     loading.value = true;
     const res = await useApiFetch('gamification/achievements/me');
     if (res.success && res.body) {
-      state.value = res.body as any;
+      state.value = res.body as unknown;
     }
     loading.value = false;
   }
@@ -45,7 +45,7 @@ export function useAchievements() {
   async function fetchChallenges() {
     const res = await useApiFetch('gamification/challenges');
     if (res.success && res.body) {
-      challenges.value = res.body as any;
+      challenges.value = res.body as unknown;
     }
   }
 

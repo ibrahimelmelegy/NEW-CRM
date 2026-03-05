@@ -423,7 +423,7 @@ const auditViewMode = ref('table');
 const showNewRequestDialog = ref(false);
 const showDsrDetailsDialog = ref(false);
 const submittingDsr = ref(false);
-const selectedDsr = ref<any>(null);
+const selectedDsr = ref<Record<string, unknown> | null>(null);
 
 // --- KPI Data ---
 const kpiData = reactive({
@@ -1216,23 +1216,23 @@ function getAuditActionColor(action: string): string {
 }
 
 // --- Actions ---
-function handleConsentToggle(record: any) {
+function handleConsentToggle(record: unknown) {
   const status = record.granted ? t('complianceCenter.granted') : t('complianceCenter.withdrawn');
   ElMessage.success(`${record.name}: ${t('complianceCenter.consentStatusUpdated')} - ${status}`);
   record.lastUpdated = new Date().toISOString().split('T')[0];
   updateKpis();
 }
 
-function editRetentionPolicy(policy: any) {
+function editRetentionPolicy(policy: unknown) {
   ElMessage.info(`${t('complianceCenter.editingPolicy')}: ${policy.name}`);
 }
 
-function viewDsrDetails(dsr: any) {
+function viewDsrDetails(dsr: unknown) {
   selectedDsr.value = dsr;
   showDsrDetailsDialog.value = true;
 }
 
-function processDsrRequest(dsr: any) {
+function processDsrRequest(dsr: unknown) {
   if (!dsr || dsr.status === 'completed') return;
   ElMessageBox.confirm(t('complianceCenter.confirmProcessDsr'), t('complianceCenter.processRequest'), { type: 'warning' })
     .then(() => {
@@ -1314,7 +1314,7 @@ async function loadData() {
     // Attempt to fetch from API, fall back to mock data
     const response = await useApiFetch('compliance/overview');
     if (response.success && response.body) {
-      const data = response.body as any;
+      const data = response.body as unknown;
       if (data.kpi) {
         kpiData.consentRate = data.kpi.consentRate ?? kpiData.consentRate;
         kpiData.activePolicies = data.kpi.activePolicies ?? kpiData.activePolicies;

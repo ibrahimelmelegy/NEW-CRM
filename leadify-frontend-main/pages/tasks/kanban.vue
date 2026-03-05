@@ -76,9 +76,9 @@ definePageMeta({ middleware: 'permissions' });
 
 const router = useRouter();
 const loading = ref(false);
-const tasks = ref<any[]>([]);
+const tasks = ref<Record<string, unknown>[]>([]);
 const showMyOnly = ref(false);
-let draggedTask: any = null;
+let draggedTask: unknown = null;
 
 const columns = [
   { status: 'TODO', label: 'To Do', color: '#64748b' },
@@ -108,7 +108,7 @@ function isOverdue(dateStr: string): boolean {
   return new Date(dateStr) < new Date();
 }
 
-function onDragStart(event: DragEvent, task: any) {
+function onDragStart(event: DragEvent, task: unknown) {
   draggedTask = task;
   if (event.dataTransfer) {
     event.dataTransfer.effectAllowed = 'move';
@@ -124,7 +124,7 @@ async function onDrop(event: DragEvent, newStatus: string) {
   draggedTask.status = newStatus;
 
   try {
-    await updateTask(draggedTask.id, { status: newStatus } as any);
+    await updateTask(draggedTask.id, { status: newStatus } as unknown);
     ElNotification({ type: 'success', title: 'Updated', message: `Task moved to ${newStatus.replace(/_/g, ' ')}` });
   } catch {
     draggedTask.status = oldStatus;

@@ -25,9 +25,9 @@ export interface WebForm {
   enableRecaptcha?: boolean;
   enableHoneypot?: boolean;
   rateLimit?: number;
-  styling?: Record<string, any>;
+  styling?: Record<string, unknown>;
   autoResponse?: { enabled: boolean; subject?: string; body?: string };
-  conditionalLogic?: Array<{ fieldId: string; condition: string; value: any; showFields: string[] }>;
+  conditionalLogic?: Array<{ fieldId: string; condition: string; value: unknown; showFields: string[] }>;
 }
 
 export interface WebFormField {
@@ -37,7 +37,7 @@ export interface WebFormField {
   required: boolean;
   placeholder?: string;
   options?: string[];
-  conditionalLogic?: any;
+  conditionalLogic?: unknown;
 }
 
 const forms = ref<WebForm[]>([]);
@@ -63,8 +63,8 @@ export function useWebForms() {
     try {
       const { body, success } = await useApiFetch('form-builder/templates?limit=100');
       if (success && body) {
-        const data = body as any;
-        forms.value = (data.docs || []).map((f: any) => ({
+        const data = body as unknown;
+        forms.value = (data.docs || []).map((f) => ({
           ...f,
           fields: f.fields || [],
           isActive: f.status === 'ACTIVE',
@@ -78,7 +78,7 @@ export function useWebForms() {
     }
   }
 
-  async function createForm(data: any): Promise<boolean> {
+  async function createForm(data: unknown): Promise<boolean> {
     const { success } = await useApiFetch('form-builder/templates', 'POST', {
       ...data,
       status: 'ACTIVE'
@@ -87,7 +87,7 @@ export function useWebForms() {
     return success;
   }
 
-  async function updateForm(id: number, updates: any) {
+  async function updateForm(id: number, updates: unknown) {
     const { success } = await useApiFetch(`form-builder/templates/${id}`, 'PUT', updates);
     if (success) await fetchForms();
     return success;

@@ -6,7 +6,7 @@ export interface AIChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
-  data?: any;
+  data?: unknown;
 }
 
 export interface DealScoreResult {
@@ -74,12 +74,12 @@ export function useAI() {
       const response = await useApiFetch('ai/chat', 'POST', { question });
 
       if (response.success && response.body) {
-        const answer = (response.body as any).answer || 'I could not process your question.';
+        const answer = (response.body as unknown).answer || 'I could not process your question.';
         chatHistory.value.push({
           role: 'assistant',
           content: answer,
           timestamp: new Date(),
-          data: (response.body as any).data
+          data: (response.body as unknown).data
         });
         return answer;
       } else {
@@ -150,8 +150,8 @@ export function useAI() {
     toCompany?: string;
     purpose?: string;
     tone?: string;
-    dealInfo?: any;
-    clientInfo?: any;
+    dealInfo?: unknown;
+    clientInfo?: unknown;
     customInstructions?: string;
     senderName?: string;
     senderCompany?: string;
@@ -183,7 +183,7 @@ export function useAI() {
     }
   }
 
-  async function suggestReply(thread: string, context?: any): Promise<GeneratedEmail | null> {
+  async function suggestReply(thread: string, context?: unknown): Promise<GeneratedEmail | null> {
     isEmailLoading.value = true;
     try {
       const response = await useApiFetch('ai/email/suggest-reply', 'POST', { thread, context });

@@ -376,7 +376,7 @@ const detailVisible = ref(false);
 const isEditing = ref(false);
 const editingId = ref('');
 const expandedSteps = ref<number[]>([]);
-const detailPlaybook = ref<any>(null);
+const detailPlaybook = ref<Record<string, unknown> | null>(null);
 const executionProgress = ref<Record<string, boolean[]>>({});
 
 interface PlaybookStepForm {
@@ -406,7 +406,7 @@ const form = reactive<PlaybookForm>({
   steps: []
 });
 
-const playbooks = ref<any[]>([]);
+const playbooks = ref<Record<string, unknown>[]>([]);
 
 // ── Computed ──
 const filteredPlaybooks = computed(() => {
@@ -435,7 +435,7 @@ async function loadPlaybooks() {
   try {
     const { body, success } = await useApiFetch('playbooks');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       playbooks.value = data.docs || data || [];
     }
   } catch (e) {
@@ -476,12 +476,12 @@ function stepTypeColor(type: string) {
     task: '',
     wait: 'info'
   };
-  return (map[type] || 'info') as any;
+  return (map[type] || 'info') as unknown;
 }
 
-function estimatedDuration(pb: any) {
+function estimatedDuration(pb: unknown) {
   if (!pb.steps?.length) return '—';
-  const total = pb.steps.reduce((sum: number, s: any) => {
+  const total = pb.steps.reduce((sum, s) => {
     const minutes = parseInt(s.durationEstimate) || 0;
     return sum + minutes;
   }, 0);
@@ -498,7 +498,7 @@ function formatDate(dateStr: string) {
 }
 
 // ── Execution Progress ──
-function startPlaybook(pb: any) {
+function startPlaybook(pb: unknown) {
   if (!executionProgress.value[pb.id]) {
     executionProgress.value[pb.id] = new Array(pb.steps?.length || 0).fill(false);
   }
@@ -527,13 +527,13 @@ function toggleStepCompletion(pbId: string, idx: number) {
   saveProgressToStorage();
 }
 
-function completedStepsFor(pb: any): number {
+function completedStepsFor(pb: unknown): number {
   const progress = executionProgress.value[pb.id];
   if (!progress) return 0;
   return progress.filter(Boolean).length;
 }
 
-function progressPercent(pb: any): number {
+function progressPercent(pb: unknown): number {
   const total = pb.steps?.length || 0;
   if (!total) return 0;
   return Math.round((completedStepsFor(pb) / total) * 100);
@@ -570,7 +570,7 @@ function openCreateDialog() {
   formDialogVisible.value = true;
 }
 
-function openEditDialog(pb: any) {
+function openEditDialog(pb: unknown) {
   isEditing.value = true;
   editingId.value = pb.id;
   form.name = pb.name || '';
@@ -578,7 +578,7 @@ function openEditDialog(pb: any) {
   form.category = pb.category || 'prospecting';
   form.status = pb.status || 'active';
   form.winRateImprovement = pb.winRateImprovement || 0;
-  form.steps = (pb.steps || []).map((s: any) => ({
+  form.steps = (pb.steps || []).map((s) => ({
     title: s.title || '',
     description: s.description || '',
     type: s.type || 'call',
@@ -589,7 +589,7 @@ function openEditDialog(pb: any) {
   formDialogVisible.value = true;
 }
 
-function openDetail(pb: any) {
+function openDetail(pb: unknown) {
   detailPlaybook.value = pb;
   expandedSteps.value = [];
   detailVisible.value = true;
@@ -653,7 +653,7 @@ async function handleSave() {
   }
 }
 
-async function handleDelete(pb: any) {
+async function handleDelete(pb: unknown) {
   try {
     await ElMessageBox.confirm(t('playbooks.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`playbooks/${pb.id}`, 'DELETE');

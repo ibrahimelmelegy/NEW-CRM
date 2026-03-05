@@ -144,13 +144,13 @@ const loadingRequests = ref(true);
 const creating = ref(false);
 const rejecting = ref(false);
 
-const pendingApprovals = ref<any[]>([]);
-const allRequests = ref<any[]>([]);
+const pendingApprovals = ref<Record<string, unknown>[]>([]);
+const allRequests = ref<Record<string, unknown>[]>([]);
 const showCreateRequest = ref(false);
 const showViewRequest = ref(false);
-const viewingRequest = ref<any>(null);
+const viewingRequest = ref<Record<string, unknown> | null>(null);
 const rejectPopup = ref(false);
-const rejectTarget = ref<any>(null);
+const rejectTarget = ref<Record<string, unknown> | null>(null);
 const rejectComment = ref('');
 const createFormRef = ref();
 
@@ -167,13 +167,13 @@ const summaryStats = computed(() => [
   { label: t('approvals.myRequests'), value: allRequests.value.length, icon: 'ph:file-text-bold', color: '#7849ff' },
   {
     label: t('hr.leave.approved'),
-    value: allRequests.value.filter((r: any) => r.status === 'APPROVED').length,
+    value: allRequests.value.filter((r) => r.status === 'APPROVED').length,
     icon: 'ph:check-circle-bold',
     color: '#22c55e'
   },
   {
     label: t('hr.leave.rejected'),
-    value: allRequests.value.filter((r: any) => r.status === 'REJECTED').length,
+    value: allRequests.value.filter((r) => r.status === 'REJECTED').length,
     icon: 'ph:x-circle-bold',
     color: '#ef4444'
   }
@@ -203,12 +203,12 @@ async function loadRequests() {
   }
 }
 
-function viewRequest(row: any) {
+function viewRequest(row: unknown) {
   viewingRequest.value = row;
   showViewRequest.value = true;
 }
 
-async function handleApprove(row: any) {
+async function handleApprove(row: unknown) {
   const res = await approveRequest(row.id, '');
   if (res?.success) {
     ElNotification({ type: 'success', title: t('common.success'), message: t('hr.leave.approved') });

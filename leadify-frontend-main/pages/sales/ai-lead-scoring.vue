@@ -455,7 +455,7 @@ const rescoring = ref(false);
 const isTraining = ref(false);
 const showLeadDialog = ref(false);
 const showModelConfigDialog = ref(false);
-const selectedLead = ref<any>(null);
+const selectedLead = ref<Record<string, unknown> | null>(null);
 
 // ─── Model Config ───────────────────────────────────────────
 const modelConfig = ref({
@@ -513,7 +513,7 @@ const kpiCards = computed(() => [
 ]);
 
 // ─── Leads Data ─────────────────────────────────────────────
-const leads = ref<any[]>([]);
+const leads = ref<Record<string, unknown>[]>([]);
 
 const filteredLeads = computed(() => {
   let result = leads.value;
@@ -528,10 +528,10 @@ const filteredLeads = computed(() => {
 });
 
 // ─── Feature Importance ─────────────────────────────────────
-const featureImportance = ref<any[]>([]);
+const featureImportance = ref<Record<string, unknown>[]>([]);
 
 // ─── Models ─────────────────────────────────────────────────
-const models = ref<any[]>([]);
+const models = ref<Record<string, unknown>[]>([]);
 
 // ─── A/B Tests ──────────────────────────────────────────────
 const abTests = ref([
@@ -625,7 +625,7 @@ function rescoreAll() {
   }, 2000);
 }
 
-function openLeadDetail(row: any) {
+function openLeadDetail(row: unknown) {
   selectedLead.value = {
     ...row,
     breakdown: [
@@ -975,7 +975,7 @@ async function loadModels() {
   try {
     const res = await useApiFetch('ai-lead-scoring');
     if (res.success && Array.isArray(res.body)) {
-      models.value = res.body as any;
+      models.value = res.body as unknown;
     } else {
       models.value = fallbackModels;
     }
@@ -987,18 +987,18 @@ async function loadModels() {
 async function loadLeads() {
   try {
     // Try to score leads using the first active model, or fall back to the lead list
-    const activeModel = models.value.find((m: any) => m.status === 'active');
-    if (activeModel && (activeModel as any).id) {
-      const res = await useApiFetch(`ai-lead-scoring/${(activeModel as any).id}/score`, 'POST');
+    const activeModel = models.value.find((m) => m.status === 'active');
+    if (activeModel && (activeModel as unknown).id) {
+      const res = await useApiFetch(`ai-lead-scoring/${(activeModel as unknown).id}/score`, 'POST');
       if (res.success && Array.isArray(res.body)) {
-        leads.value = res.body as any;
+        leads.value = res.body as unknown;
         return;
       }
     }
     // Fallback: try fetching from lead endpoint
     const res = await useApiFetch('lead');
     if (res.success && Array.isArray(res.body)) {
-      leads.value = res.body as any;
+      leads.value = res.body as unknown;
     } else {
       leads.value = fallbackLeads;
     }
@@ -1009,11 +1009,11 @@ async function loadLeads() {
 
 async function loadFeatureImportance() {
   try {
-    const activeModel = models.value.find((m: any) => m.status === 'active');
-    if (activeModel && (activeModel as any).id) {
-      const res = await useApiFetch(`ai-lead-scoring/${(activeModel as any).id}/feature-importance`);
+    const activeModel = models.value.find((m) => m.status === 'active');
+    if (activeModel && (activeModel as unknown).id) {
+      const res = await useApiFetch(`ai-lead-scoring/${(activeModel as unknown).id}/feature-importance`);
       if (res.success && Array.isArray(res.body)) {
-        featureImportance.value = res.body as any;
+        featureImportance.value = res.body as unknown;
         return;
       }
     }

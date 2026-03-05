@@ -4,7 +4,7 @@ interface JourneyEvent {
   title: string;
   description: string;
   sentiment: 'positive' | 'neutral' | 'negative';
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface JourneySummary {
@@ -36,7 +36,7 @@ export function useCustomerJourney() {
       } else {
         error.value = message || 'Failed to load journey data';
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e?.message || 'Failed to load journey data';
     } finally {
       loading.value = false;

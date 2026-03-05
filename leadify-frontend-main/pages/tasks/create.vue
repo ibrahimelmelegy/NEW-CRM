@@ -78,8 +78,8 @@ const priorityOptions = [
 ];
 
 // Fetch users
-const usersResponse: any = await useApiFetch('users');
-const users = ref(usersResponse?.body?.docs?.map((u: any) => ({ label: u.name, value: u.id })) || []);
+const usersResponse: unknown = await useApiFetch('users');
+const users = ref(usersResponse?.body?.docs?.map((u) => ({ label: u.name, value: u.id })) || []);
 
 function goBack() {
   router.back();
@@ -93,7 +93,7 @@ async function handleSubmit() {
 
   submitting.value = true;
   try {
-    const payload: Record<string, any> = {
+    const payload: Record<string, unknown> = {
       title: form.title,
       description: form.description,
       priority: form.priority

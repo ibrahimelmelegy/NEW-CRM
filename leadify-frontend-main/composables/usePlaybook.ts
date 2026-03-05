@@ -97,7 +97,7 @@ export function usePlaybook() {
       if (success && body) {
         playbooks.value = body as PlaybookData[];
         if (playbooks.value.length > 0 && !selectedPlaybook.value) {
-          selectedPlaybook.value = playbooks.value[0] as any;
+          selectedPlaybook.value = playbooks.value[0] as unknown;
         }
       }
     } catch (e) {
@@ -113,7 +113,7 @@ export function usePlaybook() {
   async function createPlaybook(data: Partial<PlaybookData>) {
     loading.value = true;
     try {
-      const { body, success } = await useApiFetch('playbook', 'POST', data as Record<string, any>);
+      const { body, success } = await useApiFetch('playbook', 'POST', data as Record<string, unknown>);
       if (success && body) {
         playbooks.value.push(body as PlaybookData);
       }
@@ -132,7 +132,7 @@ export function usePlaybook() {
   async function updatePlaybook(id: string, data: Partial<PlaybookData>) {
     loading.value = true;
     try {
-      const { body, success } = await useApiFetch(`playbook/${id}`, 'PUT', data as Record<string, any>);
+      const { body, success } = await useApiFetch(`playbook/${id}`, 'PUT', data as Record<string, unknown>);
       if (success && body) {
         const idx = playbooks.value.findIndex(p => p.id === id);
         if (idx !== -1) playbooks.value[idx] = body as PlaybookData;

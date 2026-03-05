@@ -63,9 +63,9 @@ export enum ReviewStatusEnum {
 export interface EcReview {
   id: string;
   productId: string;
-  product?: any;
+  product?: unknown;
   clientId: string;
-  client?: any;
+  client?: unknown;
   rating: number;
   title?: string;
   comment?: string;
@@ -81,7 +81,7 @@ export interface EcCartItem {
   id: string;
   cartId: string;
   productId: string;
-  product?: any;
+  product?: unknown;
   quantity: number;
   unitPrice: number;
   notes?: string;
@@ -97,7 +97,7 @@ export enum CartStatusEnum {
 export interface EcCart {
   id: string;
   clientId: string;
-  client?: any;
+  client?: unknown;
   status: CartStatusEnum;
   currency: string;
   couponCode?: string;
@@ -140,7 +140,7 @@ export async function fetchEcCategories(query?: Record<string, string>) {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`ecommerce/categories${qs}`);
   if (success && body) {
-    return body as { docs: EcCategory[]; pagination: any };
+    return body as { docs: EcCategory[]; pagination: unknown };
   }
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
@@ -162,11 +162,11 @@ export async function fetchEcCategoryById(id: string) {
 }
 
 export async function createEcCategory(data: Partial<EcCategory>) {
-  return useApiFetch('ecommerce/categories', 'POST', data as Record<string, any>);
+  return useApiFetch('ecommerce/categories', 'POST', data as Record<string, unknown>);
 }
 
 export async function updateEcCategory(id: string, data: Partial<EcCategory>) {
-  return useApiFetch(`ecommerce/categories/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`ecommerce/categories/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 export async function deleteEcCategory(id: string) {
@@ -179,7 +179,7 @@ export async function fetchCoupons(query?: Record<string, string>) {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`ecommerce/coupons${qs}`);
   if (success && body) {
-    return body as { docs: EcCoupon[]; pagination: any };
+    return body as { docs: EcCoupon[]; pagination: unknown };
   }
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
@@ -201,11 +201,11 @@ export async function applyCoupon(code: string, orderAmount: number) {
 }
 
 export async function createCoupon(data: Partial<EcCoupon>) {
-  return useApiFetch('ecommerce/coupons', 'POST', data as Record<string, any>);
+  return useApiFetch('ecommerce/coupons', 'POST', data as Record<string, unknown>);
 }
 
 export async function updateCoupon(id: string, data: Partial<EcCoupon>) {
-  return useApiFetch(`ecommerce/coupons/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`ecommerce/coupons/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 export async function deleteCoupon(id: string) {
@@ -218,7 +218,7 @@ export async function fetchReviews(query?: Record<string, string>) {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`ecommerce/reviews${qs}`);
   if (success && body) {
-    return body as { docs: EcReview[]; pagination: any };
+    return body as { docs: EcReview[]; pagination: unknown };
   }
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
@@ -240,7 +240,7 @@ export async function fetchProductReviewStats(productId: string) {
 }
 
 export async function createReview(data: Partial<EcReview>) {
-  return useApiFetch('ecommerce/reviews', 'POST', data as Record<string, any>);
+  return useApiFetch('ecommerce/reviews', 'POST', data as Record<string, unknown>);
 }
 
 export async function approveReview(id: string) {
@@ -265,7 +265,7 @@ export async function fetchCarts(query?: Record<string, string>) {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`ecommerce/cart${qs}`);
   if (success && body) {
-    return body as { docs: EcCart[]; pagination: any };
+    return body as { docs: EcCart[]; pagination: unknown };
   }
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
@@ -290,17 +290,17 @@ export async function fetchAbandonedCarts(query?: Record<string, string>) {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`ecommerce/cart/abandoned${qs}`);
   if (success && body) {
-    return body as { docs: EcCart[]; pagination: any };
+    return body as { docs: EcCart[]; pagination: unknown };
   }
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
 export async function addCartItem(cartId: string, payload: { productId: string; quantity: number; notes?: string }) {
-  return useApiFetch(`ecommerce/cart/${cartId}/items`, 'POST', payload as Record<string, any>);
+  return useApiFetch(`ecommerce/cart/${cartId}/items`, 'POST', payload as Record<string, unknown>);
 }
 
 export async function updateCartItem(itemId: string, payload: { quantity?: number; notes?: string }) {
-  return useApiFetch(`ecommerce/cart/items/${itemId}`, 'PUT', payload as Record<string, any>);
+  return useApiFetch(`ecommerce/cart/items/${itemId}`, 'PUT', payload as Record<string, unknown>);
 }
 
 export async function removeCartItem(itemId: string) {
@@ -331,7 +331,7 @@ export interface EcDashboardStats {
   totalCarts: number;
   convertedCarts: number;
   ordersByStatus: Record<string, number>;
-  recentOrders: any[];
+  recentOrders: Record<string, unknown>[];
 }
 
 /**
@@ -364,11 +364,11 @@ export async function fetchEcDashboardStats(): Promise<EcDashboardStats> {
 
   // Process orders
   if (ordersRes.status === 'fulfilled' && ordersRes.value?.success && ordersRes.value.body) {
-    const data = ordersRes.value.body as any;
+    const data = ordersRes.value.body as unknown;
     const orders = data?.docs || data?.rows || [];
     stats.totalOrders = data?.pagination?.totalItems ?? orders.length;
     stats.recentOrders = orders.slice(0, 5);
-    stats.totalRevenue = orders.reduce((sum: number, o: any) => sum + (o.total || o.totalAmount || 0), 0);
+    stats.totalRevenue = orders.reduce((sum, o) => sum + (o.total || o.totalAmount || 0), 0);
 
     // Count by status
     for (const order of orders) {
@@ -379,7 +379,7 @@ export async function fetchEcDashboardStats(): Promise<EcDashboardStats> {
 
   // Process products
   if (productsRes.status === 'fulfilled' && productsRes.value?.success && productsRes.value.body) {
-    const data = productsRes.value.body as any;
+    const data = productsRes.value.body as unknown;
     stats.activeProducts = data?.pagination?.totalItems ?? 0;
   }
 

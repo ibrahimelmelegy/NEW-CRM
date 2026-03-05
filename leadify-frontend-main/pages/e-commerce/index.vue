@@ -113,7 +113,7 @@ div.p-4.space-y-6.animate-fade-in(class="md_p-6")
       v-loading="loadingOrders"
       style="width: 100%"
       :row-style="{ cursor: 'pointer' }"
-      @row-click="(row: any) => navigateTo(`/e-commerce/orders/${row.id}`)"
+      @row-click="(row: unknown) => navigateTo(`/e-commerce/orders/${row.id}`)"
     )
       el-table-column(:label="$t('ecommerce.orderNumber')" width="160")
         template(#default="{ row }")
@@ -274,9 +274,9 @@ const kpi = reactive({
 });
 
 // Data
-const recentOrders = ref<any[]>([]);
+const recentOrders = ref<Record<string, unknown>[]>([]);
 const allProducts = ref<CatalogProduct[]>([]);
-const lowStockItems = ref<any[]>([]);
+const lowStockItems = ref<Record<string, unknown>[]>([]);
 
 // Coupon dialog
 const showCouponDialog = ref(false);
@@ -388,7 +388,7 @@ async function loadAnalytics() {
   try {
     const { body, success } = await useApiFetch('sales-orders/analytics');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       kpi.totalRevenue = Number(data.totalRevenue || 0);
       kpi.totalOrders = Number(data.totalOrders || 0);
       kpi.ordersByStatus = data.ordersByStatus || {};
@@ -397,7 +397,7 @@ async function loadAnalytics() {
       // Recent orders from analytics response
       recentOrders.value = (data.recentOrders || []).slice(0, 5);
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingOrders.value = false;
@@ -410,7 +410,7 @@ async function loadProducts() {
     const result = await fetchProducts({ limit: '50', isActive: 'true' });
     allProducts.value = result.docs || [];
     kpi.activeProducts = result.pagination?.totalItems ?? allProducts.value.length;
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingProducts.value = false;
@@ -422,10 +422,10 @@ async function loadLowStock() {
   try {
     const res = await useApiFetch('catalog/products/low-stock');
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       lowStockItems.value = (data?.docs || data?.rows || data || []).slice(0, 5);
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingLowStock.value = false;
@@ -454,7 +454,7 @@ async function loadQuickStats() {
     }
     kpi.convertedCarts = Math.max(kpi.totalCarts - kpi.abandonedCarts, 0);
     kpi.conversionRate = kpi.totalCarts > 0 ? Math.round((kpi.convertedCarts / kpi.totalCarts) * 100) : 0;
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }

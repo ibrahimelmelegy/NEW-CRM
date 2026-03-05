@@ -9,7 +9,7 @@ export interface Territory {
   parentId?: string;
   assignedUserId?: string;
   assignedUser?: { id: string; name: string };
-  boundaries?: Record<string, any>;
+  boundaries?: Record<string, unknown>;
   isActive: boolean;
   children?: Territory[];
   createdAt?: string;
@@ -19,7 +19,7 @@ export async function fetchTerritories(query?: Record<string, string>): Promise<
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`territories${qs}`);
   if (success && body) {
-    const data = body as any;
+    const data = body as unknown;
     return data.docs || data || [];
   }
   return [];
@@ -28,18 +28,18 @@ export async function fetchTerritories(query?: Record<string, string>): Promise<
 export async function fetchTerritoryTree(): Promise<Territory[]> {
   const { body, success } = await useApiFetch('territories/tree');
   if (success && body) {
-    const data = body as any;
+    const data = body as unknown;
     return data.docs || data || [];
   }
   return [];
 }
 
 export async function createTerritory(data: Partial<Territory>) {
-  return useApiFetch('territories', 'POST', data as Record<string, any>);
+  return useApiFetch('territories', 'POST', data as Record<string, unknown>);
 }
 
 export async function updateTerritory(id: string, data: Partial<Territory>) {
-  return useApiFetch(`territories/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`territories/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 export async function deleteTerritory(id: string) {

@@ -139,7 +139,7 @@ const summaryStats = computed(() => {
 async function loadData() {
   loading.value = true;
   try {
-    const res: any = await fetchCurrencies();
+    const res = await fetchCurrencies();
     currencies.value = res?.body || res || [];
   } finally {
     loading.value = false;
@@ -218,7 +218,7 @@ async function handleConvert() {
   }
   converting.value = true;
   try {
-    const res: any = await convertCurrency(convertForm.value.amount, convertForm.value.from, convertForm.value.to);
+    const res = await convertCurrency(convertForm.value.amount, convertForm.value.from, convertForm.value.to);
     convertResult.value = res?.body?.result ?? res?.result ?? null;
   } catch {
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });

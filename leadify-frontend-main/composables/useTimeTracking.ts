@@ -13,7 +13,7 @@ export interface TimeEntry {
 }
 
 export async function startTimer(data: { entityType?: string; entityId?: string; entityName?: string; description?: string }) {
-  return useApiFetch('time-tracking/start', 'POST', data as any);
+  return useApiFetch('time-tracking/start', 'POST', data as unknown);
 }
 
 export async function stopTimer() {
@@ -39,11 +39,11 @@ export async function fetchTimeEntries(query: { startDate?: string; endDate?: st
   return { entries: [], total: 0, page: 1, limit: 50 };
 }
 
-export async function createManualEntry(data: any) {
+export async function createManualEntry(data: unknown) {
   return useApiFetch('time-tracking/entries', 'POST', data);
 }
 
-export async function updateTimeEntry(id: string, data: any) {
+export async function updateTimeEntry(id: string, data: unknown) {
   return useApiFetch(`time-tracking/entries/${id}`, 'PUT', data);
 }
 

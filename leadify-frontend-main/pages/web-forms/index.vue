@@ -199,7 +199,7 @@ const showCreateDialog = ref(false);
 const showEmbedCodeDialog = ref(false);
 const showAnalyticsDialog = ref(false);
 const saving = ref(false);
-const editingForm = ref<any>(null);
+const editingForm = ref<Record<string, unknown> | null>(null);
 const analyticsLoading = ref(false);
 const trendChartRef = ref<HTMLElement>();
 const sourceChartRef = ref<HTMLElement>();
@@ -228,7 +228,7 @@ const embedCode = reactive({
   token: ''
 });
 
-const analytics = reactive<any>({
+const analytics = reactive<Record<string, unknown>>({
   totalSubmissions: 0,
   totalViews: 0,
   conversionRate: 0,
@@ -271,7 +271,7 @@ function resetForm() {
   editingForm.value = null;
 }
 
-function editForm(form: any) {
+function editForm(form: unknown) {
   editingForm.value = form;
   formData.name = form.name;
   formData.description = form.description || '';
@@ -323,7 +323,7 @@ async function saveForm() {
   }
 }
 
-function showEmbedDialog(form: any) {
+function showEmbedDialog(form: unknown) {
   const origin = window.location.origin;
   embedCode.iframe = `<iframe src="${origin}/portal/form/${form.embedToken || form.id}" width="100%" height="600" frameborder="0"></iframe>`;
   embedCode.directLink = `${origin}/portal/form/${form.embedToken || form.id}`;
@@ -331,7 +331,7 @@ function showEmbedDialog(form: any) {
   showEmbedCodeDialog.value = true;
 }
 
-async function showAnalytics(form: any) {
+async function showAnalytics(form: unknown) {
   editingForm.value = form;
   showAnalyticsDialog.value = true;
   analyticsLoading.value = true;
@@ -352,9 +352,9 @@ function renderCharts() {
     const chart = echarts.init(trendChartRef.value);
     chart.setOption({
       tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: analytics.dailySubmissions.map((d: any) => d.date) },
+      xAxis: { type: 'category', data: analytics.dailySubmissions.map((d) => d.date) },
       yAxis: { type: 'value' },
-      series: [{ data: analytics.dailySubmissions.map((d: any) => d.count), type: 'line', smooth: true, itemStyle: { color: '#7c3aed' } }]
+      series: [{ data: analytics.dailySubmissions.map((d) => d.count), type: 'line', smooth: true, itemStyle: { color: '#7c3aed' } }]
     });
   }
   if (sourceChartRef.value && analytics.sourceBreakdown?.length) {
@@ -365,7 +365,7 @@ function renderCharts() {
         {
           type: 'pie',
           radius: '60%',
-          data: analytics.sourceBreakdown.map((s: any) => ({ name: s.source, value: s.count })),
+          data: analytics.sourceBreakdown.map((s) => ({ name: s.source, value: s.count })),
           itemStyle: { borderRadius: 8 }
         }
       ]
@@ -378,7 +378,7 @@ function copyToClipboard(text: string) {
   ElMessage.success(t('common.copiedToClipboard'));
 }
 
-function calculateConversion(form: any): number {
+function calculateConversion(form: unknown): number {
   if (!form.viewCount || form.viewCount === 0) return 0;
   return Math.round((form.submissionCount / form.viewCount) * 100);
 }

@@ -182,13 +182,13 @@ const router = useRouter();
 const { hasPermission } = await usePermissions();
 const { t } = useI18n();
 
-function formatDate(date: any) {
+function formatDate(date: unknown) {
   if (!date) return 'N/A';
   const d = new Date(date);
   return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-const po = ref<any>(null);
+const po = ref<Record<string, unknown> | null>(null);
 const loadingAction = ref(false);
 const rejectDialogVisible = ref(false);
 const rejectionReason = ref('');
@@ -219,7 +219,7 @@ onMounted(fetchPO);
 
 const subtotal = computed(() => {
   if (!po.value?.items) return 0;
-  return po.value.items.reduce((acc: number, item: any) => acc + item.quantity * item.unitPrice, 0);
+  return po.value.items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
 });
 
 async function handleApprove() {
@@ -237,12 +237,12 @@ async function handleApprove() {
 
 async function handleReject() {
   if (!rejectionReason.value)
-    return (ElNotification as any)({ title: t('common.required'), message: t('procurement.purchaseOrders.rejectionRequired'), type: 'warning' });
+    return (ElNotification as unknown)({ title: t('common.required'), message: t('procurement.purchaseOrders.rejectionRequired'), type: 'warning' });
 
   loadingAction.value = true;
   try {
     await useApiFetch(`procurement/${po.value.id}/reject`, 'PATCH', { rejectionReason: rejectionReason.value });
-    (ElNotification as any)({
+    (ElNotification as unknown)({
       title: t('procurement.purchaseOrders.rejected'),
       type: 'danger',
       message: t('procurement.purchaseOrders.rejectedMsg')
@@ -257,7 +257,7 @@ async function handleReject() {
 }
 
 const showTemplateSelector = ref(false);
-const poTemplates = ref<any[]>([]);
+const poTemplates = ref<Record<string, unknown>[]>([]);
 
 async function downloadPDF() {
   // Try to load templates for purchase orders
@@ -271,11 +271,11 @@ async function downloadPDF() {
   }
 }
 
-async function downloadPDFWithTemplate(template: any) {
+async function downloadPDFWithTemplate(template: unknown) {
   showTemplateSelector.value = false;
   const { generatePDF } = await import('~/utils/pdfExporter');
 
-  const taxTotal = po.value.items?.reduce((acc: number, item: any) => acc + (item.quantity * item.unitPrice * item.tax) / 100, 0) || 0;
+  const taxTotal = po.value.items?.reduce((acc, item) => acc + (item.quantity * item.unitPrice * item.tax) / 100, 0) || 0;
 
   const data = {
     companyName: 'HIGH POINT TECHNOLOGY',
@@ -295,7 +295,7 @@ async function downloadPDFWithTemplate(template: any) {
     total: `SR ${po.value.totalAmount}`,
     notes: '',
     items:
-      po.value.items?.map((item: any) => ({
+      po.value.items?.map((item) => ({
         item: item.description,
         qty: item.quantity,
         unit: item.unit || 'pcs',
@@ -312,7 +312,7 @@ async function downloadPDFWithTemplate(template: any) {
 
 async function downloadPDFClassic() {
   const { jsPDF: JsPDF } = await import('jspdf');
-  const { default: autoTable } = (await import('jspdf-autotable')) as any;
+  const { default: autoTable } = (await import('jspdf-autotable')) as unknown;
 
   const doc = new JsPDF();
 
@@ -334,7 +334,7 @@ async function downloadPDFClassic() {
   doc.text('Project:', 14, 65);
   doc.text(po.value.project?.name || 'N/A', 40, 65);
 
-  const tableData = po.value.items.map((item: any) => [
+  const tableData = po.value.items.map((item) => [
     item.description,
     item.quantity,
     item.unitPrice,
@@ -350,7 +350,7 @@ async function downloadPDFClassic() {
     headStyles: { fillColor: [120, 73, 255] }
   });
 
-  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  const finalY = (doc as unknown).lastAutoTable.finalY + 10;
   doc.setFontSize(14);
   doc.text(`Grand Total: SR ${po.value.totalAmount}`, 196, finalY, { align: 'right' });
 

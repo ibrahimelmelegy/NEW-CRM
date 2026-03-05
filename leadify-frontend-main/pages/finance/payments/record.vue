@@ -34,7 +34,7 @@ async function handleSubmit() {
   paymentFormRef.value?.submit();
 }
 
-async function onFormSubmitted(formData: any) {
+async function onFormSubmitted(formData: unknown) {
   saving.value = true;
   try {
     const res = await recordPayment({

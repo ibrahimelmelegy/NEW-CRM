@@ -31,7 +31,7 @@ definePageMeta({
 const slug = (Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug) as string;
 const role = await getRole(slug);
 
-async function submitForm(values: any) {
+async function submitForm(values: unknown) {
   loading.value = true;
   await updateRole({ ...values, id: slug, permissions: Object.values(checkList.value).flat() });
   loading.value = false;

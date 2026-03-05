@@ -203,18 +203,18 @@ const expandedSequences = ref<string[]>([]);
 // ── Analytics Computed ──
 const activeCount = computed(() => sequences.value.filter(s => s.isActive).length);
 
-const totalContacts = computed(() => sequences.value.reduce((sum, s) => sum + ((s as any).enrolledCount || 0), 0));
+const totalContacts = computed(() => sequences.value.reduce((sum, s) => sum + ((s as unknown).enrolledCount || 0), 0));
 
 const avgOpenRate = computed(() => {
-  const withRate = sequences.value.filter(s => (s as any).openRate != null);
+  const withRate = sequences.value.filter(s => (s as unknown).openRate != null);
   if (!withRate.length) return 0;
-  return Math.round(withRate.reduce((sum, s) => sum + ((s as any).openRate || 0), 0) / withRate.length);
+  return Math.round(withRate.reduce((sum, s) => sum + ((s as unknown).openRate || 0), 0) / withRate.length);
 });
 
 const avgReplyRate = computed(() => {
-  const withRate = sequences.value.filter(s => (s as any).replyRate != null);
+  const withRate = sequences.value.filter(s => (s as unknown).replyRate != null);
   if (!withRate.length) return 0;
-  return Math.round(withRate.reduce((sum, s) => sum + ((s as any).replyRate || 0), 0) / withRate.length);
+  return Math.round(withRate.reduce((sum, s) => sum + ((s as unknown).replyRate || 0), 0) / withRate.length);
 });
 
 // ── Load ──
@@ -246,7 +246,7 @@ function stepIcon(type: string) {
   return map[type] || 'ph:circle-bold';
 }
 
-function cumulativeDay(steps: any[], idx: number): number {
+function cumulativeDay(steps: Record<string, unknown>[], idx: number): number {
   let day = 1;
   for (let i = 0; i <= idx; i++) {
     if (i > 0) day += steps[i].delayDays || 0;
@@ -254,8 +254,8 @@ function cumulativeDay(steps: any[], idx: number): number {
   return day;
 }
 
-function hasAnyABTest(seq: any): boolean {
-  return seq.steps?.some((s: any) => s.variantB) || false;
+function hasAnyABTest(seq: unknown): boolean {
+  return seq.steps?.some((s) => s.variantB) || false;
 }
 
 function toggleSequenceExpand(id: string) {
@@ -281,7 +281,7 @@ async function handleDelete(seq: Sequence) {
     await deleteSequence(seq.id);
     sequences.value = sequences.value.filter(s => s.id !== seq.id);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deletedSuccessfully') });
-  } catch (e: any) {
+  } catch (e: unknown) {
     if (e !== 'cancel') {
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
     }

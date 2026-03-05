@@ -30,13 +30,13 @@ export interface EmailMessage {
 export async function fetchEmailAccounts(): Promise<EmailAccount[]> {
   const { body, success } = await useApiFetch('email/accounts', 'GET', {}, true);
   if (success && body) {
-    const data = body as any;
+    const data = body as unknown;
     return data.docs || data || [];
   }
   return [];
 }
 
-export async function connectEmailAccount(data: Record<string, any>) {
+export async function connectEmailAccount(data: Record<string, unknown>) {
   return useApiFetch('email/accounts', 'POST', data);
 }
 
@@ -44,23 +44,23 @@ export async function disconnectEmailAccount(id: string) {
   return useApiFetch(`email/accounts/${id}`, 'DELETE');
 }
 
-export async function fetchEmailMessages(query?: Record<string, string>): Promise<{ docs: EmailMessage[]; pagination: any }> {
+export async function fetchEmailMessages(query?: Record<string, string>): Promise<{ docs: EmailMessage[]; pagination: unknown }> {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`email/messages${qs}`, 'GET', {}, true);
   if (success && body) {
-    return body as { docs: EmailMessage[]; pagination: any };
+    return body as { docs: EmailMessage[]; pagination: unknown };
   }
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
-export async function sendEmail(accountId: string, data: Record<string, any>) {
+export async function sendEmail(accountId: string, data: Record<string, unknown>) {
   return useApiFetch('email/messages/send', 'POST', { accountId, ...data });
 }
 
 export async function fetchEmailTracking(messageId: string) {
   const { body, success } = await useApiFetch(`email/tracking/${messageId}`);
   if (success && body) {
-    const data = body as any;
+    const data = body as unknown;
     return data.docs || data || [];
   }
   return [];

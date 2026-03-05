@@ -186,7 +186,7 @@ const pipelineStages = ref<Array<{ name: string; count: number; value: number; w
 const topReps = ref<Array<{ name: string; revenue: number; progress: number }>>([]);
 
 // Recent deals
-const recentDeals = ref<any[]>([]);
+const recentDeals = ref<Record<string, unknown>[]>([]);
 
 // Goals
 const goals = ref([
@@ -211,9 +211,9 @@ async function refreshData() {
     // Single API call for all deals - eliminates 4 duplicate requests
     const [dealRes, clientRes] = await Promise.all([useApiFetch('deal?limit=500'), useApiFetch('client?limit=1')]);
 
-    const allDeals: any[] = dealRes.success && dealRes.body ? (dealRes.body as any).docs || dealRes.body || [] : [];
+    const allDeals: Record<string, unknown>[] = dealRes.success && dealRes.body ? (dealRes.body as unknown).docs || dealRes.body || [] : [];
     const clientCount =
-      clientRes.success && clientRes.body ? (clientRes.body as any).pagination?.totalItems || (clientRes.body as any).total || 0 : 0;
+      clientRes.success && clientRes.body ? (clientRes.body as unknown).pagination?.totalItems || (clientRes.body as unknown).total || 0 : 0;
 
     processKPIs(allDeals, clientCount);
     processRevenue(allDeals);
@@ -228,13 +228,13 @@ async function refreshData() {
   }
 }
 
-function processKPIs(allDeals: any[], clientCount: number) {
-  const wonDeals = allDeals.filter((d: any) => d.stage === 'CLOSED');
-  const lostDeals = allDeals.filter((d: any) => d.stage === 'CANCELLED');
-  const totalValue = wonDeals.reduce((s: number, d: any) => s + Number(d.price || 0), 0);
+function processKPIs(allDeals: Record<string, unknown>[], clientCount: number) {
+  const wonDeals = allDeals.filter((d) => d.stage === 'CLOSED');
+  const lostDeals = allDeals.filter((d) => d.stage === 'CANCELLED');
+  const totalValue = wonDeals.reduce((s, d) => s + Number(d.price || 0), 0);
   const pipelineVal = allDeals
-    .filter((d: any) => d.stage !== 'CLOSED' && d.stage !== 'CANCELLED')
-    .reduce((s: number, d: any) => s + Number(d.price || 0), 0);
+    .filter((d) => d.stage !== 'CLOSED' && d.stage !== 'CANCELLED')
+    .reduce((s, d) => s + Number(d.price || 0), 0);
   const winRate = wonDeals.length + lostDeals.length > 0 ? Math.round((wonDeals.length / (wonDeals.length + lostDeals.length)) * 100) : 0;
   const avgDeal = wonDeals.length > 0 ? Math.round(totalValue / wonDeals.length) : 0;
 
@@ -284,8 +284,8 @@ function processKPIs(allDeals: any[], clientCount: number) {
   ];
 }
 
-function processRevenue(allDeals: any[]) {
-  const wonDeals = allDeals.filter((d: any) => d.stage === 'CLOSED');
+function processRevenue(allDeals: Record<string, unknown>[]) {
+  const wonDeals = allDeals.filter((d) => d.stage === 'CLOSED');
   const months: Record<string, number> = {};
   const now = new Date();
   for (let i = 11; i >= 0; i--) {
@@ -294,10 +294,10 @@ function processRevenue(allDeals: any[]) {
     months[key] = 0;
   }
 
-  wonDeals.forEach((deal: any) => {
+  wonDeals.forEach((deal) => {
     const d = new Date(deal.closeDate || deal.updatedAt || deal.createdAt);
     const key = d.toLocaleDateString('en-US', { month: 'short' });
-    if (key in months) (months as any)[key] += Number(deal.price || 0);
+    if (key in months) (months as unknown)[key] += Number(deal.price || 0);
   });
 
   const values = Object.values(months);
@@ -315,7 +315,7 @@ function processRevenue(allDeals: any[]) {
   avgRevenue.value = Math.round(totalRevenue.value / 12);
 }
 
-function processPipeline(allDeals: any[]) {
+function processPipeline(allDeals: Record<string, unknown>[]) {
   const stageMap: Record<string, { count: number; value: number }> = {};
   const stageOrder = ['PROGRESS', 'CLOSED', 'CANCELLED'];
   const colors = ['#7849ff', '#10b981', '#ef4444'];
@@ -324,7 +324,7 @@ function processPipeline(allDeals: any[]) {
     stageMap[s] = { count: 0, value: 0 };
   });
 
-  allDeals.forEach((d: any) => {
+  allDeals.forEach((d) => {
     const stage = d.stage || 'PROGRESS';
     if (!stageMap[stage]) stageMap[stage] = { count: 0, value: 0 };
     stageMap[stage]!.count++;
@@ -342,12 +342,12 @@ function processPipeline(allDeals: any[]) {
   }));
 }
 
-function processTopReps(allDeals: any[]) {
-  const wonDeals = allDeals.filter((d: any) => d.stage === 'CLOSED');
+function processTopReps(allDeals: Record<string, unknown>[]) {
+  const wonDeals = allDeals.filter((d) => d.stage === 'CLOSED');
   const repMap: Record<string, { name: string; revenue: number }> = {};
-  wonDeals.forEach((d: any) => {
+  wonDeals.forEach((d) => {
     const users = d.users || [];
-    users.forEach((user: any) => {
+    users.forEach((user) => {
       const key = user.id;
       if (!repMap[key]) repMap[key] = { name: user.name || t('executiveDashboard.unknown'), revenue: 0 };
       repMap[key].revenue += Number(d.price || 0);
@@ -366,10 +366,10 @@ function processTopReps(allDeals: any[]) {
   }));
 }
 
-function processRecentDeals(allDeals: any[]) {
+function processRecentDeals(allDeals: Record<string, unknown>[]) {
   const sorted = [...allDeals].sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime());
 
-  recentDeals.value = sorted.slice(0, 8).map((d: any) => ({
+  recentDeals.value = sorted.slice(0, 8).map((d) => ({
     id: d.id,
     name: d.name,
     client: d.companyName || '--',
@@ -379,9 +379,9 @@ function processRecentDeals(allDeals: any[]) {
   }));
 }
 
-function processGoals(allDeals: any[], clientCount: number) {
-  const wonDeals = allDeals.filter((d: any) => d.stage === 'CLOSED');
-  const totalValue = wonDeals.reduce((s: number, d: any) => s + Number(d.price || 0), 0);
+function processGoals(allDeals: Record<string, unknown>[], clientCount: number) {
+  const wonDeals = allDeals.filter((d) => d.stage === 'CLOSED');
+  const totalValue = wonDeals.reduce((s, d) => s + Number(d.price || 0), 0);
 
   goals.value = [
     {

@@ -31,11 +31,11 @@ export async function fetchWebhooks(): Promise<WebhookConfig[]> {
 }
 
 export async function createWebhook(data: Partial<WebhookConfig>) {
-  return useApiFetch('webhooks', 'POST', data as any);
+  return useApiFetch('webhooks', 'POST', data as unknown);
 }
 
 export async function updateWebhook(id: string, data: Partial<WebhookConfig>) {
-  return useApiFetch(`webhooks/${id}`, 'PUT', data as any);
+  return useApiFetch(`webhooks/${id}`, 'PUT', data as unknown);
 }
 
 export async function deleteWebhook(id: string) {

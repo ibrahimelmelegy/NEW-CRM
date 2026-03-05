@@ -326,7 +326,7 @@ const selectedModel = ref('linear');
 const dateRange = ref<[Date, Date] | null>(null);
 const activeTab = ref('channels');
 const showCampaignDetail = ref(false);
-const selectedCampaign = ref<any>(null);
+const selectedCampaign = ref<Record<string, unknown> | null>(null);
 const loading = ref(false);
 
 // ─── Attribution Models ─────────────────────────────────────
@@ -399,7 +399,7 @@ const mockBaseChannels = [
   { channel: 'Events', baseRevenue: 164000, deals: 22, conversionRate: 8.9, roi: 2.8, color: '#f97316' }
 ];
 
-const baseChannels = ref<any[]>(mockBaseChannels);
+const baseChannels = ref<Record<string, unknown>[]>(mockBaseChannels);
 
 // ─── Computed Channel Data ──────────────────────────────────
 const channelData = computed(() => {
@@ -620,7 +620,7 @@ const mockTopPaths = [
   { steps: ['Referral', 'Direct'], revenue: 98000, conversions: 14 }
 ];
 
-const topPaths = ref<any[]>([]);
+const topPaths = ref<Record<string, unknown>[]>([]);
 
 // ─── Model Comparison Data ──────────────────────────────────
 const comparisonData = computed(() => [
@@ -726,22 +726,22 @@ async function loadData() {
   try {
     // Fetch attribution and channels in parallel
     const [touchpointsRes, channelsRes] = await Promise.all([
-      useApiFetch('attribution' as any).catch(() => null),
-      useApiFetch('attribution/channels' as any).catch(() => null)
+      useApiFetch('attribution' as unknown).catch(() => null),
+      useApiFetch('attribution/channels' as unknown).catch(() => null)
     ]);
 
     // ── Channel performance from GET /attribution/channels ──
     if (channelsRes?.success && channelsRes.body) {
       const channelList = Array.isArray(channelsRes.body)
         ? channelsRes.body
-        : Array.isArray((channelsRes.body as any)?.channels)
-          ? (channelsRes.body as any).channels
-          : Array.isArray((channelsRes.body as any)?.docs)
-            ? (channelsRes.body as any).docs
+        : Array.isArray((channelsRes.body as unknown)?.channels)
+          ? (channelsRes.body as unknown).channels
+          : Array.isArray((channelsRes.body as unknown)?.docs)
+            ? (channelsRes.body as unknown).docs
             : null;
 
       if (channelList && channelList.length > 0) {
-        baseChannels.value = channelList.map((ch: any) => ({
+        baseChannels.value = channelList.map((ch) => ({
           channel: ch.channel || ch.name || 'Unknown',
           baseRevenue: parseFloat(ch.baseRevenue || ch.revenue || ch.attributedRevenue || 0),
           deals: parseInt(ch.deals || ch.dealsInfluenced || 0),
@@ -760,17 +760,17 @@ async function loadData() {
     if (touchpointsRes?.success && touchpointsRes.body) {
       const docs = Array.isArray(touchpointsRes.body)
         ? touchpointsRes.body
-        : Array.isArray((touchpointsRes.body as any)?.docs)
-          ? (touchpointsRes.body as any).docs
-          : Array.isArray((touchpointsRes.body as any)?.paths)
-            ? (touchpointsRes.body as any).paths
+        : Array.isArray((touchpointsRes.body as unknown)?.docs)
+          ? (touchpointsRes.body as unknown).docs
+          : Array.isArray((touchpointsRes.body as unknown)?.paths)
+            ? (touchpointsRes.body as unknown).paths
             : null;
 
       if (docs && docs.length > 0) {
         // Try to extract path data from touchpoints
         const pathsFromApi = docs
-          .filter((d: any) => d.steps || d.path || d.touchpoints)
-          .map((d: any) => ({
+          .filter((d) => d.steps || d.path || d.touchpoints)
+          .map((d) => ({
             steps: d.steps || d.path || d.touchpoints || [],
             revenue: parseFloat(d.revenue || d.attributedRevenue || 0),
             conversions: parseInt(d.conversions || d.conversionCount || 0)
@@ -813,7 +813,7 @@ function exportCampaigns() {
   // In a real app, this would trigger a CSV/Excel export
 }
 
-function openCampaignDetail(row: any) {
+function openCampaignDetail(row: unknown) {
   const timeline = campaignTimelines[row.name] || defaultTimeline;
   const deals = campaignDeals[row.name] || defaultDeals;
   selectedCampaign.value = {

@@ -129,7 +129,7 @@ const result = await fetchBudgets();
 const pagination = ref(result.pagination);
 
 const table = ref({
-  columns: [] as any[],
+  columns: [] as unknown[],
   data: result.docs.map(formatRow) || [],
   sort: []
 });
@@ -146,7 +146,7 @@ const summaryStats = computed(() => {
   ];
 });
 
-function formatRow(b: any) {
+function formatRow(b: unknown) {
   const pct = b.amount > 0 ? Math.round((b.spent / b.amount) * 100) : 0;
   return {
     ...b,
@@ -173,7 +173,7 @@ updateColumns();
 
 const filterOptions = computed(() => [{ title: t('finance.budgets.startDate'), value: ['startDate', 'endDate'], type: 'date' }]);
 
-function handleRowClick(row: any) {
+function handleRowClick(row: unknown) {
   router.push(`/finance/budgets/${row.id}`);
 }
 
@@ -218,7 +218,7 @@ const mobileFilteredBudgets = computed(() => {
   const data = table.value.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((b: any) => {
+  return data.filter((b) => {
     const name = (b.budgetDetails?.title || b.name || '').toLowerCase();
     const cat = (b.categoryName || '').toLowerCase();
     return name.includes(q) || cat.includes(q);
@@ -235,7 +235,7 @@ async function handleMobileRefresh() {
   }
 }
 
-function handleBudgetSwipe(name: string, budget: any) {
+function handleBudgetSwipe(name: string, budget: unknown) {
   vibrate();
   switch (name) {
     case 'view':
@@ -251,7 +251,7 @@ function handleBudgetSwipe(name: string, budget: any) {
   }
 }
 
-function getUsageColor(budget: any): string {
+function getUsageColor(budget: unknown): string {
   const pct = parseInt(budget.usagePercent) || 0;
   if (pct >= 90) return '#ef4444';
   if (pct >= 70) return '#f59e0b';

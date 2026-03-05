@@ -355,7 +355,7 @@ async function saveTemplate() {
 
   saving.value = true;
   try {
-    const payload: any = {
+    const payload: unknown = {
       name: templateName.value,
       type: templateType.value,
       layout: {

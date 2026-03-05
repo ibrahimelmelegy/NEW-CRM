@@ -39,7 +39,7 @@ const nodeCounts = computed(() => {
   return counts;
 });
 
-function onNodeClick(node: any) {
+function onNodeClick(node: unknown) {
   selectedNode.value = node;
 }
 

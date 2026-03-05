@@ -92,7 +92,7 @@ export async function recordPayment(data: {
   reference?: string;
   notes?: string;
 }) {
-  const res = await useApiFetch('payments', 'POST', data as any);
+  const res = await useApiFetch('payments', 'POST', data as unknown);
   if (res.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Payment recorded successfully' });
   } else {
@@ -124,7 +124,7 @@ export async function getPayments(
   if (query.searchKey) params.set('searchKey', query.searchKey);
 
   const { body, success } = await useApiFetch(`payments?${params.toString()}`);
-  if (success && body) return body as { docs: PaymentItem[]; pagination: any };
+  if (success && body) return body as { docs: PaymentItem[]; pagination: unknown };
   return { docs: [], pagination: { page: 1, limit: 10, totalItems: 0, totalPages: 0 } };
 }
 
@@ -166,7 +166,7 @@ export async function getClientPaymentHistory(clientId: string): Promise<ClientP
 }
 
 export async function sendReminder(invoiceId: number, type: string, method: string) {
-  const res = await useApiFetch(`payments/remind/${invoiceId}`, 'POST', { type, method } as any);
+  const res = await useApiFetch(`payments/remind/${invoiceId}`, 'POST', { type, method } as unknown);
   if (res.success) {
     ElNotification({ type: 'success', title: 'Success', message: 'Reminder sent successfully' });
   } else {

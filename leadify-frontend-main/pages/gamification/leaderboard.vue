@@ -274,7 +274,7 @@ const t = $i18n.t;
 
 const leaderboard = ref<LeaderboardEntry[]>([]);
 const achievements = ref<Achievement[]>([]);
-const allUsers = ref<any[]>([]);
+const allUsers = ref<Record<string, unknown>[]>([]);
 const showAwardDialog = ref(false);
 const showAchievementDialog = ref(false);
 const awarding = ref(false);
@@ -342,7 +342,7 @@ async function loadUsers() {
   try {
     const { body, success } = await useApiFetch('users');
     if (success && body) {
-      allUsers.value = body as any[];
+      allUsers.value = body as unknown[];
     }
   } catch (error) {
     console.error('Failed to load users', error);

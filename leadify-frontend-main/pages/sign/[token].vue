@@ -83,7 +83,7 @@ onMounted(async () => {
     if (!contract.value) {
       error.value = t('sign.contractNotFound');
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     error.value = e.message || t('sign.failedToLoad');
   }
   loading.value = false;

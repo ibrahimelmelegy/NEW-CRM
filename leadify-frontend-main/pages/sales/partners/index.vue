@@ -1047,7 +1047,7 @@ function savePartner() {
     if (editingPartner.value) {
       const idx = partners.value.findIndex(p => p.id === editingPartner.value!.id);
       if (idx >= 0) {
-        partners.value[idx] = { ...partners.value[idx], ...partnerForm } as any;
+        partners.value[idx] = { ...partners.value[idx], ...partnerForm } as unknown;
       }
     } else {
       partners.value.push({
@@ -1133,7 +1133,7 @@ function saveTierConfig() {
           ...tierConfigurations.value[idx],
           ...tierForm,
           color: getTierColor(tierForm.name)
-        } as any;
+        } as unknown;
       }
     } else {
       tierConfigurations.value.push({
@@ -1221,7 +1221,7 @@ function initRevenueByPartnerChart() {
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const d = params[0];
         return `${d.name}<br/>${d.seriesName}: <b>${Number(d.value).toLocaleString()} SAR</b>`;
       }
@@ -1267,7 +1267,7 @@ function initRevenueByTierChart() {
   tierChart.setOption({
     tooltip: {
       trigger: 'item',
-      formatter: (params: any) =>
+      formatter: (params: unknown) =>
         `${params.name}<br/>${t('partnerManagement.revenue')}: <b>${Number(params.value).toLocaleString()} SAR</b> (${params.percent}%)`
     },
     legend: { bottom: '0%', textStyle: { color: '#94a3b8' } },

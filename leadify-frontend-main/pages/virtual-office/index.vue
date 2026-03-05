@@ -173,10 +173,10 @@ const roomForm = reactive({ name: '', type: 'office' as const, capacity: 10, des
 const myOccupant = computed(() => currentRoom.value?.occupants.find(o => o.id === currentUser.value.userId));
 
 function handleStatus(status: string) {
-  setStatus(status as any);
+  setStatus(status as unknown);
 }
 async function saveRoom() {
-  await addRoom({ ...roomForm } as any);
+  await addRoom({ ...roomForm } as unknown);
   Object.assign(roomForm, { name: '', type: 'office', capacity: 10, description: '', icon: '🏢', color: '#7c3aed', isLocked: false });
   showRoomDialog.value = false;
   ElMessage.success(t('virtualOffice.roomCreated'));

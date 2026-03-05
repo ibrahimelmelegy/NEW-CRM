@@ -1,8 +1,8 @@
 import { ElNotification } from 'element-plus';
 
 export function useEmailComposer() {
-  const templates = ref<any[]>([]);
-  const selectedTemplate = ref<any>(null);
+  const templates = ref<Record<string, unknown>[]>([]);
+  const selectedTemplate = ref<Record<string, unknown> | null>(null);
   const loading = ref(false);
   const composerVisible = ref(false);
 
@@ -26,7 +26,7 @@ export function useEmailComposer() {
     try {
       const { body, success } = await useApiFetch('email/templates');
       if (success && body) {
-        templates.value = body as any[];
+        templates.value = body as unknown[];
       }
     } catch (err) {
       console.error('Failed to fetch email templates:', err);
@@ -37,7 +37,7 @@ export function useEmailComposer() {
     }
   }
 
-  function selectTemplate(template: any) {
+  function selectTemplate(template: unknown) {
     selectedTemplate.value = template;
     emailForm.subject = injectVariables(template.subject);
     emailForm.body = injectVariables(template.body);

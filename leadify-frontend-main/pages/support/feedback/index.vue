@@ -1005,7 +1005,7 @@ function generateCsatTrendData() {
   csatTrendData.value = data;
 }
 
-function generateFeedbackItems(leads: any[], deals: any[]) {
+function generateFeedbackItems(leads: Record<string, unknown>[], deals: Record<string, unknown>[]) {
   const now = new Date();
   const sentiments: FeedbackItem['sentiment'][] = ['positive', 'neutral', 'negative'];
   const channels: FeedbackItem['channel'][] = ['email', 'survey', 'chat', 'social'];

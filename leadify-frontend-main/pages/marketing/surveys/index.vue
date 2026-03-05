@@ -257,16 +257,16 @@ const responsesDialogVisible = ref(false);
 const analyticsDialogVisible = ref(false);
 const loadingResponses = ref(false);
 const loadingAnalytics = ref(false);
-const editingItem = ref<any>(null);
-const selectedSurvey = ref<any>(null);
-const analyticsSurvey = ref<any>(null);
+const editingItem = ref<Record<string, unknown> | null>(null);
+const selectedSurvey = ref<Record<string, unknown> | null>(null);
+const analyticsSurvey = ref<Record<string, unknown> | null>(null);
 const search = ref('');
 const filterStatus = ref('');
-const items = ref<any[]>([]);
+const items = ref<Record<string, unknown>[]>([]);
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
-const responses = ref<any[]>([]);
-const npsData = ref<any>({ score: null, promoters: 0, passives: 0, detractors: 0 });
-const completionData = ref<any>({ rate: 0, started: 0, completed: 0 });
+const responses = ref<Record<string, unknown>[]>([]);
+const npsData = ref<Record<string, unknown>>({ score: null, promoters: 0, passives: 0, detractors: 0 });
+const completionData = ref<Record<string, unknown>>({ rate: 0, started: 0, completed: 0 });
 
 interface QuestionItem {
   text: string;
@@ -296,8 +296,8 @@ const form = ref(defaultForm());
 const summaryStats = computed(() => {
   const data = items.value;
   const total = data.length;
-  const active = data.filter((i: any) => i.status === 'ACTIVE').length;
-  const totalResp = data.reduce((sum: number, i: any) => sum + (i.responseCount || 0), 0);
+  const active = data.filter((i) => i.status === 'ACTIVE').length;
+  const totalResp = data.reduce((sum, i) => sum + (i.responseCount || 0), 0);
   return [
     { label: t('marketing.surveys.totalSurveys'), value: total, icon: 'ph:clipboard-text-bold', color: '#8b5cf6' },
     { label: t('marketing.surveys.activeSurveys'), value: active, icon: 'ph:check-circle-bold', color: '#22c55e' },
@@ -308,14 +308,14 @@ const summaryStats = computed(() => {
 const filteredData = computed(() => {
   let data = items.value;
   if (filterStatus.value) {
-    data = data.filter((i: any) => i.status === filterStatus.value);
+    data = data.filter((i) => i.status === filterStatus.value);
   }
   if (!search.value) return data;
   const q = search.value.toLowerCase();
-  return data.filter((i: any) => (i.title || '').toLowerCase().includes(q) || (i.description || '').toLowerCase().includes(q));
+  return data.filter((i) => (i.title || '').toLowerCase().includes(q) || (i.description || '').toLowerCase().includes(q));
 });
 
-function navigateToSurvey(row: any) {
+function navigateToSurvey(row: unknown) {
   if (row?.id) router.push(`/marketing/surveys/${row.id}`);
 }
 
@@ -342,7 +342,7 @@ function addQuestion() {
   form.value.questions.push({ text: '', type: 'TEXT', required: false, options: ['', ''], description: '' });
 }
 
-async function copyPublicLink(survey: any) {
+async function copyPublicLink(survey: unknown) {
   const url = `${window.location.origin}/public/survey/${survey.id}`;
   try {
     await navigator.clipboard.writeText(url);
@@ -352,11 +352,11 @@ async function copyPublicLink(survey: any) {
   }
 }
 
-async function exportResponses(survey: any) {
+async function exportResponses(survey: unknown) {
   try {
     const res = await useApiFetch(`surveys/${survey.id}/responses/export`, 'GET');
     if (res.success && res.body) {
-      const csvData = res.body as any;
+      const csvData = res.body as unknown;
       const blob = new Blob([csvData.csv || ''], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -385,7 +385,7 @@ async function fetchData() {
   try {
     const res = await useApiFetch(`surveys?page=${pagination.page}&limit=${pagination.limit}`);
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       items.value = data.rows || data.docs || (Array.isArray(data) ? data : []);
       pagination.total = data.count ?? data.total ?? items.value.length;
     }
@@ -402,11 +402,11 @@ function openCreateDialog() {
   dialogVisible.value = true;
 }
 
-function openEditDialog(item: any) {
+function openEditDialog(item: unknown) {
   editingItem.value = item;
   const questions =
     item.questions && Array.isArray(item.questions)
-      ? item.questions.map((q: any) => ({
+      ? item.questions.map((q) => ({
           text: q.text || '',
           type: q.type || 'TEXT',
           required: q.required || false,
@@ -440,7 +440,7 @@ async function handleSave() {
   try {
     // Clean up options for non-choice questions
     const cleanedQuestions = validQuestions.map(q => {
-      const base: any = { text: q.text, type: q.type, required: q.required };
+      const base: unknown = { text: q.text, type: q.type, required: q.required };
       if (q.type === 'SINGLE_CHOICE' || q.type === 'MULTIPLE_CHOICE') {
         base.options = q.options.filter(o => o.trim());
       }
@@ -478,7 +478,7 @@ async function handleSave() {
   }
 }
 
-async function handleDelete(item: any) {
+async function handleDelete(item: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), {
       type: 'warning',
@@ -497,14 +497,14 @@ async function handleDelete(item: any) {
   }
 }
 
-async function openResponsesDialog(survey: any) {
+async function openResponsesDialog(survey: unknown) {
   selectedSurvey.value = survey;
   responsesDialogVisible.value = true;
   loadingResponses.value = true;
   try {
     const res = await useApiFetch(`surveys/${survey.id}/responses`);
     if (res.success && res.body) {
-      responses.value = Array.isArray(res.body) ? res.body : (res.body as any).docs || [];
+      responses.value = Array.isArray(res.body) ? res.body : (res.body as unknown).docs || [];
     } else {
       responses.value = [];
     }
@@ -517,7 +517,7 @@ async function openResponsesDialog(survey: any) {
 }
 
 // Analytics
-async function openAnalyticsDialog(survey: any) {
+async function openAnalyticsDialog(survey: unknown) {
   analyticsSurvey.value = survey;
   npsData.value = { score: null, promoters: 0, passives: 0, detractors: 0 };
   completionData.value = { rate: 0, started: 0, completed: 0 };

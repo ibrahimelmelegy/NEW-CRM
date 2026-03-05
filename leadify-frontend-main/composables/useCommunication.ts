@@ -59,7 +59,7 @@ export interface CommunicationActivity {
   body?: string;
   direction?: ActivityDirection;
   duration?: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   tenantId?: string;
   user?: ActivityUser;
   callLog?: CallLog;
@@ -159,7 +159,7 @@ export function useCommunication(contactId?: string, contactType?: string) {
     try {
       const res = await useApiFetch(`communications/timeline/${contactType}/${contactId}?page=${page}&limit=${pagination.value.limit}`);
       if (res.success && res.body) {
-        const data = res.body as any;
+        const data = res.body as unknown;
         if (append) {
           activities.value = [...activities.value, ...(data.docs || [])];
         } else {
@@ -190,7 +190,7 @@ export function useCommunication(contactId?: string, contactType?: string) {
     body?: string;
     direction?: ActivityDirection;
     duration?: number;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }) {
     loading.value = true;
     try {
@@ -218,13 +218,13 @@ export function useCommunication(contactId?: string, contactType?: string) {
     outcome: CallOutcome;
     recordingUrl?: string;
     notes?: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }) {
     loading.value = true;
     try {
       const res = await useApiFetch('communications/calls', 'POST', data);
       if (res.success && res.body) {
-        const result = res.body as any;
+        const result = res.body as unknown;
         // Prepend the call activity to the list
         if (result.activity) {
           activities.value = [result.activity, ...activities.value];

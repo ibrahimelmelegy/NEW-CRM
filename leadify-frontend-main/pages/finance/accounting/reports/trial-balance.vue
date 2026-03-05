@@ -66,9 +66,9 @@ function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount || 0);
 }
 
-function summaryMethod({ columns, data }: any) {
+function summaryMethod({ columns, data }: unknown) {
   const sums: string[] = [];
-  columns.forEach((column: any, index: number) => {
+  columns.forEach((column: unknown, index: number) => {
     if (index === 0) {
       sums[index] = t('accounting.trialBalance.totals');
       return;

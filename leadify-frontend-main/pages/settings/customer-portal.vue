@@ -442,7 +442,7 @@ const activeTab = ref('configuration');
 const contentSubTab = ref('articles');
 const chartPeriod = ref('30d');
 const chartRef = ref<HTMLElement | null>(null);
-let chartInstance: any = null;
+let chartInstance: unknown = null;
 const logoInputRef = ref<HTMLInputElement | null>(null);
 const logoPreview = ref('');
 
@@ -680,7 +680,7 @@ async function saveArticle() {
     if (editingArticle.value) {
       const idx = articles.value.findIndex(a => a.id === editingArticle.value!.id);
       if (idx >= 0) {
-        articles.value[idx] = { ...articles.value[idx], ...articleForm } as any;
+        articles.value[idx] = { ...articles.value[idx], ...articleForm } as unknown;
       }
     } else {
       articles.value.push({
@@ -780,7 +780,7 @@ async function saveFaq() {
     if (editingFaq.value) {
       const idx = faqs.value.findIndex(f => f.id === editingFaq.value!.id);
       if (idx >= 0) {
-        faqs.value[idx] = { ...faqs.value[idx], ...faqForm } as any;
+        faqs.value[idx] = { ...faqs.value[idx], ...faqForm } as unknown;
       }
     } else {
       faqs.value.push({
@@ -998,19 +998,19 @@ function processLogo(file: File) {
 async function loadPortalConfig() {
   loading.value = true;
   try {
-    const res: any = await useApiFetch('customer-portal/config', 'GET');
+    const res = await useApiFetch('customer-portal/config', 'GET');
     if (res.success && res.body) {
       const data = res.body;
       Object.keys(config).forEach(key => {
         if (data[key] !== undefined) {
-          (config as any)[key] = data[key];
+          (config as unknown)[key] = data[key];
         }
       });
       if (data.companyLogo) logoPreview.value = data.companyLogo;
       if (data.articles) articles.value = data.articles;
       if (data.faqs) faqs.value = data.faqs;
       if (data.features) {
-        data.features.forEach((feat: any) => {
+        data.features.forEach((feat) => {
           if (feat.key in featureEnabledState) {
             featureEnabledState[feat.key] = feat.enabled;
           }

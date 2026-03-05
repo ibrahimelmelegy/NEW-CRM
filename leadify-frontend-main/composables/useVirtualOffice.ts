@@ -75,14 +75,14 @@ export function useVirtualOffice() {
     const u = user.value;
     if (u?.id) {
       currentUser.value.userId = u.id;
-      currentUser.value.name = (u as any).firstName ? `${(u as any).firstName} ${(u as any).lastName || ''}`.trim() : u.email || 'You';
+      currentUser.value.name = (u as unknown).firstName ? `${(u as unknown).firstName} ${(u as unknown).lastName || ''}`.trim() : u.email || 'You';
       currentUser.value.avatar = u.profilePicture;
     }
 
     // Load rooms from API (seeds defaults on first call)
     const { body, success } = await useApiFetch('virtual-office/rooms');
     if (success && Array.isArray(body)) {
-      rooms.value = body.map((r: any) => ({ ...r, occupants: [] }));
+      rooms.value = body.map((r) => ({ ...r, occupants: [] }));
     }
 
     // Announce presence and sync current state via socket
@@ -173,9 +173,9 @@ export function useVirtualOffice() {
 
   // ── Room CRUD (via REST API) ──
   async function addRoom(data: Omit<VirtualRoom, 'id' | 'occupants'>) {
-    const { body, success } = await useApiFetch('virtual-office/rooms', 'POST', data as any);
+    const { body, success } = await useApiFetch('virtual-office/rooms', 'POST', data as unknown);
     if (success && body) {
-      rooms.value.push({ ...(body as any), occupants: [] });
+      rooms.value.push({ ...(body as unknown), occupants: [] });
     }
   }
 

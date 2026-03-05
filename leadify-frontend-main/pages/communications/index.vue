@@ -246,7 +246,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const activities = ref<any[]>([]);
+const activities = ref<Record<string, unknown>[]>([]);
 const activitiesLoading = ref(true);
 const currentPage = ref(1);
 const pageSize = 20;
@@ -257,7 +257,7 @@ const searchQuery = ref('');
 const showLogDialog = ref(false);
 const saving = ref(false);
 
-const stats = ref<any>({
+const stats = ref<Record<string, unknown>>({
   totalActivities: 0,
   callsToday: 0,
   emailsThisWeek: 0,
@@ -293,7 +293,7 @@ const fetchActivities = async () => {
   params.append('limit', pageSize.toString());
   if (filterType.value) params.append('type', filterType.value);
 
-  const res: any = await useApiFetch(`communications/recent?${params.toString()}`);
+  const res = await useApiFetch(`communications/recent?${params.toString()}`);
   if (res?.success && res.body) {
     if (Array.isArray(res.body)) {
       activities.value = res.body;
@@ -307,7 +307,7 @@ const fetchActivities = async () => {
 };
 
 const fetchStats = async () => {
-  const res: any = await useApiFetch('communications/stats');
+  const res = await useApiFetch('communications/stats');
   if (res?.success && res.body) {
     stats.value = res.body;
   }
@@ -329,7 +329,7 @@ const logActivity = async () => {
     }
   }
   saving.value = true;
-  const res: any = await useApiFetch('communications/activities', 'POST', {
+  const res = await useApiFetch('communications/activities', 'POST', {
     ...newActivity.value
   });
   if (res?.success) {

@@ -1,5 +1,5 @@
 /* eslint-disable require-await */
-export default function useQuery(currentPage: Ref<number>, sort: Ref<string>, filters: Ref<any>, search: Ref<string>) {
+export default function useQuery(currentPage: Ref<number>, sort: Ref<string>, filters: Ref<<unknown>, search: Ref<string>) {
   const {
     currentPage: currentPageRef,
     sort: sortRef,
@@ -38,7 +38,7 @@ export default function useQuery(currentPage: Ref<number>, sort: Ref<string>, fi
     });
   });
 
-  let timer: any;
+  let timer: unknown;
   watch(searchRef, curr => {
     clearTimeout(timer);
     timer = setTimeout(async () => {

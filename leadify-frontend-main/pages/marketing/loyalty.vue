@@ -544,19 +544,19 @@ const formatCurrency = (val: number) => {
   return `${val} SAR`;
 };
 
-const viewMember = (member: any) => {
+const viewMember = (member: unknown) => {
   ElMessage.info(`Viewing ${member.name}'s loyalty profile`);
 };
 
-const adjustPoints = (member: any) => {
+const adjustPoints = (member: unknown) => {
   ElMessage.info(`Adjusting points for ${member.name}`);
 };
 
-const editReward = (reward: any) => {
+const editReward = (reward: unknown) => {
   ElMessage.info(`Editing reward: ${reward.name}`);
 };
 
-const removeReward = (reward: any) => {
+const removeReward = (reward: unknown) => {
   rewards.value = rewards.value.filter(r => r.id !== reward.id);
   ElMessage.success(`Removed reward: ${reward.name}`);
 };

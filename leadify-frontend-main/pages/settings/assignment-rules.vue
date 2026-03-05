@@ -438,8 +438,8 @@ const roundRobinPools = ref([
 const totalAssignments = computed(() => rules.value.reduce((s, r) => s + r.triggerCount, 0));
 const escalationsTriggered = computed(() => escalationRules.value.reduce((s, e) => s + e.triggerCount, 0));
 
-const editRule = (rule: any) => ElMessage.info(t('assignmentRules.editingRule', { name: rule.name }));
-const deleteRule = (rule: any) => {
+const editRule = (rule: unknown) => ElMessage.info(t('assignmentRules.editingRule', { name: rule.name }));
+const deleteRule = (rule: unknown) => {
   rules.value = rules.value.filter(r => r.id !== rule.id);
   ElMessage.success(t('common.deleted'));
 };

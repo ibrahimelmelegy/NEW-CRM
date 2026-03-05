@@ -40,7 +40,7 @@ definePageMeta({
 const id = computed(() => route.params.slug as string);
 const loading = ref(true);
 const errorMessage = ref('');
-const initialData = ref<any>(null);
+const initialData = ref<Record<string, unknown> | null>(null);
 
 async function fetchProposal() {
   loading.value = true;
@@ -55,7 +55,7 @@ async function fetchProposal() {
     } else {
       errorMessage.value = response?.message || 'Proposal not found';
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to load proposal:', error);
     errorMessage.value = error?.message || 'Error loading proposal';
   } finally {
@@ -63,7 +63,7 @@ async function fetchProposal() {
   }
 }
 
-const handleSave = async (data: any) => {
+const handleSave = async (data: unknown) => {
   try {
     const payload = transformToApiPayload(data);
     const response = await useApiFetch(`proposal/${id.value}`, 'PUT', payload);
@@ -73,7 +73,7 @@ const handleSave = async (data: any) => {
     } else {
       ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to update proposal' });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to update proposal:', error);
     ElNotification({ type: 'error', title: t('common.error'), message: error?.message || 'Failed to update proposal' });
   }
@@ -82,7 +82,7 @@ const handleSave = async (data: any) => {
 const handleCancel = () => navigateTo('/sales/proposals');
 
 // Transform API data to form data for ProposalBuilder
-function transformApiToFormData(apiData: any) {
+function transformApiToFormData(apiData: unknown) {
   const content = apiData.content ? (typeof apiData.content === 'string' ? JSON.parse(apiData.content) : apiData.content) : {};
 
   return {
@@ -124,7 +124,7 @@ function transformApiToFormData(apiData: any) {
 }
 
 // Transform form data to API payload
-function transformToApiPayload(data: any) {
+function transformToApiPayload(data: unknown) {
   return {
     title: data.title || 'New Proposal',
     version: String(data.version || '1'),
@@ -170,7 +170,7 @@ function transformToApiPayload(data: any) {
     }),
     relatedEntityType: data.selectedEntity?.type,
     relatedEntityId: data.selectedEntity?.id,
-    fileAttachments: data.attachments?.map((f: any) => f.url) || []
+    fileAttachments: data.attachments?.map((f) => f.url) || []
   };
 }
 

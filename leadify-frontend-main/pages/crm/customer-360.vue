@@ -280,19 +280,19 @@ definePageMeta({ middleware: 'permissions' });
 const route = useRoute();
 
 const contactId = ref((route.query.contactId as string) || '');
-const selectedContact = ref<any>(null);
+const selectedContact = ref<Record<string, unknown> | null>(null);
 const searchLoading = ref(false);
-const searchResults = ref<any[]>([]);
+const searchResults = ref<Record<string, unknown>[]>([]);
 const activeTab = ref('overview');
 const pageLoading = ref(false);
 
 // Tab data
-const contactDeals = ref<any[]>([]);
-const contactInvoices = ref<any[]>([]);
-const contactTickets = ref<any[]>([]);
-const contactNotes = ref<any[]>([]);
-const contactDocuments = ref<any[]>([]);
-const recentActivities = ref<any[]>([]);
+const contactDeals = ref<Record<string, unknown>[]>([]);
+const contactInvoices = ref<Record<string, unknown>[]>([]);
+const contactTickets = ref<Record<string, unknown>[]>([]);
+const contactNotes = ref<Record<string, unknown>[]>([]);
+const contactDocuments = ref<Record<string, unknown>[]>([]);
+const recentActivities = ref<Record<string, unknown>[]>([]);
 const loadingDeals = ref(false);
 const loadingInvoices = ref(false);
 const loadingTickets = ref(false);
@@ -385,8 +385,8 @@ async function searchContacts(query: string) {
     // Search in clients
     const { body, success } = await useApiFetch(`client?search=${encodeURIComponent(query)}&limit=20`);
     if (success && body) {
-      const data = body as any;
-      searchResults.value = (data.docs || data || []).map((c: any) => ({
+      const data = body as unknown;
+      searchResults.value = (data.docs || data || []).map((c) => ({
         id: c.id,
         name: c.clientName || c.name,
         email: c.email,
@@ -409,7 +409,7 @@ async function loadContact(id?: string) {
   try {
     const { body, success } = await useApiFetch(`client/${cid}`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       selectedContact.value = {
         id: data.id,
         name: data.clientName || data.name,
@@ -438,7 +438,7 @@ async function loadDeals(clientId: string) {
   try {
     const { body, success } = await useApiFetch(`deal?clientId=${clientId}&limit=50`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       contactDeals.value = data.docs || data || [];
     }
   } catch {
@@ -453,7 +453,7 @@ async function loadInvoices(clientId: string) {
   try {
     const { body, success } = await useApiFetch(`invoices/billing?clientId=${clientId}&limit=50`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       contactInvoices.value = data.docs || data || [];
     }
   } catch {
@@ -468,7 +468,7 @@ async function loadTickets(clientId: string) {
   try {
     const { body, success } = await useApiFetch(`support/tickets?clientId=${clientId}&limit=50`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       contactTickets.value = data.docs || data || [];
     }
   } catch {
@@ -480,7 +480,7 @@ async function loadTickets(clientId: string) {
 
 function buildActivities() {
   // Build activities from all loaded data (called after deals/invoices/tickets are loaded)
-  const activities: any[] = [];
+  const activities: Record<string, unknown>[] = [];
 
   contactDeals.value.slice(0, 5).forEach(d => {
     activities.push({
@@ -525,7 +525,7 @@ async function addNote() {
     };
     const { body, success } = await useApiFetch('communications/activities', 'POST', payload);
     if (success && body) {
-      const activity = body as any;
+      const activity = body as unknown;
       contactNotes.value.unshift({
         id: activity.id,
         content: activity.body || activity.subject,
@@ -548,11 +548,11 @@ async function loadNotes(clientId: string) {
   try {
     const { body, success } = await useApiFetch(`communications/timeline/CLIENT/${clientId}?limit=50`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       const docs = data.docs || data || [];
       contactNotes.value = docs
-        .filter((a: any) => a.type === 'NOTE')
-        .map((a: any) => ({
+        .filter((a) => a.type === 'NOTE')
+        .map((a) => ({
           id: a.id,
           content: a.body || a.subject,
           createdBy: a.user?.name || 'Unknown',
@@ -569,7 +569,7 @@ async function loadDocuments(clientId: string) {
   try {
     const { body, success } = await useApiFetch(`documents?clientId=${clientId}&limit=50`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       contactDocuments.value = data.docs || data || [];
     }
   } catch {
@@ -614,7 +614,7 @@ function formatFileSize(bytes: number): string {
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
-function downloadDocument(doc: any) {
+function downloadDocument(doc: unknown) {
   if (doc.url) window.open(doc.url, '_blank');
 }
 
@@ -622,7 +622,7 @@ async function generateAiSummary(clientId: string) {
   aiLoading.value = true;
   aiSummary.value = '';
   try {
-    const res: any = await useApiFetch('ai/chat', 'POST', {
+    const res = await useApiFetch('ai/chat', 'POST', {
       message: `Give a brief 2-3 sentence customer summary for client ID ${clientId}. Include deal status, revenue, and engagement level.`
     });
     if (res?.success && res.body) {

@@ -39,21 +39,21 @@ export interface SequenceStats {
   cancelled: number;
 }
 
-export async function fetchSequences(query?: Record<string, string>): Promise<{ docs: Sequence[]; pagination: any }> {
+export async function fetchSequences(query?: Record<string, string>): Promise<{ docs: Sequence[]; pagination: unknown }> {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`sequences${qs}`);
   if (success && body) {
-    return body as { docs: Sequence[]; pagination: any };
+    return body as { docs: Sequence[]; pagination: unknown };
   }
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
 export async function createSequence(data: Partial<Sequence>) {
-  return useApiFetch('sequences', 'POST', data as Record<string, any>);
+  return useApiFetch('sequences', 'POST', data as Record<string, unknown>);
 }
 
 export async function updateSequence(id: string, data: Partial<Sequence>) {
-  return useApiFetch(`sequences/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`sequences/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 export async function deleteSequence(id: string) {
@@ -79,7 +79,7 @@ export async function resumeEnrollment(enrollmentId: string) {
 export async function fetchEnrollments(sequenceId: string): Promise<SequenceEnrollment[]> {
   const { body, success } = await useApiFetch(`sequences/${sequenceId}/enrollments`);
   if (success && body) {
-    const data = body as any;
+    const data = body as unknown;
     return data.docs || data || [];
   }
   return [];

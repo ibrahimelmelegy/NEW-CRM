@@ -225,16 +225,16 @@ const forecasts = ref<ForecastPeriod[]>([]);
 
 const showHistorical = ref(false);
 const loadingHistorical = ref(false);
-const historicalData = ref<any>(null);
+const historicalData = ref<Record<string, unknown> | null>(null);
 
 const showScenario = ref(false);
 const loadingScenario = ref(false);
 const winRateAdjustment = ref(0);
 const dealValueAdjustment = ref(0);
-const scenarioResults = ref<any>(null);
+const scenarioResults = ref<Record<string, unknown> | null>(null);
 
 const showTeamBreakdown = ref(false);
-const teamData = ref<any[]>([]);
+const teamData = ref<Record<string, unknown>[]>([]);
 
 const totals = computed(() => {
   return forecasts.value.reduce(
@@ -409,7 +409,7 @@ async function loadTeamBreakdown() {
     const qs = `?period=${selectedPeriod.value}&startDate=${start.toISOString().split('T')[0]}&endDate=${end.toISOString().split('T')[0]}`;
     const { body, success } = await useApiFetch(`forecasting/team-breakdown${qs}`);
     if (success && body) {
-      teamData.value = body as any[];
+      teamData.value = body as unknown[];
     }
   } catch (e) {
     console.error('Failed to load team breakdown', e);

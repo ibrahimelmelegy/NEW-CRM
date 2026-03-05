@@ -5,7 +5,7 @@ export interface SavedView {
   id: number;
   name: string;
   entityType: string;
-  filters: Record<string, any>;
+  filters: Record<string, unknown>;
   columns?: string[];
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
@@ -19,7 +19,7 @@ export interface SavedView {
 export async function fetchSavedViews(entityType: string): Promise<SavedView[]> {
   const { body, success } = await useApiFetch(`saved-views/${entityType}`);
   if (success && body) {
-    const data = body as any;
+    const data = body as unknown;
     return data.docs || data || [];
   }
   return [];
@@ -28,7 +28,7 @@ export async function fetchSavedViews(entityType: string): Promise<SavedView[]> 
 export async function createSavedView(data: {
   name: string;
   entityType: string;
-  filters: Record<string, any>;
+  filters: Record<string, unknown>;
   columns?: string[];
   sortBy?: string;
   sortOrder?: string;
@@ -39,7 +39,7 @@ export async function createSavedView(data: {
 }
 
 export async function updateSavedView(id: number, data: Partial<SavedView>): Promise<SavedView | null> {
-  const { body, success } = await useApiFetch(`saved-views/${id}`, 'PUT', data as Record<string, any>);
+  const { body, success } = await useApiFetch(`saved-views/${id}`, 'PUT', data as Record<string, unknown>);
   return success && body ? (body as SavedView) : null;
 }
 

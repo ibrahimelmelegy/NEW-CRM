@@ -163,13 +163,13 @@ const saving = ref(false);
 const payingOut = ref(false);
 const showDialog = ref(false);
 const showBulkPayoutDialog = ref(false);
-const items = ref<any[]>([]);
+const items = ref<Record<string, unknown>[]>([]);
 const selectedIds = ref<number[]>([]);
 const form = reactive({ amount: 0, rate: 5, dealValue: 0, notes: '' });
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
-const kpiData = ref<any>(null);
-const analyticsData = ref<any>(null);
-const forecastData = ref<any>(null);
+const kpiData = ref<Record<string, unknown> | null>(null);
+const analyticsData = ref<Record<string, unknown> | null>(null);
+const forecastData = ref<Record<string, unknown> | null>(null);
 
 const filters = reactive({
   status: '',
@@ -205,11 +205,11 @@ const dashboardStats = computed(() => {
 const periodChartData = computed(() => {
   const periods = analyticsData.value?.byPeriod || [];
   if (!periods.length) return [];
-  const maxVal = Math.max(...periods.map((p: any) => Number(p.earned || 0)), 1);
+  const maxVal = Math.max(...periods.map((p) => Number(p.earned || 0)), 1);
   return periods
     .slice(0, 12)
     .reverse()
-    .map((p: any) => ({
+    .map((p) => ({
       label: p.period,
       value: Number(p.earned || 0),
       height: Math.max((Number(p.earned || 0) / maxVal) * 100, 5)
@@ -237,7 +237,7 @@ async function fetchData() {
     if (filters.search) qs += `&search=${encodeURIComponent(filters.search)}`;
     const { body, success } = await useApiFetch(qs);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       items.value = data.rows || data.docs || [];
       pagination.total = data.pagination?.totalItems ?? data.count ?? items.value.length;
     }
@@ -313,8 +313,8 @@ async function handleDelete(id: number) {
   }
 }
 
-function handleSelectionChange(selection: any[]) {
-  selectedIds.value = selection.filter((r: any) => r.status !== 'PAID').map((r: any) => r.id);
+function handleSelectionChange(selection: Record<string, unknown>[]) {
+  selectedIds.value = selection.filter((r) => r.status !== 'PAID').map((r) => r.id);
 }
 
 async function doBulkPayout() {
@@ -322,7 +322,7 @@ async function doBulkPayout() {
   try {
     const { body, success } = await useApiFetch('commissions/bulk-payout', 'POST', { ids: selectedIds.value });
     if (success) {
-      const count = (body as any)?.paidCount || selectedIds.value.length;
+      const count = (body as unknown)?.paidCount || selectedIds.value.length;
       ElMessage.success(t('commissions.markedAsPaid', { count }));
       showBulkPayoutDialog.value = false;
       selectedIds.value = [];

@@ -147,8 +147,8 @@ const currentStageIndex = computed(() => {
 
 const currentStageType = computed(() => {
   const stage = deal?.stage;
-  if (stage === 'COMPLETED' || stage === ('CLOSED' as any) || stage === ('Closed Won' as any)) return 'success';
-  if (stage === 'CANCELLED' || stage === ('Closed Lost' as any)) return 'danger';
+  if (stage === 'COMPLETED' || stage === ('CLOSED' as unknown) || stage === ('Closed Won' as unknown)) return 'success';
+  if (stage === 'CANCELLED' || stage === ('Closed Lost' as unknown)) return 'danger';
   return 'primary';
 });
 
@@ -235,13 +235,13 @@ const invoicesTable = reactive({
   data: [] as Invoice[]
 });
 
-invoicesTable.data = ((deal?.invoice as any)?.map((item: Invoice) => ({
+invoicesTable.data = ((deal?.invoice as unknown)?.map((item: Invoice) => ({
   ...item,
   invoiceDate: getYear(item.invoiceDate),
   dueDate: getYear(item.dueDate),
   collectedDate: getYear(item.collectedDate),
   collected: item.collected ? t('common.yes') : t('common.no')
-})) || []) as any[];
+})) || []) as unknown[];
 
 //  invoices table
 const deliveriesTable = reactive({
@@ -263,8 +263,8 @@ const deliveriesTable = reactive({
   ],
   data: [] as Delivery[]
 });
-deliveriesTable.data = ((deal?.deliveryDetails as any)?.map((item: Delivery) => ({ ...item, deliveryDate: getYear(item.deliveryDate) })) ||
-  []) as any[];
+deliveriesTable.data = ((deal?.deliveryDetails as unknown)?.map((item: Delivery) => ({ ...item, deliveryDate: getYear(item.deliveryDate) })) ||
+  []) as unknown[];
 
 const table = reactive({
   columns: [
@@ -354,7 +354,7 @@ const table = reactive({
 });
 
 const checkProposalResponse = await useTableFilter(`proposal?relatedEntityId=${route.params.slug as string}&page=1&limit=100`);
-table.data = checkProposalResponse.formattedData?.map((el: any) => {
+table.data = checkProposalResponse.formattedData?.map((el) => {
   return { ...el, type: el.type == 'Mixed' ? 'Tech & Financial' : el.type };
 });
 </script>

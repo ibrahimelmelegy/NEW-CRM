@@ -306,11 +306,11 @@ const showDialog = ref(false);
 const showFeatureDialog = ref(false);
 const showDetailsDialog = ref(false);
 const editingId = ref<number | null>(null);
-const detailsCompetitor = ref<any>(null);
-const items = ref<any[]>([]);
+const detailsCompetitor = ref<Record<string, unknown> | null>(null);
+const items = ref<Record<string, unknown>[]>([]);
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
 const newFeature = ref('');
-const activityTimeline = ref<any[]>([]);
+const activityTimeline = ref<Record<string, unknown>[]>([]);
 
 const marketShareChartRef = ref<HTMLElement>();
 const winReasonsChartRef = ref<HTMLElement>();
@@ -335,7 +335,7 @@ const defaultForm = () => ({
 });
 
 const form = reactive(defaultForm());
-const threatMatrix = ref<any[]>([]);
+const threatMatrix = ref<Record<string, unknown>[]>([]);
 
 const pricingData = computed(() => {
   return items.value
@@ -401,7 +401,7 @@ async function fetchData() {
   try {
     const { body, success } = await useApiFetch(`competitors?page=${pagination.page}&limit=${pagination.limit}`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       items.value = data.rows || data.docs || [];
       pagination.total = data.count ?? data.total ?? items.value.length;
 
@@ -493,7 +493,7 @@ function openCreateDialog() {
   showDialog.value = true;
 }
 
-function openEditDialog(row: any) {
+function openEditDialog(row: unknown) {
   editingId.value = row.id;
   Object.assign(form, {
     name: row.name || '',
@@ -515,12 +515,12 @@ function openEditDialog(row: any) {
   showDialog.value = true;
 }
 
-function openDetailsDialog(row: any) {
+function openDetailsDialog(row: unknown) {
   detailsCompetitor.value = row;
   showDetailsDialog.value = true;
 }
 
-function calculateWinRate(comp: any): number {
+function calculateWinRate(comp: unknown): number {
   const won = Number(comp.dealsWon) || 0;
   const lost = Number(comp.dealsLost) || 0;
   const total = won + lost;
@@ -624,7 +624,7 @@ async function fetchThreatMatrix() {
   try {
     const { body, success } = await useApiFetch('competitors/threat-matrix');
     if (success && body) {
-      threatMatrix.value = Array.isArray(body) ? body : (body as any).rows || [];
+      threatMatrix.value = Array.isArray(body) ? body : (body as unknown).rows || [];
     }
   } catch {
     // Non-critical; silently ignore

@@ -253,15 +253,15 @@ const resultsDialogVisible = ref(false);
 const showSampleSizeCalculator = ref(false);
 const loadingResults = ref(false);
 const declaringWinner = ref(false);
-const editingItem = ref<any>(null);
-const selectedTest = ref<any>(null);
-const testResults = ref<any>(null);
+const editingItem = ref<Record<string, unknown> | null>(null);
+const selectedTest = ref<Record<string, unknown> | null>(null);
+const testResults = ref<Record<string, unknown> | null>(null);
 const search = ref('');
 const filterStatus = ref('');
-const items = ref<any[]>([]);
+const items = ref<Record<string, unknown>[]>([]);
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
 const isMobileView = ref(false);
-const formVariants = ref<any[]>([{ name: 'Variant A' }, { name: 'Variant B' }]);
+const formVariants = ref<Record<string, unknown>[]>([{ name: 'Variant A' }, { name: 'Variant B' }]);
 
 const sampleCalc = reactive({
   baselineConversion: 5,
@@ -313,9 +313,9 @@ const form = ref(defaultForm());
 const summaryStats = computed(() => {
   const data = items.value;
   const total = data.length;
-  const running = data.filter((i: any) => i.status === 'RUNNING').length;
-  const completed = data.filter((i: any) => i.status === 'COMPLETED').length;
-  const confidences = data.filter((i: any) => i.confidence != null).map((i: any) => i.confidence);
+  const running = data.filter((i) => i.status === 'RUNNING').length;
+  const completed = data.filter((i) => i.status === 'COMPLETED').length;
+  const confidences = data.filter((i) => i.confidence != null).map((i) => i.confidence);
   const avgConf = confidences.length ? Math.round(confidences.reduce((a: number, b: number) => a + b, 0) / confidences.length) : 0;
   return [
     { label: t('marketing.abTesting.totalTests'), value: total, icon: 'ph:flask-bold', color: '#7849ff' },
@@ -328,12 +328,12 @@ const summaryStats = computed(() => {
 const filteredData = computed(() => {
   let data = items.value;
   if (filterStatus.value) {
-    data = data.filter((i: any) => i.status === filterStatus.value);
+    data = data.filter((i) => i.status === filterStatus.value);
   }
   if (!search.value) return data;
   const q = search.value.toLowerCase();
   return data.filter(
-    (i: any) => (i.name || '').toLowerCase().includes(q) || (i.type || '').toLowerCase().includes(q) || (i.winner || '').toLowerCase().includes(q)
+    (i: unknown) => (i.name || '').toLowerCase().includes(q) || (i.type || '').toLowerCase().includes(q) || (i.winner || '').toLowerCase().includes(q)
   );
 });
 
@@ -356,7 +356,7 @@ function formatDate(d: string): string {
   }
 }
 
-function handleRowClick(row: any) {
+function handleRowClick(row: unknown) {
   openEditDialog(row);
 }
 
@@ -366,8 +366,8 @@ async function fetchData() {
   try {
     const res = await useApiFetch(`ab-tests?page=${pagination.page}&limit=${pagination.limit}`);
     if (res.success && res.body) {
-      const data = res.body as any;
-      items.value = (data.docs || data.rows || (Array.isArray(data) ? data : [])).map((item: any) => ({
+      const data = res.body as unknown;
+      items.value = (data.docs || data.rows || (Array.isArray(data) ? data : [])).map((item) => ({
         ...item,
         winner: item.winnerVariant || null,
         confidence: item.confidence != null ? Number(item.confidence) : null
@@ -387,7 +387,7 @@ function openCreateDialog() {
   dialogVisible.value = true;
 }
 
-function openEditDialog(item: any) {
+function openEditDialog(item: unknown) {
   editingItem.value = item;
   const variantsData = item.variants
     ? typeof item.variants === 'string'
@@ -447,7 +447,7 @@ async function handleSave() {
   }
 }
 
-async function handleDelete(item: any) {
+async function handleDelete(item: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), {
       type: 'warning',
@@ -467,7 +467,7 @@ async function handleDelete(item: any) {
 }
 
 // Results
-async function openResultsDialog(test: any) {
+async function openResultsDialog(test: unknown) {
   selectedTest.value = test;
   testResults.value = null;
   resultsDialogVisible.value = true;
@@ -475,13 +475,13 @@ async function openResultsDialog(test: any) {
   try {
     const res = await useApiFetch(`ab-tests/${test.id}/results`);
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       // Derive overall significance and confidence from variant significance data
-      const variantsWithSig = (data.variants || []).filter((v: any) => v.significance);
+      const variantsWithSig = (data.variants || []).filter((v) => v.significance);
       const bestSignificance =
         variantsWithSig.length > 0
           ? variantsWithSig.reduce(
-              (best: any, v: any) => (v.significance.confidenceLevel > (best?.confidenceLevel || 0) ? v.significance : best),
+              (best: unknown, v: unknown) => (v.significance.confidenceLevel > (best?.confidenceLevel || 0) ? v.significance : best),
               null
             )
           : null;

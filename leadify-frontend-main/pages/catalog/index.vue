@@ -233,8 +233,8 @@ const catalogValue = computed(() => {
 
 const lowStockCount = computed(() => {
   return products.value.filter(p => {
-    const stock = (p as any).stock || 0;
-    const threshold = (p as any).lowStockThreshold || 10;
+    const stock = (p as unknown).stock || 0;
+    const threshold = (p as unknown).lowStockThreshold || 10;
     return stock <= threshold && stock > 0;
   }).length;
 });
@@ -258,8 +258,8 @@ const filteredProducts = computed(() => {
   // Stock status filter
   if (filterStockStatus.value) {
     result = result.filter(p => {
-      const stock = (p as any).stock || 0;
-      const threshold = (p as any).lowStockThreshold || 10;
+      const stock = (p as unknown).stock || 0;
+      const threshold = (p as unknown).lowStockThreshold || 10;
       if (filterStockStatus.value === 'in_stock') return stock > threshold;
       if (filterStockStatus.value === 'low_stock') return stock > 0 && stock <= threshold;
       if (filterStockStatus.value === 'out_of_stock') return stock === 0;
@@ -348,7 +348,7 @@ async function handleDelete(id: string) {
 }
 
 // Bulk operations
-function toggleProductSelection(prod: any) {
+function toggleProductSelection(prod: unknown) {
   if (prod.selected) {
     selectedProducts.value.push(prod);
   } else {
@@ -402,7 +402,7 @@ async function bulkDeleteProducts() {
 }
 
 // Import
-function handleImportFileChange(file: any) {
+function handleImportFileChange(file: unknown) {
   importFile.value = file.raw;
 }
 
@@ -414,7 +414,7 @@ async function processImport() {
     formData.append('file', importFile.value);
     const { success, body } = await useApiFetch('catalog/import', 'POST', formData);
     if (success) {
-      ElMessage.success(t('catalog.importSuccess', { count: (body as any)?.imported || 0 }));
+      ElMessage.success(t('catalog.importSuccess', { count: (body as unknown)?.imported || 0 }));
       showImportDialog.value = false;
       importFile.value = null;
       await loadProducts();

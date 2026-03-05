@@ -78,7 +78,7 @@ import { ElNotification } from 'element-plus';
 const route = useRoute();
 const router = useRouter();
 const { t } = useI18n();
-const rfq = ref<any>(null);
+const rfq = ref<Record<string, unknown> | null>(null);
 const offerDialogVisible = ref(false);
 const selectedVendor = ref(null);
 const offerAmount = ref(0);
@@ -105,9 +105,9 @@ const getVendorStatus = (status: string) => {
   return 'info';
 };
 
-const getItemPrice = (vendor: any, itemId: string) => {
+const getItemPrice = (vendor: unknown, itemId: string) => {
   // Navigate through RFQVendorItems to find price
-  const item = vendor.items?.find((i: any) => i.rfqItemId === itemId);
+  const item = vendor.items?.find((i) => i.rfqItemId === itemId);
   return item ? item.price : null;
 };
 
@@ -116,15 +116,15 @@ const formatCurrency = (val: number) => {
 };
 
 // Logic to highlight lowest price
-const isLowestPrice = (vendor: any) => {
+const isLowestPrice = (vendor: unknown) => {
   if (!rfq.value?.vendors) return false;
-  const respondedVendors = rfq.value.vendors.filter((v: any) => v.totalOfferAmount > 0);
+  const respondedVendors = rfq.value.vendors.filter((v) => v.totalOfferAmount > 0);
   if (respondedVendors.length === 0) return false;
-  const min = Math.min(...respondedVendors.map((v: any) => parseFloat(v.totalOfferAmount)));
+  const min = Math.min(...respondedVendors.map((v) => parseFloat(v.totalOfferAmount)));
   return parseFloat(vendor.totalOfferAmount) === min;
 };
 
-const isWinner = (vendor: any) => vendor.status === 'Won';
+const isWinner = (vendor: unknown) => vendor.status === 'Won';
 
 function openAddOffer() {
   offerDialogVisible.value = true;
@@ -147,7 +147,7 @@ async function submitOffer() {
   }
 }
 
-async function awardVendor(vendor: any) {
+async function awardVendor(vendor: unknown) {
   ElNotification({ title: t('procurement.rfq.processing'), message: t('procurement.rfq.convertingToPo'), type: 'info' });
   // Future: Call API to convert
   setTimeout(() => {

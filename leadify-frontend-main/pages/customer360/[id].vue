@@ -268,16 +268,16 @@ const loadingContacts = ref(false);
 const loadingTickets = ref(false);
 const loadingDocuments = ref(false);
 
-const client = ref<any>(null);
-const deals = ref<any[]>([]);
-const invoices = ref<any[]>([]);
-const projects = ref<any[]>([]);
-const contracts = ref<any[]>([]);
-const contacts = ref<any[]>([]);
-const communications = ref<any[]>([]);
-const tickets = ref<any[]>([]);
-const documents = ref<any[]>([]);
-const recentActivities = ref<any[]>([]);
+const client = ref<Record<string, unknown> | null>(null);
+const deals = ref<Record<string, unknown>[]>([]);
+const invoices = ref<Record<string, unknown>[]>([]);
+const projects = ref<Record<string, unknown>[]>([]);
+const contracts = ref<Record<string, unknown>[]>([]);
+const contacts = ref<Record<string, unknown>[]>([]);
+const communications = ref<Record<string, unknown>[]>([]);
+const tickets = ref<Record<string, unknown>[]>([]);
+const documents = ref<Record<string, unknown>[]>([]);
+const recentActivities = ref<Record<string, unknown>[]>([]);
 
 // Stats
 const clientStats = computed(() => [
@@ -378,7 +378,7 @@ async function loadCommunications() {
   try {
     const { body, success } = await useApiFetch(`activity/client/${clientId.value}?limit=20`);
     if (success && body) communications.value = body.docs || body || [];
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -407,7 +407,7 @@ async function loadActivities() {
   try {
     const { body, success } = await useApiFetch(`activity/client/${clientId.value}?limit=10`);
     if (success && body) recentActivities.value = body.docs || body || [];
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -448,7 +448,7 @@ function getStatusType(status: string): string {
   return map[status?.toLowerCase()] || 'info';
 }
 
-function formatAddress(c: any): string {
+function formatAddress(c: unknown): string {
   if (!c) return '--';
   const parts = [c.street, c.city, c.state, c.zipCode].filter(Boolean);
   return parts.length ? parts.join(', ') : '--';

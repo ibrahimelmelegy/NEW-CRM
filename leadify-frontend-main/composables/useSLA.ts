@@ -8,10 +8,10 @@ export interface SLAPolicy {
   entityType: string;
   responseTimeMinutes: number;
   resolutionTimeMinutes: number;
-  conditions?: Record<string, any>;
+  conditions?: Record<string, unknown>;
   escalationRules?: EscalationRule[];
   businessHoursOnly: boolean;
-  businessHours?: Record<string, any>;
+  businessHours?: Record<string, unknown>;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -33,21 +33,21 @@ export interface SLAMetrics {
   totalTracked: number;
 }
 
-export async function fetchSLAPolicies(query?: Record<string, string>): Promise<{ docs: SLAPolicy[]; pagination: any }> {
+export async function fetchSLAPolicies(query?: Record<string, string>): Promise<{ docs: SLAPolicy[]; pagination: unknown }> {
   const qs = query ? '?' + new URLSearchParams(query).toString() : '';
   const { body, success } = await useApiFetch(`sla/policies${qs}`);
   if (success && body) {
-    return body as { docs: SLAPolicy[]; pagination: any };
+    return body as { docs: SLAPolicy[]; pagination: unknown };
   }
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
 export async function createSLAPolicy(data: Partial<SLAPolicy>) {
-  return useApiFetch('sla/policies', 'POST', data as Record<string, any>);
+  return useApiFetch('sla/policies', 'POST', data as Record<string, unknown>);
 }
 
 export async function updateSLAPolicy(id: number, data: Partial<SLAPolicy>) {
-  return useApiFetch(`sla/policies/${id}`, 'PUT', data as Record<string, any>);
+  return useApiFetch(`sla/policies/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 export async function deleteSLAPolicy(id: number) {

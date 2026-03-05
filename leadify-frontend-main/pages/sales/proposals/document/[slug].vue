@@ -32,7 +32,7 @@
 
       <!-- Print Template -->
       <div ref="printContainer">
-        <ProposalsProposalPrintTemplate :form-data="formattedData as any" />
+        <ProposalsProposalPrintTemplate :form-data="formattedData as unknown" />
       </div>
 
       <!-- Floating Export Button -->
@@ -63,7 +63,7 @@ const route = useRoute();
 const proposalId = computed(() => route.params.slug as string);
 
 const loading = ref(true);
-const proposal = ref<any>(null);
+const proposal = ref<Record<string, unknown> | null>(null);
 const printContainer = ref<HTMLElement | null>(null);
 
 const formattedData = computed(() => {
@@ -71,7 +71,7 @@ const formattedData = computed(() => {
   return transformApiToFormData(proposal.value);
 });
 
-function transformApiToFormData(apiData: any) {
+function transformApiToFormData(apiData: unknown) {
   const content = apiData.content ? (typeof apiData.content === 'string' ? JSON.parse(apiData.content) : apiData.content) : {};
 
   return {
@@ -145,7 +145,7 @@ async function handleExport() {
           html2canvas: { scale: 2, useCORS: true, logging: false },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
           pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-        } as any)
+        } as unknown)
         .from(element)
         .save();
       return;

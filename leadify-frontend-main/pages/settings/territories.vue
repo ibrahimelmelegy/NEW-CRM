@@ -94,10 +94,10 @@ const flatTerritories = computed(() => {
 
 // Load data
 try {
-  const [treeData, usersRes]: any[] = await Promise.all([fetchTerritoryTree(), useApiFetch('users')]);
+  const [treeData, usersRes]: Record<string, unknown>[] = await Promise.all([fetchTerritoryTree(), useApiFetch('users')]);
   territories.value = treeData;
   if (usersRes?.body?.docs) {
-    users.value = usersRes.body.docs.map((u: any) => ({ label: u.name, value: u.id }));
+    users.value = usersRes.body.docs.map((u) => ({ label: u.name, value: u.id }));
   }
 } catch (e) {
   console.error('Failed to load territories', e);
@@ -154,7 +154,7 @@ async function handleDelete(territory: Territory) {
     await deleteTerritory(territory.id);
     territories.value = await fetchTerritoryTree();
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }

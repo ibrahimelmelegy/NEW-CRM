@@ -17,17 +17,17 @@ export interface KBArticle {
   updatedAt: string;
 }
 
-export async function fetchKBArticles(params?: Record<string, any>) {
+export async function fetchKBArticles(params?: Record<string, unknown>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`knowledge-base${query}`);
-  if (success && body) return body as { docs: KBArticle[]; pagination: any };
+  if (success && body) return body as { docs: KBArticle[]; pagination: unknown };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 
-export async function fetchPublicArticles(params?: Record<string, any>) {
+export async function fetchPublicArticles(params?: Record<string, unknown>) {
   const query = params ? '?' + new URLSearchParams(params).toString() : '';
   const { body, success } = await useApiFetch(`knowledge-base/public${query}`);
-  if (success && body) return body as { docs: KBArticle[]; pagination: any };
+  if (success && body) return body as { docs: KBArticle[]; pagination: unknown };
   return { docs: [], pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 } };
 }
 

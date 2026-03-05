@@ -416,7 +416,7 @@ const createType = ref<'objective' | 'keyResult'>('objective');
 const editingId = ref<string | null>(null);
 const expandedObjectives = ref<string[]>([]);
 const krSearch = ref('');
-const treeRef = ref<any>(null);
+const treeRef = ref<Record<string, unknown> | null>(null);
 
 // ─── Interfaces ──────────────────────────────────────
 interface Objective {
@@ -540,7 +540,7 @@ const hierarchyTree = computed(() => {
         level: 'individual',
         ownerName: kr.owner,
         progress: kr.progress,
-        children: [] as any[]
+        children: [] as unknown[]
       }))
     }))
   };
@@ -745,7 +745,7 @@ function expandAllNodes() {
   if (tree) {
     const root = tree.store?.root;
     if (root) {
-      const expand = (node: any) => {
+      const expand = (node: unknown) => {
         node.expanded = true;
         if (node.childNodes) node.childNodes.forEach(expand);
       };
@@ -759,7 +759,7 @@ function collapseAllNodes() {
   if (tree) {
     const root = tree.store?.root;
     if (root) {
-      const collapse = (node: any) => {
+      const collapse = (node: unknown) => {
         node.expanded = false;
         if (node.childNodes) node.childNodes.forEach(collapse);
       };
@@ -769,7 +769,7 @@ function collapseAllNodes() {
   }
 }
 
-function getMemberRingOption(member: any) {
+function getMemberRingOption(member: unknown) {
   return {
     series: [
       {
@@ -1033,8 +1033,8 @@ async function loadData() {
     // Load team members
     const { body: usersBody, success: usersOk } = await useApiFetch('users?limit=50');
     if (usersOk && usersBody) {
-      const users = (usersBody as any).docs || usersBody || [];
-      teamMembers.value = users.map((u: any) => ({
+      const users = (usersBody as unknown).docs || usersBody || [];
+      teamMembers.value = users.map((u) => ({
         id: u.id || u._id,
         name: u.name || u.fullName || 'Unknown',
         role: u.role || u.position || '',
@@ -1046,10 +1046,10 @@ async function loadData() {
     try {
       const { body: goalsBody, success: goalsOk } = await useApiFetch('goals?limit=100');
       if (goalsOk && goalsBody) {
-        const goalsDocs = (goalsBody as any).docs || goalsBody || [];
+        const goalsDocs = (goalsBody as unknown).docs || goalsBody || [];
         if (goalsDocs.length) {
           // Parse real objectives and key results from API
-          goalsDocs.forEach((g: any) => {
+          goalsDocs.forEach((g) => {
             if (g.type === 'objective') {
               objectives.value.push({
                 id: g.id || g._id,

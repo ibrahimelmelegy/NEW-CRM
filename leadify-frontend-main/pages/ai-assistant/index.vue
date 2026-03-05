@@ -187,7 +187,7 @@ const messages = ref<Array<{ role: string; content: string }>>([]);
 const inputMessage = ref('');
 const isTyping = ref(false);
 const messagesContainer = ref<HTMLElement>();
-const dailyInsights = ref<any[]>([]);
+const dailyInsights = ref<Record<string, unknown>[]>([]);
 const insightsLoading = ref(true);
 
 const quickSuggestions = computed(() => [
@@ -206,7 +206,7 @@ const sendMessage = async (text?: string) => {
   isTyping.value = true;
   await scrollToBottom();
 
-  const res: any = await useApiFetch('ai/chat', 'POST', { message });
+  const res = await useApiFetch('ai/chat', 'POST', { message });
 
   isTyping.value = false;
 
@@ -251,7 +251,7 @@ const scrollToBottom = async () => {
 
 const fetchDailyInsights = async () => {
   insightsLoading.value = true;
-  const res: any = await useApiFetch('ai/insights/daily');
+  const res = await useApiFetch('ai/insights/daily');
   if (res?.success && res.body) {
     dailyInsights.value = Array.isArray(res.body) ? res.body : res.body.insights || [];
   }

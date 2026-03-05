@@ -307,14 +307,14 @@ const loading = ref(false);
 const saving = ref(false);
 const viewMode = ref('pipeline');
 
-const posting = ref<any>(null);
-const applicants = ref<any[]>([]);
-const funnelData = ref<any>(null);
+const posting = ref<Record<string, unknown> | null>(null);
+const applicants = ref<Record<string, unknown>[]>([]);
+const funnelData = ref<Record<string, unknown> | null>(null);
 const funnelLoading = ref(false);
 
 // Applicant panel
 const panelVisible = ref(false);
-const panelApplicant = ref<any>(null);
+const panelApplicant = ref<Record<string, unknown> | null>(null);
 
 // Applicant add dialog
 const applicantDialogVisible = ref(false);
@@ -328,7 +328,7 @@ const applicantForm = reactive({
 
 // Stage move dialog
 const stageDialogVisible = ref(false);
-const stageApplicant = ref<any>(null);
+const stageApplicant = ref<Record<string, unknown> | null>(null);
 const newStage = ref('');
 
 const APPLICANT_STAGES = [
@@ -364,8 +364,8 @@ const funnelVisual = computed(() => {
     HIRED: '#10b981'
   };
   return (funnelData.value.funnel || [])
-    .filter((s: any) => s.stage !== 'REJECTED')
-    .map((s: any) => ({
+    .filter((s) => s.stage !== 'REJECTED')
+    .map((s) => ({
       name: s.stage,
       count: s.count,
       color: stageColors[s.stage] || '#6b7280'
@@ -426,12 +426,12 @@ function getApplicantsForStage(stage: string) {
 }
 
 function funnelBarWidth(count: number): string {
-  const max = Math.max(...funnelVisual.value.map((s: any) => s.count), 1);
+  const max = Math.max(...funnelVisual.value.map((s) => s.count), 1);
   return Math.max(36, Math.round((count / max) * 100)) + '%';
 }
 
 function funnelBarHeight(count: number): number {
-  const max = Math.max(...funnelVisual.value.map((s: any) => s.count), 1);
+  const max = Math.max(...funnelVisual.value.map((s) => s.count), 1);
   return Math.max(28, Math.round((count / max) * 120));
 }
 
@@ -446,9 +446,9 @@ async function fetchPosting() {
   try {
     const res = await useApiFetch(`hr/recruitment/postings?page=1&limit=100`);
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       const all = data.docs || data.rows || data || [];
-      posting.value = all.find((p: any) => String(p.id) === String(postingId.value)) || null;
+      posting.value = all.find((p) => String(p.id) === String(postingId.value)) || null;
     }
   } catch {
     ElMessage.error(t('recruitment.loadPostingFailed'));
@@ -459,7 +459,7 @@ async function fetchApplicants() {
   try {
     const res = await useApiFetch(`hr/recruitment/applicants?jobPostingId=${postingId.value}&limit=200`);
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       applicants.value = data.docs || data.rows || data || [];
     }
   } catch {
@@ -491,7 +491,7 @@ async function loadAll() {
 }
 
 // ─── Applicant Panel ─────────────────────────────────────
-function openApplicantPanel(app: any) {
+function openApplicantPanel(app: unknown) {
   panelApplicant.value = app;
   panelVisible.value = true;
 }
@@ -534,7 +534,7 @@ async function handleAddApplicant() {
 }
 
 // ─── Stage Move ──────────────────────────────────────────
-function openStageDialog(applicant: any) {
+function openStageDialog(applicant: unknown) {
   stageApplicant.value = applicant;
   newStage.value = '';
   stageDialogVisible.value = true;
@@ -560,7 +560,7 @@ async function handleMoveStage() {
   }
 }
 
-async function handleRejectApplicant(row: any) {
+async function handleRejectApplicant(row: unknown) {
   try {
     await ElMessageBox.confirm(`${t('recruitment.confirmReject')} ${row.name}?`, t('common.warning'), { type: 'warning' });
     await useApiFetch(`hr/recruitment/applicants/${row.id}/stage`, 'PUT', { stage: 'REJECTED' });

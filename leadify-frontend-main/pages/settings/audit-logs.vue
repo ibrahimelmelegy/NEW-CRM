@@ -60,7 +60,7 @@ const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 
 const loading = ref(false);
-const logs = ref<any[]>([]);
+const logs = ref<Record<string, unknown>[]>([]);
 const search = ref('');
 const filterAction = ref('');
 const filterModule = ref('');
@@ -74,7 +74,7 @@ onMounted(async () => {
 const fetchLogs = async () => {
   loading.value = true;
   try {
-    const response: any = await useApiFetch('activity?limit=100');
+    const response = await useApiFetch('activity?limit=100');
     if (response.success && response.body) {
       logs.value = Array.isArray(response.body) ? response.body : [];
     }
@@ -84,12 +84,12 @@ const fetchLogs = async () => {
 };
 
 const availableModules = computed(() => {
-  const modules = new Set(logs.value.map((log: any) => log.entityType).filter(Boolean));
+  const modules = new Set(logs.value.map((log) => log.entityType).filter(Boolean));
   return Array.from(modules).sort();
 });
 
 const filteredLogs = computed(() => {
-  return logs.value.filter((log: any) => {
+  return logs.value.filter((log) => {
     const matchesSearch =
       !search.value ||
       log.description?.toLowerCase().includes(search.value.toLowerCase()) ||
@@ -112,17 +112,17 @@ const summaryStats = computed(() => [
   { label: t('auditLogs.totalLogs'), value: logs.value.length, icon: 'ph:list-bullets-bold', color: '#7849ff' },
   {
     label: t('auditLogs.creates'),
-    value: logs.value.filter((l: any) => l.status === 'create').length,
+    value: logs.value.filter((l) => l.status === 'create').length,
     icon: 'ph:plus-circle-bold',
     color: '#22c55e'
   },
   {
     label: t('auditLogs.updates'),
-    value: logs.value.filter((l: any) => l.status === 'update').length,
+    value: logs.value.filter((l) => l.status === 'update').length,
     icon: 'ph:pencil-simple-bold',
     color: '#f59e0b'
   },
-  { label: t('auditLogs.deletes'), value: logs.value.filter((l: any) => l.status === 'delete').length, icon: 'ph:trash-bold', color: '#ef4444' }
+  { label: t('auditLogs.deletes'), value: logs.value.filter((l) => l.status === 'delete').length, icon: 'ph:trash-bold', color: '#ef4444' }
 ]);
 
 function applyFilters() {

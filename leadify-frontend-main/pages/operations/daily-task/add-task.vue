@@ -38,29 +38,29 @@ const ClientNew = ref({
 });
 
 let users = await useApiFetch('users');
-users = users?.body?.docs?.map((e: any) => ({
+users = users?.body?.docs?.map((e) => ({
   label: e.name,
   value: e.id
 }));
 
-const selectedLead = ref<any>([]);
+const selectedLead = ref<Record<string, unknown>>([]);
 
 const leadId = null;
 
-async function setClient(pre: any) {
+async function setClient(pre: unknown) {
   ClientNew.value.name = pre.target?.value;
 }
 
-async function setEmail(pre: any) {
+async function setEmail(pre: unknown) {
   ClientNew.value.email = pre.target?.value;
 }
-async function setPhone(pre: any) {
+async function setPhone(pre: unknown) {
   ClientNew.value.phone = pre.target?.value;
 }
-async function setCompany(pre: any) {
+async function setCompany(pre: unknown) {
   ClientNew.value.companyName = pre.target?.value;
 }
-async function setType(pre: any) {
+async function setType(pre: unknown) {
   ClientNew.value.clientType = pre.target?.value;
 }
 

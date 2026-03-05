@@ -115,21 +115,21 @@ function getTypeTag(type?: string): string {
 
 const filteredRules = computed(() => {
   if (!filterType.value) return taxRules.value;
-  return taxRules.value.filter(r => (r as any).type === filterType.value);
+  return taxRules.value.filter(r => (r as unknown).type === filterType.value);
 });
 
 const form = ref({ name: '', type: 'VAT', rate: 15, region: '', description: '', isActive: true, isInclusive: false, isCompound: false });
 
 const calcVisible = ref(false);
 const calcAmount = ref(1000);
-const calcResult = ref<any>(null);
+const calcResult = ref<Record<string, unknown> | null>(null);
 const calcRuleId = ref<number>(0);
 const calculating = ref(false);
 
 async function loadData() {
   loading.value = true;
   try {
-    const res: any = await fetchTaxRules();
+    const res = await fetchTaxRules();
     taxRules.value = res?.body || res || [];
   } finally {
     loading.value = false;
@@ -141,13 +141,13 @@ function openDialog(item?: TaxRuleItem) {
   form.value = item
     ? {
         name: item.name,
-        type: (item as any).type || 'VAT',
+        type: (item as unknown).type || 'VAT',
         rate: item.rate,
         region: item.region,
         description: item.description,
         isActive: item.isActive,
-        isInclusive: (item as any).isInclusive || false,
-        isCompound: (item as any).isCompound || false
+        isInclusive: (item as unknown).isInclusive || false,
+        isCompound: (item as unknown).isCompound || false
       }
     : { name: '', type: 'VAT', rate: 15, region: '', description: '', isActive: true, isInclusive: false, isCompound: false };
   dialogVisible.value = true;
@@ -196,7 +196,7 @@ function openCalcDialog(rule: TaxRuleItem) {
 async function handleCalcTax() {
   calculating.value = true;
   try {
-    const res: any = await calculateTax(calcAmount.value, calcRuleId.value);
+    const res = await calculateTax(calcAmount.value, calcRuleId.value);
     calcResult.value = res?.body || res;
   } catch {
     ElMessage.error(t('common.error'));

@@ -91,7 +91,7 @@ export function useSecurity() {
       } else {
         error.value = response.message;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to fetch sessions';
     } finally {
       loading.value = false;
@@ -109,7 +109,7 @@ export function useSecurity() {
       }
       error.value = response.message;
       return false;
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to terminate session';
       return false;
     } finally {
@@ -129,7 +129,7 @@ export function useSecurity() {
       }
       error.value = response.message;
       return false;
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to terminate sessions';
       return false;
     } finally {
@@ -156,7 +156,7 @@ export function useSecurity() {
       } else {
         error.value = response.message;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to fetch login history';
     } finally {
       loading.value = false;
@@ -175,7 +175,7 @@ export function useSecurity() {
       } else {
         error.value = response.message;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to fetch IP whitelist';
     } finally {
       loading.value = false;
@@ -193,7 +193,7 @@ export function useSecurity() {
       }
       error.value = response.message;
       return false;
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to add IP';
       return false;
     } finally {
@@ -212,7 +212,7 @@ export function useSecurity() {
       }
       error.value = response.message;
       return false;
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to remove IP';
       return false;
     } finally {
@@ -232,7 +232,7 @@ export function useSecurity() {
       } else {
         error.value = response.message;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to fetch dashboard';
     } finally {
       loading.value = false;
@@ -241,17 +241,17 @@ export function useSecurity() {
 
   // ─── GDPR Export ─────────────────────────────────────────────────────
 
-  async function exportData(): Promise<Record<string, any> | null> {
+  async function exportData(): Promise<Record<string, unknown> | null> {
     loading.value = true;
     error.value = null;
     try {
-      const response = await useApiFetch<Record<string, any>>('security/session/export-data', 'POST');
+      const response = await useApiFetch<Record<string, unknown>>('security/session/export-data', 'POST');
       if (response.success && response.body) {
         return response.body;
       }
       error.value = response.message;
       return null;
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = e.message || 'Failed to export data';
       return null;
     } finally {

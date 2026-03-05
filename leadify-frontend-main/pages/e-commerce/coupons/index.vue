@@ -177,7 +177,7 @@ definePageMeta({ middleware: 'permissions' });
 const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 
-const coupons = ref<any[]>([]);
+const coupons = ref<Record<string, unknown>[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 const showDialog = ref(false);
@@ -243,8 +243,8 @@ async function loadCoupons() {
   loading.value = true;
   try {
     const res = await fetchCoupons({ page: String(currentPage.value), limit: String(pageSize.value) });
-    coupons.value = (res as any)?.body?.docs || res?.docs || [];
-    totalItems.value = (res as any)?.body?.totalDocs || (res as any)?.totalDocs || coupons.value.length;
+    coupons.value = (res as unknown)?.body?.docs || res?.docs || [];
+    totalItems.value = (res as unknown)?.body?.totalDocs || (res as unknown)?.totalDocs || coupons.value.length;
   } finally {
     loading.value = false;
   }
@@ -257,7 +257,7 @@ function generateCouponCode(): string {
   return code;
 }
 
-function formatCouponValue(coupon: any): string {
+function formatCouponValue(coupon: unknown): string {
   if (coupon.type === 'PERCENTAGE') return `${coupon.value}%`;
   if (coupon.type === 'FREE_SHIPPING') return 'Free Shipping';
   return `${coupon.value} ${coupon.currency || 'SAR'}`;
@@ -311,7 +311,7 @@ function openCreateDialog() {
   showDialog.value = true;
 }
 
-function openEditDialog(row: any) {
+function openEditDialog(row: unknown) {
   editingId.value = row.id;
   Object.assign(form, {
     code: row.code || '',
@@ -348,14 +348,14 @@ async function saveCoupon() {
 
   try {
     if (editingId.value) {
-      const res = await updateCoupon(editingId.value, payload as any);
+      const res = await updateCoupon(editingId.value, payload as unknown);
       if (res?.success !== false) {
         showDialog.value = false;
         await loadCoupons();
         ElMessage.success(t('common.saved'));
       }
     } else {
-      const res = await createCoupon(payload as any);
+      const res = await createCoupon(payload as unknown);
       if (res?.success !== false) {
         showDialog.value = false;
         resetForm();

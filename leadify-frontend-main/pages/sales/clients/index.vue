@@ -159,7 +159,7 @@ const loading = ref(false);
 const { t } = useI18n();
 
 // Data state for deals (used to calculate LTV and revenue) — must be declared BEFORE enrichedClientData
-const clientDeals = ref<any[]>([]);
+const clientDeals = ref<Record<string, unknown>[]>([]);
 const loadingDeals = ref(true);
 
 // Export columns & data
@@ -175,7 +175,7 @@ const exportColumns = [
 const exportData = computed(() => table.data);
 
 // Bulk actions
-const selectedRows = ref<any[]>([]);
+const selectedRows = ref<Record<string, unknown>[]>([]);
 async function confirmDelete() {
   if (!deleteId.value) return;
   deleting.value = true;
@@ -184,7 +184,7 @@ async function confirmDelete() {
     if (response?.success) {
       const res = await useTableFilter('client');
       rawClientData.value = res.formattedData;
-      table.data = enrichedClientData.value as any;
+      table.data = enrichedClientData.value as unknown;
     }
   } finally {
     deleting.value = false;
@@ -206,7 +206,7 @@ async function handleBulkDelete() {
     }
     const res = await useTableFilter('client');
     rawClientData.value = res.formattedData;
-    table.data = enrichedClientData.value as any;
+    table.data = enrichedClientData.value as unknown;
     selectedRows.value = [];
     ElNotification({ type: 'success', title: t('common.success'), message: t('clients.bulkDeleted') });
   } catch {
@@ -219,7 +219,7 @@ async function handleBulkExport() {
   if (!selectedRows.value.length) return;
   try {
     loading.value = true;
-    const ids = selectedRows.value.map((r: any) => r.id);
+    const ids = selectedRows.value.map((r) => r.id);
     await useApiFetch('client/export', 'POST', { ids });
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.exportSentToEmail') });
     selectedRows.value = [];
@@ -332,8 +332,8 @@ const enrichedClientData = computed(() => {
   const clientDealCountMap = new Map<string, number>();
 
   deals
-    .filter((d: any) => d.status === 'WON')
-    .forEach((deal: any) => {
+    .filter((d) => d.status === 'WON')
+    .forEach((deal) => {
       const clientId = deal.clientId;
       if (clientId) {
         const currentLTV = clientLTVMap.get(clientId) || 0;
@@ -344,7 +344,7 @@ const enrichedClientData = computed(() => {
       }
     });
 
-  return clients.map((client: any) => {
+  return clients.map((client) => {
     const ltv = clientLTVMap.get(client.id) || 0;
     const dealCount = clientDealCountMap.get(client.id) || 0;
     const isActive = client.clientStatus === 'ACTIVE' || client.status === 'ACTIVE';
@@ -370,7 +370,7 @@ const enrichedClientData = computed(() => {
   });
 });
 
-table.data = enrichedClientData.value as any;
+table.data = enrichedClientData.value as unknown;
 
 // Load deals data for LTV and revenue calculations
 async function loadClientDeals() {
@@ -378,7 +378,7 @@ async function loadClientDeals() {
   try {
     const { body, success } = await useApiFetch('deal?limit=1000');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       clientDeals.value = data.docs || data || [];
     }
   } catch {
@@ -396,8 +396,8 @@ const clientSegments = computed(() => {
   // Calculate LTV for each client
   const clientLTVMap = new Map<string, number>();
   deals
-    .filter((d: any) => d.status === 'WON')
-    .forEach((deal: any) => {
+    .filter((d) => d.status === 'WON')
+    .forEach((deal) => {
       const clientId = deal.clientId;
       if (clientId) {
         const current = clientLTVMap.get(clientId) || 0;
@@ -411,7 +411,7 @@ const clientSegments = computed(() => {
   let atRisk = 0;
   let churning = 0;
 
-  data.forEach((client: any) => {
+  data.forEach((client) => {
     const ltv = clientLTVMap.get(client.id) || 0;
     const isActive = client.clientStatus === 'ACTIVE' || client.status === 'ACTIVE';
 
@@ -432,9 +432,9 @@ const clientSegments = computed(() => {
 // Revenue analytics
 const revenueAnalytics = computed(() => {
   const deals = clientDeals.value || [];
-  const wonDeals = deals.filter((d: any) => d.status === 'WON');
+  const wonDeals = deals.filter((d) => d.status === 'WON');
 
-  const totalRevenue = wonDeals.reduce((sum: number, d: any) => sum + Number(d.value || 0), 0);
+  const totalRevenue = wonDeals.reduce((sum, d) => sum + Number(d.value || 0), 0);
   const avgDealSize = wonDeals.length > 0 ? totalRevenue / wonDeals.length : 0;
 
   return {
@@ -447,8 +447,8 @@ const revenueAnalytics = computed(() => {
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.data || [];
   const total = data.length;
-  const active = data.filter((c: any) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length;
-  const inactive = data.filter((c: any) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length;
+  const active = data.filter((c) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length;
+  const inactive = data.filter((c) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length;
 
   return [
     { label: t('clients.kpi.totalClients'), value: total, icon: 'ph:buildings-bold', color: '#3b82f6' },
@@ -469,12 +469,12 @@ const kpiMetrics = computed<KPIMetric[]>(() => {
   ];
 });
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/sales/clients/${val.id}`);
 }
 
 const mappedUsers =
-  usersResponse?.body?.docs?.map((e: any) => ({
+  usersResponse?.body?.docs?.map((e) => ({
     label: e.name,
     value: e.id
   })) || [];
@@ -502,28 +502,28 @@ const advancedSearchFields = [
   { key: 'name', label: t('clients.table.clientName'), type: 'string' },
   { key: 'email', label: t('clients.table.email'), type: 'string' },
   { key: 'phoneNumber', label: t('clients.table.phone'), type: 'string' },
-  { key: 'clientType', label: t('clients.table.type'), type: 'select', options: clientTypes.map((s: any) => ({ value: s.value, label: s.label })) },
-  { key: 'status', label: t('clients.table.status'), type: 'select', options: clientStatuses.map((s: any) => ({ value: s.value, label: s.label })) },
+  { key: 'clientType', label: t('clients.table.type'), type: 'select', options: clientTypes.map((s) => ({ value: s.value, label: s.label })) },
+  { key: 'status', label: t('clients.table.status'), type: 'select', options: clientStatuses.map((s) => ({ value: s.value, label: s.label })) },
   { key: 'createdAt', label: t('clients.table.created'), type: 'date' }
 ];
 
-async function handleApplyView(view: any) {
+async function handleApplyView(view: unknown) {
   if (view?.filters) {
     const res = await useTableFilter('client', view.filters);
     rawClientData.value = res.formattedData;
-    table.data = enrichedClientData.value as any;
+    table.data = enrichedClientData.value as unknown;
   }
 }
 
-async function handleAdvancedFilter(filterPayload: any) {
+async function handleAdvancedFilter(filterPayload: unknown) {
   try {
     const res = await useApiFetch('search/advanced/client', 'POST', filterPayload);
     if (res?.success && res?.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       rawClientData.value = data.docs || data || [];
-      table.data = enrichedClientData.value as any;
+      table.data = enrichedClientData.value as unknown;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -531,12 +531,12 @@ async function handleAdvancedFilter(filterPayload: any) {
 async function handleClearAdvancedFilter() {
   const res = await useTableFilter('client');
   rawClientData.value = res.formattedData;
-  table.data = enrichedClientData.value as any;
+  table.data = enrichedClientData.value as unknown;
 }
 
 // Watch for changes in enriched data
 watch(enrichedClientData, newData => {
-  table.data = newData as any;
+  table.data = newData as unknown;
 });
 
 // Load deals on mount
@@ -558,13 +558,13 @@ const mobileFilters = computed(() => {
       value: 'ACTIVE',
       label: t('common.active'),
       color: '#10b981',
-      count: data.filter((c: any) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length
+      count: data.filter((c) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length
     },
     {
       value: 'INACTIVE',
       label: t('common.inactive'),
       color: '#94a3b8',
-      count: data.filter((c: any) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length
+      count: data.filter((c) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length
     }
   ];
 });
@@ -572,11 +572,11 @@ const mobileFilters = computed(() => {
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((c: any) => (c.clientStatus || c.status) === mobileStatusFilter.value);
+    data = data.filter((c) => (c.clientStatus || c.status) === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((c: any) => {
+  return data.filter((c) => {
     const name = (c.ClientDetails?.title || c.name || '').toLowerCase();
     const email = (c.email || '').toLowerCase();
     const phone = (c.phoneNumber || '').toLowerCase();
@@ -595,20 +595,20 @@ async function handleMobileRefresh() {
   }
 }
 
-function getSwipeRightActions(client: any) {
+function getSwipeRightActions(client: unknown) {
   const actions = [];
   if (client.phoneNumber) actions.push({ name: 'call', label: t('common.call'), icon: 'ph:phone-bold', color: '#10B981' });
   if (client.email) actions.push({ name: 'email', label: t('common.email'), icon: 'ph:envelope-bold', color: '#3B82F6' });
   return actions;
 }
 
-function getSwipeLeftActions(_client: any) {
+function getSwipeLeftActions(_client: unknown) {
   const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#3b82f6' }];
   if (hasPermission('EDIT_CLIENTS')) actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
   return actions;
 }
 
-function handleSwipeAction(name: string, client: any) {
+function handleSwipeAction(name: string, client: unknown) {
   vibrate();
   switch (name) {
     case 'call':

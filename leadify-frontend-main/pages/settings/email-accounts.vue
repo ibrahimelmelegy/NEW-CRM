@@ -124,7 +124,7 @@ async function handleConnect() {
   }
   connecting.value = true;
   try {
-    const payload: Record<string, any> = {
+    const payload: Record<string, unknown> = {
       provider: connectForm.provider,
       email: connectForm.email
     };
@@ -152,7 +152,7 @@ async function handleDisconnect(account: EmailAccount) {
     await disconnectEmailAccount(account.id);
     accounts.value = await fetchEmailAccounts();
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }

@@ -94,12 +94,12 @@ export function useCallLog() {
     try {
       const { body, success } = await useApiFetch(`communications/call-logs?page=${page}&limit=100`);
       if (success && body) {
-        const data = body as any;
-        calls.value = (data.docs || []).map((a: any) => ({
+        const data = body as unknown;
+        calls.value = (data.docs || []).map((a) => ({
           id: a.id,
           contactName: a.subject || a.contactId || 'Unknown',
           phone: a.callLog?.phoneNumber || '',
-          direction: (a.direction || 'OUTBOUND').toLowerCase() as any,
+          direction: (a.direction || 'OUTBOUND').toLowerCase() as unknown,
           outcome: mapOutcome(a.callLog?.outcome),
           disposition: a.callLog?.disposition?.toLowerCase(),
           duration: a.duration || a.callLog?.duration || 0,

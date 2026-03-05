@@ -138,7 +138,7 @@ async function handleCalculate(assessment: ZakaatAssessment) {
 
 async function handleSubmitAssessment(assessment: ZakaatAssessment) {
   try {
-    const res = await updateAssessment(assessment.id, { status: 'SUBMITTED' } as any);
+    const res = await updateAssessment(assessment.id, { status: 'SUBMITTED' } as unknown);
     if (res.success) {
       ElMessage.success(t('zakaat.submitSuccess'));
       await loadData();
@@ -153,7 +153,7 @@ async function handleMarkPaid(assessment: ZakaatAssessment) {
     const res = await updateAssessment(assessment.id, {
       status: 'PAID',
       paidAt: new Date().toISOString()
-    } as any);
+    } as unknown);
     if (res.success) {
       ElMessage.success(t('zakaat.paidSuccess'));
       await loadData();

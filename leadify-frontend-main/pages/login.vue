@@ -173,7 +173,7 @@ const formSchema = yup.object({
     .max(50)
     .required('Email is required')
     .matches(noArabicRegx, 'No Arabic allowed')
-    .test('is-valid', 'Invalid Email format', (value: any) => (value ? isEmailValidator(value) : false))
+    .test('is-valid', 'Invalid Email format', (value: unknown) => (value ? isEmailValidator(value) : false))
     .label('email'),
   password: yup.string().required('Password is required').label('password').max(50)
 });
@@ -182,7 +182,7 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema
 });
 
-const onSubmit = handleSubmit(async (values: any) => {
+const onSubmit = handleSubmit(async (values: unknown) => {
   loading.value = true;
   try {
     const response = await useApiFetch('auth/login', 'POST', {
@@ -209,7 +209,7 @@ const onSubmit = handleSubmit(async (values: any) => {
     } else {
       throw new Error(response.message || 'Login failed');
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElNotification({
       title: 'Error',
       type: 'error',

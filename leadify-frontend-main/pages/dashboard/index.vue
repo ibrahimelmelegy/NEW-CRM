@@ -133,12 +133,12 @@ const loadingActivities = ref(false);
 const loadingTasks = ref(false);
 
 const revenuePeriod = ref('monthly');
-const summary = ref<any>(null);
-const revenueData = ref<any>(null);
-const pipelineData = ref<any>(null);
-const activities = ref<any[]>([]);
-const pendingTasks = ref<any[]>([]);
-const topDeals = ref<any[]>([]);
+const summary = ref<Record<string, unknown> | null>(null);
+const revenueData = ref<Record<string, unknown> | null>(null);
+const pipelineData = ref<Record<string, unknown> | null>(null);
+const activities = ref<Record<string, unknown>[]>([]);
+const pendingTasks = ref<Record<string, unknown>[]>([]);
+const topDeals = ref<Record<string, unknown>[]>([]);
 
 // KPI Cards
 const kpiCards = computed(() => [
@@ -175,7 +175,7 @@ const kpiCards = computed(() => [
 // Revenue Chart
 const revenueChartOption = computed(() => {
   if (!revenueData.value?.data?.length) return null;
-  const chartData = revenueData.value.data.map((item: any) => ({
+  const chartData = revenueData.value.data.map((item) => ({
     name: item.label || item.month || item.period,
     value: item.value || item.revenue || 0
   }));
@@ -185,7 +185,7 @@ const revenueChartOption = computed(() => {
 // Pipeline Chart
 const pipelineChartOption = computed(() => {
   if (!pipelineData.value?.stages?.length) return null;
-  const chartData = pipelineData.value.stages.map((stage: any) => ({
+  const chartData = pipelineData.value.stages.map((stage) => ({
     name: stage.name || stage.stage,
     value: stage.count || stage.value || 0
   }));
@@ -201,7 +201,7 @@ async function loadExecutiveSummary() {
       summary.value = data;
       topDeals.value = data.topDeals || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Failed to load executive summary:', e);
   } finally {
     loadingSummary.value = false;
@@ -212,7 +212,7 @@ async function loadRevenueChart() {
   loadingRevenue.value = true;
   try {
     revenueData.value = await fetchRevenueChart(revenuePeriod.value);
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Failed to load revenue chart:', e);
   } finally {
     loadingRevenue.value = false;
@@ -223,7 +223,7 @@ async function loadPipeline() {
   loadingPipeline.value = true;
   try {
     pipelineData.value = await fetchPipelineData();
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Failed to load pipeline:', e);
   } finally {
     loadingPipeline.value = false;
@@ -237,7 +237,7 @@ async function loadActivities() {
     if (success && body) {
       activities.value = body.docs || body || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Failed to load activities:', e);
   } finally {
     loadingActivities.value = false;
@@ -251,7 +251,7 @@ async function loadPendingTasks() {
     if (success && body) {
       pendingTasks.value = body.docs || body || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Failed to load tasks:', e);
   } finally {
     loadingTasks.value = false;

@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import { useApiFetch } from './useApiFetch';
 
 export function useDealRoom() {
-  const roomData = ref<any>(null);
+  const roomData = ref<Record<string, unknown> | null>(null);
   const loading = ref(false);
 
   async function fetchDealRoom(dealId: string) {

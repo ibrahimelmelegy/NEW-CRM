@@ -105,7 +105,7 @@ const dialogVisible = ref(false);
 const editingId = ref<string | null>(null);
 const searchingEmployees = ref(false);
 
-const employeeOptions = ref<any[]>([]);
+const employeeOptions = ref<Record<string, unknown>[]>([]);
 
 const form = ref({
   employeeId: '',
@@ -136,7 +136,7 @@ async function searchEmployees(query: string) {
   try {
     const { body, success } = await useApiFetch(`hr/employees?search=${encodeURIComponent(query)}&limit=20`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       employeeOptions.value = data.docs || data || [];
     }
   } finally {

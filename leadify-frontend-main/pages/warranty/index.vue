@@ -264,7 +264,7 @@ const savingClaim = ref(false);
 const form = reactive({ productName: '', clientName: '', warrantyType: 'Warranty', coverage: '', startDate: '', endDate: '' });
 const selectedWarranties = ref<Warranty[]>([]);
 const showClaimsSection = ref(true);
-const timelineData = ref<any[]>([]);
+const timelineData = ref<Record<string, unknown>[]>([]);
 const timelineTitle = ref('');
 
 // Claim form
@@ -285,7 +285,7 @@ const warrantyAnalytics = reactive({
 });
 
 // Expiring warranties list
-const expiringWarranties = ref<any[]>([]);
+const expiringWarranties = ref<Record<string, unknown>[]>([]);
 
 // Claim status counts
 const claimStatusCounts = reactive({
@@ -312,7 +312,7 @@ async function fetchWarranties() {
   try {
     const { body, success } = await useApiFetch(`warranty?page=${pagination.page}&limit=${pagination.limit}`, 'GET');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       warranties.value = data.rows || data.docs || (Array.isArray(data) ? data : []);
       pagination.total = data.count ?? data.total ?? warranties.value.length;
     }
@@ -428,7 +428,7 @@ async function viewTimeline(warranty: Warranty) {
   try {
     const { body, success } = await useApiFetch(`warranty/${warranty.id}/timeline`, 'GET');
     if (success && body) {
-      timelineData.value = Array.isArray(body) ? body : (body as any).events || [];
+      timelineData.value = Array.isArray(body) ? body : (body as unknown).events || [];
     }
   } catch {
     timelineData.value = [];
@@ -522,14 +522,14 @@ async function loadWarrantyAnalytics() {
   try {
     const { body, success } = await useApiFetch('warranty/analytics', 'GET');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       warrantyAnalytics.activeWarranties = data?.activeWarranties ?? data?.active ?? 0;
       warrantyAnalytics.expiringSoon = data?.expiringSoon ?? 0;
       warrantyAnalytics.claimsFiled = data?.claimsFiled ?? data?.claims ?? 0;
       warrantyAnalytics.avgResolutionTime = data?.avgResolutionTime ?? data?.avgResolution ?? 0;
       warrantyAnalytics.avgClaimValue = data?.avgClaimValue ?? 0;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error($t('common.error'));
   }
 }
@@ -540,7 +540,7 @@ async function loadClaimStatusCounts() {
     if (success && body) {
       Object.assign(claimStatusCounts, body);
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error($t('common.error'));
   }
 }
@@ -550,11 +550,11 @@ async function loadExpiringWarranties() {
   try {
     const { body, success } = await useApiFetch('warranty/expiring?daysAhead=30', 'GET');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       const items = data?.rows || data?.docs || (Array.isArray(data) ? data : []);
       // Compute daysRemaining if not provided
       const today = new Date();
-      expiringWarranties.value = items.map((w: any) => {
+      expiringWarranties.value = items.map((w) => {
         let daysRemaining = w.daysRemaining;
         if (daysRemaining == null && w.endDate) {
           const end = new Date(w.endDate);
@@ -563,7 +563,7 @@ async function loadExpiringWarranties() {
         return { ...w, daysRemaining: daysRemaining ?? 0 };
       });
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error($t('common.error'));
   }
 }

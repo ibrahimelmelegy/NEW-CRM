@@ -2,7 +2,7 @@
 export interface ReportBuilderConfig {
   entityType: string;
   columns: string[];
-  filters: { field: string; operator: string; value: any }[];
+  filters: { field: string; operator: string; value: unknown }[];
   groupBy?: string;
   chartType?: string;
   sortBy?: string;
@@ -40,10 +40,10 @@ export async function fetchSavedReports(): Promise<SavedReport[]> {
 }
 
 export async function createSavedReport(data: { name: string; entityType: string; config: ReportBuilderConfig }) {
-  return useApiFetch('report-builder', 'POST', data as any);
+  return useApiFetch('report-builder', 'POST', data as unknown);
 }
 
-export async function updateSavedReport(id: string, data: any) {
+export async function updateSavedReport(id: string, data: unknown) {
   return useApiFetch(`report-builder/${id}`, 'PUT', data);
 }
 
@@ -52,12 +52,12 @@ export async function deleteSavedReport(id: string) {
 }
 
 export async function executeReport(config: ReportBuilderConfig) {
-  const { body, success } = await useApiFetch('report-builder/execute', 'POST', config as any);
+  const { body, success } = await useApiFetch('report-builder/execute', 'POST', config as unknown);
   if (success && Array.isArray(body)) return body;
   return [];
 }
 
 export async function exportReportBuilderCSV(config: ReportBuilderConfig) {
-  const { body, success } = await useApiFetch('report-builder/export-csv', 'POST', config as any);
+  const { body, success } = await useApiFetch('report-builder/export-csv', 'POST', config as unknown);
   return body;
 }

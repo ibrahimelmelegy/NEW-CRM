@@ -166,7 +166,7 @@ const filters = reactive({
   priority: ''
 });
 
-const assignees = ref<any[]>([]);
+const assignees = ref<Record<string, unknown>[]>([]);
 
 function getColumnCards(colId: string) {
   let filtered = cards.value.filter(c => c.columnId === colId);
@@ -246,9 +246,9 @@ async function fetchAssignees() {
   try {
     const res = await useApiFetch('users');
     if (res?.success && res?.body?.docs) {
-      assignees.value = res.body.docs.map((u: any) => ({ label: u.name, value: u.name }));
+      assignees.value = res.body.docs.map((u) => ({ label: u.name, value: u.name }));
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error($t('common.error'));
   }
 }
@@ -270,7 +270,7 @@ async function saveCard() {
   saving.value = true;
   try {
     // Create a deal via the deal API
-    const payload: Record<string, any> = {
+    const payload: Record<string, unknown> = {
       name: form.title,
       companyName: form.description,
       stage: form.columnId,

@@ -23,7 +23,7 @@ export interface PipelineHealth {
 export function useSalesCoach() {
   const dealAnalysis = ref<DealAnalysis | null>(null);
   const pipelineHealth = ref<PipelineHealth | null>(null);
-  const weeklySummary = ref<any>(null);
+  const weeklySummary = ref<Record<string, unknown> | null>(null);
   const loading = ref(false);
   const isOpen = ref(false);
 
@@ -31,7 +31,7 @@ export function useSalesCoach() {
     loading.value = true;
     const res = await useApiFetch(`ai/sales-coach/deal/${dealId}`);
     if (res.success && res.body) {
-      dealAnalysis.value = res.body as any;
+      dealAnalysis.value = res.body as unknown;
     }
     loading.value = false;
   }
@@ -40,7 +40,7 @@ export function useSalesCoach() {
     loading.value = true;
     const res = await useApiFetch('ai/sales-coach/pipeline');
     if (res.success && res.body) {
-      pipelineHealth.value = res.body as any;
+      pipelineHealth.value = res.body as unknown;
     }
     loading.value = false;
   }

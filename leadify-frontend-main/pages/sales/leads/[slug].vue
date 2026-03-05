@@ -58,7 +58,7 @@
                 .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                   Icon(name="IconAssign" size="20" class="mr-2")
                   p {{ $t('leads.info.assign') }}
-                p.mb-2(style="color: var(--text-primary)") {{ lead?.users?.map((u: any) => u.name).join(', ') }}
+                p.mb-2(style="color: var(--text-primary)") {{ lead?.users?.map((u) => u.name).join(', ') }}
               div
                 .font-medium.mb-2.flex.items-center(style="color: var(--text-muted)")
                   Icon(name="IconSource" size="20" class="mr-2")
@@ -116,7 +116,7 @@ definePageMeta({
 });
 
 interface ActivityResponse {
-  docs: any[];
+  docs: Record<string, unknown>[];
   pagination: {
     page: number | string;
     totalPages: number | string;

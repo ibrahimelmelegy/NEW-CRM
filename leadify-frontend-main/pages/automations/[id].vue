@@ -197,12 +197,12 @@ const workflowName = ref('');
 const isActive = ref(false);
 const entityType = ref('');
 const triggerType = ref('');
-const elements = ref<any[]>([]);
+const elements = ref<Record<string, unknown>[]>([]);
 
 const { project } = useVueFlow();
 const dragOver = ref(false);
 
-const onDragStart = (event: DragEvent, type: string, extraData: any = {}) => {
+const onDragStart = (event: DragEvent, type: string, extraData: unknown = {}) => {
   if (event.dataTransfer) {
     event.dataTransfer.setData('application/vueflow', JSON.stringify({ type, ...extraData }));
     event.dataTransfer.effectAllowed = 'move';
@@ -244,7 +244,7 @@ const onDrop = (event: DragEvent) => {
   }
 };
 
-const onNodeClick = (event: any) => {
+const onNodeClick = (event: unknown) => {
   const node = event.node;
   ElMessage.info(`Clicked ${node.type} node settings (Editor coming soon)`);
 };
@@ -253,7 +253,7 @@ const onNodeClick = (event: any) => {
 const fetchWorkflow = async () => {
   loading.value = true;
   try {
-    const res: any = await useApiFetch(`workflows/rules/${workflowId}`);
+    const res = await useApiFetch(`workflows/rules/${workflowId}`);
     if (res?.success) {
       const data = res.body;
       workflowName.value = data.name;
@@ -276,7 +276,7 @@ const fetchWorkflow = async () => {
         ];
       }
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     ElMessage.error(err.response?.data?.message || 'Failed to fetch workflow');
   } finally {
     loading.value = false;

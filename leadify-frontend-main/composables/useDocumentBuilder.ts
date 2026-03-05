@@ -41,7 +41,7 @@ export function useDocumentBuilder() {
   async function save(templateId: string | null, name: string, type: string, content: JSONContent) {
     state.saving = true;
     try {
-      const payload: Record<string, any> = {
+      const payload: Record<string, unknown> = {
         name,
         type,
         layout: {
@@ -112,7 +112,7 @@ export function useDocumentBuilder() {
           html2canvas: { scale: 2, useCORS: true, logging: false },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
           pagebreak: { mode: ['css', 'legacy'], before: '.proposal-print-page' }
-        } as any)
+        } as unknown)
         .from(container)
         .save();
     } finally {
@@ -121,10 +121,10 @@ export function useDocumentBuilder() {
   }
 
   // ── Render variables ─────────────────────────────────────────────────
-  function renderVariables(htmlContent: string, data: Record<string, any>): string {
+  function renderVariables(htmlContent: string, data: Record<string, unknown>): string {
     return htmlContent.replace(/\{\{([a-zA-Z0-9_.]+)\}\}/g, (_, key) => {
       const parts = key.split('.');
-      let value: any = data;
+      let value: unknown = data;
       for (const part of parts) {
         value = value?.[part];
       }

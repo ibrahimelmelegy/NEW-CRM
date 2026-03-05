@@ -119,27 +119,27 @@ export async function fetchZatcaInvoice(id: number | string): Promise<ZatcaInvoi
   return success && body ? (body as ZatcaInvoice) : null;
 }
 
-export async function createZatcaInvoice(data: Partial<ZatcaInvoice>): Promise<any> {
-  return useApiFetch('zatca/invoices', 'POST', data as Record<string, any>);
+export async function createZatcaInvoice(data: Partial<ZatcaInvoice>): Promise<<unknown> {
+  return useApiFetch('zatca/invoices', 'POST', data as Record<string, unknown>);
 }
 
-export async function updateZatcaInvoice(id: number | string, data: Partial<ZatcaInvoice>): Promise<any> {
-  return useApiFetch(`zatca/invoices/${id}`, 'PUT', data as Record<string, any>);
+export async function updateZatcaInvoice(id: number | string, data: Partial<ZatcaInvoice>): Promise<<unknown> {
+  return useApiFetch(`zatca/invoices/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
-export async function submitToZatca(id: number | string): Promise<any> {
+export async function submitToZatca(id: number | string): Promise<<unknown> {
   return useApiFetch(`zatca/invoices/${id}/submit`, 'POST');
 }
 
-export async function validateZatcaInvoice(data: Partial<ZatcaInvoice>): Promise<any> {
-  return useApiFetch('zatca/validate', 'POST', data as Record<string, any>);
+export async function validateZatcaInvoice(data: Partial<ZatcaInvoice>): Promise<<unknown> {
+  return useApiFetch('zatca/validate', 'POST', data as Record<string, unknown>);
 }
 
-export async function downloadZatcaXml(id: number | string): Promise<any> {
+export async function downloadZatcaXml(id: number | string): Promise<<unknown> {
   const { body, success } = await useApiFetch(`zatca/invoices/${id}/xml`);
   if (success && body) {
     // body should contain the XML string or a download URL
-    const xml = typeof body === 'string' ? body : (body as any).xml || '';
+    const xml = typeof body === 'string' ? body : (body as unknown).xml || '';
     if (xml) {
       const blob = new Blob([xml], { type: 'application/xml' });
       const url = URL.createObjectURL(blob);

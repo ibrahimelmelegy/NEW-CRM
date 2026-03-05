@@ -154,7 +154,7 @@ onMounted(async () => {
 async function loadTemplates() {
   loading.value = true;
   try {
-    const query: Record<string, any> = { page: pagination.value.page, limit: pagination.value.limit };
+    const query: Record<string, unknown> = { page: pagination.value.page, limit: pagination.value.limit };
     if (typeFilter.value) query.type = typeFilter.value;
     if (searchKey.value) query.searchKey = searchKey.value;
     const result = await fetchDocumentTemplates(query);
@@ -218,7 +218,7 @@ async function handleSeedDefaults() {
   }
 }
 
-function miniElementStyle(el: any, layout: any) {
+function miniElementStyle(el: unknown, layout: unknown) {
   const scaleX = 120 / 210;
   const scaleY = 170 / 297;
   return {

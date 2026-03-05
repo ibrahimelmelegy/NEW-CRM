@@ -364,12 +364,12 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 
 // ─── Bulk Selection & Export ─────────────────────────────
-const selectedPostings = ref<any[]>([]);
-const selectedApplicants = ref<any[]>([]);
-const handlePostingSelectionChange = (rows: any[]) => {
+const selectedPostings = ref<Record<string, unknown>[]>([]);
+const selectedApplicants = ref<Record<string, unknown>[]>([]);
+const handlePostingSelectionChange = (rows: Record<string, unknown>[]) => {
   selectedPostings.value = rows;
 };
-const handleApplicantSelectionChange = (rows: any[]) => {
+const handleApplicantSelectionChange = (rows: Record<string, unknown>[]) => {
   selectedApplicants.value = rows;
 };
 
@@ -385,28 +385,28 @@ const activeTab = ref('postings');
 
 // ─── Postings State ──────────────────────────────────────
 const postingDialogVisible = ref(false);
-const editingPosting = ref<any>(null);
+const editingPosting = ref<Record<string, unknown> | null>(null);
 const postingSearch = ref('');
 const postingStatusFilter = ref('');
-const postings = ref<any[]>([]);
+const postings = ref<Record<string, unknown>[]>([]);
 const postingsPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 // ─── Applicants State ────────────────────────────────────
 const applicantDialogVisible = ref(false);
-const editingApplicant = ref<any>(null);
+const editingApplicant = ref<Record<string, unknown> | null>(null);
 const applicantSearch = ref('');
 const applicantStageFilter = ref('');
 const applicantJobFilter = ref<string | number>('');
-const applicants = ref<any[]>([]);
+const applicants = ref<Record<string, unknown>[]>([]);
 const applicantsPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 // ─── Stage Move State ────────────────────────────────────
 const stageDialogVisible = ref(false);
-const stageApplicant = ref<any>(null);
+const stageApplicant = ref<Record<string, unknown> | null>(null);
 const newStage = ref('');
 
 // ─── Misc ────────────────────────────────────────────────
-const departments = ref<any[]>([]);
+const departments = ref<Record<string, unknown>[]>([]);
 
 const POSTING_STATUSES = [
   { value: 'OPEN', label: 'Open' },
@@ -560,7 +560,7 @@ function formatType(type: string) {
   return map[type] || type || '--';
 }
 
-function navigateToPosting(row: any) {
+function navigateToPosting(row: unknown) {
   if (row?.id) router.push(`/hr/recruitment/${row.id}`);
 }
 
@@ -570,8 +570,8 @@ async function fetchPostings() {
     const params = `page=${postingsPagination.page}&limit=${postingsPagination.limit}`;
     const res = await useApiFetch(`hr/recruitment/postings?${params}`);
     if (res?.success && res.body) {
-      const data = res.body as any;
-      postings.value = (data.docs || data.rows || data || []).map((p: any) => ({
+      const data = res.body as unknown;
+      postings.value = (data.docs || data.rows || data || []).map((p) => ({
         ...p,
         applicantCount: p.applicants?.length ?? p.applicantCount ?? 0
       }));
@@ -591,7 +591,7 @@ async function fetchApplicants() {
     const params = `page=${applicantsPagination.page}&limit=${applicantsPagination.limit}`;
     const res = await useApiFetch(`hr/recruitment/applicants?${params}`);
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       applicants.value = data.docs || data.rows || data || [];
       if (data.pagination) {
         applicantsPagination.total = data.pagination.totalItems ?? 0;
@@ -608,7 +608,7 @@ async function fetchDepartments() {
   try {
     const res = await useApiFetch('hr/departments?limit=100');
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       departments.value = data.docs || data.rows || data || [];
     }
   } catch {
@@ -626,7 +626,7 @@ async function loadData() {
 }
 
 // ─── Posting CRUD ────────────────────────────────────────
-function openPostingDialog(item?: any) {
+function openPostingDialog(item?: unknown) {
   if (item?.id) {
     editingPosting.value = item;
     Object.assign(postingForm, {
@@ -675,7 +675,7 @@ async function handleSavePosting() {
   }
 }
 
-async function handleDeletePosting(row: any) {
+async function handleDeletePosting(row: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`hr/recruitment/postings/${row.id}`, 'DELETE');
@@ -687,7 +687,7 @@ async function handleDeletePosting(row: any) {
 }
 
 // ─── Applicant CRUD ──────────────────────────────────────
-function openApplicantDialog(item?: any) {
+function openApplicantDialog(item?: unknown) {
   if (item?.id) {
     editingApplicant.value = item;
     Object.assign(applicantForm, {
@@ -729,7 +729,7 @@ async function handleSaveApplicant() {
   }
 }
 
-async function handleRejectApplicant(row: any) {
+async function handleRejectApplicant(row: unknown) {
   try {
     await ElMessageBox.confirm(`${t('recruitment.confirmReject')} ${row.name}?`, t('common.warning'), {
       type: 'warning',
@@ -744,7 +744,7 @@ async function handleRejectApplicant(row: any) {
 }
 
 // ─── Stage Move ──────────────────────────────────────────
-function openStageDialog(applicant: any) {
+function openStageDialog(applicant: unknown) {
   stageApplicant.value = applicant;
   newStage.value = '';
   stageDialogVisible.value = true;
@@ -806,7 +806,7 @@ function exportPostingsCSV() {
   const headers = ['Title', 'Department', 'Location', 'Type', 'Open Positions', 'Status', 'Posted Date'];
   const csv = [
     headers.join(','),
-    ...data.map((row: any) =>
+    ...data.map((row) =>
       [
         `"${row.title || ''}"`,
         `"${row.department?.name || row.department || ''}"`,
@@ -849,7 +849,7 @@ function exportApplicantsCSV() {
   const headers = ['Name', 'Email', 'Job Posting', 'Stage', 'Source', 'Rating', 'Applied Date'];
   const csv = [
     headers.join(','),
-    ...data.map((row: any) =>
+    ...data.map((row) =>
       [
         `"${row.name || ''}"`,
         `"${row.email || ''}"`,

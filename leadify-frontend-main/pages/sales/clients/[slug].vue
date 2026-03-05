@@ -132,7 +132,7 @@ activity.value = response;
 const getActivityPage = async (page: number) => {
   try {
     loading.value = true;
-    const responsPage: any = await getClientActivity((route.params.slug as string) + `?limit=10` + `&&page=${page}`);
+    const responsPage: unknown = await getClientActivity((route.params.slug as string) + `?limit=10` + `&&page=${page}`);
     activity.value = { docs: [...activity.value.docs, ...responsPage.docs], pagination: responsPage.pagination };
   } finally {
     loading.value = false;

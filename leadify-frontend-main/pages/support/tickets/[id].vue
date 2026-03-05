@@ -171,7 +171,7 @@ const priorityOption = computed(() => getPriorityOption(ticket.value?.priority |
 async function loadTicket() {
   loading.value = true;
   try {
-    const { body, success }: any = await fetchTicketById(ticketId.value);
+    const { body, success }: unknown = await fetchTicketById(ticketId.value);
     if (success && body) {
       ticket.value = body;
       messages.value = body.messages || [];
@@ -191,7 +191,7 @@ async function loadCannedResponses() {
 async function loadAgents() {
   const { body, success } = await useApiFetch('users');
   if (success && body) {
-    agents.value = Array.isArray(body) ? body : (body as any)?.docs || [];
+    agents.value = Array.isArray(body) ? body : (body as unknown)?.docs || [];
   }
 }
 

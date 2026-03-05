@@ -588,7 +588,7 @@ const teamMembersFallback = [
   }
 ];
 
-const teamMembers = ref<any[]>([]);
+const teamMembers = ref<Record<string, unknown>[]>([]);
 
 // ─── Top Performer ──────────────────────────────────────────
 const topPerformer = computed(() => ({
@@ -747,8 +747,8 @@ const individualGoalsFallback = [
   }
 ];
 
-const departmentGoals = ref<any[]>([]);
-const individualGoals = ref<any[]>([]);
+const departmentGoals = ref<Record<string, unknown>[]>([]);
+const individualGoals = ref<Record<string, unknown>[]>([]);
 
 const filteredGoals = computed(() => {
   return goalView.value === 'department' ? departmentGoals.value : individualGoals.value;
@@ -945,7 +945,7 @@ const recentActivitiesFallback = [
   }
 ];
 
-const recentActivities = ref<any[]>([]);
+const recentActivities = ref<Record<string, unknown>[]>([]);
 
 // ─── Activity Heatmap ───────────────────────────────────────
 const activityHeatmapOption = computed(() => {
@@ -1005,7 +1005,7 @@ const activityHeatmapOption = computed(() => {
   return {
     tooltip: {
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         return `${days[params.value[0]]} ${hours[params.value[1]]}<br/>Activities: <b>${params.value[2]}</b>`;
       }
     },
@@ -1164,8 +1164,8 @@ async function loadData() {
     // Wire goals from goals API
     const goalsRes = await useApiFetch('goals');
     if (goalsRes.success && Array.isArray(goalsRes.body)) {
-      departmentGoals.value = (goalsRes.body as any[]).filter((g: any) => g.type === 'department');
-      individualGoals.value = (goalsRes.body as any[]).filter((g: any) => g.type === 'individual');
+      departmentGoals.value = (goalsRes.body as unknown[]).filter((g) => g.type === 'department');
+      individualGoals.value = (goalsRes.body as unknown[]).filter((g) => g.type === 'individual');
       if (departmentGoals.value.length === 0) departmentGoals.value = departmentGoalsFallback;
       if (individualGoals.value.length === 0) individualGoals.value = individualGoalsFallback;
     } else {

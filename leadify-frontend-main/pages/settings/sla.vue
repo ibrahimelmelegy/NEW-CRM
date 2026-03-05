@@ -381,7 +381,7 @@ const escalationConfig = reactive({
 });
 
 // Breach Log Data
-const breachLogs = ref<any[]>([]);
+const breachLogs = ref<Record<string, unknown>[]>([]);
 
 const filteredBreachLogs = computed(() => {
   let logs = [...breachLogs.value];
@@ -487,7 +487,7 @@ async function loadBreachLogs() {
   try {
     const { body, success } = await useApiFetch(`sla/breaches?period=${breachPeriod.value}`);
     if (success && body) {
-      breachLogs.value = (body as any).docs || body || [];
+      breachLogs.value = (body as unknown).docs || body || [];
     }
   } catch {
     // Demo breach data
@@ -517,7 +517,7 @@ await loadPerformanceData();
 await loadBreachLogs();
 
 // Chart initialization
-let chartInstance: any = null;
+let chartInstance: unknown = null;
 
 onMounted(async () => {
   await nextTick();
@@ -737,7 +737,7 @@ async function handleDeletePolicy(policy: SLAPolicy) {
     const response = await fetchSLAPolicies();
     policies.value = response.docs;
     ElNotification({ type: 'success', title: t('common.success'), message: t('sla.deleted') });
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }

@@ -780,7 +780,7 @@ function loadDemoContacts() {
 async function enrichContact(contact: Contact) {
   contact.enriching = true;
   try {
-    const res: any = await useApiFetch(`data-enrichment/enrich/${contact.id}`, 'POST');
+    const res = await useApiFetch(`data-enrichment/enrich/${contact.id}`, 'POST');
     if (res?.body) {
       Object.assign(contact, res.body);
     } else {
@@ -857,7 +857,7 @@ async function runFullEnrichment() {
 async function loadEnrichmentLog() {
   loadingLog.value = true;
   try {
-    const res: any = await useApiFetch('data-enrichment/log');
+    const res = await useApiFetch('data-enrichment/log');
     if (res?.body?.data) {
       enrichmentLog.value = res.body.data;
     } else {

@@ -13,7 +13,7 @@ definePageMeta({
   permission: 'CREATE_PROPOSALS'
 });
 
-const handleSave = async (data: any) => {
+const handleSave = async (data: unknown) => {
   try {
     const payload = transformToApiPayload(data);
     const response = await useApiFetch('proposal', 'POST', payload);
@@ -23,7 +23,7 @@ const handleSave = async (data: any) => {
     } else {
       ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to create' });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElNotification({ type: 'error', title: t('common.error'), message: error?.message || 'Failed to create' });
   }
 };
@@ -31,7 +31,7 @@ const handleSave = async (data: any) => {
 const handleCancel = () => navigateTo('/sales/proposals');
 
 // Transform form data to API payload (matches React's transformToApiPayload)
-function transformToApiPayload(data: any) {
+function transformToApiPayload(data: unknown) {
   return {
     title: data.title || 'New Proposal',
     version: String(data.version || '1'),
@@ -77,7 +77,7 @@ function transformToApiPayload(data: any) {
     }),
     relatedEntityType: data.selectedEntity?.type,
     relatedEntityId: data.selectedEntity?.id,
-    fileAttachments: data.attachments?.map((f: any) => f.url) || []
+    fileAttachments: data.attachments?.map((f) => f.url) || []
   };
 }
 </script>

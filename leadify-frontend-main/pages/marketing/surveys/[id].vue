@@ -256,11 +256,11 @@ const loading = ref(false);
 const saving = ref(false);
 const analyticsLoading = ref(false);
 const responsesLoading = ref(false);
-const survey = ref<any>(null);
-const responses = ref<any[]>([]);
-const npsData = ref<any>({});
-const completionData = ref<any>({});
-const questionAnalytics = ref<any>(null);
+const survey = ref<Record<string, unknown> | null>(null);
+const responses = ref<Record<string, unknown>[]>([]);
+const npsData = ref<Record<string, unknown>>({});
+const completionData = ref<Record<string, unknown>>({});
+const questionAnalytics = ref<Record<string, unknown> | null>(null);
 
 // Edit dialog
 const editDialogVisible = ref(false);
@@ -293,7 +293,7 @@ function formatType(type: string): string {
   return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-function formatAnswer(value: any): string {
+function formatAnswer(value: unknown): string {
   if (Array.isArray(value)) return value.join(', ');
   if (typeof value === 'object') return JSON.stringify(value);
   return String(value);
@@ -301,7 +301,7 @@ function formatAnswer(value: any): string {
 
 function getQuestionLabel(qId: string): string {
   if (!survey.value?.questions) return qId;
-  const q = survey.value.questions.find((q: any) => q.id === qId);
+  const q = survey.value.questions.find((q) => q.id === qId);
   return q ? q.text.substring(0, 40) + (q.text.length > 40 ? '...' : '') : qId;
 }
 
@@ -336,7 +336,7 @@ async function loadResponses() {
   try {
     const res = await useApiFetch(`surveys/${route.params.id}/responses`);
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       responses.value = data.docs || (Array.isArray(data) ? data : []);
     }
   } catch {
@@ -361,7 +361,7 @@ async function loadAnalytics() {
       completionData.value = completionRes.body;
     }
     if (analyticsRes?.success && analyticsRes.body) {
-      questionAnalytics.value = (analyticsRes.body as any).questionAnalytics || null;
+      questionAnalytics.value = (analyticsRes.body as unknown).questionAnalytics || null;
     }
   } catch {
     // analytics are supplementary

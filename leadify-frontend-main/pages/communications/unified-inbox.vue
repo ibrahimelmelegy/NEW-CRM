@@ -1010,7 +1010,7 @@ async function loadData() {
   try {
     const res = await useApiFetch('communications/recent');
     if (res.success && Array.isArray(res.body)) {
-      conversations.value = res.body as any;
+      conversations.value = res.body as unknown;
     } else {
       conversations.value = conversationsFallback;
     }

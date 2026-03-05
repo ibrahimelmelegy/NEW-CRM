@@ -268,7 +268,7 @@ async function handleCalculate() {
 async function handleSubmitAssessment() {
   if (!assessment.value) return;
   try {
-    const res = await updateAssessment(assessment.value.id, { status: 'SUBMITTED' } as any);
+    const res = await updateAssessment(assessment.value.id, { status: 'SUBMITTED' } as unknown);
     if (res.success) {
       ElMessage.success(t('zakaat.submitSuccess'));
       await loadAssessment();
@@ -284,7 +284,7 @@ async function handleMarkPaid() {
     const res = await updateAssessment(assessment.value.id, {
       status: 'PAID',
       paidAt: new Date().toISOString()
-    } as any);
+    } as unknown);
     if (res.success) {
       ElMessage.success(t('zakaat.paidSuccess'));
       await loadAssessment();

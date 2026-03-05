@@ -407,7 +407,7 @@ const expandedRows = ref<string[]>([]);
 
 // Dialog
 const showRunDialog = ref(false);
-const selectedRun = ref<any>(null);
+const selectedRun = ref<Record<string, unknown> | null>(null);
 
 // ─── Chart Tooltip Style ────────────────────────────────────
 const tooltipStyle = {
@@ -825,8 +825,8 @@ const filteredHistory = computed(() => {
   return data;
 });
 
-function onExpandChange(row: any, expandedList: any[]) {
-  expandedRows.value = expandedList.map((r: any) => r.id);
+function onExpandChange(row: unknown, expandedList: Record<string, unknown>[]) {
+  expandedRows.value = expandedList.map((r) => r.id);
 }
 
 // ─── Mock Data: Error Logs ──────────────────────────────────
@@ -1031,7 +1031,7 @@ function getTriggerTagType(trigger: string): string {
 }
 
 // ─── Actions ────────────────────────────────────────────────
-function retryExecution(row: any) {
+function retryExecution(row: unknown) {
   if (row.retryCount >= 3) {
     ElMessage.warning(t('workflowMonitor.maxRetriesReached', 'Maximum retry attempts reached for this execution.'));
     return;
@@ -1040,7 +1040,7 @@ function retryExecution(row: any) {
   ElMessage.success(t('workflowMonitor.retryQueued', `Retry queued for "${row.workflowName}". Attempt ${row.retryCount}/3.`));
 }
 
-function viewRunDetails(row: any) {
+function viewRunDetails(row: unknown) {
   selectedRun.value = row;
   showRunDialog.value = true;
 }
@@ -1104,7 +1104,7 @@ const errorCategoryChartOption = computed(() => {
     tooltip: {
       trigger: 'item',
       ...tooltipStyle,
-      formatter: (params: any) => `${params.marker} ${params.name}: ${params.value} (${params.percent}%)`
+      formatter: (params: unknown) => `${params.marker} ${params.name}: ${params.value} (${params.percent}%)`
     },
     legend: {
       orient: 'vertical',
@@ -1174,9 +1174,9 @@ const executionTimeTrendOption = computed(() => {
     tooltip: {
       trigger: 'axis',
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         let result = `<strong>${params[0]?.axisValue}</strong><br/>`;
-        params.forEach((p: any) => {
+        params.forEach((p) => {
           result += `${p.marker} ${p.seriesName}: ${p.value}s<br/>`;
         });
         return result;
@@ -1271,7 +1271,7 @@ const throughputChartOption = computed(() => {
     tooltip: {
       trigger: 'axis',
       ...tooltipStyle,
-      formatter: (params: any) => `<strong>${params[0]?.axisValue}</strong><br/>Executions: ${params[0]?.value}`
+      formatter: (params: unknown) => `<strong>${params[0]?.axisValue}</strong><br/>Executions: ${params[0]?.value}`
     },
     grid: { top: 20, right: 20, bottom: 30, left: 20, containLabel: true },
     xAxis: {
@@ -1319,7 +1319,7 @@ const statusDistributionOption = computed(() => {
     tooltip: {
       trigger: 'item',
       ...tooltipStyle,
-      formatter: (params: any) => `${params.marker} ${params.name}: ${params.value} (${params.percent}%)`
+      formatter: (params: unknown) => `${params.marker} ${params.name}: ${params.value} (${params.percent}%)`
     },
     legend: {
       orient: 'horizontal',

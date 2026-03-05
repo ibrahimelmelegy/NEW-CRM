@@ -255,7 +255,7 @@ async function handleSave() {
       vatAmount: totals.value.vatAmount,
       totalAmount: totals.value.totalAmount
     };
-    const res = await createZatcaInvoice(payload as any);
+    const res = await createZatcaInvoice(payload as unknown);
     if (res.success) {
       ElMessage.success(t('common.created'));
       router.push('/finance/zatca');

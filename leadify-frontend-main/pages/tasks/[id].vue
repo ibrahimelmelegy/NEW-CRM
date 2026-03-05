@@ -159,7 +159,7 @@ const editForm = reactive({
 
 // Load task and users
 try {
-  const [taskRes, usersRes]: any[] = await Promise.all([useApiFetch(`tasks/${id}`), useApiFetch('users')]);
+  const [taskRes, usersRes]: Record<string, unknown>[] = await Promise.all([useApiFetch(`tasks/${id}`), useApiFetch('users')]);
   if (taskRes?.success && taskRes?.body) {
     task.value = taskRes.body as Task;
     editForm.title = task.value.title;
@@ -169,7 +169,7 @@ try {
     editForm.assigneeId = task.value.assigneeId || null;
   }
   if (usersRes?.body?.docs) {
-    users.value = usersRes.body.docs.map((u: any) => ({ label: u.name, value: u.id }));
+    users.value = usersRes.body.docs.map((u) => ({ label: u.name, value: u.id }));
   }
 } catch (e) {
   console.error('Failed to load task', e);

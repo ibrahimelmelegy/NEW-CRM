@@ -812,7 +812,7 @@ const callsByIntegrationOption = computed(() => {
           position: 'right',
           color: '#a1a1aa',
           fontSize: 11,
-          formatter: (params: any) => formatNumber(params.value)
+          formatter: (params: unknown) => formatNumber(params.value)
         }
       }
     ]
@@ -860,7 +860,7 @@ function getProgressColor(ratio: number): string {
 }
 
 // --- Actions ---
-function installConnector(connector: any) {
+function installConnector(connector: unknown) {
   if (isInstalled(connector.id)) return;
   installedIntegrations.value.push({
     id: connector.id,
@@ -879,11 +879,11 @@ function installConnector(connector: any) {
   });
 }
 
-function configureIntegration(row: any) {
+function configureIntegration(row: unknown) {
   ElMessage.info(`${t('apiMarketplace.configuring')}: ${row.name}`);
 }
 
-function togglePause(row: any) {
+function togglePause(row: unknown) {
   if (row.status === 'Paused') {
     row.status = 'Connected';
     row.healthStatus = 'green';
@@ -895,7 +895,7 @@ function togglePause(row: any) {
   }
 }
 
-function disconnectIntegration(row: any) {
+function disconnectIntegration(row: unknown) {
   ElMessageBox.confirm(`${t('apiMarketplace.disconnectConfirm')} ${row.name}?`, t('apiMarketplace.warning'), {
     type: 'warning',
     confirmButtonText: t('apiMarketplace.disconnect'),
@@ -911,16 +911,16 @@ function disconnectIntegration(row: any) {
     });
 }
 
-function toggleKeyVisibility(key: any) {
+function toggleKeyVisibility(key: unknown) {
   key.visible = !key.visible;
 }
 
-function copyKey(key: any) {
+function copyKey(key: unknown) {
   navigator.clipboard.writeText(key.fullKey);
   ElMessage.success(t('apiMarketplace.keyCopied'));
 }
 
-function revokeKey(key: any) {
+function revokeKey(key: unknown) {
   ElMessageBox.confirm(t('apiMarketplace.revokeConfirm'), t('apiMarketplace.warning'), { type: 'warning' })
     .then(() => {
       key.status = 'Revoked';
@@ -931,8 +931,8 @@ function revokeKey(key: any) {
     });
 }
 
-function deleteKey(key: any) {
-  ElMessageBox.confirm(t('apiMarketplace.deleteKeyConfirm'), t('apiMarketplace.warning'), { type: 'warning' } as any)
+function deleteKey(key: unknown) {
+  ElMessageBox.confirm(t('apiMarketplace.deleteKeyConfirm'), t('apiMarketplace.warning'), { type: 'warning' } as unknown)
     .then(() => {
       const idx = apiKeys.value.findIndex(k => k.id === key.id);
       if (idx > -1) apiKeys.value.splice(idx, 1);

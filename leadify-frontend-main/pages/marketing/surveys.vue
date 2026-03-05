@@ -375,13 +375,13 @@ const getSurveyTypeColor = (t: string) => {
   return m[t] || 'text-slate-400';
 };
 
-const viewResults = (s: any) => ElMessage.info(`Viewing results: ${s.name}`);
-const editSurvey = (s: any) => ElMessage.info(`Editing: ${s.name}`);
-const shareSurvey = (s: any) => {
+const viewResults = (s: unknown) => ElMessage.info(`Viewing results: ${s.name}`);
+const editSurvey = (s: unknown) => ElMessage.info(`Editing: ${s.name}`);
+const shareSurvey = (s: unknown) => {
   navigator.clipboard?.writeText(`https://survey.example.com/${s.id}`);
   ElMessage.success(t('common.copied'));
 };
-const closeSurvey = (s: any) => {
+const closeSurvey = (s: unknown) => {
   s.status = 'COMPLETED';
   ElMessage.success(t('surveys.surveyClosed'));
 };

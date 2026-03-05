@@ -97,7 +97,7 @@ export function useManufacturing() {
 
   // ── BOM ──
   async function createBOM(data: { productName: string; code: string; version: number; items: Omit<BOMItem, 'id'>[] }) {
-    const { body, success } = await useApiFetch('manufacturing/bom', 'POST', data as any);
+    const { body, success } = await useApiFetch('manufacturing/bom', 'POST', data as unknown);
     if (success && body) {
       boms.value.unshift(body as BOM);
       await loadStats();
@@ -105,7 +105,7 @@ export function useManufacturing() {
     return body;
   }
 
-  async function updateBOM(id: number, data: any) {
+  async function updateBOM(id: number, data: unknown) {
     const { body, success } = await useApiFetch(`manufacturing/bom/${id}`, 'PATCH', data);
     if (success && body) {
       const idx = boms.value.findIndex(b => b.id === id);
@@ -133,7 +133,7 @@ export function useManufacturing() {
 
   // ── Work Orders ──
   async function createWorkOrder(data: { bomId?: number; quantity: number; priority: string; dueDate?: string; productName?: string }) {
-    const { body, success } = await useApiFetch('manufacturing/work-orders', 'POST', data as any);
+    const { body, success } = await useApiFetch('manufacturing/work-orders', 'POST', data as unknown);
     if (success && body) {
       workOrders.value.unshift(body as WorkOrder);
       await loadStats();
@@ -141,7 +141,7 @@ export function useManufacturing() {
     return body;
   }
 
-  async function updateWorkOrder(id: number, data: any) {
+  async function updateWorkOrder(id: number, data: unknown) {
     const { body, success } = await useApiFetch(`manufacturing/work-orders/${id}`, 'PATCH', data);
     if (success && body) {
       const idx = workOrders.value.findIndex(w => w.id === id);
@@ -152,7 +152,7 @@ export function useManufacturing() {
   }
 
   async function updateProduction(id: number, produced: number) {
-    const { body, success } = await useApiFetch(`manufacturing/work-orders/${id}/production`, 'PATCH', { produced } as any);
+    const { body, success } = await useApiFetch(`manufacturing/work-orders/${id}/production`, 'PATCH', { produced } as unknown);
     if (success && body) {
       const idx = workOrders.value.findIndex(w => w.id === id);
       if (idx >= 0) workOrders.value[idx] = body as WorkOrder;
@@ -163,7 +163,7 @@ export function useManufacturing() {
 
   // ── Quality Checks ──
   async function createQualityCheck(data: Omit<QualityCheck, 'id' | 'defects' | 'result'>) {
-    const { body, success } = await useApiFetch('manufacturing/quality', 'POST', data as any);
+    const { body, success } = await useApiFetch('manufacturing/quality', 'POST', data as unknown);
     if (success && body) {
       qualityChecks.value.unshift(body as QualityCheck);
       await loadStats();

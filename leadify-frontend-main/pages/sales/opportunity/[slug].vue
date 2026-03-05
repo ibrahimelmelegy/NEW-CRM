@@ -179,7 +179,7 @@ const getActivityPage = async (page: number) => {
 };
 
 // Call API to Get the lead
-const lead = await getLead(opportunity.leadId as any);
+const lead = await getLead(opportunity.leadId as unknown);
 const table = reactive({
   columns: [
     {
@@ -268,7 +268,7 @@ const table = reactive({
 });
 
 const proposalResponse = await useTableFilter(`proposal?relatedEntityId=${route.params.slug as string}&page=1&limit=100`);
-table.data = proposalResponse.formattedData?.map((el: any) => {
+table.data = proposalResponse.formattedData?.map((el) => {
   return { ...el, type: el.type == 'Mixed' ? t('opportunities.proposalTypes.mixed') : el.type };
 });
 </script>

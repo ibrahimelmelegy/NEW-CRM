@@ -220,8 +220,8 @@ const saving = ref(false);
 
 // Client selection
 const selectedClientId = ref('');
-const selectedClient = ref<any>(null);
-const clientOptions = ref<any[]>([]);
+const selectedClient = ref<Record<string, unknown> | null>(null);
+const clientOptions = ref<Record<string, unknown>[]>([]);
 const loadingClients = ref(false);
 
 // Product search
@@ -256,10 +256,10 @@ async function searchClients(query: string) {
   try {
     const res = await useApiFetch(`client?searchKey=${encodeURIComponent(query)}&limit=20`);
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       clientOptions.value = data?.docs || data?.rows || data || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingClients.value = false;
@@ -277,7 +277,7 @@ async function searchProducts(query: string) {
   try {
     const result = await fetchProducts({ searchKey: query, limit: '20' });
     productOptions.value = result.docs;
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingProducts.value = false;
@@ -395,10 +395,10 @@ onMounted(async () => {
   try {
     const res = await useApiFetch('client?limit=20');
     if (res?.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       clientOptions.value = data?.docs || data?.rows || data || [];
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 });

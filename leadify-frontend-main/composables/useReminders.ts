@@ -57,9 +57,9 @@ export function useReminders() {
     try {
       const { body, success } = await useApiFetch('calendar?eventType=REMINDER&limit=200');
       if (success && body) {
-        const data = body as any;
+        const data = body as unknown;
         const docs = data.docs || data || [];
-        reminders.value = docs.map((e: any) => ({
+        reminders.value = docs.map((e) => ({
           id: e.id,
           title: e.title || '',
           description: e.description || '',
@@ -140,7 +140,7 @@ export function useReminders() {
     if (r) {
       Object.assign(r, updates);
       if (typeof id === 'number') {
-        const payload: Record<string, any> = {};
+        const payload: Record<string, unknown> = {};
         if (updates.title) payload.title = updates.title;
         if (updates.description) payload.description = updates.description;
         if (updates.dueDate) {

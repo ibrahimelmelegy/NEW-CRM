@@ -74,8 +74,8 @@ definePageMeta({ middleware: 'permissions' });
 const router = useRouter();
 const { t } = useI18n();
 const loading = ref(false);
-const tickets = ref<any[]>([]);
-let draggedTicket: any = null;
+const tickets = ref<Record<string, unknown>[]>([]);
+let draggedTicket: unknown = null;
 
 const columns = [
   { status: 'OPEN', label: 'Open', color: '#ef4444' },
@@ -100,7 +100,7 @@ function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-function onDragStart(event: DragEvent, ticket: any) {
+function onDragStart(event: DragEvent, ticket: unknown) {
   draggedTicket = ticket;
   if (event.dataTransfer) {
     event.dataTransfer.effectAllowed = 'move';
@@ -131,7 +131,7 @@ async function loadTickets() {
   try {
     const { body, success } = await fetchTickets({ limit: 200 });
     if (success && body) {
-      tickets.value = (body as any).docs || [];
+      tickets.value = (body as unknown).docs || [];
     }
   } catch {
     /* silent */

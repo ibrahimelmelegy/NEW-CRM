@@ -354,7 +354,7 @@ async function loadFiles() {
 
   const result = await fetchFiles(params);
   if (result.success && result.body) {
-    const data = result.body as any;
+    const data = result.body as unknown;
     files.value = data.docs || (Array.isArray(data) ? data : []);
     if (data.pagination) pagination.value = data.pagination;
   } else {
@@ -422,7 +422,7 @@ async function handleFileUpload(event: Event) {
 
   try {
     const baseUrl = config.public.API_BASE_URL || '';
-    const response = await $fetch<any>(`${baseUrl}documents/files/upload`, {
+    const response = await $fetch<<unknown>(`${baseUrl}documents/files/upload`, {
       method: 'POST',
       body: formData,
       credentials: 'include'
@@ -434,7 +434,7 @@ async function handleFileUpload(event: Event) {
     } else {
       ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Upload failed' });
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     ElNotification({ type: 'error', title: t('common.error'), message: err?.message || 'Upload failed' });
   }
 

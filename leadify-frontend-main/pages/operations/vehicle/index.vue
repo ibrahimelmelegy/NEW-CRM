@@ -101,7 +101,7 @@ async function confirmDelete() {
   try {
     const response = await deleteVehicleById(deleteId.value);
     if (response?.success) {
-      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+      table.data = table.data.filter((r) => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -181,7 +181,7 @@ const table = reactive({
 const response = await useTableFilter('vehicle');
 table.data = response.formattedData;
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/operations/vehicle/${val.id}`);
 }
 
@@ -222,7 +222,7 @@ const mobileFilteredData = computed(() => {
   const data = table.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((v: any) => {
+  return data.filter((v) => {
     const plate = (v.plate || '').toLowerCase();
     const mfr = (v.manufacturer || '').toLowerCase();
     return plate.includes(q) || mfr.includes(q);
@@ -240,7 +240,7 @@ async function handleMobileRefresh() {
   }
 }
 
-function getSwipeLeftActions(_v: any) {
+function getSwipeLeftActions(_v: unknown) {
   const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#3b82f6' }];
   if (hasPermission('EDIT_VEHICLES'))
     actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
@@ -249,7 +249,7 @@ function getSwipeLeftActions(_v: any) {
   return actions;
 }
 
-function handleSwipeAction(name: string, v: any) {
+function handleSwipeAction(name: string, v: unknown) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/vehicle/${v.id}`);
   if (name === 'edit') navigateTo(`/operations/vehicle/edit/${v.id}`);

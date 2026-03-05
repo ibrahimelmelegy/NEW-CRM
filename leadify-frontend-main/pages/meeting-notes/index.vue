@@ -64,7 +64,7 @@
               effect="plain"
             )
               Icon(name="ph:bell" size="12" style="margin-right: 2px;")
-              | {{ note.followUps.filter((f: any) => f.status !== 'completed').length }} {{ $t('meetingNotes.followUps') }}
+              | {{ note.followUps.filter((f) => f.status !== 'completed').length }} {{ $t('meetingNotes.followUps') }}
           p.text-xs.mb-2(style="color: var(--text-muted);")
             | {{ note.creator?.name || note.user?.name || '' }} · {{ formatDate(note.date || note.meetingDate || note.createdAt) }}
           p.text-sm.line-clamp-3(style="color: var(--text-secondary, var(--text-muted));") {{ note.minutes }}
@@ -469,7 +469,7 @@ async function fetchNotes() {
   try {
     const { body, success } = await useApiFetch('communications/meeting-notes?limit=100');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       notes.value = data.docs || [];
     }
   } finally {
@@ -483,14 +483,14 @@ async function searchParticipants(query: string) {
   try {
     const { body, success } = await useApiFetch(`communications/participants/search?search=${encodeURIComponent(query)}&limit=10`);
     if (success && body) {
-      participantOptions.value = body as any[];
+      participantOptions.value = body as unknown[];
     }
   } finally {
     searchingParticipants.value = false;
   }
 }
 
-function participantLabel(p: any): string {
+function participantLabel(p: unknown): string {
   return `${p.name} (${p.email})`;
 }
 
@@ -598,15 +598,15 @@ function viewNote(note: MeetingNoteItem) {
   showViewDialog.value = true;
 }
 
-function editNote(note: any) {
+function editNote(note: unknown) {
   editingNoteId.value = note.id;
   Object.assign(form, {
     title: note.title,
     meetingType: note.type || note.meetingType || 'CLIENT',
     meetingDate: note.date || note.meetingDate ? new Date(note.date || note.meetingDate) : null,
-    attendees: (note.attendees || []).map((a: any) => a.id).filter(Boolean),
+    attendees: (note.attendees || []).map((a) => a.id).filter(Boolean),
     minutes: note.minutes || '',
-    actionItems: (note.actionItems || []).map((item: any) => ({
+    actionItems: (note.actionItems || []).map((item) => ({
       task: item.task,
       assigneeId: item.assigneeId,
       assigneeName: item.assigneeName,
@@ -624,7 +624,7 @@ function editNote(note: any) {
   showDialog.value = true;
 }
 
-async function toggleActionItem(noteId: string, idx: number, item: any) {
+async function toggleActionItem(noteId: string, idx: number, item: unknown) {
   const note = notes.value.find(n => n.id === noteId);
   if (!note) return;
 
@@ -640,7 +640,7 @@ async function toggleActionItem(noteId: string, idx: number, item: any) {
   }
 }
 
-function applyTemplate(template: any) {
+function applyTemplate(template: unknown) {
   form.meetingType = template.meetingType;
   form.actionItems = template.actionItems.map((task: string) => ({
     task,
@@ -709,7 +709,7 @@ async function exportAsMarkdown() {
     `## Meeting Minutes\n\n${viewingNote.value.minutes}\n\n` +
     `## Action Items\n\n` +
     (viewingNote.value.actionItems || [])
-      .map((item: any) => `- [${item.completed ? 'x' : ' '}] ${item.task}${item.assigneeName ? ` (@${item.assigneeName})` : ''}`)
+      .map((item) => `- [${item.completed ? 'x' : ' '}] ${item.task}${item.assigneeName ? ` (@${item.assigneeName})` : ''}`)
       .join('\n');
 
   const blob = new Blob([markdown], { type: 'text/markdown' });

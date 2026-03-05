@@ -131,8 +131,8 @@ const payingEos = ref(false);
 const searchingEmployees = ref(false);
 
 const selectedEmployeeId = ref<string>('');
-const selectedEmployee = ref<any>(null);
-const employeeOptions = ref<any[]>([]);
+const selectedEmployee = ref<Record<string, unknown> | null>(null);
+const employeeOptions = ref<Record<string, unknown>[]>([]);
 const eosResult = ref<EOSResult | null>(null);
 
 async function searchEmployees(query: string) {
@@ -141,7 +141,7 @@ async function searchEmployees(query: string) {
   try {
     const { body, success } = await useApiFetch(`hr/employees?search=${encodeURIComponent(query)}&limit=20`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       employeeOptions.value = data.docs || data || [];
     }
   } finally {

@@ -797,7 +797,7 @@ function hasPermissionForItem(item: SpotlightItem): boolean {
   // No permissions required = everyone can see
   if (!item.permissions || item.permissions.length === 0) return true;
 
-  // Check if user has any of the required permissions
+  // Check if user has unknown of the required permissions
   return item.permissions.some(perm => userPermissions.value.includes(perm));
 }
 
@@ -1056,8 +1056,8 @@ export function useSpotlight() {
     try {
       const response = await useApiFetch(`search?q=${encodeURIComponent(query)}&limit=5`);
       if (response?.success && response?.body) {
-        const results = (response.body as any).docs || response.body || [];
-        searchResults.value = (Array.isArray(results) ? results : []).slice(0, 5).map((item: any, idx: number) => ({
+        const results = (response.body as unknown).docs || response.body || [];
+        searchResults.value = (Array.isArray(results) ? results : []).slice(0, 5).map((item: unknown, idx: number) => ({
           id: `search-${idx}`,
           title: item.name || item.title || item.email || `${item.entityType} #${item.id}`,
           subtitle: item.entityType ? item.entityType.charAt(0).toUpperCase() + item.entityType.slice(1) : '',

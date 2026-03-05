@@ -120,7 +120,7 @@ const table = reactive({
 const response = await useTableFilter('service');
 table.data = response.formattedData;
 
-function handleRowClick(val: any) {
+function handleRowClick(val: unknown) {
   router.push(`/operations/services/${val.id}`);
 }
 
@@ -130,7 +130,7 @@ async function confirmDelete() {
   try {
     const response = await deleteServiceById(deleteId.value);
     if (response?.success) {
-      table.data = table.data.filter((r: any) => r.id !== deleteId.value);
+      table.data = table.data.filter((r) => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -147,7 +147,7 @@ const mobileFilteredData = computed(() => {
   const data = table.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((s: any) => {
+  return data.filter((s) => {
     const type = (s.type || '').toLowerCase();
     return type.includes(q);
   });
@@ -164,7 +164,7 @@ async function handleMobileRefresh() {
   }
 }
 
-function getSwipeLeftActions(_svc: any) {
+function getSwipeLeftActions(_svc: unknown) {
   const actions = [{ name: 'view', label: useI18n().t('common.view'), icon: 'ph:eye-bold', color: '#f59e0b' }];
   if (hasPermission('EDIT_SERVICES'))
     actions.push({ name: 'edit', label: useI18n().t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
@@ -173,7 +173,7 @@ function getSwipeLeftActions(_svc: any) {
   return actions;
 }
 
-function handleSwipeAction(name: string, svc: any) {
+function handleSwipeAction(name: string, svc: unknown) {
   vibrate();
   if (name === 'view') navigateTo(`/operations/services/${svc.id}`);
   if (name === 'edit') navigateTo(`/operations/services/edit/${svc.id}`);

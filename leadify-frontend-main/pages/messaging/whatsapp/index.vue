@@ -569,7 +569,7 @@ interface WAMessage {
   fileName?: string;
   status: string;
   templateName?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   sender?: { id: number; name: string; profilePicture?: string };
   createdAt: string;
 }
@@ -583,7 +583,7 @@ interface WATemplate {
   headerType: string;
   headerContent?: string;
   footerText?: string;
-  buttons: any[];
+  buttons: Record<string, unknown>[];
   status: string;
 }
 
@@ -629,7 +629,7 @@ const exportingContacts = ref(false);
 
 // File upload
 const mediaFile = ref<File | null>(null);
-const mediaUploadRef = ref<any>(null);
+const mediaUploadRef = ref<Record<string, unknown> | null>(null);
 
 // Dialogs
 const showContactDialog = ref(false);
@@ -757,7 +757,7 @@ async function loadContacts(page: number = 1) {
 
     const { body, success } = await useApiFetch(`whatsapp/contacts?${params.toString()}`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       contacts.value = data.docs || [];
       if (data.pagination) {
         contactsPagination.value = data.pagination;
@@ -775,7 +775,7 @@ async function loadMessages(contactId: string) {
   try {
     const { body, success } = await useApiFetch(`whatsapp/messages/${contactId}?limit=100`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       chatMessages.value = data.docs || [];
       await nextTick();
       scrollToBottom();
@@ -798,7 +798,7 @@ async function loadTemplates(page: number = 1) {
 
     const { body, success } = await useApiFetch(`whatsapp/templates?${params.toString()}`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       templates.value = data.docs || [];
     }
   } catch (err) {
@@ -812,7 +812,7 @@ async function loadAnalytics() {
   try {
     const { body, success } = await useApiFetch('whatsapp/analytics');
     if (success && body) {
-      analytics.value = body as any;
+      analytics.value = body as unknown;
     }
   } catch (err) {
     ElMessage.error(_t('whatsappPage.errors.loadAnalytics'));
@@ -931,7 +931,7 @@ async function importContacts() {
   try {
     const { body, success } = await useApiFetch('whatsapp/contacts/import', 'POST');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       ElMessage.success(_t('whatsappPage.contacts.importSuccess') + `: ${data.imported || 0}`);
       loadContacts();
     } else {
@@ -966,7 +966,7 @@ async function sendTextMessage() {
       content: newMessage.value
     });
     if (success && body) {
-      chatMessages.value.push(body as any);
+      chatMessages.value.push(body as unknown);
       newMessage.value = '';
       await nextTick();
       scrollToBottom();
@@ -992,7 +992,7 @@ function openFileUploadDialog() {
   showMediaDialog.value = true;
 }
 
-function handleMediaFileChange(file: any) {
+function handleMediaFileChange(file: unknown) {
   mediaFile.value = file.raw;
   // Auto-detect type
   const mime = file.raw.type || '';
@@ -1028,7 +1028,7 @@ async function sendMediaMessage() {
       formData.append('type', mediaForm.type);
       const uploadRes = await useApiFetch('whatsapp/upload', 'POST', formData);
       if (uploadRes.success && uploadRes.body) {
-        uploadedUrl = (uploadRes.body as any).url || '';
+        uploadedUrl = (uploadRes.body as unknown).url || '';
       } else {
         ElMessage.error(_t('whatsappPage.errors.uploadFailed'));
         return;
@@ -1044,7 +1044,7 @@ async function sendMediaMessage() {
       fileName: mediaForm.fileName
     });
     if (success && body) {
-      chatMessages.value.push(body as any);
+      chatMessages.value.push(body as unknown);
       showMediaDialog.value = false;
       mediaFile.value = null;
       await nextTick();
@@ -1082,7 +1082,7 @@ async function sendTemplateMessage() {
       variables: sendTemplateForm.variables
     });
     if (success && body) {
-      chatMessages.value.push(body as any);
+      chatMessages.value.push(body as unknown);
       showSendTemplateDialog.value = false;
       await nextTick();
       scrollToBottom();
@@ -1135,7 +1135,7 @@ async function executeBulkSend() {
       variables: bulkSendForm.variables
     });
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       ElMessage.success(
         `${_t('whatsappPage.messages.bulkResult')
           .replace('{sent}', data.sent || 0)
@@ -1159,7 +1159,7 @@ async function exportConversations() {
   try {
     const { body, success } = await useApiFetch('whatsapp/export/conversations');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       downloadCsv(data.csv || data, 'whatsapp-conversations.csv');
       ElMessage.success(_t('whatsappPage.success.exported'));
     } else {
@@ -1177,7 +1177,7 @@ async function exportSingleConversation() {
   try {
     const { body, success } = await useApiFetch(`whatsapp/export/messages/${selectedContact.value.id}`);
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       downloadCsv(data.csv || data, `chat-${selectedContact.value.name || selectedContact.value.phoneNumber}.csv`);
       ElMessage.success(_t('whatsappPage.success.exported'));
     } else {
@@ -1193,7 +1193,7 @@ async function exportContactsCsv() {
   try {
     const { body, success } = await useApiFetch('whatsapp/export/contacts');
     if (success && body) {
-      const data = body as any;
+      const data = body as unknown;
       downloadCsv(data.csv || data, 'whatsapp-contacts.csv');
       ElMessage.success(_t('whatsappPage.success.exported'));
     } else {

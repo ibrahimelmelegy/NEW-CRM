@@ -424,7 +424,7 @@ const treemapCategories = [
 const spendTreemapOption = computed(() => ({
   tooltip: {
     ...tooltipStyle,
-    formatter: (params: any) => {
+    formatter: (params: unknown) => {
       const val = (params.value / 1000).toFixed(0);
       return `<strong>${params.name}</strong><br/>Spend: $${val}K`;
     }
@@ -510,7 +510,7 @@ const topSuppliersFallback = [
   { rank: 10, name: 'SecureIT Partners', category: 'Software', totalSpend: '$35,700', percentOfTotal: 2.9, trendDir: 'down' }
 ];
 
-const topSuppliers = ref<any[]>([]);
+const topSuppliers = ref<Record<string, unknown>[]>([]);
 
 // ─── Budget vs Actual ───────────────────────────────────────
 const budgetVsActualOption = computed(() => ({
@@ -617,7 +617,7 @@ const supplierScorecardFallback = [
   { name: 'SecureIT Partners', onTimeDelivery: 90, qualityScore: 87, responsiveness: 3, overallRating: 3.8, trend: 'stable' }
 ];
 
-const supplierScorecard = ref<any[]>([]);
+const supplierScorecard = ref<Record<string, unknown>[]>([]);
 
 function getDeliveryColor(pct: number): string {
   if (pct >= 95) return '#22c55e';
@@ -800,7 +800,7 @@ const savingsOpportunitiesFallback = [
   }
 ];
 
-const savingsOpportunities = ref<any[]>([]);
+const savingsOpportunities = ref<Record<string, unknown>[]>([]);
 
 function getEffortType(effort: string): string {
   if (effort === 'Low') return 'success';
@@ -838,7 +838,7 @@ const priceVarianceDataFallback = [
   { item: 'Safety Gloves (per box)', contracted: '$12.00', actual: '$11.40', variancePct: -5.0 }
 ];
 
-const priceVarianceData = ref<any[]>([]);
+const priceVarianceData = ref<Record<string, unknown>[]>([]);
 
 function getVarianceTextColor(pct: number): string {
   if (pct > 2) return '#ef4444';
@@ -952,7 +952,7 @@ const seasonalHeatmapOption = computed(() => {
   return {
     tooltip: {
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const month = months[params.value[0]];
         const cat = heatmapCategories[params.value[1]];
         return `<strong>${cat}</strong><br/>${month}: $${params.value[2]}K`;
@@ -1127,7 +1127,7 @@ const reorderSuggestionsFallback = [
   }
 ];
 
-const reorderSuggestions = ref<any[]>([]);
+const reorderSuggestions = ref<Record<string, unknown>[]>([]);
 
 // ─── Data Loading ───────────────────────────────────────────
 async function loadData() {

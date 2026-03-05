@@ -228,13 +228,13 @@ const t = $i18n.t;
 const loading = ref(false);
 const saving = ref(false);
 const dialogVisible = ref(false);
-const editingItem = ref<any>(null);
+const editingItem = ref<Record<string, unknown> | null>(null);
 const search = ref('');
 const filterPlatform = ref('');
 const filterSentiment = ref('');
-const items = ref<any[]>([]);
+const items = ref<Record<string, unknown>[]>([]);
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
-const socialDashboard = ref<any>(null);
+const socialDashboard = ref<Record<string, unknown> | null>(null);
 
 const platformOptions = [
   { label: 'Twitter', value: 'TWITTER' },
@@ -264,12 +264,12 @@ const summaryStats = computed(() => {
   const platformBreakdown = platformOptions
     .map(p => ({
       platform: p.label,
-      count: data.filter((i: any) => i.platform === p.value).length
+      count: data.filter((i) => i.platform === p.value).length
     }))
     .filter(p => p.count > 0);
   const breakdownText = platformBreakdown.map(p => `${p.platform}: ${p.count}`).join(', ') || '--';
-  const totalFollowers = data.reduce((sum: number, i: any) => sum + (i.followers || 0), 0);
-  const positiveSentiment = data.filter((i: any) => i.sentiment === 'POSITIVE').length;
+  const totalFollowers = data.reduce((sum, i) => sum + (i.followers || 0), 0);
+  const positiveSentiment = data.filter((i) => i.sentiment === 'POSITIVE').length;
 
   return [
     { label: t('marketing.socialCrm.totalProfiles'), value: total, icon: 'ph:users-three-bold', color: '#7849ff' },
@@ -282,15 +282,15 @@ const summaryStats = computed(() => {
 const filteredData = computed(() => {
   let data = items.value;
   if (filterPlatform.value) {
-    data = data.filter((i: any) => i.platform === filterPlatform.value);
+    data = data.filter((i) => i.platform === filterPlatform.value);
   }
   if (filterSentiment.value) {
-    data = data.filter((i: any) => i.sentiment === filterSentiment.value);
+    data = data.filter((i) => i.sentiment === filterSentiment.value);
   }
   if (!search.value) return data;
   const q = search.value.toLowerCase();
   return data.filter(
-    (i: any) =>
+    (i: unknown) =>
       (i.clientName || i.clientId || '').toLowerCase().includes(q) ||
       (i.handle || '').toLowerCase().includes(q) ||
       (i.platform || '').toLowerCase().includes(q)
@@ -352,7 +352,7 @@ async function fetchData() {
   try {
     const res = await useApiFetch(`social-crm?page=${pagination.page}&limit=${pagination.limit}`);
     if (res.success && res.body) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       items.value = data.rows || data.docs || (Array.isArray(data) ? data : []);
       pagination.total = data.count ?? data.total ?? items.value.length;
     }
@@ -369,7 +369,7 @@ function openCreateDialog() {
   dialogVisible.value = true;
 }
 
-function openEditDialog(item: any) {
+function openEditDialog(item: unknown) {
   editingItem.value = item;
   form.value = {
     clientId: item.clientId || '',
@@ -416,7 +416,7 @@ async function handleSave() {
   }
 }
 
-async function handleDelete(item: any) {
+async function handleDelete(item: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), {
       type: 'warning',
@@ -442,7 +442,7 @@ async function fetchDashboard() {
     if (res.success && res.body) {
       socialDashboard.value = res.body;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -455,12 +455,12 @@ const sentimentTotal = computed(() => {
 
 const maxEngagement = computed(() => {
   if (!socialDashboard.value?.engagementTrends?.length) return 0;
-  return Math.max(...socialDashboard.value.engagementTrends.map((t: any) => t.count || 0));
+  return Math.max(...socialDashboard.value.engagementTrends.map((t) => t.count || 0));
 });
 
 const maxFollowers = computed(() => {
   if (!socialDashboard.value?.followerGrowth?.length) return 0;
-  return Math.max(...socialDashboard.value.followerGrowth.map((g: any) => g.count || 0));
+  return Math.max(...socialDashboard.value.followerGrowth.map((g) => g.count || 0));
 });
 
 function getHealthColor(health: number): string {

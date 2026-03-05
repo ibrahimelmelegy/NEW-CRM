@@ -1,11 +1,11 @@
 import { useApiFetch } from '~/composables/useApiFetch';
 
 export const useLiveChat = () => {
-  const getConversations = (params?: any) => useApiFetch('live-chat/conversations', 'GET', undefined, params);
+  const getConversations = (params?: unknown) => useApiFetch('live-chat/conversations', 'GET', undefined, params);
   const getConversation = (id: number) => useApiFetch(`live-chat/conversations/${id}`, 'GET');
-  const getMessages = (conversationId: number, params?: any) =>
+  const getMessages = (conversationId: number, params?: unknown) =>
     useApiFetch(`live-chat/conversations/${conversationId}/messages`, 'GET', undefined, params);
-  const sendMessage = (data: any) => useApiFetch('live-chat/messages', 'POST', data);
+  const sendMessage = (data: unknown) => useApiFetch('live-chat/messages', 'POST', data);
   const markAsRead = (id: number) => useApiFetch(`live-chat/conversations/${id}/read`, 'PUT');
   const assignAgent = (id: number, agentId: string | number) => useApiFetch(`live-chat/conversations/${id}/assign`, 'PUT', { agentId });
   const transferConversation = (id: number, toAgentId: string | number, reason?: string) =>

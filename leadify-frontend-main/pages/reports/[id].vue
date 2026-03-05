@@ -94,11 +94,11 @@ const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 
 const report = ref<SavedReport | null>(null);
-const results = ref<any[]>([]);
+const results = ref<Record<string, unknown>[]>([]);
 const running = ref(false);
 const resultPage = ref(1);
 const resultPageSize = 25;
-const filterOverrides = ref<{ field: string; operator: string; value: any }[]>([]);
+const filterOverrides = ref<{ field: string; operator: string; value: unknown }[]>([]);
 
 // Load report
 onMounted(async () => {
@@ -129,8 +129,8 @@ const paginatedResults = computed(() => {
 const chartOption = computed(() => {
   if (!report.value?.config?.groupBy || !results.value.length) return {};
   const config = report.value.config;
-  const labels = results.value.map((r: any) => r[config.groupBy!] || 'N/A');
-  const values = results.value.map((r: any) => Number(r.count) || 0);
+  const labels = results.value.map((r) => r[config.groupBy!] || 'N/A');
+  const values = results.value.map((r) => Number(r.count) || 0);
 
   if (config.chartType === 'pie') {
     return {
@@ -174,7 +174,7 @@ async function runReport() {
       filters: filterOverrides.value.filter(f => f.field && f.value)
     };
     results.value = await executeReport(configWithOverrides);
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElNotification({ type: 'error', title: t('common.error'), message: e?.message || 'Failed to run report' });
   } finally {
     running.value = false;
@@ -195,7 +195,7 @@ async function handleExport(format: string) {
       a.click();
       URL.revokeObjectURL(url);
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElNotification({ type: 'error', title: t('common.error'), message: e?.message || '' });
   }
 }

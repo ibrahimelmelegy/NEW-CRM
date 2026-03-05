@@ -108,8 +108,8 @@ const loading = ref(true);
 const starting = ref(false);
 const stopping = ref(false);
 const savingManual = ref(false);
-const entries = ref<any[]>([]);
-const activeTimer = ref<any>(null);
+const entries = ref<Record<string, unknown>[]>([]);
+const activeTimer = ref<Record<string, unknown> | null>(null);
 const currentPage = ref(1);
 const pagination = ref({ page: 1, limit: 20, totalItems: 0, totalPages: 0 });
 const showManualEntry = ref(false);
@@ -174,7 +174,7 @@ async function checkActiveTimer() {
       activeTimer.value = body;
       startElapsedCounter(body.startTime);
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }

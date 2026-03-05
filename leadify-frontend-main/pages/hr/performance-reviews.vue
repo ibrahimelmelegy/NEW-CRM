@@ -162,9 +162,9 @@ const deptChartRef = ref<HTMLElement>();
 const loading = ref(false);
 const creating = ref(false);
 
-const reviews = ref<any[]>([]);
-const employees = ref<any[]>([]);
-const newReview = ref({ employeeId: '', reviewType: 'QUARTERLY', period: null as any });
+const reviews = ref<Record<string, unknown>[]>([]);
+const employees = ref<Record<string, unknown>[]>([]);
+const newReview = ref({ employeeId: '', reviewType: 'QUARTERLY', period: null as unknown });
 
 // --------------- helpers to map backend → display fields ---------------
 
@@ -174,7 +174,7 @@ const newReview = ref({ employeeId: '', reviewType: 'QUARTERLY', period: null as
  * whose status is 'COMPLETED' (or 'DONE'/'MET') and divide by total weight.
  * If no weights are present, fall back to simple count ratio.
  */
-function calcGoalCompletion(goals: any[] | null | undefined): number {
+function calcGoalCompletion(goals: Record<string, unknown>[] | null | undefined): number {
   if (!goals || !Array.isArray(goals) || goals.length === 0) return 0;
 
   const hasWeights = goals.some(g => g.weight != null && g.weight > 0);
@@ -207,7 +207,7 @@ function deriveReviewType(period: string | undefined): string {
 }
 
 /** Map a raw backend PerformanceReview record into the shape the template expects. */
-function mapReview(raw: any): any {
+function mapReview(raw: unknown): unknown {
   return {
     id: raw.id,
     employeeName: raw.employee ? `${raw.employee.firstName || ''} ${raw.employee.lastName || ''}`.trim() : `Employee #${raw.employeeId}`,
@@ -229,7 +229,7 @@ const fetchReviews = async () => {
   loading.value = true;
   try {
     const query = selectedCycle.value ? `?period=${selectedCycle.value}` : '';
-    const res: any = await useApiFetch(`hr/performance${query}`);
+    const res = await useApiFetch(`hr/performance${query}`);
     if (res?.success) {
       const docs = res.body?.docs || res.body || [];
       reviews.value = (Array.isArray(docs) ? docs : []).map(mapReview);
@@ -245,7 +245,7 @@ const fetchReviews = async () => {
 };
 
 const fetchEmployees = async () => {
-  const res: any = await useApiFetch('hr/employees?limit=100');
+  const res = await useApiFetch('hr/employees?limit=100');
   if (res?.success) {
     employees.value = res.body?.docs || res.body || [];
   }
@@ -287,7 +287,7 @@ const formatDate = (d: string) => (d ? new Date(d).toLocaleDateString('en', { mo
 
 // --------------- actions ---------------
 
-const viewReview = async (review: any) => {
+const viewReview = async (review: unknown) => {
   const router = useRouter();
   // Navigate to detail view if route exists, otherwise show info
   try {
@@ -313,14 +313,14 @@ const createReview = async () => {
       periodStr = `${start} to ${end}`;
     }
 
-    const payload: Record<string, any> = {
+    const payload: Record<string, unknown> = {
       employeeId: Number(newReview.value.employeeId),
       period: periodStr,
       status: 'DRAFT',
       reviewDate: new Date().toISOString().slice(0, 10)
     };
 
-    const res: any = await useApiFetch('hr/performance', 'POST', payload);
+    const res = await useApiFetch('hr/performance', 'POST', payload);
     if (res?.success) {
       ElMessage.success(t('performanceReviews.reviewStarted'));
       showNewReviewDialog.value = false;
@@ -330,7 +330,7 @@ const createReview = async () => {
     } else {
       ElMessage.error(res?.message || 'Failed to create review');
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(e?.message || 'Failed to create review');
   } finally {
     creating.value = false;

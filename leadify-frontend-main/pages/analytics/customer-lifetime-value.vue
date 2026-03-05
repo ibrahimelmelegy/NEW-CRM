@@ -268,7 +268,7 @@ const dateRange = ref<[Date, Date] | null>(null);
 const activeTab = ref('overview');
 const riskFilter = ref('all');
 const showCustomerDialog = ref(false);
-const selectedCustomer = ref<any>(null);
+const selectedCustomer = ref<Record<string, unknown> | null>(null);
 const loading = ref(false);
 
 // ─── Helpers ────────────────────────────────────────────────
@@ -320,7 +320,7 @@ const kpiCards = computed(() => {
   const totalCustomers = segments.reduce((sum, s) => sum + (s.customerCount || 0), 0);
   const totalRevenue = segments.reduce((sum, s) => sum + (s.totalRevenue || 0), 0);
   const avgClv = totalCustomers > 0 ? Math.round(totalRevenue / totalCustomers) : 12480;
-  const churnCount = churnCustomers.value.filter((c: any) => c.riskLevel === 'high').length;
+  const churnCount = churnCustomers.value.filter((c) => c.riskLevel === 'high').length;
   const churnRate = totalCustomers > 0 ? ((churnCount / totalCustomers) * 100).toFixed(1) : '4.2';
   const retentionRate = totalCustomers > 0 ? (100 - parseFloat(churnRate as string)).toFixed(1) : '95.8';
 
@@ -386,7 +386,7 @@ const mockClvSegments = [
 ];
 
 // ─── CLV Segments ───────────────────────────────────────────
-const clvSegments = ref<any[]>([]);
+const clvSegments = ref<Record<string, unknown>[]>([]);
 
 // ─── Cohort Data ────────────────────────────────────────────
 const mockCohortData = [
@@ -464,7 +464,7 @@ const mockCohortData = [
   }
 ];
 
-const cohortData = ref<any[]>([]);
+const cohortData = ref<Record<string, unknown>[]>([]);
 
 // ─── Churn Prediction Data ──────────────────────────────────
 const mockChurnCustomers = [
@@ -801,7 +801,7 @@ const mockChurnCustomers = [
   }
 ];
 
-const churnCustomers = ref<any[]>([]);
+const churnCustomers = ref<Record<string, unknown>[]>([]);
 
 const filteredChurnCustomers = computed(() => {
   if (riskFilter.value === 'all') return churnCustomers.value;
@@ -825,8 +825,8 @@ const mockProjectedVsActual = [
   { period: 'Feb 2026', actual: 1320000, projected: 1250000, variance: 5.6 }
 ];
 
-const revenueBySegment = ref<any[]>([]);
-const projectedVsActual = ref<any[]>([]);
+const revenueBySegment = ref<Record<string, unknown>[]>([]);
+const projectedVsActual = ref<Record<string, unknown>[]>([]);
 
 // ─── Segment Color Map ──────────────────────────────────────
 const segmentColors: Record<string, string> = {
@@ -842,19 +842,19 @@ async function loadData() {
   try {
     // Fetch all three endpoints in parallel
     const [clvRes, cohortRes, churnRes] = await Promise.all([
-      useApiFetch('clv' as any).catch(() => null),
-      useApiFetch('clv/cohorts' as any).catch(() => null),
-      useApiFetch('clv/churn-predictions' as any).catch(() => null)
+      useApiFetch('clv' as unknown).catch(() => null),
+      useApiFetch('clv/cohorts' as unknown).catch(() => null),
+      useApiFetch('clv/churn-predictions' as unknown).catch(() => null)
     ]);
 
     // ── CLV segments: derive from GET /clv response ──
     if (clvRes?.success && clvRes.body) {
-      const docs = Array.isArray(clvRes.body) ? clvRes.body : Array.isArray((clvRes.body as any)?.docs) ? (clvRes.body as any).docs : null;
+      const docs = Array.isArray(clvRes.body) ? clvRes.body : Array.isArray((clvRes.body as unknown)?.docs) ? (clvRes.body as unknown).docs : null;
 
       if (docs && docs.length > 0) {
         // Group CLV records by segment
         const segmentMap = new Map<string, { count: number; totalClv: number; totalRevenue: number; growthSum: number }>();
-        docs.forEach((record: any) => {
+        docs.forEach((record) => {
           const seg = record.segment || 'Other';
           if (!segmentMap.has(seg)) {
             segmentMap.set(seg, { count: 0, totalClv: 0, totalRevenue: 0, growthSum: 0 });
@@ -866,7 +866,7 @@ async function loadData() {
           entry.growthSum += parseFloat(record.growth || record.growthRate || 0);
         });
 
-        const segments: any[] = [];
+        const segments: Record<string, unknown>[] = [];
         segmentMap.forEach((val, key) => {
           segments.push({
             segment: key,
@@ -916,7 +916,7 @@ async function loadData() {
 
     // ── Cohort data from GET /clv/cohorts ──
     if (cohortRes?.success && cohortRes.body) {
-      const cohorts = (cohortRes.body as any)?.cohorts || cohortRes.body;
+      const cohorts = (cohortRes.body as unknown)?.cohorts || cohortRes.body;
       if (Array.isArray(cohorts) && cohorts.length > 0) {
         cohortData.value = cohorts;
       } else {
@@ -928,7 +928,7 @@ async function loadData() {
 
     // ── Churn predictions from GET /clv/churn-predictions ──
     if (churnRes?.success && churnRes.body) {
-      const atRisk = (churnRes.body as any)?.atRiskCustomers || churnRes.body;
+      const atRisk = (churnRes.body as unknown)?.atRiskCustomers || churnRes.body;
       if (Array.isArray(atRisk) && atRisk.length > 0) {
         churnCustomers.value = atRisk;
       } else {
@@ -954,7 +954,7 @@ onMounted(() => {
 });
 
 // ─── Customer Detail Dialog ─────────────────────────────────
-function openCustomerDetail(row: any) {
+function openCustomerDetail(row: unknown) {
   selectedCustomer.value = row;
   showCustomerDialog.value = true;
 }

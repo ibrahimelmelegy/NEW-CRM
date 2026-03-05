@@ -260,22 +260,22 @@ const activeTab = ref('programs');
 
 // Programs state
 const programDialogVisible = ref(false);
-const editingProgram = ref<any>(null);
+const editingProgram = ref<Record<string, unknown> | null>(null);
 const programSearch = ref('');
 const programStatusFilter = ref('');
-const programs = ref<any[]>([]);
+const programs = ref<Record<string, unknown>[]>([]);
 const programsPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 // Enrollments state
 const enrollmentDialogVisible = ref(false);
-const editingEnrollment = ref<any>(null);
+const editingEnrollment = ref<Record<string, unknown> | null>(null);
 const enrollmentSearch = ref('');
 const enrollmentStatusFilter = ref('');
-const enrollments = ref<any[]>([]);
+const enrollments = ref<Record<string, unknown>[]>([]);
 const enrollmentsPagination = reactive({ page: 1, limit: 20, total: 0 });
 
 // Employees for enrollment select
-const employees = ref<any[]>([]);
+const employees = ref<Record<string, unknown>[]>([]);
 
 // Dashboard state
 const dashboardLoading = ref(false);
@@ -361,7 +361,7 @@ const enrollmentForm = reactive({
 // Computed
 const avgProgress = computed(() => {
   if (!enrollments.value.length) return 0;
-  return Math.round(enrollments.value.reduce((sum: number, e: any) => sum + (e.progress || 0), 0) / enrollments.value.length);
+  return Math.round(enrollments.value.reduce((sum, e) => sum + (e.progress || 0), 0) / enrollments.value.length);
 });
 
 const filteredPrograms = computed(() => {
@@ -407,7 +407,7 @@ function getProgressColor(progress: number): string {
   return '#3b82f6';
 }
 
-function navigateToProgram(row: any) {
+function navigateToProgram(row: unknown) {
   if (row?.id) router.push(`/hr/training/${row.id}`);
 }
 
@@ -423,7 +423,7 @@ function resetProgramForm() {
   programForm.description = '';
 }
 
-function openProgramDialog(item?: any) {
+function openProgramDialog(item?: unknown) {
   if (item?.id) {
     editingProgram.value = item;
     programForm.title = item.title || '';
@@ -464,7 +464,7 @@ async function handleSaveProgram() {
   }
 }
 
-async function handleDeleteProgram(row: any) {
+async function handleDeleteProgram(row: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     loading.value = true;
@@ -487,7 +487,7 @@ function resetEnrollmentForm() {
   enrollmentForm.score = 0;
 }
 
-function openEnrollmentDialog(item?: any) {
+function openEnrollmentDialog(item?: unknown) {
   if (item?.id) {
     editingEnrollment.value = item;
     enrollmentForm.employeeId = item.employeeId || '';
@@ -525,7 +525,7 @@ async function handleSaveEnrollment() {
   }
 }
 
-async function handleDeleteEnrollment(row: any) {
+async function handleDeleteEnrollment(row: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     loading.value = true;
@@ -549,19 +549,19 @@ async function loadData() {
       useApiFetch('hr/employees?limit=500')
     ]);
     if (programsRes?.success && programsRes.body) {
-      const data = programsRes.body as any;
+      const data = programsRes.body as unknown;
       programs.value = data.rows || data.docs || data || [];
       programsPagination.total = data.count ?? data.total ?? programs.value.length;
     }
     if (enrollmentsRes?.success && enrollmentsRes.body) {
-      const data = enrollmentsRes.body as any;
+      const data = enrollmentsRes.body as unknown;
       enrollments.value = data.rows || data.docs || data || [];
       enrollmentsPagination.total = data.count ?? data.total ?? enrollments.value.length;
     }
     if (empRes?.success && empRes.body) {
-      const data = empRes.body as any;
+      const data = empRes.body as unknown;
       const docs = data.docs || data || [];
-      employees.value = docs.map((e: any) => ({
+      employees.value = docs.map((e) => ({
         id: e.id,
         name: e.firstName ? `${e.firstName} ${e.lastName || ''}`.trim() : e.name || `Employee #${e.id}`
       }));
@@ -577,13 +577,13 @@ async function loadDashboard() {
   try {
     const res = await useApiFetch('hr/training/dashboard');
     if (res?.success && res.body) {
-      const d = res.body as any;
+      const d = res.body as unknown;
       dashboardData.totalPrograms = d.totalPrograms ?? 0;
       dashboardData.activeEnrollments = d.activeEnrollments ?? 0;
       dashboardData.completionRate = d.completionRate ?? 0;
       dashboardData.upcoming = d.upcoming ?? d.upcomingPrograms ?? 0;
       dashboardData.overdue = d.overdue ?? 0;
-      dashboardData.topCategories = (d.topCategories || []).map((c: any) => ({
+      dashboardData.topCategories = (d.topCategories || []).map((c) => ({
         name: c.name || c.category || '--',
         count: c.count ?? 0
       }));

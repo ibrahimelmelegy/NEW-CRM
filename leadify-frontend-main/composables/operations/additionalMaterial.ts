@@ -28,13 +28,13 @@ export interface CategoryItem {
   id?: string;
   name: string;
   price: number | null;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface AdditionalMaterial {
   name: string;
   items: CategoryItem[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface Material {
@@ -57,7 +57,7 @@ export async function getMaterials(project?: number): Promise<UseAdditionalMater
 
     if (success) {
       // Return the docs (additional Material) from the response
-      const materials = body?.docs?.map((material: any) => ({
+      const materials = body?.docs?.map((material) => ({
         ...material,
         createdAt: formatDate(material.createdAt),
         // updatedAt: formatDate(material.updatedAt),
@@ -114,7 +114,7 @@ export async function getAdditionalMaterials(): Promise<UseAdditionalMaterialsRe
 
     if (success) {
       // Return the docs (additional Material) from the response
-      const materials = body?.docs?.map((material: any) => ({
+      const materials = body?.docs?.map((material) => ({
         ...material,
         createdAt: formatDate(material.createdAt),
         // updatedAt: formatDate(material.updatedAt),

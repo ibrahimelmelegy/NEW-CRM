@@ -150,14 +150,14 @@ const workflows = ref<Workflow[]>([]);
 const showBuilder = ref(false);
 const showLogs = ref(false);
 const logsLoading = ref(false);
-const logs = ref<any[]>([]);
+const logs = ref<Record<string, unknown>[]>([]);
 const editingId = ref<string | null>(null);
 
 const emptyForm = () => ({
   name: '',
   trigger: '',
-  conditions: [] as any[],
-  actions: [] as any[],
+  conditions: [] as unknown[],
+  actions: [] as unknown[],
   isActive: true
 });
 
@@ -190,7 +190,7 @@ function editWorkflow(wf: Workflow) {
     name: wf.name,
     trigger: wf.trigger,
     conditions: [...(wf.conditions || [])],
-    actions: (wf.actions || []).map((a: any) => ({ type: a.type, config: { ...a.config } })),
+    actions: (wf.actions || []).map((a) => ({ type: a.type, config: { ...a.config } })),
     isActive: wf.isActive
   };
   showBuilder.value = true;

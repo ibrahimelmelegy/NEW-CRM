@@ -102,7 +102,7 @@ export function useDocBuilder() {
       const url = `doc-builder/?${queryParts.join('&')}`;
       const response = await useApiFetch(url);
       if (response?.success && response.body) {
-        const rb = response.body as any;
+        const rb = response.body as unknown;
         documents.value = rb.docs || [];
         pagination.value = rb.pagination || pagination.value;
       }
@@ -117,7 +117,7 @@ export function useDocBuilder() {
     try {
       const response = await useApiFetch(`doc-builder/${id}`);
       if (response?.success && response.body) {
-        currentDocument.value = response.body as any;
+        currentDocument.value = response.body as unknown;
       }
       return response;
     } finally {
@@ -128,9 +128,9 @@ export function useDocBuilder() {
   async function createDocument(data: Partial<DocBuilderDocument>) {
     saving.value = true;
     try {
-      const response = await useApiFetch('doc-builder/', 'POST', data as Record<string, any>);
+      const response = await useApiFetch('doc-builder/', 'POST', data as Record<string, unknown>);
       if (response?.success && response.body) {
-        currentDocument.value = response.body as any;
+        currentDocument.value = response.body as unknown;
       }
       return response;
     } finally {
@@ -141,9 +141,9 @@ export function useDocBuilder() {
   async function updateDocument(id: string, data: Partial<DocBuilderDocument> & { changeNote?: string }) {
     saving.value = true;
     try {
-      const response = await useApiFetch(`doc-builder/${id}`, 'PUT', data as Record<string, any>);
+      const response = await useApiFetch(`doc-builder/${id}`, 'PUT', data as Record<string, unknown>);
       if (response?.success && response.body) {
-        currentDocument.value = response.body as any;
+        currentDocument.value = response.body as unknown;
       }
       return response;
     } finally {
@@ -160,7 +160,7 @@ export function useDocBuilder() {
   async function changeStatus(id: string, status: string, reason?: string) {
     const response = await useApiFetch(`doc-builder/${id}/status`, 'PUT', { status, reason });
     if (response?.success && response.body) {
-      currentDocument.value = response.body as any;
+      currentDocument.value = response.body as unknown;
       const idx = documents.value.findIndex(d => d.id === id);
       if (idx >= 0 && documents.value[idx]) documents.value[idx].status = status;
     }
@@ -186,7 +186,7 @@ export function useDocBuilder() {
   async function restoreVersion(id: string, versionId: string) {
     const response = await useApiFetch(`doc-builder/${id}/versions/${versionId}/restore`, 'POST');
     if (response?.success && response.body) {
-      currentDocument.value = response.body as any;
+      currentDocument.value = response.body as unknown;
     }
     return response;
   }
@@ -199,9 +199,9 @@ export function useDocBuilder() {
 
   // Send
   async function sendDocument(id: string, data: { to: string; subject: string; message?: string }) {
-    const response = await useApiFetch(`doc-builder/${id}/send`, 'POST', data as Record<string, any>);
+    const response = await useApiFetch(`doc-builder/${id}/send`, 'POST', data as Record<string, unknown>);
     if (response?.success && response.body) {
-      currentDocument.value = response.body as any;
+      currentDocument.value = response.body as unknown;
     }
     return response;
   }
@@ -211,7 +211,7 @@ export function useDocBuilder() {
     const url = type ? `doc-builder/stats?type=${encodeURIComponent(type)}` : 'doc-builder/stats';
     const response = await useApiFetch(url);
     if (response?.success && response.body) {
-      stats.value = response.body as any;
+      stats.value = response.body as unknown;
     }
     return response;
   }

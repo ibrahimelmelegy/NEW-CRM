@@ -21,7 +21,7 @@ export interface ModuleDefinition {
 export interface ReportFilter {
   field: string;
   operator: string;
-  value: any;
+  value: unknown;
   fieldType?: string;
 }
 
@@ -300,13 +300,13 @@ export function useReportBuilderPro() {
     schedule: null
   });
 
-  const results = ref<any[]>([]);
+  const results = ref<Record<string, unknown>[]>([]);
   const summary = ref<ReportSummary>({});
   const totalCount = ref(0);
   const loading = ref(false);
   const exporting = ref(false);
   const saving = ref(false);
-  const savedReports = ref<any[]>([]);
+  const savedReports = ref<Record<string, unknown>[]>([]);
   const filterLogic = ref<'AND' | 'OR'>('AND');
 
   // ─── Module fields ──────────────────────────────────────
@@ -341,7 +341,7 @@ export function useReportBuilderPro() {
         aggregations: config.value.aggregations,
         sortBy: config.value.sortBy || undefined,
         sortOrder: config.value.sortOrder
-      } as any);
+      } as unknown);
 
       if (success && body) {
         results.value = body.data || [];
@@ -359,7 +359,7 @@ export function useReportBuilderPro() {
 
   // ─── Export Functions ───────────────────────────────────
 
-  function exportToCSV(data: any[], columns: string[], filename: string): void {
+  function exportToCSV(data: Record<string, unknown>[], columns: string[], filename: string): void {
     if (!data.length) return;
 
     const headers = columns.length ? columns : Object.keys(data[0]);
@@ -381,7 +381,7 @@ export function useReportBuilderPro() {
     downloadFile(csvContent, `${filename}.csv`, 'text/csv');
   }
 
-  function exportToExcel(data: any[], columns: string[], filename: string): void {
+  function exportToExcel(data: Record<string, unknown>[], columns: string[], filename: string): void {
     if (!data.length) return;
 
     const headers = columns.length ? columns : Object.keys(data[0]);
@@ -399,7 +399,7 @@ export function useReportBuilderPro() {
     downloadFile(blob, `${filename}.xlsx`);
   }
 
-  async function exportToPDF(data: any[], columns: string[], filename: string): Promise<void> {
+  async function exportToPDF(data: Record<string, unknown>[], columns: string[], filename: string): Promise<void> {
     if (!data.length) return;
 
     const { default: JsPDF } = await import('jspdf');
@@ -465,7 +465,7 @@ export function useReportBuilderPro() {
 
   // ─── Save / Load Reports ───────────────────────────────
 
-  async function saveReport(name: string, description?: string): Promise<any> {
+  async function saveReport(name: string, description?: string): Promise<<unknown> {
     saving.value = true;
     try {
       const moduleKey = config.value.modules[0] as string | undefined;
@@ -495,7 +495,7 @@ export function useReportBuilderPro() {
         schedule: config.value.schedule || null
       };
 
-      const { body, success } = await useApiFetch('reports', 'POST', payload as any);
+      const { body, success } = await useApiFetch('reports', 'POST', payload as unknown);
       if (success) return body;
       return null;
     } finally {
@@ -504,7 +504,7 @@ export function useReportBuilderPro() {
   }
 
   async function loadReport(id: number | string): Promise<void> {
-    const { body, success } = await useApiFetch(`reports/${id}` as any);
+    const { body, success } = await useApiFetch(`reports/${id}` as unknown);
     if (success && body) {
       const entityModuleMap: Record<string, string> = {
         LEAD: 'leads',
@@ -538,19 +538,19 @@ export function useReportBuilderPro() {
   }
 
   async function deleteSavedReport(id: number | string): Promise<void> {
-    await useApiFetch(`reports/${id}` as any, 'DELETE');
+    await useApiFetch(`reports/${id}` as unknown, 'DELETE');
     savedReports.value = savedReports.value.filter(r => r.id !== id);
   }
 
   // ─── Schedule ───────────────────────────────────────────
 
   async function scheduleReport(reportId: number | string, schedule: ScheduleConfig): Promise<void> {
-    await useApiFetch(`reports/${reportId}/schedule` as any, 'PUT', { schedule } as any);
+    await useApiFetch(`reports/${reportId}/schedule` as unknown, 'PUT', { schedule } as unknown);
   }
 
   // ─── Chart Options Generator ───────────────────────────
 
-  function getChartOption(data: any[], chartType: string, chartConfig: ChartConfig) {
+  function getChartOption(data: Record<string, unknown>[], chartType: string, chartConfig: ChartConfig) {
     if (!data.length || !chartType) return {};
 
     const colors = CHART_COLOR_SCHEMES[chartConfig.colorScheme || 'purple'];
@@ -559,8 +559,8 @@ export function useReportBuilderPro() {
 
     if (!xField) return {};
 
-    const labels = data.map((r: any) => r[xField] || 'N/A');
-    const values = data.map((r: any) => Number(r[yField]) || 0);
+    const labels = data.map((r) => r[xField] || 'N/A');
+    const values = data.map((r) => Number(r[yField]) || 0);
 
     const baseLegend = chartConfig.showLegend !== false ? { show: true, bottom: 0, textStyle: { color: 'var(--text-muted)' } } : { show: false };
 
@@ -591,7 +591,7 @@ export function useReportBuilderPro() {
 
     // Bar, Line, Area, Stacked
     const seriesType = chartType === 'area' ? 'line' : chartType === 'stacked' ? 'bar' : chartType;
-    const series: any = {
+    const series: unknown = {
       type: seriesType,
       data: values,
       itemStyle: { color: colors?.[0], borderRadius: chartType === 'bar' || chartType === 'stacked' ? [4, 4, 0, 0] : 0 },

@@ -19,7 +19,7 @@ export function useCollaborationCursors() {
   const THROTTLE_MS = 100;
   const HIDE_AFTER_MS = 3000;
 
-  let socket: any = null;
+  let socket: unknown = null;
   let throttleTimer: ReturnType<typeof setTimeout> | null = null;
   let cleanupTimer: ReturnType<typeof setInterval> | null = null;
   let checkSocketInterval: ReturnType<typeof setInterval> | null = null;

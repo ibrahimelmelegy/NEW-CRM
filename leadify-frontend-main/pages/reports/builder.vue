@@ -366,7 +366,7 @@ function onModuleSwitch(moduleKey: string) {
   }
 }
 
-function onFieldDropped(event: any) {
+function onFieldDropped(event: unknown) {
   // When a field is dropped from the picker, it comes as a FieldDefinition object
   // We need to convert it to a string (field name) for our fields array
   const added = event.added;
@@ -447,7 +447,7 @@ async function openSavedReports() {
   }
 }
 
-async function loadSavedReport(report: any) {
+async function loadSavedReport(report: unknown) {
   await pro.loadReport(report.id);
   reportName.value = report.name;
   showSavedDrawer.value = false;

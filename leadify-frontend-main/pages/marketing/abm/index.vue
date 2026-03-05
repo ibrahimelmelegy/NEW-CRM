@@ -388,9 +388,9 @@ const showAddAccountDialog = ref(false);
 const showCreateCampaignDialog = ref(false);
 
 // ── Raw API Data ──
-const rawDeals = ref<any[]>([]);
-const rawLeads = ref<any[]>([]);
-const rawCompanies = ref<any[]>([]);
+const rawDeals = ref<Record<string, unknown>[]>([]);
+const rawLeads = ref<Record<string, unknown>[]>([]);
+const rawCompanies = ref<Record<string, unknown>[]>([]);
 
 // ── Form State ──
 const accountForm = ref({
@@ -422,7 +422,7 @@ const ownerOptions = computed(() => {
 });
 
 // ── Derived Target Accounts ──
-const targetAccounts = ref<any[]>([]);
+const targetAccounts = ref<Record<string, unknown>[]>([]);
 
 const generateTargetAccounts = () => {
   const industries = ['Technology', 'Healthcare', 'Finance', 'Manufacturing', 'Retail', 'Energy', 'Media', 'Logistics'];
@@ -480,7 +480,7 @@ const generateTargetAccounts = () => {
 };
 
 // ── ABM Campaigns ──
-const abmCampaigns = ref<any[]>([]);
+const abmCampaigns = ref<Record<string, unknown>[]>([]);
 
 const generateCampaigns = () => {
   return [
@@ -554,7 +554,7 @@ const generateCampaigns = () => {
 };
 
 // ── Intent Signals ──
-const intentSignals = ref<any[]>([]);
+const intentSignals = ref<Record<string, unknown>[]>([]);
 
 const generateIntentSignals = () => {
   const accounts = targetAccounts.value;
@@ -582,7 +582,7 @@ const generateIntentSignals = () => {
 };
 
 // ── Revenue Attribution ──
-const revenueAttributions = ref<any[]>([]);
+const revenueAttributions = ref<Record<string, unknown>[]>([]);
 
 const generateRevenueAttributions = () => {
   const accounts = targetAccounts.value;
@@ -723,7 +723,7 @@ const waterfallChartOption = computed(() => {
       borderColor: 'rgba(120, 73, 255, 0.3)',
       textStyle: { color: '#fff' },
       extraCssText: 'backdrop-filter: blur(12px); border-radius: 12px;',
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const idx = params[0]?.dataIndex ?? 0;
         return `<strong>${stages[idx]}</strong><br/>
           ${t('abm.accounts')}: ${stageValues[idx]}<br/>

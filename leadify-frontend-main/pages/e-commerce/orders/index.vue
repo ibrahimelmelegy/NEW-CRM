@@ -226,8 +226,8 @@ const saving = ref(false);
 const orders = ref<SalesOrder[]>([]);
 
 // Bulk Selection
-const selectedRows = ref<any[]>([]);
-const handleSelectionChange = (rows: any[]) => {
+const selectedRows = ref<Record<string, unknown>[]>([]);
+const handleSelectionChange = (rows: Record<string, unknown>[]) => {
   selectedRows.value = rows;
 };
 const search = ref('');
@@ -309,14 +309,14 @@ async function loadOrders() {
     if (search.value.trim()) params.set('searchKey', search.value.trim());
     if (statusFilter.value && statusFilter.value !== 'ALL') params.set('status', statusFilter.value);
     if (dateRange.value?.length === 2) {
-      params.set('startDate', dateRange.value[0] as any);
-      params.set('endDate', dateRange.value[1] as any);
+      params.set('startDate', dateRange.value[0] as unknown);
+      params.set('endDate', dateRange.value[1] as unknown);
     }
     const result = await getSalesOrders(params.toString());
     orders.value = result.orders;
     pagination.totalItems = result.pagination.totalItems;
     pagination.totalPages = result.pagination.totalPages;
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
@@ -415,7 +415,7 @@ function exportSelectedCSV() {
   const data = selectedRows.value.length ? selectedRows.value : orders.value;
   if (!data.length) return;
   const headers = ['Order #', 'Client', 'Status', 'Items', 'Subtotal', 'Tax', 'Total', 'Currency', 'Date'];
-  const rows = data.map((o: any) => [
+  const rows = data.map((o) => [
     o.orderNumber || '',
     o.client?.clientName || o.client?.name || o.clientId || '',
     o.status || '',

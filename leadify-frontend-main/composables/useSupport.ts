@@ -166,7 +166,7 @@ export function getPriorityOption(priority: string) {
 
 // ─── API Functions ────────────────────────────────────────────────────────────
 
-export async function fetchTickets(query: Record<string, any> = {}) {
+export async function fetchTickets(query: Record<string, unknown> = {}) {
   const params = new URLSearchParams();
   Object.entries(query).forEach(([key, val]) => {
     if (val !== undefined && val !== null && val !== '') {
@@ -181,7 +181,7 @@ export async function fetchTicketById(id: string) {
   return useApiFetch(`support/tickets/${id}`);
 }
 
-export async function createTicket(data: Record<string, any>) {
+export async function createTicket(data: Record<string, unknown>) {
   return useApiFetch('support/tickets', 'POST', data);
 }
 
@@ -197,7 +197,7 @@ export async function closeTicket(id: string) {
   return useApiFetch(`support/tickets/${id}/close`, 'PATCH');
 }
 
-export async function addTicketMessage(id: string, data: Record<string, any>) {
+export async function addTicketMessage(id: string, data: Record<string, unknown>) {
   return useApiFetch(`support/tickets/${id}/messages`, 'POST', data);
 }
 
@@ -211,7 +211,7 @@ export async function fetchSupportDashboard() {
 
 // ─── Canned Responses ─────────────────────────────────────────────────────────
 
-export async function fetchCannedResponses(query: Record<string, any> = {}) {
+export async function fetchCannedResponses(query: Record<string, unknown> = {}) {
   const params = new URLSearchParams();
   Object.entries(query).forEach(([key, val]) => {
     if (val !== undefined && val !== null && val !== '') {
@@ -222,11 +222,11 @@ export async function fetchCannedResponses(query: Record<string, any> = {}) {
   return useApiFetch(`support/canned-responses${qs ? `?${qs}` : ''}`);
 }
 
-export async function createCannedResponse(data: Record<string, any>) {
+export async function createCannedResponse(data: Record<string, unknown>) {
   return useApiFetch('support/canned-responses', 'POST', data);
 }
 
-export async function updateCannedResponse(id: string, data: Record<string, any>) {
+export async function updateCannedResponse(id: string, data: Record<string, unknown>) {
   return useApiFetch(`support/canned-responses/${id}`, 'PUT', data);
 }
 
@@ -240,11 +240,11 @@ export async function fetchCategories() {
   return useApiFetch('support/categories');
 }
 
-export async function createCategory(data: Record<string, any>) {
+export async function createCategory(data: Record<string, unknown>) {
   return useApiFetch('support/categories', 'POST', data);
 }
 
-export async function updateCategory(id: string, data: Record<string, any>) {
+export async function updateCategory(id: string, data: Record<string, unknown>) {
   return useApiFetch(`support/categories/${id}`, 'PUT', data);
 }
 
@@ -258,11 +258,11 @@ export async function fetchSLAConfigs() {
   return useApiFetch('support/sla-configs');
 }
 
-export async function createSLAConfig(data: Record<string, any>) {
+export async function createSLAConfig(data: Record<string, unknown>) {
   return useApiFetch('support/sla-configs', 'POST', data);
 }
 
-export async function updateSLAConfig(id: string, data: Record<string, any>) {
+export async function updateSLAConfig(id: string, data: Record<string, unknown>) {
   return useApiFetch(`support/sla-configs/${id}`, 'PUT', data);
 }
 

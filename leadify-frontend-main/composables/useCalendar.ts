@@ -80,11 +80,11 @@ export async function fetchCalendarEvents(params?: Record<string, string>): Prom
   return success && body ? (body as CalendarEvent[]) : [];
 }
 
-export async function createCalendarEvent(data: any) {
+export async function createCalendarEvent(data: unknown) {
   return useApiFetch('calendar', 'POST', data);
 }
 
-export async function updateCalendarEvent(id: number, data: any) {
+export async function updateCalendarEvent(id: number, data: unknown) {
   return useApiFetch(`calendar/${id}`, 'PUT', data);
 }
 

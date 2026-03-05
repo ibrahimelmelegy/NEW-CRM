@@ -64,7 +64,7 @@ export type TaskPriority = PlannerTask['priority'];
  * Map a raw task object from the backend (which uses uppercase STATUS/PRIORITY
  * enums like "COMPLETED", "HIGH") to the frontend PlannerTask shape.
  */
-function mapTask(t: any): PlannerTask {
+function mapTask(t: unknown): PlannerTask {
   return {
     id: t.id,
     title: t.title,
@@ -166,7 +166,7 @@ export function usePlanner() {
   async function loadTasks(date: string) {
     const { body, success } = await useApiFetch(`planner/tasks?date=${date}`);
     if (success && Array.isArray(body)) {
-      const mapped = (body as any[]).map(mapTask);
+      const mapped = (body as unknown[]).map(mapTask);
       // Replace tasks for this date, keep others
       tasks.value = tasks.value.filter(t => t.date !== date).concat(mapped);
     }
@@ -214,7 +214,7 @@ export function usePlanner() {
       category: data.category,
       priority: toBackendPriority(data.priority)
     };
-    const { body, success } = await useApiFetch('planner/tasks', 'POST', payload as any);
+    const { body, success } = await useApiFetch('planner/tasks', 'POST', payload as unknown);
     if (success && body) {
       tasks.value.push(mapTask(body));
     }
@@ -253,10 +253,10 @@ export function usePlanner() {
    * Adds the returned session to the local list.
    */
   async function startFocus(taskTitle: string, duration: number, taskId?: number) {
-    const payload: any = { taskTitle, duration };
+    const payload: unknown = { taskTitle, duration };
     if (taskId !== undefined) payload.taskId = taskId;
 
-    const { body, success } = await useApiFetch('planner/focus', 'POST', payload as any);
+    const { body, success } = await useApiFetch('planner/focus', 'POST', payload as unknown);
     if (success && body) {
       focusSessions.value.push(body as FocusSession);
     }
@@ -298,7 +298,7 @@ export function usePlanner() {
 
   /** Create a new habit via POST /planner/habits. */
   async function addHabit(name: string, icon: string) {
-    const { body, success } = await useApiFetch('planner/habits', 'POST', { name, icon } as any);
+    const { body, success } = await useApiFetch('planner/habits', 'POST', { name, icon } as unknown);
     if (success && body) {
       habits.value.push(body as DailyHabit);
     }

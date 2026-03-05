@@ -446,10 +446,10 @@ const forecastChartOption = computed(() => {
     tooltip: {
       trigger: 'axis',
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const idx = params[0]?.dataIndex ?? 0;
         let html = `<strong>${data.labels[idx]}</strong><br/>`;
-        params.forEach((p: any) => {
+        params.forEach((p) => {
           if (p.seriesName === 'Upper Bound' || p.seriesName === 'Lower Bound') return;
           const val = p.value;
           if (val === undefined || val === null || isNaN(val)) return;
@@ -596,7 +596,7 @@ const forecastSummaryStats = computed(() => {
 });
 
 // ─── Product Forecast Data ──────────────────────────────────
-const productForecasts = ref<any[]>([]);
+const productForecasts = ref<Record<string, unknown>[]>([]);
 
 const filteredProducts = computed(() => {
   let items = productForecasts.value;
@@ -646,7 +646,7 @@ const seasonalHeatmapOption = computed(() => {
   return {
     tooltip: {
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const [monthIdx, catIdx, value] = params.data;
         return `<strong>${categories[catIdx]}</strong><br/>${months[monthIdx]}: <strong>${value}</strong> ${t('demandForecasting.demandIndex')}`;
       }
@@ -690,7 +690,7 @@ const seasonalHeatmapOption = computed(() => {
           color: '#fff',
           fontSize: 11,
           fontWeight: 'bold',
-          formatter: (params: any) => params.data[2]
+          formatter: (params: unknown) => params.data[2]
         },
         emphasis: {
           itemStyle: {
@@ -721,7 +721,7 @@ const seasonalInsights = computed(() => ({
 }));
 
 // ─── Reorder Items ──────────────────────────────────────────
-const reorderItems = ref<any[]>([]);
+const reorderItems = ref<Record<string, unknown>[]>([]);
 
 // ─── Safety Stock Calculator ────────────────────────────────
 const calculatedSafetyStock = ref(0);
@@ -775,11 +775,11 @@ const stockReorderChartOption = computed(() => {
       trigger: 'axis',
       ...tooltipStyle,
       axisPointer: { type: 'shadow' },
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         const idx = params[0]?.dataIndex ?? 0;
         const product = top10[idx]!;
         let html = `<strong>${product.name}</strong><br/>`;
-        params.forEach((p: any) => {
+        params.forEach((p) => {
           html += `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${p.color};margin-right:6px;"></span>`;
           html += `${p.seriesName}: <strong>${p.value.toLocaleString()}</strong><br/>`;
         });
@@ -818,7 +818,7 @@ const stockReorderChartOption = computed(() => {
         barWidth: 20,
         barGap: '30%',
         itemStyle: {
-          color: (params: any) => {
+          color: (params: unknown) => {
             const product = top10[params.dataIndex]!;
             if (product.currentStock < product.reorderPoint) {
               return new graphic.LinearGradient(0, 0, 0, 1, [
@@ -882,7 +882,7 @@ function getVarianceColor(variance: number): string {
   return '#ef4444';
 }
 
-function getProductRowClass({ row }: { row: any }): string {
+function getProductRowClass({ row }: { row: unknown }): string {
   if (row.currentStock < row.reorderPoint * 0.5) return 'stockout-risk-row';
   if (row.currentStock > row.predictedDemand * 2.5) return 'overstock-row';
   return '';
@@ -1106,10 +1106,10 @@ const mockReorderItems = [
   { name: 'MacBook Air M3', currentStock: 95, maxStock: 350, reorderPoint: 150, safetyStock: 70, daysUntilStockout: 12 }
 ];
 
-function deriveReorderItems(forecasts: any[]): any[] {
+function deriveReorderItems(forecasts: Record<string, unknown>[]): Record<string, unknown>[] {
   return forecasts
-    .filter((p: any) => p.currentStock < p.reorderPoint)
-    .map((p: any) => ({
+    .filter((p) => p.currentStock < p.reorderPoint)
+    .map((p) => ({
       name: p.name,
       currentStock: p.currentStock,
       maxStock: Math.round(p.reorderPoint * 2.5),
@@ -1117,7 +1117,7 @@ function deriveReorderItems(forecasts: any[]): any[] {
       safetyStock: Math.round(p.reorderPoint * 0.4),
       daysUntilStockout: p.predictedDemand > 0 ? Math.max(1, Math.round((p.currentStock / p.predictedDemand) * 30)) : 999
     }))
-    .sort((a: any, b: any) => a.daysUntilStockout - b.daysUntilStockout)
+    .sort((a, b) => a.daysUntilStockout - b.daysUntilStockout)
     .slice(0, 8);
 }
 
@@ -1125,7 +1125,7 @@ async function loadData() {
   loading.value = true;
   try {
     // Fetch demand forecasts
-    const { body: forecastsData, success: forecastsOk } = await useApiFetch('demand-forecasting' as any);
+    const { body: forecastsData, success: forecastsOk } = await useApiFetch('demand-forecasting' as unknown);
     if (forecastsOk && Array.isArray(forecastsData)) {
       productForecasts.value = forecastsData;
       // Derive reorder items from forecast data
@@ -1138,7 +1138,7 @@ async function loadData() {
 
     // Try to also fetch accuracy data for KPIs (optional enhancement)
     try {
-      const { body: accuracyData, success: accuracyOk } = await useApiFetch('demand-forecasting/accuracy' as any);
+      const { body: accuracyData, success: accuracyOk } = await useApiFetch('demand-forecasting/accuracy' as unknown);
       if (accuracyOk && accuracyData) {
         // Could be used to update KPI cards if backend provides accuracy metrics
       }
@@ -1179,7 +1179,7 @@ function exportReport() {
   ElMessage.success(t('demandForecasting.exportStarted'));
 }
 
-function handleReorder(item: any) {
+function handleReorder(item: unknown) {
   ElMessage.warning(`${t('demandForecasting.reorderInitiated')}: ${item.name}`);
 }
 </script>

@@ -147,7 +147,7 @@ const activeTab = ref('overview');
 const showDisable = ref(false);
 const exportLoading = ref(false);
 const dashboardLoading = ref(false);
-const exportedData = ref<Record<string, any> | null>(null);
+const exportedData = ref<Record<string, unknown> | null>(null);
 
 const { dashboard, fetchDashboard, exportData } = useSecurity();
 

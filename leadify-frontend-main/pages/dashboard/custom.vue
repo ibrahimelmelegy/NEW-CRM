@@ -174,8 +174,8 @@ const widthMarks = computed(() => ({
 }));
 
 interface WidgetView extends DashboardWidget {
-  data?: any;
-  chartOption?: any;
+  data?: unknown;
+  chartOption?: unknown;
 }
 
 const dashboards = ref<Dashboard[]>([]);
@@ -229,13 +229,13 @@ async function loadWidgetData(idx: number) {
   }
 }
 
-function buildChartOption(widget: WidgetView, data: any) {
+function buildChartOption(widget: WidgetView, data: unknown) {
   const chartType = widget.config?.chartType || 'bar';
   const items = data.items || data.data || [];
   if (!items.length) return null;
 
-  const labels = items.map((i: any) => i.name || i.label || '');
-  const values = items.map((i: any) => i.value || i.count || 0);
+  const labels = items.map((i) => i.name || i.label || '');
+  const values = items.map((i) => i.value || i.count || 0);
 
   if (chartType === 'pie') {
     return {
@@ -311,12 +311,12 @@ async function saveDashboard() {
     } else {
       const res = await createDashboard(payload);
       if (res.success && res.body) {
-        selectedDashboardId.value = (res.body as any).id;
+        selectedDashboardId.value = (res.body as unknown).id;
         dashboards.value = await fetchDashboards();
       }
     }
     ElNotification({ type: 'success', title: t('common.saved'), message: '' });
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElNotification({ type: 'error', title: t('common.error'), message: e?.message || '' });
   } finally {
     saving.value = false;
@@ -332,7 +332,7 @@ async function handleDelete() {
     dashboardName.value = '';
     widgets.value = [];
     ElNotification({ type: 'success', title: t('common.deleted'), message: '' });
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElNotification({ type: 'error', title: t('common.error'), message: e?.message || '' });
   }
 }

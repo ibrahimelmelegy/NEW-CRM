@@ -117,7 +117,7 @@ const mergeSelections = reactive<Record<string, number>>({});
 const mergeFields = ref<string[]>([]);
 
 const duplicateSets = ref<DuplicateSet[]>([]);
-const pagination = ref<any>({});
+const pagination = ref<Record<string, unknown>>({});
 
 // Load initial data
 try {
@@ -166,7 +166,7 @@ async function handleConfirm(set: DuplicateSet) {
     await confirmDuplicate(set.id);
     await handleStatusChange(activeStatus.value);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -209,7 +209,7 @@ async function handleMerge() {
     // Build merged data from selections
     const primaryRecord = mergeSet.value.records[0]!;
     const secondaryRecord = mergeSet.value.records[1]!;
-    const mergedData: Record<string, any> = {};
+    const mergedData: Record<string, unknown> = {};
     for (const field of mergeFields.value) {
       const selectedIdx = mergeSelections[field] || 0;
       mergedData[field] = mergeSet.value.records[selectedIdx]?.data?.[field];
@@ -223,7 +223,7 @@ async function handleMerge() {
     mergeDialogVisible.value = false;
     await handleStatusChange(activeStatus.value);
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     merging.value = false;

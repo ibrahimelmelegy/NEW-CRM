@@ -386,12 +386,12 @@ const activeTab = ref('warehouses');
 const saving = ref(false);
 
 // Bulk Selection
-const selectedWarehouses = ref<any[]>([]);
-const selectedTransfers = ref<any[]>([]);
-const handleWarehouseSelectionChange = (rows: any[]) => {
+const selectedWarehouses = ref<Record<string, unknown>[]>([]);
+const selectedTransfers = ref<Record<string, unknown>[]>([]);
+const handleWarehouseSelectionChange = (rows: Record<string, unknown>[]) => {
   selectedWarehouses.value = rows;
 };
-const handleTransferSelectionChange = (rows: any[]) => {
+const handleTransferSelectionChange = (rows: Record<string, unknown>[]) => {
   selectedTransfers.value = rows;
 };
 
@@ -402,15 +402,15 @@ const kpiData = reactive({
   lowStockAlerts: 0,
   pendingTransfers: 0
 });
-const lowStockItems = ref<any[]>([]);
+const lowStockItems = ref<Record<string, unknown>[]>([]);
 
 // Warehouses
 const loadingWarehouses = ref(false);
-const warehouses = ref<any[]>([]);
+const warehouses = ref<Record<string, unknown>[]>([]);
 const warehousesPagination = reactive({ page: 1, limit: 20, total: 0 });
 const warehouseSearch = ref('');
 const warehouseDialogVisible = ref(false);
-const editingWarehouse = ref<any>(null);
+const editingWarehouse = ref<Record<string, unknown> | null>(null);
 const warehouseForm = reactive({
   name: '',
   location: '',
@@ -422,12 +422,12 @@ const warehouseForm = reactive({
 
 // Zones
 const loadingZones = ref(false);
-const zones = ref<any[]>([]);
+const zones = ref<Record<string, unknown>[]>([]);
 const zonesPagination = reactive({ page: 1, limit: 20, total: 0 });
 const zoneSearch = ref('');
 const zoneDialogVisible = ref(false);
 const zoneForm = reactive({
-  warehouseId: '' as any,
+  warehouseId: '' as unknown,
   name: '',
   type: 'STORAGE',
   capacity: 0
@@ -435,13 +435,13 @@ const zoneForm = reactive({
 
 // Transfers
 const loadingTransfers = ref(false);
-const transfers = ref<any[]>([]);
+const transfers = ref<Record<string, unknown>[]>([]);
 const transfersPagination = reactive({ page: 1, limit: 20, total: 0 });
 const transferSearch = ref('');
 const transferDialogVisible = ref(false);
 const transferForm = reactive({
-  fromWarehouseId: '' as any,
-  toWarehouseId: '' as any,
+  fromWarehouseId: '' as unknown,
+  toWarehouseId: '' as unknown,
   notes: ''
 });
 
@@ -459,7 +459,7 @@ function openCreateDialog() {
 }
 
 // Helpers
-function getOccupancyColor(row: any): string {
+function getOccupancyColor(row: unknown): string {
   const pct = row.capacity ? (row.currentOccupancy / row.capacity) * 100 : 0;
   if (pct >= 90) return '#ef4444';
   if (pct >= 70) return '#f59e0b';
@@ -485,7 +485,7 @@ function formatDate(dateStr: string): string {
 const filteredWarehouses = computed(() => {
   if (!warehouseSearch.value) return warehouses.value;
   const q = warehouseSearch.value.toLowerCase();
-  return warehouses.value.filter((w: any) => {
+  return warehouses.value.filter((w) => {
     return (w.name || '').toLowerCase().includes(q) || (w.location || '').toLowerCase().includes(q);
   });
 });
@@ -493,7 +493,7 @@ const filteredWarehouses = computed(() => {
 const filteredZones = computed(() => {
   if (!zoneSearch.value) return zones.value;
   const q = zoneSearch.value.toLowerCase();
-  return zones.value.filter((z: any) => {
+  return zones.value.filter((z) => {
     return (z.name || '').toLowerCase().includes(q) || (z.warehouseName || '').toLowerCase().includes(q);
   });
 });
@@ -501,7 +501,7 @@ const filteredZones = computed(() => {
 const filteredTransfers = computed(() => {
   if (!transferSearch.value) return transfers.value;
   const q = transferSearch.value.toLowerCase();
-  return transfers.value.filter((tr: any) => {
+  return transfers.value.filter((tr) => {
     return (
       (tr.transferNumber || '').toLowerCase().includes(q) ||
       (tr.fromWarehouseName || '').toLowerCase().includes(q) ||
@@ -516,11 +516,11 @@ async function loadWarehouses() {
   try {
     const res = await useApiFetch(`warehouse?page=${warehousesPagination.page}&limit=${warehousesPagination.limit}`);
     if (res?.success) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       warehouses.value = data?.rows || data?.docs || data || [];
       warehousesPagination.total = data?.count ?? data?.total ?? warehouses.value.length;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingWarehouses.value = false;
@@ -538,7 +538,7 @@ function openCreateWarehouse() {
   warehouseDialogVisible.value = true;
 }
 
-function openEditWarehouse(wh: any) {
+function openEditWarehouse(wh: unknown) {
   editingWarehouse.value = wh;
   warehouseForm.name = wh.name || '';
   warehouseForm.location = wh.location || '';
@@ -572,7 +572,7 @@ async function saveWarehouse() {
   }
 }
 
-async function deleteWarehouse(wh: any) {
+async function deleteWarehouse(wh: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`warehouse/${wh.id}`, 'DELETE');
@@ -589,11 +589,11 @@ async function loadZones() {
   try {
     const res = await useApiFetch(`warehouse/zones?page=${zonesPagination.page}&limit=${zonesPagination.limit}`);
     if (res?.success) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       zones.value = data?.rows || data?.docs || data || [];
       zonesPagination.total = data?.count ?? data?.total ?? zones.value.length;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingZones.value = false;
@@ -626,7 +626,7 @@ async function saveZone() {
   }
 }
 
-async function deleteZone(zone: any) {
+async function deleteZone(zone: unknown) {
   try {
     await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), { type: 'warning' });
     await useApiFetch(`warehouse/zones/${zone.id}`, 'DELETE');
@@ -643,11 +643,11 @@ async function loadTransfers() {
   try {
     const res = await useApiFetch(`warehouse/transfers?page=${transfersPagination.page}&limit=${transfersPagination.limit}`);
     if (res?.success) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       transfers.value = data?.rows || data?.docs || data || [];
       transfersPagination.total = data?.count ?? data?.total ?? transfers.value.length;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   } finally {
     loadingTransfers.value = false;
@@ -683,7 +683,7 @@ async function saveTransfer() {
   }
 }
 
-async function updateTransferStatus(transfer: any) {
+async function updateTransferStatus(transfer: unknown) {
   const nextStatus = transfer.status === 'PENDING' ? 'IN_TRANSIT' : 'COMPLETED';
   try {
     await useApiFetch(`warehouse/transfers/${transfer.id}`, 'PUT', { status: nextStatus });
@@ -697,7 +697,7 @@ async function updateTransferStatus(transfer: any) {
 // KPI Computation (derived from loaded data)
 function computeKpis() {
   kpiData.totalWarehouses = warehouses.value.length;
-  kpiData.pendingTransfers = transfers.value.filter((t: any) => t.status === 'PENDING').length;
+  kpiData.pendingTransfers = transfers.value.filter((t) => t.status === 'PENDING').length;
 }
 
 // Low Stock Alerts
@@ -705,11 +705,11 @@ async function loadLowStock() {
   try {
     const res = await useApiFetch('warehouse/low-stock?threshold=10');
     if (res?.success) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       lowStockItems.value = data?.rows || data?.docs || data || [];
       kpiData.lowStockAlerts = lowStockItems.value.length;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -719,10 +719,10 @@ async function loadStockCount() {
   try {
     const res = await useApiFetch('warehouse/stock?limit=1');
     if (res?.success) {
-      const data = res.body as any;
+      const data = res.body as unknown;
       kpiData.totalStockItems = data?.count ?? data?.total ?? 0;
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     ElMessage.error(t('common.error'));
   }
 }
@@ -765,7 +765,7 @@ function exportWarehousesCSV() {
   const headers = ['Name', 'Location', 'Manager', 'Capacity', 'Occupancy', 'Status'];
   const csv = [
     headers.join(','),
-    ...data.map((row: any) =>
+    ...data.map((row) =>
       [
         `"${row.name || ''}"`,
         `"${row.location || ''}"`,
@@ -792,7 +792,7 @@ function exportTransfersCSV() {
   const headers = ['Transfer #', 'From Warehouse', 'To Warehouse', 'Items', 'Status', 'Created', 'Completed'];
   const csv = [
     headers.join(','),
-    ...data.map((row: any) =>
+    ...data.map((row) =>
       [
         `"${row.transferNumber || ''}"`,
         `"${row.fromWarehouseName || row.fromWarehouseId || ''}"`,

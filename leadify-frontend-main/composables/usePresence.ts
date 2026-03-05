@@ -39,8 +39,8 @@ export function usePresence() {
     s.emit('presence:join', {
       page: route.path,
       userId: currentUser?.id,
-      name: (currentUser as any)?.firstName
-        ? `${(currentUser as any).firstName} ${(currentUser as any).lastName || ''}`.trim()
+      name: (currentUser as unknown)?.firstName
+        ? `${(currentUser as unknown).firstName} ${(currentUser as unknown).lastName || ''}`.trim()
         : currentUser?.email || 'Anonymous',
       profilePicture: currentUser?.profilePicture || undefined
     });
