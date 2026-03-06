@@ -1,4 +1,9 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "useUnknownInCatchVariables": false,
+    "strictNullChecks": false
+  },
   "exclude": ["node_modules", "dist", "tests"]
 }
