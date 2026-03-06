@@ -38,11 +38,17 @@ const { Sequelize } = require('sequelize');
 async function reset() {
   const s = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, { host: process.env.DB_HOST, port: process.env.DB_PORT, dialect: 'postgres', logging: false });
   await s.authenticate();
-  const hash = await bcrypt.hash('Heroo@1502', 12);
-  const [results] = await s.query('UPDATE \"Users\" SET password = \$1 WHERE email = \$2 RETURNING id', { bind: [hash, 'admin@hp-tech.com'] });
-  console.log('Password reset done, rows:', results.length);
-  await s.query('DELETE FROM \"LoginFailures\" WHERE email = \$1', { bind: ['admin@hp-tech.com'] });
-  console.log('Login failures cleared');
+  // List all users first
+  const [users] = await s.query('SELECT id, email, name FROM \"Users\" ORDER BY id LIMIT 10');
+  console.log('Users found:', JSON.stringify(users));
+  if (users.length > 0) {
+    const adminEmail = users[0].email;
+    const hash = await bcrypt.hash('Heroo@1502', 12);
+    const [results] = await s.query('UPDATE \"Users\" SET password = \$1 WHERE id = \$2 RETURNING id, email', { bind: [hash, users[0].id] });
+    console.log('Password reset for:', JSON.stringify(results));
+    await s.query('DELETE FROM \"LoginFailures\"');
+    console.log('All login failures cleared');
+  }
   await s.close();
 }
 reset().catch(e => console.error(e));
