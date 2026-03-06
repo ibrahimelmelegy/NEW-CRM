@@ -28,7 +28,7 @@ class Deal extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   public companyName?: string;
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({ type: DataType.DECIMAL(12, 2), allowNull: false })
   public price!: number;
 
   @Column({ type: DataType.ENUM(...Object.values(ContractTypeEnums)), allowNull: false })

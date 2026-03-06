@@ -3,7 +3,7 @@
   .flex.justify-between.items-center.mb-4
     span
     el-button(size='medium' plain type="primary" :icon="Plus" native-type="button" @click="AddInvoice" class="!rounded-2xl !py-2.5 !px-4") {{ $t('deals.form.addInvoice') }}
-  DealFormInovice(
+  DealFormInvoice(
     v-for="(invoice, index) in invoicesList"
     :key="invoice.id"
     :invoice="invoice"

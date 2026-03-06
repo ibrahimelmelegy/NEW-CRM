@@ -50,7 +50,7 @@ class SlackConnector {
       }
 
       return { success: true, message: 'Message sent to Slack successfully' };
-    } catch (error: any) {
+    } catch (error) {
       const errMsg = error instanceof Error ? error.message : 'Failed to send Slack message';
       return { success: false, message: errMsg };
     }

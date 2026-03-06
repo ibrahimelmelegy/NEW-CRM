@@ -2,6 +2,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { FindOptions, Model } from 'sequelize';
 import { getTenantContext, TENANT_BYPASS } from '../middleware/tenantContext';
 import { buildTenantScopedModelSet, isTenantScopedModel, getTenantScopedModelCount } from '../utils/tenantModelDetector';
+import logger from './logger';
 
 /**
  * Checks whether a given model has a tenantId column using rawAttributes.
@@ -71,7 +72,7 @@ export function registerTenantHooks(sequelize: Sequelize): void {
   // Build the set of models that have a tenantId column
   buildTenantScopedModelSet(sequelize);
   const count = getTenantScopedModelCount();
-  console.log(`Tenant hooks registered: ${count} tenant-scoped models detected`);
+  logger.debug({ count }, 'Tenant hooks registered: tenant-scoped models detected');
 
   // ─── beforeFind ────────────────────────────────────────────────────────
   sequelize.addHook('beforeFind', 'tenantScopeFind', (options: FindOptions) => {
@@ -102,10 +103,7 @@ export function registerTenantHooks(sequelize: Sequelize): void {
       (instance as any).tenantId = ctx.tenantId;
     } else if (current !== ctx.tenantId) {
       // Prevent cross-tenant creation — override with correct tenantId
-      console.error(
-        `[TenantScope] SECURITY: Cross-tenant create attempt blocked. ` +
-        `Model=${model.name}, attempted=${current}, corrected=${ctx.tenantId}`
-      );
+      logger.error({ model: model.name, attemptedTenantId: current, correctedTenantId: ctx.tenantId }, 'SECURITY: Cross-tenant create attempt blocked');
       (instance as any).tenantId = ctx.tenantId;
     }
   });

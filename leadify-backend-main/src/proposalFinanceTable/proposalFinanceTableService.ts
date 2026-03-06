@@ -59,7 +59,7 @@ class ProposalFinanceTableService {
     });
 
     if (calculatedItems.length > 0) {
-      const financeTableItems = calculatedItems.map((item: any) => ({
+      const financeTableItems = calculatedItems.map((item) => ({
         ...item,
         financeTableId: financeTable.id
       }));

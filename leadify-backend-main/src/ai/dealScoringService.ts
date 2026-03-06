@@ -300,7 +300,7 @@ class DealScoringService {
     // ===== Factor 8: Invoice/Payment Progress =====
     const invoices = deal.invoice || [];
     if (invoices.length > 0) {
-      const collectedCount = invoices.filter((inv: any) => inv.collected).length;
+      const collectedCount = invoices.filter((inv) => inv.collected).length;
       if (collectedCount > 0) {
         factors.push({
           factor: 'Payment Progress',

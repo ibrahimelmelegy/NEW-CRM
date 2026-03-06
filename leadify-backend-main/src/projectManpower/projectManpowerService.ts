@@ -157,7 +157,7 @@ class ProjectManpowerService {
       raw: false
     });
 
-    const report = allocations.map((alloc: any) => {
+    const report = allocations.map((alloc) => {
       const totalEstimatedDays = Number(alloc.getDataValue('totalEstimatedDays')) || 0;
       const totalActualDays = Number(alloc.getDataValue('totalActualDays')) || 0;
       const projectCount = Number(alloc.getDataValue('projectCount')) || 0;
@@ -183,7 +183,7 @@ class ProjectManpowerService {
 
     // Summary
     const totalResources = report.length;
-    const overAllocatedCount = report.filter((r: any) => r.overAllocated).length;
+    const overAllocatedCount = report.filter((r) => r.overAllocated).length;
     const avgUtilization = totalResources > 0
       ? Math.round(report.reduce((s: number, r: any) => s + r.utilization, 0) / totalResources)
       : 0;

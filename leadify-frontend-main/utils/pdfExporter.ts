@@ -3,13 +3,14 @@ import 'jspdf-autotable';
 import type { TemplateLayout, TemplateElement } from '~/composables/useDocumentTemplates';
 
 export interface PDFData {
-  [key: string]: any;
-  items?: Array<Record<string, any>>;
+  [key: string]: unknown;
+  items?: Array<Record<string, unknown>>;
 }
 
 function resolveVariable(content: string, data: PDFData): string {
-  return content.replace(/\{\{(\w+)\}\}/g, (_, key) => {
-    return data[key] != null ? String(data[key]) : '';
+  return content.replace(/\{\{(\w+)\}\}/g, (_: string, key: string) => {
+    const val = data[key];
+    return val != null ? String(val) : '';
   });
 }
 
@@ -118,7 +119,7 @@ function renderTable(doc: JsPDF, el: TemplateElement, data: PDFData) {
   const columnWidths = el.props?.columnWidths;
 
   const head = [columns];
-  const body = items.map((item: Record<string, any>) =>
+  const body = items.map((item: Record<string, unknown>) =>
     columns.map((col: string) => {
       const key = col.toLowerCase().replace(/\s+/g, '');
       return item[key] ?? item[col] ?? '';
@@ -150,7 +151,7 @@ function renderTable(doc: JsPDF, el: TemplateElement, data: PDFData) {
       lineWidth: 0.2
     },
     ...(columnWidths && {
-      columnStyles: columnWidths.reduce((acc: any, w: number, i: number) => {
+      columnStyles: columnWidths.reduce((acc: Record<number, { cellWidth: number }>, w: number, i: number) => {
         acc[i] = { cellWidth: w };
         return acc;
       }, {})

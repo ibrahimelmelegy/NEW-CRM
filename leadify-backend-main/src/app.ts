@@ -260,19 +260,28 @@ const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
 // Health checks — no auth required
 app.use('/api', healthRoutes);
 
-// Swagger API docs — no auth required
-// Relax CSP for Swagger UI (needs inline scripts/styles)
-app.use('/api/docs', (_req: Request, res: Response, next: NextFunction) => {
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
-  );
-  next();
-}, swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'Leadify CRM API Documentation',
-}));
-app.get('/api/docs.json', (_req, res) => res.json(swaggerSpec));
+// Swagger API docs — protected in production, open in development
+const swaggerMiddleware = [
+  (_req: Request, res: Response, next: NextFunction) => {
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    );
+    next();
+  },
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'Leadify CRM API Documentation',
+  })
+];
+if (process.env.NODE_ENV === 'production') {
+  app.use('/api/docs', authenticateUser, ...swaggerMiddleware);
+  app.get('/api/docs.json', authenticateUser, (_req, res) => res.json(swaggerSpec));
+} else {
+  app.use('/api/docs', ...swaggerMiddleware);
+  app.get('/api/docs.json', (_req, res) => res.json(swaggerSpec));
+}
 
 // Expose CSRF token endpoint for frontend
 app.get('/api/csrf-token', (req: Request, res: Response) => {
@@ -280,9 +289,22 @@ app.get('/api/csrf-token', (req: Request, res: Response) => {
   res.json({ csrfToken: token });
 });
 
-// API routes use Bearer token auth (JWT + session), so CSRF middleware
-// is available but not globally applied. Apply per-route if needed
-// for cookie-based auth flows via: app.use('/path', doubleCsrfProtection, handler)
+// CSRF protection for state-changing requests (POST/PUT/PATCH/DELETE)
+// Skips GET/HEAD/OPTIONS, auth routes (no CSRF token yet), and webhooks (external callers)
+app.use('/api', (req: Request, res: Response, next: NextFunction) => {
+  // Skip safe HTTP methods
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
+  // Skip auth routes (login/register don't have CSRF token yet)
+  if (req.path.startsWith('/auth/')) return next();
+  // Skip webhook endpoints (external callers can't provide CSRF tokens)
+  if (req.path.startsWith('/webhooks/')) return next();
+  // Skip health check endpoints
+  if (req.path.startsWith('/health')) return next();
+  // Skip CSRF token endpoint itself
+  if (req.path === '/csrf-token') return next();
+  // Apply CSRF protection
+  doubleCsrfProtection(req, res, next);
+});
 
 // 9. General rate limiting
 app.use(generalLimiter);

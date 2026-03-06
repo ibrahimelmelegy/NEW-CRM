@@ -298,10 +298,10 @@ class DashboardService {
     });
 
     return {
-      labels: results.map((r: any) => r[groupBy]),
+      labels: results.map((r) => r[groupBy]),
       datasets: [
         {
-          data: results.map((r: any) => Number(r.value || 0)),
+          data: results.map((r) => Number(r.value || 0)),
           chartType: config.chartType || 'bar'
         }
       ]
@@ -377,9 +377,9 @@ class DashboardService {
     ]);
 
     const activities = [
-      ...recentLeads.map((l: any) => ({ entityType: 'lead', ...l })),
-      ...recentDeals.map((d: any) => ({ entityType: 'deal', ...d })),
-      ...recentOpportunities.map((o: any) => ({ entityType: 'opportunity', ...o }))
+      ...recentLeads.map((l) => ({ entityType: 'lead', ...l })),
+      ...recentDeals.map((d) => ({ entityType: 'deal', ...d })),
+      ...recentOpportunities.map((o) => ({ entityType: 'opportunity', ...o }))
     ]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, limit);
@@ -430,7 +430,7 @@ class DashboardService {
     });
 
     const leaderboard = results
-      .map((r: any) => {
+      .map((r) => {
         const userData = r.users?.[0];
         return {
           userId: userData?.id,
@@ -439,7 +439,7 @@ class DashboardService {
           dealCount: Number(r.getDataValue('dealCount') || 0)
         };
       })
-      .filter((entry: any) => entry.userId);
+      .filter((entry) => entry.userId);
 
     return { leaderboard };
   }
@@ -510,7 +510,7 @@ class DashboardService {
     });
 
     const stages = Object.values(DealStageEnums).map(stage => {
-      const found = stageResults.find((r: any) => r.stage === stage);
+      const found = stageResults.find((r) => r.stage === stage);
       return {
         stage,
         count: found ? Number((found as any).count) : 0,
@@ -561,9 +561,9 @@ class DashboardService {
     });
 
     return {
-      labels: results.map((r: any) => r.period),
-      revenue: results.map((r: any) => Number(r.revenue || 0)),
-      dealCount: results.map((r: any) => Number(r.dealCount || 0))
+      labels: results.map((r) => r.period),
+      revenue: results.map((r) => Number(r.revenue || 0)),
+      dealCount: results.map((r) => Number(r.dealCount || 0))
     };
   }
 
@@ -726,7 +726,7 @@ class DashboardService {
       raw: true
     });
 
-    return results.map((r: any) => ({
+    return results.map((r) => ({
       source: r.leadSource,
       count: Number(r.count)
     }));
@@ -764,7 +764,7 @@ class DashboardService {
       raw: true
     });
 
-    return results.map((r: any) => ({
+    return results.map((r) => ({
       month: r.month,
       avgValue: Math.round(Number(r.avgValue || 0)),
       dealCount: Number(r.dealCount)

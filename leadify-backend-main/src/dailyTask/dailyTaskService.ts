@@ -273,7 +273,7 @@ class DailyTaskService {
       };
     });
 
-    const taskDistributionByClient = taskClientCounts.map((item: any) => {
+    const taskDistributionByClient = taskClientCounts.map((item) => {
       const clientName = item.client?.clientName || 'Unknown';
       const count = Number(item.dataValues.count);
 
@@ -292,7 +292,7 @@ class DailyTaskService {
       taskStatusPercentage,
       monthlyRevenue: formattedMonthlyRevenue,
       taskDistributionByClient,
-      salesPerformance: salesPerformance.map((item: any) => ({
+      salesPerformance: salesPerformance.map((item) => ({
         name: item['salesRepresentative.name'],
         tasksCount: Number(item.tasksCount),
         totalPaid: Number((item.totalPaid ?? 0).toFixed(2))

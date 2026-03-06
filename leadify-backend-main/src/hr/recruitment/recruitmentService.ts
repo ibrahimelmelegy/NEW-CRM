@@ -225,7 +225,7 @@ class RecruitmentService {
       const stageHistory = exp?.stageHistory || [];
 
       // Find the HIRED transition timestamp
-      const hiredEntry = stageHistory.find((h: any) => h.to === 'HIRED');
+      const hiredEntry = stageHistory.find((h) => h.to === 'HIRED');
       const hiredDate = hiredEntry?.timestamp
         ? new Date(hiredEntry.timestamp)
         : null;

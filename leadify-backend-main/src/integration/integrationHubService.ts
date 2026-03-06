@@ -389,7 +389,7 @@ class IntegrationHubService {
         default:
           return { success: false, message: `Unknown integration type: ${type}` };
       }
-    } catch (error: any) {
+    } catch (error) {
       const errMsg = error instanceof Error ? error.message : 'Connection test failed';
       // Update status to ERROR if this is a saved integration
       const existing = await IntegrationConfig.findOne({ where: { type } });
@@ -500,7 +500,7 @@ class IntegrationHubService {
         status: response.status,
         message: response.ok ? 'Webhook test successful' : `Webhook returned HTTP ${response.status}`
       };
-    } catch (error: any) {
+    } catch (error) {
       const errMsg = error instanceof Error ? error.message : 'Webhook test failed';
       return { success: false, status: 0, message: errMsg };
     }

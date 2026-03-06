@@ -660,7 +660,7 @@ class ClientService {
 
     // Combine and sort all timeline items
     const timeline = [
-      ...deals.map((d: any) => ({
+      ...deals.map((d) => ({
         id: d.id,
         type: 'DEAL',
         title: d.name,
@@ -668,7 +668,7 @@ class ClientService {
         timestamp: d.createdAt,
         data: d.toJSON()
       })),
-      ...activities.map((a: any) => ({
+      ...activities.map((a) => ({
         id: a.id,
         type: 'ACTIVITY',
         title: a.subject || a.type,
@@ -677,7 +677,7 @@ class ClientService {
         user: a.user,
         data: a.toJSON()
       })),
-      ...calls.map((c: any) => ({
+      ...calls.map((c) => ({
         id: c.id,
         type: 'CALL',
         title: `${c.direction} Call`,
@@ -685,7 +685,7 @@ class ClientService {
         timestamp: c.createdAt,
         data: c.toJSON()
       })),
-      ...meetings.map((m: any) => ({
+      ...meetings.map((m) => ({
         id: m.id,
         type: 'MEETING',
         title: m.title,

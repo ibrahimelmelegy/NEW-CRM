@@ -173,7 +173,7 @@ class AttributionService {
 
     for (const model of models) {
       const result = await this.calculateAttribution(dealId, model, dealValue, tenantId);
-      results[model] = result.touchpoints.map((tp: any) => ({
+      results[model] = result.touchpoints.map((tp) => ({
         id: tp.id,
         channel: tp.channel,
         creditPercent: tp.creditPercent,

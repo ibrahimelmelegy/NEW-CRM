@@ -21,7 +21,7 @@ class GamificationService {
       raw: false
     });
 
-    return leaderboard.map((entry: any, index: number) => ({
+    return leaderboard.map((entry, index: number) => ({
       rank: index + 1,
       userId: entry.userId,
       user: entry.user,

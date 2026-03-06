@@ -28,7 +28,7 @@ class CampaignService {
 
     if (data.recipients?.length) {
       await CampaignRecipient.bulkCreate(
-        data.recipients.map((r: any) => ({
+        data.recipients.map((r) => ({
           campaignId: campaign.id,
           contactEmail: r.email,
           contactName: r.name
@@ -47,7 +47,7 @@ class CampaignService {
     if (data.recipients) {
       await CampaignRecipient.destroy({ where: { campaignId: id } });
       await CampaignRecipient.bulkCreate(
-        data.recipients.map((r: any) => ({
+        data.recipients.map((r) => ({
           campaignId: id,
           contactEmail: r.email,
           contactName: r.name

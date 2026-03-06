@@ -252,7 +252,7 @@ class DuplicateService {
     if (!Model) throw new Error(`Unsupported entity type: ${entityType}`);
 
     const records = await Model.findAll();
-    const recordData = records.map((r: any) => r.toJSON());
+    const recordData = records.map((r) => r.toJSON());
     const detectedSets: Array<{ masterRecordId: string; duplicateRecordIds: string[]; matchScore: number; matchedFields: any[] }> = [];
     const processedPairs = new Set<string>();
 

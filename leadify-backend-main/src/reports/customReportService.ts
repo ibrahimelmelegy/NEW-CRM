@@ -330,7 +330,7 @@ class CustomReportService {
     if (!data || !data.length) return '';
 
     const headers = Object.keys(data[0]);
-    const rows = data.map((row: any) =>
+    const rows = data.map((row) =>
       headers
         .map(h => {
           const val = row[h];

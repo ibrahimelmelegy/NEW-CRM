@@ -52,7 +52,7 @@ export const aiDealController = {
 
       const score = await dealScoringService.scoreDeal(dealId as string);
       wrapResult(res, score);
-    } catch (error: any) {
+    } catch (error) {
       if ((error instanceof Error ? error.message : String(error)) === 'Deal not found') {
         res.status(404).json({ success: false, message: 'Deal not found' });
         return;

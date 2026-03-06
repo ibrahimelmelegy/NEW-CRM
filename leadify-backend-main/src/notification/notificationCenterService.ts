@@ -242,7 +242,7 @@ class NotificationCenterService {
       for (const sub of subscriptions) {
         try {
           await webpush.sendNotification(sub.subscription, payload);
-        } catch (err: any) {
+        } catch (err) {
           // If subscription expired (410 Gone), remove it
           if (err?.statusCode === 410) {
             await sub.destroy();

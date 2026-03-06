@@ -396,7 +396,7 @@ class AIChatService {
       case 'status':
         if (data.breakdown?.length > 0) {
           const lines = data.breakdown
-            .map((item: any) => {
+            .map((item) => {
               const key = Object.keys(item).find(k => k !== 'count') || 'status';
               return `- **${item[key]}**: ${item.count}`;
             })

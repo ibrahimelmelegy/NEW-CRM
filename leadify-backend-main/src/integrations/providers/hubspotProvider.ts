@@ -44,7 +44,7 @@ export class HubSpotProvider {
         return { success: true, data: { synced: response.results.length, failed: contacts.length - response.results.length }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: contacts.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[HubSpotProvider] syncContacts error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
@@ -60,7 +60,7 @@ export class HubSpotProvider {
         return { success: true, data: { synced: response.results.length, failed: deals.length - response.results.length }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: deals.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[HubSpotProvider] syncDeals error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
@@ -76,7 +76,7 @@ export class HubSpotProvider {
         return { success: true, data: { synced: response.results.length, failed: companies.length - response.results.length }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: companies.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[HubSpotProvider] syncCompanies error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
@@ -93,7 +93,7 @@ export class HubSpotProvider {
           companies: client.crm.companies,
         };
         const response = await apiMap[objectType].basicApi.getPage(limit);
-        const records: HubSpotRecord[] = response.results.map((r: any) => ({
+        const records: HubSpotRecord[] = response.results.map((r) => ({
           id: r.id,
           properties: r.properties,
           createdAt: r.createdAt,
@@ -106,7 +106,7 @@ export class HubSpotProvider {
         { id: 'hs_002', properties: { firstname: 'Test', lastname: 'User', email: 'test@example.com' } },
       ];
       return { success: true, data: mockRecords, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[HubSpotProvider] importFromHubspot error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };
@@ -127,7 +127,7 @@ export class HubSpotProvider {
         return { success: true, data: { exported: response.results.length, failed: records.length - response.results.length }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { exported: records.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[HubSpotProvider] exportToHubspot error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !HubSpotProvider.isConfigured(), syncedAt: new Date().toISOString() };

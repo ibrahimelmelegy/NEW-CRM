@@ -89,7 +89,7 @@ export class SlackProvider {
       }
 
       return { success: true, data: { ts: `mock_ts_${Date.now()}`, channel: input.channel }, mock: true };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to send Slack message';
       console.error('[SlackProvider] sendMessage error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SlackProvider.isConfigured() };
@@ -130,7 +130,7 @@ export class SlackProvider {
         error: result.error,
         mock: result.mock
       };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to send notification';
       console.error('[SlackProvider] sendCrmNotification error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SlackProvider.isConfigured() };
@@ -170,7 +170,7 @@ export class SlackProvider {
         ],
         mock: true
       };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to list channels';
       console.error('[SlackProvider] listChannels error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SlackProvider.isConfigured() };
@@ -203,7 +203,7 @@ export class SlackProvider {
         ],
         mock: true
       };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to get channel history';
       console.error('[SlackProvider] getChannelHistory error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SlackProvider.isConfigured() };

@@ -225,7 +225,7 @@
 
 <script>
 import { defineCustomElement, defineAsyncComponent } from 'vue';
-import { defaultDataProposal } from './defaultDtat';
+import { defaultDataProposal } from './defaultData';
 import { move_children_forward_recursively, move_children_backwards_with_merging } from '~/utils/page-transition-mgmt.js';
 
 export default {

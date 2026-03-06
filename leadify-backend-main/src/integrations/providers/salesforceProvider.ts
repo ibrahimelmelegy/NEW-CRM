@@ -64,7 +64,7 @@ export class SalesforceProvider {
         return { success: true, data: { synced, failed: leads.length - synced }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: leads.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[SalesforceProvider] syncLeads error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
@@ -81,7 +81,7 @@ export class SalesforceProvider {
         return { success: true, data: { synced, failed: contacts.length - synced }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: contacts.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[SalesforceProvider] syncContacts error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
@@ -98,7 +98,7 @@ export class SalesforceProvider {
         return { success: true, data: { synced, failed: deals.length - synced }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { synced: deals.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[SalesforceProvider] syncDeals error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
@@ -115,7 +115,7 @@ export class SalesforceProvider {
           Opportunity: 'Id, Name, Amount, StageName, CloseDate',
         };
         const records = await conn.sobject(objectType).find({}, fieldMap[objectType]).limit(limit).execute();
-        const mapped = records.map((r: any) => ({ id: r.Id, name: r.Name, email: r.Email, phone: r.Phone, ...r }));
+        const mapped = records.map((r) => ({ id: r.Id, name: r.Name, email: r.Email, phone: r.Phone, ...r }));
         return { success: true, data: mapped, mock: false, syncedAt: new Date().toISOString() };
       }
       const mockRecords: SalesforceRecord[] = [
@@ -123,7 +123,7 @@ export class SalesforceProvider {
         { id: 'sf_002', name: 'Mock Lead B', email: 'leadb@example.com' },
       ];
       return { success: true, data: mockRecords, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[SalesforceProvider] importFromSalesforce error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
@@ -139,7 +139,7 @@ export class SalesforceProvider {
         return { success: true, data: { exported, failed: records.length - exported }, mock: false, syncedAt: new Date().toISOString() };
       }
       return { success: true, data: { exported: records.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[SalesforceProvider] exportToSalesforce error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };

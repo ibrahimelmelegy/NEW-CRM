@@ -262,7 +262,7 @@ export function renderFromTemplate(
     formattedDueDate: content.dueDate ? new Date(content.dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '',
     formattedValidUntil: content.validUntil ? new Date(content.validUntil).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '',
     // Enrich items with computed lineTotal
-    items: items.map((item: any, i: number) => ({
+    items: items.map((item, i: number) => ({
       ...item,
       index: i + 1,
       lineTotal: ((item.quantity || 0) * (item.rate || 0)).toFixed(2)

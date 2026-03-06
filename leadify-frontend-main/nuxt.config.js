@@ -77,7 +77,6 @@ export default defineNuxtConfig({
         '@tiptap/extension-table-header',
         'axios',
         'pinia',
-        '@vueup/vue-quill',
         'vue-tel-input',
         'vue-advanced-cropper',
         'vue-animated-counter',
@@ -105,7 +104,7 @@ export default defineNuxtConfig({
             if (id.includes('node_modules/element-plus')) {
               return 'vendor-element-plus';
             }
-            if (id.includes('node_modules/@tiptap') || id.includes('node_modules/prosemirror') || id.includes('node_modules/@vueup/vue-quill') || id.includes('node_modules/quill')) {
+            if (id.includes('node_modules/@tiptap') || id.includes('node_modules/prosemirror')) {
               return 'vendor-editor';
             }
             if (id.includes('node_modules/jspdf') || id.includes('node_modules/xlsx')) {

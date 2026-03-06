@@ -846,7 +846,7 @@ async function seedDemo() {
     // ── DONE ──
     // DEMO SEED COMPLETE
     process.exit(0);
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ Seed failed:', error.message);
     console.error(error.stack);
     process.exit(1);

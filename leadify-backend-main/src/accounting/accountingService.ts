@@ -167,7 +167,7 @@ class AccountingService {
     }
 
     // Validate all account IDs exist
-    const accountIds = lines.map((l: any) => l.accountId);
+    const accountIds = lines.map((l) => l.accountId);
     const accounts = await ChartOfAccounts.findAll({ where: { id: accountIds } });
     if (accounts.length !== new Set(accountIds).size) {
       throw new Error('One or more account IDs are invalid');

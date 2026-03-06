@@ -22,5 +22,13 @@ module.exports = {
     clearMocks: true,
     collectCoverage: true,
     coverageDirectory: 'coverage',
+    coverageThreshold: {
+        global: {
+            branches: 30,
+            functions: 30,
+            lines: 30,
+            statements: 30
+        }
+    },
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };

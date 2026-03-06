@@ -1,4 +1,25 @@
 /* eslint-disable require-await */
+export interface TemplateElementProps {
+  content?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string;
+  color?: string;
+  fill?: string;
+  align?: string;
+  columns?: string[];
+  columnWidths?: number[];
+  headerBg?: string;
+  headerColor?: string;
+  borderColor?: string;
+  borderWidth?: number;
+  borderRadius?: number;
+  thickness?: number;
+  shape?: string;
+  stripedBg?: string;
+  [key: string]: unknown;
+}
+
 export interface TemplateElement {
   id: string;
   type: 'text' | 'image' | 'table' | 'line' | 'shape';
@@ -6,7 +27,7 @@ export interface TemplateElement {
   y: number;
   width: number;
   height: number;
-  props: Record<string, unknown>;
+  props: TemplateElementProps;
 }
 
 export interface TemplateLayout {

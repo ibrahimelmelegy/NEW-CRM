@@ -110,8 +110,8 @@ class AccountPlanService {
       nest: true
     });
 
-    const opportunities = plans.map((p: any) => {
-      const goalsCompleted = (p.goals || []).filter((g: any) => g.status === 'COMPLETED').length;
+    const opportunities = plans.map((p) => {
+      const goalsCompleted = (p.goals || []).filter((g) => g.status === 'COMPLETED').length;
       const totalGoals = (p.goals || []).length;
       return {
         accountPlanId: p.id,

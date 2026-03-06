@@ -29,7 +29,7 @@ export interface HttpExecutionResult {
  */
 function resolveVariables(template: string, data: Record<string, any>): string {
   return template.replace(/\{\{([\w.]+)\}\}/g, (_match, path: string) => {
-    const value = path.split('.').reduce((obj: any, key: string) => {
+    const value = path.split('.').reduce((obj, key: string) => {
       if (obj === null || obj === undefined) return undefined;
       return obj[key];
     }, data);
@@ -93,7 +93,7 @@ async function performRequest(
       text: text.substring(0, 5000), // Truncate large responses
       resHeaders
     };
-  } catch (err: any) {
+  } catch (err) {
     clearTimeout(timer);
     throw err;
   }
@@ -183,7 +183,7 @@ export async function executeHttp(nodeConfig: HttpNodeConfig, context: HttpConte
 
       // Server error (5xx) - retry if we have retries left
       lastError = new Error(`HTTP ${result.status}: ${result.text.substring(0, 200)}`);
-    } catch (err: any) {
+    } catch (err) {
       lastError = err;
 
       // Abort errors (timeout) should not retry

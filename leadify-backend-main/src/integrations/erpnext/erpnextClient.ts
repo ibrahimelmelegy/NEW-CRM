@@ -129,7 +129,7 @@ export class ERPNextClient {
     let response: { statusCode: number; body: string };
     try {
       response = await makeRequest({ method, url, headers, body, timeout: this.timeout });
-    } catch (err: any) {
+    } catch (err) {
       console.error(`[ERPNext] Request failed: ${err.message}`);
       throw new ERPNextApiError({
         httpCode: 0,

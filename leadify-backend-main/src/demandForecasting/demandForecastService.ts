@@ -148,7 +148,7 @@ class DemandForecastService {
     let totalAbsError = 0;
     let totalBias = 0;
 
-    const details = forecasts.map((f: any) => {
+    const details = forecasts.map((f) => {
       const error = f.actualDemand - f.predictedDemand;
       const absPercError = f.actualDemand > 0 ? Math.abs(error) / f.actualDemand : 0;
       totalAbsError += absPercError;

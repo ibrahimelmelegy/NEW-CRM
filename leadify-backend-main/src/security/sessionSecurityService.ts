@@ -397,9 +397,9 @@ class SessionSecurityService {
       user: user.toJSON(),
       loginHistory,
       activeSessions: sessions.length,
-      leads: leads.map((l: any) => l.toJSON()),
-      deals: deals.map((d: any) => d.toJSON()),
-      clients: clients.map((c: any) => c.toJSON())
+      leads: leads.map((l) => l.toJSON()),
+      deals: deals.map((d) => d.toJSON()),
+      clients: clients.map((c) => c.toJSON())
     };
   }
 }

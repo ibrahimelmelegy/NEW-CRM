@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { AuthenticatedRequest } from '../types';
 import { TenantPlan } from '../tenant/tenantModel';
+import redisClient from '../config/redis';
 
 // ─── Per-Plan Rate Limits ─────────────────────────────────────────────────────
 // Requests per window. Window = 1 minute.
@@ -12,31 +13,27 @@ const PLAN_LIMITS: Record<TenantPlan, number> = {
 
 const DEFAULT_WINDOW_MS = 60 * 1000; // 1 minute
 
-// ─── In-Memory Sliding Window Store ───────────────────────────────────────────
-// Each tenant gets a bucket: { count, windowStart }
-// In production with multiple instances, replace with Redis (e.g. ioredis).
+// ─── In-Memory Fallback ──────────────────────────────────────────────────────
+// Used only when Redis is unavailable
 interface RateBucket {
   count: number;
   windowStart: number;
 }
+const fallbackBuckets = new Map<string, RateBucket>();
 
-const tenantBuckets = new Map<string, RateBucket>();
-
-// Cleanup stale buckets every 5 minutes to prevent memory leaks
+// Cleanup stale fallback buckets every 5 minutes
 const CLEANUP_INTERVAL_MS = 5 * 60 * 1000;
 setInterval(() => {
   const now = Date.now();
-  for (const [key, bucket] of tenantBuckets.entries()) {
+  for (const [key, bucket] of fallbackBuckets.entries()) {
     if (now - bucket.windowStart > DEFAULT_WINDOW_MS * 2) {
-      tenantBuckets.delete(key);
+      fallbackBuckets.delete(key);
     }
   }
-}, CLEANUP_INTERVAL_MS).unref(); // .unref() so the timer doesn't prevent process exit
+}, CLEANUP_INTERVAL_MS).unref();
 
 /**
  * Resolves the tenant plan from the request.
- * Checks req.tenant first (set by validateTenant middleware),
- * then falls back to a default.
  */
 function resolvePlan(req: AuthenticatedRequest): TenantPlan {
   const tenant = req.tenant;
@@ -48,9 +45,6 @@ function resolvePlan(req: AuthenticatedRequest): TenantPlan {
 
 /**
  * Resolves the rate limit key.
- * - Authenticated users with tenantId: keyed by tenantId
- * - Authenticated users without tenantId (superadmin): no limit
- * - Unauthenticated requests: keyed by IP
  */
 function resolveKey(req: AuthenticatedRequest): { key: string; isTenant: boolean } | null {
   const user = req.user;
@@ -73,10 +67,41 @@ function resolveKey(req: AuthenticatedRequest): { key: string; isTenant: boolean
 }
 
 /**
+ * Check rate limit using Redis. Falls back to in-memory if Redis is unavailable.
+ */
+async function checkRateLimit(key: string, maxRequests: number, windowMs: number): Promise<{ count: number; windowStart: number }> {
+  try {
+    if (redisClient.isReady) {
+      const redisKey = `ratelimit:${key}`;
+      const count = await redisClient.incr(redisKey);
+      if (count === 1) {
+        // New key - set TTL
+        await redisClient.pExpire(redisKey, windowMs);
+      }
+      const ttl = await redisClient.pTTL(redisKey);
+      const windowStart = Date.now() - (windowMs - Math.max(ttl, 0));
+      return { count, windowStart };
+    }
+  } catch {
+    // Redis unavailable - fall through to in-memory
+  }
+
+  // In-memory fallback
+  const now = Date.now();
+  let bucket = fallbackBuckets.get(key);
+  if (!bucket || now - bucket.windowStart >= windowMs) {
+    bucket = { count: 1, windowStart: now };
+    fallbackBuckets.set(key, bucket);
+  } else {
+    bucket.count++;
+  }
+  return bucket;
+}
+
+/**
  * Per-tenant rate limiting middleware.
  *
- * Rate limits are keyed by tenantId (not just IP) so that all users
- * within the same organization share a single rate budget.
+ * Uses Redis for shared state across instances. Falls back to in-memory when Redis is unavailable.
  *
  * Plan tiers:
  *   free       = 100 requests/minute
@@ -84,39 +109,26 @@ function resolveKey(req: AuthenticatedRequest): { key: string; isTenant: boolean
  *   enterprise = 2000 requests/minute
  *
  * Superadmin users are exempt from rate limiting.
- *
- * Must be placed AFTER authenticateUser and (ideally) validateTenant
- * in the middleware chain.
  */
-export const tenantRateLimit = (
+export const tenantRateLimit = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
   const resolved = resolveKey(req);
   if (!resolved) {
-    // Superadmin or unresolvable — skip rate limiting
     return next();
   }
 
   const { key, isTenant } = resolved;
   const plan = isTenant ? resolvePlan(req) : 'free';
   const maxRequests = PLAN_LIMITS[plan];
-  const now = Date.now();
 
-  let bucket = tenantBuckets.get(key);
-
-  if (!bucket || now - bucket.windowStart >= DEFAULT_WINDOW_MS) {
-    // New window
-    bucket = { count: 1, windowStart: now };
-    tenantBuckets.set(key, bucket);
-  } else {
-    bucket.count++;
-  }
+  const { count, windowStart } = await checkRateLimit(key, maxRequests, DEFAULT_WINDOW_MS);
 
   // Standard rate limit headers
-  const remaining = Math.max(0, maxRequests - bucket.count);
-  const resetTime = Math.ceil((bucket.windowStart + DEFAULT_WINDOW_MS) / 1000);
+  const remaining = Math.max(0, maxRequests - count);
+  const resetTime = Math.ceil((windowStart + DEFAULT_WINDOW_MS) / 1000);
 
   res.setHeader('X-RateLimit-Limit', maxRequests);
   res.setHeader('X-RateLimit-Remaining', remaining);
@@ -125,8 +137,8 @@ export const tenantRateLimit = (
     res.setHeader('X-RateLimit-Plan', plan);
   }
 
-  if (bucket.count > maxRequests) {
-    const retryAfterSec = Math.ceil((bucket.windowStart + DEFAULT_WINDOW_MS - now) / 1000);
+  if (count > maxRequests) {
+    const retryAfterSec = Math.ceil((windowStart + DEFAULT_WINDOW_MS - Date.now()) / 1000);
     res.setHeader('Retry-After', retryAfterSec);
     res.status(429).json({
       message: `Rate limit exceeded. Your plan (${plan}) allows ${maxRequests} requests per minute. Please try again in ${retryAfterSec} seconds.`,
@@ -142,10 +154,6 @@ export const tenantRateLimit = (
 
 /**
  * Creates a tenant-aware rate limiter with custom limits.
- * Useful for specific endpoints (e.g., export, AI) that need stricter limits.
- *
- * @param overrides - Per-plan overrides. Unspecified plans use defaults.
- * @param windowMs - Custom window in milliseconds. Defaults to 1 minute.
  */
 export function createTenantRateLimit(
   overrides: Partial<Record<TenantPlan, number>>,
@@ -157,45 +165,25 @@ export function createTenantRateLimit(
     enterprise: overrides.enterprise ?? PLAN_LIMITS.enterprise
   };
 
-  const store = new Map<string, RateBucket>();
-
-  // Cleanup for this custom store
-  const cleanup = setInterval(() => {
-    const now = Date.now();
-    for (const [key, bucket] of store.entries()) {
-      if (now - bucket.windowStart > windowMs * 2) {
-        store.delete(key);
-      }
-    }
-  }, CLEANUP_INTERVAL_MS);
-  cleanup.unref();
-
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+  return async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     const resolved = resolveKey(req);
     if (!resolved) return next();
 
     const { key, isTenant } = resolved;
     const plan = isTenant ? resolvePlan(req) : 'free';
     const maxRequests = limits[plan];
-    const now = Date.now();
 
-    let bucket = store.get(key);
-    if (!bucket || now - bucket.windowStart >= windowMs) {
-      bucket = { count: 1, windowStart: now };
-      store.set(key, bucket);
-    } else {
-      bucket.count++;
-    }
+    const { count, windowStart } = await checkRateLimit(`custom:${key}`, maxRequests, windowMs);
 
-    const remaining = Math.max(0, maxRequests - bucket.count);
-    const resetTime = Math.ceil((bucket.windowStart + windowMs) / 1000);
+    const remaining = Math.max(0, maxRequests - count);
+    const resetTime = Math.ceil((windowStart + windowMs) / 1000);
 
     res.setHeader('X-RateLimit-Limit', maxRequests);
     res.setHeader('X-RateLimit-Remaining', remaining);
     res.setHeader('X-RateLimit-Reset', resetTime);
 
-    if (bucket.count > maxRequests) {
-      const retryAfterSec = Math.ceil((bucket.windowStart + windowMs - now) / 1000);
+    if (count > maxRequests) {
+      const retryAfterSec = Math.ceil((windowStart + windowMs - Date.now()) / 1000);
       res.setHeader('Retry-After', retryAfterSec);
       res.status(429).json({
         message: `Rate limit exceeded for this endpoint. Plan (${plan}) allows ${maxRequests} requests per window. Retry in ${retryAfterSec}s.`,

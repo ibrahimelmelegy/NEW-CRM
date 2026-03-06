@@ -127,7 +127,7 @@ export async function createBackup(
     });
 
     return backup.reload();
-  } catch (error: any) {
+  } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
 
     // Mark as failed
@@ -179,7 +179,7 @@ export async function restoreBackup(backupId: number): Promise<{ success: boolea
     });
 
     return { success: true, message: 'Backup restored successfully' };
-  } catch (error: any) {
+  } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
     return { success: false, message: `Restore failed: ${errMsg}` };
   }

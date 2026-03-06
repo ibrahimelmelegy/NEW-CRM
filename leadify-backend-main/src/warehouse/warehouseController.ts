@@ -140,7 +140,7 @@ class WarehouseController {
         return res.status(400).send({ success: false, message: 'items array is required and must not be empty' });
       }
       wrapResult(res, await service.pickAndPack(warehouseId, items, orderId));
-    } catch (e: any) {
+    } catch (e) {
       if ((e as any).shortages) {
         return res.status(400).send({ success: false, message: e instanceof Error ? e.message : String(e), shortages: (e as any).shortages });
       }

@@ -105,7 +105,7 @@ class SocialListeningService {
     for (const p of Object.keys(byPlatform)) {
       const group = byPlatform[p];
       // Compute average sentiment score per platform from raw mentions
-      const platformMentions = mentions.filter((m: any) => m.platform === p);
+      const platformMentions = mentions.filter((m) => m.platform === p);
       const platformScoreSum = platformMentions.reduce((s: number, m: any) => s + (Number(m.sentimentScore) || 0), 0);
       group.avgScore = platformMentions.length > 0 ? parseFloat((platformScoreSum / platformMentions.length).toFixed(2)) : 0;
     }

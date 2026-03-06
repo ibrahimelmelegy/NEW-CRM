@@ -3,6 +3,7 @@ import { Server, Socket } from 'socket.io';
 interface PresenceUser {
   socketId: string;
   userId: number;
+  tenantId: string;
   name: string;
   profilePicture?: string;
   currentPage: string;
@@ -12,19 +13,29 @@ interface PresenceUser {
 
 const activeUsers = new Map<string, PresenceUser>();
 
+function getTenantRoom(tenantId: string): string {
+  return `tenant:${tenantId}`;
+}
+
 export function setupPresenceHandlers(io: Server) {
   io.on('connection', (socket: Socket) => {
-    socket.on('presence:join', (data: { page: string; userId?: number; name?: string; profilePicture?: string }) => {
+    socket.on('presence:join', (data: { page: string; name?: string; profilePicture?: string }) => {
+      // Use server-verified data from JWT (set by io.use() auth middleware)
+      const userId = socket.data.userId || 0;
+      const tenantId = socket.data.tenantId;
+      if (!tenantId) return;
+
       activeUsers.set(socket.id, {
         socketId: socket.id,
-        userId: data.userId || 0,
+        userId,
+        tenantId,
         name: data.name || 'Anonymous',
         profilePicture: data.profilePicture,
         currentPage: data.page,
         lastSeen: new Date(),
         status: 'online'
       });
-      broadcastPresence(io);
+      broadcastPresence(io, tenantId);
     });
 
     socket.on('presence:page', (data: { page: string }) => {
@@ -32,7 +43,7 @@ export function setupPresenceHandlers(io: Server) {
       if (user) {
         user.currentPage = data.page;
         user.lastSeen = new Date();
-        broadcastPresence(io);
+        broadcastPresence(io, user.tenantId);
       }
     });
 
@@ -45,19 +56,25 @@ export function setupPresenceHandlers(io: Server) {
     });
 
     socket.on('presence:leave', () => {
+      const user = activeUsers.get(socket.id);
+      const tenantId = user?.tenantId;
       activeUsers.delete(socket.id);
-      broadcastPresence(io);
+      if (tenantId) broadcastPresence(io, tenantId);
     });
 
     socket.on('disconnect', () => {
+      const user = activeUsers.get(socket.id);
+      const tenantId = user?.tenantId;
       activeUsers.delete(socket.id);
-      broadcastPresence(io);
+      if (tenantId) broadcastPresence(io, tenantId);
     });
 
-    // Cursor collaboration events
+    // Cursor collaboration events - scoped to tenant room
     socket.on('cursor:move', (data: { userId: number; name: string; page: string; x: number; y: number; color: string }) => {
-      // Broadcast to all other users on the same page
-      socket.broadcast.emit('cursor:move', {
+      const tenantId = socket.data.tenantId;
+      if (!tenantId) return;
+      // Broadcast to other users in the same tenant only
+      socket.to(getTenantRoom(tenantId)).emit('cursor:move', {
         socketId: socket.id,
         ...data,
         timestamp: Date.now()
@@ -65,7 +82,9 @@ export function setupPresenceHandlers(io: Server) {
     });
 
     socket.on('cursor:leave', (data: { page: string }) => {
-      socket.broadcast.emit('cursor:leave', {
+      const tenantId = socket.data.tenantId;
+      if (!tenantId) return;
+      socket.to(getTenantRoom(tenantId)).emit('cursor:leave', {
         socketId: socket.id,
         page: data.page
       });
@@ -75,31 +94,33 @@ export function setupPresenceHandlers(io: Server) {
   // Clean up stale connections every 60 seconds
   setInterval(() => {
     const now = Date.now();
-    let changed = false;
+    const changedTenants = new Set<string>();
 
     for (const [id, user] of activeUsers) {
       if (now - user.lastSeen.getTime() > 120000) {
         // No heartbeat for 2 minutes - remove
         activeUsers.delete(id);
-        changed = true;
+        changedTenants.add(user.tenantId);
       } else if (now - user.lastSeen.getTime() > 60000) {
         // No heartbeat for 1 minute - mark away
         if (user.status !== 'away') {
           user.status = 'away';
-          changed = true;
+          changedTenants.add(user.tenantId);
         }
       }
     }
 
-    if (changed) {
-      broadcastPresence(io);
+    for (const tenantId of changedTenants) {
+      broadcastPresence(io, tenantId);
     }
   }, 60000);
 }
 
-function broadcastPresence(io: Server) {
-  const users = Array.from(activeUsers.values());
-  io.emit('presence:update', users);
+function broadcastPresence(io: Server, tenantId: string) {
+  // Filter users by tenant - never leak cross-tenant presence
+  const tenantRoom = getTenantRoom(tenantId);
+  const users = Array.from(activeUsers.values()).filter(u => u.tenantId === tenantId);
+  io.to(tenantRoom).emit('presence:update', users);
 
   // Group users by page and emit page-specific viewer lists
   const pageGroups = new Map<string, PresenceUser[]>();

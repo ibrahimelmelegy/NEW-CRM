@@ -144,7 +144,7 @@ class ERPNextSyncService {
       const erpnextName = result.name;
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
-    } catch (err: any) {
+    } catch (err) {
       const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : err.message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
@@ -166,7 +166,7 @@ class ERPNextSyncService {
       const payment = await client.get('Payment Entry', erpnextPaymentName);
       await this.markSuccess(syncLog, erpnextPaymentName, payment);
       return { success: true, data: payment };
-    } catch (err: any) {
+    } catch (err) {
       const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : err.message || 'Unknown error';
       await this.markFailed(syncLog, message);
       return { success: false, error: message };
@@ -220,7 +220,7 @@ class ERPNextSyncService {
       const erpnextName = result.name;
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
-    } catch (err: any) {
+    } catch (err) {
       const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : err.message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
@@ -275,7 +275,7 @@ class ERPNextSyncService {
       const erpnextName = result.name;
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
-    } catch (err: any) {
+    } catch (err) {
       const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : err.message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
@@ -343,7 +343,7 @@ class ERPNextSyncService {
       const erpnextName = result.name;
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
-    } catch (err: any) {
+    } catch (err) {
       const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : err.message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
@@ -365,7 +365,7 @@ class ERPNextSyncService {
         0 // 0 = no limit in ERPNext
       );
       return accounts;
-    } catch (err: any) {
+    } catch (err) {
       throw new Error(`Failed to pull Chart of Accounts: ${err.message}`);
     }
   }
@@ -382,7 +382,7 @@ class ERPNextSyncService {
         date: new Date().toISOString().split('T')[0]
       });
       return result.message;
-    } catch (err: any) {
+    } catch (err) {
       // Fallback: pull accounts with balances from resource API
       try {
         const accounts = await client.getList(
@@ -416,7 +416,7 @@ class ERPNextSyncService {
         periodicity: 'Monthly'
       });
       return result.message;
-    } catch (err: any) {
+    } catch (err) {
       throw new Error(`Failed to pull Profit & Loss report: ${err.message}`);
     }
   }
@@ -437,7 +437,7 @@ class ERPNextSyncService {
         periodicity: 'Yearly'
       });
       return result.message;
-    } catch (err: any) {
+    } catch (err) {
       throw new Error(`Failed to pull Balance Sheet: ${err.message}`);
     }
   }
@@ -474,7 +474,7 @@ class ERPNextSyncService {
         100
       );
       return payments;
-    } catch (err: any) {
+    } catch (err) {
       throw new Error(`Failed to pull payment entries: ${err.message}`);
     }
   }
@@ -519,7 +519,7 @@ class ERPNextSyncService {
         baseUrl: config.baseUrl,
         lastSync: lastLog?.syncedAt || null
       };
-    } catch (err: any) {
+    } catch (err) {
       return {
         connected: false,
         enabled: true,

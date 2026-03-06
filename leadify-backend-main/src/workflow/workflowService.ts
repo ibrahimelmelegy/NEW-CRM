@@ -438,7 +438,7 @@ async function executeWebhook(action: Extract<WorkflowAction, { type: 'WEBHOOK' 
       ok: response.ok,
       body: responseText.substring(0, 1000) // truncate large responses
     };
-  } catch (err: any) {
+  } catch (err) {
     clearTimeout(timeout);
     throw new Error(`Webhook failed: ${err.message}`);
   }
@@ -610,7 +610,7 @@ async function executeWorkflow(
         status: 'SUCCESS',
         result
       });
-    } catch (error: any) {
+    } catch (error) {
       actionResults.push({
         actionType: action.type,
         status: 'FAILED',
@@ -754,7 +754,7 @@ async function processEntityEvent(
         );
 
         executions.push(execution);
-      } catch (error: any) {
+      } catch (error) {
         // Log failed execution but continue with other rules
         console.error(`Workflow rule ${rule.id} (${rule.name}) failed:`, error.message);
 
@@ -774,7 +774,7 @@ async function processEntityEvent(
     }
 
     return executions;
-  } catch (error: any) {
+  } catch (error) {
     console.error('Workflow engine processEntityEvent error:', error.message);
     return [];
   }
@@ -850,7 +850,7 @@ async function executeDelayedActions(
         status: 'SUCCESS',
         result
       });
-    } catch (error: any) {
+    } catch (error) {
       actionResults.push({
         actionType: action.type,
         status: 'FAILED',

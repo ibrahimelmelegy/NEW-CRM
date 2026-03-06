@@ -3,7 +3,7 @@ import { AuthenticatedRequest } from '../types';
 import { wrapResult } from '../utils/response/responseWrapper';
 import { NextFunction, Response } from 'express';
 import User from '../user/userModel';
-import cacheService from '../utils/cacheService';
+import cacheService from '../infrastructure/cacheService';
 
 class InsightController {
   async getLeadsSalesInsights(req: AuthenticatedRequest, res: Response, next: NextFunction) {

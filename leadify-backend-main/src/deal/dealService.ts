@@ -564,7 +564,7 @@ class DealService {
           user
         );
         await createActivityLog('deal', 'update', deal.id, user.id, null, `Auto-generated Project for Winning Deal`);
-      } catch (err: any) {
+      } catch (err) {
         // Log but don't fail the deal update if project creation fails (graceful degradation)
         console.error('Failed to auto-create project from deal:', err.message);
       }

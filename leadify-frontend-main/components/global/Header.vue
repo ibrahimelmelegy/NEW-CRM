@@ -2,7 +2,7 @@
 .header.flex.items-center.justify-between.mb-8
     div
         .title.font-bold.text-xl.mb-1 {{  route.path.split("/").filter((n) => n&& n !== 'ar')[0] ? formatTextWithyphen(route.path.split("/").filter((n) => n && n !== 'ar' )[0]).toLowerCase() : home  }}
-        Breadcramp(:key="breadkey" :disableRoot="disableRoot")
+        Breadcrumb(:key="breadkey" :disableRoot="disableRoot")
     slot
 </template>
 

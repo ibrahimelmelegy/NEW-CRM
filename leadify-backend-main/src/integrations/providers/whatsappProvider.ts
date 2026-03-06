@@ -81,7 +81,7 @@ export class WhatsAppProvider {
         return { success: true, data: { messageId: result.messages[0]?.id || '', status: 'sent' }, mock: false };
       }
       return { success: true, data: { messageId: `mock_wa_${Date.now()}`, status: 'sent' }, mock: true };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to send WhatsApp message';
       console.error('[WhatsAppProvider] sendTextMessage error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };
@@ -118,7 +118,7 @@ export class WhatsAppProvider {
         return { success: true, data: { messageId: result.messages[0]?.id || '', status: 'sent' }, mock: false };
       }
       return { success: true, data: { messageId: `mock_wa_tpl_${Date.now()}`, status: 'sent' }, mock: true };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to send template message';
       console.error('[WhatsAppProvider] sendTemplateMessage error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };
@@ -156,7 +156,7 @@ export class WhatsAppProvider {
         return { success: true, data: { messageId: result.messages[0]?.id || '', status: 'sent' }, mock: false };
       }
       return { success: true, data: { messageId: `mock_wa_media_${Date.now()}`, status: 'sent' }, mock: true };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to send media message';
       console.error('[WhatsAppProvider] sendMediaMessage error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };
@@ -190,7 +190,7 @@ export class WhatsAppProvider {
         ],
         mock: true
       };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to get templates';
       console.error('[WhatsAppProvider] getMessageTemplates error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };

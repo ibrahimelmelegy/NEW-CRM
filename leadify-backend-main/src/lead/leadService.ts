@@ -361,7 +361,7 @@ class LeadService {
     const createdLeads = await Lead.bulkCreate(leadArray);
     // Set user associations for each lead
     for (const lead of createdLeads) {
-      const leadData = leadArray.find((l: any) => l.name === lead.name);
+      const leadData = leadArray.find((l) => l.name === lead.name);
       if (leadData?.userIds && leadData.userIds.length > 0) {
         await (lead as any).$set('users', leadData.userIds);
       }

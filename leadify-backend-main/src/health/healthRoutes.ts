@@ -99,7 +99,7 @@ router.get('/health/ready', async (_req: Request, res: Response) => {
         },
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     res.status(503).json({
       status: 'error',
       timestamp: new Date().toISOString(),

@@ -484,7 +484,7 @@ class AIAssistantService {
     // Factor 7: Invoice status
     const invoices = deal.invoice || [];
     if (invoices.length > 0) {
-      const collectedCount = invoices.filter((inv: any) => inv.collected).length;
+      const collectedCount = invoices.filter((inv) => inv.collected).length;
       if (collectedCount > 0) {
         probability += 8;
         positiveSignals.push(`${collectedCount} of ${invoices.length} invoices collected`);
@@ -727,7 +727,7 @@ class AIAssistantService {
 
       // Suggestion: overdue invoices
       const invoices = deal.invoice || [];
-      const overdueInvoices = invoices.filter((inv: any) => !inv.collected && new Date(inv.invoiceDate) < now);
+      const overdueInvoices = invoices.filter((inv) => !inv.collected && new Date(inv.invoiceDate) < now);
       if (overdueInvoices.length > 0) {
         const totalOverdue = overdueInvoices.reduce((s: number, inv: any) => s + (inv.amount || 0), 0);
         suggestions.push({

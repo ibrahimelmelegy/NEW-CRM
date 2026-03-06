@@ -9,10 +9,12 @@ import { Sequelize } from 'sequelize-typescript';
 
 import http from 'http';
 import { Server } from 'socket.io';
+import jwt from 'jsonwebtoken';
 import { setupPresenceHandlers } from './socket/presenceHandler';
 import { setupVirtualOfficeHandlers } from './socket/virtualOfficeHandler';
 import { setupLiveChatHandlers } from './socket/liveChatHandler';
 import { setupCrmSocketHandlers } from './socket/socketHandlers';
+import logger from './config/logger';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 const server = http.createServer(app);
@@ -55,6 +57,32 @@ async function runTypoMigration(sequelize: Sequelize) {
   }
 }
 
+// Socket.io JWT authentication middleware
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token || socket.handshake.headers?.cookie
+    ?.split(';')
+    .find((c: string) => c.trim().startsWith('token='))
+    ?.split('=')[1];
+
+  if (!token) {
+    return next(new Error('Authentication required'));
+  }
+
+  try {
+    const SECRET_KEY = process.env.SECRET_KEY;
+    if (!SECRET_KEY) {
+      return next(new Error('Server configuration error'));
+    }
+    const decoded = jwt.verify(token, SECRET_KEY) as { id: number; tenantId?: string; role?: string };
+    socket.data.userId = decoded.id;
+    socket.data.tenantId = decoded.tenantId;
+    socket.data.role = decoded.role;
+    next();
+  } catch {
+    return next(new Error('Invalid token'));
+  }
+});
+
 // Set up real-time socket handlers
 setupPresenceHandlers(io);
 setupVirtualOfficeHandlers(io);
@@ -70,6 +98,18 @@ sequelize
     // Automated migration for 'descripion' typo
     await runTypoMigration(sequelize);
 
+    // Migrate deal price from INTEGER to DECIMAL(12,2)
+    try {
+      const [results]: any = await sequelize.query(
+        `SELECT data_type FROM information_schema.columns WHERE table_name = 'deals' AND column_name = 'price'`
+      );
+      if (results.length > 0 && results[0].data_type === 'integer') {
+        await sequelize.query(`ALTER TABLE "deals" ALTER COLUMN "price" TYPE DECIMAL(12,2)`);
+      }
+    } catch (e) {
+      // Ignore if table doesn't exist yet
+    }
+
     // Database schema sync — safe for both development and production.
     // Only adds missing columns/tables, never drops or modifies existing ones.
     try {
@@ -77,10 +117,10 @@ sequelize
       const syncResult = await safeSchemaSync(sequelize);
       // SchemaSync complete
       if (syncResult.errors.length > 0) {
-        console.warn('[SchemaSync] Errors:', syncResult.errors);
+        logger.warn({ errors: syncResult.errors }, 'SchemaSync completed with errors');
       }
     } catch (syncErr) {
-      console.warn('[SchemaSync] Failed:', (syncErr as Error).message);
+      logger.warn({ err: syncErr }, 'SchemaSync failed');
     }
 
     // Add performance indexes (non-blocking - failures are logged and skipped)
@@ -88,7 +128,7 @@ sequelize
       const { addPerformanceIndexes } = require('./infrastructure/dbIndexes');
       await addPerformanceIndexes(sequelize);
     } catch (e) {
-      console.warn('[Startup] Index setup:', (e as Error).message);
+      logger.warn({ err: e }, 'Index setup failed');
     }
 
     // Initialize job queue for background processing
@@ -96,7 +136,7 @@ sequelize
       const jobQueue = require('./infrastructure/jobQueue').default;
       jobQueue.processJobs();
     } catch (e) {
-      console.warn('[Startup] Job queue:', (e as Error).message);
+      logger.warn({ err: e }, 'Job queue initialization failed');
     }
 
     // Start the Server
@@ -130,17 +170,17 @@ sequelize
     });
   })
   .catch((err: Error) => {
-    console.error('Unable to connect to the database:', err);
+    logger.fatal({ err }, 'Unable to connect to the database');
   });
 
 // Global error handlers - prevent silent crashes in production
 process.on('uncaughtException', (err) => {
-  console.error('[FATAL] Uncaught Exception:', err);
+  logger.fatal({ err }, 'Uncaught Exception');
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason) => {
-  console.error('[FATAL] Unhandled Rejection:', reason);
+  logger.fatal({ reason }, 'Unhandled Rejection');
   process.exit(1);
 });
 
@@ -158,7 +198,7 @@ function gracefulShutdown(signal: string) {
 
   // Force shutdown after 30 seconds
   setTimeout(() => {
-    console.error('Forced shutdown after timeout');
+    logger.error('Forced shutdown after timeout');
     process.exit(1);
   }, 30000);
 }

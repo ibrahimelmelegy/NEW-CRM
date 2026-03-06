@@ -364,7 +364,7 @@ class TrainingService {
       raw: true
     });
 
-    const completedIds = new Set(completedPrereqs.map((e: any) => e.programId));
+    const completedIds = new Set(completedPrereqs.map((e) => e.programId));
     const missingIds = prerequisiteIds.filter(id => !completedIds.has(id));
 
     if (missingIds.length > 0) {
@@ -375,7 +375,7 @@ class TrainingService {
         raw: true
       });
 
-      const missingTitles = missingPrograms.map((p: any) => `"${p.title}" (ID: ${p.id})`).join(', ');
+      const missingTitles = missingPrograms.map((p) => `"${p.title}" (ID: ${p.id})`).join(', ');
       throw new Error(`Prerequisites not met. Employee must first complete: ${missingTitles}`);
     }
 

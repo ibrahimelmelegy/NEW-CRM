@@ -687,7 +687,7 @@ class ProjectService {
       });
 
       for (const project of projects) {
-        const assignedUsers = project.assignedUsers?.map((u: any) => u.name).join(', ') || '';
+        const assignedUsers = project.assignedUsers?.map((u) => u.name).join(', ') || '';
         worksheet.addRow({
           name: project.name,
           status: project.status,

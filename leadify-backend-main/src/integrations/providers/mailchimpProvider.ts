@@ -89,7 +89,7 @@ export class MailchimpProvider {
         ],
         mock: true
       };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to get lists';
       console.error('[MailchimpProvider] getLists error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !MailchimpProvider.isConfigured() };
@@ -123,7 +123,7 @@ export class MailchimpProvider {
         return { success: true, data: { id: result.id, email: result.email_address, status: result.status }, mock: false };
       }
       return { success: true, data: { id: `mock_member_${Date.now()}`, email: input.email, status: 'subscribed' }, mock: true };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to add contact';
       console.error('[MailchimpProvider] addContact error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !MailchimpProvider.isConfigured() };
@@ -157,7 +157,7 @@ export class MailchimpProvider {
         return { success: true, data: { added: contacts.length, updated: 0, errors: 0 }, mock: false };
       }
       return { success: true, data: { added: contacts.length, updated: 0, errors: 0 }, mock: true };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to sync contacts';
       console.error('[MailchimpProvider] syncContacts error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !MailchimpProvider.isConfigured() };
@@ -201,7 +201,7 @@ export class MailchimpProvider {
         return { success: true, data: { id: campaign.id, webId: campaign.web_id, status: campaign.status }, mock: false };
       }
       return { success: true, data: { id: `mock_campaign_${Date.now()}`, webId: 12345, status: 'save' }, mock: true };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to create campaign';
       console.error('[MailchimpProvider] createCampaign error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !MailchimpProvider.isConfigured() };
@@ -239,7 +239,7 @@ export class MailchimpProvider {
         };
       }
       return { success: true, data: { sent: 2500, opens: 890, clicks: 156, bounces: 23, unsubscribes: 5 }, mock: true };
-    } catch (err: any) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to get campaign stats';
       console.error('[MailchimpProvider] getCampaignStats error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !MailchimpProvider.isConfigured() };

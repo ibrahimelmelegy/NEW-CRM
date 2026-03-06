@@ -186,7 +186,7 @@ class LeadScoringService {
 
       case 'in':
         if (Array.isArray(value) && fieldValue !== undefined && fieldValue !== null) {
-          const lowerValues = value.map((v: any) => String(v).toLowerCase());
+          const lowerValues = value.map((v) => String(v).toLowerCase());
           if (lowerValues.includes(String(fieldValue).toLowerCase())) {
             return points;
           }
@@ -196,7 +196,7 @@ class LeadScoringService {
       case 'not_in':
         if (Array.isArray(value)) {
           if (fieldValue === undefined || fieldValue === null) return points;
-          const lowerValues = value.map((v: any) => String(v).toLowerCase());
+          const lowerValues = value.map((v) => String(v).toLowerCase());
           if (!lowerValues.includes(String(fieldValue).toLowerCase())) {
             return points;
           }

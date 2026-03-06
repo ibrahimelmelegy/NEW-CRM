@@ -95,7 +95,7 @@ class MaterialService {
   }
 
   private async updateMaterialItems(material: any, items: createAdditionalMaterialItemsInput[]) {
-    const deletedIds = material.materialItem.filter((e: any) => !items.find(f => f.id === e.id)).map((e: any) => e.id);
+    const deletedIds = material.materialItem.filter((e) => !items.find(f => f.id === e.id)).map((e) => e.id);
     const newMaterialItem: Partial<AdditionalMaterialItem>[] = [];
     const updateMaterialItem: Partial<AdditionalMaterialItem>[] = [];
 

@@ -244,6 +244,12 @@ const sequelize = new Sequelize({
   host: DB_HOST,
   port: parseInt(DB_PORT, 10),
   dialect: 'postgres',
+  pool: {
+    max: 20,
+    min: 5,
+    acquire: 30000,
+    idle: 10000
+  },
   models: [
     User,
     Session,

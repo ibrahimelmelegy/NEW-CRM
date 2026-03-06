@@ -130,7 +130,7 @@ class ManufacturingService {
       code: `${original.code}-COPY`,
       version: 1,
       isActive: false,
-      items: original.items?.map((i: any) => ({
+      items: original.items?.map((i) => ({
         name: i.name,
         type: i.type,
         quantity: i.quantity,
@@ -396,7 +396,7 @@ class ManufacturingService {
     const items = bom.items || [];
 
     const totalCost = Number(bom.totalCost) || 0;
-    const breakdown = items.map((item: any) => {
+    const breakdown = items.map((item) => {
       const lineCost = Number(item.quantity) * Number(item.unitCost);
       return {
         name: item.name,

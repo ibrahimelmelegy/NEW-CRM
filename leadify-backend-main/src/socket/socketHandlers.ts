@@ -160,26 +160,29 @@ export function setupCrmSocketHandlers(io: Server): void {
      * User joins their tenant room for isolated real-time updates.
      * All CRM entity events are broadcast to the tenant room.
      */
-    socket.on('crm:join', (data: { userId: number; tenantId: string; name: string }) => {
-      if (!data.userId || !data.tenantId) return;
+    socket.on('crm:join', (data: { name: string }) => {
+      // Use server-verified data from JWT (set by io.use() auth middleware)
+      const userId = socket.data.userId;
+      const tenantId = socket.data.tenantId;
+      if (!userId || !tenantId) return;
 
-      const tenantRoom = getTenantRoom(data.tenantId);
+      const tenantRoom = getTenantRoom(tenantId);
       socket.join(tenantRoom);
 
       // Track user in tenant
-      if (!tenantUsers.has(data.tenantId)) {
-        tenantUsers.set(data.tenantId, new Map());
+      if (!tenantUsers.has(tenantId)) {
+        tenantUsers.set(tenantId, new Map());
       }
-      tenantUsers.get(data.tenantId)!.set(socket.id, {
+      tenantUsers.get(tenantId)!.set(socket.id, {
         socketId: socket.id,
-        userId: data.userId,
-        tenantId: data.tenantId,
+        userId,
+        tenantId,
         name: data.name,
         joinedAt: new Date()
       });
 
       // Broadcast updated online users list to tenant
-      io.to(tenantRoom).emit('crm:online_users', getOnlineUsers(data.tenantId));
+      io.to(tenantRoom).emit('crm:online_users', getOnlineUsers(tenantId));
 
       // Send current document locks to newly joined user
       const locks: Record<string, { userId: number; userName: string }> = {};
@@ -304,14 +307,17 @@ export function setupCrmSocketHandlers(io: Server): void {
         }
       }
 
-      // Broadcast lock status to all connected clients
-      io.emit('document:editing', {
-        documentId: data.documentId,
-        userId: data.userId,
-        userName: data.userName,
-        action: data.action,
-        timestamp: Date.now()
-      });
+      // Broadcast lock status to tenant room
+      const lockTenantId = socket.data.tenantId;
+      if (lockTenantId) {
+        io.to(getTenantRoom(lockTenantId)).emit('document:editing', {
+          documentId: data.documentId,
+          userId: data.userId,
+          userName: data.userName,
+          action: data.action,
+          timestamp: Date.now()
+        });
+      }
     });
 
     // ─── 5. Chat/Messaging Events ─────────────────────────────────────
@@ -369,15 +375,15 @@ export function setupCrmSocketHandlers(io: Server): void {
         io.to(tenantRoom).emit('crm:online_users', getOnlineUsers(tenantId));
       }
 
-      // Release any document locks held by this socket
-      for (const [docId, lock] of documentLocks) {
-        // Find the user associated with this socket
-        // We search through all tenants since the user was already removed
-        for (const [, users] of tenantUsers) {
-          for (const [, user] of users) {
-            if (user.socketId === socket.id && user.userId === lock.userId) {
-              documentLocks.delete(docId);
-              io.emit('document:editing', {
+      // Release any document locks held by this socket's user
+      const disconnectedUserId = socket.data.userId;
+      const disconnectedTenantId = socket.data.tenantId;
+      if (disconnectedUserId) {
+        for (const [docId, lock] of documentLocks) {
+          if (lock.userId === disconnectedUserId) {
+            documentLocks.delete(docId);
+            if (disconnectedTenantId) {
+              io.to(getTenantRoom(disconnectedTenantId)).emit('document:editing', {
                 documentId: docId,
                 userId: lock.userId,
                 userName: lock.userName,
@@ -407,6 +413,7 @@ export function setupCrmSocketHandlers(io: Server): void {
     for (const [docId, lock] of documentLocks) {
       if (now - lock.lockedAt.getTime() > 30 * 60 * 1000) {
         documentLocks.delete(docId);
+        // Broadcast to all tenant rooms since we don't track tenant per lock
         io.emit('document:editing', {
           documentId: docId,
           userId: lock.userId,

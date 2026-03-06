@@ -227,7 +227,7 @@ class AiLeadScoringService {
       raw: true
     });
 
-    const comparison = models.map((m: any) => ({
+    const comparison = models.map((m) => ({
       id: m.id,
       name: m.name,
       type: m.type,
@@ -235,7 +235,7 @@ class AiLeadScoringService {
       accuracy: m.accuracy,
       leadsScored: m.leadsScored || 0,
       parameterCount: (m.parameters || []).length,
-      features: (m.parameters || []).map((p: any) => p.feature).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i),
+      features: (m.parameters || []).map((p) => p.feature).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i),
       lastTrainedAt: m.lastTrainedAt
     }));
 
