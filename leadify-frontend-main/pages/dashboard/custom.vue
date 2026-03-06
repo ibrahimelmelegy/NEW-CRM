@@ -154,7 +154,6 @@ const VChart = defineAsyncComponent(() =>
     import('echarts/components'),
     import('vue-echarts')
   ]).then(([{ use }, { CanvasRenderer }, { BarChart, PieChart, LineChart }, { TitleComponent, TooltipComponent, LegendComponent, GridComponent }, VChartModule]) => {
-    use([CanvasRenderer, BarChart, PieChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
     return VChartModule;
   })
 );
@@ -168,7 +167,6 @@ import {
   type DashboardWidget
 } from '~/composables/useDashboard';
 
-use([CanvasRenderer, BarChart, PieChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
 definePageMeta({ middleware: 'permissions' });
 

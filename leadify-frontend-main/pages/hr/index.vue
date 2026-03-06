@@ -121,7 +121,6 @@ import type { Employee, DepartmentItem } from '~/composables/useEmployees';
 import { getPieChartsData, getBarChartData } from '~/composables/charts';
 import { formatDate, formatLargeNumber } from '~/composables/format';
 
-use([CanvasRenderer, BarChart, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
 definePageMeta({ middleware: 'permissions' });
 

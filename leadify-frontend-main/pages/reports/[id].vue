@@ -85,7 +85,6 @@ import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from
 import VChart from 'vue-echarts';
 import { fetchSavedReports, executeReport, exportReportBuilderCSV, type SavedReport, type ReportBuilderConfig } from '~/composables/useReportBuilder';
 
-use([CanvasRenderer, BarChart, PieChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
 definePageMeta({ middleware: 'permissions' });
 

@@ -148,7 +148,6 @@ import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from
 import VChart from 'vue-echarts';
 import { getPieChartsData } from '~/composables/charts';
 
-use([CanvasRenderer, BarChart, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
 const { hasPermission } = await usePermissions();
 const { t } = useI18n();

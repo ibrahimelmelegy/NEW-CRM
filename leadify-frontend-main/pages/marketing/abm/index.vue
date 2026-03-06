@@ -370,7 +370,6 @@ import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from
 import VChart from 'vue-echarts';
 import { graphic } from 'echarts/core';
 
-use([CanvasRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
 definePageMeta({ title: 'Account-Based Marketing' });
 

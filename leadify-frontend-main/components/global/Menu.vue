@@ -468,7 +468,7 @@ const menu = [
       { link: '/settings/white-label', name: 'navigation.whiteLabel', icon: 'ph:paint-brush-bold' },
       { link: '/settings/customer-portal', name: 'navigation.customerPortal', icon: 'ph:monitor-bold' },
       { link: '/settings/compliance', name: 'navigation.complianceCenter', icon: 'ph:shield-warning-bold' },
-      { link: '/settings/roles', name: 'navigation.permissionsHub', icon: 'ph:key-bold', role: 'VIEW_ROLES' },
+      { link: '/roles', name: 'navigation.permissionsHub', icon: 'ph:key-bold', role: 'VIEW_ROLES' },
       { link: '/settings/api-marketplace', name: 'navigation.apiMarketplace', icon: 'ph:plugs-bold' },
       { link: '/settings/compliance-manager', name: 'navigation.complianceManager', icon: 'ph:detective-bold' }
     ]

@@ -792,10 +792,10 @@ const goalCompletionChartOption = computed(() => ({
       barWidth: '40%',
       itemStyle: {
         borderRadius: [6, 6, 0, 0],
-        color: new graphic.LinearGradient(0, 0, 0, 1, [
+        color: graphic ? new graphic.LinearGradient(0, 0, 0, 1, [
           { offset: 0, color: '#7849ff' },
           { offset: 1, color: '#6730e3' }
-        ])
+        ]) : '#7849ff'
       }
     },
     {

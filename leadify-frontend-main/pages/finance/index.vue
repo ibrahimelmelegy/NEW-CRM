@@ -178,8 +178,6 @@ import {
 } from '~/composables/useFinance';
 import { getCollectionDashboard, type CollectionDashboard } from '~/composables/usePayments';
 
-use([CanvasRenderer, BarChart, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
-
 definePageMeta({ middleware: 'permissions' });
 
 const { t } = useI18n();
@@ -327,10 +325,10 @@ const cashFlowOption = computed(() => {
         data: sortedMonths.map(() => revenuePerMonth),
         itemStyle: {
           borderRadius: [6, 6, 0, 0],
-          color: new graphic.LinearGradient(0, 0, 0, 1, [
+          color: graphic ? new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: '#10B981' },
             { offset: 1, color: 'rgba(16, 185, 129, 0.3)' }
-          ])
+          ]) : '#10B981'
         }
       },
       {
@@ -340,10 +338,10 @@ const cashFlowOption = computed(() => {
         data: expenseValues,
         itemStyle: {
           borderRadius: [6, 6, 0, 0],
-          color: new graphic.LinearGradient(0, 0, 0, 1, [
+          color: graphic ? new graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: '#EF4444' },
             { offset: 1, color: 'rgba(239, 68, 68, 0.3)' }
-          ])
+          ]) : '#EF4444'
         }
       }
     ]
