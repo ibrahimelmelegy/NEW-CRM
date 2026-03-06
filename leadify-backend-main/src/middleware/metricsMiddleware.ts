@@ -87,7 +87,7 @@ async function recordMetrics(bucket: number, method: string, endpoint: string, s
     if (duration > 0) {
       // Track max response time
       const currentMax = await redisClient.hGet(endpointKey, 'maxTime');
-      if (!currentMax || duration > parseInt(currentMax, 10)) {
+      if (!currentMax || duration > parseInt(currentMax as string, 10)) {
         pipeline.hSet(endpointKey, 'maxTime', duration);
       }
     }

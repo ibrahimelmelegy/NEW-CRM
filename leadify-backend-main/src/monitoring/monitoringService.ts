@@ -250,8 +250,8 @@ class MonitoringService {
           redisClient.hGetAll(statusKey)
         ]);
 
-        const reqCount = parseInt(requests || '0', 10);
-        const errCount = parseInt(errors || '0', 10);
+        const reqCount = parseInt((requests as string) || '0', 10);
+        const errCount = parseInt((errors as string) || '0', 10);
 
         totalRequests += reqCount;
         totalErrors += errCount;

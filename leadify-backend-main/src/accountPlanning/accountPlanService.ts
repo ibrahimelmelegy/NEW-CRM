@@ -115,7 +115,7 @@ class AccountPlanService {
       const totalGoals = (p.goals || []).length;
       return {
         accountPlanId: p.id,
-        accountName: p.account?.name || 'Unknown',
+        accountName: (p.account as any)?.name || 'Unknown',
         tier: p.tier,
         annualRevenue: Number(p.annualRevenue) || 0,
         expansionPotential: Number(p.expansionPotential) || 0,

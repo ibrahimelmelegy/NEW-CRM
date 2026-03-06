@@ -59,7 +59,7 @@ class CustomerSuccessService {
 
     const activeDeals = deals.filter((d) => !['CLOSED_WON', 'CLOSED_LOST'].includes(d.stage)).length;
 
-    const wonDeals = deals.filter((d) => d.stage === 'CLOSED_WON');
+    const wonDeals = deals.filter((d) => (d.stage as string) === 'CLOSED_WON');
     const totalRevenue = wonDeals.reduce((sum: number, d: any) => sum + (d.price || 0), 0);
 
     // Get recent communication activities

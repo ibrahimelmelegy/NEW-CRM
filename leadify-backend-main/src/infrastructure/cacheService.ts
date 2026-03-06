@@ -62,7 +62,7 @@ class CacheService {
       const data = await redisClient.get(key);
       if (data !== null) {
         this.hits++;
-        return JSON.parse(data) as T;
+        return JSON.parse(data as string) as T;
       }
       this.misses++;
       return null;

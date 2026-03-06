@@ -672,7 +672,7 @@ class ClientService {
         id: a.id,
         type: 'ACTIVITY',
         title: a.subject || a.type,
-        description: a.description,
+        description: (a as any).description,
         timestamp: a.createdAt,
         user: a.user,
         data: a.toJSON()
@@ -680,8 +680,8 @@ class ClientService {
       ...calls.map((c) => ({
         id: c.id,
         type: 'CALL',
-        title: `${c.direction} Call`,
-        description: c.notes || `${c.status} - ${c.duration}s`,
+        title: `${(c as any).direction} Call`,
+        description: (c as any).notes || `${(c as any).status} - ${c.duration}s`,
         timestamp: c.createdAt,
         data: c.toJSON()
       })),
@@ -689,7 +689,7 @@ class ClientService {
         id: m.id,
         type: 'MEETING',
         title: m.title,
-        description: m.notes,
+        description: (m as any).notes,
         timestamp: m.meetingDate || m.createdAt,
         data: m.toJSON()
       }))

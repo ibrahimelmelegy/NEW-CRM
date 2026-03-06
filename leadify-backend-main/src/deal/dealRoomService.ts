@@ -59,7 +59,7 @@ class DealRoomService {
     const dealAge = Math.floor((now.getTime() - new Date(deal.createdAt).getTime()) / (1000 * 60 * 60 * 24));
     const lastActivity = activities[0]?.createdAt ? new Date(activities[0].createdAt) : null;
     const daysSinceActivity = lastActivity ? Math.floor((now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24)) : 999;
-    const completedTasks = tasks.filter((t) => t.status === 'completed').length;
+    const completedTasks = tasks.filter((t) => (t.status as string) === 'completed').length;
     const totalTasks = tasks.length;
 
     // Health: activity recency (30) + stage age (25) + engagement (25) + tasks (20)
@@ -88,8 +88,8 @@ class DealRoomService {
     // Timeline data
     const timeline = activities.map((a) => ({
       id: a.id,
-      type: getActivityType(a.description || a.descripion),
-      description: a.description || a.descripion,
+      type: getActivityType(a.description),
+      description: a.description,
       date: a.createdAt,
       user: a.user
     }));

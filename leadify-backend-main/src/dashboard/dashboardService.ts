@@ -561,9 +561,9 @@ class DashboardService {
     });
 
     return {
-      labels: results.map((r) => r.period),
-      revenue: results.map((r) => Number(r.revenue || 0)),
-      dealCount: results.map((r) => Number(r.dealCount || 0))
+      labels: results.map((r) => (r as any).period),
+      revenue: results.map((r) => Number((r as any).revenue || 0)),
+      dealCount: results.map((r) => Number((r as any).dealCount || 0))
     };
   }
 
@@ -728,7 +728,7 @@ class DashboardService {
 
     return results.map((r) => ({
       source: r.leadSource,
-      count: Number(r.count)
+      count: Number((r as any).count)
     }));
   }
 
@@ -765,9 +765,9 @@ class DashboardService {
     });
 
     return results.map((r) => ({
-      month: r.month,
-      avgValue: Math.round(Number(r.avgValue || 0)),
-      dealCount: Number(r.dealCount)
+      month: (r as any).month,
+      avgValue: Math.round(Number((r as any).avgValue || 0)),
+      dealCount: Number((r as any).dealCount)
     }));
   }
 

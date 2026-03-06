@@ -294,7 +294,7 @@ class DailyTaskService {
       taskDistributionByClient,
       salesPerformance: salesPerformance.map((item) => ({
         name: item['salesRepresentative.name'],
-        tasksCount: Number(item.tasksCount),
+        tasksCount: Number((item as any).tasksCount),
         totalPaid: Number((item.totalPaid ?? 0).toFixed(2))
       }))
     };
