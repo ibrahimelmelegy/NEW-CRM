@@ -84,11 +84,14 @@ describe('TenantHooks (Sequelize global hooks)', () => {
         });
 
         it('should log the count of tenant-scoped models', () => {
-            const spy = jest.spyOn(console, 'log').mockImplementation(() => {});
+            // logger.debug uses structured logging with pino, so we mock the logger module
+            const logger = require('../../src/config/logger').default;
+            const spy = jest.spyOn(logger, 'debug').mockImplementation(() => {});
             const s = createFakeSequelize(standardModels);
             registerTenantHooks(s as any);
             expect(spy).toHaveBeenCalledWith(
-                expect.stringContaining('1 tenant-scoped models detected')
+                expect.objectContaining({ count: 1 }),
+                expect.stringContaining('tenant-scoped models detected')
             );
             spy.mockRestore();
         });
@@ -167,11 +170,15 @@ describe('TenantHooks (Sequelize global hooks)', () => {
         });
 
         it('should override mismatched tenantId with security log', () => {
-            const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+            const logger = require('../../src/config/logger').default;
+            const spy = jest.spyOn(logger, 'error').mockImplementation(() => {});
             const instance = fakeInstance('Lead', { tenantId: 'tenant-B' }, TENANT_MODEL_ATTRS);
             withContext(TENANT_A, () => seq.hooks.beforeCreate(instance, {}));
             expect(instance.tenantId).toBe('tenant-A');
-            expect(spy).toHaveBeenCalledWith(expect.stringContaining('Cross-tenant create attempt blocked'));
+            expect(spy).toHaveBeenCalledWith(
+                expect.objectContaining({ model: 'Lead' }),
+                expect.stringContaining('Cross-tenant create attempt blocked')
+            );
             spy.mockRestore();
         });
 
