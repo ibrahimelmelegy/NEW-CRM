@@ -22,23 +22,29 @@
                 button.toggle-icon(@click="openNav" :class="{'margined' : !fullNav}"): Icon.text-sm(name="ph:list-bold")
               div(class="breadcrumb")
                 el-breadcrumb(:separator-icon="ArrowRight")      
-                  el-breadcrumb-item(to="/") Dashboard
+                  el-breadcrumb-item(to="/") {{ $t('navigation.dashboard') }}
                   el-breadcrumb-item(v-for="(route, index) in breadcrumbRoutes",  :key="index", @click="getPath(route)" , class="cursor-pointer",  :class="{ 'last': index === breadcrumbRoutes.length - 1 }"  ) {{ route }}
             .flex.gap-3.items-center
               .tools.flex.items-center(class="p-2 rounded-full gap-2.5" )
                 ColorModeToggle
                 el-dropdown(class="outline-0")
-                      div.profile-trigger.flex.gap-3.items-center.outline-0.border-0.cursor-pointer
-                            Avatar(:src="user?.profilePicture", small)
-                            p.mb-0.text-base.font-medium.text-neutral-800 {{user?.name}}
-                                //- p.text-xs.font-medium.opacity-50 {{ user?.email }}
+                      div.profile-trigger.flex.gap-3.items-center.outline-0.border-0.cursor-pointer(class="!text-[var(--text-primary)]")
+                            Avatar(:src="user?.profilePicture", small, table)
+                            p.mb-0 {{user?.name}}
                             Icon.text-xl(name="iconamoon:arrow-down-2")
                       template(#dropdown='')
                         el-dropdown-menu
-                            //- NuxtLink(:to="'/profile'"): el-dropdown-item
-                            //-     p.text-xs profile
-                            el-dropdown-item(@click="logout")
-                                p.text-xs logout
+                          .px-4.py-3
+                            p.text-sm.font-semibold.mb-0 {{ user?.name }}
+                            p.text-xs.opacity-60.mb-0 {{ user?.email }}
+                          el-dropdown-item(divided, @click="router.push('/settings')")
+                            .flex.items-center.gap-2
+                              Icon(name="ph:gear-bold")
+                              span {{ $t('navigation.settings') }}
+                          el-dropdown-item(divided, @click="logout")
+                            .flex.items-center.gap-2
+                              Icon(name="ph:sign-out-bold")
+                              span {{ $t('common.logout') }}
               .notification.premium-nav-btn(@click.stop="notificationCenter.toggle()")
                 .flex.items-center.justify-center.w-full.h-full
                   Icon.text-xl(name="ph:bell-bold")
@@ -67,6 +73,7 @@ const { cheatSheetVisible, categories: shortcutCategories } = useKeyboardShortcu
 const mainData = useMain();
 const { fullNav, mobile, hideNav } = storeToRefs(mainData);
 const { width, height } = useWindowSize();
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const showNavbar = ref(false);
@@ -118,9 +125,9 @@ async function logout() {
   const response = await useApiFetch('auth/logout', 'POST');
   user.value = null;
   ElNotification({
-    title: response?.success ? 'Success' : 'Error',
+    title: response?.success ? t('common.success') : t('common.error'),
     type: response?.success ? 'success' : 'error',
-    message: response?.message || 'Logged out'
+    message: response?.message || t('common.logout')
   });
   router.push('/login');
 }
