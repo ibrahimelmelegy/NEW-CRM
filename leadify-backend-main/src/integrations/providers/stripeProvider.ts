@@ -150,7 +150,7 @@ export class StripeProvider {
         const params: any = { limit };
         if (customerId) params.customer = customerId;
         const invoices = await client.invoices.list(params);
-        const items = invoices.data.map((inv) => ({ id: inv.id, amount: inv.amount_due, status: inv.status, created: inv.created }));
+        const items = invoices.data.map((inv: any) => ({ id: inv.id, amount: inv.amount_due, status: inv.status, created: inv.created }));
         return { success: true, data: items, mock: false };
       }
       return {

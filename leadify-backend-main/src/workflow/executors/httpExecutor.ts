@@ -183,11 +183,11 @@ export async function executeHttp(nodeConfig: HttpNodeConfig, context: HttpConte
 
       // Server error (5xx) - retry if we have retries left
       lastError = new Error(`HTTP ${result.status}: ${result.text.substring(0, 200)}`);
-    } catch (err) {
-      lastError = err;
+    } catch (err: unknown) {
+      lastError = err as Error;
 
       // Abort errors (timeout) should not retry
-      if (err.name === 'AbortError') {
+      if ((err as Error).name === 'AbortError') {
         throw new Error(`HTTP request timed out after ${timeoutMs}ms to ${resolvedUrl} (attempt ${attempts})`);
       }
     }

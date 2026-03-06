@@ -254,8 +254,8 @@ class ShippingService {
       try {
         const shipment = await this.updateShipmentStatus(update.id, update.status);
         results.push({ id: update.id, success: true, shipment });
-      } catch (err) {
-        results.push({ id: update.id, success: false, error: err.message });
+      } catch (err: unknown) {
+        results.push({ id: update.id, success: false, error: (err as Error).message });
       }
     }
 

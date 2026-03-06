@@ -438,9 +438,9 @@ async function executeWebhook(action: Extract<WorkflowAction, { type: 'WEBHOOK' 
       ok: response.ok,
       body: responseText.substring(0, 1000) // truncate large responses
     };
-  } catch (err) {
+  } catch (err: unknown) {
     clearTimeout(timeout);
-    throw new Error(`Webhook failed: ${err.message}`);
+    throw new Error(`Webhook failed: ${(err as Error).message}`);
   }
 }
 
@@ -610,11 +610,11 @@ async function executeWorkflow(
         status: 'SUCCESS',
         result
       });
-    } catch (error) {
+    } catch (error: unknown) {
       actionResults.push({
         actionType: action.type,
         status: 'FAILED',
-        error: error.message || 'Unknown error'
+        error: (error as Error).message || 'Unknown error'
       });
       overallStatus = ExecutionStatus.PARTIAL;
     }
@@ -754,9 +754,9 @@ async function processEntityEvent(
         );
 
         executions.push(execution);
-      } catch (error) {
+      } catch (error: unknown) {
         // Log failed execution but continue with other rules
-        console.error(`Workflow rule ${rule.id} (${rule.name}) failed:`, error.message);
+        console.error(`Workflow rule ${rule.id} (${rule.name}) failed:`, (error as Error).message);
 
         const failedExec = await WorkflowExecution.create({
           workflowRuleId: rule.id,
@@ -764,7 +764,7 @@ async function processEntityEvent(
           entityId,
           triggerType,
           status: ExecutionStatus.FAILED,
-          actionsExecuted: [{ actionType: 'SYSTEM', status: 'FAILED', error: error.message }],
+          actionsExecuted: [{ actionType: 'SYSTEM', status: 'FAILED', error: (error as Error).message }],
           executionTimeMs: 0,
           userId: userId || null
         });
@@ -774,8 +774,8 @@ async function processEntityEvent(
     }
 
     return executions;
-  } catch (error) {
-    console.error('Workflow engine processEntityEvent error:', error.message);
+  } catch (error: unknown) {
+    console.error('Workflow engine processEntityEvent error:', (error as Error).message);
     return [];
   }
 }
@@ -850,11 +850,11 @@ async function executeDelayedActions(
         status: 'SUCCESS',
         result
       });
-    } catch (error) {
+    } catch (error: unknown) {
       actionResults.push({
         actionType: action.type,
         status: 'FAILED',
-        error: error.message || 'Unknown error'
+        error: (error as Error).message || 'Unknown error'
       });
       overallStatus = ExecutionStatus.PARTIAL;
     }

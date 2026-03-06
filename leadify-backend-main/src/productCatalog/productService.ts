@@ -304,8 +304,8 @@ class ProductService {
           priceHistory: product.unitPrice ? [{ price: product.unitPrice, date: new Date().toISOString() }] : []
         });
         created++;
-      } catch (err) {
-        errors.push(`Failed to create "${product.name}": ${err.message}`);
+      } catch (err: unknown) {
+        errors.push(`Failed to create "${product.name}": ${(err as Error).message}`);
       }
     }
 

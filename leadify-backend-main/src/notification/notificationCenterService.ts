@@ -244,7 +244,7 @@ class NotificationCenterService {
           await webpush.sendNotification(sub.subscription, payload);
         } catch (err) {
           // If subscription expired (410 Gone), remove it
-          if (err?.statusCode === 410) {
+          if ((err as any)?.statusCode === 410) {
             await sub.destroy();
           }
         }

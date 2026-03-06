@@ -56,10 +56,10 @@ async function resolveApproverUserIds(config: ApprovalConfig): Promise<number[]>
           where: { roleId: role.id, status: 'ACTIVE' },
           attributes: ['id']
         });
-        return users.map((u) => u.id);
+        return users.map((u: any) => u.id);
       }
-    } catch (err) {
-      console.error('Failed to resolve approver role:', err.message);
+    } catch (err: unknown) {
+      console.error('Failed to resolve approver role:', (err as Error).message);
     }
   }
 
@@ -112,8 +112,8 @@ export async function executeApproval(nodeConfig: ApprovalConfig, context: Appro
         status: ExecutionStatus.PARTIAL // Mark as partial until resolved
       });
     }
-  } catch (err) {
-    console.error('Failed to persist approval record:', err.message);
+  } catch (err: unknown) {
+    console.error('Failed to persist approval record:', (err as Error).message);
   }
 
   // Create notifications for approver(s)
@@ -139,8 +139,8 @@ export async function executeApproval(nodeConfig: ApprovalConfig, context: Appro
         message: nodeConfig.message
       });
     }
-  } catch (err) {
-    console.error('Failed to create approval notifications:', err.message);
+  } catch (err: unknown) {
+    console.error('Failed to create approval notifications:', (err as Error).message);
   }
 
   return approvalRecord;

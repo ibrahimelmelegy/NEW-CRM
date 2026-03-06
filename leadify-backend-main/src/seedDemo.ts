@@ -846,9 +846,9 @@ async function seedDemo() {
     // ── DONE ──
     // DEMO SEED COMPLETE
     process.exit(0);
-  } catch (error) {
-    console.error('❌ Seed failed:', error.message);
-    console.error(error.stack);
+  } catch (error: unknown) {
+    console.error('Seed failed:', (error as Error).message);
+    console.error((error as Error).stack);
     process.exit(1);
   }
 }

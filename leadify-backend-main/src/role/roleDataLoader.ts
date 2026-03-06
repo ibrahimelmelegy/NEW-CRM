@@ -11,7 +11,7 @@ export const createRoleUserCountLoader = () =>
       raw: true
     });
 
-    const userCountMap = new Map(userCounts.map((record) => [record.roleId, parseInt(record.count, 10)]));
+    const userCountMap = new Map(userCounts.map((record: any) => [record.roleId, parseInt(record.count, 10)]));
 
     return roleIds.map(roleId => userCountMap.get(roleId) || 0);
   });

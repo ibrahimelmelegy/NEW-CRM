@@ -158,7 +158,7 @@ class ReportService {
     if (!data.length) return '';
 
     const headers = Object.keys(data[0]);
-    const rows = data.map((row) =>
+    const rows = data.map((row: any) =>
       headers
         .map(h => {
           const val = row[h];
@@ -194,7 +194,7 @@ class ReportService {
     headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
 
     // Add data rows
-    data.forEach((row) => {
+    data.forEach((row: any) => {
       const values = headers.map(h => row[h]);
       worksheet.addRow(values);
     });
@@ -202,7 +202,7 @@ class ReportService {
     // Auto-size columns
     worksheet.columns.forEach((column) => {
       let maxLength = 0;
-      column.eachCell({ includeEmpty: true }, (cell: any) => {
+      column!.eachCell!({ includeEmpty: true }, (cell: any) => {
         const length = cell.value ? String(cell.value).length : 10;
         if (length > maxLength) maxLength = length;
       });

@@ -393,9 +393,9 @@ class WhatsAppService {
         const msg = await this.sendTemplateMessage(contactId, templateId, variables, userId, tenantId);
         sent++;
         results.push({ contactId, messageId: msg.id, status: 'SENT' });
-      } catch (err) {
+      } catch (err: unknown) {
         failed++;
-        results.push({ contactId, status: 'FAILED', error: err.message });
+        results.push({ contactId, status: 'FAILED', error: (err as Error).message });
       }
     }
 

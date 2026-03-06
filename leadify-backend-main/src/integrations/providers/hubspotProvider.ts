@@ -93,7 +93,7 @@ export class HubSpotProvider {
           companies: client.crm.companies,
         };
         const response = await apiMap[objectType].basicApi.getPage(limit);
-        const records: HubSpotRecord[] = response.results.map((r) => ({
+        const records: HubSpotRecord[] = response.results.map((r: any) => ({
           id: r.id,
           properties: r.properties,
           createdAt: r.createdAt,
