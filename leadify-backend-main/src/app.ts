@@ -367,6 +367,9 @@ app.use('/api/client/excel', exportLimiter);
 app.use('/api/activity', ActivityRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/users/excel', exportLimiter);
+// Staff alias — frontend pages (collaboration, analytics, revenue-intelligence)
+// call /api/staff which maps to the same user routes
+app.use('/api/staff', userRoutes);
 app.use('/api/setting', settingRoutes);
 app.use('/api/daily-task', dailyTaskRoutes);
 app.use('/api/vendor', vendorRoutes);
@@ -376,7 +379,7 @@ app.use('/api/ai', apiIntensiveLimiter, aiRoutes);
 app.use('/api/integrations', integrationRoutes);
 app.use('/api/integrations/erpnext', erpnextRoutes);
 app.use('/api/integrations/third-party', thirdPartyIntegrationRoutes);
-app.use('/api/webhooks', webhookHandlerRoutes);
+app.use('/api/webhooks/incoming', webhookLimiter, webhookHandlerRoutes);
 app.use('/api/messaging', messagingRoutes);
 app.use('/api/custom-fields', customFieldRoutes);
 app.use('/api/webhooks', webhookLimiter, webhookRoutes);
@@ -384,14 +387,17 @@ app.use('/api/time-tracking', timeTrackingRoutes);
 app.use('/api/report-builder', apiIntensiveLimiter, reportBuilderRoutes);
 app.use('/api/report-builder/export-csv', exportLimiter);
 app.use('/api/report-builder/export-pdf', exportLimiter);
-app.use('/api/invoices', invoiceRoutes);
 app.use('/api/invoices/billing', invoiceBillingRoutes);
+app.use('/api/invoices', invoiceRoutes);
 app.use('/api/workflows', workflowRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api/portal', portalRoutes);
 app.use('/api/document-templates', documentTemplateRoutes);
 app.use('/api/knowledge-base', kbRoutes);
+// Both HR routers share /api/hr — no sub-path overlap:
+// hrRoutes handles /attendance/*, /leave-requests/*
+// employeeRoutes handles /employees/*, /departments/*, /org-chart, /expiring-documents
 app.use('/api/hr', hrRoutes);
 app.use('/api/hr', employeeRoutes);
 app.use('/api/finance', financeRoutes);
@@ -486,8 +492,8 @@ app.use('/api/backups', backupRoutes);
 // ─── Monitoring & Health Dashboard ──────────────────────────────────────────
 app.use('/api/monitoring', monitoringRoutes);
 
-// Public notification unsubscribe (no auth required)
-app.use('/api/notifications', unsubscribeRoutes);
+// Public notification unsubscribe (no auth required) — singular to match /api/notification
+app.use('/api/notification', unsubscribeRoutes);
 
 // Authentication routes — strict rate limiting on login/password-reset
 app.use('/api/auth/login', authLimiter);

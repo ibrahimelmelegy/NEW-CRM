@@ -662,6 +662,8 @@ const sentimentTrendOption = computed(() => {
 
 // Sentiment Pie Chart
 const sentimentPieOption = computed(() => {
+  if (!mentions.value.length) return null;
+
   const posCount = mentions.value.filter(m => m.sentiment === 'positive').length;
   const neuCount = mentions.value.filter(m => m.sentiment === 'neutral').length;
   const negCount = mentions.value.filter(m => m.sentiment === 'negative').length;
@@ -698,6 +700,8 @@ const sentimentPieOption = computed(() => {
 
 // Sentiment By Platform (Stacked Horizontal Bar)
 const sentimentByPlatformOption = computed(() => {
+  if (!mentions.value.length) return null;
+
   const platforms = ['Twitter/X', 'LinkedIn', 'Facebook', 'Instagram'];
   const platformKeys = ['twitter', 'linkedin', 'facebook', 'instagram'];
 
@@ -752,6 +756,8 @@ const sentimentByPlatformOption = computed(() => {
 
 // Competitor Radar Chart
 const competitorRadarOption = computed(() => {
+  if (!competitors.value.length) return null;
+
   const dimensions = [
     t('socialListening.brandAwareness'),
     t('socialListening.sentimentScore'),
@@ -764,22 +770,17 @@ const competitorRadarOption = computed(() => {
   const topCompetitors = competitors.value.filter(c => !c.isOurs).slice(0, 3);
 
   const radarData = [
-    {
-      value: [82, ourBrand?.sentimentScore || 72, 78, 85, 70],
-      name: ourBrand?.name || t('socialListening.yourBrand'),
+    ...(ourBrand ? [{
+      value: [0, ourBrand.sentimentScore || 0, 0, 0, 0],
+      name: ourBrand.name,
       lineStyle: { width: 3, color: '#7849ff' },
       itemStyle: { color: '#7849ff' },
       areaStyle: { color: 'rgba(120, 73, 255, 0.2)' }
-    },
+    }] : []),
     ...topCompetitors.map((comp, idx) => {
       const colors = ['#3b82f6', '#f59e0b', '#ef4444'];
-      const baseVals = [
-        [75, 68, 72, 70, 65],
-        [60, 55, 80, 62, 58],
-        [45, 48, 55, 50, 72]
-      ];
       return {
-        value: baseVals[idx] || [50, 50, 50, 50, 50],
+        value: [0, comp.sentimentScore || 0, 0, 0, 0],
         name: comp.name,
         lineStyle: { width: 2, color: colors[idx] ?? '#999', type: 'dashed' as const },
         itemStyle: { color: colors[idx] ?? '#999' },
@@ -864,40 +865,9 @@ const sovAreaOption = computed(() => {
 });
 
 // ── Word Cloud Data ───────────────────────────────────
+// TODO: Populate from API response with trending topic data
 const wordCloudData = computed(() => {
-  const words = [
-    { text: '#BrandCRM', sizeClass: 'text-2xl', color: '#7849ff' },
-    { text: 'customer service', sizeClass: 'text-xl', color: '#3b82f6' },
-    { text: 'automation', sizeClass: 'text-lg', color: '#22c55e' },
-    { text: '#SaaS', sizeClass: 'text-2xl', color: '#f59e0b' },
-    { text: 'integration', sizeClass: 'text-base', color: '#06b6d4' },
-    { text: 'analytics', sizeClass: 'text-xl', color: '#ec4899' },
-    { text: 'dashboard', sizeClass: 'text-sm', color: '#8b5cf6' },
-    { text: '#CRMsoftware', sizeClass: 'text-lg', color: '#ef4444' },
-    { text: 'pipeline', sizeClass: 'text-base', color: '#14b8a6' },
-    { text: 'sales team', sizeClass: 'text-xl', color: '#f97316' },
-    { text: '#digital', sizeClass: 'text-sm', color: '#64748b' },
-    { text: 'workflow', sizeClass: 'text-lg', color: '#7849ff' },
-    { text: 'ROI', sizeClass: 'text-2xl', color: '#22c55e' },
-    { text: '#MarTech', sizeClass: 'text-base', color: '#3b82f6' },
-    { text: 'lead scoring', sizeClass: 'text-lg', color: '#f59e0b' },
-    { text: 'onboarding', sizeClass: 'text-sm', color: '#06b6d4' },
-    { text: '#AI', sizeClass: 'text-2xl', color: '#ec4899' },
-    { text: 'real-time', sizeClass: 'text-base', color: '#8b5cf6' },
-    { text: 'reporting', sizeClass: 'text-xl', color: '#14b8a6' },
-    { text: 'engagement', sizeClass: 'text-lg', color: '#ef4444' },
-    { text: '#B2B', sizeClass: 'text-sm', color: '#64748b' },
-    { text: 'conversion', sizeClass: 'text-xl', color: '#f97316' },
-    { text: 'support', sizeClass: 'text-base', color: '#22c55e' },
-    { text: '#Growth', sizeClass: 'text-lg', color: '#7849ff' },
-    { text: 'feedback', sizeClass: 'text-sm', color: '#3b82f6' },
-    { text: 'retention', sizeClass: 'text-xl', color: '#f59e0b' },
-    { text: 'personalization', sizeClass: 'text-base', color: '#ec4899' },
-    { text: '#Data', sizeClass: 'text-lg', color: '#06b6d4' },
-    { text: 'scalability', sizeClass: 'text-sm', color: '#8b5cf6' },
-    { text: 'omnichannel', sizeClass: 'text-xl', color: '#ef4444' }
-  ];
-  return words;
+  return [] as { text: string; sizeClass: string; color: string }[];
 });
 
 // ── Actions ───────────────────────────────────────────
@@ -913,296 +883,30 @@ function handleConnect(influencer: Influencer) {
   ElMessage.success(t('socialListening.connectionRequested', { name: influencer.name }));
 }
 
-// ── Mock Data Generation ──────────────────────────────
+// ── Data Loading (populated from API) ─────────────────
 function generateMentions() {
-  const now = new Date();
-  const platforms = ['twitter', 'linkedin', 'facebook', 'instagram'];
-  const sentiments: Mention['sentiment'][] = ['positive', 'neutral', 'negative'];
-
-  const mockAuthors = [
-    { name: 'Sarah Mitchell', handle: '@sarahmit' },
-    { name: 'Ahmed Al-Farsi', handle: '@ahmedfarsi' },
-    { name: 'David Park', handle: '@davidpark_tech' },
-    { name: 'Elena Rodriguez', handle: '@elenarodz' },
-    { name: 'James Thompson', handle: '@jthompson_biz' },
-    { name: 'Yuki Tanaka', handle: '@yukitanaka' },
-    { name: 'Priya Sharma', handle: '@priya_insights' },
-    { name: 'Marco Bianchi', handle: '@marcob_digital' },
-    { name: 'Aisha Khan', handle: '@aisha_mkt' },
-    { name: 'Robert Chen', handle: '@robchen_ceo' },
-    { name: 'Fatima Hassan', handle: '@fatima_saas' },
-    { name: 'Tom Wilson', handle: '@tomw_analytics' },
-    { name: 'Maria Garcia', handle: '@maria_crm' },
-    { name: 'Li Wei', handle: '@liwei_tech' },
-    { name: 'Nadia Popov', handle: '@nadiap_marketing' },
-    { name: 'Oscar Mendez', handle: '@oscarmendez' },
-    { name: 'Hannah Brown', handle: '@hannahb_sales' },
-    { name: 'Raj Patel', handle: '@rajpatel_biz' }
-  ];
-
-  const positiveMentions = [
-    'Just switched to @BrandCRM and the pipeline management is incredible! Our close rates improved by 30% in two months. Highly recommend for any B2B team.',
-    'Amazing customer support from @BrandCRM today. Issue resolved in under 10 minutes. This is how SaaS companies should operate! #CustomerFirst',
-    'The new analytics dashboard from @BrandCRM is a game changer. Finally real-time insights that actually drive decisions. Love the direction!',
-    'Our team has been using @BrandCRM for 6 months now and productivity is up 40%. The automation features save us hours every week.',
-    'Just attended the @BrandCRM webinar on lead scoring. Mind blown by the AI capabilities. The future of sales is here!',
-    'Shoutout to @BrandCRM for the seamless integration with our marketing stack. No more data silos!',
-    'The ROI we have seen from @BrandCRM in Q4 has been phenomenal. Best CRM investment we have made as a startup.'
-  ];
-
-  const neutralMentions = [
-    'Comparing @BrandCRM vs CompetitorX for our enterprise rollout. Both have strong features, but looking for community feedback. Thoughts?',
-    'New update from @BrandCRM just dropped. Checking out the features now. Will report back with my findings.',
-    'Anyone else using @BrandCRM for their sales operations? Curious about your workflow setup and customizations.',
-    'Reading the @BrandCRM Q4 report. Interesting market positioning. Some good numbers but also areas for improvement.',
-    'Evaluating CRM solutions for mid-market companies. @BrandCRM is on our shortlist alongside a few others.',
-    'The @BrandCRM mobile app got a redesign. Looks cleaner but still getting used to the new navigation.'
-  ];
-
-  const negativeMentions = [
-    'Having some sync issues with @BrandCRM today. Calendar integration keeps dropping. Anyone else experiencing this?',
-    'The pricing tier changes from @BrandCRM are frustrating. Features we relied on moved to enterprise plan. Not cool.',
-    '@BrandCRM reporting could use work. Custom report builder is clunky compared to what @CompetitorY offers.',
-    'Waited 3 hours for @BrandCRM support today. For enterprise pricing, response times should be much better.',
-    'Import feature in @BrandCRM failed on a 10K contact list. Had to split into smaller batches. Needs improvement.'
-  ];
-
-  const allMentionTexts = { positive: positiveMentions, neutral: neutralMentions, negative: negativeMentions };
-  const items: Mention[] = [];
-
-  for (let i = 0; i < 18; i++) {
-    const author = mockAuthors[i % mockAuthors.length]!;
-    const platform = platforms[Math.floor(Math.random() * platforms.length)]!;
-    const rand = Math.random();
-    const sentiment: Mention['sentiment'] = rand < 0.45 ? 'positive' : rand < 0.75 ? 'neutral' : 'negative';
-    const textPool = allMentionTexts[sentiment];
-    const text = textPool[Math.floor(Math.random() * textPool.length)]!;
-    const minutesAgo = Math.floor(Math.random() * 43200); // up to 30 days
-
-    items.push({
-      id: `mention-${i}`,
-      platform,
-      authorName: author.name,
-      handle: author.handle,
-      text,
-      sentiment,
-      likes: Math.floor(Math.random() * 500) + 5,
-      shares: Math.floor(Math.random() * 120) + 1,
-      comments: Math.floor(Math.random() * 80) + 1,
-      date: new Date(now.getTime() - minutesAgo * 60000).toISOString()
-    });
-  }
-
-  mentions.value = items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  // TODO: Replace with actual API call to fetch social mentions
+  mentions.value = [];
 }
 
 function generateSentimentTrend() {
-  const data: { date: string; positive: number; neutral: number; negative: number }[] = [];
-  const now = new Date();
-
-  for (let i = 29; i >= 0; i--) {
-    const date = new Date(now.getTime() - i * 86400000);
-    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    const basePositive = 35 + Math.floor(Math.random() * 25);
-    const baseNeutral = 20 + Math.floor(Math.random() * 15);
-    const baseNegative = 8 + Math.floor(Math.random() * 12);
-
-    data.push({
-      date: dateStr,
-      positive: basePositive,
-      neutral: baseNeutral,
-      negative: baseNegative
-    });
-  }
-
-  sentimentTrendData.value = data;
+  // TODO: Replace with actual API call to fetch sentiment trend data
+  sentimentTrendData.value = [];
 }
 
 function generateCompetitors() {
-  competitors.value = [
-    { id: 'comp-0', name: 'BrandCRM', mentions: 4280, sentimentScore: 72, shareOfVoice: 35, trend: 5.2, color: '#7849ff', isOurs: true },
-    { id: 'comp-1', name: 'CompetitorX', mentions: 3150, sentimentScore: 65, shareOfVoice: 26, trend: 2.1, color: '#3b82f6', isOurs: false },
-    { id: 'comp-2', name: 'RivalCRM', mentions: 2480, sentimentScore: 58, shareOfVoice: 20, trend: -3.4, color: '#f59e0b', isOurs: false },
-    { id: 'comp-3', name: 'SalesForce Pro', mentions: 1560, sentimentScore: 61, shareOfVoice: 13, trend: 1.8, color: '#22c55e', isOurs: false },
-    { id: 'comp-4', name: 'PipelineHub', mentions: 730, sentimentScore: 54, shareOfVoice: 6, trend: -1.2, color: '#ef4444', isOurs: false }
-  ];
+  // TODO: Replace with actual API call to fetch competitor data
+  competitors.value = [];
 }
 
 function generateSovTrend() {
-  const data: { month: string; values: Record<string, number> }[] = [];
-  const now = new Date();
-  const brands = competitors.value.map(c => c.name);
-
-  for (let i = 11; i >= 0; i--) {
-    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const monthLabel = date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
-    const values: Record<string, number> = {};
-
-    // Generate values that roughly sum to 100
-    const baseValues = [
-      33 + Math.floor(Math.random() * 6),
-      24 + Math.floor(Math.random() * 5),
-      19 + Math.floor(Math.random() * 4),
-      12 + Math.floor(Math.random() * 3),
-      5 + Math.floor(Math.random() * 3)
-    ];
-    brands.forEach((brand, idx) => {
-      values[brand] = baseValues[idx] || 5;
-    });
-
-    data.push({ month: monthLabel, values });
-  }
-
-  sovTrendData.value = data;
+  // TODO: Replace with actual API call to fetch share of voice trend data
+  sovTrendData.value = [];
 }
 
 function generateInfluencers() {
-  influencers.value = [
-    {
-      id: 'inf-1',
-      name: 'Alex Rivera',
-      handle: '@alexrivera_saas',
-      platform: 'twitter',
-      followers: 284000,
-      engagementRate: 4.8,
-      relevanceScore: 95,
-      avgLikes: 2400,
-      sentiment: 'positive',
-      topics: ['SaaS', 'CRM', 'Sales Tech']
-    },
-    {
-      id: 'inf-2',
-      name: 'Diana Chen',
-      handle: '@dianachen_growth',
-      platform: 'linkedin',
-      followers: 156000,
-      engagementRate: 6.2,
-      relevanceScore: 92,
-      avgLikes: 3800,
-      sentiment: 'positive',
-      topics: ['Growth', 'Marketing', 'B2B']
-    },
-    {
-      id: 'inf-3',
-      name: 'Marcus Johnson',
-      handle: '@marcusj_tech',
-      platform: 'twitter',
-      followers: 198000,
-      engagementRate: 3.5,
-      relevanceScore: 88,
-      avgLikes: 1900,
-      sentiment: 'neutral',
-      topics: ['Tech Reviews', 'Enterprise', 'Cloud']
-    },
-    {
-      id: 'inf-4',
-      name: 'Sofia Petrov',
-      handle: '@sofiapetrov_biz',
-      platform: 'instagram',
-      followers: 342000,
-      engagementRate: 5.1,
-      relevanceScore: 78,
-      avgLikes: 8200,
-      sentiment: 'positive',
-      topics: ['Startup Life', 'Productivity', 'Tools']
-    },
-    {
-      id: 'inf-5',
-      name: 'Ryan Nakamura',
-      handle: '@ryannaka_sales',
-      platform: 'linkedin',
-      followers: 89000,
-      engagementRate: 7.3,
-      relevanceScore: 96,
-      avgLikes: 1200,
-      sentiment: 'positive',
-      topics: ['Sales Strategy', 'CRM', 'Pipeline']
-    },
-    {
-      id: 'inf-6',
-      name: 'Leila Amari',
-      handle: '@leila_digital',
-      platform: 'twitter',
-      followers: 420000,
-      engagementRate: 3.9,
-      relevanceScore: 82,
-      avgLikes: 5600,
-      sentiment: 'neutral',
-      topics: ['Digital Marketing', 'Analytics', 'Data']
-    },
-    {
-      id: 'inf-7',
-      name: 'Thomas Mueller',
-      handle: '@tmueller_ent',
-      platform: 'linkedin',
-      followers: 67000,
-      engagementRate: 8.1,
-      relevanceScore: 91,
-      avgLikes: 980,
-      sentiment: 'positive',
-      topics: ['Enterprise Tech', 'CRM', 'Innovation']
-    },
-    {
-      id: 'inf-8',
-      name: 'Camila Santos',
-      handle: '@camilasantos_mkt',
-      platform: 'instagram',
-      followers: 510000,
-      engagementRate: 4.4,
-      relevanceScore: 74,
-      avgLikes: 12000,
-      sentiment: 'positive',
-      topics: ['Marketing', 'Brand', 'Content']
-    },
-    {
-      id: 'inf-9',
-      name: 'Jamal Williams',
-      handle: '@jamalw_startups',
-      platform: 'twitter',
-      followers: 132000,
-      engagementRate: 5.6,
-      relevanceScore: 87,
-      avgLikes: 2800,
-      sentiment: 'neutral',
-      topics: ['Startups', 'SaaS', 'Funding']
-    },
-    {
-      id: 'inf-10',
-      name: 'Nina Kowalski',
-      handle: '@ninak_revenue',
-      platform: 'linkedin',
-      followers: 78000,
-      engagementRate: 6.8,
-      relevanceScore: 93,
-      avgLikes: 1500,
-      sentiment: 'positive',
-      topics: ['Revenue Ops', 'CRM', 'Sales']
-    },
-    {
-      id: 'inf-11',
-      name: 'Oliver Chang',
-      handle: '@oliverchang_ai',
-      platform: 'twitter',
-      followers: 245000,
-      engagementRate: 4.2,
-      relevanceScore: 85,
-      avgLikes: 3200,
-      sentiment: 'positive',
-      topics: ['AI', 'Automation', 'SaaS']
-    },
-    {
-      id: 'inf-12',
-      name: 'Fatima Al-Zahra',
-      handle: '@fatimaalzahra_biz',
-      platform: 'facebook',
-      followers: 95000,
-      engagementRate: 5.9,
-      relevanceScore: 80,
-      avgLikes: 1800,
-      sentiment: 'neutral',
-      topics: ['Business', 'MENA Tech', 'CRM']
-    }
-  ];
+  // TODO: Replace with actual API call to fetch influencer data
+  influencers.value = [];
 }
 
 // ── Data Loading ──────────────────────────────────────

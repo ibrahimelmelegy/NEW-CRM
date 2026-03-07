@@ -19,6 +19,12 @@ const ENV_VARS: EnvVar[] = [
     hint: "Must be exactly 64 hex characters (32 bytes). Generate with: node -e \"process.stdout.write(require('crypto').randomBytes(32).toString('hex'))\""
   },
   {
+    name: 'TWO_FACTOR_ENCRYPTION_KEY',
+    required: true,
+    validator: v => /^[0-9a-f]{64}$/i.test(v),
+    hint: "Must be exactly 64 hex characters (32 bytes). Generate with: node -e \"process.stdout.write(require('crypto').randomBytes(32).toString('hex'))\""
+  },
+  {
     name: 'DB_HOST',
     required: true,
     hint: 'Database host (e.g., localhost)'

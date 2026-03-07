@@ -1279,7 +1279,7 @@ function seedDemoData() {
       goalTitle: kr.title,
       krId: kr.id,
       date: date.toISOString(),
-      oldValue: Math.max(0, kr.progress - 10 - Math.floor(Math.random() * 15)),
+      oldValue: Math.max(0, kr.progress - 10),
       newValue: kr.progress,
       updatedBy: kr.owner
     });

@@ -584,7 +584,7 @@ async function loadTeamMembers() {
       // Simulate online status based on lastActiveAt or random for demo
       teamMembers.value = members.map((m) => ({
         ...m,
-        isOnline: m.isOnline ?? (m.lastActiveAt ? isRecentlyActive(m.lastActiveAt) : Math.random() > 0.4)
+        isOnline: m.isOnline ?? (m.lastActiveAt ? isRecentlyActive(m.lastActiveAt) : false)
       }));
     }
   } catch (e) {
@@ -611,8 +611,8 @@ async function loadStats() {
     if (leadsRes.success && leadsRes.body) {
       const leads = Array.isArray(leadsRes.body) ? leadsRes.body : (leadsRes.body as unknown)?.docs || (leadsRes.body as unknown)?.rows || [];
       stats.leadsCreated = leads.filter((l) => l.createdAt?.slice(0, 10) === today).length;
-      stats.openTasks = Math.floor(Math.random() * 20) + 5; // Placeholder until task endpoint
-      stats.avgResponseTime = parseFloat((Math.random() * 3 + 0.5).toFixed(1));
+      stats.openTasks = stats.openTasks ?? 0;
+      stats.avgResponseTime = stats.avgResponseTime ?? 0;
     }
   } catch (e) {
     console.error('Failed to load stats:', e);

@@ -171,7 +171,7 @@ class NotificationCenterService {
               secret,
               { expiresIn: '30d' }
             );
-            unsubscribeUrl = `${process.env.BACKEND_URL || 'http://localhost:3000'}/api/notifications/unsubscribe?token=${unsubscribeToken}`;
+            unsubscribeUrl = `${process.env.BACKEND_URL || 'http://localhost:3000'}/api/notification/unsubscribe?token=${unsubscribeToken}`;
           } else {
             console.error('[NotificationCenter] SECRET_KEY not set — omitting unsubscribe link');
           }

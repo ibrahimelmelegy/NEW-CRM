@@ -793,7 +793,7 @@ const breakdownColors = ['#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', 
 
 const audienceBreakdownData = computed(() => {
   if (audience.type === 'tags' && audience.tags.length) {
-    return audience.tags.map((tag, i) => ({ name: tag, value: Math.floor(Math.random() * 400) + 100 }));
+    return audience.tags.map((tag, i) => ({ name: tag, value: 0 }));
   }
   return [
     { name: 'Website', value: 3200 },
@@ -895,10 +895,10 @@ const timezones = [
 
 // ── Sample Contact for Preview ──
 const sampleContact = reactive({
-  first_name: 'John',
-  last_name: 'Doe',
-  company_name: 'Acme Corp',
-  email: 'john.doe@acme.com'
+  first_name: '',
+  last_name: '',
+  company_name: '',
+  email: ''
 });
 
 // ── Analytics Data (populated when campaign is sent) ──
@@ -1249,8 +1249,8 @@ function initTimelineChart() {
   if (!timelineChartRef.value) return;
   timelineChart = echarts.init(timelineChartRef.value);
   const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`);
-  const openData = hours.map(() => Math.floor(Math.random() * 100) + 10);
-  const clickData = hours.map(() => Math.floor(Math.random() * 30) + 2);
+  const openData = hours.map(() => 0);
+  const clickData = hours.map(() => 0);
   const option: echarts.EChartsOption = {
     tooltip: { trigger: 'axis' },
     legend: {

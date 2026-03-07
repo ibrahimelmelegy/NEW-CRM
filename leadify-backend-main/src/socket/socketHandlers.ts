@@ -115,7 +115,7 @@ const tenantUsers = new Map<string, Map<string, TenantUser>>(); // tenantId -> (
 /** Track active typing indicators with auto-expire timers */
 const typingTimers = new Map<string, NodeJS.Timeout>();
 
-/** Track document editing locks: documentId -> userId */
+/** Track document editing locks: tenantId:documentId -> lock info */
 const documentLocks = new Map<string, { userId: number; userName: string; lockedAt: Date }>();
 
 // ---------------------------------------------------------------------------
@@ -161,46 +161,58 @@ export function setupCrmSocketHandlers(io: Server): void {
      * All CRM entity events are broadcast to the tenant room.
      */
     socket.on('crm:join', (data: { name: string }) => {
-      // Use server-verified data from JWT (set by io.use() auth middleware)
-      const userId = socket.data.userId;
-      const tenantId = socket.data.tenantId;
-      if (!userId || !tenantId) return;
+      try {
+        // Use server-verified data from JWT (set by io.use() auth middleware)
+        const userId = socket.data.userId;
+        const tenantId = socket.data.tenantId;
+        if (!userId || !tenantId) return;
 
-      const tenantRoom = getTenantRoom(tenantId);
-      socket.join(tenantRoom);
+        const tenantRoom = getTenantRoom(tenantId);
+        socket.join(tenantRoom);
 
-      // Track user in tenant
-      if (!tenantUsers.has(tenantId)) {
-        tenantUsers.set(tenantId, new Map());
+        // Track user in tenant
+        if (!tenantUsers.has(tenantId)) {
+          tenantUsers.set(tenantId, new Map());
+        }
+        tenantUsers.get(tenantId)!.set(socket.id, {
+          socketId: socket.id,
+          userId,
+          tenantId,
+          name: data.name,
+          joinedAt: new Date()
+        });
+
+        // Broadcast updated online users list to tenant
+        io.to(tenantRoom).emit('crm:online_users', getOnlineUsers(tenantId));
+
+        // Send current document locks for this tenant to newly joined user
+        const locks: Record<string, { userId: number; userName: string }> = {};
+        const lockPrefix = `${tenantId}:`;
+        for (const [lockKey, lock] of documentLocks) {
+          if (lockKey.startsWith(lockPrefix)) {
+            const documentId = lockKey.substring(lockPrefix.length);
+            locks[documentId] = { userId: lock.userId, userName: lock.userName };
+          }
+        }
+        socket.emit('document:locks_sync', locks);
+      } catch (err) {
+        console.error('Socket event crm:join error:', err);
       }
-      tenantUsers.get(tenantId)!.set(socket.id, {
-        socketId: socket.id,
-        userId,
-        tenantId,
-        name: data.name,
-        joinedAt: new Date()
-      });
-
-      // Broadcast updated online users list to tenant
-      io.to(tenantRoom).emit('crm:online_users', getOnlineUsers(tenantId));
-
-      // Send current document locks to newly joined user
-      const locks: Record<string, { userId: number; userName: string }> = {};
-      for (const [docId, lock] of documentLocks) {
-        locks[docId] = { userId: lock.userId, userName: lock.userName };
-      }
-      socket.emit('document:locks_sync', locks);
     });
 
     /**
      * User leaves their tenant room.
      */
     socket.on('crm:leave', () => {
-      const tenantId = removeUserFromAllTenants(socket.id);
-      if (tenantId) {
-        const tenantRoom = getTenantRoom(tenantId);
-        socket.leave(tenantRoom);
-        io.to(tenantRoom).emit('crm:online_users', getOnlineUsers(tenantId));
+      try {
+        const tenantId = removeUserFromAllTenants(socket.id);
+        if (tenantId) {
+          const tenantRoom = getTenantRoom(tenantId);
+          socket.leave(tenantRoom);
+          io.to(tenantRoom).emit('crm:online_users', getOnlineUsers(tenantId));
+        }
+      } catch (err) {
+        console.error('Socket event crm:leave error:', err);
       }
     });
 
@@ -208,7 +220,11 @@ export function setupCrmSocketHandlers(io: Server): void {
      * Heartbeat/ping - client sends periodically to confirm connection is alive.
      */
     socket.on('crm:ping', () => {
-      socket.emit('crm:pong', { timestamp: Date.now() });
+      try {
+        socket.emit('crm:pong', { timestamp: Date.now() });
+      } catch (err) {
+        console.error('Socket event crm:ping error:', err);
+      }
     });
 
     // ─── 2. Entity Subscription ───────────────────────────────────────
@@ -218,11 +234,19 @@ export function setupCrmSocketHandlers(io: Server): void {
      * This enables granular per-record real-time updates.
      */
     socket.on('entity:subscribe', (data: { entityType: string; entityId: string }) => {
-      socket.join(getEntityRoom(data.entityType, data.entityId));
+      try {
+        socket.join(getEntityRoom(data.entityType, data.entityId));
+      } catch (err) {
+        console.error('Socket event entity:subscribe error:', err);
+      }
     });
 
     socket.on('entity:unsubscribe', (data: { entityType: string; entityId: string }) => {
-      socket.leave(getEntityRoom(data.entityType, data.entityId));
+      try {
+        socket.leave(getEntityRoom(data.entityType, data.entityId));
+      } catch (err) {
+        console.error('Socket event entity:unsubscribe error:', err);
+      }
     });
 
     // ─── 3. Collaboration - Typing Indicators ─────────────────────────
@@ -232,49 +256,57 @@ export function setupCrmSocketHandlers(io: Server): void {
      * Auto-expires after 3 seconds of inactivity.
      */
     socket.on('typing:start', (data: TypingPayload) => {
-      const timerKey = `${data.entityType}:${data.entityId}:${data.userId}`;
-      const room = getEntityRoom(data.entityType, data.entityId);
+      try {
+        const timerKey = `${data.entityType}:${data.entityId}:${data.userId}`;
+        const room = getEntityRoom(data.entityType, data.entityId);
 
-      // Clear existing auto-stop timer
-      const existing = typingTimers.get(timerKey);
-      if (existing) clearTimeout(existing);
+        // Clear existing auto-stop timer
+        const existing = typingTimers.get(timerKey);
+        if (existing) clearTimeout(existing);
 
-      socket.to(room).emit('typing:start', {
-        entityType: data.entityType,
-        entityId: data.entityId,
-        userId: data.userId,
-        userName: data.userName,
-        timestamp: Date.now()
-      });
+        socket.to(room).emit('typing:start', {
+          entityType: data.entityType,
+          entityId: data.entityId,
+          userId: data.userId,
+          userName: data.userName,
+          timestamp: Date.now()
+        });
 
-      // Auto-stop after 3 seconds
-      const timer = setTimeout(() => {
+        // Auto-stop after 3 seconds
+        const timer = setTimeout(() => {
+          socket.to(room).emit('typing:stop', {
+            entityType: data.entityType,
+            entityId: data.entityId,
+            userId: data.userId,
+            userName: data.userName
+          });
+          typingTimers.delete(timerKey);
+        }, 3000);
+
+        typingTimers.set(timerKey, timer);
+      } catch (err) {
+        console.error('Socket event typing:start error:', err);
+      }
+    });
+
+    socket.on('typing:stop', (data: TypingPayload) => {
+      try {
+        const timerKey = `${data.entityType}:${data.entityId}:${data.userId}`;
+        const room = getEntityRoom(data.entityType, data.entityId);
+
+        const existing = typingTimers.get(timerKey);
+        if (existing) clearTimeout(existing);
+        typingTimers.delete(timerKey);
+
         socket.to(room).emit('typing:stop', {
           entityType: data.entityType,
           entityId: data.entityId,
           userId: data.userId,
           userName: data.userName
         });
-        typingTimers.delete(timerKey);
-      }, 3000);
-
-      typingTimers.set(timerKey, timer);
-    });
-
-    socket.on('typing:stop', (data: TypingPayload) => {
-      const timerKey = `${data.entityType}:${data.entityId}:${data.userId}`;
-      const room = getEntityRoom(data.entityType, data.entityId);
-
-      const existing = typingTimers.get(timerKey);
-      if (existing) clearTimeout(existing);
-      typingTimers.delete(timerKey);
-
-      socket.to(room).emit('typing:stop', {
-        entityType: data.entityType,
-        entityId: data.entityId,
-        userId: data.userId,
-        userName: data.userName
-      });
+      } catch (err) {
+        console.error('Socket event typing:stop error:', err);
+      }
     });
 
     // ─── 4. Collaboration - Document Editing Lock ─────────────────────
@@ -284,39 +316,45 @@ export function setupCrmSocketHandlers(io: Server): void {
      * Prevents simultaneous edits by multiple users.
      */
     socket.on('document:editing', (data: DocumentLockPayload) => {
-      if (data.action === 'lock') {
-        const existing = documentLocks.get(data.documentId);
-        if (existing && existing.userId !== data.userId) {
-          // Document is already locked by another user
-          socket.emit('document:lock_denied', {
-            documentId: data.documentId,
-            lockedBy: existing.userName,
-            lockedByUserId: existing.userId
-          });
-          return;
-        }
-        documentLocks.set(data.documentId, {
-          userId: data.userId,
-          userName: data.userName,
-          lockedAt: new Date()
-        });
-      } else {
-        const existing = documentLocks.get(data.documentId);
-        if (existing && existing.userId === data.userId) {
-          documentLocks.delete(data.documentId);
-        }
-      }
+      try {
+        const tenantId = socket.data.tenantId;
+        const lockKey = tenantId ? `${tenantId}:${data.documentId}` : data.documentId;
 
-      // Broadcast lock status to tenant room
-      const lockTenantId = socket.data.tenantId;
-      if (lockTenantId) {
-        io.to(getTenantRoom(lockTenantId)).emit('document:editing', {
-          documentId: data.documentId,
-          userId: data.userId,
-          userName: data.userName,
-          action: data.action,
-          timestamp: Date.now()
-        });
+        if (data.action === 'lock') {
+          const existing = documentLocks.get(lockKey);
+          if (existing && existing.userId !== data.userId) {
+            // Document is already locked by another user
+            socket.emit('document:lock_denied', {
+              documentId: data.documentId,
+              lockedBy: existing.userName,
+              lockedByUserId: existing.userId
+            });
+            return;
+          }
+          documentLocks.set(lockKey, {
+            userId: data.userId,
+            userName: data.userName,
+            lockedAt: new Date()
+          });
+        } else {
+          const existing = documentLocks.get(lockKey);
+          if (existing && existing.userId === data.userId) {
+            documentLocks.delete(lockKey);
+          }
+        }
+
+        // Broadcast lock status to tenant room
+        if (tenantId) {
+          io.to(getTenantRoom(tenantId)).emit('document:editing', {
+            documentId: data.documentId,
+            userId: data.userId,
+            userName: data.userName,
+            action: data.action,
+            timestamp: Date.now()
+          });
+        }
+      } catch (err) {
+        console.error('Socket event document:editing error:', err);
       }
     });
 
@@ -327,80 +365,107 @@ export function setupCrmSocketHandlers(io: Server): void {
      * Uses conversation rooms for scoped message delivery.
      */
     socket.on('message:new', (data: MessagePayload) => {
-      const room = `chat:${data.conversationId}`;
-      socket.to(room).emit('message:new', {
-        ...data,
-        timestamp: data.timestamp || new Date().toISOString()
-      });
+      try {
+        const room = `chat:${data.conversationId}`;
+        socket.to(room).emit('message:new', {
+          ...data,
+          timestamp: data.timestamp || new Date().toISOString()
+        });
+      } catch (err) {
+        console.error('Socket event message:new error:', err);
+      }
     });
 
     socket.on('message:read', (data: { conversationId: string; userId: number; messageId?: string }) => {
-      const room = `chat:${data.conversationId}`;
-      socket.to(room).emit('message:read', {
-        conversationId: data.conversationId,
-        userId: data.userId,
-        messageId: data.messageId,
-        timestamp: Date.now()
-      });
+      try {
+        const room = `chat:${data.conversationId}`;
+        socket.to(room).emit('message:read', {
+          conversationId: data.conversationId,
+          userId: data.userId,
+          messageId: data.messageId,
+          timestamp: Date.now()
+        });
+      } catch (err) {
+        console.error('Socket event message:read error:', err);
+      }
     });
 
     socket.on('chat:typing', (data: { conversationId: string; userId: number; userName: string; isTyping: boolean }) => {
-      const room = `chat:${data.conversationId}`;
-      socket.to(room).emit('chat:typing', {
-        conversationId: data.conversationId,
-        userId: data.userId,
-        userName: data.userName,
-        isTyping: data.isTyping
-      });
+      try {
+        const room = `chat:${data.conversationId}`;
+        socket.to(room).emit('chat:typing', {
+          conversationId: data.conversationId,
+          userId: data.userId,
+          userName: data.userName,
+          isTyping: data.isTyping
+        });
+      } catch (err) {
+        console.error('Socket event chat:typing error:', err);
+      }
     });
 
     /**
      * Join/leave a chat conversation room.
      */
     socket.on('chat:join_room', (data: { conversationId: string }) => {
-      socket.join(`chat:${data.conversationId}`);
+      try {
+        socket.join(`chat:${data.conversationId}`);
+      } catch (err) {
+        console.error('Socket event chat:join_room error:', err);
+      }
     });
 
     socket.on('chat:leave_room', (data: { conversationId: string }) => {
-      socket.leave(`chat:${data.conversationId}`);
+      try {
+        socket.leave(`chat:${data.conversationId}`);
+      } catch (err) {
+        console.error('Socket event chat:leave_room error:', err);
+      }
     });
 
     // ─── 6. Disconnect Cleanup ────────────────────────────────────────
 
     socket.on('disconnect', () => {
-      // Remove from tenant tracking
-      const tenantId = removeUserFromAllTenants(socket.id);
-      if (tenantId) {
-        const tenantRoom = getTenantRoom(tenantId);
-        io.to(tenantRoom).emit('crm:online_users', getOnlineUsers(tenantId));
-      }
+      try {
+        // Remove from tenant tracking
+        const tenantId = removeUserFromAllTenants(socket.id);
+        if (tenantId) {
+          const tenantRoom = getTenantRoom(tenantId);
+          io.to(tenantRoom).emit('crm:online_users', getOnlineUsers(tenantId));
+        }
 
-      // Release any document locks held by this socket's user
-      const disconnectedUserId = socket.data.userId;
-      const disconnectedTenantId = socket.data.tenantId;
-      if (disconnectedUserId) {
-        for (const [docId, lock] of documentLocks) {
-          if (lock.userId === disconnectedUserId) {
-            documentLocks.delete(docId);
-            if (disconnectedTenantId) {
-              io.to(getTenantRoom(disconnectedTenantId)).emit('document:editing', {
-                documentId: docId,
-                userId: lock.userId,
-                userName: lock.userName,
-                action: 'unlock',
-                timestamp: Date.now()
-              });
+        // Release any document locks held by this socket's user
+        const disconnectedUserId = socket.data.userId;
+        const disconnectedTenantId = socket.data.tenantId;
+        if (disconnectedUserId) {
+          for (const [lockKey, lock] of documentLocks) {
+            if (lock.userId === disconnectedUserId) {
+              documentLocks.delete(lockKey);
+              // Extract documentId from lock key (format: tenantId:documentId)
+              const colonIdx = lockKey.indexOf(':');
+              const documentId = colonIdx > -1 ? lockKey.substring(colonIdx + 1) : lockKey;
+              if (disconnectedTenantId) {
+                io.to(getTenantRoom(disconnectedTenantId)).emit('document:editing', {
+                  documentId,
+                  userId: lock.userId,
+                  userName: lock.userName,
+                  action: 'unlock',
+                  timestamp: Date.now()
+                });
+              }
             }
           }
         }
-      }
 
-      // Clean up typing timers for this socket
-      for (const [key, timer] of typingTimers.entries()) {
-        if (key.includes(socket.id)) {
-          clearTimeout(timer);
-          typingTimers.delete(key);
+        // Clean up typing timers for this socket
+        for (const [key, timer] of typingTimers.entries()) {
+          if (key.includes(socket.id)) {
+            clearTimeout(timer);
+            typingTimers.delete(key);
+          }
         }
+      } catch (err) {
+        console.error('Socket event disconnect error:', err);
       }
     });
   });
@@ -408,23 +473,41 @@ export function setupCrmSocketHandlers(io: Server): void {
   // ─── Periodic Cleanup ─────────────────────────────────────────────
 
   // Clean up stale document locks every 5 minutes (locks older than 30 minutes)
-  setInterval(() => {
+  const lockCleanupInterval = setInterval(() => {
     const now = Date.now();
-    for (const [docId, lock] of documentLocks) {
+    for (const [lockKey, lock] of documentLocks) {
       if (now - lock.lockedAt.getTime() > 30 * 60 * 1000) {
-        documentLocks.delete(docId);
-        // Broadcast to all tenant rooms since we don't track tenant per lock
-        io.emit('document:editing', {
-          documentId: docId,
-          userId: lock.userId,
-          userName: lock.userName,
-          action: 'unlock',
-          reason: 'timeout',
-          timestamp: now
-        });
+        documentLocks.delete(lockKey);
+        // Extract tenantId from lock key (format: tenantId:documentId)
+        const colonIdx = lockKey.indexOf(':');
+        const tenantId = colonIdx > -1 ? lockKey.substring(0, colonIdx) : null;
+        const documentId = colonIdx > -1 ? lockKey.substring(colonIdx + 1) : lockKey;
+
+        if (tenantId) {
+          io.to(getTenantRoom(tenantId)).emit('document:editing', {
+            documentId,
+            userId: lock.userId,
+            userName: lock.userName,
+            action: 'unlock',
+            reason: 'timeout',
+            timestamp: now
+          });
+        } else {
+          io.emit('document:editing', {
+            documentId,
+            userId: lock.userId,
+            userName: lock.userName,
+            action: 'unlock',
+            reason: 'timeout',
+            timestamp: now
+          });
+        }
       }
     }
   }, 5 * 60 * 1000);
+
+  process.on('SIGTERM', () => clearInterval(lockCleanupInterval));
+  process.on('SIGINT', () => clearInterval(lockCleanupInterval));
 }
 
 // ---------------------------------------------------------------------------
@@ -446,7 +529,7 @@ export function emitCrmEvent(io: Server, event: string, payload: Record<string, 
     } else {
       io.emit(event, payload);
     }
-  } catch {
-    // Socket emission should never crash the service
+  } catch (err) {
+    console.error('Socket emission error:', err);
   }
 }

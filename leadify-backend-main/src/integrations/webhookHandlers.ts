@@ -12,7 +12,7 @@ const router = Router();
 // ─── Stripe Webhook ─────────────────────────────────────────────────────────
 /**
  * @swagger
- * /api/webhooks/stripe:
+ * /api/webhooks/incoming/stripe:
  *   post:
  *     summary: Receive Stripe webhook events
  *     tags: [Webhooks]
@@ -41,8 +41,15 @@ router.post('/stripe', async (req: Request, res: Response) => {
         .update(payload)
         .digest('hex');
 
-      // Simple signature check (production should use Stripe SDK's constructEvent)
-      if (!sig.includes(expectedSig)) {
+      // Extract the v1 signature from the Stripe header (format: t=timestamp,v1=sig)
+      const sigParts = sig.split(',');
+      const v1Part = sigParts.find(p => p.startsWith('v1='));
+      const receivedSig = v1Part ? v1Part.slice(3) : sig;
+
+      // Constant-time comparison to prevent timing attacks
+      const expectedBuf = Buffer.from(expectedSig, 'utf8');
+      const receivedBuf = Buffer.from(receivedSig, 'utf8');
+      if (expectedBuf.length !== receivedBuf.length || !crypto.timingSafeEqual(expectedBuf, receivedBuf)) {
         logger.warn('Stripe webhook invalid signature');
         res.status(400).json({ success: false, message: 'Invalid signature' });
         return;
@@ -104,7 +111,7 @@ router.post('/stripe', async (req: Request, res: Response) => {
 // ─── HubSpot Webhook ────────────────────────────────────────────────────────
 /**
  * @swagger
- * /api/webhooks/hubspot:
+ * /api/webhooks/incoming/hubspot:
  *   post:
  *     summary: Receive HubSpot webhook events
  *     tags: [Webhooks]
@@ -198,7 +205,7 @@ router.post('/hubspot', async (req: Request, res: Response) => {
 // ─── Twilio Webhook ─────────────────────────────────────────────────────────
 /**
  * @swagger
- * /api/webhooks/twilio/sms:
+ * /api/webhooks/incoming/twilio/sms:
  *   post:
  *     summary: Receive Twilio SMS status callbacks and incoming messages
  *     tags: [Webhooks]
@@ -239,7 +246,7 @@ router.post('/twilio/sms', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/webhooks/twilio/voice:
+ * /api/webhooks/incoming/twilio/voice:
  *   post:
  *     summary: Receive Twilio voice call status callbacks
  *     tags: [Webhooks]
@@ -273,7 +280,7 @@ router.post('/twilio/voice', async (req: Request, res: Response) => {
 // ─── WhatsApp Webhook ───────────────────────────────────────────────────────
 /**
  * @swagger
- * /api/webhooks/whatsapp:
+ * /api/webhooks/incoming/whatsapp:
  *   get:
  *     summary: WhatsApp webhook verification (Meta challenge)
  *     tags: [Webhooks]
@@ -313,7 +320,7 @@ router.get('/whatsapp', (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/webhooks/whatsapp:
+ * /api/webhooks/incoming/whatsapp:
  *   post:
  *     summary: Receive WhatsApp message and status webhooks
  *     tags: [Webhooks]

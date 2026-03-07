@@ -1,6 +1,8 @@
+import crypto from 'crypto';
 import { Op, fn, col, literal } from 'sequelize';
 import { FormTemplate, FormSubmission } from './formBuilderModel';
 import { clampPagination } from '../utils/pagination';
+import logger from '../config/logger';
 
 interface FormField {
   name: string;
@@ -22,7 +24,7 @@ class FormBuilderService {
   }
 
   private generateEmbedToken(): string {
-    return `emb_${Math.random().toString(36).substring(2, 15)}${Date.now().toString(36)}`;
+    return `emb_${crypto.randomBytes(16).toString('hex')}`;
   }
 
   async getTemplates(query: any, tenantId?: string) {
@@ -92,7 +94,7 @@ class FormBuilderService {
       // TODO: Integrate with email service
       // TODO: Integrate with email service
     } catch (e) {
-      console.error('Failed to send auto-response:', e);
+      logger.error({ err: e }, 'Failed to send auto-response');
     }
   }
 

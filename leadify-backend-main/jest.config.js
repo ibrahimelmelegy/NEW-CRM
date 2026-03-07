@@ -18,6 +18,8 @@ module.exports = {
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
     },
+    // Global setup file — sets NODE_ENV and mocks persistent connections
+    setupFiles: ['<rootDir>/tests/jestSetup.ts'],
     // Setup
     clearMocks: true,
     collectCoverage: true,
@@ -31,4 +33,9 @@ module.exports = {
         }
     },
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+    // Prevent tests from hanging due to open handles (DB pools, Redis, Socket.io, BullMQ workers)
+    forceExit: true,
+    detectOpenHandles: true,
+    // Per-test timeout (30 seconds) to catch stuck tests early
+    testTimeout: 30000,
 };

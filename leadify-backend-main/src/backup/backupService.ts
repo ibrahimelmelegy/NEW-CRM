@@ -81,7 +81,13 @@ export async function createBackup(
       tables = (results as Array<{ tablename: string }>).map((r) => r.tablename);
 
       // Get row counts for top tables (limit to avoid timeout)
+      // Whitelist: only allow alphanumeric + underscore table names to prevent SQL injection
+      const SAFE_TABLE_NAME = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
       for (const table of tables.slice(0, 50)) {
+        if (!SAFE_TABLE_NAME.test(table)) {
+          rowCounts[table] = -1; // skip unsafe table name
+          continue;
+        }
         try {
           const [countResult] = await sequelize.query(
             `SELECT COUNT(*) as count FROM "${table}"`

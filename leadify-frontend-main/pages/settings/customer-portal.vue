@@ -878,9 +878,9 @@ async function initChart() {
       const d = new Date();
       d.setDate(d.getDate() - i);
       labels.push(d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }));
-      loginsData.push(Math.floor(40 + Math.random() * 80));
-      ticketsData.push(Math.floor(1 + Math.random() * 8));
-      kbData.push(Math.floor(20 + Math.random() * 60));
+      loginsData.push(0);
+      ticketsData.push(0);
+      kbData.push(0);
     }
 
     chartInstance.setOption({

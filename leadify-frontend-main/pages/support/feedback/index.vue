@@ -516,7 +516,7 @@ const actionForm = ref({
   description: ''
 });
 
-const teamMembers = ref(['Sarah Johnson', 'Ahmed Al-Rashid', 'David Chen', 'Maria Garcia', 'James Wilson', 'Fatima Hassan']);
+const teamMembers = ref<string[]>([]);
 
 // ── Computed: KPI Cards ──────────────────────────────
 const npsScore = computed(() => {
@@ -535,8 +535,8 @@ const csatScore = computed(() => {
 });
 
 const responseRate = computed(() => {
-  const totalSurveyed = npsResponses.value.length + Math.floor(npsResponses.value.length * 0.35);
-  return totalSurveyed > 0 ? Math.round((npsResponses.value.length / totalSurveyed) * 100) : 0;
+  // Will be calculated from real survey data when available
+  return 0;
 });
 
 const openActionCount = computed(() => {
@@ -945,239 +945,33 @@ function updateCsatTrend() {
 
 // ── Data Generation ───────────────────────────────
 function generateNpsResponses() {
-  const responses: { score: number; customerId: string }[] = [];
-  for (let i = 0; i < 280; i++) {
-    const rand = Math.random();
-    let score: number;
-    if (rand < 0.55)
-      score = Math.floor(Math.random() * 2) + 9; // Promoters (9-10)
-    else if (rand < 0.8)
-      score = Math.floor(Math.random() * 2) + 7; // Passives (7-8)
-    else score = Math.floor(Math.random() * 7); // Detractors (0-6)
-    responses.push({ score, customerId: `cust-${i}` });
-  }
-  npsResponses.value = responses;
+  // No fake data - will be populated from real API data when available
+  npsResponses.value = [];
 }
 
 function generateNpsTrendData() {
-  const months = npsTrendPeriod.value === '12m' ? 12 : 6;
-  const data: NpsTrendPoint[] = [];
-  const now = new Date();
-
-  for (let i = months - 1; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const monthLabel = d.toLocaleDateString(locale.value, { month: 'short', year: '2-digit' });
-    const baseScore = 35 + Math.floor(Math.random() * 30);
-    const promoters = 40 + Math.floor(Math.random() * 20);
-    const detractors = 10 + Math.floor(Math.random() * 15);
-    const passives = 100 - promoters - detractors;
-    data.push({
-      month: monthLabel,
-      score: baseScore,
-      promoters,
-      passives: Math.max(0, passives),
-      detractors
-    });
-  }
-  npsTrendData.value = data;
+  // No fake data - will be populated from real API data when available
+  npsTrendData.value = [];
 }
 
 function generateCsatCategories() {
-  csatCategories.value = [
-    { name: t('feedbackNps.support'), score: 87, responses: 245 },
-    { name: t('feedbackNps.product'), score: 82, responses: 312 },
-    { name: t('feedbackNps.onboarding'), score: 91, responses: 178 },
-    { name: t('feedbackNps.billing'), score: 74, responses: 156 },
-    { name: t('feedbackNps.sales'), score: 89, responses: 203 }
-  ];
+  // No fake data - will be populated from real API data when available
+  csatCategories.value = [];
 }
 
 function generateCsatTrendData() {
-  const months = csatTrendPeriod.value === '12m' ? 12 : 6;
-  const data: { month: string; score: number }[] = [];
-  const now = new Date();
-
-  for (let i = months - 1; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const monthLabel = d.toLocaleDateString(locale.value, { month: 'short', year: '2-digit' });
-    data.push({ month: monthLabel, score: 72 + Math.floor(Math.random() * 18) });
-  }
-  csatTrendData.value = data;
+  // No fake data - will be populated from real API data when available
+  csatTrendData.value = [];
 }
 
-function generateFeedbackItems(leads: Record<string, unknown>[], deals: Record<string, unknown>[]) {
-  const now = new Date();
-  const sentiments: FeedbackItem['sentiment'][] = ['positive', 'neutral', 'negative'];
-  const channels: FeedbackItem['channel'][] = ['email', 'survey', 'chat', 'social'];
-  const statuses: FeedbackItem['status'][] = ['new', 'reviewed', 'actioned'];
-
-  const positiveFeedback = [
-    t('feedbackNps.samplePositive1'),
-    t('feedbackNps.samplePositive2'),
-    t('feedbackNps.samplePositive3'),
-    t('feedbackNps.samplePositive4'),
-    t('feedbackNps.samplePositive5')
-  ];
-
-  const neutralFeedback = [t('feedbackNps.sampleNeutral1'), t('feedbackNps.sampleNeutral2'), t('feedbackNps.sampleNeutral3')];
-
-  const negativeFeedback = [
-    t('feedbackNps.sampleNegative1'),
-    t('feedbackNps.sampleNegative2'),
-    t('feedbackNps.sampleNegative3'),
-    t('feedbackNps.sampleNegative4')
-  ];
-
-  const items: FeedbackItem[] = [];
-  const names = leads.length
-    ? leads.map(l => ({ name: l.name || l.firstName + ' ' + (l.lastName || ''), company: l.company || '' }))
-    : [
-        { name: 'Acme Corporation', company: 'Acme Corp' },
-        { name: 'GlobalTech Industries', company: 'GlobalTech' },
-        { name: 'StartupFlow Inc', company: 'StartupFlow' },
-        { name: 'MegaRetail Group', company: 'MegaRetail' },
-        { name: 'CloudNine Solutions', company: 'CloudNine' },
-        { name: 'DataDriven Analytics', company: 'DataDriven' },
-        { name: 'TechVista Corp', company: 'TechVista' },
-        { name: 'QuickShip Logistics', company: 'QuickShip' },
-        { name: 'FinServe Partners', company: 'FinServe' },
-        { name: 'NovaBrand Agency', company: 'NovaBrand' },
-        { name: 'HealthPlus Medical', company: 'HealthPlus' },
-        { name: 'EduLearn Platform', company: 'EduLearn' },
-        { name: 'SolarEdge Tech', company: 'SolarEdge' },
-        { name: 'AquaPure Systems', company: 'AquaPure' },
-        { name: 'MetroConnect Ltd', company: 'MetroConnect' }
-      ];
-
-  for (let i = 0; i < Math.max(names.length, 15); i++) {
-    const nm = names[i % names.length]!;
-    const rand = Math.random();
-    const sentiment: FeedbackItem['sentiment'] = rand < 0.5 ? 'positive' : rand < 0.75 ? 'neutral' : 'negative';
-    const feedbackPool = sentiment === 'positive' ? positiveFeedback : sentiment === 'neutral' ? neutralFeedback : negativeFeedback;
-    const npsScore =
-      sentiment === 'positive'
-        ? 9 + Math.floor(Math.random() * 2)
-        : sentiment === 'neutral'
-          ? 7 + Math.floor(Math.random() * 2)
-          : Math.floor(Math.random() * 7);
-
-    items.push({
-      id: `fb-${i}`,
-      customerName: nm.name,
-      company: nm.company,
-      feedbackText: feedbackPool[Math.floor(Math.random() * feedbackPool.length)] ?? '',
-      sentiment,
-      channel: channels[Math.floor(Math.random() * channels.length)] ?? 'email',
-      npsScore,
-      date: new Date(now.getTime() - Math.floor(Math.random() * 60) * 86400000).toISOString(),
-      status: statuses[Math.floor(Math.random() * statuses.length)] ?? 'new'
-    });
-  }
-
-  feedbackItems.value = items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+function generateFeedbackItems(_leads: Record<string, unknown>[], _deals: Record<string, unknown>[]) {
+  // No fake data - will be populated from real API data when available
+  feedbackItems.value = [];
 }
 
 function generateActionItems() {
-  const now = new Date();
-
-  actionItems.value = [
-    {
-      id: 'act-1',
-      title: t('feedbackNps.actionImproveResponse'),
-      linkedFeedback: t('feedbackNps.sampleNegative1'),
-      linkedFeedbackId: 'fb-0',
-      priority: 'high',
-      assignedTo: 'Sarah Johnson',
-      dueDate: new Date(now.getTime() + 5 * 86400000).toISOString(),
-      status: 'open',
-      createdDate: new Date(now.getTime() - 3 * 86400000).toISOString(),
-      description: t('feedbackNps.actionImproveResponseDesc')
-    },
-    {
-      id: 'act-2',
-      title: t('feedbackNps.actionReviewOnboarding'),
-      linkedFeedback: t('feedbackNps.sampleNeutral2'),
-      linkedFeedbackId: 'fb-2',
-      priority: 'medium',
-      assignedTo: 'Ahmed Al-Rashid',
-      dueDate: new Date(now.getTime() + 10 * 86400000).toISOString(),
-      status: 'in-progress',
-      createdDate: new Date(now.getTime() - 7 * 86400000).toISOString(),
-      description: t('feedbackNps.actionReviewOnboardingDesc')
-    },
-    {
-      id: 'act-3',
-      title: t('feedbackNps.actionBillingProcess'),
-      linkedFeedback: t('feedbackNps.sampleNegative2'),
-      linkedFeedbackId: 'fb-4',
-      priority: 'high',
-      assignedTo: 'David Chen',
-      dueDate: new Date(now.getTime() - 2 * 86400000).toISOString(),
-      status: 'open',
-      createdDate: new Date(now.getTime() - 10 * 86400000).toISOString(),
-      description: t('feedbackNps.actionBillingProcessDesc')
-    },
-    {
-      id: 'act-4',
-      title: t('feedbackNps.actionEnhanceDocumentation'),
-      linkedFeedback: t('feedbackNps.sampleNeutral1'),
-      linkedFeedbackId: 'fb-1',
-      priority: 'low',
-      assignedTo: 'Maria Garcia',
-      dueDate: new Date(now.getTime() + 14 * 86400000).toISOString(),
-      status: 'in-progress',
-      createdDate: new Date(now.getTime() - 12 * 86400000).toISOString(),
-      description: t('feedbackNps.actionEnhanceDocumentationDesc')
-    },
-    {
-      id: 'act-5',
-      title: t('feedbackNps.actionFollowUpDetractors'),
-      linkedFeedback: t('feedbackNps.sampleNegative3'),
-      linkedFeedbackId: 'fb-6',
-      priority: 'high',
-      assignedTo: 'James Wilson',
-      dueDate: new Date(now.getTime() + 3 * 86400000).toISOString(),
-      status: 'open',
-      createdDate: new Date(now.getTime() - 1 * 86400000).toISOString(),
-      description: t('feedbackNps.actionFollowUpDetractorsDesc')
-    },
-    {
-      id: 'act-6',
-      title: t('feedbackNps.actionProductFeatureRequest'),
-      linkedFeedback: t('feedbackNps.samplePositive3'),
-      linkedFeedbackId: 'fb-3',
-      priority: 'medium',
-      assignedTo: 'Fatima Hassan',
-      dueDate: new Date(now.getTime() + 20 * 86400000).toISOString(),
-      status: 'completed',
-      createdDate: new Date(now.getTime() - 18 * 86400000).toISOString(),
-      description: t('feedbackNps.actionProductFeatureRequestDesc')
-    },
-    {
-      id: 'act-7',
-      title: t('feedbackNps.actionTrainSupportTeam'),
-      linkedFeedback: t('feedbackNps.sampleNegative4'),
-      linkedFeedbackId: 'fb-8',
-      priority: 'medium',
-      assignedTo: 'Sarah Johnson',
-      dueDate: new Date(now.getTime() + 7 * 86400000).toISOString(),
-      status: 'in-progress',
-      createdDate: new Date(now.getTime() - 5 * 86400000).toISOString(),
-      description: t('feedbackNps.actionTrainSupportTeamDesc')
-    },
-    {
-      id: 'act-8',
-      title: t('feedbackNps.actionImplementSurveyAutomation'),
-      linkedFeedback: t('feedbackNps.samplePositive1'),
-      linkedFeedbackId: 'fb-5',
-      priority: 'low',
-      assignedTo: 'Ahmed Al-Rashid',
-      dueDate: new Date(now.getTime() + 30 * 86400000).toISOString(),
-      status: 'open',
-      createdDate: new Date(now.getTime() - 2 * 86400000).toISOString(),
-      description: t('feedbackNps.actionImplementSurveyAutomationDesc')
-    }
-  ];
+  // No fake data - will be populated from real API data when available
+  actionItems.value = [];
 }
 
 // ── Actions ───────────────────────────────────────
@@ -1242,13 +1036,6 @@ async function loadData() {
     generateActionItems();
   } catch (e) {
     console.error('Failed to load feedback data:', e);
-    // Generate fallback data even on error
-    generateNpsResponses();
-    generateNpsTrendData();
-    generateCsatCategories();
-    generateCsatTrendData();
-    generateFeedbackItems([], []);
-    generateActionItems();
   } finally {
     loading.value = false;
   }

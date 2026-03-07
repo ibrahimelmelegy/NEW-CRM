@@ -397,11 +397,7 @@ const availableTags = ref<Record<string, unknown>[]>([
   { id: 4, name: 'Cold Call', color: 'info', count: 20 }
 ]);
 
-const availableAgents = ref<Record<string, unknown>[]>([
-  { id: 1, name: 'John Smith' },
-  { id: 2, name: 'Sarah Johnson' },
-  { id: 3, name: 'Mike Wilson' }
-]);
+const availableAgents = ref<Record<string, unknown>[]>([]);
 
 const durationChartRef = ref<HTMLElement>();
 const outcomeChartRef = ref<HTMLElement>();

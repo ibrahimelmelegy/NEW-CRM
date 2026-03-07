@@ -723,40 +723,19 @@ async function loadDashboard() {
 }
 
 function loadDemoContacts() {
-  const demoNames = [
-    'Ahmed Al-Rashid',
-    'Sarah Johnson',
-    'Mohammed Ali',
-    'Emily Chen',
-    'Khalid Ibrahim',
-    'Lisa Martinez',
-    'Omar Farouk',
-    'Jessica Williams',
-    'Youssef Hassan',
-    'Anna Schmidt',
-    'Fatima Al-Sayed',
-    'David Brown',
-    'Nour Abdallah',
-    "Michael O'Brien",
-    'Layla Mahmoud',
-    'Robert Taylor',
-    'Hana Yuki',
-    'James Wilson',
-    'Maryam Hosseini',
-    'Thomas Anderson'
-  ];
-  const industries = ['Technology', 'Finance', 'Healthcare', 'Manufacturing', 'Retail', 'Education', '', ''];
-  const locations = ['Dubai, UAE', 'New York, US', 'London, UK', 'Riyadh, KSA', 'Berlin, DE', '', ''];
-  const companies = ['TechCorp', 'FinServe Inc', 'MedPro', 'BuildRight', 'RetailMax', 'EduPlus', '', ''];
+  const demoNames: string[] = [];
+  const industries: string[] = [];
+  const locations: string[] = [];
+  const companies: string[] = [];
 
   contacts.value = demoNames.map((name, i): Contact => {
-    const score = Math.floor(Math.random() * 100);
+    const score = 0;
     const missing: string[] = [];
-    const hasEmail = Math.random() > 0.1;
-    const hasPhone = Math.random() > 0.3;
-    const hasIndustry = Math.random() > 0.35;
-    const hasLocation = Math.random() > 0.3;
-    const hasCompany = Math.random() > 0.2;
+    const hasEmail = false;
+    const hasPhone = false;
+    const hasIndustry = false;
+    const hasLocation = false;
+    const hasCompany = false;
     if (!hasPhone) missing.push('Phone');
     if (!hasIndustry) missing.push('Industry');
     if (!hasLocation) missing.push('Location');
@@ -767,7 +746,7 @@ function loadDemoContacts() {
       name,
       email: hasEmail ? `${name.toLowerCase().replace(/[^a-z]/g, '.')}@example.com` : '',
       company: hasCompany ? companies[i % companies.length] || '' : '',
-      phone: hasPhone ? `+971 5${Math.floor(Math.random() * 10)} ${Math.floor(1000000 + Math.random() * 9000000)}` : '',
+      phone: hasPhone ? '' : '',
       industry: hasIndustry ? industries[i % industries.length] || '' : '',
       location: hasLocation ? locations[i % locations.length] || '' : '',
       score,
@@ -786,7 +765,7 @@ async function enrichContact(contact: Contact) {
     } else {
       // Demo enrichment
       await new Promise(resolve => setTimeout(resolve, 1200));
-      contact.score = Math.min(100, contact.score + Math.floor(Math.random() * 25 + 10));
+      contact.score = Math.min(100, contact.score);
       contact.missingFields = contact.missingFields.slice(1);
       if (!contact.industry) contact.industry = 'Technology';
       if (!contact.phone) contact.phone = '+971 50 1234567';
@@ -844,7 +823,7 @@ async function runFullEnrichment() {
     await loadDashboard();
   } catch {
     await new Promise(resolve => setTimeout(resolve, 2000));
-    kpi.enrichedCount += Math.floor(Math.random() * 20 + 5);
+    kpi.enrichedCount += 0;
     kpi.completenessScore = Math.min(100, kpi.completenessScore + 3);
     kpi.missingFieldsCount = Math.max(0, kpi.missingFieldsCount - 20);
     kpi.lastRunFormatted = 'Just now';

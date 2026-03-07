@@ -255,60 +255,77 @@ class ClientService {
     let score = 0;
 
     // Factor 1: Has active deals? +20
-    const activeDeals = await Deal.count({
-      where: {
-        clientId,
-        stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.ARCHIVED, DealStageEnums.CONVERTED] }
-      }
-    });
-    const hasActiveDeals = activeDeals > 0;
-    factors.push({ name: 'Has active deals', points: 20, met: hasActiveDeals });
-    if (hasActiveDeals) score += 20;
+    try {
+      const activeDeals = await Deal.count({
+        where: {
+          clientId,
+          stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.ARCHIVED, DealStageEnums.CONVERTED] }
+        }
+      });
+      const hasActiveDeals = activeDeals > 0;
+      factors.push({ name: 'Has active deals', points: 20, met: hasActiveDeals });
+      if (hasActiveDeals) score += 20;
+    } catch {
+      factors.push({ name: 'Has active deals', points: 20, met: false });
+    }
 
     // Factor 2: Has recent activity (last 30 days)? +25
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const recentActivityCount = await CommActivity.count({
-      where: {
-        contactId: clientId,
-        contactType: 'CLIENT',
-        createdAt: { [Op.gte]: thirtyDaysAgo }
-      }
-    });
-    const hasRecentActivity = recentActivityCount > 0;
-    factors.push({ name: 'Recent activity (last 30 days)', points: 25, met: hasRecentActivity });
-    if (hasRecentActivity) score += 25;
+    try {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const recentActivityCount = await CommActivity.count({
+        where: {
+          contactId: clientId,
+          contactType: 'CLIENT',
+          createdAt: { [Op.gte]: thirtyDaysAgo }
+        }
+      });
+      const hasRecentActivity = recentActivityCount > 0;
+      factors.push({ name: 'Recent activity (last 30 days)', points: 25, met: hasRecentActivity });
+      if (hasRecentActivity) score += 25;
+    } catch {
+      factors.push({ name: 'Recent activity (last 30 days)', points: 25, met: false });
+    }
 
     // Factor 3: Has paid invoices? +20
-    const paidInvoices = await Invoice.count({
-      where: {
-        collected: true
-      },
-      include: [
-        {
-          model: Deal,
-          as: 'deal',
-          attributes: [],
-          where: { clientId },
-          required: true
-        }
-      ]
-    });
-    const hasPaidInvoices = paidInvoices > 0;
-    factors.push({ name: 'Has paid invoices', points: 20, met: hasPaidInvoices });
-    if (hasPaidInvoices) score += 20;
+    try {
+      const paidInvoices = await Invoice.count({
+        where: {
+          collected: true
+        },
+        include: [
+          {
+            model: Deal,
+            as: 'deal',
+            attributes: [],
+            where: { clientId },
+            required: true
+          }
+        ]
+      });
+      const hasPaidInvoices = paidInvoices > 0;
+      factors.push({ name: 'Has paid invoices', points: 20, met: hasPaidInvoices });
+      if (hasPaidInvoices) score += 20;
+    } catch {
+      factors.push({ name: 'Has paid invoices', points: 20, met: false });
+    }
 
     // Factor 4: Number of touchpoints (emails, calls, meetings) in last 90 days
-    const ninetyDaysAgo = new Date();
-    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-    const touchpoints = await CommActivity.count({
-      where: {
-        contactId: clientId,
-        contactType: 'CLIENT',
-        type: { [Op.in]: ['EMAIL', 'CALL', 'MEETING'] },
-        createdAt: { [Op.gte]: ninetyDaysAgo }
-      }
-    });
+    let touchpoints = 0;
+    try {
+      const ninetyDaysAgo = new Date();
+      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+      touchpoints = await CommActivity.count({
+        where: {
+          contactId: clientId,
+          contactType: 'CLIENT',
+          type: { [Op.in]: ['EMAIL', 'CALL', 'MEETING'] },
+          createdAt: { [Op.gte]: ninetyDaysAgo }
+        }
+      });
+    } catch {
+      // comm_activities table may not exist yet — treat as 0 touchpoints
+    }
     let touchpointPoints = 0;
     if (touchpoints >= 5) touchpointPoints = 20;
     else if (touchpoints >= 3) touchpointPoints = 10;
@@ -343,7 +360,13 @@ class ClientService {
     };
 
     for (const client of clients) {
-      const { score } = await this.calculateHealthScore(client.id);
+      let score = 0;
+      try {
+        const result = await this.calculateHealthScore(client.id);
+        score = result.score;
+      } catch {
+        // If health score calculation fails for a client, treat as 0
+      }
       const entry = { id: client.id, clientName: client.clientName, score };
 
       if (score >= 80) {
@@ -403,7 +426,13 @@ class ClientService {
     };
 
     for (const client of allClients) {
-      const { score } = await this.calculateHealthScore(client.id);
+      let score = 0;
+      try {
+        const result = await this.calculateHealthScore(client.id);
+        score = result.score;
+      } catch {
+        // If health score calculation fails for a client, treat as 0
+      }
       totalScore += score;
 
       if (score >= 80) segmentDistribution.ENTERPRISE++;

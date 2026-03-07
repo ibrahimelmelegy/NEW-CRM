@@ -355,10 +355,10 @@ const customers = computed(() => {
     // NPS mock (derived from overall health pattern)
     const npsScore =
       healthScore >= 70
-        ? Math.floor(healthScore * 0.9 + Math.random() * 10)
+        ? Math.floor(healthScore * 0.9)
         : healthScore >= 40
-          ? Math.floor(healthScore * 0.6 + Math.random() * 20)
-          : Math.floor(healthScore * 0.3 + Math.random() * 15);
+          ? Math.floor(healthScore * 0.6)
+          : Math.floor(healthScore * 0.3);
 
     // Risk level
     let riskLevel: 'healthy' | 'at-risk' | 'critical' = 'healthy';

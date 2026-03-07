@@ -426,28 +426,7 @@ const targetAccounts = ref<Record<string, unknown>[]>([]);
 const generateTargetAccounts = () => {
   const industries = ['Technology', 'Healthcare', 'Finance', 'Manufacturing', 'Retail', 'Energy', 'Media', 'Logistics'];
   const statuses = ['active', 'nurturing', 'new'];
-  const names = [
-    'Acme Corporation',
-    'Global Tech Solutions',
-    'Pinnacle Health Group',
-    'Meridian Financial',
-    'Atlas Manufacturing',
-    'Nexus Retail Co',
-    'Vertex Energy',
-    'Horizon Media',
-    'Summit Logistics',
-    'Quantum Dynamics',
-    'Apex Digital',
-    'CoreNet Systems',
-    'Brightline Industries',
-    'Stellar Innovations',
-    'Vantage Partners',
-    'Eclipse Technologies',
-    'Frontier Analytics',
-    'Catalyst Group',
-    'Prism Software',
-    'Zenith Enterprises'
-  ];
+  const names: string[] = [];
   const owners = ownerOptions.value;
 
   // If we have company data from the API, use it
@@ -458,8 +437,8 @@ const generateTargetAccounts = () => {
       domain: company.website || `${(company.name || names[idx % names.length]).toLowerCase().replace(/\s+/g, '')}.com`,
       tier: (idx % 3) + 1,
       industry: company.industry || industries[idx % industries.length],
-      engagementScore: Math.floor(Math.random() * 60) + 30,
-      pipelineValue: Math.floor(Math.random() * 450000) + 50000,
+      engagementScore: 0,
+      pipelineValue: 0,
       owner: owners[idx % owners.length],
       status: statuses[idx % statuses.length]
     }));
@@ -471,8 +450,8 @@ const generateTargetAccounts = () => {
     domain: `${name.toLowerCase().replace(/\s+/g, '')}.com`,
     tier: (idx % 3) + 1,
     industry: industries[idx % industries.length],
-    engagementScore: Math.floor(Math.random() * 60) + 30,
-    pipelineValue: Math.floor(Math.random() * 450000) + 50000,
+    engagementScore: 0,
+    pipelineValue: 0,
     owner: owners[idx % owners.length],
     status: statuses[idx % statuses.length]
   }));
@@ -575,7 +554,7 @@ const generateIntentSignals = () => {
     account: acc.name,
     type: types[idx % types.length],
     strength: strengths[idx % strengths.length],
-    detectedAt: new Date(Date.now() - Math.floor(Math.random() * 7 * 86400000)).toISOString(),
+    detectedAt: new Date().toISOString(),
     action: actions[idx % actions.length]
   }));
 };
@@ -593,7 +572,7 @@ const generateRevenueAttributions = () => {
     id: `attr-${idx + 1}`,
     account: acc.name,
     campaign: campaigns[idx % campaigns.length]?.name || t('abm.campaign_enterpriseOutreach'),
-    amount: Math.floor(Math.random() * 200000) + 25000,
+    amount: 0,
     model: models[idx % models.length],
     stage: stages[idx % stages.length]
   }));
@@ -615,7 +594,7 @@ const heatmapData = computed(() => {
       else if (isWeekday) base = 15;
       else if (isBusinessHour) base = 25;
       else base = 5;
-      row.push(Math.floor(Math.random() * 40) + base);
+      row.push(0);
     }
     data.push(row);
   }

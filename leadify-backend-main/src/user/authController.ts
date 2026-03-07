@@ -3,7 +3,6 @@ import bcrypt from 'bcryptjs';
 import { verifySync } from 'otplib';
 import { Request, Response, NextFunction } from 'express';
 import { Op } from 'sequelize';
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import User from './userModel';
 import LoginFailure from './models/loginFailureModel';
@@ -24,20 +23,6 @@ const SECRET_KEY = process.env.SECRET_KEY;
 if (!SECRET_KEY) {
   throw new Error('FATAL: SECRET_KEY environment variable is not set. Server cannot start without it.');
 }
-
-// Email configuration (using nodemailer)
-const transporter = nodemailer.createTransport({
-  host: 'smtp.office365.com', // Microsoft 365 or Outlook SMTP server
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER as string,
-    pass: process.env.EMAIL_PASS as string
-  },
-  tls: {
-    minVersion: 'TLSv1.2'
-  }
-});
 
 export const registerWorkspace = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { workspaceName, userName, email, password } = req.body;
@@ -257,21 +242,8 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 
       const resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
 
-      // TODO: Uncomment when email is configured
-      // const mailOptions = {
-      //     from: process.env.EMAIL_USER as string,
-      //     to: user.email,
-      //     subject: 'Password Reset Request',
-      //     html: `
-      //         <p>Hi,</p>
-      //         <p>It looks like you requested a password reset. Don't worry, we've got you covered!</p>
-      //         <p>Please click on the button below to reset your password. The link is valid for 24 hours:</p>
-      //         <a href="${resetLink}" style="background-color:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Reset Password</a>
-      //         <p>If you didn't request this, you can safely ignore this email.</p>
-      //         <p>Best Regards,</p>
-      //     `
-      // };
-      // await transporter.sendMail(mailOptions);
+      // TODO: Integrate with email service for password reset emails
+      // Send resetLink to user.email via the application's email service
     }
 
     wrapResult(res, { message: 'If an account with that email exists, a password reset link has been sent.' });
@@ -314,14 +286,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
 
     await PasswordResetLog.create({ userId: user.id, email: user.email, status: 'Success' });
 
-    // const mailOptions = {
-    //     from: process.env.EMAIL_USER as string,
-    //     to: user.email,
-    //     subject: 'Password Reset Notification',
-    //     html: `<p>The user with email <b>${user.email}</b> has successfully reset their password.</p>`
-    // };
-
-    // await transporter.sendMail(mailOptions);
+    // TODO: Integrate with email service for password reset confirmation
 
     wrapResult(res, { message: 'Password reset successfully' });
   } catch (error) {

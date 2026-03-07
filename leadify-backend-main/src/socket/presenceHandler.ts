@@ -63,10 +63,14 @@ export function setupPresenceHandlers(io: Server) {
     });
 
     socket.on('disconnect', () => {
-      const user = activeUsers.get(socket.id);
-      const tenantId = user?.tenantId;
-      activeUsers.delete(socket.id);
-      if (tenantId) broadcastPresence(io, tenantId);
+      try {
+        const user = activeUsers.get(socket.id);
+        const tenantId = user?.tenantId;
+        activeUsers.delete(socket.id);
+        if (tenantId) broadcastPresence(io, tenantId);
+      } catch (err) {
+        console.error('Socket event disconnect error:', err);
+      }
     });
 
     // Cursor collaboration events - scoped to tenant room
@@ -92,7 +96,7 @@ export function setupPresenceHandlers(io: Server) {
   });
 
   // Clean up stale connections every 60 seconds
-  setInterval(() => {
+  const presenceCleanupInterval = setInterval(() => {
     const now = Date.now();
     const changedTenants = new Set<string>();
 
@@ -114,6 +118,9 @@ export function setupPresenceHandlers(io: Server) {
       broadcastPresence(io, tenantId);
     }
   }, 60000);
+
+  process.on('SIGTERM', () => clearInterval(presenceCleanupInterval));
+  process.on('SIGINT', () => clearInterval(presenceCleanupInterval));
 }
 
 function broadcastPresence(io: Server, tenantId: string) {

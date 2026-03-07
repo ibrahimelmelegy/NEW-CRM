@@ -174,77 +174,11 @@ const showCreateRule = ref(false);
 const pageLoading = ref(false);
 
 // Data
-const pendingApprovals = ref<Record<string, unknown>[]>([
-  {
-    id: '1',
-    type: 'deal',
-    title: 'Deal Discount: 25% off for Acme Corp',
-    description: 'Sales rep requested 25% discount on annual subscription',
-    requester: 'John Smith',
-    amount: 15000,
-    createdAt: new Date().toISOString(),
-    steps: [
-      { approver: 'Team Lead', status: 'approved' },
-      { approver: 'Sales Manager', status: 'current' },
-      { approver: 'VP Sales', status: 'pending' }
-    ]
-  },
-  {
-    id: '2',
-    type: 'purchase_order',
-    title: 'Server Equipment Purchase',
-    description: 'New servers for production environment upgrade',
-    requester: 'IT Department',
-    amount: 45000,
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    steps: [
-      { approver: 'IT Manager', status: 'approved' },
-      { approver: 'CFO', status: 'current' }
-    ]
-  }
-]);
+const pendingApprovals = ref<Record<string, unknown>[]>([]);
 
-const approvalRules = ref<Record<string, unknown>[]>([
-  {
-    id: '1',
-    name: 'High-Value Deal Discount',
-    entityType: 'deal',
-    condition: 'Discount > 15%',
-    description: 'Requires approval when deal discount exceeds 15%',
-    active: true,
-    approvers: ['Team Lead', 'Sales Manager']
-  },
-  {
-    id: '2',
-    name: 'Large Purchase Order',
-    entityType: 'purchase_order',
-    condition: 'Amount > $10,000',
-    description: 'POs over $10,000 require CFO approval',
-    active: true,
-    approvers: ['Department Head', 'CFO']
-  }
-]);
+const approvalRules = ref<Record<string, unknown>[]>([]);
 
-const approvalHistory = ref<Record<string, unknown>[]>([
-  {
-    id: '1',
-    title: 'Q4 Marketing Budget',
-    type: 'expense',
-    requester: 'Marketing Team',
-    decision: 'approved',
-    decidedBy: 'CFO',
-    decidedAt: new Date(Date.now() - 172800000).toISOString()
-  },
-  {
-    id: '2',
-    title: '30% Discount for Beta Client',
-    type: 'deal',
-    requester: 'Jane Doe',
-    decision: 'rejected',
-    decidedBy: 'VP Sales',
-    decidedAt: new Date(Date.now() - 259200000).toISOString()
-  }
-]);
+const approvalHistory = ref<Record<string, unknown>[]>([]);
 
 const newRule = ref({
   name: '',

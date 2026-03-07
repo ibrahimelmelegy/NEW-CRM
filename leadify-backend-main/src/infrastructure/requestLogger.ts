@@ -211,6 +211,10 @@ const flushTimer = setInterval(() => {
 // Allow Node.js to exit even if this timer is pending
 if (flushTimer.unref) flushTimer.unref();
 
+// Clean up interval on process termination
+process.on('SIGTERM', () => clearInterval(flushTimer));
+process.on('SIGINT', () => clearInterval(flushTimer));
+
 // ─── Express Middleware ─────────────────────────────────────────────
 
 /**

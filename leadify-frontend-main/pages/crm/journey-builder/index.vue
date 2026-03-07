@@ -943,7 +943,7 @@ function saveJourney() {
             'ph:handshake-bold'
           ][i % 6]!,
           color: ['#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4'][i % 6]!,
-          rulesCount: Math.floor(Math.random() * 5) + 1,
+          rulesCount: 0,
           contactsInStage: 0,
           throughputRate: 0,
           isActive: false

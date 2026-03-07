@@ -168,15 +168,19 @@ export function setupVirtualOfficeHandlers(io: Server) {
 
     // Cleanup on disconnect
     socket.on('disconnect', () => {
-      const occupant = roomOccupants.get(socket.id);
-      if (occupant) {
-        const roomId = occupant.roomId;
-        roomOccupants.delete(socket.id);
-        io.emit('vo:room-update', { roomId, occupants: getRoomOccupants(roomId) });
-      }
+      try {
+        const occupant = roomOccupants.get(socket.id);
+        if (occupant) {
+          const roomId = occupant.roomId;
+          roomOccupants.delete(socket.id);
+          io.emit('vo:room-update', { roomId, occupants: getRoomOccupants(roomId) });
+        }
 
-      userPresence.delete(socket.id);
-      io.emit('vo:presence-update', getAllPresence());
+        userPresence.delete(socket.id);
+        io.emit('vo:presence-update', getAllPresence());
+      } catch (err) {
+        console.error('Socket event disconnect error:', err);
+      }
     });
   });
 }

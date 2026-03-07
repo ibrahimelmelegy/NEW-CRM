@@ -303,11 +303,11 @@ const activeTab = ref('pipeline');
 const showJobDialog = ref(false);
 const newJob = ref({ title: '', department: 'Engineering', location: 'Riyadh', type: 'Full-time', level: 'MID', salaryRange: '', description: '' });
 
-const openJobs = ref(8);
-const totalApplicants = ref(156);
-const hiredThisMonth = ref(3);
-const avgTimeToHire = ref(21);
-const interviewsThisWeek = ref(12);
+const openJobs = ref(0);
+const totalApplicants = ref(0);
+const hiredThisMonth = ref(0);
+const avgTimeToHire = ref(0);
+const interviewsThisWeek = ref(0);
 
 const pipelineStages = [
   { key: 'APPLIED', label: 'Applied', color: '#64748B' },
@@ -317,159 +317,13 @@ const pipelineStages = [
   { key: 'HIRED', label: 'Hired', color: '#10B981' }
 ];
 
-const candidates = ref([
-  { id: 1, name: 'Rania Ahmad', position: 'Sr. Frontend Dev', stage: 'INTERVIEW', experience: '6 yrs', rating: 4.5, tags: ['Vue.js', 'TypeScript'] },
-  { id: 2, name: 'Tariq Saud', position: 'Backend Engineer', stage: 'SCREENING', experience: '4 yrs', rating: 3.8, tags: ['Node.js', 'PostgreSQL'] },
-  { id: 3, name: 'Lina Khalid', position: 'UX Designer', stage: 'OFFER', experience: '5 yrs', rating: 4.8, tags: ['Figma', 'UX Research'] },
-  { id: 4, name: 'Youssef Ali', position: 'Sr. Frontend Dev', stage: 'APPLIED', experience: '3 yrs', rating: 3.5, tags: ['React', 'CSS'] },
-  { id: 5, name: 'Nada Hassan', position: 'Sales Manager', stage: 'INTERVIEW', experience: '8 yrs', rating: 4.2, tags: ['B2B', 'Enterprise'] },
-  { id: 6, name: 'Faisal Omar', position: 'DevOps Engineer', stage: 'SCREENING', experience: '5 yrs', rating: 4.0, tags: ['AWS', 'Docker'] },
-  { id: 7, name: 'Maha Ibrahim', position: 'Product Manager', stage: 'APPLIED', experience: '7 yrs', rating: 4.3, tags: ['Agile', 'SaaS'] },
-  { id: 8, name: 'Zaid Mohammed', position: 'Backend Engineer', stage: 'HIRED', experience: '4 yrs', rating: 4.6, tags: ['Python', 'Django'] },
-  { id: 9, name: 'Aisha Salem', position: 'Sales Manager', stage: 'APPLIED', experience: '5 yrs', rating: 3.9, tags: ['CRM', 'Negotiation'] }
-]);
+const candidates = ref([]);
 
-const jobs = ref([
-  {
-    id: 1,
-    title: 'Senior Frontend Developer',
-    department: 'Engineering',
-    location: 'Riyadh',
-    type: 'Full-time',
-    status: 'OPEN',
-    applicants: 42,
-    screening: 12,
-    interviews: 5,
-    postedDate: 'Feb 5, 2026',
-    salaryRange: '18K-28K SAR'
-  },
-  {
-    id: 2,
-    title: 'Backend Engineer',
-    department: 'Engineering',
-    location: 'Remote',
-    type: 'Full-time',
-    status: 'OPEN',
-    applicants: 38,
-    screening: 8,
-    interviews: 3,
-    postedDate: 'Feb 8, 2026',
-    salaryRange: '16K-25K SAR'
-  },
-  {
-    id: 3,
-    title: 'UX Designer',
-    department: 'Design',
-    location: 'Riyadh',
-    type: 'Full-time',
-    status: 'OPEN',
-    applicants: 25,
-    screening: 6,
-    interviews: 2,
-    postedDate: 'Feb 10, 2026',
-    salaryRange: '14K-22K SAR'
-  },
-  {
-    id: 4,
-    title: 'Sales Manager - Enterprise',
-    department: 'Sales',
-    location: 'Jeddah',
-    type: 'Full-time',
-    status: 'OPEN',
-    applicants: 18,
-    screening: 5,
-    interviews: 2,
-    postedDate: 'Feb 12, 2026',
-    salaryRange: '20K-35K SAR'
-  },
-  {
-    id: 5,
-    title: 'DevOps Engineer',
-    department: 'Engineering',
-    location: 'Hybrid',
-    type: 'Full-time',
-    status: 'CLOSED',
-    applicants: 33,
-    screening: 10,
-    interviews: 4,
-    postedDate: 'Jan 15, 2026',
-    salaryRange: '15K-24K SAR'
-  },
-  {
-    id: 6,
-    title: 'Product Manager',
-    department: 'Product',
-    location: 'Riyadh',
-    type: 'Full-time',
-    status: 'OPEN',
-    applicants: 20,
-    screening: 4,
-    interviews: 1,
-    postedDate: 'Feb 15, 2026',
-    salaryRange: '22K-35K SAR'
-  }
-]);
+const jobs = ref([]);
 
-const interviews = ref([
-  {
-    id: 1,
-    candidateName: 'Rania Ahmad',
-    position: 'Sr. Frontend Dev',
-    dayName: 'Mon',
-    day: '24',
-    month: 'Feb',
-    time: '10:00 AM',
-    mode: 'Video Call',
-    interviewer: 'Ahmed F.',
-    round: 'Technical',
-    status: 'SCHEDULED'
-  },
-  {
-    id: 2,
-    candidateName: 'Nada Hassan',
-    position: 'Sales Manager',
-    dayName: 'Mon',
-    day: '24',
-    month: 'Feb',
-    time: '2:00 PM',
-    mode: 'In-person',
-    interviewer: 'Sara M.',
-    round: 'Culture Fit',
-    status: 'SCHEDULED'
-  },
-  {
-    id: 3,
-    candidateName: 'Faisal Omar',
-    position: 'DevOps Engineer',
-    dayName: 'Tue',
-    day: '25',
-    month: 'Feb',
-    time: '11:00 AM',
-    mode: 'Video Call',
-    interviewer: 'Omar H.',
-    round: 'Technical',
-    status: 'SCHEDULED'
-  },
-  {
-    id: 4,
-    candidateName: 'Lina Khalid',
-    position: 'UX Designer',
-    dayName: 'Wed',
-    day: '26',
-    month: 'Feb',
-    time: '3:00 PM',
-    mode: 'In-person',
-    interviewer: 'Fatima A.',
-    round: 'Final',
-    status: 'SCHEDULED'
-  }
-]);
+const interviews = ref([]);
 
-const talentPool = ref([
-  { name: 'Ahmad Nasser', email: 'ahmad@mail.com', skills: ['React', 'Node.js', 'AWS'], experience: '5 yrs', rating: 4.2, source: 'LinkedIn' },
-  { name: 'Sara Khalil', email: 'sara@mail.com', skills: ['Python', 'ML', 'Data Science'], experience: '3 yrs', rating: 3.8, source: 'Referral' },
-  { name: 'Mohammed Zain', email: 'mz@mail.com', skills: ['Java', 'Spring', 'Microservices'], experience: '7 yrs', rating: 4.5, source: 'Job Board' }
-]);
+const talentPool = ref([]);
 
 const getCandidatesByStage = (stage: string) => candidates.value.filter(c => c.stage === stage);
 

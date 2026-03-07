@@ -265,24 +265,14 @@ const auditing = ref(false);
 const showPolicyDialog = ref(false);
 const newPolicy = ref({ entity: '', retentionPeriod: '1 year', action: 'ARCHIVE' });
 
-const qualityScore = ref(78);
+const qualityScore = ref(0);
 const qualityScoreColor = computed(() => (qualityScore.value >= 80 ? '#10B981' : qualityScore.value >= 60 ? '#F59E0B' : '#EF4444'));
 
-const dataMetrics = ref({ completeRecords: 85, duplicates: 47, validEmails: 92, staleRecords: 128 });
+const dataMetrics = ref({ completeRecords: 0, duplicates: 0, validEmails: 0, staleRecords: 0 });
 
-const qualityReport = ref([
-  { name: 'Leads', icon: 'ph:users-three-bold', score: 82, totalRecords: 1250, complete: 1025, missingFields: 225, duplicates: 18 },
-  { name: 'Clients', icon: 'ph:briefcase-bold', score: 91, totalRecords: 420, complete: 382, missingFields: 38, duplicates: 5 },
-  { name: 'Deals', icon: 'ph:handshake-bold', score: 75, totalRecords: 680, complete: 510, missingFields: 170, duplicates: 12 },
-  { name: 'Contacts', icon: 'ph:address-book-bold', score: 68, totalRecords: 890, complete: 605, missingFields: 285, duplicates: 22 }
-]);
+const qualityReport = ref<{ name: string; icon: string; score: number; totalRecords: number; complete: number; missingFields: number; duplicates: number }[]>([]);
 
-const retentionPolicies = ref([
-  { entity: 'Audit Logs', retentionPeriod: '1 year', action: 'ARCHIVE', affectedRecords: 12500, lastRun: 'Feb 1, 2026', isActive: true },
-  { entity: 'Sessions', retentionPeriod: '90 days', action: 'DELETE', affectedRecords: 8200, lastRun: 'Feb 15, 2026', isActive: true },
-  { entity: 'Lost Leads', retentionPeriod: '6 months', action: 'ANONYMIZE', affectedRecords: 340, lastRun: null, isActive: false },
-  { entity: 'Activity Logs', retentionPeriod: '2 years', action: 'ARCHIVE', affectedRecords: 45000, lastRun: 'Jan 1, 2026', isActive: true }
-]);
+const retentionPolicies = ref<{ entity: string; retentionPeriod: string; action: string; affectedRecords: number; lastRun: string | null; isActive: boolean }[]>([]);
 
 const privacySettings = ref({
   marketingConsent: true,
@@ -291,10 +281,7 @@ const privacySettings = ref({
   rightToBeForgotten: true
 });
 
-const erasureRequests = ref([
-  { id: 1, name: 'John Smith', email: 'john@example.com', date: 'Feb 18, 2026', status: 'PENDING' },
-  { id: 2, name: 'Lisa Park', email: 'lisa@example.com', date: 'Feb 10, 2026', status: 'COMPLETED' }
-]);
+const erasureRequests = ref<{ id: number; name: string; email: string; date: string; status: string }[]>([]);
 
 const encryptionFields = ref([
   { entity: 'User', field: 'password', type: 'STRING', encrypted: true, sensitivity: 'HIGH' },

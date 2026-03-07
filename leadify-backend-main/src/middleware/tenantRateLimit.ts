@@ -23,14 +23,16 @@ const fallbackBuckets = new Map<string, RateBucket>();
 
 // Cleanup stale fallback buckets every 5 minutes
 const CLEANUP_INTERVAL_MS = 5 * 60 * 1000;
-setInterval(() => {
+const cleanupInterval = setInterval(() => {
   const now = Date.now();
   for (const [key, bucket] of fallbackBuckets.entries()) {
     if (now - bucket.windowStart > DEFAULT_WINDOW_MS * 2) {
       fallbackBuckets.delete(key);
     }
   }
-}, CLEANUP_INTERVAL_MS).unref();
+}, CLEANUP_INTERVAL_MS);
+cleanupInterval.unref();
+process.on('SIGTERM', () => clearInterval(cleanupInterval));
 
 /**
  * Resolves the tenant plan from the request.

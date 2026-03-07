@@ -237,10 +237,10 @@ const fileInputRef = ref<HTMLInputElement | null>(null);
 const importing = ref(false);
 const mappingEntity = ref('leads');
 
-const totalImports = ref(34);
-const recordsImported = ref(12480);
-const failedRecords = ref(47);
-const lastImportDate = ref('Feb 18');
+const totalImports = ref(0);
+const recordsImported = ref(0);
+const failedRecords = ref(0);
+const lastImportDate = ref('-');
 
 const importSettings = ref({
   duplicateHandling: 'skip',
@@ -256,93 +256,9 @@ const entityTypes = [
 
 const previewColumns = ref(['Name', 'Email', 'Phone', 'Company', 'Source']);
 
-const previewData = ref<Record<string, string>[]>([
-  { Name: 'Ahmed Al-Rashid', Email: 'ahmed@example.com', Phone: '+966 50 123 4567', Company: 'TechCorp SA', Source: 'Website' },
-  { Name: 'Sara Mansour', Email: 'sara@example.com', Phone: '+966 55 987 6543', Company: 'Digital Solutions', Source: 'Referral' },
-  { Name: 'Tariq Nasser', Email: 'tariq@example.com', Phone: '+966 54 456 7890', Company: 'Gulf Trading', Source: 'LinkedIn' },
-  { Name: 'Lina Khalid', Email: 'lina@example.com', Phone: '+966 56 321 0987', Company: 'Smart Services', Source: 'Event' },
-  { Name: 'Youssef Ali', Email: 'youssef@example.com', Phone: '+966 50 654 3210', Company: 'Vision Group', Source: 'Website' }
-]);
+const previewData = ref<Record<string, string>[]>([]);
 
-const importHistory = ref([
-  {
-    id: 1,
-    date: 'Feb 18, 2026 14:23',
-    entity: 'Leads',
-    fileName: 'leads_q1_2026.csv',
-    totalRecords: 350,
-    successCount: 342,
-    failedCount: 8,
-    status: 'Completed',
-    user: 'Ahmed F.'
-  },
-  {
-    id: 2,
-    date: 'Feb 15, 2026 09:10',
-    entity: 'Contacts',
-    fileName: 'contacts_export.xlsx',
-    totalRecords: 1200,
-    successCount: 1185,
-    failedCount: 15,
-    status: 'Completed',
-    user: 'Sara M.'
-  },
-  {
-    id: 3,
-    date: 'Feb 12, 2026 16:45',
-    entity: 'Products',
-    fileName: 'products_catalog.csv',
-    totalRecords: 89,
-    successCount: 89,
-    failedCount: 0,
-    status: 'Completed',
-    user: 'Ahmed F.'
-  },
-  {
-    id: 4,
-    date: 'Feb 10, 2026 11:30',
-    entity: 'Deals',
-    fileName: 'deals_migration.xlsx',
-    totalRecords: 200,
-    successCount: 178,
-    failedCount: 22,
-    status: 'Completed',
-    user: 'Omar H.'
-  },
-  {
-    id: 5,
-    date: 'Feb 08, 2026 08:00',
-    entity: 'Leads',
-    fileName: 'tradeshow_leads.csv',
-    totalRecords: 500,
-    successCount: 498,
-    failedCount: 2,
-    status: 'Completed',
-    user: 'Nada S.'
-  },
-  {
-    id: 6,
-    date: 'Feb 05, 2026 13:15',
-    entity: 'Contacts',
-    fileName: 'old_crm_contacts.csv',
-    totalRecords: 3200,
-    successCount: 0,
-    failedCount: 3200,
-    status: 'Failed',
-    user: 'Sara M.'
-  },
-  {
-    id: 7,
-    date: 'Feb 03, 2026 10:00',
-    entity: 'Leads',
-    fileName: 'webinar_attendees.xlsx',
-    totalRecords: 150,
-    successCount: 150,
-    failedCount: 0,
-    status: 'Completed',
-    user: 'Tariq N.'
-  }
-]);
+const importHistory = ref<{ id: number; date: string; entity: string; fileName: string; totalRecords: number; successCount: number; failedCount: number; status: string; user: string }[]>([]);
 
 const fieldMappings = ref([
   { source: 'Full Name', target: 'name', required: true },

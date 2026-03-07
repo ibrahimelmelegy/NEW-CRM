@@ -629,11 +629,24 @@ class DealService {
       ...(tenantId ? { tenantId } : {})
     };
 
-    const deals = await Deal.findAll({
-      where,
-      attributes: ['id', 'price', 'probability', 'stage'],
-      raw: true
-    });
+    // Query only columns that are guaranteed to exist (price, stage).
+    // probability may not exist in older DB schemas, so we fall back to
+    // the DEAL_STAGE_PROBABILITY map when the column is missing or null.
+    let deals: Array<{ id: string; price: number; probability?: number; stage: string }>;
+    try {
+      deals = await Deal.findAll({
+        where,
+        attributes: ['id', 'price', 'probability', 'stage'],
+        raw: true
+      });
+    } catch {
+      // If the 'probability' column doesn't exist yet, retry without it
+      deals = await Deal.findAll({
+        where,
+        attributes: ['id', 'price', 'stage'],
+        raw: true
+      });
+    }
 
     const byStage: Record<string, { count: number; totalValue: number; weightedValue: number; totalProbability: number }> = {};
     let totalPipelineValue = 0;
@@ -641,7 +654,8 @@ class DealService {
 
     for (const deal of deals) {
       const price = Number(deal.price) || 0;
-      const prob = Number(deal.probability) || 0;
+      // Use stored probability if available, otherwise derive from stage
+      const prob = Number(deal.probability) || DEAL_STAGE_PROBABILITY[deal.stage] || 0;
       const weighted = price * (prob / 100);
 
       totalPipelineValue += price;

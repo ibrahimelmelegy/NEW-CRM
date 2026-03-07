@@ -681,306 +681,16 @@ function addNewRule() {
 }
 
 // ─── API Data Loading ───────────────────────────────────────
-const fallbackLeads = [
-  {
-    name: 'Sarah Mitchell',
-    email: 'sarah.m@techcorp.io',
-    company: 'TechCorp Inc.',
-    score: 94,
-    percentile: 98,
-    conversionProb: 87,
-    action: 'call',
-    priority: 'hot',
-    priorityOrder: 1,
-    assignedTo: 'James Parker'
-  },
-  {
-    name: 'Ahmed Al-Rashid',
-    email: 'ahmed@gulfenterprises.sa',
-    company: 'Gulf Enterprises',
-    score: 91,
-    percentile: 96,
-    conversionProb: 82,
-    action: 'demo',
-    priority: 'hot',
-    priorityOrder: 1,
-    assignedTo: 'Lisa Chen'
-  },
-  {
-    name: 'Maria Garcia',
-    email: 'mgarcia@innovatech.mx',
-    company: 'InnovaTech',
-    score: 88,
-    percentile: 94,
-    conversionProb: 79,
-    action: 'call',
-    priority: 'hot',
-    priorityOrder: 1,
-    assignedTo: 'James Parker'
-  },
-  {
-    name: 'David Chen',
-    email: 'dchen@meridian.com',
-    company: 'Meridian Solutions',
-    score: 85,
-    percentile: 91,
-    conversionProb: 74,
-    action: 'demo',
-    priority: 'hot',
-    priorityOrder: 1,
-    assignedTo: 'Sarah Kim'
-  },
-  {
-    name: 'Fatima Zahra',
-    email: 'fatima@cloudpeak.ae',
-    company: 'CloudPeak UAE',
-    score: 82,
-    percentile: 88,
-    conversionProb: 68,
-    action: 'email',
-    priority: 'hot',
-    priorityOrder: 1,
-    assignedTo: 'Lisa Chen'
-  },
-  {
-    name: 'Robert Thompson',
-    email: 'rthompson@nexgen.us',
-    company: 'NexGen Solutions',
-    score: 76,
-    percentile: 82,
-    conversionProb: 61,
-    action: 'demo',
-    priority: 'warm',
-    priorityOrder: 2,
-    assignedTo: 'James Parker'
-  },
-  {
-    name: 'Yuki Tanaka',
-    email: 'yuki@tokyodigital.jp',
-    company: 'Tokyo Digital',
-    score: 73,
-    percentile: 78,
-    conversionProb: 56,
-    action: 'email',
-    priority: 'warm',
-    priorityOrder: 2,
-    assignedTo: 'Sarah Kim'
-  },
-  {
-    name: 'Carlos Rivera',
-    email: 'crivera@latamhub.co',
-    company: 'LatAm Hub',
-    score: 70,
-    percentile: 74,
-    conversionProb: 52,
-    action: 'nurture',
-    priority: 'warm',
-    priorityOrder: 2,
-    assignedTo: 'Lisa Chen'
-  },
-  {
-    name: 'Priya Patel',
-    email: 'priya@infospark.in',
-    company: 'InfoSpark India',
-    score: 67,
-    percentile: 70,
-    conversionProb: 48,
-    action: 'email',
-    priority: 'warm',
-    priorityOrder: 2,
-    assignedTo: 'James Parker'
-  },
-  {
-    name: 'Hans Mueller',
-    email: 'hmueller@berlintech.de',
-    company: 'BerlinTech GmbH',
-    score: 64,
-    percentile: 66,
-    conversionProb: 44,
-    action: 'nurture',
-    priority: 'warm',
-    priorityOrder: 2,
-    assignedTo: 'Sarah Kim'
-  },
-  {
-    name: 'Elena Volkov',
-    email: 'elena@moscowcloud.ru',
-    company: 'MoscowCloud',
-    score: 58,
-    percentile: 58,
-    conversionProb: 38,
-    action: 'nurture',
-    priority: 'warm',
-    priorityOrder: 2,
-    assignedTo: 'Lisa Chen'
-  },
-  {
-    name: 'John Baker',
-    email: 'jbaker@smallbiz.com',
-    company: 'SmallBiz Co.',
-    score: 52,
-    percentile: 50,
-    conversionProb: 32,
-    action: 'nurture',
-    priority: 'cold',
-    priorityOrder: 3,
-    assignedTo: 'James Parker'
-  },
-  {
-    name: 'Sophie Laurent',
-    email: 'slaurent@parisgroup.fr',
-    company: 'Paris Group',
-    score: 47,
-    percentile: 44,
-    conversionProb: 28,
-    action: 'email',
-    priority: 'cold',
-    priorityOrder: 3,
-    assignedTo: 'Sarah Kim'
-  },
-  {
-    name: 'Kwame Asante',
-    email: 'kasante@accrasys.gh',
-    company: 'Accra Systems',
-    score: 43,
-    percentile: 38,
-    conversionProb: 24,
-    action: 'nurture',
-    priority: 'cold',
-    priorityOrder: 3,
-    assignedTo: 'Lisa Chen'
-  },
-  {
-    name: 'Anna Kowalski',
-    email: 'akowalski@warsawit.pl',
-    company: 'Warsaw IT',
-    score: 38,
-    percentile: 32,
-    conversionProb: 20,
-    action: 'nurture',
-    priority: 'cold',
-    priorityOrder: 3,
-    assignedTo: 'James Parker'
-  },
-  {
-    name: 'Lucas Oliveira',
-    email: 'loliveira@saopaulotech.br',
-    company: 'SP Tech',
-    score: 34,
-    percentile: 26,
-    conversionProb: 17,
-    action: 'nurture',
-    priority: 'cold',
-    priorityOrder: 3,
-    assignedTo: 'Sarah Kim'
-  },
-  {
-    name: 'Nina Johansson',
-    email: 'nina@stockholmdata.se',
-    company: 'Stockholm Data',
-    score: 29,
-    percentile: 20,
-    conversionProb: 14,
-    action: 'nurture',
-    priority: 'cold',
-    priorityOrder: 3,
-    assignedTo: 'Lisa Chen'
-  },
-  {
-    name: 'Omar Hassan',
-    email: 'ohassan@cairobiz.eg',
-    company: 'Cairo Business',
-    score: 24,
-    percentile: 14,
-    conversionProb: 11,
-    action: 'nurture',
-    priority: 'cold',
-    priorityOrder: 3,
-    assignedTo: 'James Parker'
-  },
-  {
-    name: 'Mei Wong',
-    email: 'mwong@hkdigital.hk',
-    company: 'HK Digital',
-    score: 19,
-    percentile: 8,
-    conversionProb: 8,
-    action: 'nurture',
-    priority: 'cold',
-    priorityOrder: 3,
-    assignedTo: 'Sarah Kim'
-  },
-  {
-    name: 'Liam OBrien',
-    email: 'lobrien@dublinsoft.ie',
-    company: 'Dublin Software',
-    score: 14,
-    percentile: 4,
-    conversionProb: 5,
-    action: 'nurture',
-    priority: 'cold',
-    priorityOrder: 3,
-    assignedTo: 'Lisa Chen'
-  }
-];
-
-const fallbackFeatureImportance = [
-  { name: 'Website Visits (Last 30d)', weight: 92, trend: 'up', trendValue: '+4.2%', contribution: 18.4, icon: 'ph:globe-bold', color: '#7849ff' },
-  { name: 'Email Open Rate', weight: 87, trend: 'up', trendValue: '+2.8%', contribution: 16.1, icon: 'ph:envelope-open-bold', color: '#3b82f6' },
-  { name: 'Company Revenue Size', weight: 81, trend: 'down', trendValue: '-1.3%', contribution: 14.5, icon: 'ph:buildings-bold', color: '#22c55e' },
-  { name: 'Industry Match Score', weight: 76, trend: 'up', trendValue: '+3.1%', contribution: 12.8, icon: 'ph:factory-bold', color: '#f59e0b' },
-  { name: 'Engagement Score', weight: 72, trend: 'up', trendValue: '+5.6%', contribution: 11.2, icon: 'ph:lightning-bold', color: '#ef4444' },
-  { name: 'Content Downloads', weight: 65, trend: 'down', trendValue: '-0.8%', contribution: 8.7, icon: 'ph:download-bold', color: '#06b6d4' },
-  { name: 'Social Media Activity', weight: 58, trend: 'up', trendValue: '+1.9%', contribution: 7.3, icon: 'ph:share-network-bold', color: '#ec4899' },
-  { name: 'Demo Requests', weight: 51, trend: 'up', trendValue: '+6.2%', contribution: 5.4, icon: 'ph:presentation-chart-bold', color: '#8b5cf6' },
-  {
-    name: 'Job Title Seniority',
-    weight: 44,
-    trend: 'down',
-    trendValue: '-2.1%',
-    contribution: 3.8,
-    icon: 'ph:identification-badge-bold',
-    color: '#14b8a6'
-  },
-  { name: 'Geographic Region', weight: 36, trend: 'up', trendValue: '+0.5%', contribution: 1.8, icon: 'ph:map-pin-bold', color: '#f97316' }
-];
-
-const fallbackModels = [
-  { name: 'Gradient Boost v3.2', accuracy: 94.2, precision: 92.8, recall: 91.5, f1: 0.921, aucRoc: 0.967, status: 'active', statusColor: '#22c55e' },
-  { name: 'Neural Network v2.1', accuracy: 93.1, precision: 91.4, recall: 93.8, f1: 0.926, aucRoc: 0.958, status: 'testing', statusColor: '#f59e0b' },
-  {
-    name: 'Bayesian Classifier v4.0',
-    accuracy: 89.7,
-    precision: 88.2,
-    recall: 87.6,
-    f1: 0.879,
-    aucRoc: 0.934,
-    status: 'active',
-    statusColor: '#22c55e'
-  },
-  {
-    name: 'Logistic Regression v1.8',
-    accuracy: 86.4,
-    precision: 85.1,
-    recall: 84.3,
-    f1: 0.847,
-    aucRoc: 0.912,
-    status: 'archived',
-    statusColor: '#94a3b8'
-  },
-  { name: 'Random Forest v2.5', accuracy: 91.8, precision: 90.6, recall: 89.2, f1: 0.899, aucRoc: 0.948, status: 'testing', statusColor: '#f59e0b' }
-];
-
 async function loadModels() {
   try {
     const res = await useApiFetch('ai-lead-scoring');
     if (res.success && Array.isArray(res.body)) {
       models.value = res.body as unknown;
     } else {
-      models.value = fallbackModels;
+      models.value = [];
     }
   } catch {
-    models.value = fallbackModels;
+    models.value = [];
   }
 }
 
@@ -1000,10 +710,10 @@ async function loadLeads() {
     if (res.success && Array.isArray(res.body)) {
       leads.value = res.body as unknown;
     } else {
-      leads.value = fallbackLeads;
+      leads.value = [];
     }
   } catch {
-    leads.value = fallbackLeads;
+    leads.value = [];
   }
 }
 
@@ -1017,9 +727,9 @@ async function loadFeatureImportance() {
         return;
       }
     }
-    featureImportance.value = fallbackFeatureImportance;
+    featureImportance.value = [];
   } catch {
-    featureImportance.value = fallbackFeatureImportance;
+    featureImportance.value = [];
   }
 }
 

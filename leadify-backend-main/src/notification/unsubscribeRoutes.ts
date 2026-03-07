@@ -11,7 +11,7 @@ interface UnsubscribePayload {
 
 /**
  * Public endpoint — no auth required.
- * GET /api/notifications/unsubscribe?token=xxx
+ * GET /api/notification/unsubscribe?token=xxx
  * Disables email channel for the given notification type for the user.
  */
 router.get('/unsubscribe', async (req: Request, res: Response) => {

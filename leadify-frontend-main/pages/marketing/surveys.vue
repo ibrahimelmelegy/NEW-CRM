@@ -311,44 +311,7 @@ const surveys = ref([
   { id: 6, name: 'Support Quality Survey', type: 'CSAT', status: 'DRAFT', questionCount: 10, sent: 0, responses: 0, responseRate: 0, avgScore: 0 }
 ]);
 
-const recentFeedback = ref([
-  {
-    id: 1,
-    name: 'Ahmed Al-Farsi',
-    rating: 5,
-    comment: 'Excellent product! The CRM features have streamlined our sales process significantly.',
-    sentiment: 'positive',
-    source: 'NPS Survey',
-    date: 'Feb 19'
-  },
-  {
-    id: 2,
-    name: 'Sara Mohammed',
-    rating: 4,
-    comment: 'Good overall experience. Would love to see more customization options for dashboards.',
-    sentiment: 'positive',
-    source: 'CSAT Survey',
-    date: 'Feb 18'
-  },
-  {
-    id: 3,
-    name: 'Omar Hassan',
-    rating: 2,
-    comment: 'The reporting module is slow and often times out with large datasets.',
-    sentiment: 'negative',
-    source: 'Product Feedback',
-    date: 'Feb 18'
-  },
-  {
-    id: 4,
-    name: 'Fatima Ali',
-    rating: 3,
-    comment: 'Decent product but onboarding could be smoother. Took our team 3 weeks to get comfortable.',
-    sentiment: 'neutral',
-    source: 'Onboarding Survey',
-    date: 'Feb 17'
-  }
-]);
+const recentFeedback = ref([]);
 
 const totalResponses = computed(() => surveys.value.reduce((s, sv) => s + sv.responses, 0));
 const avgResponseRate = computed(() => {

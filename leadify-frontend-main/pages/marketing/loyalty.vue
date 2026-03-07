@@ -291,18 +291,7 @@ const showAddRewardDialog = ref(false);
 const newMember = ref({ name: '', email: '', points: 0 });
 const newReward = ref({ name: '', description: '', pointsCost: 0, stock: 0, category: 'Discount' });
 
-const members = ref([
-  { id: 1, name: 'Ahmed Al-Farsi', email: 'ahmed@techcorp.sa', tier: 'Platinum', pointsBalance: 45200, lifetimePoints: 128500, joinDate: 'Jan 2023' },
-  { id: 2, name: 'Sara Mohammed', email: 'sara@gulfbiz.com', tier: 'Gold', pointsBalance: 22800, lifetimePoints: 67400, joinDate: 'Mar 2023' },
-  { id: 3, name: 'Omar Hassan', email: 'omar@startup.sa', tier: 'Gold', pointsBalance: 18600, lifetimePoints: 52100, joinDate: 'Jun 2023' },
-  { id: 4, name: 'Fatima Ali', email: 'fatima@retailco.sa', tier: 'Silver', pointsBalance: 9400, lifetimePoints: 31200, joinDate: 'Aug 2023' },
-  { id: 5, name: 'Khalid Ibrahim', email: 'khalid@finserv.sa', tier: 'Silver', pointsBalance: 7200, lifetimePoints: 24800, joinDate: 'Oct 2023' },
-  { id: 6, name: 'Noura Salem', email: 'noura@media.sa', tier: 'Bronze', pointsBalance: 3100, lifetimePoints: 8900, joinDate: 'Feb 2024' },
-  { id: 7, name: 'Hassan Al-Qahtani', email: 'hassan@logistics.sa', tier: 'Bronze', pointsBalance: 1800, lifetimePoints: 5200, joinDate: 'May 2024' },
-  { id: 8, name: 'Amal Rashid', email: 'amal@design.sa', tier: 'Platinum', pointsBalance: 52300, lifetimePoints: 145000, joinDate: 'Dec 2022' },
-  { id: 9, name: 'Youssef Mansour', email: 'youssef@pharma.sa', tier: 'Gold', pointsBalance: 16200, lifetimePoints: 48700, joinDate: 'Apr 2023' },
-  { id: 10, name: 'Layla Bashar', email: 'layla@education.sa', tier: 'Bronze', pointsBalance: 2400, lifetimePoints: 6100, joinDate: 'Sep 2024' }
-]);
+const members = ref([]);
 
 const rewards = ref([
   {

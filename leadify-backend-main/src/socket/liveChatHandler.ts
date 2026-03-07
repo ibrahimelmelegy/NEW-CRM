@@ -120,18 +120,22 @@ export function setupLiveChatHandlers(io: Server) {
     // ───────── Cleanup on Disconnect ─────────────────────────────────────
 
     socket.on('disconnect', () => {
-      // Clean up agent online status
-      if (onlineAgents.has(socket.id)) {
-        onlineAgents.delete(socket.id);
-        io.emit('chat:agents_online', Array.from(onlineAgents.values()));
-      }
-
-      // Clean up typing timers for this socket
-      for (const [key, timer] of typingTimers.entries()) {
-        if (key.includes(socket.id)) {
-          clearTimeout(timer);
-          typingTimers.delete(key);
+      try {
+        // Clean up agent online status
+        if (onlineAgents.has(socket.id)) {
+          onlineAgents.delete(socket.id);
+          io.emit('chat:agents_online', Array.from(onlineAgents.values()));
         }
+
+        // Clean up typing timers for this socket
+        for (const [key, timer] of typingTimers.entries()) {
+          if (key.includes(socket.id)) {
+            clearTimeout(timer);
+            typingTimers.delete(key);
+          }
+        }
+      } catch (err) {
+        console.error('Socket event disconnect error:', err);
       }
     });
   });

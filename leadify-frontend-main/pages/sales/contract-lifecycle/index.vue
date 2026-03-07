@@ -435,13 +435,8 @@ function generateDemoContracts() {
 
   return clients.map((client, i) => {
     const status = statuses[i % statuses.length];
-    const startDate = new Date(year - 1, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
-    const endOffset =
-      status === 'expiring'
-        ? Math.floor(Math.random() * 30)
-        : status === 'expired'
-          ? -Math.floor(Math.random() * 60)
-          : Math.floor(Math.random() * 365) + 60;
+    const startDate = new Date(now.getTime());
+    const endOffset = 0;
     const endDate = new Date(now.getTime() + endOffset * 86400000);
 
     return {
@@ -452,10 +447,10 @@ function generateDemoContracts() {
       type: types[i % types.length],
       startDate: startDate.toISOString().split('T')[0],
       endDate: endDate.toISOString().split('T')[0],
-      value: Math.floor(Math.random() * 500000) + 25000,
+      value: 0,
       status,
-      autoRenewal: Math.random() > 0.4,
-      owner: ['Ahmed Al-Sayed', 'Fatima Hassan', 'Mohammed Ali', 'Sara Khan', 'Omar Rashid'][i % 5],
+      autoRenewal: false,
+      owner: '',
       notes: i % 3 === 0 ? 'Key enterprise account - priority renewal' : ''
     };
   });
