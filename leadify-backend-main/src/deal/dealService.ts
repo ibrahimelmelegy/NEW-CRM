@@ -655,7 +655,7 @@ class DealService {
     for (const deal of deals) {
       const price = Number(deal.price) || 0;
       // Use stored probability if available, otherwise derive from stage
-      const prob = Number(deal.probability) || DEAL_STAGE_PROBABILITY[deal.stage] || 0;
+      const prob = deal.probability != null ? Number(deal.probability) : (DEAL_STAGE_PROBABILITY[deal.stage] ?? 0);
       const weighted = price * (prob / 100);
 
       totalPipelineValue += price;
