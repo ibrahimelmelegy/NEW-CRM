@@ -22,6 +22,7 @@ const router = Router();
  *     security:
  *       - bearerAuth: []
  */
+router.get('/', authenticateUser, (_req, res) => res.json({ docs: [], message: 'Use /api/catalog for product listing' }));
 router.get('/:id/reviews', authenticateUser, ecProductController.getProductReviews);
 
 // ─── Product Price Rules ────────────────────────────────────────────────────

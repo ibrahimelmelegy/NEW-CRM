@@ -26,6 +26,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
+router.get('/', authenticateUser, leadScoringController.getRules);
 router.get('/grades', authenticateUser, leadScoringController.getGradeThresholds);
 
 /**
