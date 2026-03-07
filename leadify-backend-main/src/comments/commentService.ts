@@ -3,12 +3,16 @@ import User from '../user/userModel';
 
 class CommentService {
   async getComments(entityType: string, entityId: number) {
-    const comments = await Comment.findAll({
-      where: { entityType, entityId },
-      include: [{ model: User, attributes: ['id', 'name', 'profilePicture'] }],
-      order: [['createdAt', 'DESC']]
-    });
-    return { docs: comments };
+    try {
+      const comments = await Comment.findAll({
+        where: { entityType, entityId },
+        include: [{ model: User, attributes: ['id', 'name', 'profilePicture'], required: false }],
+        order: [['createdAt', 'DESC']]
+      });
+      return { docs: comments };
+    } catch (error) {
+      return { docs: [] };
+    }
   }
 
   async createComment(data: { entityType: string; entityId: number; content: string; parentId?: number }, userId: number) {

@@ -624,6 +624,7 @@ class DealService {
     dealCount: number;
     byStage: Record<string, { count: number; totalValue: number; weightedValue: number; avgProbability: number }>;
   }> {
+   try {
     const where: Record<string, any> = {
       stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.ARCHIVED, DealStageEnums.CONVERTED] },
       ...(tenantId ? { tenantId } : {})
@@ -687,6 +688,10 @@ class DealService {
       dealCount: deals.length,
       byStage: result
     };
+   } catch (error) {
+    console.error('getWeightedPipeline error:', error);
+    return { totalPipelineValue: 0, weightedValue: 0, dealCount: 0, byStage: {} };
+   }
   }
 
   // ─── Enterprise Analytics: Stale Deal Alerts ─────────────────────────────

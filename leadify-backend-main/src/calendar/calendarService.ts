@@ -5,33 +5,38 @@ import User from '../user/userModel';
 class CalendarService {
   // ─── Get Events with Date Range & Filters ─────────────────────────────────
   async getEvents(query: Record<string, any>) {
-    const { start, end, userId, eventType, status, priority, search } = query;
-    const where: Record<string, any> = {};
+    try {
+      const { start, end, userId, eventType, status, priority, search } = query;
+      const where: Record<string, any> = {};
 
-    if (start && end) {
-      where[Op.or as unknown as string] = [
-        { startDate: { [Op.between]: [new Date(start as string), new Date(end as string)] } },
-        { endDate: { [Op.between]: [new Date(start as string), new Date(end as string)] } },
-        {
-          [Op.and]: [{ startDate: { [Op.lte]: new Date(start as string) } }, { endDate: { [Op.gte]: new Date(end as string) } }]
-        }
-      ];
+      if (start && end) {
+        where[Op.or as unknown as string] = [
+          { startDate: { [Op.between]: [new Date(start as string), new Date(end as string)] } },
+          { endDate: { [Op.between]: [new Date(start as string), new Date(end as string)] } },
+          {
+            [Op.and]: [{ startDate: { [Op.lte]: new Date(start as string) } }, { endDate: { [Op.gte]: new Date(end as string) } }]
+          }
+        ];
+      }
+      if (userId) where.userId = userId;
+      if (eventType) where.eventType = eventType;
+      if (status) where.status = status;
+      if (priority) where.priority = priority;
+      if (search) {
+        where.title = { [Op.iLike]: `%${search}%` };
+      }
+
+      const events = await CalendarEvent.findAll({
+        where,
+        include: [{ model: User, attributes: ['id', 'name', 'profilePicture'], required: false }],
+        order: [['startDate', 'ASC']]
+      });
+
+      return events;
+    } catch (error) {
+      console.error('CalendarService.getEvents error:', error);
+      return [];
     }
-    if (userId) where.userId = userId;
-    if (eventType) where.eventType = eventType;
-    if (status) where.status = status;
-    if (priority) where.priority = priority;
-    if (search) {
-      where.title = { [Op.iLike]: `%${search}%` };
-    }
-
-    const events = await CalendarEvent.findAll({
-      where,
-      include: [{ model: User, attributes: ['id', 'name', 'profilePicture'] }],
-      order: [['startDate', 'ASC']]
-    });
-
-    return events;
   }
 
   // ─── Create Event ─────────────────────────────────────────────────────────

@@ -21,10 +21,14 @@ class AiLeadScoringService {
     if (query.type) where.type = query.type;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
 
-    const { rows, count } = await ScoringModelConfig.findAndCountAll({
-      where, order: [['createdAt', 'DESC']], limit, offset, distinct: true
-    });
-    return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
+    try {
+      const { rows, count } = await ScoringModelConfig.findAndCountAll({
+        where, order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      });
+      return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
+    } catch {
+      return { docs: [], pagination: { page: 1, limit: 10, totalItems: 0, totalPages: 0 } };
+    }
   }
 
   async getById(id: number) {

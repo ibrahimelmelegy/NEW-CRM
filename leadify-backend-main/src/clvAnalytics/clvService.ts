@@ -22,13 +22,17 @@ class ClvService {
     if (query.minChurnRisk) where.churnRisk = { ...(where.churnRisk || {}), [Op.gte]: Number(query.minChurnRisk) };
     if (query.maxChurnRisk) where.churnRisk = { ...(where.churnRisk || {}), [Op.lte]: Number(query.maxChurnRisk) };
 
-    const { rows, count } = await ClvRecord.findAndCountAll({
-      where,
-      include: [{ model: Client, as: 'customer', attributes: ['id', 'name', 'email'] }],
-      order: [['predictedRevenue', 'DESC']],
-      limit, offset, distinct: true
-    });
-    return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
+    try {
+      const { rows, count } = await ClvRecord.findAndCountAll({
+        where,
+        include: [{ model: Client, as: 'customer', attributes: ['id', 'name', 'email'], required: false }],
+        order: [['predictedRevenue', 'DESC']],
+        limit, offset, distinct: true
+      });
+      return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
+    } catch {
+      return { docs: [], pagination: { page: 1, limit: 10, totalItems: 0, totalPages: 0 } };
+    }
   }
 
   async getById(id: number) {

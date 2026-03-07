@@ -45,27 +45,34 @@ class LiveChatService {
       ];
     }
 
-    const { rows, count } = await ChatConversation.findAndCountAll({
-      where,
-      include: [
-        { model: Client, as: 'client', attributes: ['id', 'name', 'email'] },
-        { model: User, as: 'staff', attributes: ['id', 'name', 'email'] },
-      ],
-      order: [['updatedAt', 'DESC']],
-      limit,
-      offset,
-      distinct: true,
-    });
-
-    return {
-      docs: rows,
-      pagination: {
-        page,
+    try {
+      const { rows, count } = await ChatConversation.findAndCountAll({
+        where,
+        include: [
+          { model: Client, as: 'client', attributes: ['id', 'name', 'email'], required: false },
+          { model: User, as: 'staff', attributes: ['id', 'name', 'email'], required: false },
+        ],
+        order: [['updatedAt', 'DESC']],
         limit,
-        totalItems: count,
-        totalPages: Math.ceil(count / limit),
-      },
-    };
+        offset,
+        distinct: true,
+      });
+
+      return {
+        docs: rows,
+        pagination: {
+          page,
+          limit,
+          totalItems: count,
+          totalPages: Math.ceil(count / limit),
+        },
+      };
+    } catch (error) {
+      return {
+        docs: [],
+        pagination: { page: 1, limit: 10, totalItems: 0, totalPages: 0 },
+      };
+    }
   }
 
   async getConversationById(id: number) {

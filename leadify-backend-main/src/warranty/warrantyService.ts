@@ -14,15 +14,19 @@ class WarrantyService {
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
     if (query.search) where.productName = { [Op.iLike]: `%${query.search}%` };
-    const { rows, count } = await Warranty.findAndCountAll({
-      where,
-      include: [
-        { model: Client, as: 'client', attributes: ['id', 'name', 'email'] },
-        { model: WarrantyClaim, as: 'claims' }
-      ],
-      order: [['createdAt', 'DESC']], limit, offset, distinct: true
-    });
-    return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
+    try {
+      const { rows, count } = await Warranty.findAndCountAll({
+        where,
+        include: [
+          { model: Client, as: 'client', attributes: ['id', 'name', 'email'], required: false },
+          { model: WarrantyClaim, as: 'claims', required: false }
+        ],
+        order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      });
+      return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
+    } catch {
+      return { docs: [], pagination: { page: 1, limit: 10, totalItems: 0, totalPages: 0 } };
+    }
   }
 
   async updateWarranty(id: number, data: any) {

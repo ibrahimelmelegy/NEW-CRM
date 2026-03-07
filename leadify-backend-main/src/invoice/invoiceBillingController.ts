@@ -6,6 +6,17 @@ import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 
 class InvoiceBillingController {
+  async listInvoices(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const result = await invoiceBillingService.listInvoices(page, limit);
+      wrapResult(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async createInvoice(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const { dealId, invoiceDate, notes, paymentTerms, dueDate, lineItems } = req.body;

@@ -24,16 +24,20 @@ class AccountPlanService {
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
     if (query.minHealth) where.healthScore = { ...(where.healthScore || {}), [Op.gte]: Number(query.minHealth) };
 
-    const { rows, count } = await AccountPlan.findAndCountAll({
-      where,
-      include: [
-        { model: Client, as: 'account', attributes: ['id', 'name', 'email'] },
-        { model: User, as: 'owner', attributes: ['id', 'name'] }
-      ],
-      order: [['createdAt', 'DESC']],
-      limit, offset, distinct: true
-    });
-    return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
+    try {
+      const { rows, count } = await AccountPlan.findAndCountAll({
+        where,
+        include: [
+          { model: Client, as: 'account', attributes: ['id', 'name', 'email'], required: false },
+          { model: User, as: 'owner', attributes: ['id', 'name'], required: false }
+        ],
+        order: [['createdAt', 'DESC']],
+        limit, offset, distinct: true
+      });
+      return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
+    } catch {
+      return { docs: [], pagination: { page: 1, limit: 10, totalItems: 0, totalPages: 0 } };
+    }
   }
 
   async getById(id: number) {

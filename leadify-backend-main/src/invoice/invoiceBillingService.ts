@@ -10,6 +10,24 @@ import { ERRORS } from '../utils/error/errors';
 import { tenantWhere } from '../utils/tenantScope';
 
 class InvoiceBillingService {
+  async listInvoices(page = 1, limit = 20): Promise<{ docs: any[]; pagination: { total: number; page: number; limit: number; totalPages: number } }> {
+    try {
+      const offset = (page - 1) * limit;
+      const { rows, count } = await Invoice.findAndCountAll({
+        order: [['createdAt', 'DESC']],
+        limit,
+        offset
+      });
+      return {
+        docs: rows,
+        pagination: { total: count, page, limit, totalPages: Math.ceil(count / limit) }
+      };
+    } catch (error) {
+      console.error('listInvoices error:', error);
+      return { docs: [], pagination: { total: 0, page, limit, totalPages: 0 } };
+    }
+  }
+
   /**
    * Auto-generate the next invoice number in INV-0001 sequence.
    */

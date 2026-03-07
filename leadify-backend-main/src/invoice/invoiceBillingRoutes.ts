@@ -155,6 +155,9 @@ router.post(
  *       500:
  *         description: Server error
  */
+// List all invoices (root GET handler)
+router.get('/', authenticateUser, HasPermission([InvoicePermissionsEnum.VIEW_INVOICES]), invoiceBillingController.listInvoices);
+
 // Get invoice detail with line items
 router.get('/:id', authenticateUser, HasPermission([InvoicePermissionsEnum.VIEW_INVOICES]), invoiceBillingController.getInvoiceDetail);
 
