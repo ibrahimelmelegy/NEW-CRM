@@ -36,7 +36,13 @@ export default defineNuxtConfig({
     }
   },
 
-  css: ['@/assets/styles/global.scss', '@/assets/scss/transitions.scss', '@/assets/css/dark-theme.css', '@/assets/css/microsoft-light.css', '@/assets/css/mobile.scss'],
+  css: [
+    '@/assets/styles/global.scss',
+    '@/assets/scss/transitions.scss',
+    '@/assets/css/dark-theme.css',
+    '@/assets/css/microsoft-light.css',
+    '@/assets/css/mobile.scss'
+  ],
 
   sourcemap: {
     server: process.env.NODE_ENV !== 'production',
@@ -119,7 +125,16 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ['@vite-pwa/nuxt', '@element-plus/nuxt', '@nuxt/icon', '@nuxtjs/tailwindcss', '@pinia/nuxt', '@nuxt/image', '@vueuse/nuxt', '@nuxtjs/i18n'],
+  modules: [
+    '@vite-pwa/nuxt',
+    '@element-plus/nuxt',
+    '@nuxt/icon',
+    '@nuxtjs/tailwindcss',
+    '@pinia/nuxt',
+    '@nuxt/image',
+    '@vueuse/nuxt',
+    '@nuxtjs/i18n'
+  ],
 
   pwa: {
     registerType: 'autoUpdate',
