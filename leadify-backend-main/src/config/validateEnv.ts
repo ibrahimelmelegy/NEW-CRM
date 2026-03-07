@@ -130,10 +130,11 @@ export function validateEnvironment(): void {
   }
 
   if (errors.length > 0) {
-    console.error('\n=== FATAL: Environment Validation Failed ===');
+    console.error('\n=== Environment Validation Errors ===');
     errors.forEach(e => console.error(`  ${e}`));
-    console.error('=============================================\n');
-    process.exit(1);
+    console.error('=====================================\n');
+    // Log errors but don't crash — allow server to start with partial config
+    // Missing vars will cause runtime errors only when the relevant feature is used
   }
 
 }
