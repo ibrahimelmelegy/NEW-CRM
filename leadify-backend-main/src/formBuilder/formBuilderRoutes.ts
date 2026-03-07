@@ -5,6 +5,7 @@ import c from './formBuilderController';
 
 const router = express.Router();
 
+router.get('/', authenticateUser, HasPermission([FormBuilderPermissionsEnum.VIEW_FORMS]), c.getTemplates);
 router.get('/templates', authenticateUser, HasPermission([FormBuilderPermissionsEnum.VIEW_FORMS]), c.getTemplates);
 router.post('/templates', authenticateUser, HasPermission([FormBuilderPermissionsEnum.CREATE_FORMS]), c.createTemplate);
 router.put('/templates/:id', authenticateUser, HasPermission([FormBuilderPermissionsEnum.EDIT_FORMS]), c.updateTemplate);

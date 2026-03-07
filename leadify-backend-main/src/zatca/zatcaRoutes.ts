@@ -59,6 +59,7 @@ const router = express.Router();
  *       200:
  *         description: Paginated list of ZATCA invoices
  */
+router.get('/', authenticateUser, zatcaController.getInvoices);
 router.get('/invoices', authenticateUser, zatcaController.getInvoices);
 
 /**

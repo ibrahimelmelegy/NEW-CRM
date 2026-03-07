@@ -11,6 +11,8 @@ import { authenticateUser } from '../middleware/authMiddleware';
 
 const router = Router();
 
+router.get('/', authenticateUser, productController.getProducts);
+
 // ─── Product Analytics ──────────────────────────────────────────────────────
 
 /**

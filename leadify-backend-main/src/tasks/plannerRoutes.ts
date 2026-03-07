@@ -7,6 +7,7 @@ const router = Router();
 router.use(authenticateUser);
 
 // Planner Tasks
+router.get('/', plannerController.getTasksByDate);
 router.get('/tasks', plannerController.getTasksByDate);
 router.post('/tasks', plannerController.createTask);
 router.patch('/tasks/:id', plannerController.updateTask);

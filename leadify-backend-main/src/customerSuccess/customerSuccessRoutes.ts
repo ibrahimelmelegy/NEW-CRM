@@ -25,6 +25,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
+router.get('/', authenticateUser, customerSuccessController.getDashboard);
 // Dashboard overview
 router.get('/dashboard', authenticateUser, customerSuccessController.getDashboard);
 

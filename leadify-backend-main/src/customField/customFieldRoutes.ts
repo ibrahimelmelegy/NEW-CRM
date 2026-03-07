@@ -88,6 +88,8 @@ const router = express.Router();
  *           nullable: true
  */
 
+router.get('/', authenticateUser, (_req, res) => res.json({ docs: [], message: 'Use specific sub-endpoints' }));
+
 // ─── Field Definition Routes ─────────────────────────────────────────────────
 
 /**

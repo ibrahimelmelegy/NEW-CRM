@@ -38,6 +38,7 @@ const router = express.Router();
  *       200:
  *         description: Login successful, returns JWT token
  */
+router.get('/', authenticatePortalUser, portalController.getDashboard);
 router.post('/auth/login', portalController.login);
 
 /**

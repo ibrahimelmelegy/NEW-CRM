@@ -5,6 +5,8 @@ import controller from './cpqController';
 
 const router = express.Router();
 
+router.get('/', authenticateUser, HasPermission([CpqPermissionsEnum.VIEW_CPQ]), controller.getQuotes);
+
 // ─── Quote Calculation & Validation (no persistence) ────────────────────────
 router.post('/generate-quote', authenticateUser, HasPermission([CpqPermissionsEnum.VIEW_CPQ]), controller.generateQuote);
 router.post('/validate-pricing', authenticateUser, HasPermission([CpqPermissionsEnum.VIEW_CPQ]), controller.validatePricing);

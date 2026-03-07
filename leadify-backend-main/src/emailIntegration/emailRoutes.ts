@@ -26,6 +26,7 @@ const router = Router();
  *       200:
  *         description: List of email accounts
  */
+router.get('/', authenticateUser, emailController.getAccounts);
 router.get('/accounts', authenticateUser, emailController.getAccounts);
 
 /**

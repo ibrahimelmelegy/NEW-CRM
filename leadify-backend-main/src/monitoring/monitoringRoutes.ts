@@ -7,6 +7,8 @@ const router = express.Router();
 // All monitoring routes require authentication and MANAGE_SETTINGS (admin) permission
 router.use(authenticateUser, HasPermission(['MANAGE_SETTINGS']));
 
+router.get('/', monitoringController.getOverview);
+
 /**
  * @swagger
  * /api/monitoring/overview:

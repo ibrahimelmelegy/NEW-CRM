@@ -62,6 +62,7 @@ const router = express.Router();
  *       201:
  *         description: Activity logged successfully
  */
+router.get('/', authenticateUser, HasPermission([CommunicationPermissionsEnum.VIEW_STATS]), communicationController.getStats);
 router.post('/activities', authenticateUser, HasPermission([CommunicationPermissionsEnum.LOG_ACTIVITIES]), communicationController.logActivity);
 
 /**

@@ -39,6 +39,7 @@ const router = Router();
  *       200:
  *         description: Paginated list of SLA policies
  */
+router.get('/', authenticateUser, slaController.getPolicies);
 router.get('/policies', authenticateUser, slaController.getPolicies);
 
 /**

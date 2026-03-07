@@ -12,6 +12,8 @@ const router = Router();
  *   description: Approval workflows and approval requests
  */
 
+router.get('/', authenticateUser, HasPermission([ApprovalPermissionsEnum.MANAGE_WORKFLOWS]), approvalController.getWorkflows);
+
 // Workflow routes
 
 /**

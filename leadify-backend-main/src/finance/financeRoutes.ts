@@ -12,6 +12,8 @@ import { FinancePermissionsEnum } from '../role/roleEnum';
 
 const router = express.Router();
 
+router.get('/', authenticateUser, HasPermission([FinancePermissionsEnum.VIEW_CATEGORIES]), financeController.getCategories);
+
 // ─── Categories ───────────────────────────────────────────────────────────────
 
 /**

@@ -48,6 +48,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
+router.get('/', authenticateUser, HasPermission([PayrollPermissionsEnum.VIEW_PAYROLL]), payrollController.getPayrollRuns);
 router.post('/runs', authenticateUser, HasPermission([PayrollPermissionsEnum.CREATE_PAYROLL_RUN]), payrollController.createPayrollRun);
 
 /**

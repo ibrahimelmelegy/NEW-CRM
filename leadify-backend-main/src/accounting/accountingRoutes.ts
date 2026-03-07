@@ -29,6 +29,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
+router.get('/', authenticateUser, HasPermission([AccountingPermissionsEnum.VIEW_CHART_OF_ACCOUNTS]), accountingController.getChartOfAccounts);
 router.get(
   '/chart-of-accounts',
   authenticateUser,

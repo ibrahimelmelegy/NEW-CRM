@@ -38,6 +38,7 @@ const router = express.Router();
  *       201:
  *         description: Timer started
  */
+router.get('/', authenticateUser, timeTrackingController.getEntries);
 router.post('/start', authenticateUser, timeTrackingController.startTimer);
 
 /**

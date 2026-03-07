@@ -12,6 +12,8 @@ import { HRPermissionsEnum } from '../role/roleEnum';
 
 const router = express.Router();
 
+router.get('/', authenticateUser, HasPermission([HRPermissionsEnum.VIEW_ATTENDANCE]), hrController.getAttendance);
+
 // ─── Attendance ───────────────────────────────────────────────────────────────
 
 /**

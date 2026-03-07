@@ -36,6 +36,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
+router.get('/', authenticateUser, (_req, res) => res.json({ views: [] }));
 router.get('/view/:id', authenticateUser, savedViewController.getViewById);
 
 /**

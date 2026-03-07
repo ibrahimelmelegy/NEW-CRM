@@ -5,6 +5,7 @@ import c from './loyaltyController';
 
 const router = express.Router();
 
+router.get('/', authenticateUser, HasPermission([LoyaltyPermissionsEnum.VIEW_LOYALTY]), c.getPrograms);
 router.get('/programs', authenticateUser, HasPermission([LoyaltyPermissionsEnum.VIEW_LOYALTY]), c.getPrograms);
 router.post('/programs', authenticateUser, HasPermission([LoyaltyPermissionsEnum.CREATE_LOYALTY]), c.createProgram);
 router.put('/programs/:id', authenticateUser, HasPermission([LoyaltyPermissionsEnum.EDIT_LOYALTY]), c.updateProgram);

@@ -4,6 +4,8 @@ import controller from './usageBillingController';
 
 const router = express.Router();
 
+router.get('/', authenticateUser, controller.getAllMeters);
+
 // ─── Billing Actions ────────────────────────────────────────────────────────
 router.get('/charges', authenticateUser, controller.calculateCharges);
 router.post('/invoice', authenticateUser, controller.generateInvoice);

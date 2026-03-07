@@ -6,6 +6,7 @@ const router = Router();
 
 router.use(authenticateUser);
 
+router.get('/', virtualOfficeController.getRooms);
 router.get('/rooms', virtualOfficeController.getRooms);
 router.post('/rooms', virtualOfficeController.createRoom);
 router.patch('/rooms/:id', virtualOfficeController.updateRoom);

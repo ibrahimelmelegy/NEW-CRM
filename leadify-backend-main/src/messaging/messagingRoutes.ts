@@ -41,6 +41,7 @@ const router = express.Router();
  *       201:
  *         description: Message sent
  */
+router.get('/', authenticateUser, messagingController.getConversations);
 router.post('/send', authenticateUser, messagingController.sendMessage);
 
 /**

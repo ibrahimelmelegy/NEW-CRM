@@ -5,6 +5,8 @@ import controller from './recruitmentController';
 
 const router = express.Router();
 
+router.get('/', authenticateUser, HasPermission([RecruitmentPermissionsEnum.VIEW_RECRUITMENT]), controller.getPostings);
+
 // Job Postings
 router.get('/postings', authenticateUser, HasPermission([RecruitmentPermissionsEnum.VIEW_RECRUITMENT]), controller.getPostings);
 router.post('/postings', authenticateUser, HasPermission([RecruitmentPermissionsEnum.CREATE_RECRUITMENT]), controller.createPosting);

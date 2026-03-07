@@ -52,6 +52,7 @@ const router = express.Router();
  *       200:
  *         description: Paginated list of Zakaat assessments
  */
+router.get('/', authenticateUser, zakaatController.getAssessments);
 router.get('/assessments', authenticateUser, zakaatController.getAssessments);
 
 /**

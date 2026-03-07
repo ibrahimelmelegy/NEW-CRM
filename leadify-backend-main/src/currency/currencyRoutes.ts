@@ -11,6 +11,8 @@ const router = express.Router();
  *   description: Currency management, conversion, and tax calculation
  */
 
+router.get('/', authenticateUser, currencyController.getCurrencies);
+
 // Currencies
 
 /**

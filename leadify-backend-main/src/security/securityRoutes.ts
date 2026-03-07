@@ -13,6 +13,8 @@ import sessionSecurityRoutes from './sessionSecurityRoutes';
 
 const router = express.Router();
 
+router.get('/', (_req, res) => res.json({ status: 'ok' }));
+
 // 2FA / MFA routes: /api/security/2fa/*
 router.use('/2fa', twoFactorRoutes);
 

@@ -5,6 +5,8 @@ import controller from './trainingController';
 
 const router = express.Router();
 
+router.get('/', authenticateUser, HasPermission([TrainingPermissionsEnum.VIEW_TRAINING]), controller.getPrograms);
+
 // Programs
 router.get('/programs', authenticateUser, HasPermission([TrainingPermissionsEnum.VIEW_TRAINING]), controller.getPrograms);
 router.get('/programs/:id', authenticateUser, HasPermission([TrainingPermissionsEnum.VIEW_TRAINING]), controller.getProgramById);

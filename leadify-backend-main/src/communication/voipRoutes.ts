@@ -47,6 +47,7 @@ const router = express.Router();
  *       400:
  *         description: Phone number (to) is required
  */
+router.get('/', authenticateUser, (_req, res) => res.json({ docs: [] }));
 router.post('/call', authenticateUser, voipController.initiateCall);
 
 // Twilio Webhooks (must be public / accessible by Twilio)

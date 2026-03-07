@@ -8,6 +8,7 @@ const router = Router();
 router.use(authenticateUser);
 
 // BOM
+router.get('/', HasPermission([ManufacturingPermissionsEnum.VIEW_MANUFACTURING]), manufacturingController.getBOMs);
 router.get('/bom', HasPermission([ManufacturingPermissionsEnum.VIEW_MANUFACTURING]), manufacturingController.getBOMs);
 router.get('/bom/:id', HasPermission([ManufacturingPermissionsEnum.VIEW_MANUFACTURING]), manufacturingController.getBOMById);
 router.post('/bom', HasPermission([ManufacturingPermissionsEnum.CREATE_MANUFACTURING]), manufacturingController.createBOM);

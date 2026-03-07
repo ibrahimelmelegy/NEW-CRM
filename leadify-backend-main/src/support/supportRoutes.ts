@@ -61,6 +61,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
+router.get('/', authenticateUser, HasPermission([SupportPermissionsEnum.VIEW_TICKETS]), supportController.getTickets);
 router.post('/tickets', authenticateUser, HasPermission([SupportPermissionsEnum.CREATE_TICKETS]), supportController.createTicket);
 
 /**

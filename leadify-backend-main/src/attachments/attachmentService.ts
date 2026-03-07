@@ -3,12 +3,22 @@ import User from '../user/userModel';
 
 class AttachmentService {
   async getAttachments(entityType: string, entityId: number) {
-    const attachments = await Attachment.findAll({
-      where: { entityType, entityId },
-      include: [{ model: User, attributes: ['id', 'name'] }],
-      order: [['createdAt', 'DESC']]
-    });
-    return { docs: attachments };
+    try {
+      const where: Record<string, any> = {};
+      if (entityType) where.entityType = entityType;
+      if (entityId && !isNaN(entityId)) where.entityId = entityId;
+
+      const attachments = await Attachment.findAll({
+        where,
+        include: [{ model: User, attributes: ['id', 'name'], required: false }],
+        order: [['createdAt', 'DESC']],
+        limit: 100
+      });
+      return { docs: attachments };
+    } catch (error) {
+      console.error('getAttachments error:', error);
+      return { docs: [] };
+    }
   }
 
   async createAttachment(

@@ -4,6 +4,8 @@ import controller from './complianceController';
 
 const router = express.Router();
 
+router.get('/', authenticateUser, controller.getAllConsents);
+
 // ─── Audit & Score (before parameterised routes) ────────────────────────────
 router.post('/audit', authenticateUser, controller.runAudit);
 router.get('/score', authenticateUser, controller.getComplianceScore);

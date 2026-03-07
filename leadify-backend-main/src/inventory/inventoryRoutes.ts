@@ -12,6 +12,8 @@ import { InventoryPermissionsEnum } from '../role/roleEnum';
 
 const router = Router();
 
+router.get('/', authenticateUser, HasPermission([InventoryPermissionsEnum.VIEW_INVENTORY]), InventoryController.getProducts);
+
 // ─── Product routes (specific routes before parameterized) ────────────────────
 
 /**

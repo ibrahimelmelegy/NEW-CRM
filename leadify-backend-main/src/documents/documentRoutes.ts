@@ -14,6 +14,8 @@ const router = express.Router();
 // All routes require authentication
 router.use(authenticateUser);
 
+router.get('/', documentController.getFiles);
+
 // Folder routes
 
 /**
