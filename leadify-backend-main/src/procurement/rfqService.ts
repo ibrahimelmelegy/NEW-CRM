@@ -9,6 +9,8 @@ import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import Project from '../project/models/projectModel';
 import { clampPagination } from '../utils/pagination';
+import notificationCenterService from '../notification/notificationCenterService';
+import logger from '../config/logger';
 
 class RFQService {
   async createRFQ(input: any, user: User): Promise<RFQ> {
@@ -70,7 +72,24 @@ class RFQService {
       await rfq.save({ transaction });
 
       await transaction.commit();
-      // TODO: Trigger Email Service Here
+
+      // Notify the RFQ creator that the RFQ has been sent to vendors
+      try {
+        if (rfq.createdBy) {
+          await notificationCenterService.sendNotification({
+            userId: rfq.createdBy,
+            type: 'SYSTEM_ALERT',
+            title: 'RFQ Sent to Vendors',
+            message: `RFQ ${rfq.rfqNumber} has been sent to ${vendorIds.length} vendor(s).`,
+            entityType: 'rfq',
+            entityId: String(rfq.id),
+            actionUrl: `/procurement/rfq/${rfq.id}`
+          });
+        }
+      } catch (notifError) {
+        logger.error({ err: notifError, rfqId }, 'Failed to send RFQ notification');
+      }
+
       return this.getRFQById(rfqId);
     } catch (error) {
       await transaction.rollback();

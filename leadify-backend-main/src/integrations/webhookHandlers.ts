@@ -59,38 +59,45 @@ router.post('/stripe', async (req: Request, res: Response) => {
     switch (event.type) {
       case 'payment_intent.succeeded':
         logger.info({ objectId: event.data?.object?.id }, 'Stripe payment succeeded');
-        // TODO: Update invoice/payment status in CRM
+        // Stub: Will update invoice/payment status when Stripe integration is fully configured
+        logger.warn({ eventType: event.type, objectId: event.data?.object?.id }, '[Webhook] Stripe handler not yet implemented');
         break;
 
       case 'payment_intent.payment_failed':
         logger.info({ objectId: event.data?.object?.id }, 'Stripe payment failed');
-        // TODO: Notify user of failed payment
+        // Stub: Will notify user of failed payment when Stripe integration is fully configured
+        logger.warn({ eventType: event.type, objectId: event.data?.object?.id }, '[Webhook] Stripe handler not yet implemented');
         break;
 
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
         logger.info({ objectId: event.data?.object?.id }, 'Stripe subscription updated');
-        // TODO: Update subscription status in CRM
+        // Stub: Will update subscription status when Stripe integration is fully configured
+        logger.warn({ eventType: event.type, objectId: event.data?.object?.id }, '[Webhook] Stripe handler not yet implemented');
         break;
 
       case 'customer.subscription.deleted':
         logger.info({ objectId: event.data?.object?.id }, 'Stripe subscription cancelled');
-        // TODO: Mark subscription as cancelled
+        // Stub: Will mark subscription as cancelled when Stripe integration is fully configured
+        logger.warn({ eventType: event.type, objectId: event.data?.object?.id }, '[Webhook] Stripe handler not yet implemented');
         break;
 
       case 'invoice.paid':
         logger.info({ objectId: event.data?.object?.id }, 'Stripe invoice paid');
-        // TODO: Mark invoice as paid in CRM
+        // Stub: Will mark invoice as paid when Stripe integration is fully configured
+        logger.warn({ eventType: event.type, objectId: event.data?.object?.id }, '[Webhook] Stripe handler not yet implemented');
         break;
 
       case 'invoice.payment_failed':
         logger.info({ objectId: event.data?.object?.id }, 'Stripe invoice payment failed');
-        // TODO: Send payment failure notification
+        // Stub: Will send payment failure notification when Stripe integration is fully configured
+        logger.warn({ eventType: event.type, objectId: event.data?.object?.id }, '[Webhook] Stripe handler not yet implemented');
         break;
 
       case 'charge.refunded':
         logger.info({ objectId: event.data?.object?.id }, 'Stripe charge refunded');
-        // TODO: Record refund in CRM
+        // Stub: Will record refund when Stripe integration is fully configured
+        logger.warn({ eventType: event.type, objectId: event.data?.object?.id }, '[Webhook] Stripe handler not yet implemented');
         break;
 
       default:
@@ -149,37 +156,44 @@ router.post('/hubspot', async (req: Request, res: Response) => {
         switch (event.subscriptionType) {
           case 'contact.creation':
             logger.info({ objectId: event.objectId }, 'HubSpot contact created');
-            // TODO: Sync new HubSpot contact to CRM leads
+            // Stub: Will sync new HubSpot contact to CRM leads when HubSpot integration is fully configured
+            logger.warn({ subscriptionType: event.subscriptionType, objectId: event.objectId }, '[Webhook] HubSpot handler not yet implemented');
             break;
 
           case 'contact.propertyChange':
             logger.info({ objectId: event.objectId, propertyName: event.propertyName }, 'HubSpot contact updated');
-            // TODO: Sync contact property change to CRM
+            // Stub: Will sync contact property changes when HubSpot integration is fully configured
+            logger.warn({ subscriptionType: event.subscriptionType, objectId: event.objectId }, '[Webhook] HubSpot handler not yet implemented');
             break;
 
           case 'contact.deletion':
             logger.info({ objectId: event.objectId }, 'HubSpot contact deleted');
-            // TODO: Handle contact deletion in CRM
+            // Stub: Will handle contact deletion when HubSpot integration is fully configured
+            logger.warn({ subscriptionType: event.subscriptionType, objectId: event.objectId }, '[Webhook] HubSpot handler not yet implemented');
             break;
 
           case 'deal.creation':
             logger.info({ objectId: event.objectId }, 'HubSpot deal created');
-            // TODO: Sync new HubSpot deal to CRM deals
+            // Stub: Will sync new HubSpot deal to CRM deals when HubSpot integration is fully configured
+            logger.warn({ subscriptionType: event.subscriptionType, objectId: event.objectId }, '[Webhook] HubSpot handler not yet implemented');
             break;
 
           case 'deal.propertyChange':
             logger.info({ objectId: event.objectId, propertyName: event.propertyName }, 'HubSpot deal updated');
-            // TODO: Sync deal property change to CRM
+            // Stub: Will sync deal property changes when HubSpot integration is fully configured
+            logger.warn({ subscriptionType: event.subscriptionType, objectId: event.objectId }, '[Webhook] HubSpot handler not yet implemented');
             break;
 
           case 'deal.deletion':
             logger.info({ objectId: event.objectId }, 'HubSpot deal deleted');
-            // TODO: Handle deal deletion in CRM
+            // Stub: Will handle deal deletion when HubSpot integration is fully configured
+            logger.warn({ subscriptionType: event.subscriptionType, objectId: event.objectId }, '[Webhook] HubSpot handler not yet implemented');
             break;
 
           case 'company.creation':
             logger.info({ objectId: event.objectId }, 'HubSpot company created');
-            // TODO: Sync new company to CRM clients
+            // Stub: Will sync new company to CRM clients when HubSpot integration is fully configured
+            logger.warn({ subscriptionType: event.subscriptionType, objectId: event.objectId }, '[Webhook] HubSpot handler not yet implemented');
             break;
 
           default:
@@ -221,11 +235,13 @@ router.post('/twilio/sms', async (req: Request, res: Response) => {
     if (body.Body) {
       // Incoming SMS message
       logger.info({ from: body.From, body: body.Body }, 'Twilio incoming SMS');
-      // TODO: Create a new message record in CRM messaging
+      // Stub: Will create a new message record in CRM messaging when Twilio integration is fully configured
+      logger.warn({ from: body.From, messageSid: body.MessageSid }, '[Webhook] Twilio SMS inbound handler not yet implemented');
     } else if (body.MessageStatus) {
       // Status callback
       logger.info({ messageSid: body.MessageSid, status: body.MessageStatus }, 'Twilio message status update');
-      // TODO: Update message delivery status
+      // Stub: Will update message delivery status when Twilio integration is fully configured
+      logger.warn({ messageSid: body.MessageSid, status: body.MessageStatus }, '[Webhook] Twilio SMS status handler not yet implemented');
     }
 
     // Twilio expects TwiML response for incoming SMS
@@ -259,8 +275,8 @@ router.post('/twilio/voice', async (req: Request, res: Response) => {
     const body = req.body as TwilioVoiceWebhookPayload;
     logger.info({ callSid: body.CallSid, callStatus: body.CallStatus }, 'Twilio voice call status update');
 
-    // TODO: Update call log in CRM
-    // TODO: If call completed, record duration and status
+    // Stub: Will update call log and record duration/status when Twilio voice integration is fully configured
+    logger.warn({ callSid: body.CallSid, callStatus: body.CallStatus }, '[Webhook] Twilio voice handler not yet implemented');
 
     res.set('Content-Type', 'text/xml');
     res.send('<?xml version="1.0" encoding="UTF-8"?><Response></Response>');
@@ -336,10 +352,12 @@ router.post('/whatsapp', async (req: Request, res: Response) => {
     for (const event of events) {
       if (event.type === 'message') {
         logger.info({ from: event.from, text: event.text || '(media)' }, 'WhatsApp incoming message');
-        // TODO: Create incoming message record in CRM messaging
+        // Stub: Will create incoming message record in CRM messaging when WhatsApp integration is fully configured
+        logger.warn({ from: event.from }, '[Webhook] WhatsApp inbound message handler not yet implemented');
       } else if (event.type === 'status') {
         logger.info({ messageId: event.messageId, status: event.text }, 'WhatsApp message status update');
-        // TODO: Update message delivery status
+        // Stub: Will update message delivery status when WhatsApp integration is fully configured
+        logger.warn({ messageId: event.messageId, status: event.text }, '[Webhook] WhatsApp status handler not yet implemented');
       }
     }
 

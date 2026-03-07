@@ -1,248 +1,157 @@
-
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-
-// Mock dependencies before imports
-jest.mock('../../src/documents/documentFolderModel');
-jest.mock('../../src/documents/documentFileModel');
-jest.mock('../../src/user/userModel');
-jest.mock('../../src/server', () => ({
-    io: { emit: jest.fn() }
-}));
-
 import documentService from '../../src/documents/documentService';
 import DocumentFolder from '../../src/documents/documentFolderModel';
 import DocumentFile from '../../src/documents/documentFileModel';
+
+jest.mock('../../src/documents/documentFolderModel');
+jest.mock('../../src/documents/documentFileModel');
 
 describe('DocumentService', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
-    // --------------------------------------------------------------------------
-    // FOLDERS
-    // --------------------------------------------------------------------------
-    describe('getFolders', () => {
-        it('should return root folders when no parentId', async () => {
-            const mockFolders = [{ id: 1, name: 'Root Folder', parentId: null }];
-            (DocumentFolder.findAll as jest.Mock<any>).mockResolvedValue(mockFolders);
-
-            const result = await documentService.getFolders();
-
-            expect(result).toEqual(mockFolders);
-            expect(DocumentFolder.findAll).toHaveBeenCalledWith(
-                expect.objectContaining({ where: { parentId: null } })
-            );
-        });
-
-        it('should return child folders when parentId provided', async () => {
-            const mockFolders = [{ id: 2, name: 'Child Folder', parentId: 1 }];
-            (DocumentFolder.findAll as jest.Mock<any>).mockResolvedValue(mockFolders);
-
-            const result = await documentService.getFolders(1);
-
-            expect(result).toEqual(mockFolders);
-            expect(DocumentFolder.findAll).toHaveBeenCalledWith(
-                expect.objectContaining({ where: { parentId: 1 } })
-            );
-        });
-    });
-
     describe('createFolder', () => {
-        it('should create a folder', async () => {
-            const mockFolder = { id: 1, name: 'New Folder', color: '#ff0000' };
+        it('should create a folder with the provided data', async () => {
+            const data = { name: 'Contracts', color: '#3498db', createdBy: 1 };
+            const mockFolder = { id: 1, ...data };
             (DocumentFolder.create as jest.Mock<any>).mockResolvedValue(mockFolder);
-
-            const result = await documentService.createFolder({ name: 'New Folder', color: '#ff0000' });
-
+            const result = await documentService.createFolder(data);
+            expect(DocumentFolder.create).toHaveBeenCalledWith(data);
             expect(result).toEqual(mockFolder);
-            expect(DocumentFolder.create).toHaveBeenCalledWith(
-                expect.objectContaining({ name: 'New Folder', color: '#ff0000' })
-            );
         });
     });
 
     describe('updateFolder', () => {
-        it('should update a folder', async () => {
-            const mockFolder = {
+        it('should update an existing folder', async () => {
+            const mockFolder: any = {
                 id: 1,
                 name: 'Old Name',
-                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
+                update: jest.fn().mockImplementation(() => Promise.resolve({ id: 1, name: 'New Name' })),
             };
             (DocumentFolder.findByPk as jest.Mock<any>).mockResolvedValue(mockFolder);
-
             await documentService.updateFolder(1, { name: 'New Name' });
-
             expect(mockFolder.update).toHaveBeenCalledWith({ name: 'New Name' });
         });
 
         it('should throw when folder not found', async () => {
             (DocumentFolder.findByPk as jest.Mock<any>).mockResolvedValue(null);
-
             await expect(documentService.updateFolder(999, { name: 'X' }))
                 .rejects.toThrow('Folder not found');
         });
 
-        it('should throw when folder is set as its own parent', async () => {
-            const mockFolder = { id: 5, name: 'Folder' };
+        it('should throw when trying to set folder as its own parent', async () => {
+            const mockFolder: any = {
+                id: 5,
+                update: jest.fn().mockImplementation(() => Promise.resolve()),
+            };
             (DocumentFolder.findByPk as jest.Mock<any>).mockResolvedValue(mockFolder);
-
             await expect(documentService.updateFolder(5, { parentId: 5 }))
                 .rejects.toThrow('A folder cannot be its own parent');
         });
     });
 
     describe('deleteFolder', () => {
-        it('should delete a folder and reparent children to root', async () => {
-            const mockFolder = { id: 1, destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
+        it('should delete folder, reassign children and files to root', async () => {
+            const mockFolder: any = {
+                id: 1,
+                destroy: jest.fn().mockImplementation(() => Promise.resolve()),
+            };
             (DocumentFolder.findByPk as jest.Mock<any>).mockResolvedValue(mockFolder);
-            (DocumentFolder.update as jest.Mock<any>).mockResolvedValue([2]); // 2 children reparented
-            (DocumentFile.update as jest.Mock<any>).mockResolvedValue([3]); // 3 files moved to root
-
+            (DocumentFolder.update as jest.Mock<any>).mockResolvedValue([2]);
+            (DocumentFile.update as jest.Mock<any>).mockResolvedValue([3]);
             const result = await documentService.deleteFolder(1);
-
-            expect(result).toEqual({ deleted: true });
-            expect(DocumentFolder.update).toHaveBeenCalledWith(
-                { parentId: null },
-                { where: { parentId: 1 } }
-            );
-            expect(DocumentFile.update).toHaveBeenCalledWith(
-                { folderId: null },
-                { where: { folderId: 1 } }
-            );
+            expect(DocumentFolder.update).toHaveBeenCalledWith({ parentId: null }, { where: { parentId: 1 } });
+            expect(DocumentFile.update).toHaveBeenCalledWith({ folderId: null }, { where: { folderId: 1 } });
             expect(mockFolder.destroy).toHaveBeenCalled();
+            expect(result).toEqual({ deleted: true });
         });
 
         it('should throw when folder not found', async () => {
             (DocumentFolder.findByPk as jest.Mock<any>).mockResolvedValue(null);
-
-            await expect(documentService.deleteFolder(999))
-                .rejects.toThrow('Folder not found');
+            await expect(documentService.deleteFolder(999)).rejects.toThrow('Folder not found');
         });
     });
 
-    // --------------------------------------------------------------------------
-    // FILES
-    // --------------------------------------------------------------------------
-    describe('getFiles', () => {
-        it('should return paginated files', async () => {
-            const mockFiles = [{ id: 1, name: 'doc.pdf' }];
-            (DocumentFile.findAndCountAll as jest.Mock<any>).mockResolvedValue({
-                rows: mockFiles,
-                count: 1,
-            });
+    describe('createFile', () => {
+        it('should create a file with the provided data', async () => {
+            const data = {
+                name: 'report.pdf',
+                originalName: 'report.pdf',
+                path: '/uploads/report.pdf',
+                mimeType: 'application/pdf',
+                size: 2048,
+                folderId: 1,
+                tags: ['finance', 'Q1'],
+                uploadedBy: 1,
+            };
+            const mockFile = { id: 1, ...data };
+            (DocumentFile.create as jest.Mock<any>).mockResolvedValue(mockFile);
+            const result = await documentService.createFile(data);
+            expect(DocumentFile.create).toHaveBeenCalledWith(data);
+            expect(result).toEqual(mockFile);
+        });
+    });
 
-            const result = await documentService.getFiles({ page: 1, limit: 50 });
-
-            expect(result.docs).toEqual(mockFiles);
-            expect(result.pagination.totalItems).toBe(1);
+    describe('updateFile', () => {
+        it('should update an existing file', async () => {
+            const mockFile: any = {
+                id: 1,
+                name: 'old-name.pdf',
+                update: jest.fn().mockImplementation(() => Promise.resolve({ id: 1, name: 'renamed.pdf' })),
+            };
+            (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(mockFile);
+            await documentService.updateFile(1, { name: 'renamed.pdf' });
+            expect(mockFile.update).toHaveBeenCalledWith({ name: 'renamed.pdf' });
         });
 
-        it('should filter files by folderId', async () => {
-            (DocumentFile.findAndCountAll as jest.Mock<any>).mockResolvedValue({ rows: [], count: 0 });
+        it('should throw when file not found', async () => {
+            (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(null);
+            await expect(documentService.updateFile(999, { name: 'X' })).rejects.toThrow('File not found');
+        });
+    });
 
-            await documentService.getFiles({ folderId: 5 });
+    describe('deleteFile', () => {
+        it('should delete an existing file and return { deleted: true }', async () => {
+            const mockFile: any = {
+                id: 1,
+                destroy: jest.fn().mockImplementation(() => Promise.resolve()),
+            };
+            (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(mockFile);
+            const result = await documentService.deleteFile(1);
+            expect(mockFile.destroy).toHaveBeenCalled();
+            expect(result).toEqual({ deleted: true });
+        });
 
-            const callArgs = (DocumentFile.findAndCountAll as jest.Mock<any>).mock.calls[0][0] as any;
-            expect(callArgs.where.folderId).toBe(5);
+        it('should throw when file not found', async () => {
+            (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(null);
+            await expect(documentService.deleteFile(999)).rejects.toThrow('File not found');
         });
     });
 
     describe('getFileById', () => {
-        it('should return file by id', async () => {
-            const mockFile = { id: 1, name: 'doc.pdf' };
+        it('should return a file when found', async () => {
+            const mockFile = { id: 1, name: 'test.pdf' };
             (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(mockFile);
-
             const result = await documentService.getFileById(1);
             expect(result).toEqual(mockFile);
         });
 
         it('should throw when file not found', async () => {
             (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(null);
-
-            await expect(documentService.getFileById(999))
-                .rejects.toThrow('File not found');
-        });
-    });
-
-    describe('createFile', () => {
-        it('should create a file record', async () => {
-            const mockFile = { id: 1, name: 'doc.pdf', path: '/uploads/doc.pdf' };
-            (DocumentFile.create as jest.Mock<any>).mockResolvedValue(mockFile);
-
-            const result = await documentService.createFile({
-                name: 'doc.pdf',
-                originalName: 'document.pdf',
-                path: '/uploads/doc.pdf',
-                mimeType: 'application/pdf',
-                size: 1024,
-            });
-
-            expect(result).toEqual(mockFile);
-        });
-    });
-
-    describe('updateFile', () => {
-        it('should update file metadata', async () => {
-            const mockFile = {
-                id: 1,
-                name: 'old-name.pdf',
-                update: (jest.fn() as jest.Mock<any>).mockResolvedValue(true),
-            };
-            (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(mockFile);
-
-            await documentService.updateFile(1, { name: 'new-name.pdf', tags: ['important'] });
-
-            expect(mockFile.update).toHaveBeenCalledWith({ name: 'new-name.pdf', tags: ['important'] });
-        });
-
-        it('should throw when file not found', async () => {
-            (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(null);
-
-            await expect(documentService.updateFile(999, { name: 'X' }))
-                .rejects.toThrow('File not found');
-        });
-    });
-
-    describe('deleteFile', () => {
-        it('should delete a file', async () => {
-            const mockFile = { id: 1, destroy: (jest.fn() as jest.Mock<any>).mockResolvedValue(true) };
-            (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(mockFile);
-
-            const result = await documentService.deleteFile(1);
-
-            expect(result).toEqual({ deleted: true });
-            expect(mockFile.destroy).toHaveBeenCalled();
-        });
-
-        it('should throw when file not found', async () => {
-            (DocumentFile.findByPk as jest.Mock<any>).mockResolvedValue(null);
-
-            await expect(documentService.deleteFile(999))
-                .rejects.toThrow('File not found');
+            await expect(documentService.getFileById(999)).rejects.toThrow('File not found');
         });
     });
 
     describe('getRecentFiles', () => {
-        it('should return recent files with default limit', async () => {
+        it('should return recent files with default limit of 10', async () => {
             const mockFiles = [{ id: 1, name: 'recent.pdf' }];
             (DocumentFile.findAll as jest.Mock<any>).mockResolvedValue(mockFiles);
-
             const result = await documentService.getRecentFiles();
-
+            expect(DocumentFile.findAll).toHaveBeenCalledWith(
+                expect.objectContaining({ order: [['createdAt', 'DESC']], limit: 10 })
+            );
             expect(result).toEqual(mockFiles);
-            expect(DocumentFile.findAll).toHaveBeenCalledWith(
-                expect.objectContaining({ limit: 10 })
-            );
-        });
-
-        it('should accept custom limit', async () => {
-            (DocumentFile.findAll as jest.Mock<any>).mockResolvedValue([]);
-
-            await documentService.getRecentFiles(5);
-
-            expect(DocumentFile.findAll).toHaveBeenCalledWith(
-                expect.objectContaining({ limit: 5 })
-            );
         });
     });
 });

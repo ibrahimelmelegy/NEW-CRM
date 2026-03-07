@@ -3,6 +3,7 @@ import { Op, fn, col } from 'sequelize';
 import { FormTemplate, FormSubmission } from './formBuilderModel';
 import { clampPagination } from '../utils/pagination';
 import logger from '../config/logger';
+import { sendEmail } from '../utils/emailHelper';
 
 interface FormField {
   name: string;
@@ -89,10 +90,20 @@ class FormBuilderService {
     return submission;
   }
 
-  private async sendAutoResponseEmail(_form: FormTemplate, _data: Record<string, any>) {
+  private async sendAutoResponseEmail(form: FormTemplate, data: Record<string, any>) {
     try {
-      // TODO: Integrate with email service
-      // TODO: Integrate with email service
+      const autoResponse = form.autoResponse as { subject?: string; body?: string; enabled?: boolean } | undefined;
+      const subject = autoResponse?.subject || `Thank you for submitting ${form.name}`;
+      const body =
+        autoResponse?.body || `Thank you for your submission to "${form.name}". We have received your response and will review it shortly.`;
+
+      await sendEmail({
+        to: data.email,
+        subject,
+        text: body,
+        html: `<div style="font-family: sans-serif; padding: 20px;"><p>${body}</p></div>`
+      });
+      logger.info({ formId: form.id, email: data.email }, 'Auto-response email sent for form submission');
     } catch (e) {
       logger.error({ err: e }, 'Failed to send auto-response');
     }

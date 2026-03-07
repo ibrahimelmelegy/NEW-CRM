@@ -14,6 +14,8 @@ import { setAuthCookie, clearAuthCookie, COOKIE_NAME } from '../utils/auth/cooki
 import Tenant from '../tenant/tenantModel';
 import Role from '../role/roleModel';
 import { sequelize } from '../config/db';
+import { sendEmail } from '../utils/emailHelper';
+import logger from '../config/logger';
 
 dotenv.config();
 
@@ -241,10 +243,24 @@ export const forgotPassword = async (req: Request, res: Response, _next: NextFun
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
       });
 
-      const _resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
+      const resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
 
-      // TODO: Integrate with email service for password reset emails
-      // Send resetLink to user.email via the application's email service
+      // Send password reset email
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: 'Password Reset Request',
+          text: `You requested a password reset. Click the following link to reset your password: ${resetLink}\n\nThis link will expire in 24 hours. If you did not request this, please ignore this email.`,
+          html: `<div style="font-family: sans-serif; padding: 20px;">
+            <h2>Password Reset Request</h2>
+            <p>You requested a password reset. Click the button below to reset your password:</p>
+            <p style="margin: 24px 0;"><a href="${resetLink}" style="background: #7849ff; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">Reset Password</a></p>
+            <p style="color: #666; font-size: 13px;">This link will expire in 24 hours. If you did not request this, please ignore this email.</p>
+          </div>`
+        });
+      } catch (emailError) {
+        logger.error({ err: emailError, email: user.email }, 'Failed to send password reset email');
+      }
     }
 
     wrapResult(res, { message: 'If an account with that email exists, a password reset link has been sent.' });
@@ -287,7 +303,21 @@ export const resetPassword = async (req: Request, res: Response, _next: NextFunc
 
     await PasswordResetLog.create({ userId: user.id, email: user.email, status: 'Success' });
 
-    // TODO: Integrate with email service for password reset confirmation
+    // Send password reset confirmation email
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: 'Password Reset Successful',
+        text: 'Your password has been reset successfully. If you did not make this change, please contact support immediately.',
+        html: `<div style="font-family: sans-serif; padding: 20px;">
+          <h2>Password Reset Successful</h2>
+          <p>Your password has been reset successfully.</p>
+          <p style="color: #666; font-size: 13px;">If you did not make this change, please contact support immediately.</p>
+        </div>`
+      });
+    } catch (emailError) {
+      logger.error({ err: emailError, email: user.email }, 'Failed to send password reset confirmation email');
+    }
 
     wrapResult(res, { message: 'Password reset successfully' });
   } catch (error) {

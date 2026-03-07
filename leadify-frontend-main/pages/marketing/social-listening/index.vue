@@ -869,7 +869,7 @@ const sovAreaOption = computed(() => {
 });
 
 // ── Word Cloud Data ───────────────────────────────────
-// TODO: Populate from API response with trending topic data
+// Word cloud data will be populated when social listening API endpoints are available
 const wordCloudData = computed(() => {
   return [] as { text: string; sizeClass: string; color: string }[];
 });
@@ -889,27 +889,27 @@ function handleConnect(influencer: Influencer) {
 
 // ── Data Loading (populated from API) ─────────────────
 function generateMentions() {
-  // TODO: Replace with actual API call to fetch social mentions
+  // Stub: Awaiting social listening API endpoints for real social mention data
   mentions.value = [];
 }
 
 function generateSentimentTrend() {
-  // TODO: Replace with actual API call to fetch sentiment trend data
+  // Stub: Awaiting social listening API endpoints for real sentiment trend data
   sentimentTrendData.value = [];
 }
 
 function generateCompetitors() {
-  // TODO: Replace with actual API call to fetch competitor data
+  // Stub: Awaiting social listening API endpoints for real competitor data
   competitors.value = [];
 }
 
 function generateSovTrend() {
-  // TODO: Replace with actual API call to fetch share of voice trend data
+  // Stub: Awaiting social listening API endpoints for real share of voice trend data
   sovTrendData.value = [];
 }
 
 function generateInfluencers() {
-  // TODO: Replace with actual API call to fetch influencer data
+  // Stub: Awaiting social listening API endpoints for real influencer data
   influencers.value = [];
 }
 
