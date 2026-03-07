@@ -389,17 +389,7 @@ const modelWeights: Record<string, Record<string, number>> = {
 };
 
 // ─── Base Channel Data ──────────────────────────────────────
-const mockBaseChannels = [
-  { channel: 'Paid Search', baseRevenue: 482000, deals: 67, conversionRate: 12.4, roi: 4.2, color: '#7849ff' },
-  { channel: 'Email', baseRevenue: 395000, deals: 54, conversionRate: 9.8, roi: 6.1, color: '#3b82f6' },
-  { channel: 'Organic Search', baseRevenue: 328000, deals: 48, conversionRate: 7.2, roi: 8.5, color: '#22c55e' },
-  { channel: 'Social Media', baseRevenue: 275000, deals: 41, conversionRate: 5.6, roi: 3.4, color: '#06b6d4' },
-  { channel: 'Referral', baseRevenue: 246000, deals: 35, conversionRate: 14.8, roi: 9.2, color: '#f59e0b' },
-  { channel: 'Direct', baseRevenue: 198000, deals: 29, conversionRate: 11.3, roi: 7.8, color: '#ec4899' },
-  { channel: 'Events', baseRevenue: 164000, deals: 22, conversionRate: 8.9, roi: 2.8, color: '#f97316' }
-];
-
-const baseChannels = ref<Record<string, unknown>[]>(mockBaseChannels);
+const baseChannels = ref<Record<string, unknown>[]>([]);
 
 // ─── Computed Channel Data ──────────────────────────────────
 const channelData = computed(() => {
@@ -423,98 +413,7 @@ const channelData = computed(() => {
 });
 
 // ─── Base Campaign Data ─────────────────────────────────────
-const baseCampaigns = [
-  {
-    name: 'Spring Product Launch 2026',
-    status: 'Active',
-    baseMultiTouch: 245000,
-    baseFirstTouch: 180000,
-    baseLastTouch: 210000,
-    pipelineInfluence: 520000,
-    touchpoints: 847
-  },
-  {
-    name: 'Enterprise Outreach Q1',
-    status: 'Active',
-    baseMultiTouch: 198000,
-    baseFirstTouch: 145000,
-    baseLastTouch: 175000,
-    pipelineInfluence: 430000,
-    touchpoints: 623
-  },
-  {
-    name: 'Webinar Series: AI in CRM',
-    status: 'Active',
-    baseMultiTouch: 172000,
-    baseFirstTouch: 132000,
-    baseLastTouch: 148000,
-    pipelineInfluence: 380000,
-    touchpoints: 512
-  },
-  {
-    name: 'Partner Co-Marketing Drive',
-    status: 'Active',
-    baseMultiTouch: 156000,
-    baseFirstTouch: 118000,
-    baseLastTouch: 134000,
-    pipelineInfluence: 340000,
-    touchpoints: 445
-  },
-  {
-    name: 'LinkedIn ABM Campaign',
-    status: 'Active',
-    baseMultiTouch: 134000,
-    baseFirstTouch: 95000,
-    baseLastTouch: 120000,
-    pipelineInfluence: 295000,
-    touchpoints: 378
-  },
-  {
-    name: 'Email Nurture: Decision Makers',
-    status: 'Completed',
-    baseMultiTouch: 128000,
-    baseFirstTouch: 82000,
-    baseLastTouch: 145000,
-    pipelineInfluence: 268000,
-    touchpoints: 934
-  },
-  {
-    name: 'Trade Show: TechSummit 2026',
-    status: 'Completed',
-    baseMultiTouch: 115000,
-    baseFirstTouch: 142000,
-    baseLastTouch: 78000,
-    pipelineInfluence: 245000,
-    touchpoints: 289
-  },
-  {
-    name: 'Content Syndication Program',
-    status: 'Active',
-    baseMultiTouch: 98000,
-    baseFirstTouch: 115000,
-    baseLastTouch: 72000,
-    pipelineInfluence: 210000,
-    touchpoints: 567
-  },
-  {
-    name: 'Retargeting: Website Visitors',
-    status: 'Paused',
-    baseMultiTouch: 87000,
-    baseFirstTouch: 45000,
-    baseLastTouch: 95000,
-    pipelineInfluence: 185000,
-    touchpoints: 1240
-  },
-  {
-    name: 'Customer Referral Program',
-    status: 'Active',
-    baseMultiTouch: 76000,
-    baseFirstTouch: 68000,
-    baseLastTouch: 82000,
-    pipelineInfluence: 160000,
-    touchpoints: 198
-  }
-];
+const baseCampaigns: Record<string, unknown>[] = [];
 
 // ─── Campaign model-adjusted multipliers ────────────────────
 const campaignModelMultipliers: Record<string, { multi: number; first: number; last: number }> = {
@@ -541,13 +440,13 @@ const kpiCards = computed(() => {
   const totalDeals = channelData.value.reduce((sum, ch) => sum + ch.deals, 0);
   const avgConversion =
     channelData.value.length > 0 ? channelData.value.reduce((sum, ch) => sum + ch.conversionRate, 0) / channelData.value.length : 0;
-  const avgTouchpoints = 4.7;
+  const avgTouchpoints = totalDeals > 0 ? channelData.value.reduce((sum, ch) => sum + ch.deals, 0) / channelData.value.length : 0;
 
   return [
     {
       label: t('attributionModeling.totalRevenueAttributed'),
       value: formatCurrency(totalRevenue),
-      change: '+18.3%',
+      change: '0%',
       changeColor: '#22c55e',
       icon: 'ph:currency-dollar-bold',
       iconColor: '#22c55e',
@@ -557,7 +456,7 @@ const kpiCards = computed(() => {
     {
       label: t('attributionModeling.campaignsTracked'),
       value: baseCampaigns.length.toString(),
-      change: '+2',
+      change: '0',
       changeColor: '#3b82f6',
       icon: 'ph:megaphone-bold',
       iconColor: '#3b82f6',
@@ -566,7 +465,7 @@ const kpiCards = computed(() => {
     {
       label: t('attributionModeling.overallConversionRate'),
       value: avgConversion.toFixed(1) + '%',
-      change: '+1.2%',
+      change: '0%',
       changeColor: '#22c55e',
       icon: 'ph:chart-line-up-bold',
       iconColor: '#f59e0b',
@@ -575,7 +474,7 @@ const kpiCards = computed(() => {
     {
       label: t('attributionModeling.avgTouchpointsPerDeal'),
       value: avgTouchpoints.toFixed(1),
-      change: '-0.3',
+      change: '0',
       changeColor: '#22c55e',
       icon: 'ph:hand-tap-bold',
       iconColor: '#7849ff',
@@ -585,22 +484,22 @@ const kpiCards = computed(() => {
 });
 
 // ─── Customer Journey ───────────────────────────────────────
-const totalJourneys = ref(3248);
+const totalJourneys = ref(0);
 
 const journeyStages = computed(() => {
   const stages = [
-    { key: 'awareness', label: t('attributionModeling.awareness'), count: 3248, color: '#7849ff', avgDays: 0 },
-    { key: 'interest', label: t('attributionModeling.interest'), count: 2156, color: '#3b82f6', avgDays: 8 },
-    { key: 'consideration', label: t('attributionModeling.consideration'), count: 1284, color: '#06b6d4', avgDays: 14 },
-    { key: 'decision', label: t('attributionModeling.decision'), count: 524, color: '#f59e0b', avgDays: 21 },
-    { key: 'purchase', label: t('attributionModeling.purchase'), count: 296, color: '#22c55e', avgDays: 32 }
+    { key: 'awareness', label: t('attributionModeling.awareness'), count: 0, color: '#7849ff', avgDays: 0 },
+    { key: 'interest', label: t('attributionModeling.interest'), count: 0, color: '#3b82f6', avgDays: 0 },
+    { key: 'consideration', label: t('attributionModeling.consideration'), count: 0, color: '#06b6d4', avgDays: 0 },
+    { key: 'decision', label: t('attributionModeling.decision'), count: 0, color: '#f59e0b', avgDays: 0 },
+    { key: 'purchase', label: t('attributionModeling.purchase'), count: 0, color: '#22c55e', avgDays: 0 }
   ];
 
-  const total = stages[0]!.count;
+  const total = stages[0]!.count || 1;
   return stages.map((stage, idx) => {
     const percent = Math.round((stage.count / total) * 100);
     const prevCount = idx > 0 ? stages[idx - 1]!.count : stage.count;
-    const dropOff = idx > 0 ? Math.round(((prevCount - stage.count) / prevCount) * 100) : 0;
+    const dropOff = idx > 0 && prevCount > 0 ? Math.round(((prevCount - stage.count) / prevCount) * 100) : 0;
     return {
       ...stage,
       percent,
@@ -612,26 +511,20 @@ const journeyStages = computed(() => {
 });
 
 // ─── Top Conversion Paths ───────────────────────────────────
-const mockTopPaths = [
-  { steps: ['Organic Search', 'Email', 'Direct'], revenue: 187000, conversions: 28 },
-  { steps: ['Paid Search', 'Referral', 'Email', 'Direct'], revenue: 156000, conversions: 22 },
-  { steps: ['Social Media', 'Email', 'Email', 'Direct'], revenue: 134000, conversions: 19 },
-  { steps: ['Events', 'Email', 'Paid Search', 'Direct'], revenue: 112000, conversions: 15 },
-  { steps: ['Referral', 'Direct'], revenue: 98000, conversions: 14 }
-];
-
 const topPaths = ref<Record<string, unknown>[]>([]);
 
 // ─── Model Comparison Data ──────────────────────────────────
-const comparisonData = computed(() => [
-  { channel: 'Paid Search', color: '#7849ff', firstTouch: 28, lastTouch: 18, linear: 22, timeDecay: 20, uShaped: 26 },
-  { channel: 'Email', color: '#3b82f6', firstTouch: 12, lastTouch: 26, linear: 19, timeDecay: 23, uShaped: 18 },
-  { channel: 'Organic Search', color: '#22c55e', firstTouch: 22, lastTouch: 14, linear: 16, timeDecay: 15, uShaped: 14 },
-  { channel: 'Social Media', color: '#06b6d4', firstTouch: 18, lastTouch: 8, linear: 13, timeDecay: 10, uShaped: 15 },
-  { channel: 'Referral', color: '#f59e0b', firstTouch: 8, lastTouch: 16, linear: 12, timeDecay: 14, uShaped: 10 },
-  { channel: 'Direct', color: '#ec4899', firstTouch: 5, lastTouch: 14, linear: 10, timeDecay: 12, uShaped: 11 },
-  { channel: 'Events', color: '#f97316', firstTouch: 7, lastTouch: 4, linear: 8, timeDecay: 6, uShaped: 6 }
-]);
+const comparisonData = computed(() => {
+  return baseChannels.value.map(ch => ({
+    channel: ch.channel,
+    color: ch.color || '#7849ff',
+    firstTouch: 0,
+    lastTouch: 0,
+    linear: 0,
+    timeDecay: 0,
+    uShaped: 0
+  }));
+});
 
 // ─── Model Legend ───────────────────────────────────────────
 const modelLegend = computed(() => [
@@ -655,59 +548,8 @@ const campaignDetailKpis = computed(() => {
 });
 
 // ─── Campaign detail timelines and deals ────────────────────
-const campaignTimelines: Record<string, any[]> = {
-  'Spring Product Launch 2026': [
-    {
-      channel: 'Paid Search',
-      date: 'Jan 15, 2026',
-      action: 'Ad click: "New CRM Features 2026"',
-      creditPercent: 25,
-      revenue: 61250,
-      color: '#7849ff'
-    },
-    { channel: 'Email', date: 'Jan 22, 2026', action: 'Opened launch announcement email', creditPercent: 15, revenue: 36750, color: '#3b82f6' },
-    { channel: 'Organic Search', date: 'Feb 3, 2026', action: 'Blog visit: "Top CRM Trends"', creditPercent: 10, revenue: 24500, color: '#22c55e' },
-    { channel: 'Email', date: 'Feb 10, 2026', action: 'Clicked demo CTA in nurture sequence', creditPercent: 20, revenue: 49000, color: '#3b82f6' },
-    { channel: 'Direct', date: 'Feb 18, 2026', action: 'Scheduled and attended demo', creditPercent: 30, revenue: 73500, color: '#ec4899' }
-  ],
-  'Enterprise Outreach Q1': [
-    { channel: 'Events', date: 'Jan 8, 2026', action: 'Attended virtual roundtable', creditPercent: 20, revenue: 39600, color: '#f97316' },
-    { channel: 'Email', date: 'Jan 18, 2026', action: 'Follow-up email with case study', creditPercent: 15, revenue: 29700, color: '#3b82f6' },
-    { channel: 'Social Media', date: 'Feb 1, 2026', action: 'LinkedIn ad engagement', creditPercent: 10, revenue: 19800, color: '#06b6d4' },
-    { channel: 'Referral', date: 'Feb 12, 2026', action: 'Partner referral introduction', creditPercent: 25, revenue: 49500, color: '#f59e0b' },
-    { channel: 'Direct', date: 'Feb 25, 2026', action: 'Contract negotiation and close', creditPercent: 30, revenue: 59400, color: '#ec4899' }
-  ]
-};
-
-const campaignDeals: Record<string, any[]> = {
-  'Spring Product Launch 2026': [
-    { dealName: 'Acme Corp Expansion', dealValue: 85000, stage: 'Won', touchCount: 7, attributedValue: 42500 },
-    { dealName: 'TechFlow Solutions', dealValue: 62000, stage: 'Won', touchCount: 5, attributedValue: 31000 },
-    { dealName: 'Global Industries Upgrade', dealValue: 48000, stage: 'Negotiation', touchCount: 4, attributedValue: 24000 },
-    { dealName: 'DataBridge Inc.', dealValue: 35000, stage: 'Proposal', touchCount: 3, attributedValue: 17500 },
-    { dealName: 'CloudFirst Technologies', dealValue: 28000, stage: 'Won', touchCount: 6, attributedValue: 14000 }
-  ],
-  'Enterprise Outreach Q1': [
-    { dealName: 'MegaCorp Strategic Deal', dealValue: 120000, stage: 'Won', touchCount: 9, attributedValue: 60000 },
-    { dealName: 'Pinnacle Group', dealValue: 78000, stage: 'Won', touchCount: 6, attributedValue: 39000 },
-    { dealName: 'Apex Dynamics', dealValue: 55000, stage: 'Negotiation', touchCount: 5, attributedValue: 27500 },
-    { dealName: 'Summit Partners', dealValue: 42000, stage: 'Proposal', touchCount: 4, attributedValue: 21000 }
-  ]
-};
-
-// Default timeline/deals for campaigns that don't have specific data
-const defaultTimeline = [
-  { channel: 'Paid Search', date: 'Jan 20, 2026', action: 'Initial ad click', creditPercent: 20, revenue: 18000, color: '#7849ff' },
-  { channel: 'Email', date: 'Feb 5, 2026', action: 'Newsletter engagement', creditPercent: 25, revenue: 22500, color: '#3b82f6' },
-  { channel: 'Organic Search', date: 'Feb 15, 2026', action: 'Content discovery', creditPercent: 15, revenue: 13500, color: '#22c55e' },
-  { channel: 'Direct', date: 'Feb 28, 2026', action: 'Sales meeting', creditPercent: 40, revenue: 36000, color: '#ec4899' }
-];
-
-const defaultDeals = [
-  { dealName: 'Standard Deal A', dealValue: 45000, stage: 'Won', touchCount: 4, attributedValue: 22500 },
-  { dealName: 'Standard Deal B', dealValue: 32000, stage: 'Negotiation', touchCount: 3, attributedValue: 16000 },
-  { dealName: 'Standard Deal C', dealValue: 28000, stage: 'Proposal', touchCount: 5, attributedValue: 14000 }
-];
+const campaignTimelines: Record<string, any[]> = {};
+const campaignDeals: Record<string, any[]> = {};
 
 // ─── Channel Color Map ──────────────────────────────────────
 const channelColors: Record<string, string> = {
@@ -750,10 +592,10 @@ async function loadData() {
           color: ch.color || channelColors[ch.channel || ch.name] || '#7849ff'
         }));
       } else {
-        baseChannels.value = mockBaseChannels;
+        baseChannels.value = [];
       }
     } else {
-      baseChannels.value = mockBaseChannels;
+      baseChannels.value = [];
     }
 
     // ── Top paths from GET /attribution touchpoints ──
@@ -779,17 +621,17 @@ async function loadData() {
         if (pathsFromApi.length > 0) {
           topPaths.value = pathsFromApi;
         } else {
-          topPaths.value = mockTopPaths;
+          topPaths.value = [];
         }
       } else {
-        topPaths.value = mockTopPaths;
+        topPaths.value = [];
       }
     } else {
       topPaths.value = mockTopPaths;
     }
   } catch (e) {
     console.error('Failed to load attribution data, using mock data', e);
-    baseChannels.value = mockBaseChannels;
+    baseChannels.value = [];
     topPaths.value = mockTopPaths;
   } finally {
     loading.value = false;
@@ -814,8 +656,8 @@ function exportCampaigns() {
 }
 
 function openCampaignDetail(row: unknown) {
-  const timeline = campaignTimelines[row.name] || defaultTimeline;
-  const deals = campaignDeals[row.name] || defaultDeals;
+  const timeline = campaignTimelines[row.name] || [];
+  const deals = campaignDeals[row.name] || [];
   selectedCampaign.value = {
     ...row,
     timeline,

@@ -377,31 +377,31 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 const kpiCards = computed(() => [
   {
     label: t('purchaseAnalytics.totalSpendMtd'),
-    value: '$1.24M',
+    value: '$0',
     icon: 'ph:currency-dollar-bold',
     color: '#3b82f6',
-    trend: 8.3
+    trend: 0
   },
   {
     label: t('purchaseAnalytics.costSavings'),
-    value: '$186K',
+    value: '$0',
     icon: 'ph:trend-down-bold',
     color: '#22c55e',
-    trend: 22.1
+    trend: 0
   },
   {
     label: t('purchaseAnalytics.activeSuppliers'),
-    value: '47',
+    value: String(topSuppliers.value.length),
     icon: 'ph:storefront-bold',
     color: '#7849ff',
-    trend: 4.5
+    trend: 0
   },
   {
     label: t('purchaseAnalytics.pendingOrders'),
-    value: '23',
+    value: '0',
     icon: 'ph:clock-bold',
     color: '#f59e0b',
-    trend: -12.3
+    trend: 0
   }
 ]);
 
@@ -410,16 +410,7 @@ const kpiCards = computed(() => [
 // ═══════════════════════════════════════════════════════════════
 
 // ─── Spend Treemap ──────────────────────────────────────────
-const treemapCategories = [
-  { name: 'Raw Materials', value: 420000, color: '#3b82f6' },
-  { name: 'Electronics', value: 310000, color: '#7849ff' },
-  { name: 'Packaging', value: 185000, color: '#22c55e' },
-  { name: 'Logistics', value: 142000, color: '#f59e0b' },
-  { name: 'Services', value: 98000, color: '#ec4899' },
-  { name: 'Office Supplies', value: 52000, color: '#06b6d4' },
-  { name: 'Software', value: 78000, color: '#8b5cf6' },
-  { name: 'Maintenance', value: 65000, color: '#ef4444' }
-];
+const treemapCategories: { name: string; value: number; color: string }[] = [];
 
 const spendTreemapOption = computed(() => ({
   tooltip: {
@@ -459,7 +450,7 @@ const spendTreemapOption = computed(() => ({
 }));
 
 // ─── Spend Trend (Area) ─────────────────────────────────────
-const spendTrendData = [820, 930, 1050, 980, 1100, 1240, 1180, 1320, 1100, 1250, 1380, 1240];
+const spendTrendData: number[] = [];
 
 const spendTrendOption = computed(() => ({
   tooltip: { ...tooltipStyle, trigger: 'axis' },
@@ -497,18 +488,7 @@ const spendTrendOption = computed(() => ({
 }));
 
 // ─── Top 10 Suppliers ───────────────────────────────────────
-const topSuppliersFallback = [
-  { rank: 1, name: 'GlobalTech Industries', category: 'Electronics', totalSpend: '$312,400', percentOfTotal: 25.2, trendDir: 'up' },
-  { rank: 2, name: 'RawMat Solutions', category: 'Raw Materials', totalSpend: '$278,900', percentOfTotal: 22.5, trendDir: 'up' },
-  { rank: 3, name: 'PackRight Corp', category: 'Packaging', totalSpend: '$185,200', percentOfTotal: 14.9, trendDir: 'down' },
-  { rank: 4, name: 'SwiftLogistics Ltd', category: 'Logistics', totalSpend: '$142,600', percentOfTotal: 11.5, trendDir: 'up' },
-  { rank: 5, name: 'ProServ Solutions', category: 'Services', totalSpend: '$98,300', percentOfTotal: 7.9, trendDir: 'up' },
-  { rank: 6, name: 'TechSoft Inc', category: 'Software', totalSpend: '$78,400', percentOfTotal: 6.3, trendDir: 'up' },
-  { rank: 7, name: 'MaintainPro Group', category: 'Maintenance', totalSpend: '$65,100', percentOfTotal: 5.3, trendDir: 'down' },
-  { rank: 8, name: 'OfficeHub Supplies', category: 'Office Supplies', totalSpend: '$52,800', percentOfTotal: 4.3, trendDir: 'down' },
-  { rank: 9, name: 'ChemWorks Ltd', category: 'Raw Materials', totalSpend: '$41,200', percentOfTotal: 3.3, trendDir: 'up' },
-  { rank: 10, name: 'SecureIT Partners', category: 'Software', totalSpend: '$35,700', percentOfTotal: 2.9, trendDir: 'down' }
-];
+const topSuppliersFallback: Record<string, unknown>[] = [];
 
 const topSuppliers = ref<Record<string, unknown>[]>([]);
 
@@ -523,7 +503,7 @@ const budgetVsActualOption = computed(() => ({
   grid: { top: 40, right: 20, bottom: 40, left: 60 },
   xAxis: {
     type: 'category',
-    data: ['Raw Mat.', 'Electronics', 'Packaging', 'Logistics', 'Services', 'Software'],
+    data: [] as string[],
     axisLabel: axisLabelStyle,
     axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
   },
@@ -537,14 +517,14 @@ const budgetVsActualOption = computed(() => ({
     {
       name: 'Budget',
       type: 'bar',
-      data: [450, 320, 200, 150, 110, 90],
+      data: [] as number[],
       barGap: '10%',
       itemStyle: { color: '#3b82f6', borderRadius: [6, 6, 0, 0] }
     },
     {
       name: 'Actual',
       type: 'bar',
-      data: [420, 310, 185, 142, 98, 78],
+      data: [] as number[],
       itemStyle: { color: '#22c55e', borderRadius: [6, 6, 0, 0] }
     }
   ]
@@ -604,18 +584,7 @@ function getRankClass(rank: number): string {
 // TAB 2: Supplier Performance
 // ═══════════════════════════════════════════════════════════════
 
-const supplierScorecardFallback = [
-  { name: 'GlobalTech Industries', onTimeDelivery: 96, qualityScore: 92, responsiveness: 5, overallRating: 4.7, trend: 'up' },
-  { name: 'RawMat Solutions', onTimeDelivery: 89, qualityScore: 88, responsiveness: 4, overallRating: 4.2, trend: 'up' },
-  { name: 'PackRight Corp', onTimeDelivery: 93, qualityScore: 85, responsiveness: 4, overallRating: 4.0, trend: 'stable' },
-  { name: 'SwiftLogistics Ltd', onTimeDelivery: 97, qualityScore: 91, responsiveness: 5, overallRating: 4.6, trend: 'up' },
-  { name: 'ProServ Solutions', onTimeDelivery: 82, qualityScore: 78, responsiveness: 3, overallRating: 3.4, trend: 'down' },
-  { name: 'TechSoft Inc', onTimeDelivery: 91, qualityScore: 94, responsiveness: 4, overallRating: 4.3, trend: 'up' },
-  { name: 'MaintainPro Group', onTimeDelivery: 85, qualityScore: 82, responsiveness: 3, overallRating: 3.6, trend: 'down' },
-  { name: 'OfficeHub Supplies', onTimeDelivery: 94, qualityScore: 86, responsiveness: 4, overallRating: 4.1, trend: 'stable' },
-  { name: 'ChemWorks Ltd', onTimeDelivery: 88, qualityScore: 90, responsiveness: 4, overallRating: 4.0, trend: 'up' },
-  { name: 'SecureIT Partners', onTimeDelivery: 90, qualityScore: 87, responsiveness: 3, overallRating: 3.8, trend: 'stable' }
-];
+const supplierScorecardFallback: Record<string, unknown>[] = [];
 
 const supplierScorecard = ref<Record<string, unknown>[]>([]);
 
@@ -641,7 +610,7 @@ function getRatingColor(rating: number): string {
 const supplierRadarOption = computed(() => ({
   tooltip: tooltipStyle,
   legend: {
-    data: ['GlobalTech', 'SwiftLogistics', 'TechSoft'],
+    data: [] as string[],
     textStyle: { color: '#94a3b8' },
     bottom: 0
   },
@@ -660,29 +629,7 @@ const supplierRadarOption = computed(() => ({
   series: [
     {
       type: 'radar',
-      data: [
-        {
-          value: [96, 92, 95, 85, 88],
-          name: 'GlobalTech',
-          lineStyle: { color: '#3b82f6', width: 2 },
-          itemStyle: { color: '#3b82f6' },
-          areaStyle: { color: 'rgba(59, 130, 246, 0.15)' }
-        },
-        {
-          value: [97, 91, 93, 80, 90],
-          name: 'SwiftLogistics',
-          lineStyle: { color: '#22c55e', width: 2 },
-          itemStyle: { color: '#22c55e' },
-          areaStyle: { color: 'rgba(34, 197, 94, 0.15)' }
-        },
-        {
-          value: [91, 94, 88, 92, 82],
-          name: 'TechSoft',
-          lineStyle: { color: '#f59e0b', width: 2 },
-          itemStyle: { color: '#f59e0b' },
-          areaStyle: { color: 'rgba(245, 158, 11, 0.15)' }
-        }
-      ]
+      data: [] as { value: number[]; name: string }[]
     }
   ]
 }));
@@ -693,7 +640,7 @@ const perfMonths = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
 const performanceTrendOption = computed(() => ({
   tooltip: { ...tooltipStyle, trigger: 'axis' },
   legend: {
-    data: ['GlobalTech', 'SwiftLogistics', 'TechSoft'],
+    data: [] as string[],
     textStyle: { color: '#94a3b8' },
     top: 0
   },
@@ -711,94 +658,14 @@ const performanceTrendOption = computed(() => ({
     axisLabel: axisLabelStyle,
     splitLine: splitLineStyle
   },
-  series: [
-    {
-      name: 'GlobalTech',
-      type: 'line',
-      smooth: true,
-      data: [90, 92, 91, 94, 95, 96],
-      lineStyle: { color: '#3b82f6', width: 2.5 },
-      itemStyle: { color: '#3b82f6' },
-      symbol: 'circle',
-      symbolSize: 6
-    },
-    {
-      name: 'SwiftLogistics',
-      type: 'line',
-      smooth: true,
-      data: [88, 90, 93, 95, 96, 97],
-      lineStyle: { color: '#22c55e', width: 2.5 },
-      itemStyle: { color: '#22c55e' },
-      symbol: 'circle',
-      symbolSize: 6
-    },
-    {
-      name: 'TechSoft',
-      type: 'line',
-      smooth: true,
-      data: [85, 87, 88, 90, 91, 91],
-      lineStyle: { color: '#f59e0b', width: 2.5 },
-      itemStyle: { color: '#f59e0b' },
-      symbol: 'circle',
-      symbolSize: 6
-    }
-  ]
+  series: [] as { name: string; type: string; data: number[] }[]
 }));
 
 // ═══════════════════════════════════════════════════════════════
 // TAB 3: Cost Optimization
 // ═══════════════════════════════════════════════════════════════
 
-const savingsOpportunitiesFallback = [
-  {
-    description: 'Consolidate packaging suppliers from 5 to 2 preferred vendors',
-    savings: '$42,000/yr',
-    effort: 'Medium',
-    status: 'Identified',
-    statusKey: 'identified',
-    icon: 'ph:package-bold'
-  },
-  {
-    description: 'Negotiate volume discounts on raw materials with RawMat Solutions',
-    savings: '$67,500/yr',
-    effort: 'Low',
-    status: 'In Progress',
-    statusKey: 'inProgress',
-    icon: 'ph:handshake-bold'
-  },
-  {
-    description: 'Switch to regional logistics provider for local deliveries',
-    savings: '$28,000/yr',
-    effort: 'High',
-    status: 'Identified',
-    statusKey: 'identified',
-    icon: 'ph:truck-bold'
-  },
-  {
-    description: 'Implement automated PO processing to reduce admin costs',
-    savings: '$18,500/yr',
-    effort: 'Medium',
-    status: 'In Progress',
-    statusKey: 'inProgress',
-    icon: 'ph:robot-bold'
-  },
-  {
-    description: 'Renegotiate software license agreements for bulk pricing',
-    savings: '$15,200/yr',
-    effort: 'Low',
-    status: 'Implemented',
-    statusKey: 'implemented',
-    icon: 'ph:code-bold'
-  },
-  {
-    description: 'Implement just-in-time inventory for office supplies',
-    savings: '$12,800/yr',
-    effort: 'High',
-    status: 'Identified',
-    statusKey: 'identified',
-    icon: 'ph:warehouse-bold'
-  }
-];
+const savingsOpportunitiesFallback: Record<string, unknown>[] = [];
 
 const savingsOpportunities = ref<Record<string, unknown>[]>([]);
 
@@ -827,16 +694,7 @@ function getStatusType(status: string): string {
 }
 
 // ─── Price Variance Data (mock with API fallback) ───────────
-const priceVarianceDataFallback = [
-  { item: 'Steel Sheets (per ton)', contracted: '$1,200', actual: '$1,248', variancePct: 4.0 },
-  { item: 'Copper Wire (per kg)', contracted: '$8.50', actual: '$8.25', variancePct: -2.9 },
-  { item: 'Cardboard Boxes (per 1000)', contracted: '$320', actual: '$315', variancePct: -1.6 },
-  { item: 'Circuit Boards (per unit)', contracted: '$4.80', actual: '$5.10', variancePct: 6.3 },
-  { item: 'Shipping Pallets (each)', contracted: '$18.00', actual: '$17.80', variancePct: -1.1 },
-  { item: 'Adhesive Tape (per roll)', contracted: '$3.20', actual: '$3.25', variancePct: 1.6 },
-  { item: 'Plastic Pellets (per kg)', contracted: '$2.10', actual: '$2.35', variancePct: 11.9 },
-  { item: 'Safety Gloves (per box)', contracted: '$12.00', actual: '$11.40', variancePct: -5.0 }
-];
+const priceVarianceDataFallback: Record<string, unknown>[] = [];
 
 const priceVarianceData = ref<Record<string, unknown>[]>([]);
 
@@ -853,7 +711,7 @@ function getVarianceStatus(pct: number): string {
 }
 
 // ─── Cost Reduction Trend ───────────────────────────────────
-const cumulativeSavings = [12, 28, 45, 62, 84, 105, 118, 132, 148, 165, 178, 186];
+const cumulativeSavings: number[] = [];
 
 const costReductionOption = computed(() => ({
   tooltip: { ...tooltipStyle, trigger: 'axis' },
@@ -892,7 +750,7 @@ const costReductionOption = computed(() => ({
 
 // ─── Order Frequency ────────────────────────────────────────
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const orderCounts = [45, 62, 58, 71, 54, 18, 8];
+const orderCounts: number[] = [];
 
 const orderFrequencyOption = computed(() => ({
   tooltip: { ...tooltipStyle, trigger: 'axis' },
@@ -930,16 +788,7 @@ const orderFrequencyOption = computed(() => ({
 // ─── Seasonal Heatmap ───────────────────────────────────────
 const heatmapCategories = ['Raw Materials', 'Electronics', 'Packaging', 'Logistics', 'Services', 'Office Supplies', 'Software', 'Maintenance'];
 
-const heatmapRawData: number[][] = [
-  [72, 65, 80, 90, 85, 70, 68, 95, 88, 78, 82, 75],
-  [55, 60, 70, 65, 80, 90, 85, 75, 70, 60, 95, 88],
-  [80, 75, 85, 70, 65, 60, 72, 78, 90, 95, 88, 82],
-  [60, 55, 65, 75, 80, 85, 90, 88, 82, 70, 65, 55],
-  [40, 45, 50, 55, 60, 70, 65, 55, 50, 45, 40, 38],
-  [50, 48, 52, 45, 42, 38, 40, 42, 55, 60, 65, 70],
-  [30, 35, 45, 50, 55, 60, 58, 52, 48, 40, 65, 80],
-  [45, 42, 50, 55, 48, 52, 60, 65, 58, 50, 45, 42]
-];
+const heatmapRawData: number[][] = [];
 
 const seasonalHeatmapOption = computed(() => {
   const data: [number, number, number][] = [];
@@ -972,8 +821,8 @@ const seasonalHeatmapOption = computed(() => {
       splitArea: { show: true, areaStyle: { color: ['rgba(255,255,255,0.02)', 'transparent'] } }
     },
     visualMap: {
-      min: 30,
-      max: 95,
+      min: 0,
+      max: 100,
       calculable: true,
       orient: 'vertical',
       right: 0,
@@ -997,16 +846,7 @@ const seasonalHeatmapOption = computed(() => {
 });
 
 // ─── Lead Time Analysis ─────────────────────────────────────
-const leadTimeSuppliers = [
-  { name: 'GlobalTech Industries', avg: 8, max: 14 },
-  { name: 'RawMat Solutions', avg: 12, max: 18 },
-  { name: 'PackRight Corp', avg: 5, max: 9 },
-  { name: 'SwiftLogistics Ltd', avg: 3, max: 6 },
-  { name: 'ProServ Solutions', avg: 10, max: 22 },
-  { name: 'TechSoft Inc', avg: 6, max: 10 },
-  { name: 'MaintainPro Group', avg: 7, max: 15 },
-  { name: 'OfficeHub Supplies', avg: 4, max: 7 }
-];
+const leadTimeSuppliers: { name: string; avg: number; max: number }[] = [];
 
 const leadTimeOption = computed(() => ({
   tooltip: { ...tooltipStyle, trigger: 'axis' },
@@ -1044,88 +884,7 @@ const leadTimeOption = computed(() => ({
 }));
 
 // ─── Reorder Suggestions ────────────────────────────────────
-const reorderSuggestionsFallback = [
-  {
-    name: 'Steel Sheets',
-    currentStock: 240,
-    reorderPoint: 300,
-    suggestedQty: 500,
-    estimatedCost: '$600,000',
-    stockStatus: 'low' as const,
-    stockLabel: 'Low Stock',
-    autoReorder: false
-  },
-  {
-    name: 'Circuit Boards',
-    currentStock: 1850,
-    reorderPoint: 1500,
-    suggestedQty: 3000,
-    estimatedCost: '$14,400',
-    stockStatus: 'medium' as const,
-    stockLabel: 'Adequate',
-    autoReorder: true
-  },
-  {
-    name: 'Cardboard Boxes',
-    currentStock: 320,
-    reorderPoint: 500,
-    suggestedQty: 2000,
-    estimatedCost: '$640',
-    stockStatus: 'low' as const,
-    stockLabel: 'Low Stock',
-    autoReorder: false
-  },
-  {
-    name: 'Copper Wire',
-    currentStock: 480,
-    reorderPoint: 200,
-    suggestedQty: 600,
-    estimatedCost: '$5,100',
-    stockStatus: 'high' as const,
-    stockLabel: 'In Stock',
-    autoReorder: true
-  },
-  {
-    name: 'Adhesive Tape',
-    currentStock: 150,
-    reorderPoint: 250,
-    suggestedQty: 800,
-    estimatedCost: '$2,560',
-    stockStatus: 'low' as const,
-    stockLabel: 'Low Stock',
-    autoReorder: false
-  },
-  {
-    name: 'Plastic Pellets',
-    currentStock: 1200,
-    reorderPoint: 800,
-    suggestedQty: 2000,
-    estimatedCost: '$4,200',
-    stockStatus: 'high' as const,
-    stockLabel: 'In Stock',
-    autoReorder: true
-  },
-  {
-    name: 'Safety Gloves',
-    currentStock: 85,
-    reorderPoint: 100,
-    suggestedQty: 400,
-    estimatedCost: '$4,800',
-    stockStatus: 'low' as const,
-    stockLabel: 'Critical',
-    autoReorder: false
-  },
-  {
-    name: 'Shipping Pallets',
-    currentStock: 340,
-    reorderPoint: 200,
-    suggestedQty: 500,
-    estimatedCost: '$9,000',
-    stockStatus: 'high' as const,
-    stockLabel: 'In Stock',
-    autoReorder: true
-  }
-];
+const reorderSuggestionsFallback: Record<string, unknown>[] = [];
 
 const reorderSuggestions = ref<Record<string, unknown>[]>([]);
 
@@ -1168,9 +927,8 @@ async function loadData() {
     reorderSuggestions.value = reorderSuggestionsFallback;
   }
 
-  // Mock data that stays as fallback (no dedicated API)
-  savingsOpportunities.value = savingsOpportunitiesFallback;
-  priceVarianceData.value = priceVarianceDataFallback;
+  savingsOpportunities.value = [];
+  priceVarianceData.value = [];
 
   loading.value = false;
 }

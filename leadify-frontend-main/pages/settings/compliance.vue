@@ -404,12 +404,12 @@ import { ref, reactive, computed } from 'vue';
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
 import { graphic } from 'echarts/core';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Compliance Center' });
 
 const { t } = useI18n();
 
-// --- State ---
 const loading = ref(true);
 const activeTab = ref('consent');
 const dateRange = ref<string[]>([]);
@@ -425,18 +425,15 @@ const showDsrDetailsDialog = ref(false);
 const submittingDsr = ref(false);
 const selectedDsr = ref<Record<string, unknown> | null>(null);
 
-// --- KPI Data ---
 const kpiData = reactive({
-  consentRate: 87,
-  activePolicies: 6,
-  openDsrRequests: 4,
-  auditScore: 92
+  consentRate: 0,
+  activePolicies: 0,
+  openDsrRequests: 0,
+  auditScore: 0
 });
 
-// --- Team Members ---
-const teamMembers = ['Sarah Johnson', 'Ahmed Hassan', 'Maria Garcia', 'James Chen'];
+const teamMembers = ref<string[]>([]);
 
-// --- New DSR Form ---
 const newDsrForm = reactive({
   requester: '',
   email: '',
@@ -445,287 +442,22 @@ const newDsrForm = reactive({
   description: ''
 });
 
-// --- Consent Records ---
-const consentRecords = ref([
-  {
-    id: 1,
-    name: 'Emily Watson',
-    email: 'emily.watson@techcorp.com',
-    consentType: 'marketing',
-    granted: true,
-    channel: 'Email',
-    consentDate: '2025-09-15',
-    expiryDate: '2026-09-15',
-    lastUpdated: '2026-01-20'
-  },
-  {
-    id: 2,
-    name: 'Michael Chen',
-    email: 'michael.chen@globex.com',
-    consentType: 'analytics',
-    granted: true,
-    channel: 'Web',
-    consentDate: '2025-11-01',
-    expiryDate: '2026-11-01',
-    lastUpdated: '2026-02-05'
-  },
-  {
-    id: 3,
-    name: 'Sarah Al-Rashid',
-    email: 'sarah.r@nexgen.io',
-    consentType: 'essential',
-    granted: true,
-    channel: 'API',
-    consentDate: '2025-06-20',
-    expiryDate: '2026-06-20',
-    lastUpdated: '2025-12-10'
-  },
-  {
-    id: 4,
-    name: 'James Okonkwo',
-    email: 'james.o@dataflow.co',
-    consentType: 'marketing',
-    granted: false,
-    channel: 'Email',
-    consentDate: '2025-08-10',
-    expiryDate: '2026-08-10',
-    lastUpdated: '2026-02-18'
-  },
-  {
-    id: 5,
-    name: 'Anna Petrova',
-    email: 'anna.p@cloudnine.eu',
-    consentType: 'analytics',
-    granted: true,
-    channel: 'Web',
-    consentDate: '2025-10-05',
-    expiryDate: '2026-10-05',
-    lastUpdated: '2026-01-30'
-  },
-  {
-    id: 6,
-    name: 'Carlos Mendoza',
-    email: 'carlos.m@latamhub.com',
-    consentType: 'marketing',
-    granted: true,
-    channel: 'Mobile',
-    consentDate: '2025-12-12',
-    expiryDate: '2026-12-12',
-    lastUpdated: '2026-02-22'
-  },
-  {
-    id: 7,
-    name: 'Fatima Al-Zahra',
-    email: 'fatima.z@gulfdata.sa',
-    consentType: 'essential',
-    granted: true,
-    channel: 'Email',
-    consentDate: '2025-07-01',
-    expiryDate: '2026-07-01',
-    lastUpdated: '2025-11-15'
-  },
-  {
-    id: 8,
-    name: 'Thomas Mueller',
-    email: 'thomas.m@eurobiz.de',
-    consentType: 'analytics',
-    granted: false,
-    channel: 'Web',
-    consentDate: '2025-05-18',
-    expiryDate: '2026-05-18',
-    lastUpdated: '2026-02-10'
-  },
-  {
-    id: 9,
-    name: 'Yuki Tanaka',
-    email: 'yuki.t@nihontech.jp',
-    consentType: 'marketing',
-    granted: true,
-    channel: 'API',
-    consentDate: '2025-11-25',
-    expiryDate: '2026-11-25',
-    lastUpdated: '2026-02-25'
-  },
-  {
-    id: 10,
-    name: 'Rachel Kim',
-    email: 'rachel.k@seoulsoft.kr',
-    consentType: 'essential',
-    granted: true,
-    channel: 'Mobile',
-    consentDate: '2025-09-30',
-    expiryDate: '2026-09-30',
-    lastUpdated: '2026-01-08'
-  }
-]);
+const consentRecords = ref<Record<string, unknown>[]>([]);
 
 const filteredConsentRecords = computed(() => {
   return consentRecords.value.filter(rec => {
     const matchSearch =
       !consentSearch.value ||
-      rec.name.toLowerCase().includes(consentSearch.value.toLowerCase()) ||
-      rec.email.toLowerCase().includes(consentSearch.value.toLowerCase());
+      (rec.name as string || '').toLowerCase().includes(consentSearch.value.toLowerCase()) ||
+      (rec.email as string || '').toLowerCase().includes(consentSearch.value.toLowerCase());
     const matchType = !consentTypeFilter.value || rec.consentType === consentTypeFilter.value;
     return matchSearch && matchType;
   });
 });
 
-// --- Retention Policies ---
-const retentionPolicies = ref([
-  {
-    id: 1,
-    name: 'Customer Data',
-    period: '3 years',
-    dataCount: 12450,
-    storageUsed: '2.4 GB',
-    active: true,
-    nextReview: 'Jun 2026',
-    icon: 'ph:users-bold',
-    iconColor: '#3b82f6',
-    iconBg: 'rgba(59, 130, 246, 0.1)'
-  },
-  {
-    id: 2,
-    name: 'Financial Records',
-    period: '7 years',
-    dataCount: 34200,
-    storageUsed: '8.1 GB',
-    active: true,
-    nextReview: 'Dec 2026',
-    icon: 'ph:currency-dollar-bold',
-    iconColor: '#22c55e',
-    iconBg: 'rgba(34, 197, 94, 0.1)'
-  },
-  {
-    id: 3,
-    name: 'Communications',
-    period: '1 year',
-    dataCount: 89500,
-    storageUsed: '5.6 GB',
-    active: true,
-    nextReview: 'Mar 2026',
-    icon: 'ph:envelope-bold',
-    iconColor: '#f59e0b',
-    iconBg: 'rgba(245, 158, 11, 0.1)'
-  },
-  {
-    id: 4,
-    name: 'Marketing Consent',
-    period: '2 years',
-    dataCount: 6800,
-    storageUsed: '0.8 GB',
-    active: true,
-    nextReview: 'Sep 2026',
-    icon: 'ph:megaphone-bold',
-    iconColor: '#7849ff',
-    iconBg: 'rgba(120, 73, 255, 0.1)'
-  },
-  {
-    id: 5,
-    name: 'Audit Logs',
-    period: '5 years',
-    dataCount: 156000,
-    storageUsed: '12.3 GB',
-    active: true,
-    nextReview: 'Jan 2027',
-    icon: 'ph:list-bullets-bold',
-    iconColor: '#06b6d4',
-    iconBg: 'rgba(6, 182, 212, 0.1)'
-  },
-  {
-    id: 6,
-    name: 'Session Data',
-    period: '90 days',
-    dataCount: 245000,
-    storageUsed: '3.2 GB',
-    active: false,
-    nextReview: 'Apr 2026',
-    icon: 'ph:globe-bold',
-    iconColor: '#ef4444',
-    iconBg: 'rgba(239, 68, 68, 0.1)'
-  }
-]);
+const retentionPolicies = ref<Record<string, unknown>[]>([]);
 
-// --- DSR Requests ---
-const dsrRequests = ref([
-  {
-    id: 1,
-    requester: 'Emma Thompson',
-    email: 'emma.t@techcorp.com',
-    requestType: 'access',
-    submittedDate: '2026-02-15',
-    daysRemaining: 22,
-    assignedTo: 'Sarah Johnson',
-    status: 'in-progress',
-    description: 'Request for a full copy of all personal data held in the CRM system.'
-  },
-  {
-    id: 2,
-    requester: 'David Park',
-    email: 'david.p@innotech.kr',
-    requestType: 'deletion',
-    submittedDate: '2026-02-20',
-    daysRemaining: 27,
-    assignedTo: 'Ahmed Hassan',
-    status: 'pending',
-    description: 'Right to erasure request for all marketing and analytics data.'
-  },
-  {
-    id: 3,
-    requester: 'Lisa Muller',
-    email: 'lisa.m@eurobiz.de',
-    requestType: 'portability',
-    submittedDate: '2026-02-10',
-    daysRemaining: 8,
-    assignedTo: 'Maria Garcia',
-    status: 'in-progress',
-    description: 'Export personal data in machine-readable format for transfer.'
-  },
-  {
-    id: 4,
-    requester: 'Omar Al-Fayed',
-    email: 'omar.f@gulfdata.sa',
-    requestType: 'rectification',
-    submittedDate: '2026-01-28',
-    daysRemaining: 3,
-    assignedTo: 'James Chen',
-    status: 'overdue',
-    description: 'Correct inaccurate contact and company information in records.'
-  },
-  {
-    id: 5,
-    requester: 'Maria Santos',
-    email: 'maria.s@latamhub.com',
-    requestType: 'access',
-    submittedDate: '2026-02-01',
-    daysRemaining: 0,
-    assignedTo: 'Sarah Johnson',
-    status: 'completed',
-    description: 'Standard data access request fulfilled with full export.'
-  },
-  {
-    id: 6,
-    requester: 'Kenji Nakamura',
-    email: 'kenji.n@nihontech.jp',
-    requestType: 'deletion',
-    submittedDate: '2026-02-22',
-    daysRemaining: 18,
-    assignedTo: 'Ahmed Hassan',
-    status: 'pending',
-    description: 'Complete data removal request including backups and archives.'
-  },
-  {
-    id: 7,
-    requester: 'Sophie Laurent',
-    email: 'sophie.l@francais.fr',
-    requestType: 'portability',
-    submittedDate: '2026-02-25',
-    daysRemaining: 25,
-    assignedTo: 'Maria Garcia',
-    status: 'pending',
-    description: 'Data export in JSON format for migration to another platform.'
-  }
-]);
+const dsrRequests = ref<Record<string, unknown>[]>([]);
 
 const filteredDsrRequests = computed(() => {
   return dsrRequests.value.filter(req => {
@@ -733,216 +465,14 @@ const filteredDsrRequests = computed(() => {
   });
 });
 
-// --- Audit Logs ---
-const auditLogs = ref([
-  {
-    id: 1,
-    timestamp: '2026-02-28T14:32:00',
-    user: 'Sarah Johnson',
-    action: 'Consent Updated',
-    resource: 'Contact: Emily Watson',
-    ipAddress: '192.168.1.45',
-    success: true,
-    details: 'Marketing consent changed from withdrawn to granted via email re-opt-in.'
-  },
-  {
-    id: 2,
-    timestamp: '2026-02-28T13:15:00',
-    user: 'Ahmed Hassan',
-    action: 'DSR Processed',
-    resource: 'Request #DSR-2026-042',
-    ipAddress: '10.0.0.22',
-    success: true,
-    details: 'Data access request completed. Full export delivered to requester via secure link.'
-  },
-  {
-    id: 3,
-    timestamp: '2026-02-28T12:45:00',
-    user: 'System',
-    action: 'Data Purge',
-    resource: 'Session Data',
-    ipAddress: '10.0.0.1',
-    success: true,
-    details: 'Automated purge of expired session data. 1,240 records removed per retention policy.'
-  },
-  {
-    id: 4,
-    timestamp: '2026-02-28T11:20:00',
-    user: 'Maria Garcia',
-    action: 'Policy Updated',
-    resource: 'Retention: Communications',
-    ipAddress: '192.168.1.88',
-    success: true,
-    details: 'Retention period changed from 6 months to 1 year for communication records.'
-  },
-  {
-    id: 5,
-    timestamp: '2026-02-28T10:05:00',
-    user: 'James Chen',
-    action: 'Export Generated',
-    resource: 'Audit Report Q1 2026',
-    ipAddress: '172.16.0.15',
-    success: true,
-    details: 'Quarterly compliance audit report exported in CSV format for external review.'
-  },
-  {
-    id: 6,
-    timestamp: '2026-02-27T16:42:00',
-    user: 'Sarah Johnson',
-    action: 'Consent Revoked',
-    resource: 'Contact: Thomas Mueller',
-    ipAddress: '192.168.1.45',
-    success: true,
-    details: 'Analytics consent withdrawn per customer request via support ticket #TKT-8821.'
-  },
-  {
-    id: 7,
-    timestamp: '2026-02-27T15:30:00',
-    user: 'Ahmed Hassan',
-    action: 'DSR Created',
-    resource: 'Request #DSR-2026-045',
-    ipAddress: '10.0.0.22',
-    success: true,
-    details: 'New data deletion request created for Kenji Nakamura. SLA deadline: Mar 22, 2026.'
-  },
-  {
-    id: 8,
-    timestamp: '2026-02-27T14:10:00',
-    user: 'System',
-    action: 'Compliance Check',
-    resource: 'GDPR Module',
-    ipAddress: '10.0.0.1',
-    success: false,
-    details: 'Automated compliance check found 3 consent records with missing expiry dates.'
-  },
-  {
-    id: 9,
-    timestamp: '2026-02-27T11:55:00',
-    user: 'Maria Garcia',
-    action: 'Data Rectified',
-    resource: 'Contact: Omar Al-Fayed',
-    ipAddress: '192.168.1.88',
-    success: true,
-    details: 'Contact information updated per rectification request. Company name and phone corrected.'
-  },
-  {
-    id: 10,
-    timestamp: '2026-02-27T09:20:00',
-    user: 'James Chen',
-    action: 'Access Logged',
-    resource: 'Financial Records',
-    ipAddress: '172.16.0.15',
-    success: true,
-    details: 'Authorized access to financial data export for annual compliance audit.'
-  },
-  {
-    id: 11,
-    timestamp: '2026-02-26T17:30:00',
-    user: 'Sarah Johnson',
-    action: 'Policy Created',
-    resource: 'Retention: Session Data',
-    ipAddress: '192.168.1.45',
-    success: true,
-    details: 'New 90-day retention policy created for session data with automated purge.'
-  },
-  {
-    id: 12,
-    timestamp: '2026-02-26T14:15:00',
-    user: 'System',
-    action: 'Data Anonymized',
-    resource: 'Marketing Leads',
-    ipAddress: '10.0.0.1',
-    success: true,
-    details: 'Batch anonymization of 340 expired marketing leads per retention schedule.'
-  },
-  {
-    id: 13,
-    timestamp: '2026-02-26T10:45:00',
-    user: 'Ahmed Hassan',
-    action: 'Consent Bulk Update',
-    resource: 'Marketing Consents',
-    ipAddress: '10.0.0.22',
-    success: true,
-    details: 'Bulk renewal of 128 marketing consent records approaching expiry date.'
-  },
-  {
-    id: 14,
-    timestamp: '2026-02-25T16:20:00',
-    user: 'Maria Garcia',
-    action: 'DSR Escalated',
-    resource: 'Request #DSR-2026-038',
-    ipAddress: '192.168.1.88',
-    success: true,
-    details: 'Data portability request escalated to legal team due to complexity of data mapping.'
-  },
-  {
-    id: 15,
-    timestamp: '2026-02-25T11:00:00',
-    user: 'System',
-    action: 'Compliance Scan',
-    resource: 'All Modules',
-    ipAddress: '10.0.0.1',
-    success: true,
-    details: 'Weekly automated compliance scan completed. Score: 92/100. 2 minor issues flagged.'
-  },
-  {
-    id: 16,
-    timestamp: '2026-02-24T15:45:00',
-    user: 'James Chen',
-    action: 'Encryption Applied',
-    resource: 'Contact: PII Fields',
-    ipAddress: '172.16.0.15',
-    success: true,
-    details: 'Field-level encryption enabled for phone and national ID fields across all contacts.'
-  },
-  {
-    id: 17,
-    timestamp: '2026-02-24T13:20:00',
-    user: 'Sarah Johnson',
-    action: 'Audit Initiated',
-    resource: 'Data Quality Check',
-    ipAddress: '192.168.1.45',
-    success: true,
-    details: 'Manual data quality audit triggered. Found 47 duplicate records and 128 stale entries.'
-  },
-  {
-    id: 18,
-    timestamp: '2026-02-24T09:10:00',
-    user: 'System',
-    action: 'Backup Verified',
-    resource: 'Compliance Database',
-    ipAddress: '10.0.0.1',
-    success: true,
-    details: 'Weekly backup verification completed. All compliance data integrity checks passed.'
-  },
-  {
-    id: 19,
-    timestamp: '2026-02-23T16:55:00',
-    user: 'Ahmed Hassan',
-    action: 'Cookie Policy Updated',
-    resource: 'Portal Settings',
-    ipAddress: '10.0.0.22',
-    success: true,
-    details: 'Cookie consent banner text updated to include new analytics tracking disclosure.'
-  },
-  {
-    id: 20,
-    timestamp: '2026-02-23T10:30:00',
-    user: 'Maria Garcia',
-    action: 'Training Completed',
-    resource: 'GDPR Module',
-    ipAddress: '192.168.1.88',
-    success: true,
-    details: 'Annual GDPR compliance training completed for all team members. Certificates issued.'
-  }
-]);
+const auditLogs = ref<Record<string, unknown>[]>([]);
 
 const filteredAuditLogs = computed(() => {
   let logs = [...auditLogs.value];
   if (auditDateRange.value && auditDateRange.value.length === 2) {
     const [start, end] = auditDateRange.value;
     logs = logs.filter(log => {
-      const logDate = log.timestamp.split('T')[0]!;
+      const logDate = (log.timestamp as string || '').split('T')[0]!;
       return logDate >= start! && logDate <= end!;
     });
   }
@@ -956,114 +486,122 @@ const paginatedAuditLogs = computed(() => {
 
 const recentAuditEvents = computed(() => auditLogs.value.slice(0, 8));
 
-// --- Chart Options ---
-const consentTrendOption = computed(() => ({
-  tooltip: {
-    trigger: 'axis',
-    backgroundColor: 'rgba(30, 30, 45, 0.9)',
-    borderColor: 'rgba(120, 73, 255, 0.3)',
-    textStyle: { color: '#fff' },
-    extraCssText: 'backdrop-filter: blur(12px); border-radius: 12px;'
-  },
-  grid: { top: 20, right: 20, bottom: 30, left: 50, containLabel: true },
-  xAxis: {
-    type: 'category',
-    data: ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
-    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-    axisLabel: { color: '#a1a1aa', fontSize: 11 }
-  },
-  yAxis: {
-    type: 'value',
-    axisLine: { show: false },
-    splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
-    axisLabel: { color: '#a1a1aa', fontSize: 11 }
-  },
-  series: [
-    {
-      name: t('complianceCenter.optIn'),
-      type: 'line',
-      data: [142, 158, 172, 185, 198, 210, 225, 240, 256, 268, 282, 295],
-      smooth: true,
-      symbol: 'circle',
-      symbolSize: 6,
-      lineStyle: { color: '#22c55e', width: 3 },
-      itemStyle: { color: '#22c55e', borderColor: '#fff', borderWidth: 2 },
-      areaStyle: {
-        color: new graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: 'rgba(34, 197, 94, 0.25)' },
-          { offset: 1, color: 'rgba(34, 197, 94, 0.02)' }
-        ])
-      }
-    },
-    {
-      name: t('complianceCenter.optOut'),
-      type: 'line',
-      data: [18, 22, 15, 20, 25, 19, 24, 28, 16, 21, 23, 17],
-      smooth: true,
-      symbol: 'circle',
-      symbolSize: 6,
-      lineStyle: { color: '#ef4444', width: 3 },
-      itemStyle: { color: '#ef4444', borderColor: '#fff', borderWidth: 2 },
-      areaStyle: {
-        color: new graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: 'rgba(239, 68, 68, 0.15)' },
-          { offset: 1, color: 'rgba(239, 68, 68, 0.02)' }
-        ])
-      }
-    }
-  ]
-}));
+const chartTooltipStyle = {
+  backgroundColor: 'rgba(30, 30, 45, 0.9)',
+  borderColor: 'rgba(120, 73, 255, 0.3)',
+  textStyle: { color: '#fff' },
+  extraCssText: 'backdrop-filter: blur(12px); border-radius: 12px;'
+};
 
-const dataDistributionOption = computed(() => ({
-  tooltip: {
-    trigger: 'item',
-    backgroundColor: 'rgba(30, 30, 45, 0.9)',
-    borderColor: 'rgba(120, 73, 255, 0.3)',
-    textStyle: { color: '#fff' },
-    extraCssText: 'backdrop-filter: blur(12px); border-radius: 12px;',
-    formatter: '{b}: {c} ({d}%)'
-  },
-  legend: {
-    orient: 'vertical',
-    right: 20,
-    top: 'center',
-    textStyle: { color: '#a1a1aa', fontSize: 12 }
-  },
-  series: [
-    {
-      name: t('complianceCenter.dataCategories'),
-      type: 'pie',
-      radius: ['45%', '75%'],
-      center: ['35%', '50%'],
-      avoidLabelOverlap: false,
-      itemStyle: {
-        borderRadius: 8,
-        borderColor: 'rgba(30, 30, 45, 0.8)',
-        borderWidth: 3
-      },
-      label: {
-        show: false
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: 14,
-          fontWeight: 'bold',
-          color: '#fff'
+const consentTrendOption = computed(() => {
+  const now = new Date();
+  const months: string[] = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push(d.toLocaleDateString(undefined, { month: 'short' }));
+  }
+
+  const emptyData = new Array(12).fill(0);
+
+  return {
+    tooltip: { trigger: 'axis', ...chartTooltipStyle },
+    grid: { top: 20, right: 20, bottom: 30, left: 50, containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: months,
+      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+      axisLabel: { color: '#a1a1aa', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+      axisLabel: { color: '#a1a1aa', fontSize: 11 }
+    },
+    series: [
+      {
+        name: t('complianceCenter.optIn'),
+        type: 'line',
+        data: emptyData,
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 6,
+        lineStyle: { color: '#22c55e', width: 3 },
+        itemStyle: { color: '#22c55e', borderColor: '#fff', borderWidth: 2 },
+        areaStyle: {
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(34, 197, 94, 0.25)' },
+            { offset: 1, color: 'rgba(34, 197, 94, 0.02)' }
+          ])
         }
       },
-      labelLine: { show: false },
-      data: [
-        { value: 12450, name: t('complianceCenter.customerData'), itemStyle: { color: '#3b82f6' } },
-        { value: 34200, name: t('complianceCenter.financialRecords'), itemStyle: { color: '#22c55e' } },
-        { value: 89500, name: t('complianceCenter.communicationsData'), itemStyle: { color: '#f59e0b' } },
-        { value: 6800, name: t('complianceCenter.marketingData'), itemStyle: { color: '#7849ff' } },
-        { value: 156000, name: t('complianceCenter.auditLogData'), itemStyle: { color: '#06b6d4' } },
-        { value: 245000, name: t('complianceCenter.sessionData'), itemStyle: { color: '#ef4444' } }
-      ]
-    }
-  ]
-}));
+      {
+        name: t('complianceCenter.optOut'),
+        type: 'line',
+        data: emptyData,
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 6,
+        lineStyle: { color: '#ef4444', width: 3 },
+        itemStyle: { color: '#ef4444', borderColor: '#fff', borderWidth: 2 },
+        areaStyle: {
+          color: new graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(239, 68, 68, 0.15)' },
+            { offset: 1, color: 'rgba(239, 68, 68, 0.02)' }
+          ])
+        }
+      }
+    ]
+  };
+});
+
+const dataDistributionOption = computed(() => {
+  const policyColors = ['#3b82f6', '#22c55e', '#f59e0b', '#7849ff', '#06b6d4', '#ef4444'];
+  const chartData = retentionPolicies.value.map((p, i) => ({
+    value: (p.dataCount as number) || 0,
+    name: (p.name as string) || '',
+    itemStyle: { color: policyColors[i % policyColors.length] }
+  }));
+
+  return {
+    tooltip: {
+      trigger: 'item',
+      ...chartTooltipStyle,
+      formatter: '{b}: {c} ({d}%)'
+    },
+    legend: {
+      orient: 'vertical',
+      right: 20,
+      top: 'center',
+      textStyle: { color: '#a1a1aa', fontSize: 12 }
+    },
+    series: [
+      {
+        name: t('complianceCenter.dataCategories'),
+        type: 'pie',
+        radius: ['45%', '75%'],
+        center: ['35%', '50%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 8,
+          borderColor: 'rgba(30, 30, 45, 0.8)',
+          borderWidth: 3
+        },
+        label: { show: false },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 14,
+            fontWeight: 'bold',
+            color: '#fff'
+          }
+        },
+        labelLine: { show: false },
+        data: chartData
+      }
+    ]
+  };
+});
 
 // --- Helpers ---
 function getInitials(name: string): string {
@@ -1260,7 +798,7 @@ function submitNewDsrRequest() {
       requestType: newDsrForm.requestType,
       submittedDate: new Date().toISOString().split('T')[0]!,
       daysRemaining: 30,
-      assignedTo: newDsrForm.assignedTo || teamMembers[0]!,
+      assignedTo: newDsrForm.assignedTo || teamMembers.value[0] || '',
       status: 'pending',
       description: newDsrForm.description
     });
@@ -1301,29 +839,45 @@ function exportAuditCsv() {
 }
 
 function updateKpis() {
+  const total = consentRecords.value.length;
   const granted = consentRecords.value.filter(r => r.granted).length;
-  kpiData.consentRate = Math.round((granted / consentRecords.value.length) * 100);
+  kpiData.consentRate = total > 0 ? Math.round((granted / total) * 100) : 0;
   kpiData.activePolicies = retentionPolicies.value.filter(p => p.active).length;
   kpiData.openDsrRequests = dsrRequests.value.filter(r => r.status !== 'completed').length;
 }
 
-// --- Data Loading ---
 async function loadData() {
   loading.value = true;
   try {
-    // Attempt to fetch from API, fall back to mock data
     const response = await useApiFetch('compliance/overview');
     if (response.success && response.body) {
-      const data = response.body as unknown;
+      const data = response.body as Record<string, unknown>;
       if (data.kpi) {
-        kpiData.consentRate = data.kpi.consentRate ?? kpiData.consentRate;
-        kpiData.activePolicies = data.kpi.activePolicies ?? kpiData.activePolicies;
-        kpiData.openDsrRequests = data.kpi.openDsrRequests ?? kpiData.openDsrRequests;
-        kpiData.auditScore = data.kpi.auditScore ?? kpiData.auditScore;
+        const kpi = data.kpi as Record<string, unknown>;
+        kpiData.consentRate = (kpi.consentRate as number) ?? 0;
+        kpiData.activePolicies = (kpi.activePolicies as number) ?? 0;
+        kpiData.openDsrRequests = (kpi.openDsrRequests as number) ?? 0;
+        kpiData.auditScore = (kpi.auditScore as number) ?? 0;
+      }
+      if (Array.isArray(data.consentRecords)) {
+        consentRecords.value = data.consentRecords;
+      }
+      if (Array.isArray(data.retentionPolicies)) {
+        retentionPolicies.value = data.retentionPolicies;
+      }
+      if (Array.isArray(data.dsrRequests)) {
+        dsrRequests.value = data.dsrRequests;
+      }
+      if (Array.isArray(data.auditLogs)) {
+        auditLogs.value = data.auditLogs;
+      }
+      if (Array.isArray(data.teamMembers)) {
+        teamMembers.value = data.teamMembers as string[];
       }
     }
+    updateKpis();
   } catch {
-    // Mock data already loaded as defaults
+    updateKpis();
   } finally {
     loading.value = false;
   }

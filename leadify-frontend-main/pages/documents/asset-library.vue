@@ -484,157 +484,36 @@ interface VersionDiff extends VersionEntry {
 const kpiCards = computed(() => [
   {
     label: t('assetLibrary.totalAssets'),
-    value: '2,847',
+    value: String(assets.value.length),
     icon: 'ph:folder-bold',
     color: '#7849ff',
-    trend: 6.2
+    trend: 0
   },
   {
     label: t('assetLibrary.storageUsed'),
-    value: '48.2 GB',
+    value: '0 GB',
     icon: 'ph:hard-drives-bold',
     color: '#3b82f6',
-    trend: 3.8
+    trend: 0
   },
   {
     label: t('assetLibrary.assetsThisMonth'),
-    value: '156',
+    value: '0',
     icon: 'ph:upload-bold',
     color: '#22c55e',
-    trend: 18.4
+    trend: 0
   },
   {
     label: t('assetLibrary.sharedAssets'),
-    value: '412',
+    value: '0',
     icon: 'ph:share-network-bold',
     color: '#f59e0b',
-    trend: 9.1
+    trend: 0
   }
 ]);
 
 // ─── Mock Assets (fallback data) ─────────────────────────────
-const assetsFallback: Asset[] = [
-  {
-    id: 1,
-    name: 'Brand Guidelines 2026.pdf',
-    type: 'Document',
-    size: '4.2 MB',
-    uploadedBy: 'Sarah Ahmed',
-    date: '2026-02-25',
-    tags: ['Brand', 'Guidelines']
-  },
-  {
-    id: 2,
-    name: 'Product Hero Shot.png',
-    type: 'Image',
-    size: '8.7 MB',
-    uploadedBy: 'Omar Hassan',
-    date: '2026-02-24',
-    tags: ['Product', 'Marketing']
-  },
-  {
-    id: 3,
-    name: 'Q4 Revenue Report.xlsx',
-    type: 'Spreadsheet',
-    size: '1.8 MB',
-    uploadedBy: 'Fatima Ali',
-    date: '2026-02-23',
-    tags: ['Finance', 'Report']
-  },
-  {
-    id: 4,
-    name: 'Customer Onboarding.mp4',
-    type: 'Video',
-    size: '245 MB',
-    uploadedBy: 'Khalid Ibrahim',
-    date: '2026-02-22',
-    tags: ['Training', 'Onboarding']
-  },
-  { id: 5, name: 'Logo Package.zip', type: 'Other', size: '12.4 MB', uploadedBy: 'Sarah Ahmed', date: '2026-02-21', tags: ['Brand', 'Logo'] },
-  {
-    id: 6,
-    name: 'Social Media Banner.jpg',
-    type: 'Image',
-    size: '3.1 MB',
-    uploadedBy: 'Layla Mansour',
-    date: '2026-02-20',
-    tags: ['Social', 'Marketing']
-  },
-  {
-    id: 7,
-    name: 'Sales Deck H1 2026.pdf',
-    type: 'Document',
-    size: '6.9 MB',
-    uploadedBy: 'Omar Hassan',
-    date: '2026-02-19',
-    tags: ['Sales', 'Presentation']
-  },
-  { id: 8, name: 'Team Photo Retreat.jpg', type: 'Image', size: '5.4 MB', uploadedBy: 'Nour Saleh', date: '2026-02-18', tags: ['HR', 'Culture'] },
-  {
-    id: 9,
-    name: 'Annual Budget Template.xlsx',
-    type: 'Spreadsheet',
-    size: '820 KB',
-    uploadedBy: 'Fatima Ali',
-    date: '2026-02-17',
-    tags: ['Finance', 'Template']
-  },
-  {
-    id: 10,
-    name: 'Product Demo Walkthrough.mp4',
-    type: 'Video',
-    size: '189 MB',
-    uploadedBy: 'Khalid Ibrahim',
-    date: '2026-02-16',
-    tags: ['Product', 'Demo']
-  },
-  {
-    id: 11,
-    name: 'Privacy Policy Draft.pdf',
-    type: 'Document',
-    size: '1.2 MB',
-    uploadedBy: 'Sarah Ahmed',
-    date: '2026-02-15',
-    tags: ['Legal', 'Policy']
-  },
-  {
-    id: 12,
-    name: 'Newsletter Header.png',
-    type: 'Image',
-    size: '2.8 MB',
-    uploadedBy: 'Layla Mansour',
-    date: '2026-02-14',
-    tags: ['Marketing', 'Email']
-  },
-  {
-    id: 13,
-    name: 'Client Contacts Export.csv',
-    type: 'Spreadsheet',
-    size: '340 KB',
-    uploadedBy: 'Omar Hassan',
-    date: '2026-02-13',
-    tags: ['CRM', 'Export']
-  },
-  {
-    id: 14,
-    name: 'Webinar Recording Feb.mp4',
-    type: 'Video',
-    size: '512 MB',
-    uploadedBy: 'Nour Saleh',
-    date: '2026-02-12',
-    tags: ['Marketing', 'Webinar']
-  },
-  { id: 15, name: 'Employee Handbook.pdf', type: 'Document', size: '3.5 MB', uploadedBy: 'Fatima Ali', date: '2026-02-11', tags: ['HR', 'Handbook'] },
-  {
-    id: 16,
-    name: 'App Wireframes.fig',
-    type: 'Other',
-    size: '18.3 MB',
-    uploadedBy: 'Khalid Ibrahim',
-    date: '2026-02-10',
-    tags: ['Design', 'Product']
-  }
-];
+const assetsFallback: Asset[] = [];
 
 const assets = ref<Asset[]>([]);
 
@@ -737,86 +616,7 @@ const newCollection = ref({
   privacy: 'private'
 });
 
-const collections = ref<Collection[]>([
-  {
-    id: 1,
-    name: 'Brand Assets',
-    assetCount: 34,
-    sharedWith: 8,
-    lastUpdated: '2026-02-26',
-    thumbnails: [
-      { icon: 'ph:image-bold', color: '#7849ff', bg: 'rgba(120, 73, 255, 0.08)' },
-      { icon: 'ph:file-pdf-bold', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.08)' },
-      { icon: 'ph:image-bold', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.08)' },
-      { icon: 'ph:file-bold', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.08)' }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Marketing Campaign Q1',
-    assetCount: 22,
-    sharedWith: 5,
-    lastUpdated: '2026-02-24',
-    thumbnails: [
-      { icon: 'ph:video-camera-bold', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.08)' },
-      { icon: 'ph:image-bold', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.08)' },
-      { icon: 'ph:file-pdf-bold', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.08)' },
-      { icon: 'ph:image-bold', color: '#7849ff', bg: 'rgba(120, 73, 255, 0.08)' }
-    ]
-  },
-  {
-    id: 3,
-    name: 'Sales Presentations',
-    assetCount: 15,
-    sharedWith: 12,
-    lastUpdated: '2026-02-22',
-    thumbnails: [
-      { icon: 'ph:file-pdf-bold', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.08)' },
-      { icon: 'ph:table-bold', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.08)' },
-      { icon: 'ph:file-pdf-bold', color: '#7849ff', bg: 'rgba(120, 73, 255, 0.08)' },
-      { icon: 'ph:image-bold', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.08)' }
-    ]
-  },
-  {
-    id: 4,
-    name: 'Product Screenshots',
-    assetCount: 48,
-    sharedWith: 3,
-    lastUpdated: '2026-02-20',
-    thumbnails: [
-      { icon: 'ph:image-bold', color: '#7849ff', bg: 'rgba(120, 73, 255, 0.08)' },
-      { icon: 'ph:image-bold', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.08)' },
-      { icon: 'ph:image-bold', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.08)' },
-      { icon: 'ph:image-bold', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.08)' }
-    ]
-  },
-  {
-    id: 5,
-    name: 'HR Documents',
-    assetCount: 19,
-    sharedWith: 4,
-    lastUpdated: '2026-02-18',
-    thumbnails: [
-      { icon: 'ph:file-pdf-bold', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.08)' },
-      { icon: 'ph:file-pdf-bold', color: '#7849ff', bg: 'rgba(120, 73, 255, 0.08)' },
-      { icon: 'ph:table-bold', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.08)' },
-      { icon: 'ph:file-bold', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.08)' }
-    ]
-  },
-  {
-    id: 6,
-    name: 'Training Videos',
-    assetCount: 11,
-    sharedWith: 15,
-    lastUpdated: '2026-02-15',
-    thumbnails: [
-      { icon: 'ph:video-camera-bold', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.08)' },
-      { icon: 'ph:video-camera-bold', color: '#7849ff', bg: 'rgba(120, 73, 255, 0.08)' },
-      { icon: 'ph:video-camera-bold', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.08)' },
-      { icon: 'ph:file-pdf-bold', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.08)' }
-    ]
-  }
-]);
+const collections = ref<Collection[]>([]);
 
 function openCollection(collection: Collection) {
   ElMessage.info(`Opening: ${collection.name}`);
@@ -852,104 +652,7 @@ function createCollection() {
 }
 
 // ─── Usage & Analytics ──────────────────────────────────────
-const mostDownloadedAssets = ref<Asset[]>([
-  {
-    id: 1,
-    name: 'Brand Guidelines 2026.pdf',
-    type: 'Document',
-    size: '4.2 MB',
-    uploadedBy: 'Sarah Ahmed',
-    date: '2026-02-25',
-    tags: [],
-    downloads: 347,
-    views: 1204,
-    lastAccessed: '2026-02-28'
-  },
-  {
-    id: 2,
-    name: 'Product Hero Shot.png',
-    type: 'Image',
-    size: '8.7 MB',
-    uploadedBy: 'Omar Hassan',
-    date: '2026-02-24',
-    tags: [],
-    downloads: 289,
-    views: 982,
-    lastAccessed: '2026-02-27'
-  },
-  {
-    id: 3,
-    name: 'Sales Deck H1 2026.pdf',
-    type: 'Document',
-    size: '6.9 MB',
-    uploadedBy: 'Omar Hassan',
-    date: '2026-02-19',
-    tags: [],
-    downloads: 234,
-    views: 876,
-    lastAccessed: '2026-02-28'
-  },
-  {
-    id: 4,
-    name: 'Social Media Banner.jpg',
-    type: 'Image',
-    size: '3.1 MB',
-    uploadedBy: 'Layla Mansour',
-    date: '2026-02-20',
-    tags: [],
-    downloads: 198,
-    views: 654,
-    lastAccessed: '2026-02-26'
-  },
-  {
-    id: 5,
-    name: 'Q4 Revenue Report.xlsx',
-    type: 'Spreadsheet',
-    size: '1.8 MB',
-    uploadedBy: 'Fatima Ali',
-    date: '2026-02-23',
-    tags: [],
-    downloads: 156,
-    views: 543,
-    lastAccessed: '2026-02-25'
-  },
-  {
-    id: 6,
-    name: 'Customer Onboarding.mp4',
-    type: 'Video',
-    size: '245 MB',
-    uploadedBy: 'Khalid Ibrahim',
-    date: '2026-02-22',
-    tags: [],
-    downloads: 142,
-    views: 487,
-    lastAccessed: '2026-02-27'
-  },
-  {
-    id: 7,
-    name: 'Employee Handbook.pdf',
-    type: 'Document',
-    size: '3.5 MB',
-    uploadedBy: 'Fatima Ali',
-    date: '2026-02-11',
-    tags: [],
-    downloads: 128,
-    views: 412,
-    lastAccessed: '2026-02-24'
-  },
-  {
-    id: 8,
-    name: 'Newsletter Header.png',
-    type: 'Image',
-    size: '2.8 MB',
-    uploadedBy: 'Layla Mansour',
-    date: '2026-02-14',
-    tags: [],
-    downloads: 115,
-    views: 378,
-    lastAccessed: '2026-02-23'
-  }
-]);
+const mostDownloadedAssets = ref<Asset[]>([]);
 
 // ─── Chart Tooltip Style ────────────────────────────────────
 const tooltipStyle = {
@@ -997,13 +700,7 @@ const storageBreakdownOption = computed(() => ({
         }
       },
       labelLine: { show: false },
-      data: [
-        { value: 18.4, name: t('assetLibrary.images'), itemStyle: { color: '#7849ff' } },
-        { value: 12.6, name: t('assetLibrary.documents'), itemStyle: { color: '#ef4444' } },
-        { value: 10.8, name: t('assetLibrary.videos'), itemStyle: { color: '#3b82f6' } },
-        { value: 4.2, name: t('assetLibrary.spreadsheets'), itemStyle: { color: '#22c55e' } },
-        { value: 2.2, name: t('assetLibrary.other'), itemStyle: { color: '#f59e0b' } }
-      ]
+      data: [] as { value: number; name: string }[]
     }
   ]
 }));
@@ -1014,7 +711,7 @@ const uploadTrendOption = computed(() => {
     const d = new Date(2026, 1, i + 1);
     return `${d.getMonth() + 1}/${d.getDate()}`;
   });
-  const values = [12, 8, 15, 6, 18, 22, 10, 14, 9, 20, 16, 11, 25, 13, 7, 19, 23, 17, 8, 14, 21, 10, 16, 12, 28, 15, 9, 18, 24, 11];
+  const values: number[] = [];
 
   return {
     tooltip: {
@@ -1087,7 +784,7 @@ const usageByDepartmentOption = computed(() => ({
   },
   yAxis: {
     type: 'category',
-    data: ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations', 'Legal'],
+    data: [] as string[],
     axisLine: { lineStyle: { color: 'var(--border-default)' } },
     axisLabel: { color: 'var(--text-muted)', fontSize: 11 }
   },
@@ -1100,7 +797,7 @@ const usageByDepartmentOption = computed(() => ({
         color: '#7849ff',
         borderRadius: [0, 6, 6, 0]
       },
-      data: [482, 396, 354, 218, 186, 142, 98]
+      data: [] as number[]
     },
     {
       name: t('assetLibrary.views'),
@@ -1110,194 +807,13 @@ const usageByDepartmentOption = computed(() => ({
         color: '#3b82f6',
         borderRadius: [0, 6, 6, 0]
       },
-      data: [1240, 1084, 892, 564, 432, 324, 210]
+      data: [] as number[]
     }
   ]
 }));
 
 // ─── Versions ───────────────────────────────────────────────
-const versionEntries = ref<VersionEntry[]>([
-  {
-    id: 1,
-    assetName: 'Brand Guidelines 2026.pdf',
-    type: 'Document',
-    version: 'v3.2',
-    uploadedBy: 'Sarah Ahmed',
-    date: '2026-02-25',
-    size: '4.2 MB',
-    changes: 'Updated logo usage section and color palette',
-    isCurrent: true,
-    previousVersion: 'v3.1',
-    previousSize: '4.0 MB',
-    previousDate: '2026-02-18',
-    previousUploader: 'Sarah Ahmed'
-  },
-  {
-    id: 2,
-    assetName: 'Brand Guidelines 2026.pdf',
-    type: 'Document',
-    version: 'v3.1',
-    uploadedBy: 'Sarah Ahmed',
-    date: '2026-02-18',
-    size: '4.0 MB',
-    changes: 'Added digital-first brand voice guidelines',
-    isCurrent: false,
-    previousVersion: 'v3.0',
-    previousSize: '3.8 MB',
-    previousDate: '2026-02-10',
-    previousUploader: 'Omar Hassan'
-  },
-  {
-    id: 3,
-    assetName: 'Brand Guidelines 2026.pdf',
-    type: 'Document',
-    version: 'v3.0',
-    uploadedBy: 'Omar Hassan',
-    date: '2026-02-10',
-    size: '3.8 MB',
-    changes: 'Major revision for 2026 rebrand',
-    isCurrent: false,
-    previousVersion: 'v2.4',
-    previousSize: '3.2 MB',
-    previousDate: '2025-12-15',
-    previousUploader: 'Sarah Ahmed'
-  },
-  {
-    id: 4,
-    assetName: 'Sales Deck H1 2026.pdf',
-    type: 'Document',
-    version: 'v2.1',
-    uploadedBy: 'Omar Hassan',
-    date: '2026-02-19',
-    size: '6.9 MB',
-    changes: 'Updated pricing slides and case studies',
-    isCurrent: true,
-    previousVersion: 'v2.0',
-    previousSize: '6.5 MB',
-    previousDate: '2026-02-12',
-    previousUploader: 'Omar Hassan'
-  },
-  {
-    id: 5,
-    assetName: 'Sales Deck H1 2026.pdf',
-    type: 'Document',
-    version: 'v2.0',
-    uploadedBy: 'Omar Hassan',
-    date: '2026-02-12',
-    size: '6.5 MB',
-    changes: 'Redesigned with new brand template',
-    isCurrent: false,
-    previousVersion: 'v1.3',
-    previousSize: '5.8 MB',
-    previousDate: '2026-01-28',
-    previousUploader: 'Fatima Ali'
-  },
-  {
-    id: 6,
-    assetName: 'Product Hero Shot.png',
-    type: 'Image',
-    version: 'v1.4',
-    uploadedBy: 'Layla Mansour',
-    date: '2026-02-24',
-    size: '8.7 MB',
-    changes: 'Higher resolution export, adjusted lighting',
-    isCurrent: true,
-    previousVersion: 'v1.3',
-    previousSize: '7.2 MB',
-    previousDate: '2026-02-16',
-    previousUploader: 'Layla Mansour'
-  },
-  {
-    id: 7,
-    assetName: 'Product Hero Shot.png',
-    type: 'Image',
-    version: 'v1.3',
-    uploadedBy: 'Layla Mansour',
-    date: '2026-02-16',
-    size: '7.2 MB',
-    changes: 'Color correction and background cleanup',
-    isCurrent: false,
-    previousVersion: 'v1.2',
-    previousSize: '6.8 MB',
-    previousDate: '2026-02-08',
-    previousUploader: 'Khalid Ibrahim'
-  },
-  {
-    id: 8,
-    assetName: 'Employee Handbook.pdf',
-    type: 'Document',
-    version: 'v4.0',
-    uploadedBy: 'Fatima Ali',
-    date: '2026-02-11',
-    size: '3.5 MB',
-    changes: 'Updated remote work and leave policies',
-    isCurrent: true,
-    previousVersion: 'v3.8',
-    previousSize: '3.3 MB',
-    previousDate: '2026-01-22',
-    previousUploader: 'Fatima Ali'
-  },
-  {
-    id: 9,
-    assetName: 'Employee Handbook.pdf',
-    type: 'Document',
-    version: 'v3.8',
-    uploadedBy: 'Fatima Ali',
-    date: '2026-01-22',
-    size: '3.3 MB',
-    changes: 'Added new benefits section',
-    isCurrent: false,
-    previousVersion: 'v3.7',
-    previousSize: '3.1 MB',
-    previousDate: '2025-12-30',
-    previousUploader: 'Nour Saleh'
-  },
-  {
-    id: 10,
-    assetName: 'Q4 Revenue Report.xlsx',
-    type: 'Spreadsheet',
-    version: 'v1.2',
-    uploadedBy: 'Fatima Ali',
-    date: '2026-02-23',
-    size: '1.8 MB',
-    changes: 'Final audited figures and chart updates',
-    isCurrent: true,
-    previousVersion: 'v1.1',
-    previousSize: '1.6 MB',
-    previousDate: '2026-02-15',
-    previousUploader: 'Fatima Ali'
-  },
-  {
-    id: 11,
-    assetName: 'Q4 Revenue Report.xlsx',
-    type: 'Spreadsheet',
-    version: 'v1.1',
-    uploadedBy: 'Fatima Ali',
-    date: '2026-02-15',
-    size: '1.6 MB',
-    changes: 'Updated with December actuals',
-    isCurrent: false,
-    previousVersion: 'v1.0',
-    previousSize: '1.4 MB',
-    previousDate: '2026-02-05',
-    previousUploader: 'Omar Hassan'
-  },
-  {
-    id: 12,
-    assetName: 'Q4 Revenue Report.xlsx',
-    type: 'Spreadsheet',
-    version: 'v1.0',
-    uploadedBy: 'Omar Hassan',
-    date: '2026-02-05',
-    size: '1.4 MB',
-    changes: 'Initial draft with preliminary numbers',
-    isCurrent: false,
-    previousVersion: 'N/A',
-    previousSize: 'N/A',
-    previousDate: 'N/A',
-    previousUploader: 'N/A'
-  }
-]);
+const versionEntries = ref<VersionEntry[]>([]);
 
 function onVersionSelect(row: VersionEntry | null) {
   if (row && !row.isCurrent && row.previousVersion) {
@@ -1329,7 +845,7 @@ async function loadData() {
   try {
     const res = await useApiFetch('documents');
     if (res.success && Array.isArray(res.body)) {
-      assets.value = res.body as unknown;
+      assets.value = res.body as Asset[];
     } else {
       assets.value = assetsFallback;
     }

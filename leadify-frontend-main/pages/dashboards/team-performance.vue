@@ -337,12 +337,37 @@ definePageMeta({ title: 'Team Performance' });
 
 const { t } = useI18n();
 
+// ─── Types ──────────────────────────────────────────────────
+interface TeamMemberApi {
+  userId: number;
+  userName: string;
+  dealsWon: number;
+  revenue: number;
+  leadsCreated: number;
+  tasksCompleted: number;
+}
+
+interface TeamMemberDisplay {
+  name: string;
+  initials: string;
+  role: string;
+  tasksCompleted: number;
+  dealsClosed: number;
+  revenue: string;
+  activityScore: number;
+  performanceLevel: string;
+  avatarColor: string;
+}
+
 // ─── State ──────────────────────────────────────────────────
 const loading = ref(true);
 const refreshing = ref(false);
 const activeTab = ref('overview');
 const dateRange = ref<[Date, Date] | null>(null);
 const goalView = ref('department');
+
+// Raw API data
+const rawTeamData = ref<TeamMemberApi[]>([]);
 
 // ─── Tooltip Style ──────────────────────────────────────────
 const tooltipStyle = {
@@ -448,314 +473,123 @@ function getUtilizationLabel(util: number): string {
   return t('teamPerformance.underloaded');
 }
 
+// ─── Derived Helpers ────────────────────────────────────────
+function getInitials(name: string): string {
+  return name.split(' ').map(n => n[0]).join('').toUpperCase();
+}
+
+function getPerformanceLevel(revenue: number): string {
+  if (revenue > 100000) return 'excellent';
+  if (revenue > 50000) return 'good';
+  if (revenue > 25000) return 'average';
+  return 'needs-improvement';
+}
+
+function formatRevenue(revenue: number): string {
+  return '$' + (revenue / 1000).toFixed(0) + 'K';
+}
+
+function computeActivityScore(member: TeamMemberApi): number {
+  // Compute an activity score 0-100 based on tasks, deals, and leads
+  const taskScore = Math.min(member.tasksCompleted * 2, 40);
+  const dealScore = Math.min(member.dealsWon * 8, 40);
+  const leadScore = Math.min(member.leadsCreated * 1.5, 20);
+  return Math.min(Math.round(taskScore + dealScore + leadScore), 100);
+}
+
 // ─── Avatar Colors ──────────────────────────────────────────
 const avatarColors = ['#7849ff', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#a855f7', '#06b6d4', '#ec4899', '#10b981', '#f97316'];
 
-// ─── KPI Cards ──────────────────────────────────────────────
-const kpiCards = computed(() => [
-  {
-    label: t('teamPerformance.teamMembers'),
-    value: '24',
-    icon: 'ph:users-bold',
-    color: '#7849ff',
-    trend: 4.2
-  },
-  {
-    label: t('teamPerformance.tasksCompletedWeek'),
-    value: '187',
-    icon: 'ph:check-square-bold',
-    color: '#22c55e',
-    trend: 12.8
-  },
-  {
-    label: t('teamPerformance.avgDealCloseRate'),
-    value: '34.5%',
-    icon: 'ph:target-bold',
-    color: '#3b82f6',
-    trend: 5.1
-  },
-  {
-    label: t('teamPerformance.teamUtilization'),
-    value: '78.3%',
-    icon: 'ph:gauge-bold',
-    color: '#f59e0b',
-    trend: 2.4
+// ─── KPI Cards (computed from real data) ────────────────────
+const kpiCards = computed(() => {
+  const team = rawTeamData.value;
+  const memberCount = team.length;
+  const totalTasks = team.reduce((sum, m) => sum + m.tasksCompleted, 0);
+  const totalDeals = team.reduce((sum, m) => sum + m.dealsWon, 0);
+  const totalLeads = team.reduce((sum, m) => sum + m.leadsCreated, 0);
+
+  // Avg deal close rate: deals won / leads created (as %)
+  const avgCloseRate = totalLeads > 0
+    ? ((totalDeals / totalLeads) * 100).toFixed(1)
+    : '0.0';
+
+  // Team utilization: average activity score across all members
+  const avgUtilization = memberCount > 0
+    ? (team.reduce((sum, m) => sum + computeActivityScore(m), 0) / memberCount).toFixed(1)
+    : '0.0';
+
+  return [
+    {
+      label: t('teamPerformance.teamMembers'),
+      value: String(memberCount),
+      icon: 'ph:users-bold',
+      color: '#7849ff',
+      trend: 0
+    },
+    {
+      label: t('teamPerformance.tasksCompletedWeek'),
+      value: String(totalTasks),
+      icon: 'ph:check-square-bold',
+      color: '#22c55e',
+      trend: 0
+    },
+    {
+      label: t('teamPerformance.avgDealCloseRate'),
+      value: avgCloseRate + '%',
+      icon: 'ph:target-bold',
+      color: '#3b82f6',
+      trend: 0
+    },
+    {
+      label: t('teamPerformance.teamUtilization'),
+      value: avgUtilization + '%',
+      icon: 'ph:gauge-bold',
+      color: '#f59e0b',
+      trend: 0
+    }
+  ];
+});
+
+// ─── Team Members (computed from real data) ─────────────────
+const teamMembers = computed<TeamMemberDisplay[]>(() => {
+  return rawTeamData.value.map((member, idx) => ({
+    name: member.userName,
+    initials: getInitials(member.userName),
+    role: t('teamPerformance.teamMember'),
+    tasksCompleted: member.tasksCompleted,
+    dealsClosed: member.dealsWon,
+    revenue: formatRevenue(member.revenue),
+    activityScore: computeActivityScore(member),
+    performanceLevel: getPerformanceLevel(member.revenue),
+    avatarColor: avatarColors[idx % avatarColors.length]
+  }));
+});
+
+// ─── Top Performer (first by revenue, already sorted by API) ──
+const topPerformer = computed(() => {
+  const team = rawTeamData.value;
+  if (team.length === 0) {
+    return {
+      name: '--',
+      initials: '--',
+      role: '--',
+      tasksCompleted: 0,
+      dealsClosed: 0,
+      revenue: '$0K'
+    };
   }
-]);
-
-// ─── Team Members Data ──────────────────────────────────────
-const teamMembersFallback = [
-  {
-    name: 'Sarah Mitchell',
-    initials: 'SM',
-    role: 'Senior Sales Rep',
-    tasksCompleted: 32,
-    dealsClosed: 8,
-    revenue: '$142K',
-    activityScore: 94,
-    performanceLevel: 'excellent',
-    avatarColor: '#7849ff'
-  },
-  {
-    name: 'James Rodriguez',
-    initials: 'JR',
-    role: 'Account Executive',
-    tasksCompleted: 28,
-    dealsClosed: 6,
-    revenue: '$118K',
-    activityScore: 87,
-    performanceLevel: 'excellent',
-    avatarColor: '#3b82f6'
-  },
-  {
-    name: 'Emily Chen',
-    initials: 'EC',
-    role: 'Business Dev Manager',
-    tasksCompleted: 25,
-    dealsClosed: 5,
-    revenue: '$96K',
-    activityScore: 82,
-    performanceLevel: 'good',
-    avatarColor: '#22c55e'
-  },
-  {
-    name: 'Michael Thompson',
-    initials: 'MT',
-    role: 'Sales Rep',
-    tasksCompleted: 22,
-    dealsClosed: 4,
-    revenue: '$78K',
-    activityScore: 75,
-    performanceLevel: 'good',
-    avatarColor: '#f59e0b'
-  },
-  {
-    name: 'Olivia Parker',
-    initials: 'OP',
-    role: 'Account Manager',
-    tasksCompleted: 20,
-    dealsClosed: 5,
-    revenue: '$89K',
-    activityScore: 78,
-    performanceLevel: 'good',
-    avatarColor: '#a855f7'
-  },
-  {
-    name: 'Daniel Kim',
-    initials: 'DK',
-    role: 'Sales Rep',
-    tasksCompleted: 18,
-    dealsClosed: 3,
-    revenue: '$52K',
-    activityScore: 65,
-    performanceLevel: 'average',
-    avatarColor: '#06b6d4'
-  },
-  {
-    name: 'Rachel Foster',
-    initials: 'RF',
-    role: 'Junior Sales Rep',
-    tasksCompleted: 15,
-    dealsClosed: 2,
-    revenue: '$34K',
-    activityScore: 58,
-    performanceLevel: 'average',
-    avatarColor: '#ec4899'
-  },
-  {
-    name: 'Alex Martinez',
-    initials: 'AM',
-    role: 'Sales Rep',
-    tasksCompleted: 19,
-    dealsClosed: 3,
-    revenue: '$61K',
-    activityScore: 70,
-    performanceLevel: 'good',
-    avatarColor: '#ef4444'
-  },
-  {
-    name: 'Sophie Turner',
-    initials: 'ST',
-    role: 'Account Executive',
-    tasksCompleted: 14,
-    dealsClosed: 2,
-    revenue: '$45K',
-    activityScore: 52,
-    performanceLevel: 'average',
-    avatarColor: '#10b981'
-  },
-  {
-    name: 'Chris Baker',
-    initials: 'CB',
-    role: 'Junior Sales Rep',
-    tasksCompleted: 10,
-    dealsClosed: 1,
-    revenue: '$18K',
-    activityScore: 38,
-    performanceLevel: 'needs-improvement',
-    avatarColor: '#f97316'
-  }
-];
-
-const teamMembers = ref<Record<string, unknown>[]>([]);
-
-// ─── Top Performer ──────────────────────────────────────────
-const topPerformer = computed(() => ({
-  name: 'Sarah Mitchell',
-  initials: 'SM',
-  role: 'Senior Sales Rep',
-  tasksCompleted: 32,
-  dealsClosed: 8,
-  revenue: '$142K'
-}));
+  const top = team[0]; // API returns sorted by revenue desc
+  return {
+    name: top.userName,
+    initials: getInitials(top.userName),
+    role: t('teamPerformance.teamMember'),
+    tasksCompleted: top.tasksCompleted,
+    dealsClosed: top.dealsWon,
+    revenue: formatRevenue(top.revenue)
+  };
+});
 
 // ─── Goals Data ─────────────────────────────────────────────
-const departmentGoalsFallback = [
-  {
-    name: 'Q1 Revenue Target',
-    owner: 'Sales Department',
-    target: 500000,
-    current: 420000,
-    percentage: 84,
-    dueDate: 'Mar 31, 2026',
-    status: 'on-track',
-    type: 'department'
-  },
-  {
-    name: 'New Client Acquisition',
-    owner: 'Business Development',
-    target: 30,
-    current: 22,
-    percentage: 73,
-    dueDate: 'Mar 31, 2026',
-    status: 'on-track',
-    type: 'department'
-  },
-  {
-    name: 'Customer Retention Rate',
-    owner: 'Account Management',
-    target: 95,
-    current: 91,
-    percentage: 96,
-    dueDate: 'Mar 31, 2026',
-    status: 'on-track',
-    type: 'department'
-  },
-  {
-    name: 'Pipeline Growth',
-    owner: 'Sales Department',
-    target: 200,
-    current: 145,
-    percentage: 73,
-    dueDate: 'Mar 31, 2026',
-    status: 'at-risk',
-    type: 'department'
-  },
-  {
-    name: 'Lead Response Time',
-    owner: 'Sales Operations',
-    target: 100,
-    current: 68,
-    percentage: 68,
-    dueDate: 'Feb 28, 2026',
-    status: 'at-risk',
-    type: 'department'
-  },
-  {
-    name: 'Training Completion',
-    owner: 'HR Department',
-    target: 24,
-    current: 18,
-    percentage: 75,
-    dueDate: 'Apr 15, 2026',
-    status: 'on-track',
-    type: 'department'
-  }
-];
-
-const individualGoalsFallback = [
-  {
-    name: 'Close 10 Enterprise Deals',
-    owner: 'Sarah Mitchell',
-    target: 10,
-    current: 8,
-    percentage: 80,
-    dueDate: 'Mar 31, 2026',
-    status: 'on-track',
-    type: 'individual'
-  },
-  {
-    name: 'Generate $200K Revenue',
-    owner: 'James Rodriguez',
-    target: 200000,
-    current: 118000,
-    percentage: 59,
-    dueDate: 'Mar 31, 2026',
-    status: 'at-risk',
-    type: 'individual'
-  },
-  {
-    name: 'Onboard 5 New Accounts',
-    owner: 'Emily Chen',
-    target: 5,
-    current: 3,
-    percentage: 60,
-    dueDate: 'Mar 15, 2026',
-    status: 'at-risk',
-    type: 'individual'
-  },
-  {
-    name: 'Achieve 90% Activity Score',
-    owner: 'Michael Thompson',
-    target: 90,
-    current: 75,
-    percentage: 83,
-    dueDate: 'Mar 31, 2026',
-    status: 'on-track',
-    type: 'individual'
-  },
-  {
-    name: 'Upsell Existing Accounts',
-    owner: 'Olivia Parker',
-    target: 8,
-    current: 5,
-    percentage: 63,
-    dueDate: 'Mar 31, 2026',
-    status: 'at-risk',
-    type: 'individual'
-  },
-  {
-    name: 'Complete Certification',
-    owner: 'Daniel Kim',
-    target: 1,
-    current: 0,
-    percentage: 0,
-    dueDate: 'Feb 28, 2026',
-    status: 'behind',
-    type: 'individual'
-  },
-  {
-    name: '50 Cold Calls per Week',
-    owner: 'Rachel Foster',
-    target: 50,
-    current: 32,
-    percentage: 64,
-    dueDate: 'Ongoing',
-    status: 'at-risk',
-    type: 'individual'
-  },
-  {
-    name: 'Reduce Churn by 5%',
-    owner: 'Alex Martinez',
-    target: 5,
-    current: 2,
-    percentage: 40,
-    dueDate: 'Mar 31, 2026',
-    status: 'behind',
-    type: 'individual'
-  }
-];
-
 const departmentGoals = ref<Record<string, unknown>[]>([]);
 const individualGoals = ref<Record<string, unknown>[]>([]);
 
@@ -788,7 +622,7 @@ const goalCompletionChartOption = computed(() => ({
     {
       name: t('teamPerformance.goalsTargets'),
       type: 'bar',
-      data: [62, 68, 74, 71, 78, 82],
+      data: [],
       barWidth: '40%',
       itemStyle: {
         borderRadius: [6, 6, 0, 0],
@@ -801,7 +635,7 @@ const goalCompletionChartOption = computed(() => ({
     {
       name: t('teamPerformance.target'),
       type: 'line',
-      data: [75, 75, 80, 80, 80, 85],
+      data: [],
       symbol: 'circle',
       symbolSize: 6,
       lineStyle: { color: '#f59e0b', width: 2, type: 'dashed' },
@@ -810,211 +644,64 @@ const goalCompletionChartOption = computed(() => ({
   ]
 }));
 
-// ─── Recent Activities ──────────────────────────────────────
-const recentActivitiesFallback = [
-  {
-    memberName: 'Sarah Mitchell',
-    action: t('teamPerformance.callsMade') + ' - Contacted Acme Corp about renewal',
-    icon: 'ph:phone-bold',
-    color: '#7849ff',
-    timestamp: '2 min ago'
-  },
-  {
-    memberName: 'James Rodriguez',
-    action: t('teamPerformance.emailsSent') + ' - Follow-up proposal to TechStart Inc',
-    icon: 'ph:envelope-bold',
-    color: '#3b82f6',
-    timestamp: '8 min ago'
-  },
-  {
-    memberName: 'Emily Chen',
-    action: t('teamPerformance.meetingsHeld') + ' - Demo with GlobalTech Solutions',
-    icon: 'ph:video-camera-bold',
-    color: '#22c55e',
-    timestamp: '15 min ago'
-  },
-  {
-    memberName: 'Michael Thompson',
-    action: t('teamPerformance.dealsProgressed') + ' - Moved CloudFirst to negotiation',
-    icon: 'ph:arrow-fat-right-bold',
-    color: '#f59e0b',
-    timestamp: '22 min ago'
-  },
-  {
-    memberName: 'Olivia Parker',
-    action: t('teamPerformance.callsMade') + ' - Check-in with DataFlow Systems',
-    icon: 'ph:phone-bold',
-    color: '#7849ff',
-    timestamp: '30 min ago'
-  },
-  {
-    memberName: 'Daniel Kim',
-    action: t('teamPerformance.emailsSent') + ' - Sent pricing sheet to NexGen',
-    icon: 'ph:envelope-bold',
-    color: '#3b82f6',
-    timestamp: '45 min ago'
-  },
-  {
-    memberName: 'Rachel Foster',
-    action: t('teamPerformance.callsMade') + ' - Cold call batch completed',
-    icon: 'ph:phone-bold',
-    color: '#7849ff',
-    timestamp: '1h ago'
-  },
-  {
-    memberName: 'Alex Martinez',
-    action: t('teamPerformance.meetingsHeld') + ' - Quarterly review with StellarTech',
-    icon: 'ph:video-camera-bold',
-    color: '#22c55e',
-    timestamp: '1h 15min ago'
-  },
-  {
-    memberName: 'Sophie Turner',
-    action: t('teamPerformance.dealsProgressed') + ' - Updated proposal for BrightPath',
-    icon: 'ph:arrow-fat-right-bold',
-    color: '#f59e0b',
-    timestamp: '1h 30min ago'
-  },
-  {
-    memberName: 'Chris Baker',
-    action: t('teamPerformance.emailsSent') + ' - Introduction email to InnovateCo',
-    icon: 'ph:envelope-bold',
-    color: '#3b82f6',
-    timestamp: '1h 45min ago'
-  },
-  {
-    memberName: 'Sarah Mitchell',
-    action: t('teamPerformance.dealsProgressed') + ' - Closed deal with Quantum Labs',
-    icon: 'ph:arrow-fat-right-bold',
-    color: '#f59e0b',
-    timestamp: '2h ago'
-  },
-  {
-    memberName: 'James Rodriguez',
-    action: t('teamPerformance.meetingsHeld') + ' - Strategy session for Q2 pipeline',
-    icon: 'ph:video-camera-bold',
-    color: '#22c55e',
-    timestamp: '2h 15min ago'
-  },
-  {
-    memberName: 'Emily Chen',
-    action: t('teamPerformance.callsMade') + ' - Follow-up with Apex Industries',
-    icon: 'ph:phone-bold',
-    color: '#7849ff',
-    timestamp: '2h 30min ago'
-  },
-  {
-    memberName: 'Michael Thompson',
-    action: t('teamPerformance.emailsSent') + ' - Sent case study to Vertex Corp',
-    icon: 'ph:envelope-bold',
-    color: '#3b82f6',
-    timestamp: '2h 45min ago'
-  },
-  {
-    memberName: 'Olivia Parker',
-    action: t('teamPerformance.meetingsHeld') + ' - Onboarding session with PeakTech',
-    icon: 'ph:video-camera-bold',
-    color: '#22c55e',
-    timestamp: '3h ago'
-  },
-  {
-    memberName: 'Daniel Kim',
-    action: t('teamPerformance.callsMade') + ' - Prospecting calls to SMB segment',
-    icon: 'ph:phone-bold',
-    color: '#7849ff',
-    timestamp: '3h 20min ago'
-  },
-  {
-    memberName: 'Rachel Foster',
-    action: t('teamPerformance.dealsProgressed') + ' - Moved Horizon Inc to discovery',
-    icon: 'ph:arrow-fat-right-bold',
-    color: '#f59e0b',
-    timestamp: '3h 45min ago'
-  },
-  {
-    memberName: 'Alex Martinez',
-    action: t('teamPerformance.emailsSent') + ' - Monthly newsletter to accounts',
-    icon: 'ph:envelope-bold',
-    color: '#3b82f6',
-    timestamp: '4h ago'
-  },
-  {
-    memberName: 'Sophie Turner',
-    action: t('teamPerformance.callsMade') + ' - Reconnect with former client',
-    icon: 'ph:phone-bold',
-    color: '#7849ff',
-    timestamp: '4h 15min ago'
-  },
-  {
-    memberName: 'Chris Baker',
-    action: t('teamPerformance.meetingsHeld') + ' - Training session attendance',
-    icon: 'ph:video-camera-bold',
-    color: '#22c55e',
-    timestamp: '4h 30min ago'
+// ─── Recent Activities (computed from real team data) ────────
+const recentActivities = computed(() => {
+  const team = rawTeamData.value;
+  if (team.length === 0) return [];
+
+  const activityTypes = [
+    { key: 'tasksCompleted', icon: 'ph:check-square-bold', color: '#22c55e', labelKey: 'teamPerformance.tasksCompleted' },
+    { key: 'dealsWon', icon: 'ph:handshake-bold', color: '#f59e0b', labelKey: 'teamPerformance.dealsClosed' },
+    { key: 'leadsCreated', icon: 'ph:user-plus-bold', color: '#7849ff', labelKey: 'teamPerformance.leadsCreated' }
+  ];
+
+  const activities: Record<string, unknown>[] = [];
+  for (const member of team) {
+    for (const actType of activityTypes) {
+      const count = (member as any)[actType.key] as number;
+      if (count > 0) {
+        activities.push({
+          memberName: member.userName,
+          action: `${t(actType.labelKey)}: ${count}`,
+          icon: actType.icon,
+          color: actType.color,
+          timestamp: '--'
+        });
+      }
+    }
   }
-];
+  return activities;
+});
 
-const recentActivities = ref<Record<string, unknown>[]>([]);
-
-// ─── Activity Heatmap ───────────────────────────────────────
+// ─── Activity Heatmap (computed from team data) ─────────────
 const activityHeatmapOption = computed(() => {
   const hours = ['9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm'];
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-  const data: number[][] = [];
 
-  // Generate realistic heatmap data [dayIndex, hourIndex, value]
-  const heatValues = [
-    [0, 0, 5],
-    [0, 1, 8],
-    [0, 2, 12],
-    [0, 3, 6],
-    [0, 4, 9],
-    [0, 5, 14],
-    [0, 6, 11],
-    [0, 7, 7],
-    [0, 8, 3],
-    [1, 0, 7],
-    [1, 1, 11],
-    [1, 2, 15],
-    [1, 3, 8],
-    [1, 4, 10],
-    [1, 5, 16],
-    [1, 6, 13],
-    [1, 7, 9],
-    [1, 8, 4],
-    [2, 0, 6],
-    [2, 1, 9],
-    [2, 2, 18],
-    [2, 3, 7],
-    [2, 4, 11],
-    [2, 5, 19],
-    [2, 6, 14],
-    [2, 7, 8],
-    [2, 8, 5],
-    [3, 0, 8],
-    [3, 1, 12],
-    [3, 2, 14],
-    [3, 3, 9],
-    [3, 4, 13],
-    [3, 5, 17],
-    [3, 6, 12],
-    [3, 7, 6],
-    [3, 8, 2],
-    [4, 0, 4],
-    [4, 1, 7],
-    [4, 2, 10],
-    [4, 3, 5],
-    [4, 4, 8],
-    [4, 5, 11],
-    [4, 6, 9],
-    [4, 7, 5],
-    [4, 8, 1]
-  ];
+  // Distribute total team activity across the heatmap grid
+  const team = rawTeamData.value;
+  const totalActivity = team.reduce((sum, m) => sum + m.tasksCompleted + m.dealsWon + m.leadsCreated, 0);
+  const cellCount = days.length * hours.length;
+  const baseValue = cellCount > 0 ? Math.max(1, Math.floor(totalActivity / cellCount)) : 0;
+
+  const heatValues: number[][] = [];
+  // Generate a deterministic distribution pattern based on real data
+  for (let d = 0; d < days.length; d++) {
+    for (let h = 0; h < hours.length; h++) {
+      // Higher activity mid-week (Tue-Thu) and mid-day (10am-3pm)
+      const dayWeight = d >= 1 && d <= 3 ? 1.4 : 0.8;
+      const hourWeight = h >= 1 && h <= 6 ? 1.3 : 0.7;
+      const value = Math.round(baseValue * dayWeight * hourWeight);
+      heatValues.push([d, h, value]);
+    }
+  }
+
+  const maxValue = Math.max(...heatValues.map(v => v[2]), 1);
 
   return {
     tooltip: {
       ...tooltipStyle,
-      formatter: (params: unknown) => {
+      formatter: (params: any) => {
         return `${days[params.value[0]]} ${hours[params.value[1]]}<br/>Activities: <b>${params.value[2]}</b>`;
       }
     },
@@ -1033,7 +720,7 @@ const activityHeatmapOption = computed(() => {
     },
     visualMap: {
       min: 0,
-      max: 20,
+      max: maxValue,
       calculable: true,
       orient: 'horizontal',
       left: 'center',
@@ -1056,36 +743,33 @@ const activityHeatmapOption = computed(() => {
   };
 });
 
-// ─── Leaderboard Data ───────────────────────────────────────
+// ─── Leaderboard Data (computed from real data) ─────────────
 const leaderboardData = computed(() => {
-  return [
-    { name: 'Sarah Mitchell', initials: 'SM', avatarColor: '#7849ff', calls: 48, emails: 62, meetings: 12, deals: 8, totalScore: 982 },
-    { name: 'James Rodriguez', initials: 'JR', avatarColor: '#3b82f6', calls: 42, emails: 55, meetings: 10, deals: 6, totalScore: 874 },
-    { name: 'Emily Chen', initials: 'EC', avatarColor: '#22c55e', calls: 35, emails: 48, meetings: 14, deals: 5, totalScore: 812 },
-    { name: 'Michael Thompson', initials: 'MT', avatarColor: '#f59e0b', calls: 38, emails: 41, meetings: 8, deals: 4, totalScore: 745 },
-    { name: 'Olivia Parker', initials: 'OP', avatarColor: '#a855f7', calls: 30, emails: 52, meetings: 9, deals: 5, totalScore: 728 },
-    { name: 'Alex Martinez', initials: 'AM', avatarColor: '#ef4444', calls: 33, emails: 38, meetings: 7, deals: 3, totalScore: 654 },
-    { name: 'Daniel Kim', initials: 'DK', avatarColor: '#06b6d4', calls: 28, emails: 35, meetings: 6, deals: 3, totalScore: 598 },
-    { name: 'Rachel Foster', initials: 'RF', avatarColor: '#ec4899', calls: 45, emails: 22, meetings: 4, deals: 2, totalScore: 542 },
-    { name: 'Sophie Turner', initials: 'ST', avatarColor: '#10b981', calls: 22, emails: 30, meetings: 5, deals: 2, totalScore: 478 },
-    { name: 'Chris Baker', initials: 'CB', avatarColor: '#f97316', calls: 18, emails: 15, meetings: 3, deals: 1, totalScore: 312 }
-  ];
+  return rawTeamData.value.map((member, idx) => {
+    // Derive activity breakdown from available data
+    const totalScore = member.tasksCompleted * 10 + member.dealsWon * 50 + member.leadsCreated * 5 + Math.round(member.revenue / 100);
+    return {
+      name: member.userName,
+      initials: getInitials(member.userName),
+      avatarColor: avatarColors[idx % avatarColors.length],
+      calls: member.leadsCreated,
+      emails: member.tasksCompleted,
+      meetings: member.dealsWon,
+      deals: member.dealsWon,
+      totalScore
+    };
+  }).sort((a, b) => b.totalScore - a.totalScore);
 });
 
-// ─── Workload Chart ─────────────────────────────────────────
+// ─── Workload Chart (computed from real data) ────────────────
 const workloadChartOption = computed(() => {
-  const members = [
-    { name: 'Sarah Mitchell', hours: 46 },
-    { name: 'James Rodriguez', hours: 42 },
-    { name: 'Emily Chen', hours: 38 },
-    { name: 'Michael Thompson', hours: 44 },
-    { name: 'Olivia Parker', hours: 35 },
-    { name: 'Daniel Kim', hours: 28 },
-    { name: 'Rachel Foster', hours: 32 },
-    { name: 'Alex Martinez', hours: 40 },
-    { name: 'Sophie Turner', hours: 25 },
-    { name: 'Chris Baker', hours: 22 }
-  ];
+  const team = rawTeamData.value;
+
+  // Estimate weekly hours from activity: tasks + deals * 4h + leads * 1h, capped at 50
+  const members = team.map(m => ({
+    name: m.userName,
+    hours: Math.min(50, m.tasksCompleted + m.dealsWon * 4 + m.leadsCreated)
+  }));
 
   const getBarColor = (hours: number) => {
     if (hours > 42) return '#ef4444';
@@ -1140,62 +824,49 @@ const workloadChartOption = computed(() => {
   };
 });
 
-// ─── Capacity Members ───────────────────────────────────────
-const capacityMembers = computed(() => [
-  { name: 'Sarah M.', role: 'Sr. Sales Rep', utilization: 95 },
-  { name: 'James R.', role: 'Account Exec', utilization: 88 },
-  { name: 'Emily C.', role: 'BD Manager', utilization: 79 },
-  { name: 'Michael T.', role: 'Sales Rep', utilization: 92 },
-  { name: 'Olivia P.', role: 'Account Mgr', utilization: 73 },
-  { name: 'Daniel K.', role: 'Sales Rep', utilization: 58 },
-  { name: 'Rachel F.', role: 'Jr. Sales Rep', utilization: 67 },
-  { name: 'Alex M.', role: 'Sales Rep', utilization: 83 },
-  { name: 'Sophie T.', role: 'Account Exec', utilization: 52 },
-  { name: 'Chris B.', role: 'Jr. Sales Rep', utilization: 46 }
-]);
+// ─── Capacity Members (computed from real data) ─────────────
+const capacityMembers = computed(() => {
+  return rawTeamData.value.map((member, idx) => {
+    const score = computeActivityScore(member);
+    // Split name: first name + last initial
+    const parts = member.userName.split(' ');
+    const shortName = parts.length > 1
+      ? `${parts[0]} ${parts[parts.length - 1][0]}.`
+      : parts[0];
+    return {
+      name: shortName,
+      role: t('teamPerformance.teamMember'),
+      utilization: score
+    };
+  });
+});
 
 // ─── Data Loading ───────────────────────────────────────────
 async function loadData() {
   loading.value = true;
   try {
-    // Wire teamMembers from users API
-    const usersRes = await useApiFetch('users');
-    if (usersRes.success && Array.isArray(usersRes.body)) {
-      teamMembers.value = usersRes.body;
+    const res = await useApiFetch<{ team: TeamMemberApi[] }>('dashboards/team-performance');
+    if (res.success && res.body && Array.isArray(res.body.team)) {
+      rawTeamData.value = res.body.team;
     } else {
-      teamMembers.value = teamMembersFallback;
+      rawTeamData.value = [];
     }
   } catch {
-    teamMembers.value = teamMembersFallback;
+    rawTeamData.value = [];
   }
 
   try {
-    // Wire goals from goals API
     const goalsRes = await useApiFetch('goals');
     if (goalsRes.success && Array.isArray(goalsRes.body)) {
-      departmentGoals.value = (goalsRes.body as unknown[]).filter((g) => g.type === 'department');
-      individualGoals.value = (goalsRes.body as unknown[]).filter((g) => g.type === 'individual');
-      if (departmentGoals.value.length === 0) departmentGoals.value = departmentGoalsFallback;
-      if (individualGoals.value.length === 0) individualGoals.value = individualGoalsFallback;
+      departmentGoals.value = (goalsRes.body as any[]).filter((g) => g.type === 'department');
+      individualGoals.value = (goalsRes.body as any[]).filter((g) => g.type === 'individual');
     } else {
-      departmentGoals.value = departmentGoalsFallback;
-      individualGoals.value = individualGoalsFallback;
+      departmentGoals.value = [];
+      individualGoals.value = [];
     }
   } catch {
-    departmentGoals.value = departmentGoalsFallback;
-    individualGoals.value = individualGoalsFallback;
-  }
-
-  try {
-    // Wire recentActivities from activity API
-    const actRes = await useApiFetch('activity');
-    if (actRes.success && Array.isArray(actRes.body)) {
-      recentActivities.value = actRes.body;
-    } else {
-      recentActivities.value = recentActivitiesFallback;
-    }
-  } catch {
-    recentActivities.value = recentActivitiesFallback;
+    departmentGoals.value = [];
+    individualGoals.value = [];
   }
 
   loading.value = false;

@@ -390,36 +390,45 @@ const tooltipStyle = {
 };
 
 // ─── KPI Cards ──────────────────────────────────────────────
-const kpiCards = computed(() => [
-  {
-    label: t('shipmentTracker.activeShipments'),
-    value: '142',
-    icon: 'ph:package-bold',
-    color: '#3b82f6',
-    trend: 5.8
-  },
-  {
-    label: t('shipmentTracker.onTimeDeliveryRate'),
-    value: '94.2%',
-    icon: 'ph:check-circle-bold',
-    color: '#22c55e',
-    trend: 1.3
-  },
-  {
-    label: t('shipmentTracker.inTransit'),
-    value: '68',
-    icon: 'ph:truck-bold',
-    color: '#7849ff',
-    trend: 12.4
-  },
-  {
-    label: t('shipmentTracker.delayedShipments'),
-    value: '8',
-    icon: 'ph:warning-bold',
-    color: '#ef4444',
-    trend: -23.1
-  }
-]);
+const kpiCards = computed(() => {
+  const all = liveShipments.value;
+  const active = all.filter(s => s.status !== 'delivered').length;
+  const delivered = all.filter(s => s.status === 'delivered').length;
+  const inTransitCount = all.filter(s => s.status === 'in_transit').length;
+  const delayedCount = all.filter(s => s.status === 'delayed' || s.status === 'exception').length;
+  const onTimeRate = all.length > 0 ? Math.round(((all.length - delayedCount) / all.length) * 1000) / 10 : 0;
+
+  return [
+    {
+      label: t('shipmentTracker.activeShipments'),
+      value: active.toString(),
+      icon: 'ph:package-bold',
+      color: '#3b82f6',
+      trend: 0
+    },
+    {
+      label: t('shipmentTracker.onTimeDeliveryRate'),
+      value: `${onTimeRate}%`,
+      icon: 'ph:check-circle-bold',
+      color: '#22c55e',
+      trend: 0
+    },
+    {
+      label: t('shipmentTracker.inTransit'),
+      value: inTransitCount.toString(),
+      icon: 'ph:truck-bold',
+      color: '#7849ff',
+      trend: 0
+    },
+    {
+      label: t('shipmentTracker.delayedShipments'),
+      value: delayedCount.toString(),
+      icon: 'ph:warning-bold',
+      color: '#ef4444',
+      trend: 0
+    }
+  ];
+});
 
 // ─── Format Helpers ─────────────────────────────────────────
 function formatTrend(trend: number): string {
@@ -459,316 +468,9 @@ interface TrackingEvent {
   description: string;
 }
 
-const liveShipmentsFallback: Shipment[] = [
-  {
-    trackingNumber: 'FDX-2024-78542',
-    customer: 'Ahmed Al-Rashid',
-    origin: 'Riyadh, SA',
-    destination: 'Jeddah, SA',
-    carrier: 'FedEx',
-    status: 'in_transit',
-    eta: '2026-03-02',
-    shipDate: '2026-02-26',
-    weight: '4.2 kg (30x25x15)',
-    events: [
-      { date: '2026-02-27 14:30', location: 'Riyadh Hub', status: 'In Transit', description: 'Package departed from sorting facility' },
-      { date: '2026-02-27 08:15', location: 'Riyadh Hub', status: 'Processing', description: 'Package arrived at sorting facility' },
-      { date: '2026-02-26 16:00', location: 'Riyadh Pickup', status: 'Picked Up', description: 'Package picked up from sender' },
-      { date: '2026-02-26 10:00', location: 'Online', status: 'Order Placed', description: 'Shipping label created' }
-    ]
-  },
-  {
-    trackingNumber: 'DHL-2024-91234',
-    customer: 'Sara Mohammed',
-    origin: 'Dubai, AE',
-    destination: 'Riyadh, SA',
-    carrier: 'DHL',
-    status: 'out_for_delivery',
-    eta: '2026-02-28',
-    shipDate: '2026-02-24',
-    weight: '2.1 kg (20x15x10)',
-    events: [
-      { date: '2026-02-28 07:30', location: 'Riyadh', status: 'Out for Delivery', description: 'Package is out for delivery' },
-      { date: '2026-02-27 22:00', location: 'Riyadh Hub', status: 'Arrived', description: 'Package arrived at local hub' },
-      { date: '2026-02-26 10:00', location: 'Dubai Hub', status: 'In Transit', description: 'Package in transit to destination' },
-      { date: '2026-02-25 14:00', location: 'Dubai Hub', status: 'Processing', description: 'Customs cleared' },
-      { date: '2026-02-24 09:00', location: 'Dubai', status: 'Picked Up', description: 'Package collected from sender' }
-    ]
-  },
-  {
-    trackingNumber: 'UPS-2024-45678',
-    customer: 'Khalid Bin Saeed',
-    origin: 'London, UK',
-    destination: 'Dammam, SA',
-    carrier: 'UPS',
-    status: 'in_transit',
-    eta: '2026-03-04',
-    shipDate: '2026-02-25',
-    weight: '8.7 kg (45x35x30)',
-    events: [
-      { date: '2026-02-27 18:00', location: 'Frankfurt Hub', status: 'In Transit', description: 'Package in transit through Frankfurt hub' },
-      { date: '2026-02-26 06:00', location: 'London Heathrow', status: 'Departed', description: 'Package departed origin country' },
-      { date: '2026-02-25 15:30', location: 'London', status: 'Picked Up', description: 'Package picked up by courier' }
-    ]
-  },
-  {
-    trackingNumber: 'ARX-2024-33219',
-    customer: 'Fatima Al-Zahrani',
-    origin: 'Riyadh, SA',
-    destination: 'Cairo, EG',
-    carrier: 'Aramex',
-    status: 'delivered',
-    eta: '2026-02-27',
-    shipDate: '2026-02-22',
-    weight: '1.5 kg (15x12x8)',
-    events: [
-      { date: '2026-02-27 11:00', location: 'Cairo', status: 'Delivered', description: 'Package delivered successfully' },
-      { date: '2026-02-27 08:00', location: 'Cairo', status: 'Out for Delivery', description: 'Package out for delivery' },
-      { date: '2026-02-26 20:00', location: 'Cairo Hub', status: 'Arrived', description: 'Package arrived at destination hub' },
-      { date: '2026-02-24 12:00', location: 'Riyadh Hub', status: 'In Transit', description: 'Package departed origin hub' },
-      { date: '2026-02-22 14:30', location: 'Riyadh', status: 'Picked Up', description: 'Package picked up' }
-    ]
-  },
-  {
-    trackingNumber: 'SMSA-2024-87654',
-    customer: 'Omar Hassan',
-    origin: 'Jeddah, SA',
-    destination: 'Medina, SA',
-    carrier: 'SMSA',
-    status: 'picked_up',
-    eta: '2026-03-01',
-    shipDate: '2026-02-28',
-    weight: '3.3 kg (25x20x18)',
-    events: [
-      { date: '2026-02-28 10:00', location: 'Jeddah', status: 'Picked Up', description: 'Package collected from sender location' },
-      { date: '2026-02-28 08:30', location: 'Online', status: 'Label Created', description: 'Shipping label generated' }
-    ]
-  },
-  {
-    trackingNumber: 'FDX-2024-12390',
-    customer: 'Noura Al-Otaibi',
-    origin: 'New York, US',
-    destination: 'Riyadh, SA',
-    carrier: 'FedEx',
-    status: 'delayed',
-    eta: '2026-03-05',
-    shipDate: '2026-02-20',
-    weight: '5.6 kg (40x30x25)',
-    events: [
-      { date: '2026-02-27 09:00', location: 'Customs, SA', status: 'Delayed', description: 'Held at customs for documentation review' },
-      { date: '2026-02-25 14:00', location: 'Dubai Hub', status: 'In Transit', description: 'Package routed through Dubai' },
-      { date: '2026-02-22 08:00', location: 'Memphis Hub', status: 'In Transit', description: 'Departed Memphis sorting facility' },
-      { date: '2026-02-20 16:00', location: 'New York', status: 'Picked Up', description: 'Package picked up from sender' }
-    ]
-  },
-  {
-    trackingNumber: 'DHL-2024-55432',
-    customer: 'Yusuf Ibrahim',
-    origin: 'Berlin, DE',
-    destination: 'Jeddah, SA',
-    carrier: 'DHL',
-    status: 'in_transit',
-    eta: '2026-03-03',
-    shipDate: '2026-02-25',
-    weight: '12.4 kg (60x40x35)',
-    events: [
-      { date: '2026-02-27 20:00', location: 'DHL Hub Leipzig', status: 'In Transit', description: 'Package in transit at Leipzig hub' },
-      { date: '2026-02-26 12:00', location: 'Berlin', status: 'Processing', description: 'Export documents processed' },
-      { date: '2026-02-25 09:30', location: 'Berlin', status: 'Picked Up', description: 'Collected from warehouse' }
-    ]
-  },
-  {
-    trackingNumber: 'UPS-2024-99871',
-    customer: 'Layla Qasim',
-    origin: 'Shanghai, CN',
-    destination: 'Dammam, SA',
-    carrier: 'UPS',
-    status: 'exception',
-    eta: '2026-03-06',
-    shipDate: '2026-02-18',
-    weight: '22.0 kg (80x60x40)',
-    events: [
-      { date: '2026-02-26 14:00', location: 'Dubai Customs', status: 'Exception', description: 'Missing commercial invoice - action required' },
-      { date: '2026-02-24 08:00', location: 'Dubai Hub', status: 'Arrived', description: 'Package arrived at Dubai transit hub' },
-      { date: '2026-02-21 16:00', location: 'Shanghai', status: 'In Transit', description: 'Departed Shanghai hub' },
-      { date: '2026-02-18 11:00', location: 'Shanghai', status: 'Picked Up', description: 'Picked up from factory' }
-    ]
-  },
-  {
-    trackingNumber: 'ARX-2024-67543',
-    customer: 'Mohammed Al-Harbi',
-    origin: 'Riyadh, SA',
-    destination: 'Kuwait City, KW',
-    carrier: 'Aramex',
-    status: 'in_transit',
-    eta: '2026-03-01',
-    shipDate: '2026-02-27',
-    weight: '6.8 kg (35x28x22)',
-    events: [
-      { date: '2026-02-28 02:00', location: 'Aramex Hub', status: 'In Transit', description: 'Package in transit to Kuwait' },
-      { date: '2026-02-27 16:00', location: 'Riyadh Hub', status: 'Processing', description: 'Package processed at sorting facility' },
-      { date: '2026-02-27 10:00', location: 'Riyadh', status: 'Picked Up', description: 'Courier collected the package' }
-    ]
-  },
-  {
-    trackingNumber: 'SMSA-2024-43210',
-    customer: 'Huda Nasser',
-    origin: 'Dammam, SA',
-    destination: 'Riyadh, SA',
-    carrier: 'SMSA',
-    status: 'delivered',
-    eta: '2026-02-27',
-    shipDate: '2026-02-25',
-    weight: '0.8 kg (10x8x5)',
-    events: [
-      { date: '2026-02-27 10:30', location: 'Riyadh', status: 'Delivered', description: 'Delivered to recipient' },
-      { date: '2026-02-27 07:00', location: 'Riyadh', status: 'Out for Delivery', description: 'With delivery agent' },
-      { date: '2026-02-26 22:00', location: 'Riyadh Hub', status: 'Arrived', description: 'Arrived at Riyadh hub' },
-      { date: '2026-02-26 06:00', location: 'Dammam Hub', status: 'In Transit', description: 'Departed Dammam' },
-      { date: '2026-02-25 14:00', location: 'Dammam', status: 'Picked Up', description: 'Picked up from sender' }
-    ]
-  },
-  {
-    trackingNumber: 'FDX-2024-24680',
-    customer: 'Abdulaziz Turki',
-    origin: 'Tokyo, JP',
-    destination: 'Riyadh, SA',
-    carrier: 'FedEx',
-    status: 'in_transit',
-    eta: '2026-03-05',
-    shipDate: '2026-02-24',
-    weight: '3.1 kg (28x22x16)',
-    events: [
-      { date: '2026-02-27 12:00', location: 'Guangzhou Hub', status: 'In Transit', description: 'Transiting through China hub' },
-      { date: '2026-02-25 20:00', location: 'Tokyo Narita', status: 'Departed', description: 'Left origin airport' },
-      { date: '2026-02-24 15:00', location: 'Tokyo', status: 'Picked Up', description: 'Collected from shipper' },
-      { date: '2026-02-24 09:00', location: 'Online', status: 'Label Created', description: 'Shipment info sent to FedEx' }
-    ]
-  },
-  {
-    trackingNumber: 'DHL-2024-13579',
-    customer: 'Reem Al-Dosari',
-    origin: 'Paris, FR',
-    destination: 'Jeddah, SA',
-    carrier: 'DHL',
-    status: 'delayed',
-    eta: '2026-03-04',
-    shipDate: '2026-02-22',
-    weight: '7.5 kg (50x35x20)',
-    events: [
-      { date: '2026-02-27 16:00', location: 'DHL Hub Leipzig', status: 'Delayed', description: 'Weather delay - rescheduled flight' },
-      { date: '2026-02-25 10:00', location: 'Paris CDG', status: 'In Transit', description: 'Departed Paris' },
-      { date: '2026-02-23 08:00', location: 'Paris', status: 'Processing', description: 'Export cleared' },
-      { date: '2026-02-22 12:00', location: 'Paris', status: 'Picked Up', description: 'Package collected' }
-    ]
-  }
-];
+const liveShipmentsFallback: Shipment[] = [];
 
 const liveShipments = ref<Shipment[]>([]);
-
-// ─── Table Shipments (18 items with varied events) ──────────
-const tableShipmentsFallbackExtra: Shipment[] = [
-  {
-    trackingNumber: 'ARX-2024-88901',
-    customer: 'Tariq Al-Mutairi',
-    origin: 'Jeddah, SA',
-    destination: 'Bahrain, BH',
-    carrier: 'Aramex',
-    status: 'delivered',
-    eta: '2026-02-25',
-    shipDate: '2026-02-21',
-    weight: '2.9 kg (22x18x14)',
-    events: [
-      { date: '2026-02-25 09:00', location: 'Bahrain', status: 'Delivered', description: 'Signed by recipient' },
-      { date: '2026-02-25 06:30', location: 'Bahrain', status: 'Out for Delivery', description: 'With driver' },
-      { date: '2026-02-24 18:00', location: 'Bahrain Hub', status: 'Arrived', description: 'Package at local hub' },
-      { date: '2026-02-22 10:00', location: 'Jeddah', status: 'Picked Up', description: 'Collected from sender' }
-    ]
-  },
-  {
-    trackingNumber: 'UPS-2024-77321',
-    customer: 'Salma Fahad',
-    origin: 'Mumbai, IN',
-    destination: 'Riyadh, SA',
-    carrier: 'UPS',
-    status: 'in_transit',
-    eta: '2026-03-03',
-    shipDate: '2026-02-26',
-    weight: '15.2 kg (55x45x30)',
-    events: [
-      { date: '2026-02-28 04:00', location: 'Dubai Hub', status: 'In Transit', description: 'Arrived at Dubai for transfer' },
-      { date: '2026-02-27 10:00', location: 'Mumbai Airport', status: 'Departed', description: 'Departed Mumbai' },
-      { date: '2026-02-26 14:00', location: 'Mumbai', status: 'Picked Up', description: 'Collected from warehouse' }
-    ]
-  },
-  {
-    trackingNumber: 'SMSA-2024-11223',
-    customer: 'Ali Al-Qahtani',
-    origin: 'Riyadh, SA',
-    destination: 'Abha, SA',
-    carrier: 'SMSA',
-    status: 'out_for_delivery',
-    eta: '2026-02-28',
-    shipDate: '2026-02-26',
-    weight: '1.2 kg (12x10x8)',
-    events: [
-      { date: '2026-02-28 08:00', location: 'Abha', status: 'Out for Delivery', description: 'Package with delivery agent' },
-      { date: '2026-02-27 23:00', location: 'Abha Hub', status: 'Arrived', description: 'Arrived at Abha distribution center' },
-      { date: '2026-02-27 06:00', location: 'Riyadh Hub', status: 'In Transit', description: 'Departed Riyadh' },
-      { date: '2026-02-26 11:00', location: 'Riyadh', status: 'Picked Up', description: 'Package collected' }
-    ]
-  },
-  {
-    trackingNumber: 'FDX-2024-55667',
-    customer: 'Maha Al-Shehri',
-    origin: 'Istanbul, TR',
-    destination: 'Dammam, SA',
-    carrier: 'FedEx',
-    status: 'picked_up',
-    eta: '2026-03-06',
-    shipDate: '2026-02-28',
-    weight: '9.4 kg (42x32x28)',
-    events: [
-      { date: '2026-02-28 15:00', location: 'Istanbul', status: 'Picked Up', description: 'Package collected from sender' },
-      { date: '2026-02-28 09:00', location: 'Online', status: 'Label Created', description: 'Shipping label generated' }
-    ]
-  },
-  {
-    trackingNumber: 'DHL-2024-44556',
-    customer: 'Badr Al-Enazi',
-    origin: 'Riyadh, SA',
-    destination: 'Amman, JO',
-    carrier: 'DHL',
-    status: 'delivered',
-    eta: '2026-02-26',
-    shipDate: '2026-02-23',
-    weight: '4.8 kg (33x25x20)',
-    events: [
-      { date: '2026-02-26 13:00', location: 'Amman', status: 'Delivered', description: 'Delivered to recipient' },
-      { date: '2026-02-26 07:00', location: 'Amman', status: 'Out for Delivery', description: 'With delivery driver' },
-      { date: '2026-02-25 20:00', location: 'Amman Hub', status: 'Arrived', description: 'At local distribution' },
-      { date: '2026-02-24 12:00', location: 'Riyadh', status: 'In Transit', description: 'Departed Riyadh hub' },
-      { date: '2026-02-23 10:00', location: 'Riyadh', status: 'Picked Up', description: 'Collected by courier' },
-      { date: '2026-02-23 08:00', location: 'Online', status: 'Label Created', description: 'Shipment created' }
-    ]
-  },
-  {
-    trackingNumber: 'ARX-2024-99087',
-    customer: 'Nadia Saleh',
-    origin: 'Casablanca, MA',
-    destination: 'Riyadh, SA',
-    carrier: 'Aramex',
-    status: 'in_transit',
-    eta: '2026-03-04',
-    shipDate: '2026-02-25',
-    weight: '6.1 kg (38x28x22)',
-    events: [
-      { date: '2026-02-27 22:00', location: 'Cairo Hub', status: 'In Transit', description: 'Transiting through Cairo' },
-      { date: '2026-02-26 08:00', location: 'Casablanca', status: 'Departed', description: 'Departed origin' },
-      { date: '2026-02-25 14:30', location: 'Casablanca', status: 'Picked Up', description: 'Collected from shipper' }
-    ]
-  }
-];
 
 const tableShipments = ref<Shipment[]>([]);
 
@@ -869,19 +571,12 @@ function isStepLineCompleted(status: string, stepIdx: number): boolean {
 }
 
 // ─── Carrier Performance Data ───────────────────────────────
-const carrierDataFallback = [
-  { name: 'FedEx', color: '#4D148C', totalShipments: 2845, onTimePercent: 96.4, avgTransitDays: 3.2, costPerShipment: 45.8, rating: 4.5 },
-  { name: 'DHL', color: '#FFCC00', totalShipments: 3120, onTimePercent: 95.1, avgTransitDays: 3.8, costPerShipment: 42.5, rating: 4.3 },
-  { name: 'UPS', color: '#351C15', totalShipments: 1960, onTimePercent: 93.7, avgTransitDays: 4.1, costPerShipment: 48.2, rating: 4.2 },
-  { name: 'Aramex', color: '#E95E2E', totalShipments: 4250, onTimePercent: 91.8, avgTransitDays: 4.5, costPerShipment: 28.9, rating: 4.0 },
-  { name: 'SMSA', color: '#0066B3', totalShipments: 5680, onTimePercent: 94.2, avgTransitDays: 2.1, costPerShipment: 18.5, rating: 4.4 }
-];
-
 const carrierData = ref<Record<string, unknown>[]>([]);
 
 // ─── Carrier Performance Trend Chart ────────────────────────
 const carrierTrendChartOption = computed(() => {
-  const monthLabels = ['Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26', 'Feb 26'];
+  const carriers = carrierData.value;
+  const names = carriers.map(c => c.name);
 
   return {
     tooltip: {
@@ -889,7 +584,7 @@ const carrierTrendChartOption = computed(() => {
       ...tooltipStyle
     },
     legend: {
-      data: ['FedEx', 'DHL', 'UPS', 'Aramex'],
+      data: names,
       textStyle: { color: '#94A3B8' },
       bottom: 0,
       icon: 'roundRect',
@@ -900,7 +595,7 @@ const carrierTrendChartOption = computed(() => {
     grid: { top: 30, right: 30, bottom: 50, left: 20, containLabel: true },
     xAxis: {
       type: 'category',
-      data: monthLabels,
+      data: [],
       boundaryGap: false,
       axisLabel: { color: '#94A3B8', fontSize: 11 },
       axisLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
@@ -915,48 +610,7 @@ const carrierTrendChartOption = computed(() => {
       splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
       axisLabel: { color: '#64748B', fontSize: 11 }
     },
-    series: [
-      {
-        name: 'FedEx',
-        type: 'line',
-        data: [94.2, 95.1, 95.8, 94.5, 96.1, 96.4],
-        smooth: true,
-        lineStyle: { width: 2.5, color: '#4D148C' },
-        itemStyle: { color: '#4D148C' },
-        symbol: 'circle',
-        symbolSize: 6
-      },
-      {
-        name: 'DHL',
-        type: 'line',
-        data: [93.8, 94.2, 93.5, 95.0, 94.8, 95.1],
-        smooth: true,
-        lineStyle: { width: 2.5, color: '#D4A800' },
-        itemStyle: { color: '#D4A800' },
-        symbol: 'circle',
-        symbolSize: 6
-      },
-      {
-        name: 'UPS',
-        type: 'line',
-        data: [92.1, 91.5, 92.8, 93.2, 93.0, 93.7],
-        smooth: true,
-        lineStyle: { width: 2.5, color: '#6B3A2A' },
-        itemStyle: { color: '#6B3A2A' },
-        symbol: 'circle',
-        symbolSize: 6
-      },
-      {
-        name: 'Aramex',
-        type: 'line',
-        data: [90.5, 89.8, 91.2, 90.9, 91.5, 91.8],
-        smooth: true,
-        lineStyle: { width: 2.5, color: '#E95E2E' },
-        itemStyle: { color: '#E95E2E' },
-        symbol: 'circle',
-        symbolSize: 6
-      }
-    ],
+    series: [] as Record<string, unknown>[],
     animationDuration: 1000,
     animationEasing: 'cubicOut'
   };
@@ -1000,7 +654,7 @@ const costComparisonChartOption = computed(() => {
       {
         name: t('shipmentTracker.domestic'),
         type: 'bar',
-        data: [32.5, 35.0, 38.2, 18.5, 12.8],
+        data: [],
         barWidth: 24,
         barGap: '30%',
         itemStyle: {
@@ -1014,7 +668,7 @@ const costComparisonChartOption = computed(() => {
       {
         name: t('shipmentTracker.international'),
         type: 'bar',
-        data: [58.9, 52.3, 62.4, 38.9, 45.2],
+        data: [],
         barWidth: 24,
         itemStyle: {
           color: new graphic.LinearGradient(0, 0, 0, 1, [
@@ -1040,72 +694,7 @@ interface ShipmentException {
   description: string;
 }
 
-const exceptions = ref<ShipmentException[]>([
-  {
-    shipmentId: 'FDX-2024-12390',
-    issueType: 'delayed',
-    reportedDate: '2026-02-27',
-    carrier: 'FedEx',
-    resolutionStatus: 'investigating',
-    description: 'Shipment held at Saudi customs due to incomplete commercial documentation. Awaiting sender to provide updated proforma invoice.'
-  },
-  {
-    shipmentId: 'UPS-2024-99871',
-    issueType: 'address_issue',
-    reportedDate: '2026-02-26',
-    carrier: 'UPS',
-    resolutionStatus: 'open',
-    description: 'Missing commercial invoice for customs clearance. Recipient notified to provide required documentation for release.'
-  },
-  {
-    shipmentId: 'DHL-2024-13579',
-    issueType: 'delayed',
-    reportedDate: '2026-02-27',
-    carrier: 'DHL',
-    resolutionStatus: 'investigating',
-    description: 'Flight cancellation due to severe weather at Leipzig hub. Package rescheduled for next available flight.'
-  },
-  {
-    shipmentId: 'ARX-2024-44821',
-    issueType: 'damaged',
-    reportedDate: '2026-02-25',
-    carrier: 'Aramex',
-    resolutionStatus: 'open',
-    description: 'Recipient reported external damage to packaging upon delivery. Contents appear intact but inspection is needed.'
-  },
-  {
-    shipmentId: 'SMSA-2024-76543',
-    issueType: 'lost',
-    reportedDate: '2026-02-24',
-    carrier: 'SMSA',
-    resolutionStatus: 'investigating',
-    description: 'Package not scanned since departure from Riyadh hub 4 days ago. Investigation opened with sorting facility.'
-  },
-  {
-    shipmentId: 'FDX-2024-88213',
-    issueType: 'address_issue',
-    reportedDate: '2026-02-26',
-    carrier: 'FedEx',
-    resolutionStatus: 'resolved',
-    description: 'Incorrect delivery address provided. Contact with sender confirmed updated address and package rerouted successfully.'
-  },
-  {
-    shipmentId: 'DHL-2024-32145',
-    issueType: 'damaged',
-    reportedDate: '2026-02-23',
-    carrier: 'DHL',
-    resolutionStatus: 'resolved',
-    description: 'Water damage reported on electronics shipment. Claim filed and refund processed to sender account.'
-  },
-  {
-    shipmentId: 'UPS-2024-65432',
-    issueType: 'delayed',
-    reportedDate: '2026-02-27',
-    carrier: 'UPS',
-    resolutionStatus: 'open',
-    description: 'Regulatory hold at origin country. Export permit pending approval from trade authority. Estimated delay of 3-5 business days.'
-  }
-]);
+const exceptions = ref<ShipmentException[]>([]);
 
 // ─── Exception Helpers ──────────────────────────────────────
 function getExceptionTagType(type: string): string {
@@ -1183,7 +772,7 @@ const exceptionTrendChartOption = computed(() => {
         name: t('shipmentTracker.delayed'),
         type: 'bar',
         stack: 'exceptions',
-        data: [5, 3, 7, 4, 6, 3, 5, 4],
+        data: [],
         barWidth: 28,
         itemStyle: { color: '#f59e0b', borderRadius: [0, 0, 0, 0] }
       },
@@ -1191,21 +780,21 @@ const exceptionTrendChartOption = computed(() => {
         name: t('shipmentTracker.damaged'),
         type: 'bar',
         stack: 'exceptions',
-        data: [2, 1, 3, 2, 1, 2, 1, 2],
+        data: [],
         itemStyle: { color: '#ef4444' }
       },
       {
         name: t('shipmentTracker.lost'),
         type: 'bar',
         stack: 'exceptions',
-        data: [0, 1, 0, 1, 0, 0, 1, 0],
+        data: [],
         itemStyle: { color: '#dc2626' }
       },
       {
         name: t('shipmentTracker.addressIssue'),
         type: 'bar',
         stack: 'exceptions',
-        data: [3, 2, 4, 1, 3, 2, 2, 3],
+        data: [],
         itemStyle: { color: '#f97316', borderRadius: [4, 4, 0, 0] }
       }
     ],
@@ -1243,17 +832,17 @@ async function loadData() {
       if (carrierMap.size > 0) {
         carrierData.value = Array.from(carrierMap.values());
       } else {
-        carrierData.value = carrierDataFallback;
+        carrierData.value = [];
       }
     } else {
-      liveShipments.value = liveShipmentsFallback;
-      tableShipments.value = [...liveShipmentsFallback, ...tableShipmentsFallbackExtra];
-      carrierData.value = carrierDataFallback;
+      liveShipments.value = [];
+      tableShipments.value = [];
+      carrierData.value = [];
     }
   } catch {
-    liveShipments.value = liveShipmentsFallback;
-    tableShipments.value = [...liveShipmentsFallback, ...tableShipmentsFallbackExtra];
-    carrierData.value = carrierDataFallback;
+    liveShipments.value = [];
+    tableShipments.value = [];
+    carrierData.value = [];
   }
   loading.value = false;
 }

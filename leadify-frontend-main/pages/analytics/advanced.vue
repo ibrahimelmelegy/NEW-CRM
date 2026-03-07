@@ -499,7 +499,7 @@ function computeFunnel() {
 
   // Map stages to counts from real data
   const stageCounts: Record<string, number> = {
-    lead: leads.length || Math.max(deals.length * 3, 50),
+    lead: leads.length,
     qualified: 0,
     opportunity: opportunities.length || 0,
     proposal: 0,
@@ -527,8 +527,8 @@ function computeFunnel() {
   const keys = ['lead', 'qualified', 'opportunity', 'proposal', 'negotiation', 'won'];
   let prev = stageCounts.lead || 0;
   keys.forEach(k => {
-    if ((stageCounts[k] || 0) === 0 || (stageCounts[k] || 0) > prev) {
-      stageCounts[k] = Math.round(prev * (0.5 + Math.random() * 0.3));
+    if ((stageCounts[k] || 0) > prev) {
+      stageCounts[k] = prev;
     }
     prev = stageCounts[k] || 0;
   });
@@ -550,10 +550,7 @@ function computeFunnel() {
 
   // Previous period: simulate ~10-20% difference
   previousFunnelStages.value = funnelStages.value.map(s => {
-    const variance = 0.8 + Math.random() * 0.4;
-    const prevCount = Math.round(s.count * variance);
-    const change = s.count > 0 ? Math.round(((s.count - prevCount) / prevCount) * 100) : 0;
-    return { ...s, count: prevCount, change };
+    return { ...s, count: 0, change: 0 };
   });
 }
 
@@ -588,7 +585,7 @@ function drillDownStage(stage: unknown) {
     company: d.company?.name || d.companyName || d.client || '-',
     value: parseFloat(d.value || d.amount || d.dealValue || 0),
     owner: d.assignedTo?.name || d.owner?.name || d.ownerName || '-',
-    daysInStage: Math.round(Math.random() * 30 + 1)
+    daysInStage: 0
   }));
 
   showDrillDown.value = true;
@@ -914,8 +911,8 @@ function computeInsights() {
     const src = l.source || l.leadSource || 'Unknown';
     sourceMap.set(src, (sourceMap.get(src) || 0) + 1);
   });
-  let topSource = 'Website';
-  let topSourcePct = 42;
+  let topSource = '-';
+  let topSourcePct = 0;
   if (sourceMap.size > 0) {
     const sorted = Array.from(sourceMap.entries()).sort((a, b) => b[1] - a[1]);
     topSource = sorted[0]![0];
@@ -934,26 +931,26 @@ function computeInsights() {
     {
       label: t('advancedAnalytics.revenueUp'),
       value: formatCurrency(totalRevenue),
-      change: '+23%',
-      trend: 'up'
+      change: totalRevenue > 0 ? '' : '0%',
+      trend: totalRevenue > 0 ? 'up' : 'down'
     },
     {
       label: t('advancedAnalytics.winRateImproved'),
       value: `${winRate}%`,
-      change: `${winRate > 28 ? '+' : ''}${winRate - 28}%`,
-      trend: winRate >= 28 ? 'up' : 'down'
+      change: `${winRate}%`,
+      trend: winRate > 0 ? 'up' : 'down'
     },
     {
       label: t('advancedAnalytics.topLeadSource'),
       value: `${topSource} (${topSourcePct}%)`,
-      change: `+${Math.round(topSourcePct * 0.15)}%`,
-      trend: 'up'
+      change: `${topSourcePct}%`,
+      trend: topSourcePct > 0 ? 'up' : 'down'
     },
     {
       label: t('advancedAnalytics.avgDealCycle'),
       value: `${avgCycle} ${t('advancedAnalytics.days')}`,
-      change: avgCycle > 20 ? '-3 days' : '+2 days',
-      trend: avgCycle > 20 ? 'up' : 'down'
+      change: `${avgCycle} ${t('advancedAnalytics.days')}`,
+      trend: avgCycle > 0 ? 'up' : 'down'
     }
   ];
 }

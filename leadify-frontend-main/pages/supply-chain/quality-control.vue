@@ -398,163 +398,51 @@ const tooltipStyle = {
 };
 
 // ─── KPI Cards ──────────────────────────────────────────────
-const kpiCards = computed(() => [
-  {
-    label: t('qualityControl.passRate'),
-    value: '96.4%',
-    icon: 'ph:check-circle-bold',
-    color: '#22c55e',
-    trend: 2.1
-  },
-  {
-    label: t('qualityControl.openDefects'),
-    value: '23',
-    icon: 'ph:bug-bold',
-    color: '#ef4444',
-    trend: -5.3
-  },
-  {
-    label: t('qualityControl.inspectionsToday'),
-    value: '18',
-    icon: 'ph:clipboard-text-bold',
-    color: '#3b82f6',
-    trend: 12.5
-  },
-  {
-    label: t('qualityControl.avgResolutionTime'),
-    value: '2.4 days',
-    icon: 'ph:clock-bold',
-    color: '#f59e0b',
-    trend: -8.7
-  }
-]);
+const kpiCards = computed(() => {
+  const records = inspectionRecords.value;
+  const passed = records.filter(r => r.status === 'Passed').length;
+  const passRate = records.length > 0 ? Math.round((passed / records.length) * 1000) / 10 : 0;
+  const openDef = defectRecords.value.filter(d => d.status === 'Open' || d.status === 'In Progress').length;
+  const today = new Date().toISOString().split('T')[0];
+  const todayCount = records.filter(r => r.date === today).length;
+
+  return [
+    {
+      label: t('qualityControl.passRate'),
+      value: `${passRate}%`,
+      icon: 'ph:check-circle-bold',
+      color: '#22c55e',
+      trend: 0
+    },
+    {
+      label: t('qualityControl.openDefects'),
+      value: openDef.toString(),
+      icon: 'ph:bug-bold',
+      color: '#ef4444',
+      trend: 0
+    },
+    {
+      label: t('qualityControl.inspectionsToday'),
+      value: todayCount.toString(),
+      icon: 'ph:clipboard-text-bold',
+      color: '#3b82f6',
+      trend: 0
+    },
+    {
+      label: t('qualityControl.avgResolutionTime'),
+      value: '0 days',
+      icon: 'ph:clock-bold',
+      color: '#f59e0b',
+      trend: 0
+    }
+  ];
+});
 
 // ─── Inspector List ─────────────────────────────────────────
-const inspectorList = ['Ahmed Al-Rashid', 'Sarah Johnson', 'Omar Khalil', 'Maria Santos', 'James Chen', 'Fatima Al-Sayed'];
+const inspectorList: string[] = [];
 
 // ─── Inspection Records (fallback mock data) ────────────────
-const inspectionRecordsFallback = [
-  {
-    id: 'INS-2026-001',
-    product: 'Steel Beam Grade A',
-    batch: 'BTH-4521',
-    inspector: 'Ahmed Al-Rashid',
-    type: 'Incoming',
-    status: 'Passed',
-    date: '2026-02-28',
-    score: 98
-  },
-  {
-    id: 'INS-2026-002',
-    product: 'Copper Wire 12mm',
-    batch: 'BTH-4522',
-    inspector: 'Sarah Johnson',
-    type: 'In-Process',
-    status: 'Passed',
-    date: '2026-02-28',
-    score: 95
-  },
-  {
-    id: 'INS-2026-003',
-    product: 'Hydraulic Pump Unit',
-    batch: 'BTH-4523',
-    inspector: 'Omar Khalil',
-    type: 'Final',
-    status: 'Failed',
-    date: '2026-02-27',
-    score: 62
-  },
-  {
-    id: 'INS-2026-004',
-    product: 'LED Panel 60W',
-    batch: 'BTH-4524',
-    inspector: 'Maria Santos',
-    type: 'Incoming',
-    status: 'Passed',
-    date: '2026-02-27',
-    score: 97
-  },
-  {
-    id: 'INS-2026-005',
-    product: 'Carbon Fiber Sheet',
-    batch: 'BTH-4525',
-    inspector: 'James Chen',
-    type: 'Random',
-    status: 'Pending',
-    date: '2026-02-27',
-    score: 0
-  },
-  {
-    id: 'INS-2026-006',
-    product: 'Aluminum Extrusion',
-    batch: 'BTH-4526',
-    inspector: 'Fatima Al-Sayed',
-    type: 'In-Process',
-    status: 'Passed',
-    date: '2026-02-26',
-    score: 91
-  },
-  {
-    id: 'INS-2026-007',
-    product: 'Titanium Bolts M10',
-    batch: 'BTH-4527',
-    inspector: 'Ahmed Al-Rashid',
-    type: 'Final',
-    status: 'Passed',
-    date: '2026-02-26',
-    score: 99
-  },
-  {
-    id: 'INS-2026-008',
-    product: 'PVC Insulation Roll',
-    batch: 'BTH-4528',
-    inspector: 'Sarah Johnson',
-    type: 'Incoming',
-    status: 'Failed',
-    date: '2026-02-25',
-    score: 54
-  },
-  {
-    id: 'INS-2026-009',
-    product: 'Stainless Steel Pipe',
-    batch: 'BTH-4529',
-    inspector: 'Omar Khalil',
-    type: 'Random',
-    status: 'Passed',
-    date: '2026-02-25',
-    score: 88
-  },
-  {
-    id: 'INS-2026-010',
-    product: 'Ceramic Bearings Kit',
-    batch: 'BTH-4530',
-    inspector: 'Maria Santos',
-    type: 'In-Process',
-    status: 'Passed',
-    date: '2026-02-24',
-    score: 94
-  },
-  {
-    id: 'INS-2026-011',
-    product: 'Glass Fiber Composite',
-    batch: 'BTH-4531',
-    inspector: 'James Chen',
-    type: 'Final',
-    status: 'Pending',
-    date: '2026-02-24',
-    score: 0
-  },
-  {
-    id: 'INS-2026-012',
-    product: 'Rubber Gasket Set',
-    batch: 'BTH-4532',
-    inspector: 'Fatima Al-Sayed',
-    type: 'Incoming',
-    status: 'Passed',
-    date: '2026-02-23',
-    score: 96
-  }
-];
+const inspectionRecordsFallback: Record<string, unknown>[] = [];
 
 const inspectionRecords = ref<Record<string, unknown>[]>([]);
 
@@ -584,119 +472,12 @@ const filteredInspections = computed(() => {
 });
 
 // ─── Defect Records (mock with API fallback) ────────────────
-const defectRecordsFallback = [
-  {
-    id: 'DEF-001',
-    product: 'Hydraulic Pump Unit',
-    defectType: 'Seal Leakage',
-    severity: 'Critical',
-    reportedBy: 'Omar Khalil',
-    assignedTo: 'Ahmed Al-Rashid',
-    status: 'Open',
-    date: '2026-02-27',
-    images: 3
-  },
-  {
-    id: 'DEF-002',
-    product: 'PVC Insulation Roll',
-    defectType: 'Surface Contamination',
-    severity: 'Major',
-    reportedBy: 'Sarah Johnson',
-    assignedTo: 'James Chen',
-    status: 'In Progress',
-    date: '2026-02-25',
-    images: 2
-  },
-  {
-    id: 'DEF-003',
-    product: 'Steel Beam Grade A',
-    defectType: 'Dimensional Deviation',
-    severity: 'Minor',
-    reportedBy: 'Ahmed Al-Rashid',
-    assignedTo: 'Omar Khalil',
-    status: 'Resolved',
-    date: '2026-02-22',
-    images: 1
-  },
-  {
-    id: 'DEF-004',
-    product: 'Copper Wire 12mm',
-    defectType: 'Tensile Strength Failure',
-    severity: 'Critical',
-    reportedBy: 'Maria Santos',
-    assignedTo: 'Sarah Johnson',
-    status: 'In Progress',
-    date: '2026-02-26',
-    images: 4
-  },
-  {
-    id: 'DEF-005',
-    product: 'LED Panel 60W',
-    defectType: 'Color Temperature Drift',
-    severity: 'Minor',
-    reportedBy: 'James Chen',
-    assignedTo: 'Fatima Al-Sayed',
-    status: 'Open',
-    date: '2026-02-28',
-    images: 0
-  },
-  {
-    id: 'DEF-006',
-    product: 'Carbon Fiber Sheet',
-    defectType: 'Delamination',
-    severity: 'Major',
-    reportedBy: 'Fatima Al-Sayed',
-    assignedTo: 'Maria Santos',
-    status: 'Open',
-    date: '2026-02-27',
-    images: 5
-  },
-  {
-    id: 'DEF-007',
-    product: 'Aluminum Extrusion',
-    defectType: 'Surface Scratch',
-    severity: 'Minor',
-    reportedBy: 'Omar Khalil',
-    assignedTo: 'James Chen',
-    status: 'Resolved',
-    date: '2026-02-20',
-    images: 2
-  },
-  {
-    id: 'DEF-008',
-    product: 'Rubber Gasket Set',
-    defectType: 'Hardness Out of Spec',
-    severity: 'Major',
-    reportedBy: 'Ahmed Al-Rashid',
-    assignedTo: 'Omar Khalil',
-    status: 'In Progress',
-    date: '2026-02-24',
-    images: 1
-  },
-  {
-    id: 'DEF-009',
-    product: 'Stainless Steel Pipe',
-    defectType: 'Weld Porosity',
-    severity: 'Critical',
-    reportedBy: 'Sarah Johnson',
-    assignedTo: 'Ahmed Al-Rashid',
-    status: 'Open',
-    date: '2026-02-28',
-    images: 3
-  }
-];
+const defectRecordsFallback: Record<string, unknown>[] = [];
 
 const defectRecords = ref<Record<string, unknown>[]>([]);
 
 // ─── Checklist Templates (mock with API fallback) ───────────
-const checklistTemplatesFallback = [
-  { name: 'Incoming Material Inspection', category: 'Manufacturing', itemCount: 15, lastUsed: '2026-02-28', timesUsed: 142, color: '#3b82f6' },
-  { name: 'Final Product QA', category: 'Manufacturing', itemCount: 22, lastUsed: '2026-02-27', timesUsed: 98, color: '#22c55e' },
-  { name: 'Packaging Integrity Check', category: 'Packaging', itemCount: 10, lastUsed: '2026-02-26', timesUsed: 76, color: '#f59e0b' },
-  { name: 'Safety Compliance Audit', category: 'Safety', itemCount: 28, lastUsed: '2026-02-25', timesUsed: 34, color: '#ef4444' },
-  { name: 'Environmental Standards', category: 'Environmental', itemCount: 18, lastUsed: '2026-02-22', timesUsed: 21, color: '#8b5cf6' },
-  { name: 'Regulatory Compliance', category: 'Compliance', itemCount: 32, lastUsed: '2026-02-20', timesUsed: 45, color: '#06b6d4' }
-];
+const checklistTemplatesFallback: Record<string, unknown>[] = [];
 
 const checklistTemplates = ref<Record<string, unknown>[]>([]);
 
@@ -738,7 +519,7 @@ const defectTrendChartOption = computed(() => {
     d.setDate(d.getDate() - i);
     const label = `${d.getMonth() + 1}/${d.getDate()}`;
     days.push(label);
-    values.push(Math.floor(Math.random() * 6) + 1);
+    values.push(0);
   }
 
   return {
@@ -812,13 +593,7 @@ const defectCategoryChartOption = computed(() => {
           label: { show: true, fontSize: 14, fontWeight: 'bold', color: '#fff' },
           itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0,0,0,0.3)' }
         },
-        data: [
-          { value: 8, name: t('qualityControl.surfaceDefects'), itemStyle: { color: '#ef4444' } },
-          { value: 6, name: t('qualityControl.dimensionalIssues'), itemStyle: { color: '#f59e0b' } },
-          { value: 4, name: t('qualityControl.materialFlaws'), itemStyle: { color: '#3b82f6' } },
-          { value: 3, name: t('qualityControl.mechanicalFailure'), itemStyle: { color: '#8b5cf6' } },
-          { value: 2, name: t('qualityControl.electricalDefects'), itemStyle: { color: '#22c55e' } }
-        ],
+        data: [],
         animationDuration: 1200,
         animationEasing: 'cubicOut'
       }
@@ -837,7 +612,7 @@ const passRateTrendChartOption = computed(() => {
     d.setDate(d.getDate() - i);
     const label = `${d.getMonth() + 1}/${d.getDate()}`;
     days.push(label);
-    values.push(Math.round((92 + Math.random() * 7) * 10) / 10);
+    values.push(0);
   }
 
   return {
@@ -905,9 +680,9 @@ const passRateTrendChartOption = computed(() => {
 
 // ─── Chart: Defect Pareto (bar + cumulative line, dual y-axis) ──
 const defectParetoChartOption = computed(() => {
-  const categories = ['Surface Defects', 'Dimensional', 'Material Flaws', 'Mechanical', 'Electrical', 'Contamination', 'Packaging'];
-  const counts = [34, 28, 19, 14, 9, 6, 3];
-  const total = counts.reduce((s, v) => s + v, 0);
+  const categories: string[] = [];
+  const counts: number[] = [];
+  const total = counts.reduce((s, v) => s + v, 0) || 1;
   const cumulative: number[] = [];
   let running = 0;
   counts.forEach(c => {
@@ -995,9 +770,9 @@ const defectParetoChartOption = computed(() => {
 
 // ─── Chart: Inspector Performance (horizontal bar) ──────────
 const inspectorPerformanceChartOption = computed(() => {
-  const inspectors = ['Fatima Al-Sayed', 'Ahmed Al-Rashid', 'Maria Santos', 'James Chen', 'Sarah Johnson', 'Omar Khalil'];
-  const passRates = [98.2, 97.5, 96.8, 95.4, 94.1, 92.7];
-  const inspectionsConducted = [145, 198, 167, 132, 178, 156];
+  const inspectors: string[] = [];
+  const passRates: number[] = [];
+  const inspectionsConducted: number[] = [];
 
   return {
     tooltip: {
@@ -1091,7 +866,7 @@ const qualityCostChartOption = computed(() => {
           show: true,
           position: 'center',
           formatter: () => {
-            return `{total|$184K}\n{label|${t('qualityControl.totalCost')}}`;
+            return `{total|$0}\n{label|${t('qualityControl.totalCost')}}`;
           },
           rich: {
             total: { fontSize: 22, fontWeight: 'bold', color: '#fff', lineHeight: 30 },
@@ -1102,11 +877,7 @@ const qualityCostChartOption = computed(() => {
           label: { show: true },
           itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0,0,0,0.3)' }
         },
-        data: [
-          { value: 52000, name: t('qualityControl.prevention'), itemStyle: { color: '#22c55e' } },
-          { value: 78000, name: t('qualityControl.appraisal'), itemStyle: { color: '#3b82f6' } },
-          { value: 54000, name: t('qualityControl.failure'), itemStyle: { color: '#ef4444' } }
-        ],
+        data: [],
         animationDuration: 1200,
         animationEasing: 'cubicOut'
       }
@@ -1168,17 +939,17 @@ async function loadData() {
     if (inspRes.success && Array.isArray(inspRes.body)) {
       inspectionRecords.value = inspRes.body;
     } else {
-      inspectionRecords.value = inspectionRecordsFallback;
+      inspectionRecords.value = [];
     }
   } catch {
-    inspectionRecords.value = inspectionRecordsFallback;
+    inspectionRecords.value = [];
   }
 
   // Defect records: keep as mock (no dedicated API)
-  defectRecords.value = defectRecordsFallback;
+  defectRecords.value = [];
 
   // Checklist templates: keep as mock (no dedicated API)
-  checklistTemplates.value = checklistTemplatesFallback;
+  checklistTemplates.value = [];
 
   loading.value = false;
 }

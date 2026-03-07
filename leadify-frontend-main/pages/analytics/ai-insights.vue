@@ -311,48 +311,37 @@ definePageMeta({ title: 'AI Insights Dashboard' });
 
 const { t } = useI18n();
 
-// ─── State ──────────────────────────────────────────────────
 const loading = ref(true);
 const activeTab = ref('predictions');
 const dateRange = ref<[Date, Date] | null>(null);
 
-// Raw data
 const rawDeals = ref<Record<string, unknown>[]>([]);
 const rawLeads = ref<Record<string, unknown>[]>([]);
 
-// Filters
 const churnFilter = ref('all');
 const anomalyStatusFilter = ref('all');
 const recCategoryFilter = ref('all');
 
-// Dialog
 const showRecDialog = ref(false);
 const selectedRec = ref<Record<string, unknown> | null>(null);
 
-// ─── Derived AI Data ────────────────────────────────────────
-const predictionAccuracy = ref(87.3);
-const anomaliesDetected = ref(12);
-const recommendationsGenerated = ref(34);
-const actionsTaken = ref(21);
+const predictionAccuracy = ref(0);
+const anomaliesDetected = ref(0);
+const recommendationsGenerated = ref(0);
+const actionsTaken = ref(0);
 
-// Churn data
 const churnData = ref<Record<string, unknown>[]>([]);
-
-// Win probability
 const winProbabilityGroups = ref<Record<string, unknown>[]>([]);
-
-// Anomaly data
 const anomalyLog = ref<Record<string, unknown>[]>([]);
-const severitySummary = ref<Record<string, unknown>[]>([]);
-
-// Recommendations
+const severitySummary = ref<Record<string, unknown>[]>([
+  { label: t('aiInsights.critical'), count: 0, icon: 'ph:fire-bold', color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.12)' },
+  { label: t('aiInsights.warning'), count: 0, icon: 'ph:warning-bold', color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.12)' },
+  { label: t('aiInsights.informational'), count: 0, icon: 'ph:info-bold', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.12)' }
+]);
 const recommendations = ref<Record<string, unknown>[]>([]);
 const pendingRecommendations = computed(() => recommendations.value.filter(r => !r.dismissed && !r.applied).length);
-
-// Model performance
 const modelComparisonData = ref<Record<string, unknown>[]>([]);
 
-// ─── Chart Tooltip Style ────────────────────────────────────
 const tooltipStyle = {
   backgroundColor: 'rgba(30, 30, 45, 0.9)',
   borderColor: 'rgba(120, 73, 255, 0.3)',
@@ -362,7 +351,6 @@ const tooltipStyle = {
   extraCssText: 'backdrop-filter: blur(12px); border-radius: 12px;'
 };
 
-// ─── KPI Cards ──────────────────────────────────────────────
 const kpiCards = computed(() => [
   {
     label: t('aiInsights.predictionAccuracy'),
@@ -398,7 +386,6 @@ const kpiCards = computed(() => [
   }
 ]);
 
-// ─── Helpers ────────────────────────────────────────────────
 function formatCurrency(amount: number): string {
   if (!amount && amount !== 0) return '$0';
   return new Intl.NumberFormat('en-US', {
@@ -450,7 +437,6 @@ function getFilteredDeals(): Record<string, unknown>[] {
   });
 }
 
-// ─── Data Loading ───────────────────────────────────────────
 async function loadData() {
   loading.value = true;
   try {
@@ -474,9 +460,6 @@ function computeAll() {
   computeKPIs();
   computeWinProbability();
   computeChurnRisk();
-  computeAnomalies();
-  computeRecommendations();
-  computeModelPerformance();
 }
 
 function onDateChange() {
@@ -487,7 +470,6 @@ function refreshData() {
   loadData();
 }
 
-// ─── Compute KPIs ───────────────────────────────────────────
 function computeKPIs() {
   const deals = getFilteredDeals();
   const wonDeals = deals.filter((d) => {
@@ -496,39 +478,52 @@ function computeKPIs() {
   });
   const totalDeals = deals.length;
 
-  // Derive prediction accuracy from win rate consistency
-  const winRate = totalDeals > 0 ? (wonDeals.length / totalDeals) * 100 : 50;
-  predictionAccuracy.value = parseFloat(Math.min(95, Math.max(72, 80 + winRate * 0.2)).toFixed(1));
+  if (totalDeals === 0) {
+    predictionAccuracy.value = 0;
+    anomaliesDetected.value = 0;
+    recommendationsGenerated.value = 0;
+    actionsTaken.value = 0;
+    return;
+  }
 
-  // Derive anomalies from data variance
+  const winRate = (wonDeals.length / totalDeals) * 100;
+  predictionAccuracy.value = parseFloat(Math.min(95, Math.max(50, 50 + winRate * 0.5)).toFixed(1));
+
   const values = deals.map((d) => parseFloat(d.value || d.amount || d.dealValue || 0)).filter(v => v > 0);
   const mean = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
   const variance = values.length > 0 ? values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length : 0;
   const stdDev = Math.sqrt(variance);
-  anomaliesDetected.value = Math.max(3, values.filter(v => Math.abs(v - mean) > stdDev * 1.5).length + Math.floor(Math.random() * 5));
+  anomaliesDetected.value = values.filter(v => Math.abs(v - mean) > stdDev * 1.5).length;
 
-  // Recommendations based on data patterns
-  recommendationsGenerated.value = Math.max(15, Math.floor(deals.length * 0.4) + Math.floor(rawLeads.value.length * 0.2));
-  actionsTaken.value = Math.floor(recommendationsGenerated.value * (0.55 + Math.random() * 0.15));
+  recommendationsGenerated.value = 0;
+  actionsTaken.value = 0;
 }
 
-// ─── Win Probability ────────────────────────────────────────
 function computeWinProbability() {
   const deals = getFilteredDeals();
+  if (deals.length === 0) {
+    winProbabilityGroups.value = [
+      { label: t('aiInsights.highProbability'), deals: [], color: '#22c55e', tagType: 'success' },
+      { label: t('aiInsights.mediumProbability'), deals: [], color: '#f59e0b', tagType: 'warning' },
+      { label: t('aiInsights.lowProbability'), deals: [], color: '#ef4444', tagType: 'danger' }
+    ];
+    return;
+  }
+
   const scoredDeals = deals.map((d) => {
     const value = parseFloat(d.value || d.amount || d.dealValue || 0);
     const stage = (d.status || d.stage || d.dealStage || '').toLowerCase();
     const name = d.name || d.title || d.dealName || 'Untitled Deal';
-    const company = d.company?.name || d.companyName || d.client || 'Unknown';
+    const company = d.company?.name || d.companyName || d.client || '';
 
-    // Calculate probability based on stage progression
     let probability = 50;
     if (stage.includes('won') || stage.includes('closed')) probability = 95;
-    else if (stage.includes('negoti')) probability = 75 + Math.floor(Math.random() * 15);
-    else if (stage.includes('propos')) probability = 55 + Math.floor(Math.random() * 20);
-    else if (stage.includes('qualif')) probability = 35 + Math.floor(Math.random() * 20);
-    else if (stage.includes('opportun')) probability = 45 + Math.floor(Math.random() * 20);
-    else probability = 15 + Math.floor(Math.random() * 30);
+    else if (stage.includes('negoti')) probability = 80;
+    else if (stage.includes('propos')) probability = 60;
+    else if (stage.includes('qualif')) probability = 40;
+    else if (stage.includes('opportun')) probability = 50;
+    else if (stage.includes('lost')) probability = 5;
+    else probability = 25;
 
     return { name, company, value, probability };
   });
@@ -544,16 +539,20 @@ function computeWinProbability() {
   ];
 }
 
-// ─── Churn Risk ─────────────────────────────────────────────
 function computeChurnRisk() {
   const deals = getFilteredDeals();
   const leads = rawLeads.value;
   const now = new Date();
 
-  // Build customer profiles from deals and leads
-  const customers = new Map<string, unknown>();
+  if (deals.length === 0 && leads.length === 0) {
+    churnData.value = [];
+    return;
+  }
+
+  const customers = new Map<string, Record<string, unknown>>();
   deals.forEach((d) => {
-    const name = d.company?.name || d.companyName || d.client || d.name || 'Unknown';
+    const name = d.company?.name || d.companyName || d.client || d.name || '';
+    if (!name) return;
     if (!customers.has(name)) {
       customers.set(name, {
         customerName: name,
@@ -563,23 +562,21 @@ function computeChurnRisk() {
       });
     }
     const c = customers.get(name)!;
-    c.value += parseFloat(d.value || d.amount || d.dealValue || 0);
+    (c as Record<string, unknown>).value = ((c as Record<string, unknown>).value as number) + parseFloat(d.value || d.amount || d.dealValue || 0);
     const date = new Date(d.updatedAt || d.updated_at || d.createdAt || d.created_at || Date.now());
-    if (date > c.lastDate) c.lastDate = date;
+    if (date > (c.lastDate as Date)) c.lastDate = date;
   });
 
-  // If not enough real data, supplement with leads
-  if (customers.size < 5) {
+  if (customers.size < 3) {
     leads.slice(0, 10).forEach((l) => {
-      const name = l.company || l.name || l.fullName || 'Lead Customer';
-      if (!customers.has(name)) {
-        customers.set(name, {
-          customerName: name,
-          value: parseFloat(l.value || l.estimatedValue || '5000'),
-          lastDate: new Date(l.updatedAt || l.updated_at || l.createdAt || l.created_at || Date.now()),
-          status: l.status || ''
-        });
-      }
+      const name = l.company || l.name || l.fullName || '';
+      if (!name || customers.has(name)) return;
+      customers.set(name, {
+        customerName: name,
+        value: parseFloat(l.value || l.estimatedValue || '0'),
+        lastDate: new Date(l.updatedAt || l.updated_at || l.createdAt || l.created_at || Date.now()),
+        status: l.status || ''
+      });
     });
   }
 
@@ -594,21 +591,22 @@ function computeChurnRisk() {
 
   churnData.value = Array.from(customers.values())
     .map(c => {
-      const daysSinceActivity = Math.floor((now.getTime() - c.lastDate.getTime()) / (1000 * 60 * 60 * 24));
-      const riskScore = Math.min(98, Math.max(5, Math.floor(daysSinceActivity * 1.5 + Math.random() * 30)));
-      const monthlyRevenue = Math.round(c.value / 12);
+      const daysSinceActivity = Math.floor((now.getTime() - (c.lastDate as Date).getTime()) / (1000 * 60 * 60 * 24));
+      const riskScore = Math.min(98, Math.max(5, Math.floor(daysSinceActivity * 1.5)));
+      const monthlyRevenue = Math.round((c.value as number) / 12);
       const predictedChurnDate = new Date(now.getTime() + (100 - riskScore) * 24 * 60 * 60 * 1000);
+      const actionIndex = daysSinceActivity % actions.length;
 
       return {
         customerName: c.customerName,
         riskScore,
-        monthlyRevenue: Math.max(monthlyRevenue, 500),
+        monthlyRevenue,
         lastActivity: `${daysSinceActivity}d ago`,
         predictedChurnDate: predictedChurnDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
-        action: actions[Math.floor(Math.random() * actions.length)]
+        action: actions[actionIndex]
       };
     })
-    .sort((a, b) => b.riskScore - a.riskScore)
+    .sort((a, b) => (b.riskScore as number) - (a.riskScore as number))
     .slice(0, 15);
 }
 
@@ -621,7 +619,6 @@ const filteredChurnData = computed(() => {
   });
 });
 
-// ─── Revenue Forecast Chart ─────────────────────────────────
 const revenueForecastOption = computed(() => {
   const deals = getFilteredDeals();
   const now = new Date();
@@ -631,7 +628,6 @@ const revenueForecastOption = computed(() => {
   const upperBand: (number | null)[] = [];
   const lowerBand: (number | null)[] = [];
 
-  // Past 6 months actual data
   const monthMap = new Map<string, number>();
   for (let i = 8; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -651,9 +647,8 @@ const revenueForecastOption = computed(() => {
     pastValues.length > 1
       ? pastValues.slice(1).reduce((acc, v, i) => acc + ((pastValues[i] || 0) > 0 ? (v - pastValues[i]!) / pastValues[i]! : 0), 0) /
         (pastValues.length - 1)
-      : 0.05;
+      : 0;
 
-  // Build past months
   sorted.forEach(([key, val]) => {
     months.push(getMonthLabel(key));
     actual.push(val);
@@ -662,20 +657,20 @@ const revenueForecastOption = computed(() => {
     lowerBand.push(null);
   });
 
-  // Future 6 months forecast
-  let lastVal = pastValues[pastValues.length - 1] || 10000;
-  for (let i = 1; i <= 6; i++) {
-    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
-    months.push(getMonthLabel(getMonthKey(d)));
-    actual.push(null);
-    const projected = Math.round(lastVal * (1 + avgGrowth + (Math.random() - 0.5) * 0.03));
-    forecast.push(projected);
-    upperBand.push(Math.round(projected * (1.12 + i * 0.02)));
-    lowerBand.push(Math.round(projected * (0.88 - i * 0.02)));
-    lastVal = projected;
+  let lastVal = pastValues[pastValues.length - 1] || 0;
+  if (lastVal > 0) {
+    for (let i = 1; i <= 6; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      months.push(getMonthLabel(getMonthKey(d)));
+      actual.push(null);
+      const projected = Math.round(lastVal * (1 + avgGrowth));
+      forecast.push(projected);
+      upperBand.push(Math.round(projected * (1.12 + i * 0.02)));
+      lowerBand.push(Math.round(projected * (0.88 - i * 0.02)));
+      lastVal = projected;
+    }
   }
 
-  // Bridge point: connect actual to forecast
   const lastActualIdx = actual.findLastIndex(v => v !== null);
   if (lastActualIdx >= 0 && lastActualIdx < actual.length - 1) {
     forecast[lastActualIdx] = actual[lastActualIdx] ?? null;
@@ -778,99 +773,18 @@ const revenueForecastOption = computed(() => {
   };
 });
 
-// ─── Anomalies ──────────────────────────────────────────────
-function computeAnomalies() {
-  const deals = getFilteredDeals();
-  const now = new Date();
-  const metricNames = [
-    'Deal Close Rate',
-    'Lead Conversion',
-    'Avg Deal Size',
-    'Response Time',
-    'Pipeline Velocity',
-    'Email Open Rate',
-    'Meeting No-shows',
-    'Revenue per Rep',
-    'Customer Satisfaction',
-    'Lead Quality Score',
-    'Proposal Win Rate',
-    'Call Duration'
-  ];
-  const severities: ('critical' | 'warning' | 'info')[] = ['critical', 'warning', 'info'];
-  const statuses: ('new' | 'investigating' | 'resolved')[] = ['new', 'investigating', 'resolved'];
-
-  // Generate anomaly entries based on data variance
-  const anomalyEntries: Record<string, unknown>[] = [];
-  const count = Math.max(8, Math.min(20, anomaliesDetected.value + 5));
-
-  for (let i = 0; i < count; i++) {
-    const daysAgo = Math.floor(Math.random() * 30);
-    const detectedDate = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
-    const expected = Math.round(50 + Math.random() * 200);
-    const deviation = (Math.random() - 0.3) * 80;
-    const actualVal = Math.round(expected + (expected * deviation) / 100);
-    const deviationPct = parseFloat((((actualVal - expected) / expected) * 100).toFixed(1));
-    const severity = Math.abs(deviationPct) > 40 ? 'critical' : Math.abs(deviationPct) > 20 ? 'warning' : 'info';
-
-    anomalyEntries.push({
-      detectedDate: detectedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
-      metricName: metricNames[i % metricNames.length],
-      expectedValue: expected.toLocaleString(),
-      actualValue: actualVal.toLocaleString(),
-      deviation,
-      deviationPct,
-      severity,
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-      timestamp: detectedDate.getTime(),
-      deviationMagnitude: Math.abs(deviation)
-    });
-  }
-
-  anomalyLog.value = anomalyEntries.sort((a, b) => b.timestamp - a.timestamp);
-
-  // Severity summary
-  const criticalCount = anomalyEntries.filter(a => a.severity === 'critical').length;
-  const warningCount = anomalyEntries.filter(a => a.severity === 'warning').length;
-  const infoCount = anomalyEntries.filter(a => a.severity === 'info').length;
-
-  severitySummary.value = [
-    {
-      label: t('aiInsights.critical'),
-      count: criticalCount,
-      icon: 'ph:fire-bold',
-      color: '#ef4444',
-      bgColor: 'rgba(239, 68, 68, 0.12)'
-    },
-    {
-      label: t('aiInsights.warning'),
-      count: warningCount,
-      icon: 'ph:warning-bold',
-      color: '#f59e0b',
-      bgColor: 'rgba(245, 158, 11, 0.12)'
-    },
-    {
-      label: t('aiInsights.informational'),
-      count: infoCount,
-      icon: 'ph:info-bold',
-      color: '#3b82f6',
-      bgColor: 'rgba(59, 130, 246, 0.12)'
-    }
-  ];
-}
-
 const filteredAnomalyLog = computed(() => {
   if (anomalyStatusFilter.value === 'all') return anomalyLog.value;
   return anomalyLog.value.filter(a => a.status === anomalyStatusFilter.value);
 });
 
-// ─── Anomaly Scatter Chart ──────────────────────────────────
 const anomalyScatterOption = computed(() => {
   const criticalData: number[][] = [];
   const warningData: number[][] = [];
   const infoData: number[][] = [];
 
   anomalyLog.value.forEach((a, idx) => {
-    const point = [idx, Math.abs(a.deviationPct), Math.abs(a.deviationPct) * 0.8 + 5];
+    const point = [idx, Math.abs(a.deviationPct as number), Math.abs(a.deviationPct as number) * 0.8 + 5];
     if (a.severity === 'critical') criticalData.push(point);
     else if (a.severity === 'warning') warningData.push(point);
     else infoData.push(point);
@@ -882,7 +796,7 @@ const anomalyScatterOption = computed(() => {
       formatter: (params: unknown) => {
         const a = anomalyLog.value[params.data[0]];
         if (!a) return '';
-        return `<strong>${a.metricName}</strong><br/>${t('aiInsights.deviation')}: ${a.deviationPct > 0 ? '+' : ''}${a.deviationPct}%<br/>${t('aiInsights.severity')}: ${a.severity}<br/>${t('aiInsights.detected')}: ${a.detectedDate}`;
+        return `<strong>${a.metricName}</strong><br/>${t('aiInsights.deviation')}: ${(a.deviationPct as number) > 0 ? '+' : ''}${a.deviationPct}%<br/>${t('aiInsights.severity')}: ${a.severity}<br/>${t('aiInsights.detected')}: ${a.detectedDate}`;
       }
     },
     legend: {
@@ -936,97 +850,6 @@ const anomalyScatterOption = computed(() => {
   };
 });
 
-// ─── Recommendations ────────────────────────────────────────
-function computeRecommendations() {
-  const deals = getFilteredDeals();
-  const leads = rawLeads.value;
-  const priorities: ('urgent' | 'high' | 'medium')[] = ['urgent', 'high', 'medium'];
-  const categories: ('cross-sell' | 'upsell' | 'engagement' | 'retention')[] = ['cross-sell', 'upsell', 'engagement', 'retention'];
-
-  const recTemplates = [
-    {
-      title: t('aiInsights.recCrossSellTitle'),
-      description: t('aiInsights.recCrossSellDesc'),
-      category: 'cross-sell',
-      revenueImpact: 15000,
-      efficiencyGain: 8
-    },
-    {
-      title: t('aiInsights.recUpsellTitle'),
-      description: t('aiInsights.recUpsellDesc'),
-      category: 'upsell',
-      revenueImpact: 28000,
-      efficiencyGain: 12
-    },
-    {
-      title: t('aiInsights.recEngagementTitle'),
-      description: t('aiInsights.recEngagementDesc'),
-      category: 'engagement',
-      revenueImpact: 8000,
-      efficiencyGain: 22
-    },
-    {
-      title: t('aiInsights.recRetentionTitle'),
-      description: t('aiInsights.recRetentionDesc'),
-      category: 'retention',
-      revenueImpact: 42000,
-      efficiencyGain: 15
-    },
-    {
-      title: t('aiInsights.recLeadScoringTitle'),
-      description: t('aiInsights.recLeadScoringDesc'),
-      category: 'engagement',
-      revenueImpact: 18000,
-      efficiencyGain: 30
-    },
-    {
-      title: t('aiInsights.recWinBackTitle'),
-      description: t('aiInsights.recWinBackDesc'),
-      category: 'retention',
-      revenueImpact: 35000,
-      efficiencyGain: 10
-    },
-    {
-      title: t('aiInsights.recBundleTitle'),
-      description: t('aiInsights.recBundleDesc'),
-      category: 'cross-sell',
-      revenueImpact: 22000,
-      efficiencyGain: 18
-    },
-    {
-      title: t('aiInsights.recPricingTitle'),
-      description: t('aiInsights.recPricingDesc'),
-      category: 'upsell',
-      revenueImpact: 55000,
-      efficiencyGain: 5
-    },
-    {
-      title: t('aiInsights.recAutomationTitle'),
-      description: t('aiInsights.recAutomationDesc'),
-      category: 'engagement',
-      revenueImpact: 12000,
-      efficiencyGain: 40
-    },
-    {
-      title: t('aiInsights.recLoyaltyTitle'),
-      description: t('aiInsights.recLoyaltyDesc'),
-      category: 'retention',
-      revenueImpact: 30000,
-      efficiencyGain: 14
-    }
-  ];
-
-  recommendations.value = recTemplates.map((tpl, idx) => ({
-    ...tpl,
-    priority: priorities[idx % priorities.length],
-    confidence: Math.floor(70 + Math.random() * 25),
-    revenueImpact: Math.round(tpl.revenueImpact * (0.8 + Math.random() * 0.4)),
-    efficiencyGain: Math.round(tpl.efficiencyGain * (0.8 + Math.random() * 0.4)),
-    dismissed: false,
-    applied: false
-  }));
-}
-
 const filteredRecommendations = computed(() => {
   let recs = recommendations.value.filter(r => !r.dismissed);
   if (recCategoryFilter.value !== 'all') {
@@ -1062,58 +885,6 @@ function confirmApply() {
   showRecDialog.value = false;
 }
 
-// ─── Model Performance ──────────────────────────────────────
-function computeModelPerformance() {
-  modelComparisonData.value = [
-    {
-      modelName: t('aiInsights.churnModel'),
-      accuracy: 91.2,
-      precision: 0.89,
-      recall: 0.93,
-      f1: 0.91,
-      lastTrained: '2026-02-25',
-      status: 'active'
-    },
-    {
-      modelName: t('aiInsights.winRateModel'),
-      accuracy: 87.8,
-      precision: 0.85,
-      recall: 0.9,
-      f1: 0.87,
-      lastTrained: '2026-02-24',
-      status: 'active'
-    },
-    {
-      modelName: t('aiInsights.revenueModel'),
-      accuracy: 84.5,
-      precision: 0.82,
-      recall: 0.87,
-      f1: 0.84,
-      lastTrained: '2026-02-20',
-      status: 'active'
-    },
-    {
-      modelName: t('aiInsights.leadScoringModel'),
-      accuracy: 89.3,
-      precision: 0.88,
-      recall: 0.91,
-      f1: 0.89,
-      lastTrained: '2026-02-26',
-      status: 'training'
-    },
-    {
-      modelName: t('aiInsights.anomalyModel'),
-      accuracy: 82.1,
-      precision: 0.8,
-      recall: 0.84,
-      f1: 0.82,
-      lastTrained: '2026-02-15',
-      status: 'active'
-    }
-  ];
-}
-
-// ─── Accuracy Trend Chart ───────────────────────────────────
 const accuracyTrendOption = computed(() => {
   const months: string[] = [];
   const now = new Date();
@@ -1122,22 +893,7 @@ const accuracyTrendOption = computed(() => {
     months.push(getMonthLabel(getMonthKey(d)));
   }
 
-  // Generate trend lines per model
-  const generateTrend = (base: number, volatility: number): number[] => {
-    const data: number[] = [];
-    let current = base - 5 - Math.random() * 3;
-    for (let i = 0; i < 12; i++) {
-      current += (Math.random() - 0.3) * volatility;
-      current = Math.min(98, Math.max(65, current));
-      if (i > 8) current = Math.max(current, base - 2);
-      data.push(parseFloat(current.toFixed(1)));
-    }
-    return data;
-  };
-
-  const churnTrend = generateTrend(91, 2);
-  const winRateTrend = generateTrend(88, 2.5);
-  const revenueTrend = generateTrend(85, 3);
+  const emptyData = new Array(12).fill(0);
 
   return {
     tooltip: { trigger: 'axis', ...tooltipStyle },
@@ -1159,7 +915,7 @@ const accuracyTrendOption = computed(() => {
     },
     yAxis: {
       type: 'value',
-      min: 60,
+      min: 0,
       max: 100,
       splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.05)' } },
       axisLabel: { color: '#64748B', formatter: '{value}%' }
@@ -1168,7 +924,7 @@ const accuracyTrendOption = computed(() => {
       {
         name: t('aiInsights.churnModel'),
         type: 'line',
-        data: churnTrend,
+        data: emptyData,
         smooth: true,
         symbol: 'circle',
         symbolSize: 5,
@@ -1184,7 +940,7 @@ const accuracyTrendOption = computed(() => {
       {
         name: t('aiInsights.winRateModel'),
         type: 'line',
-        data: winRateTrend,
+        data: emptyData,
         smooth: true,
         symbol: 'circle',
         symbolSize: 5,
@@ -1200,7 +956,7 @@ const accuracyTrendOption = computed(() => {
       {
         name: t('aiInsights.revenueModel'),
         type: 'line',
-        data: revenueTrend,
+        data: emptyData,
         smooth: true,
         symbol: 'circle',
         symbolSize: 5,
@@ -1219,11 +975,9 @@ const accuracyTrendOption = computed(() => {
   };
 });
 
-// ─── Confidence Distribution Histogram ──────────────────────
 const confidenceDistOption = computed(() => {
-  // Generate confidence distribution data
   const buckets = ['50-55', '55-60', '60-65', '65-70', '70-75', '75-80', '80-85', '85-90', '90-95', '95-100'];
-  const counts = [2, 4, 6, 10, 18, 25, 32, 28, 15, 8];
+  const emptyBuckets = new Array(10).fill(0);
 
   return {
     tooltip: {
@@ -1249,8 +1003,8 @@ const confidenceDistOption = computed(() => {
     series: [
       {
         type: 'bar',
-        data: counts.map((val, idx) => ({
-          value: val,
+        data: emptyBuckets.map(() => ({
+          value: 0,
           itemStyle: {
             color: new graphic.LinearGradient(0, 0, 0, 1, [
               { offset: 0, color: '#06b6d4' },
@@ -1267,7 +1021,6 @@ const confidenceDistOption = computed(() => {
   };
 });
 
-// ─── Init ───────────────────────────────────────────────────
 await loadData().catch(() => {
   loading.value = false;
 });

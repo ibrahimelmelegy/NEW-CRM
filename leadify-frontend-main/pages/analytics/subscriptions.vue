@@ -301,18 +301,18 @@ const kpiCards = computed(() => {
     return acc + val / 12;
   }, 0);
 
-  const mrr = Math.round(totalMrr) || 24500;
+  const mrr = Math.round(totalMrr);
   const arr = mrr * 12;
 
-  const totalDeals = deals.length || 1;
+  const totalDeals = deals.length;
   const activeSubs = wonDeals.length;
   const lostDeals = deals.filter((d) => {
     const s = (d.status || d.stage || '').toLowerCase();
     return s.includes('lost') || s.includes('churn') || s.includes('cancel');
   }).length;
 
-  const nrr = activeSubs > 0 ? Math.min(Math.round(((activeSubs + 2) / activeSubs) * 100), 135) : 108;
-  const grossChurn = totalDeals > 0 ? Math.round((lostDeals / totalDeals) * 100 * 10) / 10 : 3.2;
+  const nrr = activeSubs > 0 ? Math.min(Math.round(((activeSubs + 2) / activeSubs) * 100), 135) : 0;
+  const grossChurn = totalDeals > 0 ? Math.round((lostDeals / totalDeals) * 100 * 10) / 10 : 0;
 
   return [
     {
@@ -320,28 +320,28 @@ const kpiCards = computed(() => {
       value: formatCurrency(mrr),
       icon: 'ph:currency-dollar-bold',
       color: '#7849ff',
-      trend: 12.4
+      trend: 0
     },
     {
       label: t('subscriptionAnalytics.arr'),
       value: formatCurrency(arr),
       icon: 'ph:chart-line-up-bold',
       color: '#22c55e',
-      trend: 8.7
+      trend: 0
     },
     {
       label: t('subscriptionAnalytics.netRevenueRetention'),
       value: `${nrr}%`,
       icon: 'ph:arrow-clockwise-bold',
       color: '#3b82f6',
-      trend: 3.2
+      trend: 0
     },
     {
       label: t('subscriptionAnalytics.grossChurnRate'),
       value: `${grossChurn}%`,
       icon: 'ph:user-minus-bold',
       color: '#ef4444',
-      trend: -1.5
+      trend: 0
     }
   ];
 });
@@ -510,13 +510,7 @@ function computeOverview() {
   });
 
   if (!hasMrr) {
-    let baseMrr = 18000;
-    sortedKeys.forEach((k, idx) => {
-      const growthRate = 1 + (0.04 + Math.random() * 0.06);
-      baseMrr = Math.round(baseMrr * growthRate);
-      monthMap.get(k)!.mrr = baseMrr;
-      monthMap.get(k)!.newDeals = Math.round(5 + Math.random() * 10);
-    });
+    // No data — leave all months at zero
   }
 
   // Accumulate MRR if values are from individual deals
@@ -682,8 +676,7 @@ const mrrArrChartOption = computed(() => {
 function computeCohort() {
   const deals = getFilteredDeals();
   if (!deals.length) {
-    // Generate mock cohort data for demonstration
-    generateMockCohort();
+    cohortData.value = [];
     return;
   }
 
@@ -743,43 +736,6 @@ function computeCohort() {
   });
 }
 
-function generateMockCohort() {
-  const now = new Date();
-  const rows: Record<string, unknown>[] = [];
-
-  for (let i = 9; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const key = getMonthKey(d);
-    const initialCount = Math.round(30 + Math.random() * 40);
-    const cells = [];
-    let retention = 100;
-
-    for (let m = 0; m < 12; m++) {
-      const targetDate = new Date(d.getFullYear(), d.getMonth() + m);
-      if (targetDate > now) {
-        cells.push({ value: null, count: 0, rawValue: 0 });
-        continue;
-      }
-      if (m === 0) {
-        cells.push({ value: 100, count: initialCount, rawValue: initialCount * 500 });
-      } else {
-        const decay = 0.85 + Math.random() * 0.1;
-        retention = Math.round(retention * decay);
-        retention = Math.max(retention, 15);
-        const count = Math.round((retention / 100) * initialCount);
-        cells.push({
-          value: cohortMetric.value === 'revenue' ? Math.min(retention + 5, 100) : retention,
-          count,
-          rawValue: count * 500
-        });
-      }
-    }
-
-    rows.push({ label: getMonthLabel(key), initialCount, cells });
-  }
-
-  cohortData.value = rows;
-}
 
 // ─── Churn Analysis ─────────────────────────────────────────
 function computeChurn() {
@@ -811,14 +767,6 @@ function computeChurn() {
         reasonMap.involuntary = (reasonMap.involuntary || 0) + 1;
       else reasonMap.voluntary = (reasonMap.voluntary || 0) + 1;
     });
-  } else {
-    // Mock data
-    reasonMap.voluntary = 35;
-    reasonMap.involuntary = 22;
-    reasonMap.downgrade = 15;
-    reasonMap.competitor = 12;
-    reasonMap.budgetCuts = 10;
-    reasonMap.poorFit = 6;
   }
 
   const totalReasons = Object.values(reasonMap).reduce((a, b) => a + b, 0) || 1;
@@ -852,30 +800,14 @@ function computeChurn() {
         const mrr = Math.round(parseFloat(d.value || d.amount || d.dealValue || 0) / 12);
         const created = new Date(d.createdAt || d.created_at || Date.now());
         const daysSince = Math.round((Date.now() - created.getTime()) / (1000 * 60 * 60 * 24));
-        const riskScore = Math.min(95, Math.max(25, Math.round(40 + Math.random() * 50)));
+        const riskScore = Math.min(95, Math.max(25, Math.round(daysSince > 180 ? 70 : daysSince > 90 ? 50 : 30)));
         const daysUntilRenewal = Math.max(1, Math.round(365 - (daysSince % 365)));
         return { name, mrr, riskScore, daysUntilRenewal };
       })
       .sort((a, b) => b.riskScore - a.riskScore)
       .slice(0, 8);
   } else {
-    // Mock at-risk customers
-    const mockNames = [
-      'Acme Corp',
-      'TechVibe Solutions',
-      'NovaStar Inc',
-      'CloudFirst Ltd',
-      'DataPulse Systems',
-      'Vertex Digital',
-      'Bloom Enterprises',
-      'Apex Industries'
-    ];
-    atRiskCustomers.value = mockNames.map((name, idx) => ({
-      name,
-      mrr: Math.round(800 + Math.random() * 4200),
-      riskScore: Math.round(90 - idx * 8 + Math.random() * 5),
-      daysUntilRenewal: Math.round(5 + idx * 12 + Math.random() * 20)
-    }));
+    atRiskCustomers.value = [];
   }
 }
 
@@ -966,12 +898,6 @@ function computeExpansion() {
         }
       });
 
-      // If no real expansion data, use mock
-      if (upsell === 0 && crossSell === 0) {
-        upsell = Math.round(8000 + Math.random() * 15000);
-        crossSell = Math.round(4000 + Math.random() * 8000);
-      }
-
       quarters.push({ label: qLabel, upsell: Math.round(upsell), crossSell: Math.round(crossSell) });
     }
     expansionData.value = quarters;
@@ -997,11 +923,6 @@ function computeExpansion() {
           }
         }
       });
-
-      if (upsell === 0 && crossSell === 0) {
-        upsell = Math.round(2500 + Math.random() * 6000);
-        crossSell = Math.round(1200 + Math.random() * 3500);
-      }
 
       months.push({ label, upsell: Math.round(upsell), crossSell: Math.round(crossSell) });
     }
@@ -1044,31 +965,14 @@ function computeExpansion() {
       const val = parseFloat(d.value || d.amount || d.dealValue || 0);
       return {
         account: d.company?.name || d.companyName || d.client || d.name || d.title || 'Unknown',
-        type: Math.random() > 0.5 ? 'upsell' : 'cross-sell',
-        value: Math.round(val * (0.1 + Math.random() * 0.3)),
-        probability: Math.round(30 + Math.random() * 60),
-        expectedClose: new Date(Date.now() + Math.round(Math.random() * 90) * 86400000).toISOString()
+        type: (d.type || d.dealType || '').toLowerCase().includes('cross') ? 'cross-sell' : 'upsell',
+        value: Math.round(val * 0.2),
+        probability: 0,
+        expectedClose: d.expectedClose || d.closeDate || ''
       };
     });
   } else {
-    // Mock pipeline
-    const mockAccounts = [
-      'Meridian Group',
-      'Apex Holdings',
-      'SynergyTech',
-      'Atlas Solutions',
-      'PrimeLine Corp',
-      'Quantum Digital',
-      'EverGreen Systems',
-      'CoreBridge Inc'
-    ];
-    expansionPipeline.value = mockAccounts.map((name, idx) => ({
-      account: name,
-      type: idx % 3 === 0 ? 'cross-sell' : 'upsell',
-      value: Math.round(2000 + Math.random() * 12000),
-      probability: Math.round(25 + Math.random() * 65),
-      expectedClose: new Date(Date.now() + Math.round((15 + idx * 10) * 86400000)).toISOString()
-    }));
+    expansionPipeline.value = [];
   }
 }
 
