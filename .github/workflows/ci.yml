@@ -58,6 +58,8 @@ jobs:
       - name: Lint backend
         run: npm run lint
         working-directory: leadify-backend-main
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
 
   test-backend:
     name: Backend Tests
