@@ -291,7 +291,7 @@ const expansionPipeline = ref<Record<string, unknown>[]>([]);
 // ─── KPI Cards ──────────────────────────────────────────────
 const kpiCards = computed(() => {
   const deals = getFilteredDeals();
-  const wonDeals = deals.filter((d) => {
+  const wonDeals = deals.filter(d => {
     const s = (d.status || d.stage || '').toLowerCase();
     return s.includes('won') || s.includes('closed') || s.includes('active');
   });
@@ -306,7 +306,7 @@ const kpiCards = computed(() => {
 
   const totalDeals = deals.length;
   const activeSubs = wonDeals.length;
-  const lostDeals = deals.filter((d) => {
+  const lostDeals = deals.filter(d => {
     const s = (d.status || d.stage || '').toLowerCase();
     return s.includes('lost') || s.includes('churn') || s.includes('cancel');
   }).length;
@@ -351,7 +351,7 @@ function getFilteredDeals() {
   let deals = rawDeals.value;
   if (dateRange.value) {
     const [start, end] = dateRange.value;
-    deals = deals.filter((d) => {
+    deals = deals.filter(d => {
       const created = new Date(d.createdAt || d.created_at || Date.now());
       return created >= start && created <= end;
     });
@@ -445,8 +445,16 @@ async function loadData() {
       useApiFetch('lead').catch(() => ({ body: [] }))
     ]);
 
-    rawDeals.value = Array.isArray(dealsRes?.body) ? dealsRes.body : Array.isArray((dealsRes?.body as unknown)?.docs) ? (dealsRes.body as unknown).docs : [];
-    rawLeads.value = Array.isArray(leadsRes?.body) ? leadsRes.body : Array.isArray((leadsRes?.body as unknown)?.docs) ? (leadsRes.body as unknown).docs : [];
+    rawDeals.value = Array.isArray(dealsRes?.body)
+      ? dealsRes.body
+      : Array.isArray((dealsRes?.body as unknown)?.docs)
+        ? (dealsRes.body as unknown).docs
+        : [];
+    rawLeads.value = Array.isArray(leadsRes?.body)
+      ? leadsRes.body
+      : Array.isArray((leadsRes?.body as unknown)?.docs)
+        ? (leadsRes.body as unknown).docs
+        : [];
 
     computeAll();
   } catch (e) {
@@ -485,7 +493,7 @@ function computeOverview() {
     monthMap.set(key, { mrr: 0, newDeals: 0, churned: 0 });
   }
 
-  deals.forEach((d) => {
+  deals.forEach(d => {
     const created = new Date(d.createdAt || d.created_at || Date.now());
     const key = getMonthKey(created);
     if (monthMap.has(key)) {
@@ -585,7 +593,7 @@ const mrrArrChartOption = computed(() => {
         const idx = params[0]?.dataIndex ?? 0;
         const month = labels[idx] || '';
         let html = `<strong>${month}</strong><br/>`;
-        params.forEach((p) => {
+        params.forEach(p => {
           html += `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.color};margin-right:6px;"></span>`;
           html += `${p.seriesName}: <strong>${formatCurrency(p.value)}</strong><br/>`;
         });
@@ -681,7 +689,7 @@ function computeCohort() {
   }
 
   const cohortMap = new Map<string, any[]>();
-  deals.forEach((deal) => {
+  deals.forEach(deal => {
     const created = new Date(deal.createdAt || deal.created_at || Date.now());
     const key = getMonthKey(created);
     if (!cohortMap.has(key)) cohortMap.set(key, []);
@@ -704,7 +712,7 @@ function computeCohort() {
       }
 
       if (cohortMetric.value === 'retention') {
-        const retained = coDeals.filter((d) => {
+        const retained = coDeals.filter(d => {
           if (m === 0) return true;
           const status = (d.status || d.stage || '').toLowerCase();
           const closeDate = d.closedAt || d.closed_at || d.updatedAt || d.updated_at;
@@ -736,12 +744,11 @@ function computeCohort() {
   });
 }
 
-
 // ─── Churn Analysis ─────────────────────────────────────────
 function computeChurn() {
   const deals = getFilteredDeals();
 
-  const lostDeals = deals.filter((d) => {
+  const lostDeals = deals.filter(d => {
     const s = (d.status || d.stage || '').toLowerCase();
     return s.includes('lost') || s.includes('churn') || s.includes('cancel');
   });
@@ -757,7 +764,7 @@ function computeChurn() {
   };
 
   if (lostDeals.length > 0) {
-    lostDeals.forEach((d) => {
+    lostDeals.forEach(d => {
       const reason = (d.lostReason || d.closeReason || '').toLowerCase();
       if (reason.includes('compet')) reasonMap.competitor = (reasonMap.competitor || 0) + 1;
       else if (reason.includes('budget') || reason.includes('price')) reasonMap.budgetCuts = (reasonMap.budgetCuts || 0) + 1;
@@ -788,14 +795,14 @@ function computeChurn() {
   }));
 
   // At-risk customers from active deals
-  const activeDeals = deals.filter((d) => {
+  const activeDeals = deals.filter(d => {
     const s = (d.status || d.stage || '').toLowerCase();
     return !s.includes('lost') && !s.includes('churn');
   });
 
   if (activeDeals.length > 0) {
     atRiskCustomers.value = activeDeals
-      .map((d) => {
+      .map(d => {
         const name = d.company?.name || d.companyName || d.client || d.name || d.title || 'Unknown Account';
         const mrr = Math.round(parseFloat(d.value || d.amount || d.dealValue || 0) / 12);
         const created = new Date(d.createdAt || d.created_at || Date.now());
@@ -850,7 +857,7 @@ const churnReasonsChartOption = computed(() => {
           label: { show: true, fontSize: 14, fontWeight: 'bold' },
           itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0, 0, 0, 0.3)' }
         },
-        data: reasons.map((r) => ({
+        data: reasons.map(r => ({
           name: r.name,
           value: r.value,
           itemStyle: { color: r.color }
@@ -881,7 +888,7 @@ function computeExpansion() {
       let upsell = 0;
       let crossSell = 0;
 
-      deals.forEach((d) => {
+      deals.forEach(d => {
         const created = new Date(d.createdAt || d.created_at || Date.now());
         const key = getMonthKey(created);
         const qMonth = qStart.getMonth();
@@ -911,7 +918,7 @@ function computeExpansion() {
       let upsell = 0;
       let crossSell = 0;
 
-      deals.forEach((deal) => {
+      deals.forEach(deal => {
         const created = new Date(deal.createdAt || deal.created_at || Date.now());
         if (getMonthKey(created) === key) {
           const val = parseFloat(deal.value || deal.amount || deal.dealValue || 0);
@@ -954,14 +961,14 @@ function computeExpansion() {
 
   // Expansion pipeline
   const pipelineAccounts = deals
-    .filter((d) => {
+    .filter(d => {
       const s = (d.status || d.stage || '').toLowerCase();
       return !s.includes('lost') && !s.includes('won') && !s.includes('closed');
     })
     .slice(0, 8);
 
   if (pipelineAccounts.length > 0) {
-    expansionPipeline.value = pipelineAccounts.map((d) => {
+    expansionPipeline.value = pipelineAccounts.map(d => {
       const val = parseFloat(d.value || d.amount || d.dealValue || 0);
       return {
         account: d.company?.name || d.companyName || d.client || d.name || d.title || 'Unknown',
@@ -995,7 +1002,7 @@ const expansionChartOption = computed(() => {
         const idx = params[0]?.dataIndex ?? 0;
         const label = labels[idx] || '';
         let html = `<strong>${label}</strong><br/>`;
-        params.forEach((p) => {
+        params.forEach(p => {
           html += `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${p.color};margin-right:6px;"></span>`;
           html += `${p.seriesName}: <strong>${formatCurrency(p.value)}</strong><br/>`;
         });

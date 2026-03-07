@@ -42,7 +42,7 @@ const valueMap = {
 const labelType = computed(() => {
   // Check if the route includes "projects"
   const statusValue = route.path.includes('projects') ? valueMap[props.value] || props.value : props.value;
-  return `label-${props.type == 'select' ? 'outline' : props.type}-${getStatusColor(statusValue)}`;
+  return `label-${props.type === 'select' ? 'outline' : props.type}-${getStatusColor(statusValue)}`;
 });
 const labelBg = computed(() => {
   return `bg-${props.type}-${getStatusColor(props.value)}`;

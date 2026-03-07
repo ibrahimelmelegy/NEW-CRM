@@ -448,8 +448,8 @@ const filteredConsentRecords = computed(() => {
   return consentRecords.value.filter(rec => {
     const matchSearch =
       !consentSearch.value ||
-      (rec.name as string || '').toLowerCase().includes(consentSearch.value.toLowerCase()) ||
-      (rec.email as string || '').toLowerCase().includes(consentSearch.value.toLowerCase());
+      ((rec.name as string) || '').toLowerCase().includes(consentSearch.value.toLowerCase()) ||
+      ((rec.email as string) || '').toLowerCase().includes(consentSearch.value.toLowerCase());
     const matchType = !consentTypeFilter.value || rec.consentType === consentTypeFilter.value;
     return matchSearch && matchType;
   });
@@ -472,7 +472,7 @@ const filteredAuditLogs = computed(() => {
   if (auditDateRange.value && auditDateRange.value.length === 2) {
     const [start, end] = auditDateRange.value;
     logs = logs.filter(log => {
-      const logDate = (log.timestamp as string || '').split('T')[0]!;
+      const logDate = ((log.timestamp as string) || '').split('T')[0]!;
       return logDate >= start! && logDate <= end!;
     });
   }

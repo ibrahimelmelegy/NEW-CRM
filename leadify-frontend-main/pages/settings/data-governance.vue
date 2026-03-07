@@ -4,7 +4,9 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">{{ $t('dataGovernance.title') }}</h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">
+            {{ $t('dataGovernance.title') }}
+          </h1>
           <p class="text-slate-400 text-sm mt-1">{{ $t('dataGovernance.subtitle') }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" :loading="auditing" @click="runAudit">
@@ -270,9 +272,13 @@ const qualityScoreColor = computed(() => (qualityScore.value >= 80 ? '#10B981' :
 
 const dataMetrics = ref({ completeRecords: 0, duplicates: 0, validEmails: 0, staleRecords: 0 });
 
-const qualityReport = ref<{ name: string; icon: string; score: number; totalRecords: number; complete: number; missingFields: number; duplicates: number }[]>([]);
+const qualityReport = ref<
+  { name: string; icon: string; score: number; totalRecords: number; complete: number; missingFields: number; duplicates: number }[]
+>([]);
 
-const retentionPolicies = ref<{ entity: string; retentionPeriod: string; action: string; affectedRecords: number; lastRun: string | null; isActive: boolean }[]>([]);
+const retentionPolicies = ref<
+  { entity: string; retentionPeriod: string; action: string; affectedRecords: number; lastRun: string | null; isActive: boolean }[]
+>([]);
 
 const privacySettings = ref({
   marketingConsent: true,

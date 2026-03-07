@@ -88,7 +88,7 @@ async function loadPipelineChart() {
     const data = body as unknown;
     const stages = data.stages || data || [];
     if (!stages.length) return;
-    const chartData = stages.map((s) => ({
+    const chartData = stages.map(s => ({
       name: s.name || s.stage || 'Unknown',
       value: s.count || s.value || 0
     }));
@@ -97,7 +97,7 @@ async function loadPipelineChart() {
       grid: { top: 10, right: 15, bottom: 20, left: 15, containLabel: true },
       xAxis: {
         type: 'category',
-        data: chartData.map((d) => d.name),
+        data: chartData.map(d => d.name),
         axisLabel: { color: '#94A3B8', fontSize: 10 },
         axisLine: { show: false },
         axisTick: { show: false }
@@ -111,7 +111,7 @@ async function loadPipelineChart() {
         {
           type: 'bar',
           barWidth: '40%',
-          data: chartData.map((d) => d.value),
+          data: chartData.map(d => d.value),
           itemStyle: {
             borderRadius: [6, 6, 6, 6],
             color: new graphic.LinearGradient(0, 0, 0, 1, [
@@ -132,7 +132,7 @@ async function loadLeadSourcesChart() {
     // Try to extract lead sources from the API response
     const sources = data.leadSources || data.sources || [];
     const chartData = sources.length
-      ? sources.map((s) => ({ name: s.name || s.source, value: s.count || s.value || 0 }))
+      ? sources.map(s => ({ name: s.name || s.source, value: s.count || s.value || 0 }))
       : [
           { name: 'Website', value: 35 },
           { name: 'Referral', value: 25 },
@@ -213,7 +213,7 @@ async function loadFunnelChart() {
     const data = body as unknown;
     const stages = data.stages || data || [];
     const funnelData = stages.length
-      ? stages.map((s) => ({ name: s.name || s.stage, value: s.count || s.value || 0 }))
+      ? stages.map(s => ({ name: s.name || s.stage, value: s.count || s.value || 0 }))
       : [
           { name: 'Leads', value: 100 },
           { name: 'Qualified', value: 65 },
@@ -253,7 +253,7 @@ async function loadRevenueTrendChart() {
     const data = body as unknown;
     const items = data.data || data || [];
     const chartData = items.length
-      ? items.map((item) => ({ name: item.label || item.month || item.period, value: item.value || item.revenue || 0 }))
+      ? items.map(item => ({ name: item.label || item.month || item.period, value: item.value || item.revenue || 0 }))
       : [];
     if (!chartData.length) return;
     chartOption.value = {
@@ -262,7 +262,7 @@ async function loadRevenueTrendChart() {
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: chartData.map((d) => d.name),
+        data: chartData.map(d => d.name),
         axisLabel: { color: '#94A3B8', fontSize: 10 },
         axisLine: { show: false },
         axisTick: { show: false }
@@ -275,7 +275,7 @@ async function loadRevenueTrendChart() {
       series: [
         {
           type: 'line',
-          data: chartData.map((d) => d.value),
+          data: chartData.map(d => d.value),
           smooth: true,
           showSymbol: false,
           lineStyle: { width: 3, color: '#EF4444', shadowBlur: 12, shadowColor: 'rgba(239,68,68,0.3)', shadowOffsetY: 6 },

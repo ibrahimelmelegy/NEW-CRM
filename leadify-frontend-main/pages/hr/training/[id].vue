@@ -311,22 +311,22 @@ const materialForm = reactive({ name: '', url: '', type: 'PDF' });
 const statusCounts = computed(() => {
   const e = enrollments.value;
   return {
-    enrolled: e.filter((x) => x.status === 'ENROLLED').length,
-    inProgress: e.filter((x) => x.status === 'IN_PROGRESS').length,
-    completed: e.filter((x) => x.status === 'COMPLETED').length,
-    dropped: e.filter((x) => x.status === 'DROPPED').length
+    enrolled: e.filter(x => x.status === 'ENROLLED').length,
+    inProgress: e.filter(x => x.status === 'IN_PROGRESS').length,
+    completed: e.filter(x => x.status === 'COMPLETED').length,
+    dropped: e.filter(x => x.status === 'DROPPED').length
   };
 });
 
 const completionRate = computed(() => {
-  const active = enrollments.value.filter((e) => e.status !== 'DROPPED').length;
+  const active = enrollments.value.filter(e => e.status !== 'DROPPED').length;
   if (!active) return 0;
   return Math.round((statusCounts.value.completed / active) * 100);
 });
 
 const filteredParticipants = computed(() => {
   if (!participantStatusFilter.value) return enrollments.value;
-  return enrollments.value.filter((e) => e.status === participantStatusFilter.value);
+  return enrollments.value.filter(e => e.status === participantStatusFilter.value);
 });
 
 // Helpers
@@ -424,7 +424,7 @@ async function loadEmployees() {
     const res = await useApiFetch('hr/employees?limit=500');
     if (res?.success && res.body) {
       const docs = (res.body as unknown).docs || res.body || [];
-      employees.value = docs.map((e) => ({
+      employees.value = docs.map(e => ({
         id: e.id,
         name: e.firstName ? `${e.firstName} ${e.lastName || ''}`.trim() : e.name || `Employee #${e.id}`
       }));

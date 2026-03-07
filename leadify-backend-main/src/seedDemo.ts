@@ -7,7 +7,6 @@
  */
 import { sequelize } from './config/db';
 import bcrypt from 'bcryptjs';
-import { Op } from 'sequelize';
 
 // ── Models ──
 import User from './user/userModel';
@@ -69,15 +68,45 @@ const hashedPw = bcrypt.hashSync('Demo@2026!', 12);
 
 // Realistic company names
 const companies = [
-  'Aramco Digital', 'NEOM Tech Solutions', 'Riyadh Metro Group', 'Saudi Telecom (STC)',
-  'Al Rajhi Capital', 'SABIC Industries', 'Red Sea Global', 'Lucid Motors Arabia',
-  'Flynas Aviation', 'Vision 2030 Labs', 'Maaden Mining Corp', 'Jarir Technologies',
-  'Tamimi Markets Group', 'Panda Retail Company', 'Almarai Fresh Foods',
-  'Elm Information Security', 'Mobily Enterprise', 'Zain Business Solutions',
-  'Saudi Arabian Airlines', 'Kingdom Holding'
+  'Aramco Digital',
+  'NEOM Tech Solutions',
+  'Riyadh Metro Group',
+  'Saudi Telecom (STC)',
+  'Al Rajhi Capital',
+  'SABIC Industries',
+  'Red Sea Global',
+  'Lucid Motors Arabia',
+  'Flynas Aviation',
+  'Vision 2030 Labs',
+  'Maaden Mining Corp',
+  'Jarir Technologies',
+  'Tamimi Markets Group',
+  'Panda Retail Company',
+  'Almarai Fresh Foods',
+  'Elm Information Security',
+  'Mobily Enterprise',
+  'Zain Business Solutions',
+  'Saudi Arabian Airlines',
+  'Kingdom Holding'
 ];
 
-const firstNames = ['Ahmed', 'Mohammed', 'Khalid', 'Omar', 'Faisal', 'Youssef', 'Sara', 'Noura', 'Lama', 'Aisha', 'Hassan', 'Ali', 'Tariq', 'Rania', 'Dalal'];
+const firstNames = [
+  'Ahmed',
+  'Mohammed',
+  'Khalid',
+  'Omar',
+  'Faisal',
+  'Youssef',
+  'Sara',
+  'Noura',
+  'Lama',
+  'Aisha',
+  'Hassan',
+  'Ali',
+  'Tariq',
+  'Rania',
+  'Dalal'
+];
 const lastNames = ['Al-Rashid', 'Al-Saud', 'Al-Dosari', 'Al-Ghamdi', 'Al-Harbi', 'Al-Qahtani', 'Al-Otaibi', 'Al-Shehri', 'Al-Zahrani', 'Al-Mutairi'];
 const fullName = () => `${pick(firstNames)} ${pick(lastNames)}`;
 
@@ -117,20 +146,25 @@ async function seedDemo() {
     // Seeding Roles
     const allPerms = getAllPermissions();
     // Sales permissions subset
-    const salesPerms = allPerms.filter(p =>
-      p.includes('LEAD') || p.includes('DEAL') || p.includes('OPPORTUNITY') ||
-      p.includes('CLIENT') || p.includes('PROPOSAL') || p.includes('SALES') ||
-      p.includes('INVOICE')
+    const salesPerms = allPerms.filter(
+      p =>
+        p.includes('LEAD') ||
+        p.includes('DEAL') ||
+        p.includes('OPPORTUNITY') ||
+        p.includes('CLIENT') ||
+        p.includes('PROPOSAL') ||
+        p.includes('SALES') ||
+        p.includes('INVOICE')
     );
-    const supportPerms = allPerms.filter(p =>
-      p.includes('TICKET') || p.includes('CLIENT') || p.includes('VIEW')
-    );
-    const hrPerms = allPerms.filter(p =>
-      p.includes('EMPLOYEE') || p.includes('PAYROLL') || p.includes('VIEW')
-    );
+    const supportPerms = allPerms.filter(p => p.includes('TICKET') || p.includes('CLIENT') || p.includes('VIEW'));
+    const hrPerms = allPerms.filter(p => p.includes('EMPLOYEE') || p.includes('PAYROLL') || p.includes('VIEW'));
 
     const rolesData = [
-      { name: 'SALES_MANAGER', description: 'Sales department manager with full sales access', permissions: [...salesPerms, ...allPerms.filter(p => p.includes('GLOBAL') || p.includes('REPORT'))] },
+      {
+        name: 'SALES_MANAGER',
+        description: 'Sales department manager with full sales access',
+        permissions: [...salesPerms, ...allPerms.filter(p => p.includes('GLOBAL') || p.includes('REPORT'))]
+      },
       { name: 'SALES_REP', description: 'Sales representative with own-data access', permissions: salesPerms.filter(p => !p.includes('GLOBAL')) },
       { name: 'SUPPORT_AGENT', description: 'Customer support agent', permissions: supportPerms },
       { name: 'HR_MANAGER', description: 'Human resources manager', permissions: hrPerms }
@@ -148,7 +182,7 @@ async function seedDemo() {
 
     // ── 2. STAFF / USERS (8) ──
     // Seeding Staff
-    const superAdminRole = await (Role as any).findOne({ where: { name: 'SUPER_ADMIN' } });
+    const _superAdminRole = await (Role as any).findOne({ where: { name: 'SUPER_ADMIN' } });
     const staffData = [
       { name: 'Khalid Al-Rashid', email: 'khalid@hp-tech.com', phone: '0501234001', roleId: createdRoles[0].id, status: 'ACTIVE' },
       { name: 'Omar Al-Dosari', email: 'omar@hp-tech.com', phone: '0501234002', roleId: createdRoles[0].id, status: 'ACTIVE' },
@@ -185,7 +219,7 @@ async function seedDemo() {
       { name: 'Closed Won', order: 5, color: '#22c55e', probability: 100, entityType: 'deal', isWon: true },
       { name: 'Closed Lost', order: 6, color: '#ef4444', probability: 0, entityType: 'deal', isLost: true }
     ];
-    const createdStages = await PipelineStage.bulkCreate(stagesData);
+    const _createdStages = await PipelineStage.bulkCreate(stagesData);
     // Pipeline stages created
 
     // ── 4. CLIENTS (15) ──
@@ -210,14 +244,21 @@ async function seedDemo() {
 
     // ── 5. LEADS (50) ──
     // Seeding Leads
-    const leadStatuses = Object.values(LeadStatusEnums);
+    const _leadStatuses = Object.values(LeadStatusEnums);
     const leadSources = Object.values(LeadSourceEnums);
     const leadsData = Array.from({ length: 50 }, (_, i) => ({
       name: fullName(),
       companyName: pick(companies),
       email: `lead${i + 1}@${pick(['gmail.com', 'outlook.com', 'corporate.sa', 'business.com'])}`,
       phone: `05${rand(10000000, 99999999)}`,
-      status: i < 15 ? LeadStatusEnums.NEW : i < 25 ? LeadStatusEnums.CONTACTED : i < 35 ? LeadStatusEnums.QUALIFIED : pick([LeadStatusEnums.CONVERTED, LeadStatusEnums.DISQUALIFIED, LeadStatusEnums.LOST]),
+      status:
+        i < 15
+          ? LeadStatusEnums.NEW
+          : i < 25
+            ? LeadStatusEnums.CONTACTED
+            : i < 35
+              ? LeadStatusEnums.QUALIFIED
+              : pick([LeadStatusEnums.CONVERTED, LeadStatusEnums.DISQUALIFIED, LeadStatusEnums.LOST]),
       leadSource: pick(leadSources),
       score: rand(5, 98),
       notes: i < 10 ? 'High priority lead from trade show' : i < 20 ? 'Inbound from website demo request' : undefined,
@@ -231,7 +272,13 @@ async function seedDemo() {
 
     // ── 6. OPPORTUNITIES (30) ──
     // Seeding Opportunities
-    const oppStages = [OpportunityStageEnums.DISCOVERY, OpportunityStageEnums.PROPOSAL, OpportunityStageEnums.NEGOTIATION, OpportunityStageEnums.WON, OpportunityStageEnums.LOST];
+    const _oppStages = [
+      OpportunityStageEnums.DISCOVERY,
+      OpportunityStageEnums.PROPOSAL,
+      OpportunityStageEnums.NEGOTIATION,
+      OpportunityStageEnums.WON,
+      OpportunityStageEnums.LOST
+    ];
     const priorities = Object.values(OpportunityPriorityEnums);
 
     const qualifiedLeads = createdLeads.filter(l => ['QUALIFIED', 'CONVERTED', 'CONTACTED'].includes((l as any).status));
@@ -241,7 +288,16 @@ async function seedDemo() {
         name: `${pick(['CRM Implementation', 'Cloud Migration', 'ERP Upgrade', 'Digital Transformation', 'IT Infrastructure', 'Cybersecurity Audit', 'Data Analytics Platform', 'Mobile App Dev', 'SAP Integration', 'AI Automation'])} — ${pick(companies.slice(0, 10))}`,
         leadId: lead?.id,
         clientId: createdClients[i % createdClients.length].id,
-        stage: i < 8 ? OpportunityStageEnums.DISCOVERY : i < 15 ? OpportunityStageEnums.PROPOSAL : i < 22 ? OpportunityStageEnums.NEGOTIATION : i < 27 ? OpportunityStageEnums.WON : OpportunityStageEnums.LOST,
+        stage:
+          i < 8
+            ? OpportunityStageEnums.DISCOVERY
+            : i < 15
+              ? OpportunityStageEnums.PROPOSAL
+              : i < 22
+                ? OpportunityStageEnums.NEGOTIATION
+                : i < 27
+                  ? OpportunityStageEnums.WON
+                  : OpportunityStageEnums.LOST,
         estimatedValue: money(15000, 500000),
         expectedCloseDate: days(rand(-10, 90)),
         priority: pick(priorities),
@@ -297,7 +353,13 @@ async function seedDemo() {
 
     // ── 9. PROPOSALS (5) ──
     // Seeding Proposals
-    const proposalStatuses = [ProposalStatusEnum.APPROVED, ProposalStatusEnum.APPROVED, ProposalStatusEnum.WAITING_APPROVAL, ProposalStatusEnum.REJECTED, ProposalStatusEnum.DRAFT];
+    const proposalStatuses = [
+      ProposalStatusEnum.APPROVED,
+      ProposalStatusEnum.APPROVED,
+      ProposalStatusEnum.WAITING_APPROVAL,
+      ProposalStatusEnum.REJECTED,
+      ProposalStatusEnum.DRAFT
+    ];
     const proposalsData = Array.from({ length: 5 }, (_, i) => ({
       title: `${pick(['Enterprise CRM Implementation', 'Cloud Infrastructure Proposal', 'Digital Workplace Transformation', 'AI & Analytics Suite', 'Managed Services Agreement'])}`,
       version: '1.0',
@@ -347,7 +409,16 @@ async function seedDemo() {
         subtotal += lineTotal;
         await SalesOrderItem.create({
           salesOrderId: so.id,
-          description: pick(['CRM License (Annual)', 'Implementation Services', 'Training Package', 'Support Plan — Premium', 'Data Migration Service', 'Custom Development — 40 hrs', 'Hardware — Server Rack', 'Cloud Hosting — 12 months']),
+          description: pick([
+            'CRM License (Annual)',
+            'Implementation Services',
+            'Training Package',
+            'Support Plan — Premium',
+            'Data Migration Service',
+            'Custom Development — 40 hrs',
+            'Hardware — Server Rack',
+            'Cloud Hosting — 12 months'
+          ]),
           quantity: qty,
           unitPrice,
           taxRate: 15,
@@ -364,11 +435,25 @@ async function seedDemo() {
 
     // ── 11. PROJECTS (8) ──
     // Seeding Projects
-    const projStatuses = [ProjectStatusEnum.ACTIVE, ProjectStatusEnum.ACTIVE, ProjectStatusEnum.ACTIVE, ProjectStatusEnum.ACTIVE, ProjectStatusEnum.ON_HOLD, ProjectStatusEnum.ON_HOLD, ProjectStatusEnum.COMPLETE, ProjectStatusEnum.COMPLETE];
+    const projStatuses = [
+      ProjectStatusEnum.ACTIVE,
+      ProjectStatusEnum.ACTIVE,
+      ProjectStatusEnum.ACTIVE,
+      ProjectStatusEnum.ACTIVE,
+      ProjectStatusEnum.ON_HOLD,
+      ProjectStatusEnum.ON_HOLD,
+      ProjectStatusEnum.COMPLETE,
+      ProjectStatusEnum.COMPLETE
+    ];
     const projectNames = [
-      'Aramco Digital Transformation', 'NEOM Smart City CRM', 'STC Network Upgrade',
-      'Al Rajhi Core Banking', 'Red Sea Resort IT', 'Vision 2030 Analytics',
-      'Maaden ERP Migration', 'Jarir E-Commerce Platform'
+      'Aramco Digital Transformation',
+      'NEOM Smart City CRM',
+      'STC Network Upgrade',
+      'Al Rajhi Core Banking',
+      'Red Sea Resort IT',
+      'Vision 2030 Analytics',
+      'Maaden ERP Migration',
+      'Jarir E-Commerce Platform'
     ];
     const projectsData = projectNames.map((name, i) => ({
       name,
@@ -392,16 +477,36 @@ async function seedDemo() {
     // ── 12. TASKS (30) ──
     // Seeding Tasks
     const taskTitles = [
-      'Prepare client demo environment', 'Follow up on proposal feedback', 'Schedule discovery call',
-      'Send revised pricing to client', 'Update CRM deal notes', 'Prepare quarterly review deck',
-      'Onboard new team member', 'Review contract terms', 'Configure staging environment',
-      'Complete security assessment', 'Draft SOW document', 'Conduct user training',
-      'Fix integration issues', 'Migrate legacy data', 'Setup monitoring dashboards',
-      'Create API documentation', 'Performance optimization sprint', 'Design system architecture',
-      'Implement payment gateway', 'Deploy to production', 'Conduct code review',
-      'Update project timeline', 'Prepare invoice batch', 'Audit user permissions',
-      'Setup backup procedures', 'Test disaster recovery', 'Create marketing collateral',
-      'Analyze competitor pricing', 'Build reporting dashboard', 'Prepare board presentation'
+      'Prepare client demo environment',
+      'Follow up on proposal feedback',
+      'Schedule discovery call',
+      'Send revised pricing to client',
+      'Update CRM deal notes',
+      'Prepare quarterly review deck',
+      'Onboard new team member',
+      'Review contract terms',
+      'Configure staging environment',
+      'Complete security assessment',
+      'Draft SOW document',
+      'Conduct user training',
+      'Fix integration issues',
+      'Migrate legacy data',
+      'Setup monitoring dashboards',
+      'Create API documentation',
+      'Performance optimization sprint',
+      'Design system architecture',
+      'Implement payment gateway',
+      'Deploy to production',
+      'Conduct code review',
+      'Update project timeline',
+      'Prepare invoice batch',
+      'Audit user permissions',
+      'Setup backup procedures',
+      'Test disaster recovery',
+      'Create marketing collateral',
+      'Analyze competitor pricing',
+      'Build reporting dashboard',
+      'Prepare board presentation'
     ];
     const tasksData = taskTitles.map((title, i) => ({
       title,
@@ -438,18 +543,114 @@ async function seedDemo() {
     }
 
     const employeeData = [
-      { firstName: 'Khalid', lastName: 'Al-Rashid', email: 'khalid@hp-tech.com', jobTitle: 'Sales Director', departmentId: createdDepts[0].id, salary: 28000, employmentType: 'FULL_TIME' },
-      { firstName: 'Omar', lastName: 'Al-Dosari', email: 'omar@hp-tech.com', jobTitle: 'Sales Manager', departmentId: createdDepts[0].id, salary: 22000, employmentType: 'FULL_TIME' },
-      { firstName: 'Sara', lastName: 'Al-Ghamdi', email: 'sara@hp-tech.com', jobTitle: 'Account Executive', departmentId: createdDepts[0].id, salary: 16000, employmentType: 'FULL_TIME' },
-      { firstName: 'Ahmed', lastName: 'Al-Harbi', email: 'ahmed@hp-tech.com', jobTitle: 'Account Executive', departmentId: createdDepts[0].id, salary: 15000, employmentType: 'FULL_TIME' },
-      { firstName: 'Noura', lastName: 'Al-Qahtani', email: 'noura@hp-tech.com', jobTitle: 'Business Development Rep', departmentId: createdDepts[0].id, salary: 13000, employmentType: 'FULL_TIME' },
-      { firstName: 'Tariq', lastName: 'Al-Mutairi', email: 'tariq@hp-tech.com', jobTitle: 'Senior Developer', departmentId: createdDepts[1].id, salary: 25000, employmentType: 'FULL_TIME' },
-      { firstName: 'Rania', lastName: 'Al-Zahrani', email: 'rania@hp-tech.com', jobTitle: 'Full Stack Developer', departmentId: createdDepts[1].id, salary: 20000, employmentType: 'FULL_TIME' },
-      { firstName: 'Youssef', lastName: 'Al-Zahrani', email: 'youssef@hp-tech.com', jobTitle: 'HR Manager', departmentId: createdDepts[2].id, salary: 20000, employmentType: 'FULL_TIME' },
-      { firstName: 'Dalal', lastName: 'Al-Shehri', email: 'dalal@hp-tech.com', jobTitle: 'HR Coordinator', departmentId: createdDepts[2].id, salary: 12000, employmentType: 'FULL_TIME' },
-      { firstName: 'Ali', lastName: 'Al-Otaibi', email: 'ali@hp-tech.com', jobTitle: 'Finance Manager', departmentId: createdDepts[3].id, salary: 24000, employmentType: 'FULL_TIME' },
-      { firstName: 'Faisal', lastName: 'Al-Otaibi', email: 'faisal@hp-tech.com', jobTitle: 'Support Lead', departmentId: createdDepts[4].id, salary: 18000, employmentType: 'FULL_TIME' },
-      { firstName: 'Lama', lastName: 'Al-Shehri', email: 'lama@hp-tech.com', jobTitle: 'Support Agent', departmentId: createdDepts[4].id, salary: 12000, employmentType: 'FULL_TIME' }
+      {
+        firstName: 'Khalid',
+        lastName: 'Al-Rashid',
+        email: 'khalid@hp-tech.com',
+        jobTitle: 'Sales Director',
+        departmentId: createdDepts[0].id,
+        salary: 28000,
+        employmentType: 'FULL_TIME'
+      },
+      {
+        firstName: 'Omar',
+        lastName: 'Al-Dosari',
+        email: 'omar@hp-tech.com',
+        jobTitle: 'Sales Manager',
+        departmentId: createdDepts[0].id,
+        salary: 22000,
+        employmentType: 'FULL_TIME'
+      },
+      {
+        firstName: 'Sara',
+        lastName: 'Al-Ghamdi',
+        email: 'sara@hp-tech.com',
+        jobTitle: 'Account Executive',
+        departmentId: createdDepts[0].id,
+        salary: 16000,
+        employmentType: 'FULL_TIME'
+      },
+      {
+        firstName: 'Ahmed',
+        lastName: 'Al-Harbi',
+        email: 'ahmed@hp-tech.com',
+        jobTitle: 'Account Executive',
+        departmentId: createdDepts[0].id,
+        salary: 15000,
+        employmentType: 'FULL_TIME'
+      },
+      {
+        firstName: 'Noura',
+        lastName: 'Al-Qahtani',
+        email: 'noura@hp-tech.com',
+        jobTitle: 'Business Development Rep',
+        departmentId: createdDepts[0].id,
+        salary: 13000,
+        employmentType: 'FULL_TIME'
+      },
+      {
+        firstName: 'Tariq',
+        lastName: 'Al-Mutairi',
+        email: 'tariq@hp-tech.com',
+        jobTitle: 'Senior Developer',
+        departmentId: createdDepts[1].id,
+        salary: 25000,
+        employmentType: 'FULL_TIME'
+      },
+      {
+        firstName: 'Rania',
+        lastName: 'Al-Zahrani',
+        email: 'rania@hp-tech.com',
+        jobTitle: 'Full Stack Developer',
+        departmentId: createdDepts[1].id,
+        salary: 20000,
+        employmentType: 'FULL_TIME'
+      },
+      {
+        firstName: 'Youssef',
+        lastName: 'Al-Zahrani',
+        email: 'youssef@hp-tech.com',
+        jobTitle: 'HR Manager',
+        departmentId: createdDepts[2].id,
+        salary: 20000,
+        employmentType: 'FULL_TIME'
+      },
+      {
+        firstName: 'Dalal',
+        lastName: 'Al-Shehri',
+        email: 'dalal@hp-tech.com',
+        jobTitle: 'HR Coordinator',
+        departmentId: createdDepts[2].id,
+        salary: 12000,
+        employmentType: 'FULL_TIME'
+      },
+      {
+        firstName: 'Ali',
+        lastName: 'Al-Otaibi',
+        email: 'ali@hp-tech.com',
+        jobTitle: 'Finance Manager',
+        departmentId: createdDepts[3].id,
+        salary: 24000,
+        employmentType: 'FULL_TIME'
+      },
+      {
+        firstName: 'Faisal',
+        lastName: 'Al-Otaibi',
+        email: 'faisal@hp-tech.com',
+        jobTitle: 'Support Lead',
+        departmentId: createdDepts[4].id,
+        salary: 18000,
+        employmentType: 'FULL_TIME'
+      },
+      {
+        firstName: 'Lama',
+        lastName: 'Al-Shehri',
+        email: 'lama@hp-tech.com',
+        jobTitle: 'Support Agent',
+        departmentId: createdDepts[4].id,
+        salary: 12000,
+        employmentType: 'FULL_TIME'
+      }
     ];
 
     const createdEmployees: any[] = [];
@@ -480,12 +681,72 @@ async function seedDemo() {
     // ── 14. VENDORS (6) ──
     // Seeding Vendors
     const vendorsData = [
-      { name: 'Dell Technologies KSA', type: 'Vendor', firstName: 'John', lastName: 'Smith', phone: '0112345001', email: 'sales@dell-ksa.com', serviceType: 'Hardware', evaluation: 92, defaultPaymentMethod: 'Credit' },
-      { name: 'Oracle Cloud ME', type: 'Distributor', firstName: 'Sarah', lastName: 'Lee', phone: '0112345002', email: 'contact@oracle-me.com', serviceType: 'Software', evaluation: 88, defaultPaymentMethod: 'Credit' },
-      { name: 'Cisco Saudi', type: 'Vendor', firstName: 'Ahmad', lastName: 'Khan', phone: '0112345003', email: 'enterprise@cisco-sa.com', serviceType: 'Both', evaluation: 95, defaultPaymentMethod: 'Credit' },
-      { name: 'Local IT Supplies', type: 'LocalSupplier', firstName: 'Mohammed', lastName: 'Ali', phone: '0112345004', email: 'orders@localit.sa', serviceType: 'Hardware', evaluation: 75, defaultPaymentMethod: 'Cash' },
-      { name: 'AWS Saudi Region', type: 'Distributor', firstName: 'Alex', lastName: 'Johnson', phone: '0112345005', email: 'aws-sa@amazon.com', serviceType: 'Software', evaluation: 97, defaultPaymentMethod: 'Credit' },
-      { name: 'HP Enterprise ME', type: 'Vendor', firstName: 'Lisa', lastName: 'Wang', phone: '0112345006', email: 'enterprise@hpe-me.com', serviceType: 'Both', evaluation: 90, defaultPaymentMethod: 'Credit' }
+      {
+        name: 'Dell Technologies KSA',
+        type: 'Vendor',
+        firstName: 'John',
+        lastName: 'Smith',
+        phone: '0112345001',
+        email: 'sales@dell-ksa.com',
+        serviceType: 'Hardware',
+        evaluation: 92,
+        defaultPaymentMethod: 'Credit'
+      },
+      {
+        name: 'Oracle Cloud ME',
+        type: 'Distributor',
+        firstName: 'Sarah',
+        lastName: 'Lee',
+        phone: '0112345002',
+        email: 'contact@oracle-me.com',
+        serviceType: 'Software',
+        evaluation: 88,
+        defaultPaymentMethod: 'Credit'
+      },
+      {
+        name: 'Cisco Saudi',
+        type: 'Vendor',
+        firstName: 'Ahmad',
+        lastName: 'Khan',
+        phone: '0112345003',
+        email: 'enterprise@cisco-sa.com',
+        serviceType: 'Both',
+        evaluation: 95,
+        defaultPaymentMethod: 'Credit'
+      },
+      {
+        name: 'Local IT Supplies',
+        type: 'LocalSupplier',
+        firstName: 'Mohammed',
+        lastName: 'Ali',
+        phone: '0112345004',
+        email: 'orders@localit.sa',
+        serviceType: 'Hardware',
+        evaluation: 75,
+        defaultPaymentMethod: 'Cash'
+      },
+      {
+        name: 'AWS Saudi Region',
+        type: 'Distributor',
+        firstName: 'Alex',
+        lastName: 'Johnson',
+        phone: '0112345005',
+        email: 'aws-sa@amazon.com',
+        serviceType: 'Software',
+        evaluation: 97,
+        defaultPaymentMethod: 'Credit'
+      },
+      {
+        name: 'HP Enterprise ME',
+        type: 'Vendor',
+        firstName: 'Lisa',
+        lastName: 'Wang',
+        phone: '0112345006',
+        email: 'enterprise@hpe-me.com',
+        serviceType: 'Both',
+        evaluation: 90,
+        defaultPaymentMethod: 'Credit'
+      }
     ];
     const createdVendors = await Vendor.bulkCreate(vendorsData as any);
     // Vendors created
@@ -513,7 +774,15 @@ async function seedDemo() {
         total += qty * price;
         await PurchaseOrderItem.create({
           purchaseOrderId: po.id,
-          description: pick(['Server Rack Unit', 'Cisco Switch 48-port', 'UPS Battery Pack', 'SSD 1TB Enterprise', 'RAM 64GB ECC', 'Network Cable Cat6 — 100m', 'Firewall Appliance']),
+          description: pick([
+            'Server Rack Unit',
+            'Cisco Switch 48-port',
+            'UPS Battery Pack',
+            'SSD 1TB Enterprise',
+            'RAM 64GB ECC',
+            'Network Cable Cat6 — 100m',
+            'Firewall Appliance'
+          ]),
           quantity: qty,
           unitPrice: price,
           tax: 15
@@ -542,13 +811,39 @@ async function seedDemo() {
     }
 
     const expenseDescs = [
-      'Flight to Jeddah — client meeting', 'Monthly Slack subscription', 'Office printer cartridges',
-      'Google Ads campaign — Q1', 'Team building workshop', 'Hotel — Riyadh business trip',
-      'Adobe Creative Cloud annual', 'Standing desks (x3)', 'Conference registration fees',
-      'Uber business rides — January', 'AWS hosting — February', 'LinkedIn Sales Navigator',
-      'Office renovation supplies', 'Catering for client event', 'Professional development course'
+      'Flight to Jeddah — client meeting',
+      'Monthly Slack subscription',
+      'Office printer cartridges',
+      'Google Ads campaign — Q1',
+      'Team building workshop',
+      'Hotel — Riyadh business trip',
+      'Adobe Creative Cloud annual',
+      'Standing desks (x3)',
+      'Conference registration fees',
+      'Uber business rides — January',
+      'AWS hosting — February',
+      'LinkedIn Sales Navigator',
+      'Office renovation supplies',
+      'Catering for client event',
+      'Professional development course'
     ];
-    const expStatuses = ['APPROVED', 'APPROVED', 'APPROVED', 'APPROVED', 'APPROVED', 'PENDING', 'PENDING', 'PENDING', 'PENDING', 'REJECTED', 'APPROVED', 'APPROVED', 'PENDING', 'APPROVED', 'PENDING'];
+    const expStatuses = [
+      'APPROVED',
+      'APPROVED',
+      'APPROVED',
+      'APPROVED',
+      'APPROVED',
+      'PENDING',
+      'PENDING',
+      'PENDING',
+      'PENDING',
+      'REJECTED',
+      'APPROVED',
+      'APPROVED',
+      'PENDING',
+      'APPROVED',
+      'PENDING'
+    ];
     const expensesData = expenseDescs.map((desc, i) => ({
       description: desc,
       amount: money(200, 25000),
@@ -580,13 +875,29 @@ async function seedDemo() {
     }
 
     const ticketSubjects = [
-      'Cannot login after password reset', 'Invoice #2045 shows wrong amount',
-      'Dashboard charts not loading', 'Request: Dark mode for mobile app',
-      'Slow performance on reports page', 'Need to merge duplicate contacts',
-      'Email integration disconnected', 'Approval workflow stuck in pending',
-      'Export to Excel generates empty file', 'Calendar sync not working'
+      'Cannot login after password reset',
+      'Invoice #2045 shows wrong amount',
+      'Dashboard charts not loading',
+      'Request: Dark mode for mobile app',
+      'Slow performance on reports page',
+      'Need to merge duplicate contacts',
+      'Email integration disconnected',
+      'Approval workflow stuck in pending',
+      'Export to Excel generates empty file',
+      'Calendar sync not working'
     ];
-    const ticketStatuses = ['OPEN', 'OPEN', 'IN_PROGRESS', 'IN_PROGRESS', 'IN_PROGRESS', 'WAITING_CUSTOMER', 'RESOLVED', 'RESOLVED', 'RESOLVED', 'CLOSED'];
+    const ticketStatuses = [
+      'OPEN',
+      'OPEN',
+      'IN_PROGRESS',
+      'IN_PROGRESS',
+      'IN_PROGRESS',
+      'WAITING_CUSTOMER',
+      'RESOLVED',
+      'RESOLVED',
+      'RESOLVED',
+      'CLOSED'
+    ];
     const ticketsData = ticketSubjects.map((subject, i) => ({
       ticketNumber: `TKT-2026-${(i + 1).toString().padStart(4, '0')}`,
       subject,
@@ -609,10 +920,30 @@ async function seedDemo() {
     // ── 18. KB ARTICLES (5) ──
     // Seeding Knowledge Base
     const articles = [
-      { title: 'Getting Started with Leadify CRM', slug: 'getting-started-crm', category: 'Onboarding', excerpt: 'A complete guide to setting up your CRM workspace' },
-      { title: 'Managing Your Sales Pipeline', slug: 'managing-sales-pipeline', category: 'Sales', excerpt: 'Best practices for lead-to-deal conversion' },
-      { title: 'Creating & Managing Proposals', slug: 'creating-proposals', category: 'Sales', excerpt: 'Step-by-step guide to creating winning proposals' },
-      { title: 'Understanding Reports & Analytics', slug: 'reports-analytics', category: 'Analytics', excerpt: 'How to leverage data for better decisions' },
+      {
+        title: 'Getting Started with Leadify CRM',
+        slug: 'getting-started-crm',
+        category: 'Onboarding',
+        excerpt: 'A complete guide to setting up your CRM workspace'
+      },
+      {
+        title: 'Managing Your Sales Pipeline',
+        slug: 'managing-sales-pipeline',
+        category: 'Sales',
+        excerpt: 'Best practices for lead-to-deal conversion'
+      },
+      {
+        title: 'Creating & Managing Proposals',
+        slug: 'creating-proposals',
+        category: 'Sales',
+        excerpt: 'Step-by-step guide to creating winning proposals'
+      },
+      {
+        title: 'Understanding Reports & Analytics',
+        slug: 'reports-analytics',
+        category: 'Analytics',
+        excerpt: 'How to leverage data for better decisions'
+      },
       { title: 'Workflow Automation Guide', slug: 'workflow-automation', category: 'Automation', excerpt: 'Automate repetitive tasks and save time' }
     ];
     const articlesData = articles.map((a, i) => ({
@@ -631,9 +962,29 @@ async function seedDemo() {
     // ── 19. CAMPAIGNS (3) ──
     // Seeding Campaigns
     const campaignsData = [
-      { name: 'Q1 Product Launch Campaign', subject: 'Introducing Leadify CRM 3.0 — Your Enterprise Edge', status: CampaignStatus.SENT, sentAt: daysAgo(15), userId: adminId, htmlContent: '<h1>Leadify CRM 3.0</h1><p>Discover the new features.</p>' },
-      { name: 'Renewal Reminder — March 2026', subject: 'Your subscription renews soon — Special offer inside', status: CampaignStatus.SCHEDULED, scheduledAt: days(10), userId: adminId, htmlContent: '<h1>Renewal Reminder</h1><p>Renew early for 15% off.</p>' },
-      { name: 'Feature Announcement — AI Assistant', subject: 'Meet your new AI Sales Coach', status: CampaignStatus.DRAFT, userId: adminId, htmlContent: '<h1>AI Sales Coach</h1><p>AI-powered insights for your pipeline.</p>' }
+      {
+        name: 'Q1 Product Launch Campaign',
+        subject: 'Introducing Leadify CRM 3.0 — Your Enterprise Edge',
+        status: CampaignStatus.SENT,
+        sentAt: daysAgo(15),
+        userId: adminId,
+        htmlContent: '<h1>Leadify CRM 3.0</h1><p>Discover the new features.</p>'
+      },
+      {
+        name: 'Renewal Reminder — March 2026',
+        subject: 'Your subscription renews soon — Special offer inside',
+        status: CampaignStatus.SCHEDULED,
+        scheduledAt: days(10),
+        userId: adminId,
+        htmlContent: '<h1>Renewal Reminder</h1><p>Renew early for 15% off.</p>'
+      },
+      {
+        name: 'Feature Announcement — AI Assistant',
+        subject: 'Meet your new AI Sales Coach',
+        status: CampaignStatus.DRAFT,
+        userId: adminId,
+        htmlContent: '<h1>AI Sales Coach</h1><p>AI-powered insights for your pipeline.</p>'
+      }
     ];
     await Campaign.bulkCreate(campaignsData);
     // Campaigns created
@@ -641,11 +992,21 @@ async function seedDemo() {
     // ── 20. CALENDAR EVENTS (15) ──
     // Seeding Calendar Events
     const eventTitles = [
-      'Client Demo — Aramco Digital', 'Weekly Sales Standup', 'Quarterly Business Review',
-      'Follow-up Call — NEOM', 'Team Lunch', 'Sprint Planning', 'Board Meeting Prep',
-      'Training: CRM Advanced Features', 'Client Onboarding — STC', 'One-on-One with Manager',
-      'Pipeline Review Meeting', 'Proposal Deadline — Red Sea', 'Investor Update Call',
-      'Product Roadmap Workshop', 'End-of-Month Closeout'
+      'Client Demo — Aramco Digital',
+      'Weekly Sales Standup',
+      'Quarterly Business Review',
+      'Follow-up Call — NEOM',
+      'Team Lunch',
+      'Sprint Planning',
+      'Board Meeting Prep',
+      'Training: CRM Advanced Features',
+      'Client Onboarding — STC',
+      'One-on-One with Manager',
+      'Pipeline Review Meeting',
+      'Proposal Deadline — Red Sea',
+      'Investor Update Call',
+      'Product Roadmap Workshop',
+      'End-of-Month Closeout'
     ];
     const eventTypes = ['MEETING', 'CALL', 'TASK', 'REMINDER', 'OTHER'];
     const eventColors = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
@@ -708,7 +1069,18 @@ async function seedDemo() {
         description: `Approval request for ${i < 3 ? 'purchase order' : 'expense report'}`,
         status: approvalStatuses[i],
         currentStep: approvalStatuses[i] === 'PENDING' ? 0 : 1,
-        stepResults: approvalStatuses[i] !== 'PENDING' ? [{ step: 1, approverUserId: adminId, status: approvalStatuses[i], comment: approvalStatuses[i] === 'REJECTED' ? 'Over budget' : 'Looks good', date: new Date().toISOString() }] : [],
+        stepResults:
+          approvalStatuses[i] !== 'PENDING'
+            ? [
+                {
+                  step: 1,
+                  approverUserId: adminId,
+                  status: approvalStatuses[i],
+                  comment: approvalStatuses[i] === 'REJECTED' ? 'Over budget' : 'Looks good',
+                  date: new Date().toISOString()
+                }
+              ]
+            : [],
         requesterId: createdUsers[rand(1, 5)].id
       } as any);
     }
@@ -725,7 +1097,12 @@ async function seedDemo() {
         conditionLogic: ConditionLogic.AND,
         conditions: [{ field: 'score', operator: 'greater_than', value: 80 }],
         actions: [
-          { type: 'SEND_NOTIFICATION', role: 'SALES_MANAGER', title: 'High-Value Lead: {{name}}', message: 'A lead with score {{score}} was created. Immediate follow-up recommended.' }
+          {
+            type: 'SEND_NOTIFICATION',
+            role: 'SALES_MANAGER',
+            title: 'High-Value Lead: {{name}}',
+            message: 'A lead with score {{score}} was created. Immediate follow-up recommended.'
+          }
         ],
         isActive: true,
         priority: 100,
@@ -738,9 +1115,7 @@ async function seedDemo() {
         triggerType: TriggerType.ON_UPDATE,
         conditionLogic: ConditionLogic.AND,
         conditions: [{ field: 'stage', operator: 'equals', value: 'PROGRESS' }],
-        actions: [
-          { type: 'CREATE_TASK', title: 'Follow up on {{name}}', assignedTo: '1', dueInDays: 3 }
-        ],
+        actions: [{ type: 'CREATE_TASK', title: 'Follow up on {{name}}', assignedTo: '1', dueInDays: 3 }],
         isActive: true,
         priority: 90,
         createdBy: adminId
@@ -753,7 +1128,12 @@ async function seedDemo() {
         conditionLogic: ConditionLogic.AND,
         conditions: [{ field: 'priority', operator: 'equals', value: 'URGENT' }],
         actions: [
-          { type: 'SEND_NOTIFICATION', role: 'SUPER_ADMIN', title: 'Urgent Ticket: {{subject}}', message: 'An urgent support ticket has been created. SLA response time: 1 hour.' }
+          {
+            type: 'SEND_NOTIFICATION',
+            role: 'SUPER_ADMIN',
+            title: 'Urgent Ticket: {{subject}}',
+            message: 'An urgent support ticket has been created. SLA response time: 1 hour.'
+          }
         ],
         isActive: true,
         priority: 95,
@@ -766,23 +1146,48 @@ async function seedDemo() {
     // ── 23. NOTIFICATIONS (20) ──
     // Seeding Notifications
     const notifTypes = [
-      'LEAD_ASSIGNED', 'DEAL_ASSIGNED', 'OPPORTUNITY_ASSIGNED', 'DEAL_WON',
-      'PROPOSAL_APPROVED', 'PROPOSAL_REJECTED', 'TASK_DUE', 'APPROVAL_REQUESTED',
-      'SLA_BREACH', 'INVOICE_OVERDUE', 'CONTRACT_EXPIRING', 'SYSTEM_ALERT',
-      'WORKFLOW_TRIGGERED', 'COMMENT_MENTION', 'SLA_WARNING', 'CLIENT_ASSIGNED',
-      'PROJECT_ASSIGNED', 'PROPOSAL_ASSIGNED', 'DEAL_WON', 'SYSTEM_ALERT'
+      'LEAD_ASSIGNED',
+      'DEAL_ASSIGNED',
+      'OPPORTUNITY_ASSIGNED',
+      'DEAL_WON',
+      'PROPOSAL_APPROVED',
+      'PROPOSAL_REJECTED',
+      'TASK_DUE',
+      'APPROVAL_REQUESTED',
+      'SLA_BREACH',
+      'INVOICE_OVERDUE',
+      'CONTRACT_EXPIRING',
+      'SYSTEM_ALERT',
+      'WORKFLOW_TRIGGERED',
+      'COMMENT_MENTION',
+      'SLA_WARNING',
+      'CLIENT_ASSIGNED',
+      'PROJECT_ASSIGNED',
+      'PROPOSAL_ASSIGNED',
+      'DEAL_WON',
+      'SYSTEM_ALERT'
     ];
     const notifBodiesEn = [
-      'New lead "Ahmed — NEOM" assigned to you', 'Deal "Enterprise License — STC" assigned to you',
-      'New opportunity "Cloud Migration" assigned', 'Congratulations! Deal worth 350,000 SAR closed',
-      'Proposal "CRM Implementation" has been approved', 'Proposal "IT Audit" was rejected — see feedback',
-      'Task "Prepare client demo" is due tomorrow', 'New approval request for PO-2026-0001',
-      'SLA breach on ticket TKT-2026-0001', 'Invoice INV-2026-0005 is 15 days overdue',
-      'Contract with Aramco Digital expires in 30 days', 'System maintenance scheduled for tonight',
-      'Workflow "Auto-Notify" triggered for new lead', 'Khalid mentioned you in a comment',
-      'SLA warning: Ticket response due in 2 hours', 'New client "Red Sea Global" assigned to you',
-      'Added to project "NEOM Smart City CRM"', 'Assigned to proposal "Digital Transformation"',
-      'Another deal worth 180,000 SAR won this week!', 'Database backup completed successfully'
+      'New lead "Ahmed — NEOM" assigned to you',
+      'Deal "Enterprise License — STC" assigned to you',
+      'New opportunity "Cloud Migration" assigned',
+      'Congratulations! Deal worth 350,000 SAR closed',
+      'Proposal "CRM Implementation" has been approved',
+      'Proposal "IT Audit" was rejected — see feedback',
+      'Task "Prepare client demo" is due tomorrow',
+      'New approval request for PO-2026-0001',
+      'SLA breach on ticket TKT-2026-0001',
+      'Invoice INV-2026-0005 is 15 days overdue',
+      'Contract with Aramco Digital expires in 30 days',
+      'System maintenance scheduled for tonight',
+      'Workflow "Auto-Notify" triggered for new lead',
+      'Khalid mentioned you in a comment',
+      'SLA warning: Ticket response due in 2 hours',
+      'New client "Red Sea Global" assigned to you',
+      'Added to project "NEOM Smart City CRM"',
+      'Assigned to proposal "Digital Transformation"',
+      'Another deal worth 180,000 SAR won this week!',
+      'Database backup completed successfully'
     ];
     const notifsData = notifTypes.map((type, i) => ({
       body_en: notifBodiesEn[i],

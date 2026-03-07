@@ -294,7 +294,7 @@ async function handleUpdate() {
     if (res?.success !== false) {
       await loadTree();
       // Re-select the updated category
-      const updated = flatCategories.value.find((c) => c.id === selectedCategory.value.id);
+      const updated = flatCategories.value.find(c => c.id === selectedCategory.value.id);
       if (updated) onNodeClick(updated);
       ElMessage.success(t('common.saved'));
     }

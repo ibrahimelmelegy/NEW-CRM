@@ -161,7 +161,7 @@ export async function getProjects(all?: false): Promise<CombinedProjectValues> {
 
     if (success) {
       // Return the docs (c) from the response
-      const projects = body?.docs?.map((project) => ({
+      const projects = body?.docs?.map(project => ({
         ...project,
         createdAt: formatDate(project.createdAt)
       }));
@@ -274,7 +274,7 @@ export async function getProject(id: string): Promise<CombinedProjectValues> {
 
 export async function getProjectActivity(id: string | string[]): Promise<Lead> {
   try {
-    const { body: lead, success } = await useApiFetch(`activity/project/${id}`);
+    const { body: lead } = await useApiFetch(`activity/project/${id}`);
     return lead;
   } catch (error) {
     console.error('Error fetching lead:', error instanceof Error ? error.message : error);

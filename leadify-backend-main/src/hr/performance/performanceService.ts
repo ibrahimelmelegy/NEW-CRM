@@ -1,4 +1,4 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op } from 'sequelize';
 import PerformanceReview from './performanceModel';
 import Employee from '../models/employeeModel';
 import User from '../../user/userModel';
@@ -28,7 +28,9 @@ class PerformanceService {
         { model: User, as: 'reviewer', attributes: ['id', 'name', 'email'] }
       ],
       order: [['createdAt', 'DESC']],
-      limit, offset, distinct: true
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -88,18 +90,14 @@ class PerformanceService {
     if (Array.isArray(review.goals)) {
       for (const goal of review.goals) {
         const weight = goal.weight || 0;
-        const isCompleted = ['COMPLETED', 'MET', 'ACHIEVED'].includes(
-          (goal.status || '').toUpperCase()
-        );
+        const isCompleted = ['COMPLETED', 'MET', 'ACHIEVED'].includes((goal.status || '').toUpperCase());
         const goalScore = isCompleted ? 5 : 1;
         weightedSum += goalScore * weight;
         totalWeight += weight;
       }
     }
 
-    const overallRating = totalWeight > 0
-      ? Math.round((weightedSum / totalWeight) * 10) / 10
-      : null;
+    const overallRating = totalWeight > 0 ? Math.round((weightedSum / totalWeight) * 10) / 10 : null;
 
     if (overallRating !== null) {
       await review.update({ overallRating });
@@ -126,10 +124,10 @@ class PerformanceService {
     });
 
     const distribution = {
-      needsImprovement: 0,  // 1.0 - 1.99
+      needsImprovement: 0, // 1.0 - 1.99
       meetsExpectations: 0, // 2.0 - 2.99
-      exceeds: 0,           // 3.0 - 3.99
-      outstanding: 0        // 4.0 - 5.0
+      exceeds: 0, // 3.0 - 3.99
+      outstanding: 0 // 4.0 - 5.0
     };
 
     for (const r of reviews) {
@@ -144,12 +142,15 @@ class PerformanceService {
     return {
       total,
       distribution,
-      percentages: total > 0 ? {
-        needsImprovement: Math.round((distribution.needsImprovement / total) * 100),
-        meetsExpectations: Math.round((distribution.meetsExpectations / total) * 100),
-        exceeds: Math.round((distribution.exceeds / total) * 100),
-        outstanding: Math.round((distribution.outstanding / total) * 100)
-      } : null
+      percentages:
+        total > 0
+          ? {
+              needsImprovement: Math.round((distribution.needsImprovement / total) * 100),
+              meetsExpectations: Math.round((distribution.meetsExpectations / total) * 100),
+              exceeds: Math.round((distribution.exceeds / total) * 100),
+              outstanding: Math.round((distribution.outstanding / total) * 100)
+            }
+          : null
     };
   }
 
@@ -175,23 +176,22 @@ class PerformanceService {
         employeeId: { [Op.in]: employeeIds },
         period
       },
-      include: [
-        { model: Employee, as: 'employee', attributes: ['id', 'firstName', 'lastName', 'jobTitle'] }
-      ],
+      include: [{ model: Employee, as: 'employee', attributes: ['id', 'firstName', 'lastName', 'jobTitle'] }],
       order: [['overallRating', 'DESC']]
     });
 
-    const ratings = reviews
-      .map(r => Number(r.overallRating))
-      .filter(r => !isNaN(r) && r > 0);
+    const ratings = reviews.map(r => Number(r.overallRating)).filter(r => !isNaN(r) && r > 0);
 
-    const stats = ratings.length > 0 ? {
-      averageRating: Math.round((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10,
-      highestRating: Math.max(...ratings),
-      lowestRating: Math.min(...ratings),
-      reviewedCount: ratings.length,
-      pendingCount: directReports.length - ratings.length
-    } : null;
+    const stats =
+      ratings.length > 0
+        ? {
+            averageRating: Math.round((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10,
+            highestRating: Math.max(...ratings),
+            lowestRating: Math.min(...ratings),
+            reviewedCount: ratings.length,
+            pendingCount: directReports.length - ratings.length
+          }
+        : null;
 
     return { directReports, reviews, stats };
   }
@@ -264,7 +264,9 @@ class PerformanceService {
     }
 
     await review.update({ status: 'COMPLETED' });
-    try { io.emit('performance:submitted', { id: reviewId, employeeId: review.employeeId, status: 'COMPLETED' }); } catch {}
+    try {
+      io.emit('performance:submitted', { id: reviewId, employeeId: review.employeeId, status: 'COMPLETED' });
+    } catch {}
     return this.getById(reviewId);
   }
 
@@ -288,7 +290,9 @@ class PerformanceService {
       comments: updatedComments
     });
 
-    try { io.emit('performance:approved', { id: reviewId, employeeId: review.employeeId, approverId, status: 'ACKNOWLEDGED' }); } catch {}
+    try {
+      io.emit('performance:approved', { id: reviewId, employeeId: review.employeeId, approverId, status: 'ACKNOWLEDGED' });
+    } catch {}
     return this.getById(reviewId);
   }
 }

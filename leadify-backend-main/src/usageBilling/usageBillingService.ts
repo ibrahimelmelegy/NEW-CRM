@@ -1,4 +1,4 @@
-import { Op, fn, col } from 'sequelize';
+import { Op } from 'sequelize';
 import UsageMeter from './usageMeterModel';
 import UsageRecord from './usageRecordModel';
 import { clampPagination } from '../utils/pagination';
@@ -9,7 +9,9 @@ class UsageBillingService {
 
   async createMeter(data: any, tenantId?: string) {
     const meter = await UsageMeter.create({ ...data, tenantId });
-    try { io.emit('usageMeter:created', { id: meter.id, name: meter.name }); } catch {}
+    try {
+      io.emit('usageMeter:created', { id: meter.id, name: meter.name });
+    } catch {}
     return meter;
   }
 
@@ -21,7 +23,11 @@ class UsageBillingService {
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
 
     const { rows, count } = await UsageMeter.findAndCountAll({
-      where, order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      where,
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -34,7 +40,9 @@ class UsageBillingService {
     const item = await UsageMeter.findByPk(id);
     if (!item) return null;
     await item.update(data);
-    try { io.emit('usageMeter:updated', { id: item.id }); } catch {}
+    try {
+      io.emit('usageMeter:updated', { id: item.id });
+    } catch {}
     return item;
   }
 
@@ -54,7 +62,9 @@ class UsageBillingService {
       data.billingPeriod = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     }
     const record = await UsageRecord.create({ ...data, tenantId });
-    try { io.emit('usage:recorded', { id: record.id, meterId: record.meterId }); } catch {}
+    try {
+      io.emit('usage:recorded', { id: record.id, meterId: record.meterId });
+    } catch {}
     return record;
   }
 
@@ -70,7 +80,9 @@ class UsageBillingService {
       where,
       include: [{ model: UsageMeter, as: 'meter', attributes: ['id', 'name', 'unit', 'pricePerUnit'] }],
       order: [['recordedAt', 'DESC']],
-      limit, offset, distinct: true
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -192,7 +204,9 @@ class UsageBillingService {
       status: 'DRAFT'
     };
 
-    try { io.emit('usageInvoice:generated', { customerId, billingPeriod, total: invoice.total }); } catch {}
+    try {
+      io.emit('usageInvoice:generated', { customerId, billingPeriod, total: invoice.total });
+    } catch {}
     return invoice;
   }
 }

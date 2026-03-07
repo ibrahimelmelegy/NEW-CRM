@@ -72,11 +72,11 @@ function toggleCategory(cat: string) {
 const filteredTemplates = computed(() => {
   let result = props.templates;
   if (activeCategory.value) {
-    result = result.filter((t) => t.category === activeCategory.value);
+    result = result.filter(t => t.category === activeCategory.value);
   }
   if (search.value) {
     const q = search.value.toLowerCase();
-    result = result.filter((t) => t.name.toLowerCase().includes(q) || t.subject.toLowerCase().includes(q) || t.body.toLowerCase().includes(q));
+    result = result.filter(t => t.name.toLowerCase().includes(q) || t.subject.toLowerCase().includes(q) || t.body.toLowerCase().includes(q));
   }
   return result;
 });

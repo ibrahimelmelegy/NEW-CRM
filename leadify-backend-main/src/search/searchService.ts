@@ -4,8 +4,6 @@ import Lead from '../lead/leadModel';
 import Deal from '../deal/model/dealModel';
 import Client from '../client/clientModel';
 import Opportunity from '../opportunity/opportunityModel';
-import Project from '../project/models/projectModel';
-import { tenantWhere } from '../utils/tenantScope';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 
@@ -115,11 +113,7 @@ class SearchService {
    * Search across leads, deals, clients, contacts, opportunities.
    * Uses PostgreSQL tsvector when available, falls back to ILIKE.
    */
-  async globalSearch(
-    query: string,
-    tenantId: string | undefined,
-    options: GlobalSearchOptions = {}
-  ): Promise<GlobalSearchResult> {
+  async globalSearch(query: string, tenantId: string | undefined, options: GlobalSearchOptions = {}): Promise<GlobalSearchResult> {
     if (!query || query.trim().length === 0) {
       return { results: [], totalByEntity: {} };
     }
@@ -128,16 +122,14 @@ class SearchService {
     const { entities, page = 1, limit = MAX_PER_ENTITY } = options;
     const perEntity = Math.min(limit, MAX_PER_ENTITY);
 
-    const entitiesToSearch = entities && entities.length > 0
-      ? entities.filter(e => entityConfigMap[e])
-      : Object.keys(entityConfigMap);
+    const entitiesToSearch = entities && entities.length > 0 ? entities.filter(e => entityConfigMap[e]) : Object.keys(entityConfigMap);
 
     const tenantFilter = tenantId ? { tenantId } : {};
     const allResults: SearchResultItem[] = [];
     const totalByEntity: Record<string, number> = {};
 
     await Promise.all(
-      entitiesToSearch.map(async (entityType) => {
+      entitiesToSearch.map(async entityType => {
         const config = entityConfigMap[entityType];
         if (!config) return;
 
@@ -154,9 +146,7 @@ class SearchService {
               ...literal(`search_vector @@ plainto_tsquery('english', ${escaped})`)
             },
             attributes: {
-              include: [
-                [literal(`ts_rank(search_vector, plainto_tsquery('english', ${escaped}))`), 'search_rank']
-              ]
+              include: [[literal(`ts_rank(search_vector, plainto_tsquery('english', ${escaped}))`), 'search_rank']]
             },
             limit: perEntity,
             offset,
@@ -200,9 +190,7 @@ class SearchService {
             id: plain.id,
             title: plain[config.titleField] || '',
             subtitle: plain[config.subtitleField] || '',
-            relevanceScore: plain.search_rank
-              ? parseFloat(plain.search_rank)
-              : 1 - index * 0.01
+            relevanceScore: plain.search_rank ? parseFloat(plain.search_rank) : 1 - index * 0.01
           });
         });
       })
@@ -217,12 +205,7 @@ class SearchService {
   /**
    * Search within a specific entity type with optional field filters.
    */
-  async searchEntity(
-    entity: string,
-    query: string,
-    tenantId: string | undefined,
-    filters: EntitySearchFilters = {}
-  ): Promise<EntitySearchResult> {
+  async searchEntity(entity: string, query: string, tenantId: string | undefined, filters: EntitySearchFilters = {}): Promise<EntitySearchResult> {
     const config = entityConfigMap[entity];
     if (!config) {
       throw new BaseError(ERRORS.SOMETHING_WENT_WRONG, 400);
@@ -297,9 +280,7 @@ class SearchService {
     const history = searchHistory.get(userId) || [];
 
     // Remove duplicate if the same query already exists
-    const filtered = history.filter(
-      entry => entry.query.toLowerCase() !== query.trim().toLowerCase()
-    );
+    const filtered = history.filter(entry => entry.query.toLowerCase() !== query.trim().toLowerCase());
 
     // Add new entry at the beginning
     filtered.unshift({ query: query.trim(), timestamp: new Date() });

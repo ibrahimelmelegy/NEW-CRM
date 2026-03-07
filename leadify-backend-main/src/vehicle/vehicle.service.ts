@@ -235,7 +235,6 @@ class VehicleService {
     if (!vehicle) throw new BaseError(ERRORS.VEHICLE_NOT_FOUND);
     await vehicle.destroy();
   }
-
 }
 
 export default new VehicleService();

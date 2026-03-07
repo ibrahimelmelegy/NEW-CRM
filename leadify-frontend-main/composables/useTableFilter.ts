@@ -85,12 +85,12 @@ export default async function useTableFilter(position: string = 'lead', queryPar
     // Handle API response
     if (success) {
       // Format the data for the table, including dates and user assignment
-      const formattedData = body?.docs?.map((data) => ({
+      const formattedData = body?.docs?.map(data => ({
         ...data,
         createdAt: formatDate(data.createdAt),
         date: getYear(data?.createdAt),
         updatedAt: formatDate(data.updatedAt),
-        assign: data.users?.length ? data.users?.map((user) => user.name).join(', ') : 'Unassigned',
+        assign: data.users?.length ? data.users?.map(user => user.name).join(', ') : 'Unassigned',
         ...(data?.proposalDate && { proposalDate: formatDate(data?.proposalDate) }),
         ...(data?.type && { type: formatSnakeCase(data?.type) }),
         // ...(data?.status && { status: formatSnakeCase(data?.status) }),
@@ -138,7 +138,7 @@ export default async function useTableFilter(position: string = 'lead', queryPar
         clientType: formatSnakeCase(data.clientType) || '-',
         startDate: getYear(data?.startDate),
         endDate: getYear(data?.endDate),
-        projectAssignedUsers: data?.assignedUsers?.length ? data.assignedUsers.map((user) => user.name).join(', ') : '-',
+        projectAssignedUsers: data?.assignedUsers?.length ? data.assignedUsers.map(user => user.name).join(', ') : '-',
         projectClient: data?.client?.clientName || '-',
         description: data?.description || '-',
         relatedEntity: data?.relatedEntity?.name || '-',

@@ -24,7 +24,7 @@ class AttachmentController {
         fileSize: file?.size || req.body.fileSize,
         mimeType: file?.mimetype || req.body.mimeType
       };
-      wrapResult(res, await attachmentService.createAttachment(data, req.user?.id!), 201);
+      wrapResult(res, await attachmentService.createAttachment(data, req.user!.id), 201);
     } catch (error) {
       next(error);
     }
@@ -32,7 +32,7 @@ class AttachmentController {
 
   async deleteAttachment(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      wrapResult(res, await attachmentService.deleteAttachment(Number(req.params.id), req.user?.id!));
+      wrapResult(res, await attachmentService.deleteAttachment(Number(req.params.id), req.user!.id));
     } catch (error) {
       next(error);
     }

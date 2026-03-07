@@ -297,13 +297,49 @@ const newRule = ref({
   method: 'ROUND_ROBIN'
 });
 
-const rules = ref<{ id: number; name: string; description: string; isActive: boolean; type: string; matchType: string; conditions: { field: string; operator: string; value: string }[]; assignTo: string; assignMethod: string; triggerCount: number }[]>([]);
+const rules = ref<
+  {
+    id: number;
+    name: string;
+    description: string;
+    isActive: boolean;
+    type: string;
+    matchType: string;
+    conditions: { field: string; operator: string; value: string }[];
+    assignTo: string;
+    assignMethod: string;
+    triggerCount: number;
+  }[]
+>([]);
 
 const assignmentRules = computed(() => rules.value.filter(r => r.type === 'ASSIGNMENT'));
 
-const escalationRules = ref<{ id: number; name: string; description: string; isActive: boolean; entity: string; trigger: string; triggerCount: number; levels: { delay: string; notifyTo: string; email: boolean; sms: boolean; slack: boolean }[] }[]>([]);
+const escalationRules = ref<
+  {
+    id: number;
+    name: string;
+    description: string;
+    isActive: boolean;
+    entity: string;
+    trigger: string;
+    triggerCount: number;
+    levels: { delay: string; notifyTo: string; email: boolean; sms: boolean; slack: boolean }[];
+  }[]
+>([]);
 
-const roundRobinPools = ref<{ id: number; name: string; entity: string; method: string; isActive: boolean; totalAssigned: number; nextAssignee: string; maxLoad: number; members: { name: string; assigned: number; weight: number | undefined }[] }[]>([]);
+const roundRobinPools = ref<
+  {
+    id: number;
+    name: string;
+    entity: string;
+    method: string;
+    isActive: boolean;
+    totalAssigned: number;
+    nextAssignee: string;
+    maxLoad: number;
+    members: { name: string; assigned: number; weight: number | undefined }[];
+  }[]
+>([]);
 
 const totalAssignments = computed(() => rules.value.reduce((s, r) => s + r.triggerCount, 0));
 const escalationsTriggered = computed(() => escalationRules.value.reduce((s, e) => s + e.triggerCount, 0));

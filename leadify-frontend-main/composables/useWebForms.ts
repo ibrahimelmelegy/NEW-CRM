@@ -64,7 +64,7 @@ export function useWebForms() {
       const { body, success } = await useApiFetch('form-builder/templates?limit=100');
       if (success && body) {
         const data = body as unknown;
-        forms.value = (data.docs || []).map((f) => ({
+        forms.value = (data.docs || []).map(f => ({
           ...f,
           fields: f.fields || [],
           isActive: f.status === 'ACTIVE',

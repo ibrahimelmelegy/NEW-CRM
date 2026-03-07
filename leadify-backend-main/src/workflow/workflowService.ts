@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import WorkflowRule, { ConditionLogic, EntityType, TriggerType, WorkflowAction, WorkflowCondition } from './workflowModel';
+import WorkflowRule, { ConditionLogic, TriggerType, WorkflowAction, WorkflowCondition } from './workflowModel';
 import WorkflowExecution, { ActionExecutionResult, ExecutionStatus } from './workflowExecutionModel';
 import User from '../user/userModel';
 import Notification from '../notification/notificationModel';
@@ -17,13 +17,21 @@ function getModelRegistry(): Record<string, any> {
   if (modelRegistry) return modelRegistry;
 
   // Require inline to break circular deps
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Lead = require('../lead/leadModel').default;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Deal = require('../deal/model/dealModel').default;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Client = require('../client/clientModel').default;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Opportunity = require('../opportunity/opportunityModel').default;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Invoice = require('../deal/model/invoiceMode').default;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Contract = require('../contract/contractModel').default;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const PurchaseOrder = require('../procurement/models/purchaseOrderModel').default;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Expense = require('../finance/expenseModel').default;
 
   modelRegistry = {
@@ -341,6 +349,7 @@ async function executeSendNotification(
     notifiedUserIds.push(Number(action.userId));
   } else if (action.role) {
     // Find all users with the given role name
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const Role = require('../role/roleModel').default;
     const role = await Role.findOne({ where: { name: action.role } });
     if (role) {
@@ -644,6 +653,7 @@ async function executeWorkflow(
     const delayAction = rule.actions.find(a => a.type === 'DELAY');
     const delayMs = (delayAction?.days || 0) * 86400000 + (delayAction?.hours || 0) * 3600000;
 
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { workflowQueue } = require('./workflowQueue');
     await workflowQueue.add(
       'delayed-workflow',

@@ -205,11 +205,11 @@ const dashboardStats = computed(() => {
 const periodChartData = computed(() => {
   const periods = analyticsData.value?.byPeriod || [];
   if (!periods.length) return [];
-  const maxVal = Math.max(...periods.map((p) => Number(p.earned || 0)), 1);
+  const maxVal = Math.max(...periods.map(p => Number(p.earned || 0)), 1);
   return periods
     .slice(0, 12)
     .reverse()
-    .map((p) => ({
+    .map(p => ({
       label: p.period,
       value: Number(p.earned || 0),
       height: Math.max((Number(p.earned || 0) / maxVal) * 100, 5)
@@ -314,7 +314,7 @@ async function handleDelete(id: number) {
 }
 
 function handleSelectionChange(selection: Record<string, unknown>[]) {
-  selectedIds.value = selection.filter((r) => r.status !== 'PAID').map((r) => r.id);
+  selectedIds.value = selection.filter(r => r.status !== 'PAID').map(r => r.id);
 }
 
 async function doBulkPayout() {

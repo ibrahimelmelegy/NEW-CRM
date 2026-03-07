@@ -1,7 +1,6 @@
 import redisClient from './config/redis';
 import { sequelize } from './config/db';
 import Lead from './lead/leadModel';
-import Deal from './deal/model/dealModel';
 
 const diagnose = async () => {
   // DIAGNOSE AUDIT
@@ -10,7 +9,7 @@ const diagnose = async () => {
     await sequelize.authenticate();
     // Database Connection: OK
   } catch (error) {
-    console.error('Database Connection: FAILED', error.message);
+    console.error('Database Connection: FAILED', (error as Error).message);
   }
 
   // 2. Check Redis Connection
@@ -26,10 +25,10 @@ const diagnose = async () => {
 
   // 3. Check Data
   try {
-    const leadCount = await Lead.count();
+    const _leadCount = await Lead.count();
     // Lead count retrieved
   } catch (error) {
-    console.error('Data Access Error:', error.message);
+    console.error('Data Access Error:', (error as Error).message);
   }
 
   // Diagnose complete

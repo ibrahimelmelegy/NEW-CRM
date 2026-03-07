@@ -3,7 +3,6 @@ import CampaignRecipient from './campaignRecipientModel';
 import EmailTemplate from './emailTemplateModel';
 import { CampaignStatus, RecipientStatus } from './campaignEnum';
 import { sendEmail } from '../utils/emailHelper';
-import User from '../user/userModel';
 
 class CampaignService {
   async getCampaigns(userId: number) {
@@ -28,7 +27,7 @@ class CampaignService {
 
     if (data.recipients?.length) {
       await CampaignRecipient.bulkCreate(
-        data.recipients.map((r) => ({
+        data.recipients.map((r: any) => ({
           campaignId: campaign.id,
           contactEmail: r.email,
           contactName: r.name
@@ -47,7 +46,7 @@ class CampaignService {
     if (data.recipients) {
       await CampaignRecipient.destroy({ where: { campaignId: id } });
       await CampaignRecipient.bulkCreate(
-        data.recipients.map((r) => ({
+        data.recipients.map((r: any) => ({
           campaignId: id,
           contactEmail: r.email,
           contactName: r.name

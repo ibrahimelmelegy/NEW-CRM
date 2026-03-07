@@ -1,4 +1,4 @@
-import { Includeable, Op, Sequelize, WhereOptions } from 'sequelize';
+import { Includeable, Op, WhereOptions } from 'sequelize';
 import { clampPagination } from '../utils/pagination';
 import Asset from '../asset/assetModel';
 import { sequelize } from '../config/db';
@@ -108,11 +108,15 @@ class ProjectService {
       const project = !existingProject
         ? await Project.create({ ...input.basicInfo, tenantId: admin.tenantId }, { transaction })
         : existingProject.set({ ...input.basicInfo });
-      existingProject && (await project.save({ transaction }));
+      if (existingProject) {
+        await project.save({ transaction });
+      }
 
       if (input.basicInfo.files?.length) {
         await uploaderService.setFileReferences(input.basicInfo.files.map(file => file.refs).flat(1));
-        project.files?.length && (await uploaderService.removeFileReferences(project.files.map(file => file.refs).flat(1)));
+        if (project.files?.length) {
+          await uploaderService.removeFileReferences(project.files.map(file => file.refs).flat(1));
+        }
       }
 
       // Add relation to the project
@@ -131,7 +135,9 @@ class ProjectService {
 
       // Commit the transaction
       await transaction?.commit();
-      !input?.projectId && (await createActivityLog('project', 'create', project.id, admin.id, null, 'Prject created Successfully'));
+      if (!input?.projectId) {
+        await createActivityLog('project', 'create', project.id, admin.id, null, 'Prject created Successfully');
+      }
       // Return the created project with relations
       return await Project.findByPk(project.id, {
         include: RelationArray
@@ -199,7 +205,9 @@ class ProjectService {
       foodCostPerDay,
       managementAdditionPercentage
     });
-    project.isCompleted && (await createActivityLog('project', 'update', project.id, user.id, null, 'Prject manpower got updated Successfully'));
+    if (project.isCompleted) {
+      await createActivityLog('project', 'update', project.id, user.id, null, 'Prject manpower got updated Successfully');
+    }
 
     return this.recalculateProject(project);
   }
@@ -552,8 +560,7 @@ class ProjectService {
     let manpowerTotalCost = 0;
     for (const manpower of manpowerRecords) {
       const foodAllowanceCost = (project.foodCostPerDay || 0) * manpower.estimatedWorkDays;
-      const totalCost =
-        manpower.durationCost + foodAllowanceCost + accommodationCostPerManpower + carRentPerManpower + manpower.otherCosts;
+      const totalCost = manpower.durationCost + foodAllowanceCost + accommodationCostPerManpower + carRentPerManpower + manpower.otherCosts;
       await manpower.update({
         totalCost: parseFloat(totalCost.toFixed(2)),
         foodAllowanceCost: parseFloat(foodAllowanceCost.toFixed(2)),
@@ -687,7 +694,7 @@ class ProjectService {
       });
 
       for (const project of projects) {
-        const assignedUsers = project.assignedUsers?.map((u) => u.name).join(', ') || '';
+        const assignedUsers = project.assignedUsers?.map(u => u.name).join(', ') || '';
         worksheet.addRow({
           name: project.name,
           status: project.status,

@@ -1,5 +1,4 @@
 import { google } from 'googleapis';
-import { Client } from '@microsoft/microsoft-graph-client';
 import Integration from './integrationModel';
 
 class CalendarService {

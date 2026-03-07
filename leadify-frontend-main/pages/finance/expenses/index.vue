@@ -306,14 +306,14 @@ async function refreshData() {
 
 function handleExport() {
   const csvHeaders = ['Description', 'Amount', 'Category', 'Date', 'Status'];
-  const rows = (table.value.data || []).map((r) => [
+  const rows = (table.value.data || []).map(r => [
     r.description || r.expenseDetails?.title || '',
     r.amount || '',
     r.categoryName || '',
     r.date || '',
     r.status || ''
   ]);
-  const csv = [csvHeaders, ...rows].map(r => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const csv = [csvHeaders, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -349,18 +349,18 @@ const mobileExpFilters = computed(() => {
   const data = table.value.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
-    { value: 'PENDING', label: t('finance.expenses.pending'), color: '#f59e0b', count: data.filter((e) => e.status === 'PENDING').length },
-    { value: 'APPROVED', label: t('finance.expenses.approved'), color: '#22c55e', count: data.filter((e) => e.status === 'APPROVED').length },
-    { value: 'REJECTED', label: t('finance.expenses.rejected'), color: '#ef4444', count: data.filter((e) => e.status === 'REJECTED').length }
+    { value: 'PENDING', label: t('finance.expenses.pending'), color: '#f59e0b', count: data.filter(e => e.status === 'PENDING').length },
+    { value: 'APPROVED', label: t('finance.expenses.approved'), color: '#22c55e', count: data.filter(e => e.status === 'APPROVED').length },
+    { value: 'REJECTED', label: t('finance.expenses.rejected'), color: '#ef4444', count: data.filter(e => e.status === 'REJECTED').length }
   ];
 });
 
 const mobileFilteredExpenses = computed(() => {
   let data = table.value.data || [];
-  if (mobileExpStatus.value !== 'ALL') data = data.filter((e) => e.status === mobileExpStatus.value);
+  if (mobileExpStatus.value !== 'ALL') data = data.filter(e => e.status === mobileExpStatus.value);
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((e) => {
+  return data.filter(e => {
     const desc = (e.expenseDetails?.title || e.description || '').toLowerCase();
     const cat = (e.categoryName || '').toLowerCase();
     const sub = (e.submitterName || '').toLowerCase();

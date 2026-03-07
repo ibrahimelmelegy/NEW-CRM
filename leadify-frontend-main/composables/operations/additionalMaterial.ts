@@ -57,7 +57,7 @@ export async function getMaterials(project?: number): Promise<UseAdditionalMater
 
     if (success) {
       // Return the docs (additional Material) from the response
-      const materials = body?.docs?.map((material) => ({
+      const materials = body?.docs?.map(material => ({
         ...material,
         createdAt: formatDate(material.createdAt),
         // updatedAt: formatDate(material.updatedAt),
@@ -114,7 +114,7 @@ export async function getAdditionalMaterials(): Promise<UseAdditionalMaterialsRe
 
     if (success) {
       // Return the docs (additional Material) from the response
-      const materials = body?.docs?.map((material) => ({
+      const materials = body?.docs?.map(material => ({
         ...material,
         createdAt: formatDate(material.createdAt),
         // updatedAt: formatDate(material.updatedAt),
@@ -147,7 +147,7 @@ export async function getAdditionalMaterials(): Promise<UseAdditionalMaterialsRe
  */
 export async function getAdditionalMaterial(id: string | string[]): Promise<AdditionalMaterial> {
   try {
-    const { body: material, success } = await useApiFetch(`additional-material/${id}`);
+    const { body: material } = await useApiFetch(`additional-material/${id}`);
     return material;
   } catch (error) {
     console.error('Error fetching material:', error instanceof Error ? error.message : error);

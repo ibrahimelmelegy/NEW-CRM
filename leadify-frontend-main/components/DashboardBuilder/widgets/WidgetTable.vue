@@ -74,7 +74,7 @@ async function loadRecentDeals() {
   if (success && body) {
     const data = body as unknown;
     const deals = data.docs || data || [];
-    rows.value = deals.map((d) => ({
+    rows.value = deals.map(d => ({
       name: d.name || d.title || '--',
       clientName: d.client?.name || d.clientName || '--',
       stage: d.stage || d.status || '--',
@@ -94,7 +94,7 @@ async function loadTeamPerformance() {
   if (success && body) {
     const data = body as unknown;
     const members = Array.isArray(data.members) ? data.members : Array.isArray(data) ? data : [];
-    rows.value = members.map((m) => ({
+    rows.value = members.map(m => ({
       name: m.name || m.userName || '--',
       deals: m.dealsCount || m.deals || 0,
       revenue: m.revenue || m.totalRevenue || 0,

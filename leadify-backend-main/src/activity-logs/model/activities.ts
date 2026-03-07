@@ -1,4 +1,4 @@
-import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, Model } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, Model } from 'sequelize-typescript';
 import User from '../../user/userModel';
 export type ActivityActionType = 'create' | 'update' | 'assign' | 'export' | 'delete' | 'approve' | 'reject' | 'archive';
 

@@ -5,8 +5,23 @@
  * Covers: getLeads, getLead, getActivity, createLead, updateLead, deleteLead
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref } from 'vue';
+
+// Now import functions under test
+import {
+  getLeads,
+  getLead,
+  getActivity,
+  createLead,
+  updateLead,
+  deleteLead,
+  LeadSourceEnums,
+  LeadStatusEnums,
+  leadSources,
+  leadStates,
+  type LeadValues
+} from '@/composables/useLeads';
 
 // ============================================
 // Global mocks required by the composable
@@ -14,11 +29,9 @@ import { ref } from 'vue';
 const mockUseApiFetch = vi.fn();
 const mockElNotification = vi.fn();
 const mockFormatDate = vi.fn((d: string) => `formatted-${d}`);
-const mockGetYear = vi.fn((d: string) => '2024');
+const mockGetYear = vi.fn((_d: string) => '2024');
 const mockCleanObject = vi.fn((obj: Record<string, unknown>) => {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([_, v]) => v !== null && v !== undefined && v !== '')
-  );
+  return Object.fromEntries(Object.entries(obj).filter(([_k, v]) => v !== null && v !== undefined && v !== ''));
 });
 
 // Mock element-plus to intercept the import { ElNotification } in useLeads.ts
@@ -34,24 +47,6 @@ vi.mock('element-plus', () => ({
 (globalThis as any).getYear = mockGetYear;
 (globalThis as any).cleanObject = mockCleanObject;
 (globalThis as any).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
-
-// Now import functions under test
-import {
-  getLeads,
-  getLead,
-  getActivity,
-  createLead,
-  updateLead,
-  deleteLead,
-  LeadSourceEnums,
-  LeadStatusEnums,
-  leadSources,
-  leadStates,
-  type Lead,
-  type LeadValues,
-  type Activity,
-  type ActivityResponse
-} from '@/composables/useLeads';
 
 describe('useLeads composable', () => {
   beforeEach(() => {
@@ -171,7 +166,19 @@ describe('useLeads composable', () => {
       mockUseApiFetch.mockResolvedValueOnce({
         body: {
           docs: [
-            { id: '1', name: 'X', companyName: '', email: '', phone: '', leadSource: '', user: 1, notes: '', status: 'NEW', createdAt: '2024-06-15', updatedAt: '' }
+            {
+              id: '1',
+              name: 'X',
+              companyName: '',
+              email: '',
+              phone: '',
+              leadSource: '',
+              user: 1,
+              notes: '',
+              status: 'NEW',
+              createdAt: '2024-06-15',
+              updatedAt: ''
+            }
           ],
           pagination: { page: 1, totalPages: 1, totalItems: 1, limit: 10 }
         },
@@ -189,8 +196,17 @@ describe('useLeads composable', () => {
         body: {
           docs: [
             {
-              id: '1', name: 'Multi', companyName: '', email: '', phone: '', leadSource: '', user: 1, notes: '', status: 'NEW',
-              createdAt: '', updatedAt: '',
+              id: '1',
+              name: 'Multi',
+              companyName: '',
+              email: '',
+              phone: '',
+              leadSource: '',
+              user: 1,
+              notes: '',
+              status: 'NEW',
+              createdAt: '',
+              updatedAt: '',
               users: [
                 { id: 1, name: 'Alice', email: 'a@x.com' },
                 { id: 2, name: 'Bob', email: 'b@x.com' }
@@ -211,7 +227,19 @@ describe('useLeads composable', () => {
       mockUseApiFetch.mockResolvedValueOnce({
         body: {
           docs: [
-            { id: '1', name: 'No Users', companyName: '', email: '', phone: '', leadSource: '', user: 1, notes: '', status: 'NEW', createdAt: '', updatedAt: '' }
+            {
+              id: '1',
+              name: 'No Users',
+              companyName: '',
+              email: '',
+              phone: '',
+              leadSource: '',
+              user: 1,
+              notes: '',
+              status: 'NEW',
+              createdAt: '',
+              updatedAt: ''
+            }
           ],
           pagination: { page: 1, totalPages: 1, totalItems: 1, limit: 10 }
         },
@@ -290,9 +318,7 @@ describe('useLeads composable', () => {
       mockUseApiFetch.mockRejectedValueOnce(new Error('Server error'));
 
       await getLead('bad-id');
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
   });
 
@@ -325,9 +351,7 @@ describe('useLeads composable', () => {
       mockUseApiFetch.mockRejectedValueOnce(new Error('Network error'));
 
       await getActivity('bad-id');
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
   });
 
@@ -390,9 +414,7 @@ describe('useLeads composable', () => {
 
       await createLead(validLeadValues);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'success' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
     });
 
     it('should show error notification when API returns success=false', async () => {
@@ -400,9 +422,7 @@ describe('useLeads composable', () => {
 
       await createLead(validLeadValues);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error', message: 'Validation failed' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Validation failed' }));
     });
 
     it('should return error response on unexpected exception', async () => {
@@ -474,9 +494,7 @@ describe('useLeads composable', () => {
 
       await updateLead(updateValues);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'success' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
     });
 
     it('should show error notification when API returns success=false', async () => {
@@ -484,9 +502,7 @@ describe('useLeads composable', () => {
 
       await updateLead(updateValues);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error', message: 'Not found' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Not found' }));
     });
 
     it('should return error response on exception', async () => {
@@ -537,9 +553,7 @@ describe('useLeads composable', () => {
 
       await deleteLead('lead-1');
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'success' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
     });
 
     it('should show error notification when deletion fails', async () => {
@@ -547,9 +561,7 @@ describe('useLeads composable', () => {
 
       await deleteLead('lead-1');
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error', message: 'Forbidden' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Forbidden' }));
     });
 
     it('should return error response on exception', async () => {
@@ -577,9 +589,7 @@ describe('useLeads composable', () => {
       await deleteLead('lead-1');
 
       // Falls back to t('leads.deleteFailed')
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
   });
 });

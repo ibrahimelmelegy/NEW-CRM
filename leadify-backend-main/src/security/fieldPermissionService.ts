@@ -1,6 +1,4 @@
 import FieldPermission, { FieldAccess } from './fieldPermissionModel';
-import BaseError from '../utils/error/base-http-exception';
-import { ERRORS } from '../utils/error/errors';
 
 /**
  * Get all field permissions for a specific role and entity type.

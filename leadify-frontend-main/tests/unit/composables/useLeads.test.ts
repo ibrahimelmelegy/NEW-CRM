@@ -4,8 +4,8 @@
  * Tests for composables/useLeads.ts
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { type Lead, LeadSourceEnums, LeadStatusEnums, leadSources, leadStates } from '@/composables/useLeads';
+import { describe, it, expect } from 'vitest';
+import { LeadSourceEnums, LeadStatusEnums, leadSources, leadStates } from '@/composables/useLeads';
 
 // Mock the API fetch for testing CRUD functions
 vi.mock('@/composables/useApiFetch', () => ({

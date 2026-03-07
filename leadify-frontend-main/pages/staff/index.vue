@@ -148,7 +148,6 @@ import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from
 import VChart from 'vue-echarts';
 import { getPieChartsData } from '~/composables/charts';
 
-
 const { hasPermission } = await usePermissions();
 const { t } = useI18n();
 const router = useRouter();
@@ -233,11 +232,11 @@ table.data = response.formattedData;
 // Staff Analytics
 const staffAnalytics = computed(() => {
   const data = table.data || [];
-  const activeStaff = data.filter((s) => s.status === 'ACTIVE');
+  const activeStaff = data.filter(s => s.status === 'ACTIVE');
 
   // Department count (extracted from role or department field)
   const departments = new Set<string>();
-  data.forEach((s) => {
+  data.forEach(s => {
     const dept = s.department || s.roleDetails?.split('-')[0]?.trim() || 'Unknown';
     departments.add(dept);
   });
@@ -245,13 +244,13 @@ const staffAnalytics = computed(() => {
   // Recent hires (last 30 days)
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  const recentHires = data.filter((s) => {
+  const recentHires = data.filter(s => {
     if (!s.createdAt) return false;
     return new Date(s.createdAt) > thirtyDaysAgo;
   }).length;
 
   // Average tenure (in months)
-  const staffWithDates = data.filter((s) => s.createdAt);
+  const staffWithDates = data.filter(s => s.createdAt);
   const avgTenureMonths =
     staffWithDates.length > 0
       ? Math.round(
@@ -276,7 +275,7 @@ const departmentChartOption = computed(() => {
   if (!data.length) return null;
 
   const deptMap = new Map<string, number>();
-  data.forEach((s) => {
+  data.forEach(s => {
     const dept = s.department || s.roleDetails?.split('-')[0]?.trim() || 'Unknown';
     deptMap.set(dept, (deptMap.get(dept) || 0) + 1);
   });
@@ -294,7 +293,7 @@ const roleChartOption = computed(() => {
   if (!data.length) return null;
 
   const roleMap = new Map<string, number>();
-  data.forEach((s) => {
+  data.forEach(s => {
     const role = s.roleDetails || 'Unknown';
     roleMap.set(role, (roleMap.get(role) || 0) + 1);
   });
@@ -363,7 +362,7 @@ const mappedRoles = ref<{ label: string; value: unknown }[]>();
 //  Get roles
 const repsonse = await useApiFetch('role');
 // Map clients to Select Options
-mappedRoles.value = repsonse.body?.docs?.map((e) => ({
+mappedRoles.value = repsonse.body?.docs?.map(e => ({
   label: e.name,
   value: e.id
 }));
@@ -386,7 +385,7 @@ const advancedSearchFields = [
   { key: 'name', label: t('staff.table.staffName'), type: 'string' },
   { key: 'email', label: t('staff.table.email'), type: 'string' },
   { key: 'phone', label: t('staff.table.phone'), type: 'string' },
-  { key: 'status', label: t('staff.table.status'), type: 'select', options: staffStatuses.map((s) => ({ value: s.value, label: s.label })) },
+  { key: 'status', label: t('staff.table.status'), type: 'select', options: staffStatuses.map(s => ({ value: s.value, label: s.label })) },
   { key: 'roleId', label: t('staff.table.role'), type: 'select', options: mappedRoles.value || [] },
   { key: 'createdAt', label: t('common.created'), type: 'date' }
 ];
@@ -425,19 +424,19 @@ const mobileFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
-    { value: 'ACTIVE', label: t('common.active'), color: '#10b981', count: data.filter((s) => s.status === 'ACTIVE').length },
-    { value: 'INACTIVE', label: t('common.inactive'), color: '#94a3b8', count: data.filter((s) => s.status === 'INACTIVE').length }
+    { value: 'ACTIVE', label: t('common.active'), color: '#10b981', count: data.filter(s => s.status === 'ACTIVE').length },
+    { value: 'INACTIVE', label: t('common.inactive'), color: '#94a3b8', count: data.filter(s => s.status === 'INACTIVE').length }
   ];
 });
 
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((s) => s.status === mobileStatusFilter.value);
+    data = data.filter(s => s.status === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((s) => {
+  return data.filter(s => {
     const name = (s.staffDetails?.title || s.name || '').toLowerCase();
     const email = (s.email || '').toLowerCase();
     const phone = (s.phone || '').toLowerCase();

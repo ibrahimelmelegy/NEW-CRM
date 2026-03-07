@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsDateString, IsEmail, IsIn, IsInt, IsOptional, IsPositive, IsString, Length, Matches, MaxLength } from 'class-validator';
+import { IsEmail, IsIn, IsInt, IsOptional, IsPositive, IsString, Length, Matches, MaxLength } from 'class-validator';
 import { ClientIndustryEnums, ClientStatusEnums, ClientTypeEnums } from '../clientEnum';
 
 export class UpdateClientInput {

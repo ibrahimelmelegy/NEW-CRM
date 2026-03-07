@@ -268,10 +268,10 @@ const filteredProducts = computed(() => {
   }
 
   // Price range filter
-  if (priceMin.value != null) {
+  if (priceMin.value !== null && priceMin.value !== undefined) {
     result = result.filter(p => (p.unitPrice || 0) >= (priceMin.value || 0));
   }
-  if (priceMax.value != null) {
+  if (priceMax.value !== null && priceMax.value !== undefined) {
     result = result.filter(p => (p.unitPrice || 0) <= (priceMax.value || 0));
   }
 

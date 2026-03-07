@@ -578,7 +578,7 @@ function openEditDialog(pb: unknown) {
   form.category = pb.category || 'prospecting';
   form.status = pb.status || 'active';
   form.winRateImprovement = pb.winRateImprovement || 0;
-  form.steps = (pb.steps || []).map((s) => ({
+  form.steps = (pb.steps || []).map(s => ({
     title: s.title || '',
     description: s.description || '',
     type: s.type || 'call',

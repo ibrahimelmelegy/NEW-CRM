@@ -30,7 +30,7 @@ import { sendEmail } from '../utils/emailHelper';
 import clientService from '../client/clientService';
 import projectService from '../project/projectService';
 import { ProjectCategoryEnum, ProjectStatusEnum } from '../project/projectEnum';
-import { tenantWhere, tenantCreate } from '../utils/tenantScope';
+import { tenantWhere } from '../utils/tenantScope';
 import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 import { TriggerType } from '../workflow/workflowModel';
@@ -252,7 +252,20 @@ class DealService {
     if (!user.role.permissions.includes(DealPermissionsEnum.VIEW_GLOBAL_DEALS)) query.userId = user.id;
 
     const { rows: deals, count: totalItems } = await Deal.findAndCountAll({
-      attributes: ['id', 'name', 'companyName', 'price', 'stage', 'contractType', 'probability', 'signatureDate', 'leadId', 'clientId', 'createdAt', 'updatedAt'],
+      attributes: [
+        'id',
+        'name',
+        'companyName',
+        'price',
+        'stage',
+        'contractType',
+        'probability',
+        'signatureDate',
+        'leadId',
+        'clientId',
+        'createdAt',
+        'updatedAt'
+      ],
       where: {
         ...tenantWhere(user),
         stage: {
@@ -379,11 +392,19 @@ class DealService {
     }
     const users = input.users?.filter((item: number) => !deal.users.map(e => e.id).includes(item));
 
-    input.invoiceDetails?.length && (await this.createOrUpdateDealInvoice(input.dealId, input.invoiceDetails, user));
-    input.deliveryDetails?.length && (await this.createOrUpdateDealDeliveryDetails(input.dealId, input.deliveryDetails, user));
+    if (input.invoiceDetails?.length) {
+      await this.createOrUpdateDealInvoice(input.dealId, input.invoiceDetails, user);
+    }
+    if (input.deliveryDetails?.length) {
+      await this.createOrUpdateDealDeliveryDetails(input.dealId, input.deliveryDetails, user);
+    }
 
-    input.deletedDeliveryIds?.length && (await DealDelivery.destroy({ where: { id: { [Op.in]: input.deletedDeliveryIds } } }));
-    input.deletedInvoiceIds?.length && (await Invoice.destroy({ where: { id: { [Op.in]: input.deletedInvoiceIds } } }));
+    if (input.deletedDeliveryIds?.length) {
+      await DealDelivery.destroy({ where: { id: { [Op.in]: input.deletedDeliveryIds } } });
+    }
+    if (input.deletedInvoiceIds?.length) {
+      await Invoice.destroy({ where: { id: { [Op.in]: input.deletedInvoiceIds } } });
+    }
 
     delete input.deletedDeliveryIds;
     delete input.deletedInvoiceIds;
@@ -437,7 +458,9 @@ class DealService {
     const updateDeliveryDetails: Partial<DealDelivery>[] = [];
     input!.forEach(e => (e.id ? updateDeliveryDetails.push(e) : newDeliveryDetails.push({ ...e, dealId })));
 
-    newDeliveryDetails.length && (await DealDelivery.bulkCreate(newDeliveryDetails));
+    if (newDeliveryDetails.length) {
+      await DealDelivery.bulkCreate(newDeliveryDetails);
+    }
     await Promise.all(updateDeliveryDetails.map(async e => await DealDelivery.update(e, { where: { id: e.id } })));
   }
 
@@ -566,7 +589,7 @@ class DealService {
         await createActivityLog('deal', 'update', deal.id, user.id, null, `Auto-generated Project for Winning Deal`);
       } catch (err) {
         // Log but don't fail the deal update if project creation fails (graceful degradation)
-        console.error('Failed to auto-create project from deal:', err.message);
+        console.error('Failed to auto-create project from deal:', (err as Error).message);
       }
     }
 
@@ -624,74 +647,74 @@ class DealService {
     dealCount: number;
     byStage: Record<string, { count: number; totalValue: number; weightedValue: number; avgProbability: number }>;
   }> {
-   try {
-    const where: Record<string, any> = {
-      stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.ARCHIVED, DealStageEnums.CONVERTED] },
-      ...(tenantId ? { tenantId } : {})
-    };
-
-    // Query only columns that are guaranteed to exist (price, stage).
-    // probability may not exist in older DB schemas, so we fall back to
-    // the DEAL_STAGE_PROBABILITY map when the column is missing or null.
-    let deals: Array<{ id: string; price: number; probability?: number; stage: string }>;
     try {
-      deals = await Deal.findAll({
-        where,
-        attributes: ['id', 'price', 'probability', 'stage'],
-        raw: true
-      });
-    } catch {
-      // If the 'probability' column doesn't exist yet, retry without it
-      deals = await Deal.findAll({
-        where,
-        attributes: ['id', 'price', 'stage'],
-        raw: true
-      });
-    }
-
-    const byStage: Record<string, { count: number; totalValue: number; weightedValue: number; totalProbability: number }> = {};
-    let totalPipelineValue = 0;
-    let weightedValue = 0;
-
-    for (const deal of deals) {
-      const price = Number(deal.price) || 0;
-      // Use stored probability if available, otherwise derive from stage
-      const prob = deal.probability != null ? Number(deal.probability) : (DEAL_STAGE_PROBABILITY[deal.stage] ?? 0);
-      const weighted = price * (prob / 100);
-
-      totalPipelineValue += price;
-      weightedValue += weighted;
-
-      if (!byStage[deal.stage]) {
-        byStage[deal.stage] = { count: 0, totalValue: 0, weightedValue: 0, totalProbability: 0 };
-      }
-      byStage[deal.stage].count += 1;
-      byStage[deal.stage].totalValue += price;
-      byStage[deal.stage].weightedValue += weighted;
-      byStage[deal.stage].totalProbability += prob;
-    }
-
-    // Convert totalProbability to avgProbability
-    const result: Record<string, { count: number; totalValue: number; weightedValue: number; avgProbability: number }> = {};
-    for (const [stage, data] of Object.entries(byStage)) {
-      result[stage] = {
-        count: data.count,
-        totalValue: data.totalValue,
-        weightedValue: data.weightedValue,
-        avgProbability: data.count > 0 ? Math.round((data.totalProbability / data.count) * 100) / 100 : 0
+      const where: Record<string, any> = {
+        stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.ARCHIVED, DealStageEnums.CONVERTED] },
+        ...(tenantId ? { tenantId } : {})
       };
-    }
 
-    return {
-      totalPipelineValue,
-      weightedValue: Math.round(weightedValue * 100) / 100,
-      dealCount: deals.length,
-      byStage: result
-    };
-   } catch (error) {
-    console.error('getWeightedPipeline error:', error);
-    return { totalPipelineValue: 0, weightedValue: 0, dealCount: 0, byStage: {} };
-   }
+      // Query only columns that are guaranteed to exist (price, stage).
+      // probability may not exist in older DB schemas, so we fall back to
+      // the DEAL_STAGE_PROBABILITY map when the column is missing or null.
+      let deals: Array<{ id: string; price: number; probability?: number; stage: string }>;
+      try {
+        deals = await Deal.findAll({
+          where,
+          attributes: ['id', 'price', 'probability', 'stage'],
+          raw: true
+        });
+      } catch {
+        // If the 'probability' column doesn't exist yet, retry without it
+        deals = await Deal.findAll({
+          where,
+          attributes: ['id', 'price', 'stage'],
+          raw: true
+        });
+      }
+
+      const byStage: Record<string, { count: number; totalValue: number; weightedValue: number; totalProbability: number }> = {};
+      let totalPipelineValue = 0;
+      let weightedValue = 0;
+
+      for (const deal of deals) {
+        const price = Number(deal.price) || 0;
+        // Use stored probability if available, otherwise derive from stage
+        const prob = deal.probability != null ? Number(deal.probability) : (DEAL_STAGE_PROBABILITY[deal.stage] ?? 0);
+        const weighted = price * (prob / 100);
+
+        totalPipelineValue += price;
+        weightedValue += weighted;
+
+        if (!byStage[deal.stage]) {
+          byStage[deal.stage] = { count: 0, totalValue: 0, weightedValue: 0, totalProbability: 0 };
+        }
+        byStage[deal.stage].count += 1;
+        byStage[deal.stage].totalValue += price;
+        byStage[deal.stage].weightedValue += weighted;
+        byStage[deal.stage].totalProbability += prob;
+      }
+
+      // Convert totalProbability to avgProbability
+      const result: Record<string, { count: number; totalValue: number; weightedValue: number; avgProbability: number }> = {};
+      for (const [stage, data] of Object.entries(byStage)) {
+        result[stage] = {
+          count: data.count,
+          totalValue: data.totalValue,
+          weightedValue: data.weightedValue,
+          avgProbability: data.count > 0 ? Math.round((data.totalProbability / data.count) * 100) / 100 : 0
+        };
+      }
+
+      return {
+        totalPipelineValue,
+        weightedValue: Math.round(weightedValue * 100) / 100,
+        dealCount: deals.length,
+        byStage: result
+      };
+    } catch (error) {
+      console.error('getWeightedPipeline error:', error);
+      return { totalPipelineValue: 0, weightedValue: 0, dealCount: 0, byStage: {} };
+    }
   }
 
   // ─── Enterprise Analytics: Stale Deal Alerts ─────────────────────────────
@@ -727,7 +750,10 @@ class DealService {
   }
 
   // ─── Enterprise Analytics: Win/Loss Analysis ─────────────────────────────
-  public async getWinLossAnalysis(tenantId?: string, period?: { from?: string; to?: string }): Promise<{
+  public async getWinLossAnalysis(
+    tenantId?: string,
+    period?: { from?: string; to?: string }
+  ): Promise<{
     totalWon: number;
     totalLost: number;
     winRate: number;
@@ -800,9 +826,7 @@ class DealService {
         month,
         won: data.won,
         lost: data.lost,
-        winRate: (data.won + data.lost) > 0
-          ? Math.round((data.won / (data.won + data.lost)) * 10000) / 100
-          : 0
+        winRate: data.won + data.lost > 0 ? Math.round((data.won / (data.won + data.lost)) * 10000) / 100 : 0
       }));
 
     return {

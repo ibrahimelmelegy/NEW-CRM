@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, Index } from 'sequelize-typescript';
+import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
 export enum SyncDirection {
   PUSH = 'PUSH',

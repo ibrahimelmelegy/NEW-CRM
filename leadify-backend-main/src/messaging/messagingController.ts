@@ -68,7 +68,7 @@ class MessagingController {
       const body = req.body;
       if (body?.entry?.[0]?.changes?.[0]?.value?.messages) {
         const messageData = body.entry[0].changes[0].value.messages[0];
-        const contact = body.entry[0].changes[0].value.contacts?.[0];
+        const _contact = body.entry[0].changes[0].value.contacts?.[0];
 
         await messagingService.recordInboundMessage(messageData.from, messageData.text?.body || '', messageData.id);
       }

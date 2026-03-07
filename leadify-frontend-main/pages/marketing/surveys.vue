@@ -4,12 +4,12 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-violet-400">{{ $t("surveys.title") }}</h1>
-          <p class="text-slate-400 text-sm mt-1">{{ $t("surveys.subtitle") }}</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-violet-400">{{ $t('surveys.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('surveys.subtitle') }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showCreateDialog = true">
           <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-          {{ $t("surveys.newSurvey") }}
+          {{ $t('surveys.newSurvey') }}
         </el-button>
       </div>
     </div>
@@ -18,7 +18,7 @@
     <div class="grid grid-cols-12 gap-4">
       <!-- NPS Gauge -->
       <div class="col-span-12 md:col-span-4 glass-panel p-6 rounded-2xl text-center">
-        <h3 class="text-sm font-medium text-slate-400 mb-2">{{ $t("surveys.netPromoterScore") }}</h3>
+        <h3 class="text-sm font-medium text-slate-400 mb-2">{{ $t('surveys.netPromoterScore') }}</h3>
         <div class="relative inline-block">
           <svg width="160" height="100" viewBox="0 0 160 100">
             <path d="M 20 90 A 60 60 0 0 1 140 90" fill="none" stroke="#1e293b" stroke-width="12" stroke-linecap="round" />
@@ -46,50 +46,50 @@
 
       <!-- NPS Breakdown -->
       <div class="col-span-12 md:col-span-4 glass-panel p-6 rounded-2xl">
-        <h3 class="text-sm font-medium text-slate-400 mb-4">{{ $t("surveys.responseBreakdown") }}</h3>
+        <h3 class="text-sm font-medium text-slate-400 mb-4">{{ $t('surveys.responseBreakdown') }}</h3>
         <div class="space-y-3">
           <div>
             <div class="flex justify-between text-xs mb-1">
-              <span class="text-emerald-400">{{ $t("surveys.promoters") }} (9-10)</span>
+              <span class="text-emerald-400">{{ $t('surveys.promoters') }} (9-10)</span>
               <span class="text-slate-300">{{ npsData.promoters }}%</span>
             </div>
             <el-progress :percentage="npsData.promoters" :stroke-width="8" color="#10B981" :show-text="false" />
           </div>
           <div>
             <div class="flex justify-between text-xs mb-1">
-              <span class="text-amber-400">{{ $t("surveys.passives") }} (7-8)</span>
+              <span class="text-amber-400">{{ $t('surveys.passives') }} (7-8)</span>
               <span class="text-slate-300">{{ npsData.passives }}%</span>
             </div>
             <el-progress :percentage="npsData.passives" :stroke-width="8" color="#F59E0B" :show-text="false" />
           </div>
           <div>
             <div class="flex justify-between text-xs mb-1">
-              <span class="text-red-400">{{ $t("surveys.detractors") }} (0-6)</span>
+              <span class="text-red-400">{{ $t('surveys.detractors') }} (0-6)</span>
               <span class="text-slate-300">{{ npsData.detractors }}%</span>
             </div>
             <el-progress :percentage="npsData.detractors" :stroke-width="8" color="#EF4444" :show-text="false" />
           </div>
         </div>
-        <div class="mt-4 text-xs text-slate-500 text-center">{{ npsData.totalResponses }} {{ $t("surveys.totalResponsesLabel") }}</div>
+        <div class="mt-4 text-xs text-slate-500 text-center">{{ npsData.totalResponses }} {{ $t('surveys.totalResponsesLabel') }}</div>
       </div>
 
       <!-- Quick Stats -->
       <div class="col-span-12 md:col-span-4 grid grid-cols-2 gap-3">
         <div class="glass-panel p-4 rounded-xl text-center">
           <div class="text-2xl font-bold text-slate-200">{{ surveys.length }}</div>
-          <div class="text-xs text-slate-500 mt-1">{{ $t("surveys.totalSurveys") }}</div>
+          <div class="text-xs text-slate-500 mt-1">{{ $t('surveys.totalSurveys') }}</div>
         </div>
         <div class="glass-panel p-4 rounded-xl text-center">
           <div class="text-2xl font-bold text-emerald-400">{{ surveys.filter(s => s.status === 'ACTIVE').length }}</div>
-          <div class="text-xs text-slate-500 mt-1">{{ $t("surveys.active") }}</div>
+          <div class="text-xs text-slate-500 mt-1">{{ $t('surveys.active') }}</div>
         </div>
         <div class="glass-panel p-4 rounded-xl text-center">
           <div class="text-2xl font-bold text-blue-400">{{ totalResponses }}</div>
-          <div class="text-xs text-slate-500 mt-1">{{ $t("surveys.totalResponses") }}</div>
+          <div class="text-xs text-slate-500 mt-1">{{ $t('surveys.totalResponses') }}</div>
         </div>
         <div class="glass-panel p-4 rounded-xl text-center">
           <div class="text-2xl font-bold text-amber-400">{{ avgResponseRate }}%</div>
-          <div class="text-xs text-slate-500 mt-1">{{ $t("surveys.avgResponseRate") }}</div>
+          <div class="text-xs text-slate-500 mt-1">{{ $t('surveys.avgResponseRate') }}</div>
         </div>
       </div>
     </div>
@@ -104,7 +104,7 @@
             </div>
             <div>
               <h4 class="text-sm font-medium text-slate-200">{{ survey.name }}</h4>
-              <p class="text-xs text-slate-500">{{ survey.type }} - {{ survey.questionCount }} {{ $t("surveys.questions") }}</p>
+              <p class="text-xs text-slate-500">{{ survey.type }} - {{ survey.questionCount }} {{ $t('surveys.questions') }}</p>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -118,15 +118,15 @@
         <div class="grid grid-cols-4 gap-3 my-3 py-3 border-t border-b border-slate-800/60 text-center">
           <div>
             <div class="text-sm font-bold text-slate-200">{{ survey.sent }}</div>
-            <div class="text-[10px] text-slate-500">{{ $t("surveys.sent") }}</div>
+            <div class="text-[10px] text-slate-500">{{ $t('surveys.sent') }}</div>
           </div>
           <div>
             <div class="text-sm font-bold text-blue-400">{{ survey.responses }}</div>
-            <div class="text-[10px] text-slate-500">{{ $t("surveys.responses") }}</div>
+            <div class="text-[10px] text-slate-500">{{ $t('surveys.responses') }}</div>
           </div>
           <div>
             <div class="text-sm font-bold text-emerald-400">{{ survey.responseRate }}%</div>
-            <div class="text-[10px] text-slate-500">{{ $t("surveys.responseRate") }}</div>
+            <div class="text-[10px] text-slate-500">{{ $t('surveys.responseRate') }}</div>
           </div>
           <div>
             <div
@@ -135,7 +135,7 @@
             >
               {{ survey.avgScore }}/5
             </div>
-            <div class="text-[10px] text-slate-500">{{ $t("surveys.avgScore") }}</div>
+            <div class="text-[10px] text-slate-500">{{ $t('surveys.avgScore') }}</div>
           </div>
         </div>
 
@@ -143,19 +143,19 @@
         <div class="flex gap-2">
           <el-button size="small" text type="primary" @click="viewResults(survey)">
             <Icon name="ph:chart-bar" class="w-4 h-4 mr-1" />
-            {{ $t("surveys.results") }}
+            {{ $t('surveys.results') }}
           </el-button>
           <el-button size="small" text @click="editSurvey(survey)">
             <Icon name="ph:pencil-simple" class="w-4 h-4 mr-1" />
-            {{ $t("common.edit") }}
+            {{ $t('common.edit') }}
           </el-button>
           <el-button size="small" text @click="shareSurvey(survey)">
             <Icon name="ph:share-network" class="w-4 h-4 mr-1" />
-            {{ $t("surveys.share") }}
+            {{ $t('surveys.share') }}
           </el-button>
           <el-button v-if="survey.status === 'ACTIVE'" size="small" text type="danger" @click="closeSurvey(survey)">
             <Icon name="ph:stop-circle" class="w-4 h-4 mr-1" />
-            {{ $t("surveys.close") }}
+            {{ $t('surveys.close') }}
           </el-button>
         </div>
       </div>
@@ -163,7 +163,7 @@
 
     <!-- Recent Feedback -->
     <div class="glass-panel p-6 rounded-2xl">
-      <h3 class="text-sm font-medium text-slate-300 mb-4">{{ $t("surveys.recentFeedback") }}</h3>
+      <h3 class="text-sm font-medium text-slate-300 mb-4">{{ $t('surveys.recentFeedback') }}</h3>
       <div class="space-y-3">
         <div v-for="fb in recentFeedback" :key="fb.id" class="flex items-start gap-3 p-3 rounded-lg bg-slate-800/30">
           <el-avatar :size="32" class="bg-slate-700 flex-shrink-0">{{ fb.name.charAt(0) }}</el-avatar>
@@ -227,8 +227,8 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showCreateDialog = false">{{ $t("common.cancel") }}</el-button>
-        <el-button type="primary" @click="createSurvey">{{ $t("surveys.createSurveyBtn") }}</el-button>
+        <el-button @click="showCreateDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" @click="createSurvey">{{ $t('surveys.createSurveyBtn') }}</el-button>
       </template>
     </el-dialog>
   </div>

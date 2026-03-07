@@ -17,7 +17,6 @@ import {
   ValidateIf,
   ValidateNested
 } from 'class-validator';
-import { AdditionalMaterialItemInputDto, CreateMaterialInput } from '../../material/input/create-material.input';
 import { IsNotBlank } from '../../utils/custom-validators/not-bank.validator';
 import { ApplicationStatusEnum, ContractTypeEnum, ProjectCategoryEnum, ProjectStatusEnum, ProposalStatusEnum } from '../projectEnum';
 

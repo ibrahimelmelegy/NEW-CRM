@@ -103,7 +103,7 @@ export function useDocumentArchive() {
       if (success && body) {
         const data = body as unknown;
         const docs = data.docs || data || [];
-        archivedDocuments.value = docs.map((f) => ({
+        archivedDocuments.value = docs.map(f => ({
           id: f.id,
           refNumber: f.name || '',
           title: f.originalName || f.name || '',

@@ -99,7 +99,7 @@ function onChange(item: unknown) {
 function removeTag(tag: unknown) {
   emits(
     'change',
-    props.options.find((option) => option.value === tag)
+    props.options.find(option => option.value === tag)
   );
 }
 </script>

@@ -50,7 +50,7 @@ class VendorController {
     }
   }
 
-  public async getAllVendors(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async getAllVendors(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
     try {
       const vendors = await VendorService.getAllVendors();
       wrapResult(res, vendors);

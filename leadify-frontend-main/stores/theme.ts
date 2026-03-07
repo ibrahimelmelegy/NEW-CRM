@@ -43,13 +43,10 @@ export const useThemeStore = defineStore('theme', () => {
       isLight.value = true;
     } else if (saved === 'dark' || saved === 'false') {
       isLight.value = false;
+    } else if (typeof window !== 'undefined' && window.matchMedia) {
+      isLight.value = window.matchMedia('(prefers-color-scheme: light)').matches;
     } else {
-      // No saved preference: detect system preference
-      if (typeof window !== 'undefined' && window.matchMedia) {
-        isLight.value = window.matchMedia('(prefers-color-scheme: light)').matches;
-      } else {
-        isLight.value = false; // Default to dark
-      }
+      isLight.value = false;
     }
 
     const savedPreset = localStorage.getItem('theme-preset');
@@ -122,9 +119,7 @@ export const useThemeStore = defineStore('theme', () => {
     root.style.setProperty('--base-font-size', `${fontSize.value}px`);
 
     // Glass background with dynamic opacity - different tint for light vs dark
-    const glassBg = isLight.value
-      ? `rgba(255, 255, 255, ${Math.max(glassOpacity.value, 0.6)})`
-      : `rgba(255, 255, 255, ${glassOpacity.value})`;
+    const glassBg = isLight.value ? `rgba(255, 255, 255, ${Math.max(glassOpacity.value, 0.6)})` : `rgba(255, 255, 255, ${glassOpacity.value})`;
     root.style.setProperty('--glass-bg-primary', glassBg);
   };
 

@@ -331,19 +331,14 @@ class ProductService {
 
     // Stock value (SUM of unitPrice * stockQuantity)
     const stockValueResult = await CatalogProduct.findOne({
-      attributes: [
-        [fn('COALESCE', fn('SUM', literal('"unitPrice" * "stockQuantity"')), 0), 'stockValue']
-      ],
+      attributes: [[fn('COALESCE', fn('SUM', literal('"unitPrice" * "stockQuantity"')), 0), 'stockValue']],
       where: { isActive: true },
       raw: true
     });
 
     // Category distribution
     const categoryDist: Record<string, any>[] = await CatalogProduct.findAll({
-      attributes: [
-        'category',
-        [fn('COUNT', col('id')), 'count']
-      ],
+      attributes: ['category', [fn('COUNT', col('id')), 'count']],
       group: ['category'],
       raw: true,
       order: [[fn('COUNT', col('id')), 'DESC']]

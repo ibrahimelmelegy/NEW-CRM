@@ -1,4 +1,4 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import CustomReport, { ReportFilter, ReportAggregation } from './customReportModel';
 import Lead from '../lead/leadModel';
 import Deal from '../deal/model/dealModel';
@@ -330,7 +330,7 @@ class CustomReportService {
     if (!data || !data.length) return '';
 
     const headers = Object.keys(data[0]);
-    const rows = data.map((row) =>
+    const rows = data.map(row =>
       headers
         .map(h => {
           const val = row[h];

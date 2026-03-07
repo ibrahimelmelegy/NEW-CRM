@@ -241,7 +241,7 @@ const loadLayout = () => {
     const parsed = JSON.parse(saved);
     // Merge saved layout with default widgets to ensure new widgets are added
     const merged = [...defaultWidgets].map(dw => {
-      const sw = parsed.find((p) => p.id === dw.id);
+      const sw = parsed.find(p => p.id === dw.id);
       if (sw) {
         return { ...dw, ...sw, visible: sw.visible === undefined ? true : sw.visible };
       }

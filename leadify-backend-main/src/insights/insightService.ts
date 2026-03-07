@@ -158,12 +158,15 @@ class InsightService {
 
     const leadConversionRate = leadCount > 0 ? Number(((convertedOpportunityFromLeadsCount / leadCount) * 100).toFixed(2)) : 0;
 
-    const opportunityStages = Object.values(OpportunityStageEnums).reduce((acc, stage) => {
-      const found = opportunityStageCounts.find((item) => item.dataValues.stage === stage);
-      const count = found ? Number(found.dataValues.count) : 0;
-      acc[stage] = opportunityCount > 0 ? Number(((count / opportunityCount) * 100).toFixed(2)) : 0;
-      return acc;
-    }, {});
+    const opportunityStages = Object.values(OpportunityStageEnums).reduce(
+      (acc, stage) => {
+        const found = opportunityStageCounts.find(item => item.dataValues.stage === stage);
+        const count = found ? Number(found.dataValues.count) : 0;
+        acc[stage] = opportunityCount > 0 ? Number(((count / opportunityCount) * 100).toFixed(2)) : 0;
+        return acc;
+      },
+      {} as Record<string, any>
+    );
 
     const dealsPipeline = {
       leads: leadCount,
@@ -276,12 +279,15 @@ class InsightService {
         })
       ]);
 
-    const projectsByStatus = Object.values(ProjectStatusEnum).reduce((acc, status) => {
-      const found = projectsByStatusRaw.find(item => item.dataValues.status === status);
-      const count = found ? Number(found.dataValues.count) : 0;
-      acc[status] = count;
-      return acc;
-    }, {});
+    const projectsByStatus = Object.values(ProjectStatusEnum).reduce(
+      (acc, status) => {
+        const found = projectsByStatusRaw.find(item => item.dataValues.status === status);
+        const count = found ? Number(found.dataValues.count) : 0;
+        acc[status] = count;
+        return acc;
+      },
+      {} as Record<string, any>
+    );
 
     const usedManpowerPercentage = totalManpowerCount > 0 ? Number(((assignedManpowerCount / totalManpowerCount) * 100).toFixed(2)) : 0;
     // Calculate percentage of used assets

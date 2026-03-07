@@ -25,16 +25,32 @@ module.exports = {
     'vue/require-default-prop': 'off',
     'vue/require-explicit-emits': 'warn',
     'vue/no-multiple-template-root': 'off', // Vue 3 supports multiple roots
-    // Console warnings (production should have no console.log)
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
     // TypeScript
-    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-    '@typescript-eslint/no-require-imports': 'warn', // Legacy code has require()
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_|^e$|^err$|^error$'
+      }
+    ],
+    '@typescript-eslint/no-require-imports': 'warn',
     // General rules
     'prefer-const': 'warn',
-    'no-var': 'warn', // Turn to warning for now (legacy code)
-    camelcase: 'warn', // Turn to warning for now (legacy code)
-    eqeqeq: ['warn', 'always'] // Prefer === but warn only
-  }
+    'no-var': 'warn',
+    camelcase: 'off',
+    eqeqeq: ['warn', 'always'],
+    'no-console': ['warn', { allow: ['warn', 'error'] }]
+  },
+  overrides: [
+    {
+      files: ['*.vue'],
+      rules: {
+        // Pug templates are opaque to ESLint — it cannot detect variable usage in them
+        '@typescript-eslint/no-unused-vars': 'off',
+        'no-unused-vars': 'off'
+      }
+    }
+  ]
 };

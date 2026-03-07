@@ -88,12 +88,7 @@ router.post('/webhook', whatsappController.webhookIncoming);
  *       200:
  *         description: Analytics data
  */
-router.get(
-  '/analytics',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_ANALYTICS]),
-  whatsappController.getAnalytics
-);
+router.get('/analytics', authenticateUser, HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_ANALYTICS]), whatsappController.getAnalytics);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONTACTS
@@ -137,12 +132,7 @@ router.get(
  *       200:
  *         description: Paginated contacts list
  */
-router.get(
-  '/contacts',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_CONTACTS]),
-  whatsappController.getContacts
-);
+router.get('/contacts', authenticateUser, HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_CONTACTS]), whatsappController.getContacts);
 
 /**
  * @swagger
@@ -182,12 +172,7 @@ router.post(
  *       200:
  *         description: Contact details
  */
-router.get(
-  '/contacts/:id',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_CONTACTS]),
-  whatsappController.getContactById
-);
+router.get('/contacts/:id', authenticateUser, HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_CONTACTS]), whatsappController.getContactById);
 
 /**
  * @swagger
@@ -221,12 +206,7 @@ router.get(
  *       201:
  *         description: Contact created
  */
-router.post(
-  '/contacts',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.MANAGE_WHATSAPP_CONTACTS]),
-  whatsappController.createContact
-);
+router.post('/contacts', authenticateUser, HasPermission([WhatsAppPermissionsEnum.MANAGE_WHATSAPP_CONTACTS]), whatsappController.createContact);
 
 /**
  * @swagger
@@ -266,12 +246,7 @@ router.post(
  *       200:
  *         description: Contact updated
  */
-router.put(
-  '/contacts/:id',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.MANAGE_WHATSAPP_CONTACTS]),
-  whatsappController.updateContact
-);
+router.put('/contacts/:id', authenticateUser, HasPermission([WhatsAppPermissionsEnum.MANAGE_WHATSAPP_CONTACTS]), whatsappController.updateContact);
 
 /**
  * @swagger
@@ -292,12 +267,7 @@ router.put(
  *       200:
  *         description: Contact deleted
  */
-router.delete(
-  '/contacts/:id',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.MANAGE_WHATSAPP_CONTACTS]),
-  whatsappController.deleteContact
-);
+router.delete('/contacts/:id', authenticateUser, HasPermission([WhatsAppPermissionsEnum.MANAGE_WHATSAPP_CONTACTS]), whatsappController.deleteContact);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // MESSAGES
@@ -332,12 +302,7 @@ router.delete(
  *       200:
  *         description: Paginated messages
  */
-router.get(
-  '/messages/:contactId',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_MESSAGES]),
-  whatsappController.getMessages
-);
+router.get('/messages/:contactId', authenticateUser, HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_MESSAGES]), whatsappController.getMessages);
 
 /**
  * @swagger
@@ -511,12 +476,7 @@ router.put(
  *       200:
  *         description: Bulk send results
  */
-router.post(
-  '/messages/bulk',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.SEND_WHATSAPP_BULK]),
-  whatsappController.sendBulkTemplate
-);
+router.post('/messages/bulk', authenticateUser, HasPermission([WhatsAppPermissionsEnum.SEND_WHATSAPP_BULK]), whatsappController.sendBulkTemplate);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TEMPLATES
@@ -559,12 +519,7 @@ router.post(
  *       200:
  *         description: Paginated templates
  */
-router.get(
-  '/templates',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_TEMPLATES]),
-  whatsappController.getTemplates
-);
+router.get('/templates', authenticateUser, HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_TEMPLATES]), whatsappController.getTemplates);
 
 /**
  * @swagger
@@ -585,12 +540,7 @@ router.get(
  *       200:
  *         description: Template details
  */
-router.get(
-  '/templates/:id',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_TEMPLATES]),
-  whatsappController.getTemplateById
-);
+router.get('/templates/:id', authenticateUser, HasPermission([WhatsAppPermissionsEnum.VIEW_WHATSAPP_TEMPLATES]), whatsappController.getTemplateById);
 
 /**
  * @swagger
@@ -632,12 +582,7 @@ router.get(
  *       201:
  *         description: Template created
  */
-router.post(
-  '/templates',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.MANAGE_WHATSAPP_TEMPLATES]),
-  whatsappController.createTemplate
-);
+router.post('/templates', authenticateUser, HasPermission([WhatsAppPermissionsEnum.MANAGE_WHATSAPP_TEMPLATES]), whatsappController.createTemplate);
 
 /**
  * @swagger
@@ -658,12 +603,7 @@ router.post(
  *       200:
  *         description: Template updated
  */
-router.put(
-  '/templates/:id',
-  authenticateUser,
-  HasPermission([WhatsAppPermissionsEnum.MANAGE_WHATSAPP_TEMPLATES]),
-  whatsappController.updateTemplate
-);
+router.put('/templates/:id', authenticateUser, HasPermission([WhatsAppPermissionsEnum.MANAGE_WHATSAPP_TEMPLATES]), whatsappController.updateTemplate);
 
 /**
  * @swagger

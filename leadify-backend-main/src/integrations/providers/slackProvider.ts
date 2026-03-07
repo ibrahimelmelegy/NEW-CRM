@@ -66,7 +66,7 @@ export class SlackProvider {
           }),
           signal: AbortSignal.timeout(10000)
         });
-        const body = await response.json() as { ok: boolean; ts?: string; channel?: string; error?: string };
+        const body = (await response.json()) as { ok: boolean; ts?: string; channel?: string; error?: string };
         if (body.ok) {
           return { success: true, data: { ts: body.ts || '', channel: body.channel || input.channel }, mock: false };
         }
@@ -145,7 +145,7 @@ export class SlackProvider {
           headers: this.getApiHeaders(),
           signal: AbortSignal.timeout(10000)
         });
-        const body = await response.json() as {
+        const body = (await response.json()) as {
           ok: boolean;
           channels?: Array<{ id: string; name: string; is_private: boolean; num_members: number }>;
           error?: string;
@@ -185,7 +185,7 @@ export class SlackProvider {
           headers: this.getApiHeaders(),
           signal: AbortSignal.timeout(10000)
         });
-        const body = await response.json() as {
+        const body = (await response.json()) as {
           ok: boolean;
           messages?: Array<{ ts: string; user: string; text: string }>;
           error?: string;

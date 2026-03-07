@@ -1,4 +1,4 @@
-import { AllowNull, BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from 'sequelize-typescript';
+import { AllowNull, BelongsTo, BelongsToMany, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 import User from '../user/userModel';
 import Lead from '../lead/leadModel';
 import { OpportunityPriorityEnums, OpportunityStageEnums } from './opportunityEnum';

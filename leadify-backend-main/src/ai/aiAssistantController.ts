@@ -37,17 +37,7 @@ export const aiAssistantController = {
    */
   async generateEmailDraft(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const {
-        recipientName,
-        recipientCompany,
-        senderName,
-        dealName,
-        dealStage,
-        dealValue,
-        purpose,
-        tone,
-        additionalContext
-      } = req.body;
+      const { recipientName, recipientCompany, senderName, dealName, dealStage, dealValue, purpose, tone, additionalContext } = req.body;
 
       if (!purpose) {
         res.status(400).json({
@@ -139,10 +129,7 @@ export const aiAssistantController = {
         return;
       }
 
-      const result = await aiAssistantService.getSmartSuggestions(
-        entityType as 'lead' | 'deal' | 'client',
-        entityId as string
-      );
+      const result = await aiAssistantService.getSmartSuggestions(entityType as 'lead' | 'deal' | 'client', entityId as string);
 
       wrapResult(res, result);
     } catch (error) {

@@ -11,7 +11,9 @@ class AccountPlanService {
 
   async create(data: any, tenantId?: string, ownerId?: number) {
     const plan = await AccountPlan.create({ ...data, tenantId, ownerId });
-    try { io.emit('accountPlan:created', { id: plan.id, name: plan.name }); } catch {}
+    try {
+      io.emit('accountPlan:created', { id: plan.id, name: plan.name });
+    } catch {}
     return plan;
   }
 
@@ -32,7 +34,9 @@ class AccountPlanService {
           { model: User, as: 'owner', attributes: ['id', 'name'], required: false }
         ],
         order: [['createdAt', 'DESC']],
-        limit, offset, distinct: true
+        limit,
+        offset,
+        distinct: true
       });
       return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
     } catch {
@@ -53,7 +57,9 @@ class AccountPlanService {
     const item = await AccountPlan.findByPk(id);
     if (!item) return null;
     await item.update(data);
-    try { io.emit('accountPlan:updated', { id: item.id }); } catch {}
+    try {
+      io.emit('accountPlan:updated', { id: item.id });
+    } catch {}
     return item;
   }
 
@@ -62,7 +68,9 @@ class AccountPlanService {
     if (!item) return false;
     await Stakeholder.destroy({ where: { accountPlanId: id } });
     await item.destroy();
-    try { io.emit('accountPlan:deleted', { id }); } catch {}
+    try {
+      io.emit('accountPlan:deleted', { id });
+    } catch {}
     return true;
   }
 
@@ -70,7 +78,9 @@ class AccountPlanService {
 
   async addStakeholder(data: any, tenantId?: string) {
     const stakeholder = await Stakeholder.create({ ...data, tenantId });
-    try { io.emit('stakeholder:created', { id: stakeholder.id, accountPlanId: stakeholder.accountPlanId }); } catch {}
+    try {
+      io.emit('stakeholder:created', { id: stakeholder.id, accountPlanId: stakeholder.accountPlanId });
+    } catch {}
     return stakeholder;
   }
 
@@ -114,8 +124,8 @@ class AccountPlanService {
       nest: true
     });
 
-    const opportunities = plans.map((p) => {
-      const goalsCompleted = (p.goals || []).filter((g) => g.status === 'COMPLETED').length;
+    const opportunities = plans.map(p => {
+      const goalsCompleted = (p.goals || []).filter(g => g.status === 'COMPLETED').length;
       const totalGoals = (p.goals || []).length;
       return {
         accountPlanId: p.id,

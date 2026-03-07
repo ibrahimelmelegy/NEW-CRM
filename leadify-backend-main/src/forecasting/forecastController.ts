@@ -89,11 +89,7 @@ class ForecastController {
       const { winRateAdjustment, dealValueAdjustment } = req.body;
       wrapResult(
         res,
-        await forecastService.getScenarioProjection(
-          String(req.user!.id),
-          Number(winRateAdjustment || 0),
-          Number(dealValueAdjustment || 0)
-        )
+        await forecastService.getScenarioProjection(String(req.user!.id), Number(winRateAdjustment || 0), Number(dealValueAdjustment || 0))
       );
     } catch (error) {
       next(error);

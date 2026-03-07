@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { sequelize } from './config/db';
 import User from './user/userModel';
 import Role from './role/roleModel';
@@ -17,7 +18,6 @@ async function seed() {
     const roleModel = Role as any;
 
     // Delete all roles NOT named SUPER_ADMIN
-    const { Op } = require('sequelize');
     await roleModel.destroy({
       where: {
         name: { [Op.ne]: 'SUPER_ADMIN' }
@@ -64,7 +64,7 @@ async function seed() {
     }
 
     const hashedPassword = await bcrypt.hash(adminPassword, 12);
-    const newAdmin = await userModel.create({
+    const _newAdmin = await userModel.create({
       name: 'System Admin',
       email: adminEmail,
       password: hashedPassword,
@@ -78,7 +78,7 @@ async function seed() {
     const verifyUser = await userModel.findOne({ where: { email: adminEmail } });
     if (verifyUser) {
       // Verification passed - User exists in database
-      const passwordMatch = await bcrypt.compare(adminPassword, verifyUser.password);
+      const _passwordMatch = await bcrypt.compare(adminPassword, verifyUser.password);
       // Password verification completed
     } else {
       console.error('Verification failed - User not found!');

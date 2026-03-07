@@ -101,7 +101,7 @@ async function confirmDelete() {
   try {
     const response = await deleteVehicleById(deleteId.value);
     if (response?.success) {
-      table.data = table.data.filter((r) => r.id !== deleteId.value);
+      table.data = table.data.filter(r => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -222,7 +222,7 @@ const mobileFilteredData = computed(() => {
   const data = table.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((v) => {
+  return data.filter(v => {
     const plate = (v.plate || '').toLowerCase();
     const mfr = (v.manufacturer || '').toLowerCase();
     return plate.includes(q) || mfr.includes(q);

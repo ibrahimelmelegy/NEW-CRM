@@ -4,7 +4,7 @@
  * Tests for composables/useApiCache.ts
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useApiCache, withRetry, clearAllCache, getCacheStats } from '@/composables/useApiCache';
 
 describe('useApiCache.ts', () => {

@@ -76,7 +76,7 @@ async function migrate() {
       // 3. Create trigger function
       `CREATE OR REPLACE FUNCTION ${functionName}() RETURNS trigger AS $$
        BEGIN
-         NEW.search_vector := ${vectorExpr.replace(/\b(name|email|phone|type|title)\b/g, (match) => `NEW.${match}`).replace(/"(\w+)"/g, 'NEW."$1"')};
+         NEW.search_vector := ${vectorExpr.replace(/\b(name|email|phone|type|title)\b/g, match => `NEW.${match}`).replace(/"(\w+)"/g, 'NEW."$1"')};
          RETURN NEW;
        END;
        $$ LANGUAGE plpgsql;`,

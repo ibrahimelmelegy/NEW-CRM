@@ -470,16 +470,16 @@ const filteredContracts = computed(() => {
   }
 
   if (filterStatus.value) {
-    result = result.filter((c) => c.status === filterStatus.value);
+    result = result.filter(c => c.status === filterStatus.value);
   }
 
   if (filterType.value) {
-    result = result.filter((c) => c.type === filterType.value);
+    result = result.filter(c => c.type === filterType.value);
   }
 
   if (filterDateRange.value?.length === 2) {
     const [from, to] = filterDateRange.value!;
-    result = result.filter((c) => c.endDate >= from! && c.endDate <= to!);
+    result = result.filter(c => c.endDate >= from! && c.endDate <= to!);
   }
 
   return result;
@@ -493,13 +493,13 @@ const paginatedContracts = computed(() => {
 const renewalAlerts = computed(() => {
   const now = new Date();
   return contracts.value
-    .filter((c) => {
+    .filter(c => {
       if (c.status === 'expired' || c.status === 'terminated') return false;
       const end = new Date(c.endDate);
       const diff = Math.ceil((end.getTime() - now.getTime()) / 86400000);
       return diff > 0 && diff <= 90;
     })
-    .map((c) => {
+    .map(c => {
       const end = new Date(c.endDate);
       const diff = Math.ceil((end.getTime() - now.getTime()) / 86400000);
       return { ...c, daysLeft: diff };
@@ -509,17 +509,17 @@ const renewalAlerts = computed(() => {
 
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = contracts.value;
-  const active = data.filter((c) => c.status === 'active' || c.status === 'expiring').length;
-  const expiringSoon = data.filter((c) => {
+  const active = data.filter(c => c.status === 'active' || c.status === 'expiring').length;
+  const expiringSoon = data.filter(c => {
     const end = new Date(c.endDate);
     const diff = Math.ceil((end.getTime() - Date.now()) / 86400000);
     return diff > 0 && diff <= 30 && c.status !== 'expired' && c.status !== 'terminated';
   }).length;
   const totalValue = data
-    .filter((c) => c.status === 'active' || c.status === 'expiring' || c.status === 'renewed')
+    .filter(c => c.status === 'active' || c.status === 'expiring' || c.status === 'renewed')
     .reduce((sum, c) => sum + (Number(c.value) || 0), 0);
-  const renewedCount = data.filter((c) => c.status === 'renewed').length;
-  const eligibleForRenewal = data.filter((c) => ['renewed', 'expired', 'expiring'].includes(c.status)).length;
+  const renewedCount = data.filter(c => c.status === 'renewed').length;
+  const eligibleForRenewal = data.filter(c => ['renewed', 'expired', 'expiring'].includes(c.status)).length;
   const renewalRate = eligibleForRenewal > 0 ? Math.round((renewedCount / eligibleForRenewal) * 100) : 0;
 
   return [
@@ -824,7 +824,7 @@ function handleSelectionChange(rows: Record<string, unknown>[]) {
 
 async function handleBulkExport() {
   try {
-    const ids = selectedRows.value.map((r) => r.id);
+    const ids = selectedRows.value.map(r => r.id);
     await useApiFetch('contracts/export', 'POST', { ids });
     ElNotification({ type: 'success', title: t('common.success'), message: t('contractLifecycle.exportSuccess') });
     selectedRows.value = [];
@@ -846,7 +846,7 @@ function handleExportCSV() {
     t('contractLifecycle.status'),
     t('contractLifecycle.autoRenewal')
   ];
-  const rows = data.map((c) => [
+  const rows = data.map(c => [
     c.contractNumber,
     c.clientName,
     getTypeLabel(c.type),
@@ -856,7 +856,7 @@ function handleExportCSV() {
     getStatusLabel(c.status),
     c.autoRenewal ? 'Yes' : 'No'
   ]);
-  const csv = [headers.join(','), ...rows.map((r: Record<string, unknown>[]) => r.map((v) => `"${v}"`).join(','))].join('\n');
+  const csv = [headers.join(','), ...rows.map((r: Record<string, unknown>[]) => r.map(v => `"${v}"`).join(','))].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

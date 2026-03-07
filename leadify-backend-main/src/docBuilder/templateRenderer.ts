@@ -295,13 +295,7 @@ export function renderDocumentHtml(content: DocumentContent, type: string, water
  * Falls back to renderDocumentHtml() if no templateHtml is provided.
  * If watermark is provided, a semi-transparent diagonal overlay is added to the output.
  */
-export function renderWithTemplate(
-  content: DocumentContent,
-  type: string,
-  templateHtml?: string,
-  brand?: BrandSettings,
-  watermark?: string
-): string {
+export function renderWithTemplate(content: DocumentContent, type: string, templateHtml?: string, brand?: BrandSettings, watermark?: string): string {
   if (!templateHtml) {
     return renderDocumentHtml(content, type, watermark);
   }

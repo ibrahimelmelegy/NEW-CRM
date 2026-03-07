@@ -24,7 +24,7 @@ interface JourneyResult {
 }
 
 class LeadJourneyService {
-  async getJourney(leadId: string, tenantId?: string): Promise<JourneyResult> {
+  async getJourney(leadId: string, _tenantId?: string): Promise<JourneyResult> {
     // 1. Find lead or throw error
     const lead = await Lead.findByPk(leadId);
     if (!lead) throw new BaseError(ERRORS.LEAD_NOT_FOUND);

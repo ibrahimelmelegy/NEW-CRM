@@ -267,10 +267,10 @@ export function useDashboardBuilder() {
       if (success && body) {
         const data = body as unknown;
         const dashboards = data.docs || data || [];
-        const defaultDb = dashboards.find((d) => d.isDefault) || dashboards[0];
+        const defaultDb = dashboards.find(d => d.isDefault) || dashboards[0];
         if (defaultDb && defaultDb.widgets?.length) {
           dashboardId.value = defaultDb.id;
-          dashboardWidgets.value = defaultDb.widgets.map((w) => ({
+          dashboardWidgets.value = defaultDb.widgets.map(w => ({
             id: w.id || generateId(),
             type: w.type,
             colSpan: w.config?.colSpan || 1,

@@ -644,7 +644,7 @@ async function loadTemplates(type: string) {
     const { body, success } = await useApiFetch(`document-templates?type=${type.toUpperCase()}&limit=50`);
     if (success && body) {
       const data = body as unknown;
-      templates.value = (data.docs || data || []).map((t) => ({
+      templates.value = (data.docs || data || []).map(t => ({
         id: t.id,
         name: t.name,
         type: t.type,
@@ -704,7 +704,7 @@ async function onDealChange() {
       const { body, success } = await useApiFetch(`sales-orders?dealId=${form.value.dealId}&limit=100`);
       if (success && body) {
         const data = body as unknown;
-        salesOrders.value = (data.docs || data || []).map((o) => ({ id: o.id, orderNumber: o.orderNumber }));
+        salesOrders.value = (data.docs || data || []).map(o => ({ id: o.id, orderNumber: o.orderNumber }));
       }
     } catch {
       /* silent */
@@ -907,18 +907,18 @@ async function loadInitialData() {
 
   if (dealRes.success && dealRes.body) {
     const data = dealRes.body as unknown;
-    deals.value = (data.docs || data || []).map((d) => ({ id: d.id, name: d.name }));
+    deals.value = (data.docs || data || []).map(d => ({ id: d.id, name: d.name }));
   }
   if (clientRes.success && clientRes.body) {
     const data = clientRes.body as unknown;
-    clients.value = (data.docs || data || []).map((c) => ({ id: c.id, name: c.name, companyName: c.companyName }));
+    clients.value = (data.docs || data || []).map(c => ({ id: c.id, name: c.name, companyName: c.companyName }));
   }
   if (vendorRes.success && vendorRes.body) {
-    vendors.value = ((vendorRes.body as unknown[]) || []).map((v) => ({ id: v.id, name: v.name, companyName: v.companyName }));
+    vendors.value = ((vendorRes.body as unknown[]) || []).map(v => ({ id: v.id, name: v.name, companyName: v.companyName }));
   }
   if (projectRes.success && projectRes.body) {
     const data = projectRes.body as unknown;
-    projects.value = (data.docs || data || []).map((p) => ({ id: p.id, name: p.name }));
+    projects.value = (data.docs || data || []).map(p => ({ id: p.id, name: p.name }));
   }
 }
 
@@ -927,7 +927,7 @@ async function loadInvoices() {
     const { body, success } = await useApiFetch('invoices?limit=100', 'GET', {}, true);
     if (success && body) {
       const data = body as unknown;
-      invoicesList.value = (data.docs || data || []).map((inv) => ({
+      invoicesList.value = (data.docs || data || []).map(inv => ({
         id: inv.id,
         invoiceNumber: inv.invoiceNumber || `INV-${inv.id}`,
         amount: inv.total || inv.amount || 0

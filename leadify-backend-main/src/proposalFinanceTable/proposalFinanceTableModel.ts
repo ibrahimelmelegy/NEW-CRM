@@ -1,5 +1,4 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
-import ProposalContent from '../proposalContent/proposalContentModel';
 import ProposalFinanceTableItem from '../ProposalFinanceTableItem/proposalFinanceTableItemModel';
 import Proposal from '../proposal/models/proposalModel';
 

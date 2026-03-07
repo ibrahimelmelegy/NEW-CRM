@@ -410,31 +410,31 @@ const filteredCalls = computed(() => {
   let result = calls.value;
 
   if (filters.outcome) {
-    result = result.filter((c) => c.outcome === filters.outcome);
+    result = result.filter(c => c.outcome === filters.outcome);
   }
 
   if (filters.disposition) {
-    result = result.filter((c) => c.disposition === filters.disposition);
+    result = result.filter(c => c.disposition === filters.disposition);
   }
 
   if (filters.agent) {
-    result = result.filter((c) => c.agentId === filters.agent);
+    result = result.filter(c => c.agentId === filters.agent);
   }
 
   if (filters.dateRange && filters.dateRange.length === 2) {
     const [start, end] = filters.dateRange;
-    result = result.filter((c) => {
+    result = result.filter(c => {
       const callDate = new Date(c.createdAt);
       return callDate >= start && callDate <= end;
     });
   }
 
   if (filters.durationMin !== null) {
-    result = result.filter((c) => c.duration >= filters.durationMin! * 60);
+    result = result.filter(c => c.duration >= filters.durationMin! * 60);
   }
 
   if (filters.durationMax !== null) {
-    result = result.filter((c) => c.duration <= filters.durationMax! * 60);
+    result = result.filter(c => c.duration <= filters.durationMax! * 60);
   }
 
   if (filters.search) {
@@ -445,7 +445,7 @@ const filteredCalls = computed(() => {
   }
 
   if (filters.tagId) {
-    result = result.filter((c) => c.tags?.some((t) => t.id === filters.tagId));
+    result = result.filter(c => c.tags?.some(t => t.id === filters.tagId));
   }
 
   return result;

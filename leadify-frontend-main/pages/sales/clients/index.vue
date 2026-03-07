@@ -219,7 +219,7 @@ async function handleBulkExport() {
   if (!selectedRows.value.length) return;
   try {
     loading.value = true;
-    const ids = selectedRows.value.map((r) => r.id);
+    const ids = selectedRows.value.map(r => r.id);
     await useApiFetch('client/export', 'POST', { ids });
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.exportSentToEmail') });
     selectedRows.value = [];
@@ -332,8 +332,8 @@ const enrichedClientData = computed(() => {
   const clientDealCountMap = new Map<string, number>();
 
   deals
-    .filter((d) => d.status === 'WON')
-    .forEach((deal) => {
+    .filter(d => d.status === 'WON')
+    .forEach(deal => {
       const clientId = deal.clientId;
       if (clientId) {
         const currentLTV = clientLTVMap.get(clientId) || 0;
@@ -344,7 +344,7 @@ const enrichedClientData = computed(() => {
       }
     });
 
-  return clients.map((client) => {
+  return clients.map(client => {
     const ltv = clientLTVMap.get(client.id) || 0;
     const dealCount = clientDealCountMap.get(client.id) || 0;
     const isActive = client.clientStatus === 'ACTIVE' || client.status === 'ACTIVE';
@@ -396,8 +396,8 @@ const clientSegments = computed(() => {
   // Calculate LTV for each client
   const clientLTVMap = new Map<string, number>();
   deals
-    .filter((d) => d.status === 'WON')
-    .forEach((deal) => {
+    .filter(d => d.status === 'WON')
+    .forEach(deal => {
       const clientId = deal.clientId;
       if (clientId) {
         const current = clientLTVMap.get(clientId) || 0;
@@ -411,7 +411,7 @@ const clientSegments = computed(() => {
   let atRisk = 0;
   let churning = 0;
 
-  data.forEach((client) => {
+  data.forEach(client => {
     const ltv = clientLTVMap.get(client.id) || 0;
     const isActive = client.clientStatus === 'ACTIVE' || client.status === 'ACTIVE';
 
@@ -432,7 +432,7 @@ const clientSegments = computed(() => {
 // Revenue analytics
 const revenueAnalytics = computed(() => {
   const deals = clientDeals.value || [];
-  const wonDeals = deals.filter((d) => d.status === 'WON');
+  const wonDeals = deals.filter(d => d.status === 'WON');
 
   const totalRevenue = wonDeals.reduce((sum, d) => sum + Number(d.value || 0), 0);
   const avgDealSize = wonDeals.length > 0 ? totalRevenue / wonDeals.length : 0;
@@ -447,8 +447,8 @@ const revenueAnalytics = computed(() => {
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.data || [];
   const total = data.length;
-  const active = data.filter((c) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length;
-  const inactive = data.filter((c) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length;
+  const active = data.filter(c => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length;
+  const inactive = data.filter(c => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length;
 
   return [
     { label: t('clients.kpi.totalClients'), value: total, icon: 'ph:buildings-bold', color: '#3b82f6' },
@@ -474,7 +474,7 @@ function handleRowClick(val: unknown) {
 }
 
 const mappedUsers =
-  usersResponse?.body?.docs?.map((e) => ({
+  usersResponse?.body?.docs?.map(e => ({
     label: e.name,
     value: e.id
   })) || [];
@@ -502,8 +502,8 @@ const advancedSearchFields = [
   { key: 'name', label: t('clients.table.clientName'), type: 'string' },
   { key: 'email', label: t('clients.table.email'), type: 'string' },
   { key: 'phoneNumber', label: t('clients.table.phone'), type: 'string' },
-  { key: 'clientType', label: t('clients.table.type'), type: 'select', options: clientTypes.map((s) => ({ value: s.value, label: s.label })) },
-  { key: 'status', label: t('clients.table.status'), type: 'select', options: clientStatuses.map((s) => ({ value: s.value, label: s.label })) },
+  { key: 'clientType', label: t('clients.table.type'), type: 'select', options: clientTypes.map(s => ({ value: s.value, label: s.label })) },
+  { key: 'status', label: t('clients.table.status'), type: 'select', options: clientStatuses.map(s => ({ value: s.value, label: s.label })) },
   { key: 'createdAt', label: t('clients.table.created'), type: 'date' }
 ];
 
@@ -558,13 +558,13 @@ const mobileFilters = computed(() => {
       value: 'ACTIVE',
       label: t('common.active'),
       color: '#10b981',
-      count: data.filter((c) => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length
+      count: data.filter(c => c.clientStatus === 'ACTIVE' || c.status === 'ACTIVE').length
     },
     {
       value: 'INACTIVE',
       label: t('common.inactive'),
       color: '#94a3b8',
-      count: data.filter((c) => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length
+      count: data.filter(c => c.clientStatus === 'INACTIVE' || c.status === 'INACTIVE').length
     }
   ];
 });
@@ -572,11 +572,11 @@ const mobileFilters = computed(() => {
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((c) => (c.clientStatus || c.status) === mobileStatusFilter.value);
+    data = data.filter(c => (c.clientStatus || c.status) === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((c) => {
+  return data.filter(c => {
     const name = (c.ClientDetails?.title || c.name || '').toLowerCase();
     const email = (c.email || '').toLowerCase();
     const phone = (c.phoneNumber || '').toLowerCase();

@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useApiFetch } from './useApiFetch';
 
 export interface WorkflowNodeData {

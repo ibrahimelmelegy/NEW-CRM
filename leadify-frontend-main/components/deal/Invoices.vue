@@ -48,7 +48,7 @@ const invoicesList = ref<Invoice[]>([
 ]);
 
 if (props.invoices?.length) {
-  invoicesList.value = props.invoices.map((invoice) => ({
+  invoicesList.value = props.invoices.map(invoice => ({
     amount: invoice.amount || null,
     invoiceNumber: invoice.invoiceNumber || '',
     invoiceDate: new Date(invoice.invoiceDate),

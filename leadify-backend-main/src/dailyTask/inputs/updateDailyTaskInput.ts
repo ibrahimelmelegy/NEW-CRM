@@ -1,5 +1,5 @@
-import { Expose, Type } from 'class-transformer';
-import { IsOptional, IsString, IsUUID, MaxLength, IsIn, IsDate, IsNumber } from 'class-validator';
+import { Expose } from 'class-transformer';
+import { IsOptional, IsString, IsUUID, MaxLength, IsIn, IsNumber } from 'class-validator';
 import { DailyTaskPriorityEnum, DailyTaskStatusEnum } from '../dailyTaskEnum';
 
 export class UpdateDailyTaskInput {

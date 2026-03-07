@@ -7,6 +7,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 
+import { useAuthStore } from '@/stores/auth';
+
 // Track ElNotification calls via a local mock fn
 const mockElNotification = vi.fn();
 
@@ -25,8 +27,6 @@ globalThis.useApiFetch = vi.fn();
 
 // Mock useI18n
 globalThis.useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
-
-import { useAuthStore } from '@/stores/auth';
 
 describe('useAuthStore', () => {
   let store: ReturnType<typeof useAuthStore>;
@@ -73,7 +73,9 @@ describe('useAuthStore', () => {
 
     it('should set loadingChangePassword to true during request', async () => {
       let resolvePromise: (value: any) => void;
-      const pendingPromise = new Promise((resolve) => { resolvePromise = resolve; });
+      const pendingPromise = new Promise(resolve => {
+        resolvePromise = resolve;
+      });
 
       (globalThis.useApiFetch as any).mockReturnValue(pendingPromise);
 

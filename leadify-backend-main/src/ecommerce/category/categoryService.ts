@@ -20,9 +20,7 @@ class CategoryService {
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [
-        { name: { [Op.iLike]: `%${searchKey}%` } }
-      ];
+      (where as any)[Op.or] = [{ name: { [Op.iLike]: `%${searchKey}%` } }];
     }
 
     if (parentId !== undefined && parentId !== '') {
@@ -41,7 +39,10 @@ class CategoryService {
       where,
       limit,
       offset,
-      order: [['sortOrder', 'ASC'], ['createdAt', 'DESC']],
+      order: [
+        ['sortOrder', 'ASC'],
+        ['createdAt', 'DESC']
+      ],
       include: [
         { model: EcCategory, as: 'parent', required: false },
         { model: EcCategory, as: 'children', required: false }
@@ -73,15 +74,16 @@ class CategoryService {
   async getCategoryTree(): Promise<EcCategory[]> {
     const categories = await EcCategory.findAll({
       where: { parentId: null },
-      order: [['sortOrder', 'ASC'], ['createdAt', 'DESC']],
+      order: [
+        ['sortOrder', 'ASC'],
+        ['createdAt', 'DESC']
+      ],
       include: [
         {
           model: EcCategory,
           as: 'children',
           required: false,
-          include: [
-            { model: EcCategory, as: 'children', required: false }
-          ]
+          include: [{ model: EcCategory, as: 'children', required: false }]
         }
       ]
     });

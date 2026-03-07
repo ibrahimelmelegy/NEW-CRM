@@ -3,7 +3,7 @@ import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import ProposalFinanceTable from './proposalFinanceTableModel';
 import materialService from '../additionalMaterial/material.service';
-import { Includeable, WhereOptions, Op, Sequelize, QueryTypes } from 'sequelize';
+import { Includeable, WhereOptions, Op, QueryTypes } from 'sequelize';
 import { sequelize } from '../config/db';
 import { clampPagination } from '../utils/pagination';
 import { ProposalActionEnum } from '../proposalLog/proposalLogEnum';
@@ -59,7 +59,7 @@ class ProposalFinanceTableService {
     });
 
     if (calculatedItems.length > 0) {
-      const financeTableItems = calculatedItems.map((item) => ({
+      const financeTableItems = calculatedItems.map(item => ({
         ...item,
         financeTableId: financeTable.id
       }));

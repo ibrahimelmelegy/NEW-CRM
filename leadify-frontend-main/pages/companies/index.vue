@@ -866,7 +866,7 @@ function renderRevenueChart() {
     },
     xAxis: {
       type: 'category',
-      data: companyRevenue.value.revenueByMonth.map((item) => item.month)
+      data: companyRevenue.value.revenueByMonth.map(item => item.month)
     },
     yAxis: {
       type: 'value'
@@ -876,7 +876,7 @@ function renderRevenueChart() {
         name: 'Revenue',
         type: 'line',
         smooth: true,
-        data: companyRevenue.value.revenueByMonth.map((item) => item.revenue),
+        data: companyRevenue.value.revenueByMonth.map(item => item.revenue),
         areaStyle: {
           color: 'rgba(124, 58, 237, 0.1)'
         },

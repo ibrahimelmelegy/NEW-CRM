@@ -4,8 +4,8 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-emerald-400">{{ $t("dataImport.title") }}</h1>
-          <p class="text-slate-400 text-sm mt-1">{{ $t("dataImport.subtitle") }}</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-emerald-400">{{ $t('dataImport.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('dataImport.subtitle') }}</p>
         </div>
       </div>
     </div>
@@ -14,19 +14,19 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ totalImports }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("dataImport.totalImports") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('dataImport.totalImports') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ recordsImported.toLocaleString() }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("dataImport.recordsImported") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('dataImport.recordsImported') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-red-400">{{ failedRecords }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("dataImport.failedRecords") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('dataImport.failedRecords') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-blue-400">{{ lastImportDate }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("dataImport.lastImport") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('dataImport.lastImport') }}</div>
       </div>
     </div>
 
@@ -35,7 +35,7 @@
       <!-- New Import -->
       <el-tab-pane :label="$t('dataImport.newImport')" name="new">
         <div class="glass-panel p-6 rounded-xl mb-6">
-          <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t("dataImport.selectEntityType") }}</h3>
+          <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t('dataImport.selectEntityType') }}</h3>
           <div class="flex gap-3 mb-6">
             <div
               v-for="entity in entityTypes"
@@ -55,7 +55,7 @@
             </div>
           </div>
 
-          <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t("dataImport.uploadFile") }}</h3>
+          <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t('dataImport.uploadFile') }}</h3>
           <div
             class="border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer"
             :class="isDragging ? 'border-indigo-500/60 bg-indigo-500/5' : 'border-slate-700 hover:border-slate-600'"
@@ -65,8 +65,8 @@
             @click="triggerFileInput"
           >
             <Icon name="ph:cloud-arrow-up-bold" class="w-12 h-12 text-slate-500 mx-auto mb-3" />
-            <p class="text-sm text-slate-400 mb-1">{{ $t("dataImport.dragAndDrop") }}</p>
-            <p class="text-xs text-slate-600">{{ $t("dataImport.supportedFormats") }}</p>
+            <p class="text-sm text-slate-400 mb-1">{{ $t('dataImport.dragAndDrop') }}</p>
+            <p class="text-xs text-slate-600">{{ $t('dataImport.supportedFormats') }}</p>
             <div v-if="uploadedFile" class="mt-4 flex items-center justify-center gap-2 text-sm text-emerald-400">
               <Icon name="ph:file-text-bold" class="w-4 h-4" />
               {{ uploadedFile.name }} ({{ formatFileSize(uploadedFile.size) }})
@@ -79,10 +79,10 @@
 
           <!-- Import Settings -->
           <div v-if="uploadedFile" class="mt-6">
-            <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t("dataImport.importSettings") }}</h3>
+            <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t('dataImport.importSettings') }}</h3>
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs text-slate-500 mb-2">{{ $t("dataImport.duplicateHandling") }}</label>
+                <label class="block text-xs text-slate-500 mb-2">{{ $t('dataImport.duplicateHandling') }}</label>
                 <el-select v-model="importSettings.duplicateHandling" class="w-full">
                   <el-option :label="$t('dataImport.skipDuplicates')" value="skip" />
                   <el-option :label="$t('dataImport.updateExisting')" value="update" />
@@ -90,7 +90,7 @@
                 </el-select>
               </div>
               <div>
-                <label class="block text-xs text-slate-500 mb-2">{{ $t("dataImport.requiredFieldValidation") }}</label>
+                <label class="block text-xs text-slate-500 mb-2">{{ $t('dataImport.requiredFieldValidation') }}</label>
                 <el-select v-model="importSettings.validation" class="w-full">
                   <el-option :label="$t('dataImport.strict')" value="strict" />
                   <el-option :label="$t('dataImport.lenient')" value="lenient" />
@@ -101,7 +101,7 @@
 
           <!-- Preview Table -->
           <div v-if="previewData.length" class="mt-6">
-            <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t("dataImport.preview") }}</h3>
+            <h3 class="text-sm font-medium text-slate-200 mb-4">{{ $t('dataImport.preview') }}</h3>
             <el-table :data="previewData" class="glass-table" stripe max-height="300">
               <el-table-column v-for="col in previewColumns" :key="col" :prop="col" :label="col" min-width="150">
                 <template #default="{ row }">
@@ -113,7 +113,7 @@
             <div class="flex justify-end mt-4">
               <el-button type="primary" class="!rounded-xl" :loading="importing" @click="startImport">
                 <Icon name="ph:upload-bold" class="w-4 h-4 mr-2" />
-                {{ $t("dataImport.startImport") }} ({{ previewData.length }}+)
+                {{ $t('dataImport.startImport') }} ({{ previewData.length }}+)
               </el-button>
             </div>
           </div>
@@ -176,8 +176,8 @@
         <div class="glass-panel p-6 rounded-xl">
           <div class="flex items-center justify-between mb-4">
             <div>
-              <h3 class="text-sm font-medium text-slate-200">{{ $t("dataImport.mapColumns") }}</h3>
-              <p class="text-xs text-slate-500 mt-1">{{ $t("dataImport.mapColumnsDesc") }}</p>
+              <h3 class="text-sm font-medium text-slate-200">{{ $t('dataImport.mapColumns') }}</h3>
+              <p class="text-xs text-slate-500 mt-1">{{ $t('dataImport.mapColumnsDesc') }}</p>
             </div>
             <el-select v-model="mappingEntity" :placeholder="$t('dataImport.selectEntity')" class="w-44">
               <el-option v-for="entity in entityTypes" :key="entity.value" :label="entity.label" :value="entity.value" />
@@ -203,15 +203,15 @@
                   <el-option v-for="field in getCrmFields(mappingEntity)" :key="field.value" :label="field.label" :value="field.value" />
                 </el-select>
               </div>
-              <el-tag v-if="mapping.required" type="danger" effect="plain" size="small">{{ $t("dataImport.required") }}</el-tag>
+              <el-tag v-if="mapping.required" type="danger" effect="plain" size="small">{{ $t('dataImport.required') }}</el-tag>
             </div>
           </div>
 
           <div class="flex justify-end mt-4 gap-2">
-            <el-button @click="resetMapping">{{ $t("common.reset") }}</el-button>
+            <el-button @click="resetMapping">{{ $t('common.reset') }}</el-button>
             <el-button type="primary" class="!rounded-xl" @click="saveMapping">
               <Icon name="ph:floppy-disk-bold" class="w-4 h-4 mr-2" />
-              {{ $t("dataImport.saveMapping") }}
+              {{ $t('dataImport.saveMapping') }}
             </el-button>
           </div>
         </div>
@@ -258,7 +258,19 @@ const previewColumns = ref(['Name', 'Email', 'Phone', 'Company', 'Source']);
 
 const previewData = ref<Record<string, string>[]>([]);
 
-const importHistory = ref<{ id: number; date: string; entity: string; fileName: string; totalRecords: number; successCount: number; failedCount: number; status: string; user: string }[]>([]);
+const importHistory = ref<
+  {
+    id: number;
+    date: string;
+    entity: string;
+    fileName: string;
+    totalRecords: number;
+    successCount: number;
+    failedCount: number;
+    status: string;
+    user: string;
+  }[]
+>([]);
 
 const fieldMappings = ref([
   { source: 'Full Name', target: 'name', required: true },

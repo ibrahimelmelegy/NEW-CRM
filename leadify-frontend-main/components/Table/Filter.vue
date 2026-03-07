@@ -49,7 +49,7 @@ if (globalFilterOptions.value) {
   const processedFilterOptions = Object.entries(globalFilterOptions.value).reduce(
     (acc, [key, value]) => {
       if (key === 'userId') {
-        acc[key] = Array.isArray(value) ? value.map((e) => Number(e)) : typeof value === 'string' ? [Number(value)] : [];
+        acc[key] = Array.isArray(value) ? value.map(e => Number(e)) : typeof value === 'string' ? [Number(value)] : [];
       } else {
         acc[key] = Array.isArray(value) ? value : typeof value === 'string' ? [value] : value;
       }

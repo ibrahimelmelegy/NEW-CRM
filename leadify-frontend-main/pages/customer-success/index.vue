@@ -75,7 +75,9 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-medium text-slate-200">{{ $t('customerSuccess.atRiskClients') }}</h3>
-        <el-tag type="danger" effect="dark" size="small">{{ dashboard.atRiskClients.length }} {{ $t('customerSuccess.clientsNeedAttention') }}</el-tag>
+        <el-tag type="danger" effect="dark" size="small">
+          {{ dashboard.atRiskClients.length }} {{ $t('customerSuccess.clientsNeedAttention') }}
+        </el-tag>
       </div>
       <el-table :data="dashboard.atRiskClients" class="glass-table" style="width: 100%" stripe>
         <el-table-column prop="clientName" :label="$t('customerSuccess.client')" min-width="180">
@@ -267,7 +269,7 @@ const renderCharts = () => {
           center: ['50%', '50%'],
           avoidLabelOverlap: false,
           label: { show: true, position: 'outside', color: '#94a3b8', fontSize: 12 },
-          data: dashboard.value.healthDistribution.map((d) => ({
+          data: dashboard.value.healthDistribution.map(d => ({
             name: d.name,
             value: d.value,
             itemStyle: { color: d.color }
@@ -285,7 +287,7 @@ const renderCharts = () => {
       grid: { left: '3%', right: '4%', bottom: '3%', top: '8%', containLabel: true },
       xAxis: {
         type: 'category',
-        data: dashboard.value.revenueByMonth.map((d) => d.month),
+        data: dashboard.value.revenueByMonth.map(d => d.month),
         axisLabel: { color: '#64748b' },
         axisLine: { lineStyle: { color: '#334155' } }
       },
@@ -297,7 +299,7 @@ const renderCharts = () => {
       series: [
         {
           type: 'bar',
-          data: dashboard.value.revenueByMonth.map((d) => d.revenue),
+          data: dashboard.value.revenueByMonth.map(d => d.revenue),
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               { offset: 0, color: '#10B981' },
@@ -319,7 +321,7 @@ const renderCharts = () => {
       grid: { left: '3%', right: '4%', bottom: '3%', top: '8%', containLabel: true },
       xAxis: {
         type: 'category',
-        data: dashboard.value.engagementTrend.map((d) => d.month),
+        data: dashboard.value.engagementTrend.map(d => d.month),
         axisLabel: { color: '#64748b' },
         axisLine: { lineStyle: { color: '#334155' } }
       },
@@ -327,7 +329,7 @@ const renderCharts = () => {
       series: [
         {
           type: 'line',
-          data: dashboard.value.engagementTrend.map((d) => d.activities),
+          data: dashboard.value.engagementTrend.map(d => d.activities),
           smooth: true,
           lineStyle: { color: '#6366F1', width: 3 },
           areaStyle: {

@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import { wrapResult } from '../utils/response/responseWrapper';
 import portalService from './portalService';
 import { PortalRequest } from './portalMiddleware';
-import { PortalTokenRequest } from './portalAuth';
 import { AuthenticatedRequest } from '../types';
 
 class PortalController {

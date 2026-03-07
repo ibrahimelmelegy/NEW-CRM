@@ -198,7 +198,7 @@ const isLoadingEntities = computed(() => {
 
 const filteredEntities = computed(() => {
   const term = searchTerm.value.toLowerCase();
-  return currentEntities.value.filter((entity) => entity.name?.toLowerCase().includes(term) || entity.title?.toLowerCase().includes(term));
+  return currentEntities.value.filter(entity => entity.name?.toLowerCase().includes(term) || entity.title?.toLowerCase().includes(term));
 });
 
 // ---- Methods ----

@@ -154,7 +154,7 @@ const parsedContent = computed(() => {
 });
 
 const availableConversions = computed(() => {
-  return getAvailableConversions(props.documentType).map((c) => c.type || c);
+  return getAvailableConversions(props.documentType).map(c => c.type || c);
 });
 
 // Helpers

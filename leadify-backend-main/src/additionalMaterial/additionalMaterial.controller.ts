@@ -56,7 +56,6 @@ class AdditionalMaterialController {
       next(error);
     }
   }
-
 }
 
 export default new AdditionalMaterialController();

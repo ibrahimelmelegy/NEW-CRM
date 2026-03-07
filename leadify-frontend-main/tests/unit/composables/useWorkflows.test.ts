@@ -6,13 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import {
-  ENTITY_TYPES,
-  TRIGGER_TYPES,
-  CONDITION_OPERATORS,
-  ACTION_TYPES,
-  useWorkflows
-} from '~/composables/useWorkflows';
+import { ENTITY_TYPES, TRIGGER_TYPES, CONDITION_OPERATORS, ACTION_TYPES, useWorkflows } from '~/composables/useWorkflows';
 
 const mockApiFetch = vi.fn();
 (globalThis as any).useApiFetch = mockApiFetch;

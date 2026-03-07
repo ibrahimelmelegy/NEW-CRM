@@ -4,9 +4,6 @@ import Client from '../client/clientModel';
 import User from '../user/userModel';
 import DealUsers from '../deal/model/deal_UsersModel';
 import LeadUsers from '../lead/model/lead_UsersModel';
-import ClientUsers from '../client/client_UsersModel';
-import { QueryTypes } from 'sequelize';
-import { sequelize } from '../config/db';
 
 interface GraphNode {
   id: string;

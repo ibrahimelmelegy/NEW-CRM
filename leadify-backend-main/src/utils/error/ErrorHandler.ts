@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import BaseError from './base-http-exception';
 
-export default (error: Error, req: Request, res: Response, next: NextFunction): Response => {
+export default (error: Error, req: Request, res: Response, _next: NextFunction): Response => {
   const isBaseError = error instanceof BaseError;
 
   const statusCode = isBaseError ? error.statusCode : 500;

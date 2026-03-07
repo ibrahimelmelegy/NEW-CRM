@@ -12,7 +12,12 @@ import {
 
 const router = express.Router();
 
-router.get('/', authenticateUser, HasPermission([LeadAndSalesWidgetsPermissionsEnum.VIEW_GLOBAL_LEAD_SALES_WIDGETS, LeadAndSalesWidgetsPermissionsEnum.VIEW_OWN_LEAD_SALES_WIDGETS]), insightController.getLeadsSalesInsights);
+router.get(
+  '/',
+  authenticateUser,
+  HasPermission([LeadAndSalesWidgetsPermissionsEnum.VIEW_GLOBAL_LEAD_SALES_WIDGETS, LeadAndSalesWidgetsPermissionsEnum.VIEW_OWN_LEAD_SALES_WIDGETS]),
+  insightController.getLeadsSalesInsights
+);
 
 /**
  * @swagger

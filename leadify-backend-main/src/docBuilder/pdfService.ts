@@ -16,6 +16,7 @@ class PdfService {
    */
   public async generatePdfBuffer(html: string): Promise<{ buffer: Buffer; isPdf: boolean }> {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const puppeteer = require('puppeteer');
       const browser = await puppeteer.launch({
         headless: true,
@@ -64,23 +65,26 @@ class PdfService {
     }
 
     const settings = await Setting.findOne();
-    const brand: BrandSettings = settings ? {
-      companyName: settings.name || undefined,
-      logo: settings.logo || undefined,
-      primaryColor: settings.primaryColor || undefined,
-      accentColor: settings.accentColor || undefined,
-      fontFamily: settings.fontFamily || undefined,
-      companyAddress: settings.companyAddress || undefined,
-      companyPhone: settings.companyPhone || undefined,
-      companyEmail: settings.email || undefined,
-      companyTaxId: settings.companyTaxId || undefined,
-      brandFooterText: settings.brandFooterText || undefined
-    } : {};
+    const brand: BrandSettings = settings
+      ? {
+          companyName: settings.name || undefined,
+          logo: settings.logo || undefined,
+          primaryColor: settings.primaryColor || undefined,
+          accentColor: settings.accentColor || undefined,
+          fontFamily: settings.fontFamily || undefined,
+          companyAddress: settings.companyAddress || undefined,
+          companyPhone: settings.companyPhone || undefined,
+          companyEmail: settings.email || undefined,
+          companyTaxId: settings.companyTaxId || undefined,
+          brandFooterText: settings.brandFooterText || undefined
+        }
+      : {};
 
     const html = renderWithTemplate(content, document.type, templateHtml, brand);
 
     try {
       // Try Puppeteer for proper PDF generation
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const puppeteer = require('puppeteer');
       const browser = await puppeteer.launch({
         headless: true,
@@ -121,6 +125,7 @@ class PdfService {
    */
   public async generatePdfFromHtml(html: string, filename: string): Promise<string> {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const puppeteer = require('puppeteer');
       const browser = await puppeteer.launch({
         headless: true,

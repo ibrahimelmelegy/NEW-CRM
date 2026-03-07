@@ -237,7 +237,7 @@ class PortalEnhancedService {
   /**
    * Get documents shared with client
    */
-  async getSharedDocuments(clientId: string) {
+  async getSharedDocuments(_clientId: string) {
     // Get all document files with their folders
     const documents = await DocumentFile.findAll({
       include: [{ model: DocumentFolder, attributes: ['id', 'name', 'color'] }],

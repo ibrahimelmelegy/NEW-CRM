@@ -15,7 +15,7 @@ class CommentController {
 
   async createComment(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      wrapResult(res, await commentService.createComment(req.body, req.user?.id!), 201);
+      wrapResult(res, await commentService.createComment(req.body, req.user!.id), 201);
     } catch (error) {
       next(error);
     }
@@ -23,7 +23,7 @@ class CommentController {
 
   async updateComment(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      wrapResult(res, await commentService.updateComment(Number(req.params.id), req.body.content, req.user?.id!));
+      wrapResult(res, await commentService.updateComment(Number(req.params.id), req.body.content, req.user!.id));
     } catch (error) {
       next(error);
     }
@@ -31,7 +31,7 @@ class CommentController {
 
   async deleteComment(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      wrapResult(res, await commentService.deleteComment(Number(req.params.id), req.user?.id!));
+      wrapResult(res, await commentService.deleteComment(Number(req.params.id), req.user!.id));
     } catch (error) {
       next(error);
     }

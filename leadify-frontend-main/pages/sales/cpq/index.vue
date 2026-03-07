@@ -466,7 +466,7 @@ function addQuoteLineItem() {
 
 function getLineItemPrice(item: { entryId: number | null; quantity: number }): string {
   if (!item.entryId) return '—';
-  const entry = entries.value.find((e) => e.id === item.entryId);
+  const entry = entries.value.find(e => e.id === item.entryId);
   if (!entry) return '—';
   const total = Number(entry.unitPrice || 0) * item.quantity;
   return total.toLocaleString() + ' SAR';

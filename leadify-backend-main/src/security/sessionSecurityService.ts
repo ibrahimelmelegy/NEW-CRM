@@ -1,4 +1,4 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op } from 'sequelize';
 import LoginHistory, { LoginStatus } from './models/loginHistoryModel';
 import IPWhitelist from './models/ipWhitelistModel';
 import Session from '../user/models/sessionModel';
@@ -397,9 +397,9 @@ class SessionSecurityService {
       user: user.toJSON(),
       loginHistory,
       activeSessions: sessions.length,
-      leads: leads.map((l) => l.toJSON()),
-      deals: deals.map((d) => d.toJSON()),
-      clients: clients.map((c) => c.toJSON())
+      leads: leads.map(l => l.toJSON()),
+      deals: deals.map(d => d.toJSON()),
+      clients: clients.map(c => c.toJSON())
     };
   }
 }

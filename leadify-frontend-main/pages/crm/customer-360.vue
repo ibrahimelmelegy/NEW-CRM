@@ -386,7 +386,7 @@ async function searchContacts(query: string) {
     const { body, success } = await useApiFetch(`client?search=${encodeURIComponent(query)}&limit=20`);
     if (success && body) {
       const data = body as unknown;
-      searchResults.value = (data.docs || data || []).map((c) => ({
+      searchResults.value = (data.docs || data || []).map(c => ({
         id: c.id,
         name: c.clientName || c.name,
         email: c.email,
@@ -551,8 +551,8 @@ async function loadNotes(clientId: string) {
       const data = body as unknown;
       const docs = data.docs || data || [];
       contactNotes.value = docs
-        .filter((a) => a.type === 'NOTE')
-        .map((a) => ({
+        .filter(a => a.type === 'NOTE')
+        .map(a => ({
           id: a.id,
           content: a.body || a.subject,
           createdBy: a.user?.name || 'Unknown',

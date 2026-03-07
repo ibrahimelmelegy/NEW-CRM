@@ -16,14 +16,11 @@ import {
   fetchExpenseById,
   fetchExpenseSummary,
   createExpense,
-  updateExpense,
-  deleteExpense,
   approveExpense,
   rejectExpense,
   fetchBudgets,
   fetchBudgetById,
   createBudget,
-  updateBudget,
   deleteBudget
 } from '~/composables/useFinance';
 

@@ -176,10 +176,7 @@ export function useAiAssistant() {
   const smartSuggestions = ref<SmartSuggestionsResult | null>(null);
   const isSuggestionsLoading = ref(false);
 
-  async function getSmartSuggestions(
-    entityType: 'lead' | 'deal' | 'client',
-    entityId: string
-  ): Promise<SmartSuggestionsResult | null> {
+  async function getSmartSuggestions(entityType: 'lead' | 'deal' | 'client', entityId: string): Promise<SmartSuggestionsResult | null> {
     isSuggestionsLoading.value = true;
     try {
       const response = await useApiFetch(`ai/assistant/suggestions/${entityType}/${entityId}`);

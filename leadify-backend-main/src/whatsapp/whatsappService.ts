@@ -1,8 +1,13 @@
 import { Op } from 'sequelize';
 import {
-  WhatsAppContact, WhatsAppMessage, WhatsAppTemplate,
-  WAContactStatus, WAMessageDirection, WAMessageType,
-  WAMessageStatus, WATemplateStatus
+  WhatsAppContact,
+  WhatsAppMessage,
+  WhatsAppTemplate,
+  WAContactStatus,
+  WAMessageDirection,
+  WAMessageType,
+  WAMessageStatus,
+  WATemplateStatus
 } from './whatsappModel';
 import Client from '../client/clientModel';
 import User from '../user/userModel';
@@ -37,10 +42,7 @@ class WhatsAppService {
     }
 
     if (query.search) {
-      where[Op.or] = [
-        { phoneNumber: { [Op.iLike]: `%${query.search}%` } },
-        { name: { [Op.iLike]: `%${query.search}%` } }
-      ];
+      where[Op.or] = [{ phoneNumber: { [Op.iLike]: `%${query.search}%` } }, { name: { [Op.iLike]: `%${query.search}%` } }];
     }
 
     if (query.tags && query.tags.length > 0) {
@@ -49,9 +51,7 @@ class WhatsAppService {
 
     const { rows, count } = await WhatsAppContact.findAndCountAll({
       where,
-      include: [
-        { model: Client, as: 'client', attributes: ['id', 'clientName', 'email'], required: false }
-      ],
+      include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email'], required: false }],
       order: [['lastMessageAt', 'DESC NULLS LAST']],
       limit,
       offset
@@ -65,9 +65,7 @@ class WhatsAppService {
 
   public async getContactById(id: string): Promise<WhatsAppContact> {
     const contact = await WhatsAppContact.findByPk(id, {
-      include: [
-        { model: Client, as: 'client', attributes: ['id', 'clientName', 'email'], required: false }
-      ]
+      include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email'], required: false }]
     });
     if (!contact) throw new BaseError(ERRORS.NOT_FOUND);
     return contact;
@@ -155,7 +153,10 @@ class WhatsAppService {
 
     for (const client of clients) {
       const phone = (client as any).phoneNumber;
-      if (!phone) { skipped++; continue; }
+      if (!phone) {
+        skipped++;
+        continue;
+      }
 
       const existing = await WhatsAppContact.findOne({
         where: {
@@ -189,19 +190,14 @@ class WhatsAppService {
   // MESSAGES
   // ═══════════════════════════════════════════════════════════════════════════
 
-  public async getMessages(
-    contactId: string,
-    query: { page?: number; limit?: number }
-  ): Promise<IPaginationRes<WhatsAppMessage>> {
+  public async getMessages(contactId: string, query: { page?: number; limit?: number }): Promise<IPaginationRes<WhatsAppMessage>> {
     const page = Number(query.page) || 1;
     const limit = Math.min(100, Math.max(1, Number(query.limit) || 50));
     const offset = (page - 1) * limit;
 
     const { rows, count } = await WhatsAppMessage.findAndCountAll({
       where: { contactId },
-      include: [
-        { model: User, as: 'sender', attributes: ['id', 'name', 'profilePicture'], required: false }
-      ],
+      include: [{ model: User, as: 'sender', attributes: ['id', 'name', 'profilePicture'], required: false }],
       order: [['createdAt', 'ASC']],
       limit,
       offset
@@ -213,12 +209,7 @@ class WhatsAppService {
     };
   }
 
-  public async sendTextMessage(
-    contactId: string,
-    content: string,
-    userId: number,
-    tenantId: string | null
-  ): Promise<WhatsAppMessage> {
+  public async sendTextMessage(contactId: string, content: string, userId: number, tenantId: string | null): Promise<WhatsAppMessage> {
     const contact = await WhatsAppContact.findByPk(contactId);
     if (!contact) throw new BaseError(ERRORS.NOT_FOUND);
 
@@ -419,10 +410,7 @@ class WhatsAppService {
     if (query.category) where.category = query.category;
     if (query.status) where.status = query.status;
     if (query.search) {
-      where[Op.or] = [
-        { name: { [Op.iLike]: `%${query.search}%` } },
-        { content: { [Op.iLike]: `%${query.search}%` } }
-      ];
+      where[Op.or] = [{ name: { [Op.iLike]: `%${query.search}%` } }, { content: { [Op.iLike]: `%${query.search}%` } }];
     }
 
     const { rows, count } = await WhatsAppTemplate.findAndCountAll({
@@ -581,9 +569,7 @@ class WhatsAppService {
     const unreadMessages = await WhatsAppMessage.count({ where: unreadWhere });
 
     // Response rate (messages that got a reply)
-    const responseRate = totalReceived > 0
-      ? Math.round((totalSent / totalReceived) * 100)
-      : 0;
+    const responseRate = totalReceived > 0 ? Math.round((totalSent / totalReceived) * 100) : 0;
 
     return {
       totalContacts,

@@ -114,7 +114,12 @@ router.get('/stats', authenticateUser, HasPermission([ProcurementPermissionsEnum
  *       500:
  *         description: Server error
  */
-router.get('/vendor-comparison', authenticateUser, HasPermission([ProcurementPermissionsEnum.VIEW_PROCUREMENT]), ProcurementController.getVendorComparison);
+router.get(
+  '/vendor-comparison',
+  authenticateUser,
+  HasPermission([ProcurementPermissionsEnum.VIEW_PROCUREMENT]),
+  ProcurementController.getVendorComparison
+);
 
 /**
  * @swagger

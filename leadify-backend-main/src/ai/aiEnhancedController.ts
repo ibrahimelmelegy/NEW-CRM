@@ -133,7 +133,7 @@ export const aiInsightsController = {
         convertedLeadsThisWeek,
         totalLeadsThisWeek,
         overdueInvoices,
-        upcomingOpportunities,
+        _upcomingOpportunities,
         pipelineValue,
         recentActivitiesCount
       ] = await Promise.all([

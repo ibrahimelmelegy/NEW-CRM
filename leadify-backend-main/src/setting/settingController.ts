@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from '../types';
 import { wrapResult } from '../utils/response/responseWrapper';
 import settingService from './settingService';

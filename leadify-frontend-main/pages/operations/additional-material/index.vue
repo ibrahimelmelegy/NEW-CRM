@@ -178,7 +178,7 @@ async function confirmDelete() {
   try {
     const response = await deleteAdditionalMaterialById(deleteId.value);
     if (response?.success) {
-      finalData.value = finalData.value.filter((r) => r.id !== deleteId.value);
+      finalData.value = finalData.value.filter(r => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;

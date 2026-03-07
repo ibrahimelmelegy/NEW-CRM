@@ -180,7 +180,7 @@ onMounted(async () => {
   // Fetch users
   const usersRes: unknown = await useApiFetch('users');
   users.value =
-    usersRes?.body?.docs?.map((e) => ({
+    usersRes?.body?.docs?.map(e => ({
       label: e.name,
       value: e.id
     })) || [];
@@ -189,7 +189,7 @@ onMounted(async () => {
   const leadsResponse = await getLeads();
   const leads = leadsResponse.leads;
   mappedLeads.value =
-    leads?.map((e) => ({
+    leads?.map(e => ({
       label: e.name,
       value: e.id
     })) || [];
@@ -197,19 +197,19 @@ onMounted(async () => {
   // Fetch clients
   const { clients } = await getClients();
   allClients.value = clients || [];
-  mappedClients.value = clients?.map((e) => ({
+  mappedClients.value = clients?.map(e => ({
     label: e.clientName,
     value: e.clientName,
     id: e.id
   }));
 
   if (props.deal?.clientId) {
-    selectedClient.value = clients?.find((client) => client.id === props.deal?.clientId);
+    selectedClient.value = clients?.find(client => client.id === props.deal?.clientId);
     switchType.value = true;
   }
 
   if (leadId) {
-    let lead: unknown = leads?.find((l) => l.id === leadId);
+    let lead: unknown = leads?.find(l => l.id === leadId);
 
     if (!lead || opportunityId) {
       lead = await getLead(leadId as string);
@@ -234,7 +234,7 @@ onMounted(async () => {
  */
 function getSelectedClient(e: unknown) {
   // Find the selected lead in the clients array and update the selectedClient variable
-  selectedClient.value = allClients.value?.find((lead) => lead.id === e.id);
+  selectedClient.value = allClients.value?.find(lead => lead.id === e.id);
 
   if (selectedClient.value?.email) {
     isEmail.value = true;

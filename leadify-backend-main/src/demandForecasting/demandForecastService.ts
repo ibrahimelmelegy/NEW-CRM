@@ -8,7 +8,9 @@ class DemandForecastService {
 
   async create(data: any, tenantId?: string, createdBy?: number) {
     const forecast = await DemandForecast.create({ ...data, tenantId, createdBy });
-    try { io.emit('forecast:created', { id: forecast.id, product: forecast.product }); } catch {}
+    try {
+      io.emit('forecast:created', { id: forecast.id, product: forecast.product });
+    } catch {}
     return forecast;
   }
 
@@ -22,7 +24,11 @@ class DemandForecastService {
     if (query.search) where.product = { [Op.iLike]: `%${query.search}%` };
 
     const { rows, count } = await DemandForecast.findAndCountAll({
-      where, order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      where,
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -35,7 +41,9 @@ class DemandForecastService {
     const item = await DemandForecast.findByPk(id);
     if (!item) return null;
     await item.update(data);
-    try { io.emit('forecast:updated', { id: item.id }); } catch {}
+    try {
+      io.emit('forecast:updated', { id: item.id });
+    } catch {}
     return item;
   }
 
@@ -43,7 +51,9 @@ class DemandForecastService {
     const item = await DemandForecast.findByPk(id);
     if (!item) return false;
     await item.destroy();
-    try { io.emit('forecast:deleted', { id }); } catch {}
+    try {
+      io.emit('forecast:deleted', { id });
+    } catch {}
     return true;
   }
 
@@ -54,13 +64,17 @@ class DemandForecastService {
    * Takes historical demand data and produces a prediction for the next period.
    * Supports methods: MOVING_AVG, WEIGHTED_AVG, EXPONENTIAL.
    */
-  async generateForecast(data: {
-    product: string;
-    historicalData: Array<{ period: string; demand: number }>;
-    method?: 'MOVING_AVG' | 'WEIGHTED_AVG' | 'EXPONENTIAL';
-    windowSize?: number;
-    targetPeriod: string;
-  }, tenantId?: string, createdBy?: number) {
+  async generateForecast(
+    data: {
+      product: string;
+      historicalData: Array<{ period: string; demand: number }>;
+      method?: 'MOVING_AVG' | 'WEIGHTED_AVG' | 'EXPONENTIAL';
+      windowSize?: number;
+      targetPeriod: string;
+    },
+    tenantId?: string,
+    createdBy?: number
+  ) {
     const { product, historicalData, targetPeriod } = data;
     const method = data.method || 'MOVING_AVG';
     const windowSize = data.windowSize || 3;
@@ -96,7 +110,7 @@ class DemandForecastService {
         const window = demands.slice(-actualWindow);
         const totalWeight = (actualWindow * (actualWindow + 1)) / 2;
         predictedDemand = window.reduce((sum, v, i) => sum + v * (i + 1), 0) / totalWeight;
-        confidence = Math.min(1, 0.6 + (demands.length / 20));
+        confidence = Math.min(1, 0.6 + demands.length / 20);
         break;
       }
       case 'EXPONENTIAL': {
@@ -107,7 +121,7 @@ class DemandForecastService {
           forecast = alpha * demands[i] + (1 - alpha) * forecast;
         }
         predictedDemand = forecast;
-        confidence = Math.min(1, 0.5 + (demands.length / 30));
+        confidence = Math.min(1, 0.5 + demands.length / 30);
         break;
       }
       default:
@@ -130,7 +144,9 @@ class DemandForecastService {
       createdBy
     });
 
-    try { io.emit('forecast:generated', { id: forecast.id, product, predictedDemand }); } catch {}
+    try {
+      io.emit('forecast:generated', { id: forecast.id, product, predictedDemand });
+    } catch {}
     return forecast;
   }
 
@@ -148,12 +164,20 @@ class DemandForecastService {
     let totalAbsError = 0;
     let totalBias = 0;
 
-    const details = forecasts.map((f) => {
-      const error = f.actualDemand - f.predictedDemand;
-      const absPercError = f.actualDemand > 0 ? Math.abs(error) / f.actualDemand : 0;
+    const details = forecasts.map(f => {
+      const error = f.actualDemand! - f.predictedDemand;
+      const absPercError = f.actualDemand! > 0 ? Math.abs(error) / f.actualDemand! : 0;
       totalAbsError += absPercError;
       totalBias += error;
-      return { id: f.id, product: f.product, period: f.period, predicted: f.predictedDemand, actual: f.actualDemand, error: parseFloat(error.toFixed(2)), absPercError: parseFloat((absPercError * 100).toFixed(1)) };
+      return {
+        id: f.id,
+        product: f.product,
+        period: f.period,
+        predicted: f.predictedDemand,
+        actual: f.actualDemand,
+        error: parseFloat(error.toFixed(2)),
+        absPercError: parseFloat((absPercError * 100).toFixed(1))
+      };
     });
 
     return {

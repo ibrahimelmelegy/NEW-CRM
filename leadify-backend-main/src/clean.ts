@@ -9,7 +9,7 @@ async function clean() {
     // Connected to DB for cleanup
 
     // Delete all users
-    const deleted = await User.destroy({ where: {}, truncate: true, cascade: true, restartIdentity: true });
+    const _deleted = await User.destroy({ where: {}, truncate: true, cascade: true, restartIdentity: true });
     // Users table truncated
   } catch (error) {
     console.error('Cleanup failed:', error);

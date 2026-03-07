@@ -130,14 +130,14 @@ export class ERPNextClient {
     try {
       response = await makeRequest({ method, url, headers, body, timeout: this.timeout });
     } catch (err) {
-      console.error(`[ERPNext] Request failed: ${err.message}`);
+      console.error(`[ERPNext] Request failed: ${(err as Error).message}`);
       throw new ERPNextApiError({
         httpCode: 0,
-        message: `ERPNext connection failed: ${err.message}`
+        message: `ERPNext connection failed: ${(err as Error).message}`
       });
     }
 
-    const duration = Date.now() - startTime;
+    const _duration = Date.now() - startTime;
     // ERPNext response received
 
     // Parse response body

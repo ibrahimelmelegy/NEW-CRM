@@ -38,7 +38,7 @@ export function formatSaudiIso(dateText: string | Date | number = new Date()) {
   // return formattedDate;
 }
 
-function getDaySuffix(day: number) {
+function _getDaySuffix(day: number) {
   if (day >= 11 && day <= 13) {
     return 'th';
   }
@@ -198,7 +198,7 @@ export function formatLargeNumber(num: number | string) {
   return n.toString();
 }
 
-export const formatDate = (date: string | Date, format: string = 'DD MMM YYYY') => {
+export const formatDate = (date: string | Date, _format: string = 'DD MMM YYYY') => {
   if (!date) return '-';
   return new Date(date).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
 };

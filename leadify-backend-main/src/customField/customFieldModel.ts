@@ -6,11 +6,7 @@ import User from '../user/userModel';
   tableName: 'custom_fields',
   modelName: 'CustomField',
   timestamps: true,
-  indexes: [
-    { fields: ['entityType'] },
-    { fields: ['entityType', 'isActive'] },
-    { fields: ['fieldName', 'entityType'], unique: true }
-  ]
+  indexes: [{ fields: ['entityType'] }, { fields: ['entityType', 'isActive'] }, { fields: ['fieldName', 'entityType'], unique: true }]
 })
 class CustomField extends Model {
   @Column({

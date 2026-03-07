@@ -31,20 +31,15 @@ const router = express.Router();
  *       200:
  *         description: Backup statistics
  */
-router.get(
-  '/stats',
-  authenticateUser,
-  HasPermission(['MANAGE_SETTINGS']),
-  async (_req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      const stats = await getBackupStats();
-      const autoBackupActive = isAutoBackupRunning();
-      wrapResult(res, { ...stats, autoBackupActive });
-    } catch (error) {
-      next(error);
-    }
+router.get('/stats', authenticateUser, HasPermission(['MANAGE_SETTINGS']), async (_req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const stats = await getBackupStats();
+    const autoBackupActive = isAutoBackupRunning();
+    wrapResult(res, { ...stats, autoBackupActive });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * @swagger
@@ -75,24 +70,19 @@ router.get(
  *       200:
  *         description: Paginated list of backups
  */
-router.get(
-  '/',
-  authenticateUser,
-  HasPermission(['MANAGE_SETTINGS']),
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      const page = req.query.page ? Number(req.query.page) : 1;
-      const limit = req.query.limit ? Number(req.query.limit) : 20;
-      const status = req.query.status as string | undefined;
-      const type = req.query.type as string | undefined;
+router.get('/', authenticateUser, HasPermission(['MANAGE_SETTINGS']), async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 20;
+    const status = req.query.status as string | undefined;
+    const type = req.query.type as string | undefined;
 
-      const result = await listBackups(page, limit, status, type);
-      wrapResult(res, result);
-    } catch (error) {
-      next(error);
-    }
+    const result = await listBackups(page, limit, status, type);
+    wrapResult(res, result);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * @swagger
@@ -113,22 +103,17 @@ router.get(
  *       201:
  *         description: Backup creation initiated
  */
-router.post(
-  '/',
-  authenticateUser,
-  HasPermission(['MANAGE_SETTINGS']),
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      const type = (req.body.type as BackupType) || BackupType.MANUAL;
-      const userId = req.user?.id ? Number(req.user.id) : undefined;
+router.post('/', authenticateUser, HasPermission(['MANAGE_SETTINGS']), async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const type = (req.body.type as BackupType) || BackupType.MANUAL;
+    const userId = req.user?.id ? Number(req.user.id) : undefined;
 
-      const backup = await createBackup(type, userId);
-      wrapResult(res, backup, 201);
-    } catch (error) {
-      next(error);
-    }
+    const backup = await createBackup(type, userId);
+    wrapResult(res, backup, 201);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * @swagger
@@ -223,23 +208,18 @@ router.post(
  *       200:
  *         description: Backup details
  */
-router.get(
-  '/:id',
-  authenticateUser,
-  HasPermission(['MANAGE_SETTINGS']),
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      const id = Number(req.params.id);
-      const backup = await getBackupById(id);
-      if (!backup) {
-        return res.status(404).json({ success: false, message: 'Backup not found' });
-      }
-      wrapResult(res, backup);
-    } catch (error) {
-      next(error);
+router.get('/:id', authenticateUser, HasPermission(['MANAGE_SETTINGS']), async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const id = Number(req.params.id);
+    const backup = await getBackupById(id);
+    if (!backup) {
+      return res.status(404).json({ success: false, message: 'Backup not found' });
     }
+    wrapResult(res, backup);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * @swagger
@@ -273,6 +253,7 @@ router.get(
       res.setHeader('Content-Type', 'application/gzip');
       res.setHeader('Content-Disposition', `attachment; filename="${fileInfo.filename}"`);
 
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const fileStream = require('fs').createReadStream(fileInfo.filePath);
       fileStream.pipe(res);
     } catch (error) {
@@ -333,24 +314,19 @@ router.post(
  *       200:
  *         description: Backup deleted
  */
-router.delete(
-  '/:id',
-  authenticateUser,
-  HasPermission(['MANAGE_SETTINGS']),
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      const id = Number(req.params.id);
-      const result = await deleteBackup(id);
+router.delete('/:id', authenticateUser, HasPermission(['MANAGE_SETTINGS']), async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const id = Number(req.params.id);
+    const result = await deleteBackup(id);
 
-      if (!result.success) {
-        return res.status(404).json({ success: false, message: result.message });
-      }
-
-      wrapResult(res, result);
-    } catch (error) {
-      next(error);
+    if (!result.success) {
+      return res.status(404).json({ success: false, message: result.message });
     }
+
+    wrapResult(res, result);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 export default router;

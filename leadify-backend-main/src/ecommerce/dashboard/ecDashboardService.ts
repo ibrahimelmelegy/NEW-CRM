@@ -99,13 +99,13 @@ class EcDashboardService {
 
     // Build orders by status map
     const statusMap: Record<string, number> = {};
-    for (const row of (ordersByStatus as any[])) {
+    for (const row of ordersByStatus as any[]) {
       statusMap[row.status] = parseInt(row.count, 10);
     }
 
     // Enrich top products with product details
     const topProducts: any[] = [];
-    for (const tp of (topProductsResult as any[])) {
+    for (const tp of topProductsResult as any[]) {
       if (tp.productId) {
         const product = await CatalogProduct.findByPk(tp.productId, {
           attributes: ['id', 'name', 'sku', 'category', 'unitPrice', 'isActive']

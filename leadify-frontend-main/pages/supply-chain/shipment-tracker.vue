@@ -813,7 +813,7 @@ async function loadData() {
       tableShipments.value = res.body as unknown;
       // Aggregate carrier data from shipments if available
       const carrierMap = new Map<string, unknown>();
-      (res.body as unknown[]).forEach((s) => {
+      (res.body as unknown[]).forEach(s => {
         if (s.carrier && !carrierMap.has(s.carrier)) {
           carrierMap.set(s.carrier, {
             name: s.carrier,

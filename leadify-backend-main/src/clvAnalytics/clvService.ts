@@ -1,4 +1,4 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op } from 'sequelize';
 import ClvRecord from './clvModel';
 import Client from '../client/clientModel';
 import { clampPagination } from '../utils/pagination';
@@ -9,7 +9,9 @@ class ClvService {
 
   async create(data: any, tenantId?: string) {
     const record = await ClvRecord.create({ ...data, tenantId, calculatedAt: new Date() });
-    try { io.emit('clv:created', { id: record.id, customerId: record.customerId }); } catch {}
+    try {
+      io.emit('clv:created', { id: record.id, customerId: record.customerId });
+    } catch {}
     return record;
   }
 
@@ -27,7 +29,9 @@ class ClvService {
         where,
         include: [{ model: Client, as: 'customer', attributes: ['id', 'name', 'email'], required: false }],
         order: [['predictedRevenue', 'DESC']],
-        limit, offset, distinct: true
+        limit,
+        offset,
+        distinct: true
       });
       return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
     } catch {
@@ -45,7 +49,9 @@ class ClvService {
     const item = await ClvRecord.findByPk(id);
     if (!item) return null;
     await item.update(data);
-    try { io.emit('clv:updated', { id: item.id }); } catch {}
+    try {
+      io.emit('clv:updated', { id: item.id });
+    } catch {}
     return item;
   }
 
@@ -63,14 +69,17 @@ class ClvService {
    * CLV = (Average Order Value * Purchase Frequency * Customer Lifespan)
    * Churn risk is estimated from recency of last purchase.
    */
-  async calculateCLV(data: {
-    customerId: string;
-    historicalRevenue: number;
-    avgOrderValue: number;
-    purchaseFrequency: number;
-    customerAge: number;
-    lastPurchaseDate: string;
-  }, tenantId?: string) {
+  async calculateCLV(
+    data: {
+      customerId: string;
+      historicalRevenue: number;
+      avgOrderValue: number;
+      purchaseFrequency: number;
+      customerAge: number;
+      lastPurchaseDate: string;
+    },
+    tenantId?: string
+  ) {
     const { customerId, historicalRevenue, avgOrderValue, purchaseFrequency, customerAge } = data;
     const lastPurchase = new Date(data.lastPurchaseDate);
 
@@ -116,7 +125,9 @@ class ClvService {
       record = await ClvRecord.create(recordData);
     }
 
-    try { io.emit('clv:calculated', { id: record.id, customerId, segment, churnRisk }); } catch {}
+    try {
+      io.emit('clv:calculated', { id: record.id, customerId, segment, churnRisk });
+    } catch {}
     return record;
   }
 
@@ -129,10 +140,16 @@ class ClvService {
 
     const records = await ClvRecord.findAll({ where, raw: true });
 
-    const cohorts: Record<string, {
-      count: number; totalHistorical: number; totalPredicted: number;
-      avgChurnRisk: number; avgOrderValue: number;
-    }> = {};
+    const cohorts: Record<
+      string,
+      {
+        count: number;
+        totalHistorical: number;
+        totalPredicted: number;
+        avgChurnRisk: number;
+        avgOrderValue: number;
+      }
+    > = {};
 
     for (const r of records) {
       const rec = r as any;
@@ -168,7 +185,7 @@ class ClvService {
       where,
       include: [{ model: Client, as: 'customer', attributes: ['id', 'name', 'email'] }],
       order: [['churnRisk', 'DESC']],
-      limit,
+      limit
     });
 
     return {

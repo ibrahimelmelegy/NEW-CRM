@@ -246,7 +246,7 @@ async function fetchAssignees() {
   try {
     const res = await useApiFetch('users');
     if (res?.success && res?.body?.docs) {
-      assignees.value = res.body.docs.map((u) => ({ label: u.name, value: u.name }));
+      assignees.value = res.body.docs.map(u => ({ label: u.name, value: u.name }));
     }
   } catch (e: unknown) {
     ElMessage.error($t('common.error'));

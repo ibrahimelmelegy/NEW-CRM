@@ -362,7 +362,12 @@ router.post('/leave-requests', authenticateUser, HasPermission([HRPermissionsEnu
  *       500:
  *         description: Server error
  */
-router.patch('/leave-requests/:id/approve', authenticateUser, HasPermission([HRPermissionsEnum.APPROVE_LEAVE_REQUESTS]), hrController.approveLeaveRequest);
+router.patch(
+  '/leave-requests/:id/approve',
+  authenticateUser,
+  HasPermission([HRPermissionsEnum.APPROVE_LEAVE_REQUESTS]),
+  hrController.approveLeaveRequest
+);
 
 /**
  * @swagger
@@ -398,7 +403,12 @@ router.patch('/leave-requests/:id/approve', authenticateUser, HasPermission([HRP
  *       500:
  *         description: Server error
  */
-router.patch('/leave-requests/:id/reject', authenticateUser, HasPermission([HRPermissionsEnum.APPROVE_LEAVE_REQUESTS]), hrController.rejectLeaveRequest);
+router.patch(
+  '/leave-requests/:id/reject',
+  authenticateUser,
+  HasPermission([HRPermissionsEnum.APPROVE_LEAVE_REQUESTS]),
+  hrController.rejectLeaveRequest
+);
 
 /**
  * @swagger
@@ -423,7 +433,12 @@ router.patch('/leave-requests/:id/reject', authenticateUser, HasPermission([HRPe
  *       500:
  *         description: Server error
  */
-router.patch('/leave-requests/:id/cancel', authenticateUser, HasPermission([HRPermissionsEnum.CREATE_LEAVE_REQUESTS]), hrController.cancelLeaveRequest);
+router.patch(
+  '/leave-requests/:id/cancel',
+  authenticateUser,
+  HasPermission([HRPermissionsEnum.CREATE_LEAVE_REQUESTS]),
+  hrController.cancelLeaveRequest
+);
 
 /**
  * @swagger

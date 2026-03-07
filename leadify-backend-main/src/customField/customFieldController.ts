@@ -79,11 +79,7 @@ class CustomFieldController {
   async saveValues(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const { entityType, entityId } = req.params;
-      const values = await customFieldService.setFieldValues(
-        entityType as string,
-        entityId as string,
-        req.body.values
-      );
+      const values = await customFieldService.setFieldValues(entityType as string, entityId as string, req.body.values);
       wrapResult(res, values);
     } catch (error) {
       next(error);

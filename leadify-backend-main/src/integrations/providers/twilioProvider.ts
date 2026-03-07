@@ -32,6 +32,7 @@ export class TwilioProvider {
   private getClient() {
     if (!this.client && TwilioProvider.isConfigured()) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const twilio = require('twilio');
         this.client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
       } catch (err) {
@@ -52,7 +53,7 @@ export class TwilioProvider {
         const message = await client.messages.create({
           to: input.to,
           from: input.from || this.getDefaultFrom(),
-          body: input.body,
+          body: input.body
         });
         return { success: true, data: { sid: message.sid, status: message.status }, mock: false };
       }
@@ -69,9 +70,7 @@ export class TwilioProvider {
       const client = this.getClient();
       if (client) {
         const results = await Promise.allSettled(
-          input.recipients.map(to =>
-            client.messages.create({ to, from: input.from || this.getDefaultFrom(), body: input.body })
-          )
+          input.recipients.map(to => client.messages.create({ to, from: input.from || this.getDefaultFrom(), body: input.body }))
         );
         const items = results.map((r, i) =>
           r.status === 'fulfilled'
@@ -104,7 +103,9 @@ export class TwilioProvider {
     }
   }
 
-  async validatePhoneNumber(phoneNumber: string): Promise<SMSResult<{ valid: boolean; countryCode: string; phoneNumber: string; carrier: string | null }>> {
+  async validatePhoneNumber(
+    phoneNumber: string
+  ): Promise<SMSResult<{ valid: boolean; countryCode: string; phoneNumber: string; carrier: string | null }>> {
     try {
       const client = this.getClient();
       if (client) {
@@ -115,9 +116,9 @@ export class TwilioProvider {
             valid: lookup.valid,
             countryCode: lookup.countryCode,
             phoneNumber: lookup.phoneNumber,
-            carrier: lookup.lineTypeIntelligence?.carrier_name || null,
+            carrier: lookup.lineTypeIntelligence?.carrier_name || null
           },
-          mock: false,
+          mock: false
         };
       }
       const isValid = /^\+\d{10,15}$/.test(phoneNumber);

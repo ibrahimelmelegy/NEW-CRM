@@ -169,7 +169,7 @@ const breadcrumbRoutes = computed(() => {
 const getPath = (routeName: string) => {
   const pathSegments = route.path.split('/').filter(Boolean);
   let pathGo = '';
-  const indexStop = pathSegments.findIndex(route => route == routeName);
+  const indexStop = pathSegments.findIndex(route => route === routeName);
   pathSegments.forEach((el, indes) => {
     if (indes <= indexStop) pathGo = pathGo + '/' + el;
   });

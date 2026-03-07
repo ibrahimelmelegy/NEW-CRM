@@ -165,7 +165,7 @@ async function confirmDelete() {
   try {
     const response = await deleteOpportunity(deleteId.value);
     if (response?.success) {
-      table.data = table.data.filter((r) => r.id !== deleteId.value);
+      table.data = table.data.filter(r => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -200,7 +200,7 @@ async function handleBulkExport() {
   if (!selectedRows.value.length) return;
   try {
     loadingAction.value = true;
-    const ids = selectedRows.value.map((r) => r.id);
+    const ids = selectedRows.value.map(r => r.id);
     await useApiFetch('opportunity/export', 'POST', { ids });
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.exportSentToEmail') });
     selectedRows.value = [];
@@ -391,7 +391,7 @@ function handleRowClick(val: unknown) {
 }
 
 const mappedUsers =
-  usersResponse?.body?.docs?.map((e) => ({
+  usersResponse?.body?.docs?.map(e => ({
     label: e.name,
     value: e.id
   })) || [];
@@ -483,26 +483,26 @@ const mobileStageFilters = computed(() => {
       value: 'DISCOVERY',
       label: t('opportunities.stages.discovery'),
       color: '#3b82f6',
-      count: data.filter((o) => o.stage === 'DISCOVERY').length
+      count: data.filter(o => o.stage === 'DISCOVERY').length
     },
-    { value: 'PROPOSAL', label: t('opportunities.stages.proposal'), color: '#8b5cf6', count: data.filter((o) => o.stage === 'PROPOSAL').length },
+    { value: 'PROPOSAL', label: t('opportunities.stages.proposal'), color: '#8b5cf6', count: data.filter(o => o.stage === 'PROPOSAL').length },
     {
       value: 'NEGOTIATION',
       label: t('opportunities.stages.negotiation'),
       color: '#f59e0b',
-      count: data.filter((o) => o.stage === 'NEGOTIATION').length
+      count: data.filter(o => o.stage === 'NEGOTIATION').length
     },
-    { value: 'WON', label: t('opportunities.stages.won'), color: '#10b981', count: data.filter((o) => o.stage === 'WON').length },
-    { value: 'LOST', label: t('opportunities.stages.lost'), color: '#ef4444', count: data.filter((o) => o.stage === 'LOST').length }
+    { value: 'WON', label: t('opportunities.stages.won'), color: '#10b981', count: data.filter(o => o.stage === 'WON').length },
+    { value: 'LOST', label: t('opportunities.stages.lost'), color: '#ef4444', count: data.filter(o => o.stage === 'LOST').length }
   ];
 });
 
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
-  if (mobileStageFilter.value !== 'ALL') data = data.filter((o) => o.stage === mobileStageFilter.value);
+  if (mobileStageFilter.value !== 'ALL') data = data.filter(o => o.stage === mobileStageFilter.value);
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((o) => {
+  return data.filter(o => {
     const name = (o.name || '').toLowerCase();
     const assign = (o.assign || '').toLowerCase();
     return name.includes(q) || assign.includes(q);

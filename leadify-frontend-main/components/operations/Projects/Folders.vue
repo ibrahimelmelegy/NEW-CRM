@@ -114,7 +114,7 @@ function formattedBasicInfo(values: unknown) {
     startDate: typeof values?.startDate === 'string' ? values?.startDate : values?.startDate?.toISOString(),
     endDate: typeof values?.endDate === 'string' ? values?.endDate : values?.endDate?.toISOString(),
     duration: Number(values?.duration),
-    assignedUsersIds: values?.assignedUsers?.map((el) => el?.id),
+    assignedUsersIds: values?.assignedUsers?.map(el => el?.id),
     status: values?.status,
     description: values?.description,
     cancelledReason: values?.cancelReason
@@ -147,7 +147,7 @@ async function onSubmit(values: unknown) {
         if (file.name === props.folder?.name) {
           return {
             name: values?.name,
-            refs: values?.file?.map((el) => el?.response)
+            refs: values?.file?.map(el => el?.response)
           };
         }
         return file;
@@ -158,7 +158,7 @@ async function onSubmit(values: unknown) {
         ...(props?.project?.files || []),
         {
           name: values?.name,
-          refs: values?.file?.map((el) => el?.response)
+          refs: values?.file?.map(el => el?.response)
         }
       ];
     }

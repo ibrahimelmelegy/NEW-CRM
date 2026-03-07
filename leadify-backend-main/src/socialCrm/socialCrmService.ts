@@ -1,10 +1,12 @@
-import { Op, fn, col } from 'sequelize';
+import { Op } from 'sequelize';
 import SocialProfile, { SocialPost } from './socialCrmModel';
 import Client from '../client/clientModel';
 import { clampPagination } from '../utils/pagination';
 
 class SocialCrmService {
-  async create(data: any, tenantId?: string) { return SocialProfile.create({ ...data, tenantId }); }
+  async create(data: any, tenantId?: string) {
+    return SocialProfile.create({ ...data, tenantId });
+  }
 
   async getAll(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
@@ -17,7 +19,10 @@ class SocialCrmService {
       const { rows, count } = await SocialProfile.findAndCountAll({
         where,
         include: [{ model: Client, as: 'client', attributes: ['id', 'name', 'email'], required: false }],
-        order: [['createdAt', 'DESC']], limit, offset, distinct: true
+        order: [['createdAt', 'DESC']],
+        limit,
+        offset,
+        distinct: true
       });
       return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
     } catch {
@@ -76,7 +81,7 @@ class SocialCrmService {
       platform: profile.platform,
       rawScore: Math.round(rawScore * 100) / 100,
       engagementScore: normalizedScore,
-      metrics: { followers, likes, comments, shares, timeActiveDays },
+      metrics: { followers, likes, comments, shares, timeActiveDays }
     };
   }
 
@@ -94,9 +99,9 @@ class SocialCrmService {
     try {
       const existing = profile.notes ? JSON.parse(profile.notes) : {};
       tally = {
-        positive: (existing.sentimentTally?.positive || 0),
-        neutral: (existing.sentimentTally?.neutral || 0),
-        negative: (existing.sentimentTally?.negative || 0),
+        positive: existing.sentimentTally?.positive || 0,
+        neutral: existing.sentimentTally?.neutral || 0,
+        negative: existing.sentimentTally?.negative || 0
       };
     } catch {
       tally = { positive: 0, neutral: 0, negative: 0 };
@@ -121,12 +126,14 @@ class SocialCrmService {
     let existingNotes: Record<string, any> = {};
     try {
       if (profile.notes) existingNotes = JSON.parse(profile.notes);
-    } catch { /* ignore parse errors */ }
+    } catch {
+      /* ignore parse errors */
+    }
 
     await profile.update({
       sentiment: overallSentiment,
       notes: JSON.stringify({ ...existingNotes, sentimentTally: tally }),
-      lastActivity: new Date(),
+      lastActivity: new Date()
     });
 
     return {
@@ -136,9 +143,9 @@ class SocialCrmService {
       distribution: {
         positive: { count: tally.positive, percentage: total > 0 ? Math.round((tally.positive / total) * 10000) / 100 : 0 },
         neutral: { count: tally.neutral, percentage: total > 0 ? Math.round((tally.neutral / total) * 10000) / 100 : 0 },
-        negative: { count: tally.negative, percentage: total > 0 ? Math.round((tally.negative / total) * 10000) / 100 : 0 },
+        negative: { count: tally.negative, percentage: total > 0 ? Math.round((tally.negative / total) * 10000) / 100 : 0 }
       },
-      totalObservations: total,
+      totalObservations: total
     };
   }
 
@@ -177,13 +184,13 @@ class SocialCrmService {
     const topProfiles = [...profiles]
       .sort((a, b) => (b.engagement || 0) - (a.engagement || 0))
       .slice(0, 10)
-      .map((p) => ({
+      .map(p => ({
         id: p.id,
         handle: p.handle,
         platform: p.platform,
         followers: p.followers,
         engagement: p.engagement,
-        sentiment: p.sentiment,
+        sentiment: p.sentiment
       }));
 
     return {
@@ -191,7 +198,7 @@ class SocialCrmService {
       byPlatform,
       averageEngagement: engagementCount > 0 ? Math.round((totalEngagement / engagementCount) * 100) / 100 : 0,
       sentimentDistribution: sentimentCounts,
-      topPerformingProfiles: topProfiles,
+      topPerformingProfiles: topProfiles
     };
   }
 
@@ -206,7 +213,10 @@ class SocialCrmService {
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     const { rows, count } = await SocialPost.findAndCountAll({
-      where, order: [['createdAt', 'DESC']], limit, offset
+      where,
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -231,20 +241,19 @@ class SocialCrmService {
   async getClientSocialPresence(clientId: string) {
     const profiles = await SocialProfile.findAll({
       where: { clientId },
-      order: [['engagement', 'DESC']],
+      order: [['engagement', 'DESC']]
     });
 
     const totalFollowers = profiles.reduce((sum, p) => sum + (p.followers || 0), 0);
-    const avgEngagement = profiles.length > 0
-      ? Math.round(profiles.reduce((sum, p) => sum + (p.engagement || 0), 0) / profiles.length * 100) / 100
-      : 0;
+    const avgEngagement =
+      profiles.length > 0 ? Math.round((profiles.reduce((sum, p) => sum + (p.engagement || 0), 0) / profiles.length) * 100) / 100 : 0;
 
     return {
       clientId,
       totalProfiles: profiles.length,
       totalFollowers,
       averageEngagement: avgEngagement,
-      platforms: profiles.map((p) => ({
+      platforms: profiles.map(p => ({
         id: p.id,
         platform: p.platform,
         handle: p.handle,
@@ -252,8 +261,8 @@ class SocialCrmService {
         followers: p.followers,
         engagement: p.engagement,
         sentiment: p.sentiment,
-        lastActivity: p.lastActivity,
-      })),
+        lastActivity: p.lastActivity
+      }))
     };
   }
 }

@@ -14,11 +14,13 @@ const DEFAULT_TIERS: TierDefinition[] = [
   { name: 'BRONZE', minPoints: 0, maxPoints: 999 },
   { name: 'SILVER', minPoints: 1000, maxPoints: 4999 },
   { name: 'GOLD', minPoints: 5000, maxPoints: 19999 },
-  { name: 'PLATINUM', minPoints: 20000, maxPoints: Infinity },
+  { name: 'PLATINUM', minPoints: 20000, maxPoints: Infinity }
 ];
 
 class LoyaltyService {
-  async createProgram(data: any, tenantId?: string) { return LoyaltyProgram.create({ ...data, tenantId }); }
+  async createProgram(data: any, tenantId?: string) {
+    return LoyaltyProgram.create({ ...data, tenantId });
+  }
 
   async getPrograms(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
@@ -44,7 +46,9 @@ class LoyaltyService {
     return true;
   }
 
-  async addPoints(data: any, tenantId?: string) { return LoyaltyPoints.create({ ...data, tenantId }); }
+  async addPoints(data: any, tenantId?: string) {
+    return LoyaltyPoints.create({ ...data, tenantId });
+  }
 
   async getPointsHistory(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
@@ -55,14 +59,17 @@ class LoyaltyService {
     const { rows, count } = await LoyaltyPoints.findAndCountAll({
       where,
       include: [{ model: Client, as: 'client', attributes: ['id', 'name', 'email'] }],
-      order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
   async getClientBalance(clientId: string, programId: number) {
-    const earned = await LoyaltyPoints.sum('points', { where: { clientId, programId, transactionType: 'EARN' } }) || 0;
-    const redeemed = await LoyaltyPoints.sum('points', { where: { clientId, programId, transactionType: 'REDEEM' } }) || 0;
+    const earned = (await LoyaltyPoints.sum('points', { where: { clientId, programId, transactionType: 'EARN' } })) || 0;
+    const redeemed = (await LoyaltyPoints.sum('points', { where: { clientId, programId, transactionType: 'REDEEM' } })) || 0;
     return { balance: earned - Math.abs(redeemed), earned, redeemed };
   }
 
@@ -75,7 +82,7 @@ class LoyaltyService {
     const where: Record<string, any> = { clientId, transactionType: 'EARN' };
     if (programId) where.programId = programId;
 
-    const totalEarned = await LoyaltyPoints.sum('points', { where }) || 0;
+    const totalEarned = (await LoyaltyPoints.sum('points', { where })) || 0;
 
     let currentTier = DEFAULT_TIERS[0];
     let nextTier: TierDefinition | null = null;
@@ -93,7 +100,7 @@ class LoyaltyService {
       currentTier: currentTier.name,
       nextTier: nextTier ? nextTier.name : null,
       pointsToNextTier: nextTier ? nextTier.minPoints - totalEarned : 0,
-      nextTierThreshold: nextTier ? nextTier.minPoints : null,
+      nextTierThreshold: nextTier ? nextTier.minPoints : null
     };
   }
 
@@ -108,7 +115,7 @@ class LoyaltyService {
     const where: Record<string, any> = {
       clientId,
       transactionType: 'EARN',
-      createdAt: { [Op.lt]: twelveMonthsAgo },
+      createdAt: { [Op.lt]: twelveMonthsAgo }
     };
     if (programId) where.programId = programId;
 
@@ -124,8 +131,8 @@ class LoyaltyService {
         where: {
           clientId,
           transactionType: 'EXPIRE',
-          referenceId: String(tx.id),
-        },
+          referenceId: String(tx.id)
+        }
       });
 
       if (!alreadyExpired) {
@@ -137,7 +144,7 @@ class LoyaltyService {
           transactionType: 'EXPIRE',
           description: `Expiration of points earned on ${tx.createdAt}`,
           referenceId: String(tx.id),
-          tenantId: tx.tenantId,
+          tenantId: tx.tenantId
         });
         totalExpiredPoints += tx.points;
         expiredTransactionIds.push(tx.id);
@@ -147,7 +154,7 @@ class LoyaltyService {
     return {
       clientId,
       totalExpiredPoints,
-      expiredTransactions: expiredTransactionIds.length,
+      expiredTransactions: expiredTransactionIds.length
     };
   }
 
@@ -161,17 +168,20 @@ class LoyaltyService {
     }
 
     // Calculate current effective balance (earned - redeemed - expired)
-    const earned = await LoyaltyPoints.sum('points', {
-      where: { clientId, programId, transactionType: 'EARN' },
-    }) || 0;
+    const earned =
+      (await LoyaltyPoints.sum('points', {
+        where: { clientId, programId, transactionType: 'EARN' }
+      })) || 0;
 
-    const redeemed = await LoyaltyPoints.sum('points', {
-      where: { clientId, programId, transactionType: 'REDEEM' },
-    }) || 0;
+    const redeemed =
+      (await LoyaltyPoints.sum('points', {
+        where: { clientId, programId, transactionType: 'REDEEM' }
+      })) || 0;
 
-    const expired = await LoyaltyPoints.sum('points', {
-      where: { clientId, programId, transactionType: 'EXPIRE' },
-    }) || 0;
+    const expired =
+      (await LoyaltyPoints.sum('points', {
+        where: { clientId, programId, transactionType: 'EXPIRE' }
+      })) || 0;
 
     const balance = earned - Math.abs(redeemed) - Math.abs(expired);
 
@@ -185,7 +195,7 @@ class LoyaltyService {
       programId,
       points: amount,
       transactionType: 'REDEEM',
-      description: description || 'Points redemption',
+      description: description || 'Points redemption'
     });
 
     const newBalance = balance - amount;
@@ -194,7 +204,7 @@ class LoyaltyService {
       transaction,
       previousBalance: balance,
       redeemedAmount: amount,
-      newBalance,
+      newBalance
     };
   }
 
@@ -227,16 +237,20 @@ class LoyaltyService {
       points: pointsEarned,
       transactionType: 'EARN',
       description: `Auto-earn from deal value $${dealValue.toFixed(2)}`,
-      tenantId: program.tenantId,
+      tenantId: program.tenantId
     });
 
     // Get tier after earning
     const tierAfter = await this.calculateTier(clientId, programId);
     const tierChanged = tierBefore.currentTier !== tierAfter.currentTier;
 
-    try { io.emit('loyalty:points_earned', { clientId, programId, pointsEarned, totalEarned: tierAfter.totalEarned }); } catch {}
+    try {
+      io.emit('loyalty:points_earned', { clientId, programId, pointsEarned, totalEarned: tierAfter.totalEarned });
+    } catch {}
     if (tierChanged) {
-      try { io.emit('loyalty:tier_upgrade', { clientId, programId, previousTier: tierBefore.currentTier, currentTier: tierAfter.currentTier }); } catch {}
+      try {
+        io.emit('loyalty:tier_upgrade', { clientId, programId, previousTier: tierBefore.currentTier, currentTier: tierAfter.currentTier });
+      } catch {}
     }
 
     return {
@@ -246,7 +260,7 @@ class LoyaltyService {
       tierChanged,
       previousTier: tierBefore.currentTier,
       currentTier: tierAfter.currentTier,
-      pointsToNextTier: tierAfter.pointsToNextTier,
+      pointsToNextTier: tierAfter.pointsToNextTier
     };
   }
 
@@ -256,49 +270,55 @@ class LoyaltyService {
    */
   async getLoyaltyDashboard(tenantId: string) {
     // Total distinct active members (clients who have any point transactions)
-    const memberRows = await LoyaltyPoints.findAll({
+    const memberRows = (await LoyaltyPoints.findAll({
       where: { tenantId },
       attributes: [[fn('DISTINCT', col('clientId')), 'clientId']],
-      raw: true,
-    }) as unknown as Array<{ clientId: string }>;
+      raw: true
+    })) as unknown as Array<{ clientId: string }>;
     const totalMembers = memberRows.length;
-    const clientIds = memberRows.map((r) => r.clientId);
+    const clientIds = memberRows.map(r => r.clientId);
 
     // Total points issued
-    const totalIssued = await LoyaltyPoints.sum('points', {
-      where: { tenantId, transactionType: 'EARN' },
-    }) || 0;
+    const totalIssued =
+      (await LoyaltyPoints.sum('points', {
+        where: { tenantId, transactionType: 'EARN' }
+      })) || 0;
 
     // Total points redeemed
-    const totalRedeemed = await LoyaltyPoints.sum('points', {
-      where: { tenantId, transactionType: 'REDEEM' },
-    }) || 0;
+    const totalRedeemed =
+      (await LoyaltyPoints.sum('points', {
+        where: { tenantId, transactionType: 'REDEEM' }
+      })) || 0;
 
     // Total points expired
-    const totalExpired = await LoyaltyPoints.sum('points', {
-      where: { tenantId, transactionType: 'EXPIRE' },
-    }) || 0;
+    const totalExpired =
+      (await LoyaltyPoints.sum('points', {
+        where: { tenantId, transactionType: 'EXPIRE' }
+      })) || 0;
 
     // Calculate tier distribution
     const tierDistribution: Record<string, number> = {
       BRONZE: 0,
       SILVER: 0,
       GOLD: 0,
-      PLATINUM: 0,
+      PLATINUM: 0
     };
 
     let totalBalance = 0;
 
     for (const cId of clientIds) {
-      const earned = await LoyaltyPoints.sum('points', {
-        where: { clientId: cId, tenantId, transactionType: 'EARN' },
-      }) || 0;
-      const redeemed = await LoyaltyPoints.sum('points', {
-        where: { clientId: cId, tenantId, transactionType: 'REDEEM' },
-      }) || 0;
-      const expired = await LoyaltyPoints.sum('points', {
-        where: { clientId: cId, tenantId, transactionType: 'EXPIRE' },
-      }) || 0;
+      const earned =
+        (await LoyaltyPoints.sum('points', {
+          where: { clientId: cId, tenantId, transactionType: 'EARN' }
+        })) || 0;
+      const redeemed =
+        (await LoyaltyPoints.sum('points', {
+          where: { clientId: cId, tenantId, transactionType: 'REDEEM' }
+        })) || 0;
+      const expired =
+        (await LoyaltyPoints.sum('points', {
+          where: { clientId: cId, tenantId, transactionType: 'EXPIRE' }
+        })) || 0;
 
       const balance = earned - Math.abs(redeemed) - Math.abs(expired);
       totalBalance += balance;
@@ -317,7 +337,7 @@ class LoyaltyService {
       totalPointsRedeemed: Math.abs(totalRedeemed),
       totalPointsExpired: Math.abs(totalExpired),
       averageBalance: totalMembers > 0 ? Math.round(totalBalance / totalMembers) : 0,
-      tierDistribution,
+      tierDistribution
     };
   }
 }

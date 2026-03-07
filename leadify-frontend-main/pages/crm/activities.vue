@@ -294,7 +294,7 @@ async function loadActivities(append = false) {
 
     if (dealRes.success && dealRes.body) {
       const deals = (dealRes.body as unknown).docs || dealRes.body || [];
-      deals.forEach((d) => {
+      deals.forEach(d => {
         fetched.push({
           id: `deal-${d.id}`,
           type: 'deal_update',
@@ -316,7 +316,7 @@ async function loadActivities(append = false) {
 
     if (taskRes.success && taskRes.body) {
       const tasks = (taskRes.body as unknown).docs || taskRes.body || [];
-      tasks.forEach((t) => {
+      tasks.forEach(t => {
         fetched.push({
           id: `task-${t.id}`,
           type: 'task',
@@ -333,7 +333,7 @@ async function loadActivities(append = false) {
 
     if (ticketRes.success && ticketRes.body) {
       const tickets = (ticketRes.body as unknown).docs || ticketRes.body || [];
-      tickets.forEach((tk) => {
+      tickets.forEach(tk => {
         fetched.push({
           id: `ticket-${tk.id}`,
           type: 'ticket_update',

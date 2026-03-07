@@ -1,5 +1,5 @@
 import { Op, WhereOptions, where, cast, col } from 'sequelize';
-import Vendor, { VendorTypeEnum } from './vendorModel';
+import Vendor from './vendorModel';
 import User from '../user/userModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
@@ -51,10 +51,7 @@ class VendorService {
             { firstName: { [Op.iLike]: `%${searchKey}%` } },
             { lastName: { [Op.iLike]: `%${searchKey}%` } },
             { email: { [Op.iLike]: `%${searchKey}%` } },
-            where(
-              cast(col('"Vendor"."brands"'), 'TEXT'),
-              { [Op.iLike]: `%${searchKey}%` }
-            )
+            where(cast(col('"Vendor"."brands"'), 'TEXT'), { [Op.iLike]: `%${searchKey}%` })
           ]
         })
       },

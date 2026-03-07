@@ -121,7 +121,7 @@ class InventoryService {
       where: { category: { [Op.ne]: null } },
       raw: true
     });
-    return results.map((r) => r.category).filter(Boolean);
+    return results.map(r => r.category).filter(Boolean);
   }
 
   async getWarehouses(): Promise<string[]> {
@@ -130,7 +130,7 @@ class InventoryService {
       where: { warehouse: { [Op.ne]: null } },
       raw: true
     });
-    return results.map((r) => r.warehouse).filter(Boolean);
+    return results.map(r => r.warehouse).filter(Boolean);
   }
 
   private async productOrError(filter: WhereOptions): Promise<Product> {

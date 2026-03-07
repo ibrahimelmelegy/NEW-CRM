@@ -95,7 +95,7 @@ class MaterialService {
   }
 
   private async updateMaterialItems(material: any, items: createAdditionalMaterialItemsInput[]) {
-    const deletedIds = material.materialItem.filter((e) => !items.find(f => f.id === e.id)).map((e) => e.id);
+    const deletedIds = material.materialItem.filter((e: any) => !items.find(f => f.id === e.id)).map((e: any) => e.id);
     const newMaterialItem: Partial<AdditionalMaterialItem>[] = [];
     const updateMaterialItem: Partial<AdditionalMaterialItem>[] = [];
 
@@ -103,7 +103,9 @@ class MaterialService {
     await AdditionalMaterialItem.bulkCreate(newMaterialItem as []);
 
     await Promise.all(updateMaterialItem.map(async e => await AdditionalMaterialItem.update(e, { where: { id: e.id } })));
-    deletedIds?.length && (await AdditionalMaterialItem.destroy({ where: { id: { [Op.in]: deletedIds } } }));
+    if (deletedIds?.length) {
+      await AdditionalMaterialItem.destroy({ where: { id: { [Op.in]: deletedIds } } });
+    }
   }
 
   async materialOrError(filter: WhereOptions, joinedTables?: Includeable[]): Promise<Material> {
@@ -197,7 +199,6 @@ class MaterialService {
     if (!material) throw new BaseError(ERRORS.ADDITIONAL_MATERIAL_NOT_FOUND);
     await material.destroy();
   }
-
 }
 
 export default new MaterialService();

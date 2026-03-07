@@ -445,7 +445,7 @@ const filteredHistory = computed(() => {
 });
 
 function onExpandChange(row: unknown, expandedList: Record<string, unknown>[]) {
-  expandedRows.value = expandedList.map((r) => r.id);
+  expandedRows.value = expandedList.map(r => r.id);
 }
 
 // ─── Data: Error Logs ────────────────────────────────────────
@@ -588,7 +588,7 @@ async function loadData() {
       useApiFetch('workflow/executions/history').catch(() => null),
       useApiFetch('workflow/executions/errors').catch(() => null),
       useApiFetch('workflow/executions/kpi').catch(() => null),
-      useApiFetch('workflow/executions/performance').catch(() => null),
+      useApiFetch('workflow/executions/performance').catch(() => null)
     ]);
     if (execRes?.success && Array.isArray(execRes.body)) liveExecutions.value = execRes.body;
     if (historyRes?.success && Array.isArray(historyRes.body)) historyData.value = historyRes.body;
@@ -599,7 +599,7 @@ async function loadData() {
         activeWorkflows: b.activeWorkflows ?? 0,
         executions24h: b.executions24h ?? 0,
         successRate: b.successRate ?? 0,
-        avgExecutionTime: b.avgExecutionTime ?? '\u2014',
+        avgExecutionTime: b.avgExecutionTime ?? '\u2014'
       };
     }
     if (perfRes?.success && perfRes.body) {
@@ -626,15 +626,16 @@ async function refreshAllData() {
 const errorCategoryData = ref<Array<{ name: string; value: number; color: string }>>([]);
 
 const errorCategoryChartOption = computed(() => {
-  const categories = errorCategoryData.value.length > 0
-    ? errorCategoryData.value
-    : [
-        { name: t('workflowMonitor.timeout', 'Timeout'), value: 0, color: '#ef4444' },
-        { name: t('workflowMonitor.validationError', 'Validation Error'), value: 0, color: '#f59e0b' },
-        { name: t('workflowMonitor.apiError', 'API Error'), value: 0, color: '#3b82f6' },
-        { name: t('workflowMonitor.permissionDenied', 'Permission Denied'), value: 0, color: '#8b5cf6' },
-        { name: t('workflowMonitor.other', 'Other'), value: 0, color: '#6b7280' }
-      ];
+  const categories =
+    errorCategoryData.value.length > 0
+      ? errorCategoryData.value
+      : [
+          { name: t('workflowMonitor.timeout', 'Timeout'), value: 0, color: '#ef4444' },
+          { name: t('workflowMonitor.validationError', 'Validation Error'), value: 0, color: '#f59e0b' },
+          { name: t('workflowMonitor.apiError', 'API Error'), value: 0, color: '#3b82f6' },
+          { name: t('workflowMonitor.permissionDenied', 'Permission Denied'), value: 0, color: '#8b5cf6' },
+          { name: t('workflowMonitor.other', 'Other'), value: 0, color: '#6b7280' }
+        ];
 
   return {
     tooltip: {
@@ -705,7 +706,7 @@ const executionTimeTrendOption = computed(() => {
       ...tooltipStyle,
       formatter: (params: unknown) => {
         let result = `<strong>${params[0]?.axisValue}</strong><br/>`;
-        params.forEach((p) => {
+        params.forEach(p => {
           result += `${p.marker} ${p.seriesName}: ${p.value}s<br/>`;
         });
         return result;
@@ -827,13 +828,14 @@ const throughputChartOption = computed(() => {
 const statusDistributionData = ref<Array<{ name: string; value: number; color: string }>>([]);
 
 const statusDistributionOption = computed(() => {
-  const statuses = statusDistributionData.value.length > 0
-    ? statusDistributionData.value
-    : [
-        { name: t('workflowMonitor.success', 'Success'), value: 0, color: '#22c55e' },
-        { name: t('workflowMonitor.failed', 'Failed'), value: 0, color: '#ef4444' },
-        { name: t('workflowMonitor.cancelled', 'Cancelled'), value: 0, color: '#6b7280' }
-      ];
+  const statuses =
+    statusDistributionData.value.length > 0
+      ? statusDistributionData.value
+      : [
+          { name: t('workflowMonitor.success', 'Success'), value: 0, color: '#22c55e' },
+          { name: t('workflowMonitor.failed', 'Failed'), value: 0, color: '#ef4444' },
+          { name: t('workflowMonitor.cancelled', 'Cancelled'), value: 0, color: '#6b7280' }
+        ];
 
   return {
     tooltip: {

@@ -52,7 +52,7 @@ export async function getAllActivityLogs(limit: number = 100) {
         include: [userInclude],
         attributes: ['id', 'description', 'status', 'userId', 'createdAt']
       });
-      return logs.map((log) => ({ ...log.toJSON(), entityType: modelName }));
+      return logs.map((log: any) => ({ ...log.toJSON(), entityType: modelName }));
     })
   );
 

@@ -196,7 +196,7 @@ const agingReport = ref<AgingReport | null>(null);
 
 const analyticsStats = computed(() => {
   const s = summary.value;
-  const overdueCount = (table.value.data || []).filter((r) => {
+  const overdueCount = (table.value.data || []).filter(r => {
     if (r.statusLabel === 'COLLECTED') return false;
     if (!r.invoiceDate) return false;
     const dueDate = new Date(r.invoiceDate);
@@ -365,7 +365,7 @@ async function handleUncollect(id: number) {
 
 function handleExport() {
   const csvHeaders = ['Invoice #', 'Deal', 'Amount', 'Date', 'Status', 'Collected Date'];
-  const rows = (table.value.data || []).map((r) => [
+  const rows = (table.value.data || []).map(r => [
     r.invoiceNumber,
     r.dealDetails?.title,
     r.formattedAmount,
@@ -373,7 +373,7 @@ function handleExport() {
     r.statusLabel,
     r.formattedCollectedDate
   ]);
-  const csv = [csvHeaders, ...rows].map(r => r.map((v) => `"${String(v || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+  const csv = [csvHeaders, ...rows].map(r => r.map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -491,17 +491,17 @@ const mobileInvFilters = computed(() => {
   const data = table.value.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
-    { value: 'COLLECTED', label: t('invoices.collected'), color: '#22c55e', count: data.filter((i) => i.statusLabel === 'COLLECTED').length },
-    { value: 'PENDING', label: t('invoices.pending'), color: '#f59e0b', count: data.filter((i) => i.statusLabel === 'PENDING').length }
+    { value: 'COLLECTED', label: t('invoices.collected'), color: '#22c55e', count: data.filter(i => i.statusLabel === 'COLLECTED').length },
+    { value: 'PENDING', label: t('invoices.pending'), color: '#f59e0b', count: data.filter(i => i.statusLabel === 'PENDING').length }
   ];
 });
 
 const mobileFilteredInvoices = computed(() => {
   let data = table.value.data || [];
-  if (mobileInvStatus.value !== 'ALL') data = data.filter((i) => i.statusLabel === mobileInvStatus.value);
+  if (mobileInvStatus.value !== 'ALL') data = data.filter(i => i.statusLabel === mobileInvStatus.value);
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((i) => {
+  return data.filter(i => {
     const num = (i.invoiceNumber || '').toLowerCase();
     const deal = (i.dealDetails?.title || '').toLowerCase();
     return num.includes(q) || deal.includes(q);

@@ -60,6 +60,7 @@ class SpacesStorageProvider implements StorageProvider {
     this.cdnUrl = process.env.DO_SPACES_CDN_URL || '';
 
     // Lazy-load AWS SDK to avoid requiring it in dev mode
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { S3Client } = require('@aws-sdk/client-s3');
     this.s3 = new S3Client({
       endpoint: process.env.DO_SPACES_ENDPOINT || 'https://nyc3.digitaloceanspaces.com',
@@ -73,6 +74,7 @@ class SpacesStorageProvider implements StorageProvider {
   }
 
   async upload(buffer: Buffer, key: string, mimetype: string): Promise<string> {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { PutObjectCommand } = require('@aws-sdk/client-s3');
     await this.s3.send(
       new PutObjectCommand({
@@ -95,28 +97,24 @@ class SpacesStorageProvider implements StorageProvider {
   }
 
   async getSignedUrl(key: string, expiresIn: number = 3600): Promise<string> {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { GetObjectCommand } = require('@aws-sdk/client-s3');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
-    return getSignedUrl(
-      this.s3,
-      new GetObjectCommand({ Bucket: this.bucket, Key: key }),
-      { expiresIn }
-    );
+    return getSignedUrl(this.s3, new GetObjectCommand({ Bucket: this.bucket, Key: key }), { expiresIn });
   }
 
   async delete(key: string): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { DeleteObjectCommand } = require('@aws-sdk/client-s3');
-    await this.s3.send(
-      new DeleteObjectCommand({ Bucket: this.bucket, Key: key })
-    );
+    await this.s3.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
   }
 
   async exists(key: string): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { HeadObjectCommand } = require('@aws-sdk/client-s3');
     try {
-      await this.s3.send(
-        new HeadObjectCommand({ Bucket: this.bucket, Key: key })
-      );
+      await this.s3.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
       return true;
     } catch {
       return false;

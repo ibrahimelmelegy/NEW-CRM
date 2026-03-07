@@ -23,7 +23,7 @@ const { handleSubmit, errors, values, resetForm } = useForm();
 const emit = defineEmits(['showFilter']);
 
 const users = await useApiFetch('users');
-const mappedUsers = users?.body?.docs?.map((e) => ({
+const mappedUsers = users?.body?.docs?.map(e => ({
   label: e.name,
   value: e.id
 }));

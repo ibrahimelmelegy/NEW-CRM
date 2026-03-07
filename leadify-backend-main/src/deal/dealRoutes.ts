@@ -448,12 +448,7 @@ router.get(
  *       500:
  *         description: Internal Server Error
  */
-router.get(
-  '/analytics/stale-alerts',
-  authenticateUser,
-  HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS]),
-  dealController.getStaleDealAlerts
-);
+router.get('/analytics/stale-alerts', authenticateUser, HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS]), dealController.getStaleDealAlerts);
 
 /**
  * @swagger
@@ -483,12 +478,7 @@ router.get(
  *       500:
  *         description: Internal Server Error
  */
-router.get(
-  '/analytics/win-loss',
-  authenticateUser,
-  HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS]),
-  dealController.getWinLossAnalysis
-);
+router.get('/analytics/win-loss', authenticateUser, HasPermission([DealPermissionsEnum.VIEW_GLOBAL_DEALS]), dealController.getWinLossAnalysis);
 
 /**
  * @swagger
@@ -800,6 +790,11 @@ router.get(
   dealController.getDealById
 );
 //** --------------------- DELETE --------------------- */
-router.delete('/:id([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', authenticateUser, HasPermission([DealPermissionsEnum.DELETE_DEALS]), dealController.deleteDeal);
+router.delete(
+  '/:id([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
+  authenticateUser,
+  HasPermission([DealPermissionsEnum.DELETE_DEALS]),
+  dealController.deleteDeal
+);
 
 export default router;

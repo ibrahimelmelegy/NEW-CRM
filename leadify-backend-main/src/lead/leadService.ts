@@ -12,7 +12,7 @@ import LeadUsers from './model/lead_UsersModel';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import { io } from '../server';
-import { tenantWhere, tenantCreate } from '../utils/tenantScope';
+import { tenantWhere } from '../utils/tenantScope';
 import { clampPagination } from '../utils/pagination';
 import { TriggerType } from '../workflow/workflowModel';
 import workflowService from '../workflow/workflowService';
@@ -47,7 +47,7 @@ export const DEFAULT_SCORING_RULES: ScoringRule[] = [
   // Budget / value indicators (max 20) -- only the best match counts
   { field: 'budget', condition: 'greater_than', value: 50000, points: 20, group: 'budget_tier' },
   { field: 'budget', condition: 'greater_than', value: 10000, points: 10, group: 'budget_tier' },
-  { field: 'budget', condition: 'exists', points: 5, group: 'budget_tier' },
+  { field: 'budget', condition: 'exists', points: 5, group: 'budget_tier' }
 ];
 
 /**
@@ -193,7 +193,9 @@ class LeadService {
     if (input.users && Array.isArray(input.users)) await lead.$set('users', input.users);
     lead.set(input);
     await createActivityLog('lead', 'update', lead.id, user.id, null, `New updates added successfully`);
-    users?.length && (await notificationService.sendAssignLeadNotification({ userId: user.id, target: lead.id }));
+    if (users?.length) {
+      await notificationService.sendAssignLeadNotification({ userId: user.id, target: lead.id });
+    }
     const updatedLead = await lead.save();
     io.emit('lead:updated', updatedLead); // Emit event after update
 
@@ -218,7 +220,20 @@ class LeadService {
     if (!user.role.permissions.includes(LeadPermissionsEnum.VIEW_GLOBAL_LEADS)) query.userId = user.id;
 
     const { rows: leads, count: totalItems } = await Lead.findAndCountAll({
-      attributes: ['id', 'name', 'email', 'phone', 'companyName', 'status', 'leadSource', 'score', 'otherSource', 'lastContactDate', 'createdAt', 'updatedAt'],
+      attributes: [
+        'id',
+        'name',
+        'email',
+        'phone',
+        'companyName',
+        'status',
+        'leadSource',
+        'score',
+        'otherSource',
+        'lastContactDate',
+        'createdAt',
+        'updatedAt'
+      ],
       where: {
         ...tenantWhere(user),
         status: {
@@ -361,7 +376,7 @@ class LeadService {
     const createdLeads = await Lead.bulkCreate(leadArray);
     // Set user associations for each lead
     for (const lead of createdLeads) {
-      const leadData = leadArray.find((l) => l.name === lead.name);
+      const leadData = leadArray.find(l => l.name === lead.name);
       if (leadData?.userIds && leadData.userIds.length > 0) {
         await (lead as any).$set('users', leadData.userIds);
       }
@@ -415,7 +430,7 @@ class LeadService {
       // Alias mappings for backward compatibility
       company: lead.company || lead.companyName,
       source: lead.source || lead.leadSource,
-      assignedUsers: lead.assignedUsers || lead.users,
+      assignedUsers: lead.assignedUsers || lead.users
     };
 
     return evaluateScore(normalised, rules);

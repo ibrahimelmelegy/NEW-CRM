@@ -216,7 +216,7 @@ const updateTableColumns = () => {
 updateTableColumns();
 
 const mappedUsers =
-  usersResponse?.body?.docs?.map((e) => ({
+  usersResponse?.body?.docs?.map(e => ({
     label: e.name,
     value: e.id
   })) || [];
@@ -310,23 +310,23 @@ const mobileTaskFilters = computed(() => {
   const data = table.value.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
-    { value: 'TODO', label: t('tasks.status.TODO'), color: '#94a3b8', count: data.filter((t) => t.status === 'TODO').length },
+    { value: 'TODO', label: t('tasks.status.TODO'), color: '#94a3b8', count: data.filter(t => t.status === 'TODO').length },
     {
       value: 'IN_PROGRESS',
       label: t('tasks.status.IN_PROGRESS'),
       color: '#3b82f6',
-      count: data.filter((t) => t.status === 'IN_PROGRESS').length
+      count: data.filter(t => t.status === 'IN_PROGRESS').length
     },
-    { value: 'DONE', label: t('tasks.status.DONE'), color: '#10b981', count: data.filter((t) => t.status === 'DONE').length }
+    { value: 'DONE', label: t('tasks.status.DONE'), color: '#10b981', count: data.filter(t => t.status === 'DONE').length }
   ];
 });
 
 const mobileFilteredTasks = computed(() => {
   let data = table.value.data || [];
-  if (mobileTaskStatus.value !== 'ALL') data = data.filter((tk) => tk.status === mobileTaskStatus.value);
+  if (mobileTaskStatus.value !== 'ALL') data = data.filter(tk => tk.status === mobileTaskStatus.value);
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((tk) => {
+  return data.filter(tk => {
     const name = (tk.taskDetails?.name || tk.title || '').toLowerCase();
     const assign = (tk.assign || '').toLowerCase();
     return name.includes(q) || assign.includes(q);

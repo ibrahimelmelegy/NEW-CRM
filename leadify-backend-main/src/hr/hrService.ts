@@ -8,7 +8,7 @@ class HRService {
   // Attendance
   async getAttendance(query: any) {
     const { page, limit, offset } = clampPagination(query, 30);
-    const { userId, date, startDate, endDate, status, searchKey, sortBy, sort } = query;
+    const { userId, date, startDate, endDate, status, searchKey: _searchKey, sortBy: _sortBy, sort: _sort } = query;
     const where: Record<string, any> = {};
     if (userId) where.userId = userId;
     if (date) where.date = date;
@@ -85,7 +85,7 @@ class HRService {
 
   async getLeaveRequests(query: any) {
     const { page, limit, offset } = clampPagination(query, 20);
-    const { userId, status, leaveType, searchKey, sortBy, sort } = query;
+    const { userId, status, leaveType, searchKey: _searchKey2, sortBy: _sortBy2, sort: _sort2 } = query;
     const where: Record<string, any> = {};
     if (userId) where.userId = userId;
     if (status) where.status = status;

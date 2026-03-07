@@ -390,7 +390,7 @@ const normalizeMessage = (raw: unknown): ChatMessage => ({
   sender: raw.senderType === 'STAFF' || raw.sender === 'agent' ? 'agent' : 'visitor',
   text: raw.content || raw.text || '',
   time: raw.createdAt ? new Date(raw.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : raw.time || '',
-  read: raw.readAt != null || raw.read === true
+  read: (raw.readAt !== null && raw.readAt !== undefined) || raw.read === true
 });
 
 const scrollToBottom = async () => {
@@ -444,7 +444,7 @@ const loadAgents = async () => {
     const res = await useApiFetch('users?role=support', 'GET');
     if (res.success && res.body) {
       const raw = Array.isArray(res.body) ? res.body : (res.body as unknown).rows || (res.body as unknown).data || (res.body as unknown).users || [];
-      agents.value = raw.map((u) => ({
+      agents.value = raw.map(u => ({
         id: u.id,
         name: u.name || `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.email,
         activeChats: u.activeChats ?? 0

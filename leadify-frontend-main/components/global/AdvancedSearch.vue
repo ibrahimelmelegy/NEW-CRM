@@ -244,9 +244,9 @@ const hasValidFilters = computed(() => {
     if (!row.field || !row.operator) return false;
     if (row.operator === 'is_empty' || row.operator === 'is_not_empty') return true;
     if (row.operator === 'between') {
-      return row.value != null && row.valueTo != null;
+      return row.value !== null && row.value !== undefined && row.valueTo !== null && row.valueTo !== undefined;
     }
-    return row.value != null && row.value !== '';
+    return row.value !== null && row.value !== undefined && row.value !== '';
   });
 });
 
@@ -255,8 +255,8 @@ function applyFilters() {
     .filter(row => {
       if (!row.field || !row.operator) return false;
       if (row.operator === 'is_empty' || row.operator === 'is_not_empty') return true;
-      if (row.operator === 'between') return row.value != null && row.valueTo != null;
-      return row.value != null && row.value !== '';
+      if (row.operator === 'between') return row.value !== null && row.value !== undefined && row.valueTo !== null && row.valueTo !== undefined;
+      return row.value !== null && row.value !== undefined && row.value !== '';
     })
     .map(row => ({
       field: row.field,

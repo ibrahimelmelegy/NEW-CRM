@@ -1,4 +1,4 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import Goal from './goalModel';
 import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
@@ -16,16 +16,15 @@ class GoalService {
     if (query.status) where.status = query.status;
     if (query.owner) where.owner = { [Op.iLike]: `%${query.owner}%` };
     if (query.search) {
-      where[Op.or] = [
-        { title: { [Op.iLike]: `%${query.search}%` } },
-        { description: { [Op.iLike]: `%${query.search}%` } }
-      ];
+      where[Op.or] = [{ title: { [Op.iLike]: `%${query.search}%` } }, { description: { [Op.iLike]: `%${query.search}%` } }];
     }
 
     const { rows, count } = await Goal.findAndCountAll({
       where,
       order: [['createdAt', 'DESC']],
-      limit, offset, distinct: true
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -70,9 +69,13 @@ class GoalService {
     }
 
     await goal.update(updateData);
-    try { io.emit('goal:progress_updated', { id: goalId, title: goal.title, progress: clampedProgress, status: updateData.status || goal.status }); } catch {}
+    try {
+      io.emit('goal:progress_updated', { id: goalId, title: goal.title, progress: clampedProgress, status: updateData.status || goal.status });
+    } catch {}
     if (clampedProgress >= 100) {
-      try { io.emit('goal:completed', { id: goalId, title: goal.title }); } catch {}
+      try {
+        io.emit('goal:completed', { id: goalId, title: goal.title });
+      } catch {}
     }
 
     // Check milestones after progress update
@@ -101,9 +104,7 @@ class GoalService {
 
     if (children.length === 0) return;
 
-    const avgProgress = Math.round(
-      children.reduce((sum, child) => sum + (child.progress || 0), 0) / children.length
-    );
+    const avgProgress = Math.round(children.reduce((sum, child) => sum + (child.progress || 0), 0) / children.length);
 
     const updateData: Record<string, any> = { progress: avgProgress };
     if (avgProgress >= 100 && parent.status !== 'COMPLETED') {
@@ -201,7 +202,9 @@ class GoalService {
 
     // Emit socket event for each crossed milestone
     for (const milestone of crossedMilestones) {
-      try { io.emit('goal:milestone_reached', { goalId, milestone, title: goal.title, currentProgress: curr }); } catch {}
+      try {
+        io.emit('goal:milestone_reached', { goalId, milestone, title: goal.title, currentProgress: curr });
+      } catch {}
     }
 
     return {

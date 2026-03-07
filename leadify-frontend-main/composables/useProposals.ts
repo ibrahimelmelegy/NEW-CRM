@@ -131,7 +131,7 @@ export interface FinanceTableItem {
  */
 export async function getProposal(id: string | string[]): Promise<ProposalData> {
   try {
-    const { body: proposal, success } = await useApiFetch(`proposal/${id}`);
+    const { body: proposal } = await useApiFetch(`proposal/${id}`);
     return proposal as unknown as ProposalData;
   } catch (error) {
     console.error('Error fetching proposal:', error instanceof Error ? error.message : error);
@@ -142,7 +142,7 @@ export async function getProposal(id: string | string[]): Promise<ProposalData> 
 
 export async function getProposalFinanceTableByPropsalId(proposalId: string | string[]): Promise<FinanceTableData> {
   try {
-    const { body: table, success } = await useApiFetch(`proposal-finance-table/?page=1&limit=10&proposalId=${proposalId}`);
+    const { body: table } = await useApiFetch(`proposal-finance-table/?page=1&limit=10&proposalId=${proposalId}`);
     return table as unknown as FinanceTableData;
   } catch (error) {
     console.error('Error fetching proposal:', error instanceof Error ? error.message : error);
@@ -153,7 +153,7 @@ export async function getProposalFinanceTableByPropsalId(proposalId: string | st
 
 export async function getProposalFinanceTableItemByTablelId(TablelId: string | string[]): Promise<{ items?: FinanceTableItem[] }> {
   try {
-    const { body: tableItem, success } = await useApiFetch(`proposal-finance-table-item/?page=1&limit=1000&financeTableId=${TablelId}`);
+    const { body: tableItem } = await useApiFetch(`proposal-finance-table-item/?page=1&limit=1000&financeTableId=${TablelId}`);
     return tableItem as unknown as { items?: FinanceTableItem[] };
   } catch (error) {
     console.error('Error fetching tableItem:', error instanceof Error ? error.message : error);
@@ -307,8 +307,8 @@ export async function createProposal(values: ProposalInfoPayload & { file?: Arra
     const formattedValues: Record<string, unknown> = {
       ...values,
       fileAttachments: values?.file?.map((el: { response?: string }) => el?.response),
-      relatedEntityId: values?.relatedEntityId == '' ? undefined : values?.relatedEntityId,
-      relatedEntityType: values?.relatedEntityType == '' ? undefined : values?.relatedEntityType
+      relatedEntityId: values?.relatedEntityId === '' ? undefined : values?.relatedEntityId,
+      relatedEntityType: values?.relatedEntityType === '' ? undefined : values?.relatedEntityType
     };
     delete formattedValues.file;
     // Call API to create the proposal
@@ -365,8 +365,8 @@ export async function updateProposal(values: UpdateProposalValues): Promise<void
   try {
     // Call API to create the proposal
     const proposalData: Record<string, unknown> = {
-      relatedEntityId: values?.relatedEntityId == '' ? undefined : values?.relatedEntityId,
-      relatedEntityType: values?.relatedEntityType == '' ? undefined : values?.relatedEntityType,
+      relatedEntityId: values?.relatedEntityId === '' ? undefined : values?.relatedEntityId,
+      relatedEntityType: values?.relatedEntityType === '' ? undefined : values?.relatedEntityType,
       title: values?.title ?? undefined,
       version: values?.version ?? undefined,
       content: values?.content ?? undefined,
@@ -380,11 +380,11 @@ export async function updateProposal(values: UpdateProposalValues): Promise<void
     };
     if (values.status) {
       const responseChange =
-        values.status == 'reject'
+        values.status === 'reject'
           ? await useApiFetch(`proposal/reject/${values.id}`, 'PUT', {
               rejectionReason: values.reason
             })
-          : values.status == 'waiting-approval'
+          : values.status === 'waiting-approval'
             ? await useApiFetch(`proposal/waiting-approval/${values.id}`, 'PUT')
             : await useApiFetch(`proposal/approve/${values.id}`, 'PUT');
       // Handle the API response

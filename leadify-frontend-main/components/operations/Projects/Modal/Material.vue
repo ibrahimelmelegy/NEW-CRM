@@ -152,7 +152,7 @@ isAdditionalMaterial.value = !!props.data?.additionalMaterialId;
 isAdditionalService.value = !!props.data?.serviceId;
 
 let services = await useTableFilter('service');
-services = services.formattedData.map((item) => ({
+services = services.formattedData.map(item => ({
   label: item.type,
   value: item.id,
   price: item.price
@@ -168,12 +168,12 @@ function mapAddMaterials(data: AdditionalMaterial[] = []): { label: string; valu
  * Updates the items data and filtered addMaterials list based on the selected addMaterial IDs.
  */
 function updateTableData() {
-  items.value.data = addMaterialsItems.value?.map((item) => ({
+  items.value.data = addMaterialsItems.value?.map(item => ({
     price: item?.price,
     name:
       item?.name ||
       addMaterials.value
-        ?.find((material) => Object.keys(finalAddMaterialsItems.value).includes(material.id?.toString()))
+        ?.find(material => Object.keys(finalAddMaterialsItems.value).includes(material.id?.toString()))
         ?.materialItem.find((materialI: unknown) => materialI.id === item?.id)?.name,
     quantity: item?.quantity || 1,
     additionalMaterialPrice: item?.price * (item?.quantity || 1)
@@ -186,7 +186,7 @@ const addMaterialId = ref<string>('');
  */
 function toggleAddMaterialSelection(val?: unknown) {
   addMaterialId.value = val?.value || val;
-  addMaterial.value = addMaterials.value?.find((item) => item.id === addMaterialId.value);
+  addMaterial.value = addMaterials.value?.find(item => item.id === addMaterialId.value);
   if (props.selectedAddMaterialItem && addMaterial.value && Object.keys(props.selectedAddMaterialItem).length) {
     addMaterial.value = updateMaterialQuantities(props.selectedAddMaterialItem, addMaterial.value);
     getAddMaterialsItem(props.selectedAddMaterialItem);
@@ -222,8 +222,8 @@ await fetchAddMaterials(props?.data?.additionalMaterialId);
 function updateMaterialQuantities(selectedItems: unknown, additionalMaterial: unknown) {
   return {
     ...additionalMaterial,
-    materialItem: additionalMaterial.materialItem?.map((item) => {
-      const selectedItem = selectedItems[Object.keys(selectedItems)[0]!]?.find((s) => s.id === item.id);
+    materialItem: additionalMaterial.materialItem?.map(item => {
+      const selectedItem = selectedItems[Object.keys(selectedItems)[0]!]?.find(s => s.id === item.id);
       return selectedItem ? { ...item, quantity: selectedItem.quantity } : item;
     })
   };
@@ -238,7 +238,7 @@ function toggleServiceSelection(val?: unknown) {
 async function updateService(val?: unknown) {
   serviceId.value = '';
   services = await useTableFilter('service');
-  services = services.formattedData.map((item) => ({
+  services = services.formattedData.map(item => ({
     label: item.type,
     value: item.id,
     price: item.price

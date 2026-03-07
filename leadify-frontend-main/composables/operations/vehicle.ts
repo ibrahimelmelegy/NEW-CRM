@@ -63,7 +63,7 @@ export async function getVehicles(): Promise<UseVehicleResult> {
 
     if (success) {
       // Return the docs (vehicles) from the response
-      const vehicles = body?.docs?.map((vehicle) => ({
+      const vehicles = body?.docs?.map(vehicle => ({
         ...vehicle,
         createdAt: formatDate(vehicle.createdAt),
         // updatedAt: formatDate(vehicle.updatedAt),
@@ -96,7 +96,7 @@ export async function getVehicles(): Promise<UseVehicleResult> {
  */
 export async function getVehicle(id: string | string[]): Promise<Vehicle> {
   try {
-    const { body: vehicle, success } = await useApiFetch(`vehicle/${id}`);
+    const { body: vehicle } = await useApiFetch(`vehicle/${id}`);
     return vehicle;
   } catch (error) {
     console.error('Error fetching vehicle:', error instanceof Error ? error.message : error);

@@ -604,9 +604,9 @@ function editNote(note: unknown) {
     title: note.title,
     meetingType: note.type || note.meetingType || 'CLIENT',
     meetingDate: note.date || note.meetingDate ? new Date(note.date || note.meetingDate) : null,
-    attendees: (note.attendees || []).map((a) => a.id).filter(Boolean),
+    attendees: (note.attendees || []).map(a => a.id).filter(Boolean),
     minutes: note.minutes || '',
-    actionItems: (note.actionItems || []).map((item) => ({
+    actionItems: (note.actionItems || []).map(item => ({
       task: item.task,
       assigneeId: item.assigneeId,
       assigneeName: item.assigneeName,
@@ -709,7 +709,7 @@ async function exportAsMarkdown() {
     `## Meeting Minutes\n\n${viewingNote.value.minutes}\n\n` +
     `## Action Items\n\n` +
     (viewingNote.value.actionItems || [])
-      .map((item) => `- [${item.completed ? 'x' : ' '}] ${item.task}${item.assigneeName ? ` (@${item.assigneeName})` : ''}`)
+      .map(item => `- [${item.completed ? 'x' : ' '}] ${item.task}${item.assigneeName ? ` (@${item.assigneeName})` : ''}`)
       .join('\n');
 
   const blob = new Blob([markdown], { type: 'text/markdown' });

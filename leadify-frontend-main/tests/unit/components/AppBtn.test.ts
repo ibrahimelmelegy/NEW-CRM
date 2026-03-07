@@ -4,7 +4,7 @@
  * Tests for components/global/AppBtn.vue
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import AppBtn from '@/components/global/AppBtn.vue';
 

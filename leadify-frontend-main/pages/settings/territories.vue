@@ -97,7 +97,7 @@ try {
   const [treeData, usersRes]: Record<string, unknown>[] = await Promise.all([fetchTerritoryTree(), useApiFetch('users')]);
   territories.value = treeData;
   if (usersRes?.body?.docs) {
-    users.value = usersRes.body.docs.map((u) => ({ label: u.name, value: u.id }));
+    users.value = usersRes.body.docs.map(u => ({ label: u.name, value: u.id }));
   }
 } catch (e) {
   console.error('Failed to load territories', e);

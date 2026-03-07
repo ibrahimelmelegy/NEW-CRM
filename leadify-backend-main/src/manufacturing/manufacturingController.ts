@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import manufacturingService from './manufacturingService';
 import { wrapResult } from '../utils/response/responseWrapper';
 import { AuthenticatedRequest } from '../types';

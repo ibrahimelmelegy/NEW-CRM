@@ -1,12 +1,10 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import Lead from '../lead/leadModel';
 import Deal from '../deal/model/dealModel';
 import Client from '../client/clientModel';
 import Invoice from '../deal/model/invoiceMode';
 import Opportunity from '../opportunity/opportunityModel';
-import User from '../user/userModel';
 import { DealActivity } from '../activity-logs/model/dealActivities';
-import aiService from './aiService';
 
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -396,7 +394,7 @@ class AIChatService {
       case 'status':
         if (data.breakdown?.length > 0) {
           const lines = data.breakdown
-            .map((item) => {
+            .map((item: any) => {
               const key = Object.keys(item).find(k => k !== 'count') || 'status';
               return `- **${item[key]}**: ${item.count}`;
             })
@@ -444,7 +442,9 @@ class AIChatService {
   private async getOpenAIClient(): Promise<any> {
     // Access the private openai client through the aiService singleton
     // We mirror the getClient pattern
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const OpenAI = require('openai').default;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const Integration = require('../integration/integrationModel').default;
 
     const integration = await Integration.findOne({ where: { provider: 'openai', isActive: true } });
@@ -452,6 +452,7 @@ class AIChatService {
 
     if (integration?.config?.apiKey) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { decrypt } = require('../utils/encryption');
         apiKey = decrypt(integration.config.apiKey);
       } catch {

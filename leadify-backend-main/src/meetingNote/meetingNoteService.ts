@@ -7,7 +7,9 @@ import { io } from '../server';
 class MeetingNoteService {
   async create(data: any, userId: number, tenantId?: string) {
     const note = await MeetingNote.create({ ...data, createdBy: userId, tenantId });
-    try { io.emit('meetingNote:created', { id: note.id, title: note.title }); } catch {}
+    try {
+      io.emit('meetingNote:created', { id: note.id, title: note.title });
+    } catch {}
     return this.getById(note.id);
   }
 
@@ -17,10 +19,7 @@ class MeetingNoteService {
     if (tenantId) where.tenantId = tenantId;
     if (query.type) where.type = query.type;
     if (query.search) {
-      where[Op.or] = [
-        { title: { [Op.iLike]: `%${query.search}%` } },
-        { minutes: { [Op.iLike]: `%${query.search}%` } }
-      ];
+      where[Op.or] = [{ title: { [Op.iLike]: `%${query.search}%` } }, { minutes: { [Op.iLike]: `%${query.search}%` } }];
     }
     if (query.startDate && query.endDate) {
       where.date = { [Op.between]: [new Date(query.startDate), new Date(query.endDate)] };
@@ -32,9 +31,7 @@ class MeetingNoteService {
 
     const { rows, count } = await MeetingNote.findAndCountAll({
       where,
-      include: [
-        { model: User, as: 'creator', attributes: ['id', 'name', 'email', 'profilePicture'] }
-      ],
+      include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'email', 'profilePicture'] }],
       order: [['date', 'DESC']],
       limit,
       offset,
@@ -45,9 +42,7 @@ class MeetingNoteService {
 
   async getById(id: string) {
     return MeetingNote.findByPk(id, {
-      include: [
-        { model: User, as: 'creator', attributes: ['id', 'name', 'email', 'profilePicture'] }
-      ]
+      include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'email', 'profilePicture'] }]
     });
   }
 
@@ -55,7 +50,9 @@ class MeetingNoteService {
     const item = await MeetingNote.findByPk(id);
     if (!item) return null;
     await item.update(data);
-    try { io.emit('meetingNote:updated', { id: item.id, title: item.title }); } catch {}
+    try {
+      io.emit('meetingNote:updated', { id: item.id, title: item.title });
+    } catch {}
     return this.getById(item.id);
   }
 
@@ -63,7 +60,9 @@ class MeetingNoteService {
     const item = await MeetingNote.findByPk(id);
     if (!item) return false;
     await item.destroy();
-    try { io.emit('meetingNote:deleted', { id }); } catch {}
+    try {
+      io.emit('meetingNote:deleted', { id });
+    } catch {}
     return true;
   }
 }

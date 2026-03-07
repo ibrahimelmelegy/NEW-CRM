@@ -514,9 +514,9 @@ const shipmentStats = computed(() => {
   const data = shipments.value;
   return {
     total: data.length,
-    inTransit: data.filter((s) => s.status === 'IN_TRANSIT' || s.status === 'SHIPPED').length,
-    delivered: data.filter((s) => s.status === 'DELIVERED').length,
-    returned: data.filter((s) => s.status === 'RETURNED').length
+    inTransit: data.filter(s => s.status === 'IN_TRANSIT' || s.status === 'SHIPPED').length,
+    delivered: data.filter(s => s.status === 'DELIVERED').length,
+    returned: data.filter(s => s.status === 'RETURNED').length
   };
 });
 
@@ -524,11 +524,11 @@ const shipmentStats = computed(() => {
 const filteredShipments = computed(() => {
   let data = shipments.value;
   if (shipmentStatusFilter.value) {
-    data = data.filter((s) => s.status === shipmentStatusFilter.value);
+    data = data.filter(s => s.status === shipmentStatusFilter.value);
   }
   if (shipmentSearch.value) {
     const q = shipmentSearch.value.toLowerCase();
-    data = data.filter((s) => {
+    data = data.filter(s => {
       return (
         (s.shipmentNumber || '').toLowerCase().includes(q) ||
         (s.carrier || '').toLowerCase().includes(q) ||
@@ -545,7 +545,7 @@ const filteredShipments = computed(() => {
 const filteredRates = computed(() => {
   if (!rateSearch.value) return rates.value;
   const q = rateSearch.value.toLowerCase();
-  return rates.value.filter((r) => {
+  return rates.value.filter(r => {
     return (r.carrier || '').toLowerCase().includes(q) || (r.zone || '').toLowerCase().includes(q);
   });
 });

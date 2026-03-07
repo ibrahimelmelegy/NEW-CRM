@@ -270,7 +270,7 @@ async function handleCancelSubscription(row: CustomerSubscription) {
     });
     const result = await cancelSubscription(String(row.id));
     if (result) {
-      const sub = subscriptions.value.find((s) => s.id === row.id);
+      const sub = subscriptions.value.find(s => s.id === row.id);
       if (sub) sub.status = 'CANCELLED';
       ElMessage.success(t('subscriptions.cancelSuccess'));
     }

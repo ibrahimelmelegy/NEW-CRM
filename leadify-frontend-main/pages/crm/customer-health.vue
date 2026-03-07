@@ -267,13 +267,11 @@
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-import { use } from 'echarts/core';
+import { use, graphic } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts/core';
-
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -354,11 +352,7 @@ const customers = computed(() => {
 
     // NPS mock (derived from overall health pattern)
     const npsScore =
-      healthScore >= 70
-        ? Math.floor(healthScore * 0.9)
-        : healthScore >= 40
-          ? Math.floor(healthScore * 0.6)
-          : Math.floor(healthScore * 0.3);
+      healthScore >= 70 ? Math.floor(healthScore * 0.9) : healthScore >= 40 ? Math.floor(healthScore * 0.6) : Math.floor(healthScore * 0.3);
 
     // Risk level
     let riskLevel: 'healthy' | 'at-risk' | 'critical' = 'healthy';

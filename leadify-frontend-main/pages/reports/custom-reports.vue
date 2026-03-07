@@ -423,11 +423,11 @@ const formRules = reactive<FormRules>({
 const filteredReports = computed(() => {
   let result = reports.value;
   if (entityTypeFilter.value) {
-    result = result.filter((r) => r.entityType === entityTypeFilter.value);
+    result = result.filter(r => r.entityType === entityTypeFilter.value);
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter((r) => (r.name || '').toLowerCase().includes(q) || (r.description || '').toLowerCase().includes(q));
+    result = result.filter(r => (r.name || '').toLowerCase().includes(q) || (r.description || '').toLowerCase().includes(q));
   }
   return result;
 });
@@ -435,11 +435,11 @@ const filteredReports = computed(() => {
 const recentlyExecutedCount = computed(() => {
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-  return reports.value.filter((r) => new Date(r.updatedAt) > oneWeekAgo).length;
+  return reports.value.filter(r => new Date(r.updatedAt) > oneWeekAgo).length;
 });
 
 const scheduledCount = computed(() => {
-  return reports.value.filter((r) => r.schedule && r.schedule.frequency).length;
+  return reports.value.filter(r => r.schedule && r.schedule.frequency).length;
 });
 
 const resultColumns = computed(() => {
@@ -632,7 +632,7 @@ async function openEditDialog(report: unknown) {
     description: report.description || '',
     entityType: report.entityType || '',
     fields: Array.isArray(report.fields) ? [...report.fields] : [],
-    filters: Array.isArray(report.filters) ? report.filters.map((f) => ({ ...f })) : [],
+    filters: Array.isArray(report.filters) ? report.filters.map(f => ({ ...f })) : [],
     groupBy: report.groupBy || '',
     sortBy: report.sortBy || '',
     sortOrder: report.sortOrder || 'DESC',

@@ -155,18 +155,25 @@ const usage = ref<TenantUsage | null>(null);
 
 const statusType = computed(() => {
   switch (tenantInfo.value?.status) {
-    case 'ACTIVE': return 'success';
-    case 'TRIAL': return 'warning';
-    case 'SUSPENDED': return 'danger';
-    default: return 'info';
+    case 'ACTIVE':
+      return 'success';
+    case 'TRIAL':
+      return 'warning';
+    case 'SUSPENDED':
+      return 'danger';
+    default:
+      return 'info';
   }
 });
 
 const planType = computed(() => {
   switch (tenantInfo.value?.plan) {
-    case 'enterprise': return 'danger';
-    case 'pro': return 'warning';
-    default: return 'info';
+    case 'enterprise':
+      return 'danger';
+    case 'pro':
+      return 'warning';
+    default:
+      return 'info';
   }
 });
 
@@ -193,10 +200,7 @@ function formatDate(dateStr?: string): string {
 async function loadTenantInfo() {
   loading.value = true;
   try {
-    const [infoRes, usageRes] = await Promise.all([
-      useApiFetch<TenantInfo>('tenant/me'),
-      useApiFetch<TenantUsage>('tenant/usage')
-    ]);
+    const [infoRes, usageRes] = await Promise.all([useApiFetch<TenantInfo>('tenant/me'), useApiFetch<TenantUsage>('tenant/usage')]);
 
     if (infoRes.success && infoRes.body) {
       tenantInfo.value = infoRes.body as TenantInfo;

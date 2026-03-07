@@ -156,7 +156,7 @@ const mobileFilteredData = computed(() => {
   const data = table.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((r) => {
+  return data.filter(r => {
     const name = (r.name || '').toLowerCase();
     const desc = (r.description || '').toLowerCase();
     return name.includes(q) || desc.includes(q);

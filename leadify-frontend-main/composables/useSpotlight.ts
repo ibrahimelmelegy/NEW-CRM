@@ -904,7 +904,7 @@ export function useSpotlight() {
   // Load user permissions on init
   async function loadPermissions() {
     try {
-      const { hasPermission, hasAnyPermission } = await usePermissions();
+      const { hasPermission: _hasPermission, hasAnyPermission: _hasAnyPermission } = await usePermissions();
 
       // Get role info to check if admin
       const userResponse = await useApiFetch('auth/me');

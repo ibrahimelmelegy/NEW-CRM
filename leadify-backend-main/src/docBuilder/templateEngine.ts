@@ -28,11 +28,7 @@ function resolvePath(obj: Record<string, any>, path: string): unknown {
  */
 function escapeHtml(str: string): string {
   if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 /**
@@ -228,17 +224,12 @@ export function renderTemplate(template: string, data: Record<string, any>, bran
  * Render a full document using a DocumentTemplate layout + content data + brand settings.
  * The template layout contains an HTML string with {{placeholders}}.
  */
-export function renderFromTemplate(
-  templateHtml: string,
-  content: Record<string, any>,
-  brand?: BrandSettings
-): string {
+export function renderFromTemplate(templateHtml: string, content: Record<string, any>, brand?: BrandSettings): string {
   // Parse items financial data if present
   const items = content.items || [];
   const currency = content.currency || 'SAR';
   const subtotal = items.reduce((sum: number, item: any) => sum + (item.quantity || 0) * (item.rate || 0), 0);
-  const discountAmount =
-    content.discountType === 'percent' ? subtotal * ((content.discount || 0) / 100) : content.discount || 0;
+  const discountAmount = content.discountType === 'percent' ? subtotal * ((content.discount || 0) / 100) : content.discount || 0;
   const taxableAmount = subtotal - discountAmount;
   const taxAmount = taxableAmount * ((content.taxRate || 0) / 100);
   const total = taxableAmount + taxAmount;
@@ -259,10 +250,14 @@ export function renderFromTemplate(
     hasNotes: !!content.notes,
     // Format dates
     formattedDate: content.date ? new Date(content.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '',
-    formattedDueDate: content.dueDate ? new Date(content.dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '',
-    formattedValidUntil: content.validUntil ? new Date(content.validUntil).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '',
+    formattedDueDate: content.dueDate
+      ? new Date(content.dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+      : '',
+    formattedValidUntil: content.validUntil
+      ? new Date(content.validUntil).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+      : '',
     // Enrich items with computed lineTotal
-    items: items.map((item, i: number) => ({
+    items: items.map((item: any, i: number) => ({
       ...item,
       index: i + 1,
       lineTotal: ((item.quantity || 0) * (item.rate || 0)).toFixed(2)

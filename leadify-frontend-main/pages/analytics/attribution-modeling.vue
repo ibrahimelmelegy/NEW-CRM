@@ -583,7 +583,7 @@ async function loadData() {
             : null;
 
       if (channelList && channelList.length > 0) {
-        baseChannels.value = channelList.map((ch) => ({
+        baseChannels.value = channelList.map(ch => ({
           channel: ch.channel || ch.name || 'Unknown',
           baseRevenue: parseFloat(ch.baseRevenue || ch.revenue || ch.attributedRevenue || 0),
           deals: parseInt(ch.deals || ch.dealsInfluenced || 0),
@@ -611,8 +611,8 @@ async function loadData() {
       if (docs && docs.length > 0) {
         // Try to extract path data from touchpoints
         const pathsFromApi = docs
-          .filter((d) => d.steps || d.path || d.touchpoints)
-          .map((d) => ({
+          .filter(d => d.steps || d.path || d.touchpoints)
+          .map(d => ({
             steps: d.steps || d.path || d.touchpoints || [],
             revenue: parseFloat(d.revenue || d.attributedRevenue || 0),
             conversions: parseInt(d.conversions || d.conversionCount || 0)

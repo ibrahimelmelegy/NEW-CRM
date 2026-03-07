@@ -364,8 +364,8 @@ const funnelVisual = computed(() => {
     HIRED: '#10b981'
   };
   return (funnelData.value.funnel || [])
-    .filter((s) => s.stage !== 'REJECTED')
-    .map((s) => ({
+    .filter(s => s.stage !== 'REJECTED')
+    .map(s => ({
       name: s.stage,
       count: s.count,
       color: stageColors[s.stage] || '#6b7280'
@@ -426,12 +426,12 @@ function getApplicantsForStage(stage: string) {
 }
 
 function funnelBarWidth(count: number): string {
-  const max = Math.max(...funnelVisual.value.map((s) => s.count), 1);
+  const max = Math.max(...funnelVisual.value.map(s => s.count), 1);
   return Math.max(36, Math.round((count / max) * 100)) + '%';
 }
 
 function funnelBarHeight(count: number): number {
-  const max = Math.max(...funnelVisual.value.map((s) => s.count), 1);
+  const max = Math.max(...funnelVisual.value.map(s => s.count), 1);
   return Math.max(28, Math.round((count / max) * 120));
 }
 
@@ -448,7 +448,7 @@ async function fetchPosting() {
     if (res?.success && res.body) {
       const data = res.body as unknown;
       const all = data.docs || data.rows || data || [];
-      posting.value = all.find((p) => String(p.id) === String(postingId.value)) || null;
+      posting.value = all.find(p => String(p.id) === String(postingId.value)) || null;
     }
   } catch {
     ElMessage.error(t('recruitment.loadPostingFailed'));

@@ -35,22 +35,22 @@ All endpoints (except health checks and auth) require a Bearer JWT token.
 All data is tenant-isolated. The tenant is determined from the authenticated user's context.
       `,
       contact: {
-        name: 'Leadify CRM Support',
-      },
+        name: 'Leadify CRM Support'
+      }
     },
     servers: [
       {
         url: process.env.API_BASE_URL || 'http://localhost:3061',
-        description: 'API Server',
-      },
+        description: 'API Server'
+      }
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
+          bearerFormat: 'JWT'
+        }
       },
       schemas: {
         Error: {
@@ -58,8 +58,8 @@ All data is tenant-isolated. The tenant is determined from the authenticated use
           properties: {
             status: { type: 'number', example: 400 },
             success: { type: 'boolean', example: false },
-            message: { type: 'string', example: 'Validation error' },
-          },
+            message: { type: 'string', example: 'Validation error' }
+          }
         },
         SuccessResponse: {
           type: 'object',
@@ -67,8 +67,8 @@ All data is tenant-isolated. The tenant is determined from the authenticated use
             status: { type: 'number', example: 200 },
             success: { type: 'boolean', example: true },
             message: { type: 'string', example: 'Success' },
-            body: { type: 'object' },
-          },
+            body: { type: 'object' }
+          }
         },
         PaginatedResponse: {
           type: 'object',
@@ -79,10 +79,10 @@ All data is tenant-isolated. The tenant is determined from the authenticated use
               type: 'object',
               properties: {
                 rows: { type: 'array', items: { type: 'object' } },
-                count: { type: 'number', example: 100 },
-              },
-            },
-          },
+                count: { type: 'number', example: 100 }
+              }
+            }
+          }
         },
         Lead: {
           type: 'object',
@@ -95,8 +95,8 @@ All data is tenant-isolated. The tenant is determined from the authenticated use
             status: { type: 'string', enum: ['new', 'contacted', 'qualified', 'lost', 'converted'] },
             source: { type: 'string', example: 'website' },
             score: { type: 'number', example: 85 },
-            created_at: { type: 'string', format: 'date-time' },
-          },
+            created_at: { type: 'string', format: 'date-time' }
+          }
         },
         Deal: {
           type: 'object',
@@ -107,8 +107,8 @@ All data is tenant-isolated. The tenant is determined from the authenticated use
             stage: { type: 'string', example: 'negotiation' },
             probability: { type: 'number', example: 75 },
             expected_close: { type: 'string', format: 'date' },
-            created_at: { type: 'string', format: 'date-time' },
-          },
+            created_at: { type: 'string', format: 'date-time' }
+          }
         },
         Client: {
           type: 'object',
@@ -119,10 +119,10 @@ All data is tenant-isolated. The tenant is determined from the authenticated use
             phone: { type: 'string', example: '+1234567890' },
             company: { type: 'string', example: 'Acme Corp' },
             industry: { type: 'string', example: 'Technology' },
-            created_at: { type: 'string', format: 'date-time' },
-          },
-        },
-      },
+            created_at: { type: 'string', format: 'date-time' }
+          }
+        }
+      }
     },
     security: [{ bearerAuth: [] }],
     tags: [
@@ -146,8 +146,8 @@ All data is tenant-isolated. The tenant is determined from the authenticated use
       { name: 'E-Commerce', description: 'E-commerce operations' },
       { name: 'Inventory', description: 'Inventory & supply chain' },
       { name: 'Documents', description: 'Document management' },
-      { name: 'Reports', description: 'Reports & analytics' },
-    ],
+      { name: 'Reports', description: 'Reports & analytics' }
+    ]
   },
   // Scan all route files for @swagger JSDoc annotations
   apis: [
@@ -161,8 +161,8 @@ All data is tenant-isolated. The tenant is determined from the authenticated use
     path.join(__dirname, '../hr/employeeRoutes.{ts,js}'),
     path.join(__dirname, '../finance/financeRoutes.{ts,js}'),
     path.join(__dirname, '../setting/settingRoutes.{ts,js}'),
-    path.join(__dirname, '../health/healthRoutes.{ts,js}'),
-  ],
+    path.join(__dirname, '../health/healthRoutes.{ts,js}')
+  ]
 };
 
 export const swaggerSpec = swaggerJsdoc(options);

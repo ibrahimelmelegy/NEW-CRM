@@ -1,6 +1,5 @@
 import { Column, DataType, ForeignKey, BelongsTo, Model, Table } from 'sequelize-typescript';
 import CommActivity from './activityModel';
-import User from '../../user/userModel';
 
 export enum MeetingType {
   INTERNAL = 'INTERNAL',

@@ -215,7 +215,7 @@ const onSubmit = handleSubmit((values: unknown, actions: unknown) => {
 });
 
 let users: unknown = await useApiFetch('users');
-users = users?.body?.docs?.map((e) => ({
+users = users?.body?.docs?.map(e => ({
   label: e.name,
   value: e.id
 }));
@@ -224,7 +224,7 @@ const selectedLead = ref<Record<string, unknown>>([]);
 const response = await getLeads();
 const leads = response.leads;
 
-const mappedLeads = leads?.map((e) => ({
+const mappedLeads = leads?.map(e => ({
   label: e.name,
   value: e.name,
   id: e.id
@@ -245,7 +245,7 @@ if (leadId) {
       selectedLead.value = lead;
     }
   } else {
-    selectedLead.value = leads?.find((lead) => lead.id === leadId);
+    selectedLead.value = leads?.find(lead => lead.id === leadId);
   }
 
   if (selectedLead.value) {
@@ -258,13 +258,13 @@ const mappedClients = ref<{ label: string; value: unknown }[]>();
 //  Get clients
 const { clients } = await getClients();
 // Map clients to Select Options
-mappedClients.value = clients?.map((e) => ({
+mappedClients.value = clients?.map(e => ({
   label: e.clientName,
   value: e.id
 }));
 
 function getSelectedLead(e: unknown) {
-  selectedLead.value = leads?.find((lead) => lead.id === e.id);
+  selectedLead.value = leads?.find(lead => lead.id === e.id);
   if (selectedLead.value?.email) {
     isEmail.value = true;
   } else if (selectedLead.value?.phone) {

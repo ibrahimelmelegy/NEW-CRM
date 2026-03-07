@@ -10,11 +10,7 @@ import { TenantPlan } from './tenantModel';
  * GET /api/admin/tenants
  * List all tenants with pagination and filtering. Superadmin only.
  */
-export const listTenants = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const listTenants = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { page, limit, status, plan, search } = req.query;
     const result = await tenantService.getAllTenants({
@@ -43,11 +39,7 @@ export const listTenants = async (
  * GET /api/admin/tenants/:id
  * Get a specific tenant by ID. Superadmin only.
  */
-export const getTenantById = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const getTenantById = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const id = req.params.id as string;
     const tenant = await tenantService.getTenantById(id);
@@ -67,11 +59,7 @@ export const getTenantById = async (
  * POST /api/admin/tenants
  * Create a new tenant. Superadmin only.
  */
-export const createTenant = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const createTenant = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { name, domain, logo, plan, maxUsers, maxStorageMB, settings } = req.body;
 
@@ -100,11 +88,7 @@ export const createTenant = async (
  * PUT /api/admin/tenants/:id
  * Update a tenant. Superadmin only.
  */
-export const updateTenant = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const updateTenant = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const id = req.params.id as string;
     const { name, domain, logo, status, plan, maxUsers, maxStorageMB, isActive } = req.body;
@@ -135,11 +119,7 @@ export const updateTenant = async (
  * PUT /api/admin/tenants/:id/settings
  * Update tenant settings (JSONB merge). Superadmin only.
  */
-export const updateTenantSettings = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const updateTenantSettings = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const id = req.params.id as string;
     const settings = req.body;
@@ -166,11 +146,7 @@ export const updateTenantSettings = async (
  * GET /api/admin/tenants/:id/usage
  * Get tenant resource usage and limits. Superadmin only.
  */
-export const getTenantUsage = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const getTenantUsage = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const id = req.params.id as string;
     const usage = await tenantService.checkTenantLimits(id);
@@ -192,11 +168,7 @@ export const getTenantUsage = async (
  * GET /api/tenant/me
  * Get the current user's tenant info. Any authenticated user.
  */
-export const getMyTenant = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const getMyTenant = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const tenantId = req.user?.tenantId;
     if (!tenantId) {
@@ -220,11 +192,7 @@ export const getMyTenant = async (
  * GET /api/tenant/usage
  * Get the current user's tenant usage. Any authenticated user.
  */
-export const getMyTenantUsage = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const getMyTenantUsage = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const tenantId = req.user?.tenantId;
     if (!tenantId) {

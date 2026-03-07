@@ -770,13 +770,17 @@ const competitorRadarOption = computed(() => {
   const topCompetitors = competitors.value.filter(c => !c.isOurs).slice(0, 3);
 
   const radarData = [
-    ...(ourBrand ? [{
-      value: [0, ourBrand.sentimentScore || 0, 0, 0, 0],
-      name: ourBrand.name,
-      lineStyle: { width: 3, color: '#7849ff' },
-      itemStyle: { color: '#7849ff' },
-      areaStyle: { color: 'rgba(120, 73, 255, 0.2)' }
-    }] : []),
+    ...(ourBrand
+      ? [
+          {
+            value: [0, ourBrand.sentimentScore || 0, 0, 0, 0],
+            name: ourBrand.name,
+            lineStyle: { width: 3, color: '#7849ff' },
+            itemStyle: { color: '#7849ff' },
+            areaStyle: { color: 'rgba(120, 73, 255, 0.2)' }
+          }
+        ]
+      : []),
     ...topCompetitors.map((comp, idx) => {
       const colors = ['#3b82f6', '#f59e0b', '#ef4444'];
       return {

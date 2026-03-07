@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { ArrayMinSize, IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, Max, Min, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsOptional, IsPositive, Max, Min, ValidateNested } from 'class-validator';
 import { IsNotBlank } from '../../utils/custom-validators/not-bank.validator';
 
 export class createAdditionalMaterialItemsInput {

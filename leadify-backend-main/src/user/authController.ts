@@ -24,7 +24,7 @@ if (!SECRET_KEY) {
   throw new Error('FATAL: SECRET_KEY environment variable is not set. Server cannot start without it.');
 }
 
-export const registerWorkspace = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const registerWorkspace = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
   const { workspaceName, userName, email, password } = req.body;
   const transaction = await sequelize.transaction();
 
@@ -98,7 +98,7 @@ export const registerWorkspace = async (req: Request, res: Response, next: NextF
   }
 };
 
-export const loginUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const loginUser = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
   const { email, password } = req.body;
   // Login attempt - sensitive data not logged
 
@@ -169,7 +169,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-export const getUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getUserProfile = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '') || req.cookies?.[COOKIE_NAME] || null;
 
@@ -190,6 +190,7 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
     // Fetch the user data
     const user = await User.findByPk(decoded.id, {
       attributes: { exclude: ['password'] },
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       include: [{ model: require('../role/roleModel').default }] // Dynamically load Role to avoid circular deps
     });
 
@@ -204,7 +205,7 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-export const logoutUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const logoutUser = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '') || req.cookies?.[COOKIE_NAME] || null;
     if (!token) {
@@ -222,7 +223,7 @@ export const logoutUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const forgotPassword = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
   const { email } = req.body;
 
   try {
@@ -240,7 +241,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
       });
 
-      const resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
+      const _resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
 
       // TODO: Integrate with email service for password reset emails
       // Send resetLink to user.email via the application's email service
@@ -252,7 +253,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-export const resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const resetPassword = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
   const { token, newPassword } = req.body;
 
   try {
@@ -294,7 +295,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-export const checkResetToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const checkResetToken = async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
   const { token } = req.body;
 
   try {

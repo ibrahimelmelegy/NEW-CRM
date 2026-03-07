@@ -218,7 +218,7 @@ const mobileFilteredBudgets = computed(() => {
   const data = table.value.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((b) => {
+  return data.filter(b => {
     const name = (b.budgetDetails?.title || b.name || '').toLowerCase();
     const cat = (b.categoryName || '').toLowerCase();
     return name.includes(q) || cat.includes(q);

@@ -34,7 +34,7 @@ function handleSuccess(message: string) {
  */
 export async function getRole(id: string | string[]): Promise<RoleData> {
   try {
-    const { body: role, success } = await useApiFetch(`role/${id}`);
+    const { body: role } = await useApiFetch(`role/${id}`);
     return role as unknown as RoleData;
   } catch (error) {
     console.error('Error fetching role:', error instanceof Error ? error.message : error);

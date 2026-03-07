@@ -363,13 +363,11 @@
 </template>
 
 <script setup lang="ts">
-import { use } from 'echarts/core';
+import { use, graphic } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
-import { graphic } from 'echarts/core';
-
 
 definePageMeta({ title: 'Account-Based Marketing' });
 

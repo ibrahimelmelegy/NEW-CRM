@@ -1,6 +1,5 @@
 import { Expose } from 'class-transformer';
-import { ArrayMinSize, IsInt, IsOptional, IsUUID, IsObject, IsDefined, ValidateNested, IsPositive, Max, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import { ArrayMinSize, IsInt, IsOptional, IsObject, IsDefined, IsPositive, Max, Min } from 'class-validator';
 class MaterialItem {
   @Expose()
   @IsInt()

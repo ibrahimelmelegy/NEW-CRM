@@ -59,7 +59,11 @@ export function validateBody<T extends object>(dtoClass: ClassConstructor<T>) {
 
 // Middleware for validating the query
 export function validateQuery<T extends object>(dtoClass: ClassConstructor<T>) {
-  return async (req: Request<{}, {}, {}, ParsedQs>, res: Response, next: NextFunction): Promise<any> => {
+  return async (
+    req: Request<Record<string, string>, Record<string, unknown>, Record<string, unknown>, ParsedQs>,
+    res: Response,
+    next: NextFunction
+  ): Promise<any> => {
     try {
       // Step 1: Transform the query params into an instance of the DTO class
       const dtoObject = plainToInstance(dtoClass, req.query, {

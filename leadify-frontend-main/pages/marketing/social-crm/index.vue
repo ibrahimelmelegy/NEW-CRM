@@ -264,12 +264,12 @@ const summaryStats = computed(() => {
   const platformBreakdown = platformOptions
     .map(p => ({
       platform: p.label,
-      count: data.filter((i) => i.platform === p.value).length
+      count: data.filter(i => i.platform === p.value).length
     }))
     .filter(p => p.count > 0);
   const breakdownText = platformBreakdown.map(p => `${p.platform}: ${p.count}`).join(', ') || '--';
   const totalFollowers = data.reduce((sum, i) => sum + (i.followers || 0), 0);
-  const positiveSentiment = data.filter((i) => i.sentiment === 'POSITIVE').length;
+  const positiveSentiment = data.filter(i => i.sentiment === 'POSITIVE').length;
 
   return [
     { label: t('marketing.socialCrm.totalProfiles'), value: total, icon: 'ph:users-three-bold', color: '#7849ff' },
@@ -282,10 +282,10 @@ const summaryStats = computed(() => {
 const filteredData = computed(() => {
   let data = items.value;
   if (filterPlatform.value) {
-    data = data.filter((i) => i.platform === filterPlatform.value);
+    data = data.filter(i => i.platform === filterPlatform.value);
   }
   if (filterSentiment.value) {
-    data = data.filter((i) => i.sentiment === filterSentiment.value);
+    data = data.filter(i => i.sentiment === filterSentiment.value);
   }
   if (!search.value) return data;
   const q = search.value.toLowerCase();
@@ -455,12 +455,12 @@ const sentimentTotal = computed(() => {
 
 const maxEngagement = computed(() => {
   if (!socialDashboard.value?.engagementTrends?.length) return 0;
-  return Math.max(...socialDashboard.value.engagementTrends.map((t) => t.count || 0));
+  return Math.max(...socialDashboard.value.engagementTrends.map(t => t.count || 0));
 });
 
 const maxFollowers = computed(() => {
   if (!socialDashboard.value?.followerGrowth?.length) return 0;
-  return Math.max(...socialDashboard.value.followerGrowth.map((g) => g.count || 0));
+  return Math.max(...socialDashboard.value.followerGrowth.map(g => g.count || 0));
 });
 
 function getHealthColor(health: number): string {

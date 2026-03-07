@@ -51,13 +51,15 @@ router.get('/unsubscribe', async (req: Request, res: Response) => {
 
     await pref.update({ preferences: prefs });
 
-    res.status(200).send(
-      '<html><body style="font-family:sans-serif;text-align:center;padding:60px;">' +
-      '<h2>Successfully unsubscribed</h2>' +
-      `<p>You will no longer receive email notifications for <strong>${notificationType.replace(/_/g, ' ').toLowerCase()}</strong>.</p>` +
-      '<p>You can re-enable email notifications from your CRM settings at any time.</p>' +
-      '</body></html>'
-    );
+    res
+      .status(200)
+      .send(
+        '<html><body style="font-family:sans-serif;text-align:center;padding:60px;">' +
+          '<h2>Successfully unsubscribed</h2>' +
+          `<p>You will no longer receive email notifications for <strong>${notificationType.replace(/_/g, ' ').toLowerCase()}</strong>.</p>` +
+          '<p>You can re-enable email notifications from your CRM settings at any time.</p>' +
+          '</body></html>'
+      );
   } catch (error) {
     console.error('Unsubscribe error:', error);
     res.status(500).send('<h2>Something went wrong. Please try again later.</h2>');

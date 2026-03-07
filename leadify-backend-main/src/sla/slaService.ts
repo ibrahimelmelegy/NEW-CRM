@@ -1,4 +1,4 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op } from 'sequelize';
 import { SLAPolicy, SLAInstance, SLAInstanceStatus, SLAConditions, EscalationRule, BusinessHoursConfig } from './slaModel';
 import User from '../user/userModel';
 import BaseError from '../utils/error/base-http-exception';

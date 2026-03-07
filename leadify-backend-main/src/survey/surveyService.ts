@@ -12,7 +12,9 @@ interface SurveyQuestion {
 }
 
 class SurveyService {
-  async create(data: any, tenantId?: string) { return Survey.create({ ...data, tenantId }); }
+  async create(data: any, tenantId?: string) {
+    return Survey.create({ ...data, tenantId });
+  }
 
   async getAll(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
@@ -24,7 +26,9 @@ class SurveyService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async getById(id: number) { return Survey.findByPk(id, { include: [{ model: SurveyResponse, as: 'responses' }] }); }
+  async getById(id: number) {
+    return Survey.findByPk(id, { include: [{ model: SurveyResponse, as: 'responses' }] });
+  }
 
   async update(id: number, data: any) {
     const item = await Survey.findByPk(id);
@@ -47,7 +51,9 @@ class SurveyService {
     if (survey.status === 'CLOSED' || survey.status === 'ARCHIVED') return null;
     const response = await SurveyResponse.create({ surveyId, ...data, completedAt: new Date(), tenantId: survey.tenantId });
     await survey.increment('responseCount');
-    try { io.emit('survey:response_submitted', { surveyId, responseId: response.id, surveyTitle: survey.title }); } catch {}
+    try {
+      io.emit('survey:response_submitted', { surveyId, responseId: response.id, surveyTitle: survey.title });
+    } catch {}
     return response;
   }
 
@@ -72,9 +78,7 @@ class SurveyService {
 
     const questions: SurveyQuestion[] = survey.questions || [];
     // Find the NPS question: type 'nps' or 'rating' that represents a 0-10 scale
-    const npsQuestion = questions.find(
-      (q) => q.type === 'nps' || (q.type === 'rating' && q.text.toLowerCase().includes('recommend'))
-    );
+    const npsQuestion = questions.find(q => q.type === 'nps' || (q.type === 'rating' && q.text.toLowerCase().includes('recommend')));
 
     if (!npsQuestion) {
       return { error: 'No NPS question found in this survey' };
@@ -112,9 +116,9 @@ class SurveyService {
     return {
       nps,
       promoters: { count: promoters, percentage: Math.round(promoterPct * 100) / 100 },
-      passives: { count: passives, percentage: Math.round(((passives / validResponses) * 100) * 100) / 100 },
+      passives: { count: passives, percentage: Math.round((passives / validResponses) * 100 * 100) / 100 },
       detractors: { count: detractors, percentage: Math.round(detractorPct * 100) / 100 },
-      totalResponses: validResponses,
+      totalResponses: validResponses
     };
   }
 
@@ -148,7 +152,7 @@ class SurveyService {
         case 'rating':
         case 'nps':
         case 'number': {
-          const numValues = values.map(Number).filter((n) => !isNaN(n));
+          const numValues = values.map(Number).filter(n => !isNaN(n));
           if (numValues.length > 0) {
             const sum = numValues.reduce((a, b) => a + b, 0);
             // Build distribution map
@@ -163,7 +167,7 @@ class SurveyService {
               average: Math.round((sum / numValues.length) * 100) / 100,
               min: Math.min(...numValues),
               max: Math.max(...numValues),
-              distribution,
+              distribution
             };
           } else {
             analytics[qId] = { questionText: question.text, type: question.type, responseCount: 0 };
@@ -194,7 +198,7 @@ class SurveyService {
             questionText: question.text,
             type: question.type,
             responseCount: values.length,
-            optionCounts,
+            optionCounts
           };
           break;
         }
@@ -204,7 +208,7 @@ class SurveyService {
           analytics[qId] = {
             questionText: question.text,
             type: question.type,
-            responseCount: values.length,
+            responseCount: values.length
           };
           break;
         }
@@ -215,7 +219,7 @@ class SurveyService {
       surveyId,
       surveyTitle: survey.title,
       totalResponses: responses.length,
-      questionAnalytics: analytics,
+      questionAnalytics: analytics
     };
   }
 
@@ -229,16 +233,14 @@ class SurveyService {
 
     const totalStarted = await SurveyResponse.count({ where: { surveyId } });
     const totalCompleted = await SurveyResponse.count({
-      where: { surveyId, completedAt: { [Op.ne]: null } },
+      where: { surveyId, completedAt: { [Op.ne]: null } }
     });
 
     return {
       surveyId,
       started: totalStarted,
       completed: totalCompleted,
-      completionRate: totalStarted > 0
-        ? Math.round((totalCompleted / totalStarted) * 10000) / 100
-        : 0,
+      completionRate: totalStarted > 0 ? Math.round((totalCompleted / totalStarted) * 10000) / 100 : 0
     };
   }
 
@@ -257,18 +259,20 @@ class SurveyService {
     const analyticsResult = await this.getResponseAnalytics(surveyId);
 
     await survey.update({
-      status: 'CLOSED',
+      status: 'CLOSED'
     });
 
-    try { io.emit('survey:closed', { surveyId, title: survey.title, responseCount: survey.responseCount }); } catch {}
+    try {
+      io.emit('survey:closed', { surveyId, title: survey.title, responseCount: survey.responseCount });
+    } catch {}
     return {
       survey,
       finalSnapshot: {
         closedAt: new Date(),
         nps: npsResult,
         completion: completionResult,
-        analytics: analyticsResult,
-      },
+        analytics: analyticsResult
+      }
     };
   }
   /**

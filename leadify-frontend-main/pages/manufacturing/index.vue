@@ -428,7 +428,7 @@ const editBom = (bom: unknown) => {
     productName: bom.productName,
     code: bom.code,
     version: bom.version,
-    items: (bom.items || []).map((i) => ({ name: i.name, quantity: i.quantity, unitCost: i.unitCost || 0 }))
+    items: (bom.items || []).map(i => ({ name: i.name, quantity: i.quantity, unitCost: i.unitCost || 0 }))
   };
   showBomDialog.value = true;
 };

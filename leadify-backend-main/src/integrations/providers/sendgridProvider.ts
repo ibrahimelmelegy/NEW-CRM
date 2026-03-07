@@ -41,6 +41,7 @@ export class SendGridProvider {
   private getClient() {
     if (!this.sgMail && SendGridProvider.isConfigured()) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const sgMail = require('@sendgrid/mail');
         sgMail.setApiKey(process.env.SENDGRID_API_KEY);
         this.sgMail = sgMail;
@@ -64,7 +65,7 @@ export class SendGridProvider {
           from: input.from || this.getDefaultFrom(),
           subject: input.subject,
           text: input.text,
-          html: input.html,
+          html: input.html
         });
         return { success: true, data: { messageId: response.headers['x-message-id'] || `sg_${Date.now()}` }, mock: false };
       }
@@ -85,7 +86,7 @@ export class SendGridProvider {
           from: input.from || this.getDefaultFrom(),
           subject: input.subject,
           text: input.text,
-          html: input.html,
+          html: input.html
         }));
         await client.send(messages);
         return { success: true, data: { messageCount: messages.length, messageIds: messages.map(() => `sg_${Date.now()}`) }, mock: false };
@@ -107,7 +108,7 @@ export class SendGridProvider {
           to: input.to,
           from: input.from || this.getDefaultFrom(),
           templateId: input.templateId,
-          dynamicTemplateData: input.dynamicData,
+          dynamicTemplateData: input.dynamicData
         });
         return { success: true, data: { messageId: response.headers['x-message-id'] || `sg_tpl_${Date.now()}` }, mock: false };
       }
@@ -119,9 +120,13 @@ export class SendGridProvider {
     }
   }
 
-  async getEmailStats(startDate?: string, endDate?: string): Promise<EmailResult<{ delivered: number; opens: number; clicks: number; bounces: number }>> {
+  async getEmailStats(
+    startDate?: string,
+    endDate?: string
+  ): Promise<EmailResult<{ delivered: number; opens: number; clicks: number; bounces: number }>> {
     try {
       if (SendGridProvider.isConfigured()) {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const sgClient = require('@sendgrid/client');
         sgClient.setApiKey(process.env.SENDGRID_API_KEY);
         const queryParams: any = {};

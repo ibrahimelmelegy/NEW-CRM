@@ -338,7 +338,7 @@ async function loadData() {
     if (empRes?.success && empRes.body) {
       const data = empRes.body as unknown;
       const docs = data.docs || data || [];
-      employees.value = docs.map((e) => ({
+      employees.value = docs.map(e => ({
         id: e.id,
         name: e.firstName ? `${e.firstName} ${e.lastName || ''}`.trim() : e.name || `Employee #${e.id}`
       }));

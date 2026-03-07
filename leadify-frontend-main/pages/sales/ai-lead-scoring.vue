@@ -697,7 +697,7 @@ async function loadModels() {
 async function loadLeads() {
   try {
     // Try to score leads using the first active model, or fall back to the lead list
-    const activeModel = models.value.find((m) => m.status === 'active');
+    const activeModel = models.value.find(m => m.status === 'active');
     if (activeModel && (activeModel as unknown).id) {
       const res = await useApiFetch(`ai-lead-scoring/${(activeModel as unknown).id}/score`, 'POST');
       if (res.success && Array.isArray(res.body)) {
@@ -719,7 +719,7 @@ async function loadLeads() {
 
 async function loadFeatureImportance() {
   try {
-    const activeModel = models.value.find((m) => m.status === 'active');
+    const activeModel = models.value.find(m => m.status === 'active');
     if (activeModel && (activeModel as unknown).id) {
       const res = await useApiFetch(`ai-lead-scoring/${(activeModel as unknown).id}/feature-importance`);
       if (res.success && Array.isArray(res.body)) {

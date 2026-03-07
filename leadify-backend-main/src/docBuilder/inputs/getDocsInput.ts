@@ -1,6 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsOptional, IsString, IsIn } from 'class-validator';
-import { DocTypeEnum, DocStatusEnum } from '../models/docBuilderModel';
+import { IsOptional, IsString } from 'class-validator';
 
 export enum DocSortByEnum {
   title = 'title',

@@ -611,7 +611,7 @@ const territoriesByRegion = computed(() => {
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = enrichedTerritories.value;
   const total = data.length;
-  const assignedReps = new Set(data.flatMap(t => (t._reps || []).map((r) => r.id || r.name)));
+  const assignedReps = new Set(data.flatMap(t => (t._reps || []).map(r => r.id || r.name)));
   const unassignedLeads = data.reduce((sum, t) => sum + Math.max(0, (t._leadsCount || 0) - (t._reps?.length || 0) * 10), 0);
   const totalRevenue = data.reduce((sum, t) => sum + (t._revenue || 0), 0);
 
@@ -731,7 +731,7 @@ const filteredStaff = computed(() => {
   let data = staffList.value;
   if (staffSearch.value) {
     const q = staffSearch.value.toLowerCase();
-    data = data.filter((s) => (s.name || '').toLowerCase().includes(q) || (s.email || '').toLowerCase().includes(q));
+    data = data.filter(s => (s.name || '').toLowerCase().includes(q) || (s.email || '').toLowerCase().includes(q));
   }
   return data;
 });
@@ -883,7 +883,7 @@ async function handleSaveTerritory() {
 // ──────────── Assignment ────────────
 function openAssignDialog(territory: unknown) {
   assigningTerritory.value = territory;
-  selectedStaffIds.value = (territory._reps || []).map((r) => r.id);
+  selectedStaffIds.value = (territory._reps || []).map(r => r.id);
   staffSearch.value = '';
   assignDialogVisible.value = true;
 }
@@ -950,7 +950,7 @@ async function handleBulkExport() {
     const data = selectedRows.value.length ? selectedRows.value : enrichedTerritories.value;
     const csvRows = [
       ['Name', 'Region', 'Leads', 'Deals', 'Pipeline Value', 'Revenue', 'Coverage %'].join(','),
-      ...data.map((t) =>
+      ...data.map(t =>
         [t.name, t.type || '', t._leadsCount || 0, t._dealsCount || 0, t._pipelineValue || 0, t._revenue || 0, (t._coverage || 0).toFixed(0)].join(
           ','
         )

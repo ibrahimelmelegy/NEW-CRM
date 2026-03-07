@@ -129,7 +129,7 @@ class TaskService {
   /**
    * Update an existing task.
    */
-  public async updateTask(id: number, data: any, userId: number) {
+  public async updateTask(id: number, data: any, _userId: number) {
     const task = await this.taskOrError({ id });
 
     // If status is being changed to COMPLETED, set completedAt
@@ -159,7 +159,7 @@ class TaskService {
   /**
    * Mark a task as completed.
    */
-  public async completeTask(id: number, userId: number) {
+  public async completeTask(id: number, _userId: number) {
     const task = await this.taskOrError({ id });
 
     if (task.status === TaskStatus.COMPLETED) {

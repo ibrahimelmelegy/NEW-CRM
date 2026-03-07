@@ -514,7 +514,7 @@ export default {
               let colspan = 1;
               let data;
 
-              if (cells?.[index + 1]?.trim() == '') {
+              if (cells?.[index + 1]?.trim() === '') {
                 colspan = colspan + 1;
                 if (cells?.[index] && cells?.[index]?.trim() !== '') data = cells?.[index];
               }
@@ -562,7 +562,11 @@ export default {
         props: this.invoiceData
       });
 
-      if (this?.invoiceData?.proposalDetails?.content == '' || this?.invoiceData?.proposalDetails?.content == null) {
+      if (
+        this?.invoiceData?.proposalDetails?.content === '' ||
+        this?.invoiceData?.proposalDetails?.content === null ||
+        this?.invoiceData?.proposalDetails?.content === undefined
+      ) {
         const htmlString = defaultDataProposal;
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlString, 'text/html');
@@ -1127,7 +1131,7 @@ involved.  </div>
               uuid: this.new_uuid(),
               content_idx: index + 1,
               isInvoice: false,
-              content: `${tableHTML == '' ? el.innerHTML : tableHTML}`
+              content: `${tableHTML === '' ? el.innerHTML : tableHTML}`
             });
           }
           tableHTML = '';
@@ -1201,7 +1205,7 @@ involved.  </div>
         selection &&
         selection.rangeCount &&
         selection.anchorNode &&
-        !(selection.anchorNode.dataset && selection.anchorNode.dataset.isVDEPage != null)
+        !(selection.anchorNode.dataset && selection.anchorNode.dataset.isVDEPage !== null && selection.anchorNode.dataset.isVDEPage !== undefined)
       ) {
         const range = selection.getRangeAt(0);
         range.insertNode(start_marker);
@@ -1221,14 +1225,14 @@ involved.  </div>
         if (
           !page.template &&
           (prev_page_modified_flag ||
-            page.elt.innerHTML != page.prev_innerHTML ||
-            (next_page_elt && !next_page.template && next_page_elt.innerHTML != next_page.prev_innerHTML))
+            page.elt.innerHTML !== page.prev_innerHTML ||
+            (next_page_elt && !next_page.template && next_page_elt.innerHTML !== next_page.prev_innerHTML))
         ) {
           prev_page_modified_flag = true;
 
           // BACKWARD-PROPAGATION
           // check if content doesn't overflow, and that next page exists and has the same content_idx
-          if (page.elt.clientHeight <= this.pages_height && next_page && next_page.content_idx == page.content_idx) {
+          if (page.elt.clientHeight <= this.pages_height && next_page && next_page.content_idx === page.content_idx) {
             // try to append every node from the next page until it doesn't fit
             move_children_backwards_with_merging(
               page.elt,
@@ -1241,7 +1245,7 @@ involved.  </div>
           // check if content overflows
           if (page.elt.clientHeight > this.pages_height) {
             // if there is no next page for the same content, create it
-            if (!next_page || next_page.content_idx != page.content_idx) {
+            if (!next_page || next_page.content_idx !== page.content_idx) {
               next_page = {
                 uuid: this.new_uuid(),
                 content_idx: page.content_idx
@@ -1257,7 +1261,7 @@ involved.  </div>
 
           // CLEANING
           // remove next page if it is empty
-          if (next_page_elt && next_page.content_idx == page.content_idx && !next_page_elt.childNodes.length) {
+          if (next_page_elt && next_page.content_idx === page.content_idx && !next_page_elt.childNodes.length) {
             this.pages.splice(page_idx + 1, 1);
           }
         }
@@ -1296,7 +1300,7 @@ involved.  </div>
       if (!e) return; // check that event is set
       this.fit_content_over_pages(); // fit content according to modifications
       this.emit_new_content(); // emit content modification
-      if (e.inputType != 'insertText') this.process_current_text_style(); // update current style if it has changed
+      if (e.inputType !== 'insertText') this.process_current_text_style(); // update current style if it has changed
     },
 
     applySectionType() {
@@ -1373,7 +1377,7 @@ involved.  </div>
           selection.addRange(range);
         }
 
-        if (this.sections.type == 'table') {
+        if (this.sections.type === 'table') {
           // First, collect all unique custom column keys from all items
           const customColumnKeys = new Set();
           this?.financeTable?.financeTable?.items?.forEach(item => {
@@ -1637,14 +1641,14 @@ involved.  </div>
           // For content pages, get the HTML content
           let elt = page.elt;
           while (
-            elt.children.length == 1 &&
+            elt.children.length === 1 &&
             elt.firstChild.tagName &&
-            elt.firstChild.tagName.toLowerCase() == 'div' &&
+            elt.firstChild.tagName.toLowerCase() === 'div' &&
             !elt.firstChild.getAttribute('style')
           ) {
             elt = elt.firstChild;
           }
-          const content = elt.innerHTML == '<br>' || elt.innerHTML == '<!---->' ? '' : elt.innerHTML;
+          const content = elt.innerHTML === '<br>' || elt.innerHTML === '<!---->' ? '' : elt.innerHTML;
           new_content.push(content);
         }
       });
@@ -1714,7 +1718,7 @@ involved.  </div>
       let top_mm;
       let bkg_width_mm;
       let bkg_height_mm;
-      if (this.display == 'horizontal') {
+      if (this.display === 'horizontal') {
         if (inner_width > this.pages.length * page_with_plus_spacing) {
           nb_pages_x = Math.floor(inner_width / page_with_plus_spacing);
           left_px = (inner_width / (nb_pages_x * 2)) * (1 + page_idx * 2) - page_width / 2;
@@ -1728,7 +1732,7 @@ involved.  </div>
       } else {
         // "grid", vertical
         nb_pages_x = Math.floor(inner_width / page_with_plus_spacing);
-        if (nb_pages_x < 1 || this.display == 'vertical') nb_pages_x = 1;
+        if (nb_pages_x < 1 || this.display === 'vertical') nb_pages_x = 1;
         page_column = page_idx % nb_pages_x;
         x_pos = (inner_width / (nb_pages_x * 2)) * (1 + page_column * 2) - page_width / 2;
         x_ofx = Math.max(0, (page_width * this.zoom - inner_width) / 2);
@@ -1769,7 +1773,7 @@ involved.  </div>
     // Update pages <div> from this.pages data
     update_pages_elts() {
       // Removing deleted pages
-      const deleted_pages = [...this.$refs.content?.children].filter(page_elt => !this.pages.find(page => page.elt == page_elt));
+      const deleted_pages = [...this.$refs.content?.children].filter(page_elt => !this.pages.find(page => page.elt === page_elt));
       for (const page_elt of deleted_pages) {
         page_elt.remove();
       }

@@ -471,12 +471,7 @@ router.get(
  *       500:
  *         description: Internal Server Error
  */
-router.get(
-  '/analytics',
-  authenticateUser,
-  HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS]),
-  clientController.getClientAnalytics
-);
+router.get('/analytics', authenticateUser, HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS]), clientController.getClientAnalytics);
 
 /**
  * @swagger
@@ -493,12 +488,7 @@ router.get(
  *       500:
  *         description: Internal Server Error
  */
-router.get(
-  '/segments',
-  authenticateUser,
-  HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS]),
-  clientController.segmentClients
-);
+router.get('/segments', authenticateUser, HasPermission([ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS]), clientController.segmentClients);
 
 /**
  * @swagger
@@ -605,40 +595,15 @@ router.get(
   clientController.getCompanyNotes
 );
 
-router.post(
-  '/:id/notes',
-  authenticateUser,
-  HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]),
-  clientController.createCompanyNote
-);
+router.post('/:id/notes', authenticateUser, HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]), clientController.createCompanyNote);
 
-router.put(
-  '/notes/:noteId',
-  authenticateUser,
-  HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]),
-  clientController.updateCompanyNote
-);
+router.put('/notes/:noteId', authenticateUser, HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]), clientController.updateCompanyNote);
 
-router.delete(
-  '/notes/:noteId',
-  authenticateUser,
-  HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]),
-  clientController.deleteCompanyNote
-);
+router.delete('/notes/:noteId', authenticateUser, HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]), clientController.deleteCompanyNote);
 
-router.post(
-  '/bulk-update',
-  authenticateUser,
-  HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]),
-  clientController.bulkUpdateCompanies
-);
+router.post('/bulk-update', authenticateUser, HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]), clientController.bulkUpdateCompanies);
 
-router.post(
-  '/merge',
-  authenticateUser,
-  HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]),
-  clientController.mergeCompanies
-);
+router.post('/merge', authenticateUser, HasPermission([ClientPermissionsEnum.EDIT_CLIENTS]), clientController.mergeCompanies);
 
 router.get(
   '/:id',

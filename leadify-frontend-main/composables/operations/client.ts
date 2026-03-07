@@ -123,13 +123,13 @@ export async function getClients(): Promise<UseClientsResult> {
 
     if (success) {
       // Return the docs (leads) from the response
-      const clients = body?.docs?.map((client) => ({
+      const clients = body?.docs?.map(client => ({
         ...client,
         ClientDetails: { title: client?.clientName, text: client?.companyName },
         createdAt: formatDate(client.createdAt),
         // updatedAt: formatDate(lead.updatedAt),
         updatedAt: '-',
-        assign: client.users?.map((el) => el.name).join(', ')
+        assign: client.users?.map(el => el.name).join(', ')
       }));
       const pagination = body?.pagination;
       return { clients, pagination };
@@ -157,7 +157,7 @@ export async function getClients(): Promise<UseClientsResult> {
  */
 export async function getClient(id: string | string[]): Promise<Client> {
   try {
-    const { body: lead, success } = await useApiFetch(`client/${id}`);
+    const { body: lead } = await useApiFetch(`client/${id}`);
     return lead;
   } catch (error) {
     console.error('Error fetching lead:', error instanceof Error ? error.message : error);
@@ -168,7 +168,7 @@ export async function getClient(id: string | string[]): Promise<Client> {
 
 export async function getClientActivity(id: string | string[]): Promise<Lead> {
   try {
-    const { body: lead, success } = await useApiFetch(`activity/client/${id}`);
+    const { body: lead } = await useApiFetch(`activity/client/${id}`);
     return lead;
   } catch (error) {
     console.error('Error fetching lead:', error instanceof Error ? error.message : error);

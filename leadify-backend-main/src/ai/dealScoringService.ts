@@ -300,7 +300,7 @@ class DealScoringService {
     // ===== Factor 8: Invoice/Payment Progress =====
     const invoices = deal.invoice || [];
     if (invoices.length > 0) {
-      const collectedCount = invoices.filter((inv) => inv.collected).length;
+      const collectedCount = invoices.filter(inv => inv.collected).length;
       if (collectedCount > 0) {
         factors.push({
           factor: 'Payment Progress',
@@ -372,7 +372,9 @@ class DealScoringService {
 
   private async getAISuggestions(deal: any, factors: ScoreFactor[], score: number): Promise<string[]> {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const OpenAI = require('openai').default;
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const Integration = require('../integration/integrationModel').default;
 
       const integration = await Integration.findOne({ where: { provider: 'openai', isActive: true } });
@@ -380,6 +382,7 @@ class DealScoringService {
 
       if (integration?.config?.apiKey) {
         try {
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
           const { decrypt } = require('../utils/encryption');
           apiKey = decrypt(integration.config.apiKey);
         } catch {

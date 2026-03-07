@@ -320,18 +320,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { useApiFetch } from '~/composables/useApiFetch';
 // Lazy-load heavy chart dependencies for faster initial page load
 let graphic: any;
 const VChart = defineAsyncComponent(() =>
-  Promise.all([
-    import('echarts/core'),
-    import('vue-echarts')
-  ]).then(([echartsCore, VChartModule]) => {
+  Promise.all([import('echarts/core'), import('vue-echarts')]).then(([echartsCore, VChartModule]) => {
     graphic = echartsCore.graphic;
     return VChartModule;
   })
 );
-import { useApiFetch } from '~/composables/useApiFetch';
 
 definePageMeta({ title: 'Team Performance' });
 
@@ -475,7 +472,11 @@ function getUtilizationLabel(util: number): string {
 
 // ─── Derived Helpers ────────────────────────────────────────
 function getInitials(name: string): string {
-  return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase();
 }
 
 function getPerformanceLevel(revenue: number): string {
@@ -509,14 +510,10 @@ const kpiCards = computed(() => {
   const totalLeads = team.reduce((sum, m) => sum + m.leadsCreated, 0);
 
   // Avg deal close rate: deals won / leads created (as %)
-  const avgCloseRate = totalLeads > 0
-    ? ((totalDeals / totalLeads) * 100).toFixed(1)
-    : '0.0';
+  const avgCloseRate = totalLeads > 0 ? ((totalDeals / totalLeads) * 100).toFixed(1) : '0.0';
 
   // Team utilization: average activity score across all members
-  const avgUtilization = memberCount > 0
-    ? (team.reduce((sum, m) => sum + computeActivityScore(m), 0) / memberCount).toFixed(1)
-    : '0.0';
+  const avgUtilization = memberCount > 0 ? (team.reduce((sum, m) => sum + computeActivityScore(m), 0) / memberCount).toFixed(1) : '0.0';
 
   return [
     {
@@ -626,10 +623,12 @@ const goalCompletionChartOption = computed(() => ({
       barWidth: '40%',
       itemStyle: {
         borderRadius: [6, 6, 0, 0],
-        color: graphic ? new graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: '#7849ff' },
-          { offset: 1, color: '#6730e3' }
-        ]) : '#7849ff'
+        color: graphic
+          ? new graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#7849ff' },
+              { offset: 1, color: '#6730e3' }
+            ])
+          : '#7849ff'
       }
     },
     {
@@ -745,20 +744,22 @@ const activityHeatmapOption = computed(() => {
 
 // ─── Leaderboard Data (computed from real data) ─────────────
 const leaderboardData = computed(() => {
-  return rawTeamData.value.map((member, idx) => {
-    // Derive activity breakdown from available data
-    const totalScore = member.tasksCompleted * 10 + member.dealsWon * 50 + member.leadsCreated * 5 + Math.round(member.revenue / 100);
-    return {
-      name: member.userName,
-      initials: getInitials(member.userName),
-      avatarColor: avatarColors[idx % avatarColors.length],
-      calls: member.leadsCreated,
-      emails: member.tasksCompleted,
-      meetings: member.dealsWon,
-      deals: member.dealsWon,
-      totalScore
-    };
-  }).sort((a, b) => b.totalScore - a.totalScore);
+  return rawTeamData.value
+    .map((member, idx) => {
+      // Derive activity breakdown from available data
+      const totalScore = member.tasksCompleted * 10 + member.dealsWon * 50 + member.leadsCreated * 5 + Math.round(member.revenue / 100);
+      return {
+        name: member.userName,
+        initials: getInitials(member.userName),
+        avatarColor: avatarColors[idx % avatarColors.length],
+        calls: member.leadsCreated,
+        emails: member.tasksCompleted,
+        meetings: member.dealsWon,
+        deals: member.dealsWon,
+        totalScore
+      };
+    })
+    .sort((a, b) => b.totalScore - a.totalScore);
 });
 
 // ─── Workload Chart (computed from real data) ────────────────
@@ -830,9 +831,7 @@ const capacityMembers = computed(() => {
     const score = computeActivityScore(member);
     // Split name: first name + last initial
     const parts = member.userName.split(' ');
-    const shortName = parts.length > 1
-      ? `${parts[0]} ${parts[parts.length - 1][0]}.`
-      : parts[0];
+    const shortName = parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1][0]}.` : parts[0];
     return {
       name: shortName,
       role: t('teamPerformance.teamMember'),
@@ -858,8 +857,8 @@ async function loadData() {
   try {
     const goalsRes = await useApiFetch('goals');
     if (goalsRes.success && Array.isArray(goalsRes.body)) {
-      departmentGoals.value = (goalsRes.body as any[]).filter((g) => g.type === 'department');
-      individualGoals.value = (goalsRes.body as any[]).filter((g) => g.type === 'individual');
+      departmentGoals.value = (goalsRes.body as any[]).filter(g => g.type === 'department');
+      individualGoals.value = (goalsRes.body as any[]).filter(g => g.type === 'individual');
     } else {
       departmentGoals.value = [];
       individualGoals.value = [];

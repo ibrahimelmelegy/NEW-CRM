@@ -65,7 +65,7 @@ export function useWarRoom() {
     if (res.success && res.body) {
       const body = res.body as unknown;
       const users = Array.isArray(body) ? body : body.rows || [];
-      teamMembers.value = users.map((u) => ({
+      teamMembers.value = users.map(u => ({
         id: u.id,
         name: u.name,
         profilePicture: u.profilePicture,

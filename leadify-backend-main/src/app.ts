@@ -10,8 +10,6 @@ import { doubleCsrf } from 'csrf-csrf';
 import { generalLimiter, uploadLimiter, authLimiter, apiIntensiveLimiter, exportLimiter, webhookLimiter } from './middleware/rateLimiter';
 import { sanitizeInput } from './middleware/sanitize';
 import { authenticateUser, HasPermission } from './middleware/authMiddleware';
-import { validateTenant } from './middleware/tenantMiddleware';
-import { tenantRateLimit } from './middleware/tenantRateLimit';
 
 // Validate required SECRET_KEY at startup — never fall back to a hardcoded value
 const CSRF_SECRET = process.env.SECRET_KEY;
@@ -161,7 +159,7 @@ import monitoringRoutes from './monitoring/monitoringRoutes';
 import { metricsMiddleware } from './middleware/metricsMiddleware';
 import { errorTracker } from './middleware/errorTracker';
 
-const fileUpload = require('express-fileupload');
+import fileUpload from 'express-fileupload';
 
 const app: Application = express();
 
@@ -192,10 +190,7 @@ app.use(
 
 // Permissions-Policy header
 app.use((_req: Request, res: Response, next: NextFunction) => {
-  res.setHeader(
-    'Permissions-Policy',
-    'camera=(), microphone=(), geolocation=(self), payment=()'
-  );
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=()');
   next();
 });
 
@@ -272,7 +267,7 @@ const swaggerMiddleware = [
   swaggerUi.serve,
   swaggerUi.setup(swaggerSpec, {
     customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: 'Leadify CRM API Documentation',
+    customSiteTitle: 'Leadify CRM API Documentation'
   })
 ];
 if (process.env.NODE_ENV === 'production') {

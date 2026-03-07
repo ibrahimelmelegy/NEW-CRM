@@ -295,7 +295,7 @@ async function downloadPDFWithTemplate(template: unknown) {
     total: `SR ${po.value.totalAmount}`,
     notes: '',
     items:
-      po.value.items?.map((item) => ({
+      po.value.items?.map(item => ({
         item: item.description,
         qty: item.quantity,
         unit: item.unit || 'pcs',
@@ -334,7 +334,7 @@ async function downloadPDFClassic() {
   doc.text('Project:', 14, 65);
   doc.text(po.value.project?.name || 'N/A', 40, 65);
 
-  const tableData = po.value.items.map((item) => [
+  const tableData = po.value.items.map(item => [
     item.description,
     item.quantity,
     item.unitPrice,

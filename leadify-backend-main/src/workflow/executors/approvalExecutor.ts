@@ -1,5 +1,4 @@
 import WorkflowExecution, { ExecutionStatus } from '../workflowExecutionModel';
-import WorkflowRule from '../workflowModel';
 import { io } from '../../server';
 
 export interface ApprovalConfig {
@@ -47,7 +46,9 @@ async function resolveApproverUserIds(config: ApprovalConfig): Promise<number[]>
 
   if (config.approverRole) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const Role = require('../../role/roleModel').default;
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const User = require('../../user/userModel').default;
 
       const role = await Role.findOne({ where: { name: config.approverRole } });
@@ -118,6 +119,7 @@ export async function executeApproval(nodeConfig: ApprovalConfig, context: Appro
 
   // Create notifications for approver(s)
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const Notification = require('../../notification/notificationModel').default;
 
     for (const userId of approverIds) {

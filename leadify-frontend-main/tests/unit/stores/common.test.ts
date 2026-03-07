@@ -7,6 +7,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 
+import { useMain } from '@/stores/common';
+
 // Track ElNotification calls via a local mock fn
 const mockElNotification = vi.fn();
 
@@ -23,8 +25,6 @@ globalThis.useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
 
 // Mock useAsyncGql (GraphQL composable used by uploadFile)
 (globalThis as any).useAsyncGql = vi.fn();
-
-import { useMain } from '@/stores/common';
 
 describe('useMain', () => {
   let store: ReturnType<typeof useMain>;
@@ -78,10 +78,20 @@ describe('useMain', () => {
 
     it('months should be in correct order', () => {
       const expectedLabels = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
       ];
-      const labels = store.months.map((m) => m.label);
+      const labels = store.months.map(m => m.label);
       expect(labels).toEqual(expectedLabels);
     });
   });

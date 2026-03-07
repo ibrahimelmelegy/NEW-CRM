@@ -74,10 +74,10 @@ export class WhatsAppProvider {
           signal: AbortSignal.timeout(10000)
         });
         if (!response.ok) {
-          const errorBody = await response.json() as { error?: { message?: string } };
+          const errorBody = (await response.json()) as { error?: { message?: string } };
           return { success: false, data: null, error: errorBody.error?.message || `HTTP ${response.status}`, mock: false };
         }
-        const result = await response.json() as { messages: Array<{ id: string }> };
+        const result = (await response.json()) as { messages: Array<{ id: string }> };
         return { success: true, data: { messageId: result.messages[0]?.id || '', status: 'sent' }, mock: false };
       }
       return { success: true, data: { messageId: `mock_wa_${Date.now()}`, status: 'sent' }, mock: true };
@@ -111,10 +111,10 @@ export class WhatsAppProvider {
           signal: AbortSignal.timeout(10000)
         });
         if (!response.ok) {
-          const errorBody = await response.json() as { error?: { message?: string } };
+          const errorBody = (await response.json()) as { error?: { message?: string } };
           return { success: false, data: null, error: errorBody.error?.message || `HTTP ${response.status}`, mock: false };
         }
-        const result = await response.json() as { messages: Array<{ id: string }> };
+        const result = (await response.json()) as { messages: Array<{ id: string }> };
         return { success: true, data: { messageId: result.messages[0]?.id || '', status: 'sent' }, mock: false };
       }
       return { success: true, data: { messageId: `mock_wa_tpl_${Date.now()}`, status: 'sent' }, mock: true };
@@ -149,10 +149,10 @@ export class WhatsAppProvider {
           signal: AbortSignal.timeout(10000)
         });
         if (!response.ok) {
-          const errorBody = await response.json() as { error?: { message?: string } };
+          const errorBody = (await response.json()) as { error?: { message?: string } };
           return { success: false, data: null, error: errorBody.error?.message || `HTTP ${response.status}`, mock: false };
         }
-        const result = await response.json() as { messages: Array<{ id: string }> };
+        const result = (await response.json()) as { messages: Array<{ id: string }> };
         return { success: true, data: { messageId: result.messages[0]?.id || '', status: 'sent' }, mock: false };
       }
       return { success: true, data: { messageId: `mock_wa_media_${Date.now()}`, status: 'sent' }, mock: true };
@@ -178,7 +178,7 @@ export class WhatsAppProvider {
         if (!response.ok) {
           return { success: false, data: null, error: `HTTP ${response.status}`, mock: false };
         }
-        const body = await response.json() as { data: Array<{ name: string; status: string; language: string; category: string }> };
+        const body = (await response.json()) as { data: Array<{ name: string; status: string; language: string; category: string }> };
         return { success: true, data: body.data, mock: false };
       }
       return {
@@ -221,7 +221,9 @@ export class WhatsAppProvider {
         for (const change of e.changes || []) {
           const value = change.value;
           // Incoming messages
-          const messages = value.messages as Array<{ id: string; from: string; timestamp: string; type: string; text?: { body: string } }> | undefined;
+          const messages = value.messages as
+            | Array<{ id: string; from: string; timestamp: string; type: string; text?: { body: string } }>
+            | undefined;
           if (messages) {
             for (const msg of messages) {
               events.push({

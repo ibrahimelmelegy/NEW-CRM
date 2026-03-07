@@ -38,7 +38,7 @@ const setupWorker = () => {
     'workflow-execution-queue',
     async (job: Job<WorkflowJobData>) => {
       // Processing workflow job
-      const { executionId, ruleId, entityType, entityId, actions, entityData, triggerUserId } = job.data;
+      const { executionId, ruleId, entityType: _entityType, entityId: _entityId, actions, entityData, triggerUserId } = job.data;
 
       // Process the exact delayed actions via the service
       if (typeof (workflowService as any).executeDelayedActions === 'function') {
@@ -59,7 +59,7 @@ const setupWorker = () => {
     console.error(`[Queue] Job ${job?.id} failed:`, err.message);
   });
 
-  worker.on('completed', (job: Job) => {
+  worker.on('completed', (_job: Job) => {
     // Job completed
   });
 

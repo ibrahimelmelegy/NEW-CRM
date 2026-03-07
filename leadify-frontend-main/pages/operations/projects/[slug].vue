@@ -302,7 +302,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
           size="24"
         )
         .mt-2
-          h4.text-neutral-800.font-semibold.text-sm.mb-1 {{ item?.status == "assigned" ? $t('operations.projects.activity.assigned') : item?.status == "create" ? $t('operations.projects.activity.create') : item?.status?.toString()?.toUpperCase() }}
+          h4.text-neutral-800.font-semibold.text-sm.mb-1 {{ item?.status === "assigned" ? $t('operations.projects.activity.assigned') : item?.status === "create" ? $t('operations.projects.activity.create') : item?.status?.toString()?.toUpperCase() }}
           p.text-neutral-500.text-xs.mb-4.font-medium {{ formatDate(item?.createdAt) }}
           .glass-card.p-5.rounded-3xl(class="w-[65vw]")
             p.text-neutral-700.text-xs {{ item?.description?.toString()?.toUpperCase() }}
@@ -313,7 +313,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
               )
               p.text-neutral-800.text-xs.font-medium {{ item?.user?.name }}
     el-empty(
-      v-if="activity?.docs?.length == 0 || !activity?.docs",
+      v-if="activity?.docs?.length === 0 || !activity?.docs",
       :description="$t('operations.projects.details.noActivity')",
       image="/images/empty.png"
     )
@@ -324,7 +324,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
         class="!rounded-2xl",
         type="primary",
         size="large",
-        :disabled="activity?.pagination?.totalPages == activity?.pagination?.page",
+        :disabled="activity?.pagination?.totalPages === activity?.pagination?.page",
         @click="getActivityPage(Number(activity?.pagination?.page) + 1)"
       ) {{ $t('operations.projects.details.viewMore') }}
   el-tab-pane(:label="$t('common.timeline')" name="timeline")
@@ -468,7 +468,7 @@ const vehicles = reactive({
 
 if (project?.vehicles?.length) {
   vehicles.data =
-    project?.vehicles?.map((vehicle) => ({
+    project?.vehicles?.map(vehicle => ({
       ...vehicle,
       totalCost:
         Number(vehicle.rentCost || 0) + Number(vehicle.gasCost || 0) + Number(vehicle.oilCost || 0) + Number(vehicle.regularMaintenanceCost || 0)
@@ -564,8 +564,8 @@ const [response, _manpowersRes, _serviceRes, _addMaterialsRes, _assetsRes]: Reco
   useTableFilter('additional-material'),
   useTableFilter('asset')
 ]);
-table.data = response.formattedData?.map((el) => {
-  return { ...el, type: el.type == 'Mixed' ? 'Tech & Financial' : el.type };
+table.data = response.formattedData?.map(el => {
+  return { ...el, type: el.type === 'Mixed' ? 'Tech & Financial' : el.type };
 });
 
 const manPowerPreview = ref({
@@ -602,9 +602,9 @@ const manpowersResponse: unknown = _manpowersRes.formattedData;
 
 if (project?.projectManpowerResources?.length) {
   manpowers.value.data =
-    project?.projectManpowerResources?.map((manpower) => ({
+    project?.projectManpowerResources?.map(manpower => ({
       ...manpower,
-      name: manpowersResponse?.find((item) => item.id === manpower?.manpowerId)?.name || '-',
+      name: manpowersResponse?.find(item => item.id === manpower?.manpowerId)?.name || '-',
       mission: manpower?.mission?.join(', ')
     })) || [];
   manPowertotal.value.data = [
@@ -676,10 +676,10 @@ const addMaterials: unknown = _addMaterialsRes?.formattedData || [];
 
 function materialMappedData() {
   if (!project?.materials?.length) return [];
-  return project?.materials.map((material) => {
+  return project?.materials.map(material => {
     // const additionalMaterials = project?.additionalMaterialItem[material.additionalMaterialId || 0] || [];
     const additionalMaterials =
-      project?.additionalMaterialItem?.filter((item) => item.AdditionalMaterialItem.additionalMateria === material.additionalMaterialId) || [];
+      project?.additionalMaterialItem?.filter(item => item.AdditionalMaterialItem.additionalMateria === material.additionalMaterialId) || [];
 
     console.log('material', material);
     const totalAdditionalMaterialCost = additionalMaterials.reduce((sum, item) => {
@@ -687,7 +687,7 @@ function materialMappedData() {
     }, 0);
 
     const totalRelatedQuantity = project?.materials
-      .filter((m) => m.additionalMaterialId === material.additionalMaterialId)
+      .filter(m => m.additionalMaterialId === material.additionalMaterialId)
       .reduce((sum, item) => sum + item.quantity, 0);
 
     const additionalMaterialCost = totalRelatedQuantity > 0 ? totalAdditionalMaterialCost / totalRelatedQuantity : 0;
@@ -699,7 +699,7 @@ function materialMappedData() {
       projectId: project.id,
       materialId: material.id,
       additionalMaterialId: material.additionalMaterialId,
-      additionalMaterial: material.additionalMaterialId ? addMaterials?.find((item) => item.id === material.additionalMaterialId)?.name : '-',
+      additionalMaterial: material.additionalMaterialId ? addMaterials?.find(item => item.id === material.additionalMaterialId)?.name : '-',
       description: material.description,
       quantity: material.quantity,
       unitPrice: material.unitPrice,
@@ -707,8 +707,8 @@ function materialMappedData() {
       marginCommission: +marginCommission.toFixed(2),
       materialCost: +materialCost.toFixed(2),
       totalMaterialCost: +totalMaterialCost.toFixed(2),
-      service: material.serviceId ? serviceResponse?.find((s) => s.id === material.serviceId)?.type : '-',
-      servicePrice: material.serviceId ? serviceResponse?.find((s) => s.id === material.serviceId)?.price : 0,
+      service: material.serviceId ? serviceResponse?.find(s => s.id === material.serviceId)?.type : '-',
+      servicePrice: material.serviceId ? serviceResponse?.find(s => s.id === material.serviceId)?.price : 0,
       id: material.id
     };
   });

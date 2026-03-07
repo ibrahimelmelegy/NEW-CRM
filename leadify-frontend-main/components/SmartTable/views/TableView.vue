@@ -231,7 +231,7 @@ const formatDate = (val: unknown) => {
 };
 
 const formatNumber = (val: unknown) => {
-  if (val == null || val === '') return '-';
+  if (val === null || val === undefined || val === '') return '-';
   const num = Number(val);
   if (isNaN(num)) return val;
   return num.toLocaleString();

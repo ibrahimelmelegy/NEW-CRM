@@ -278,7 +278,7 @@ export async function getManpowers(): Promise<UseManpowersResult> {
 
     if (success) {
       // Return the docs (manpowers) from the response
-      const manpowers = body?.docs?.map((manpower) => ({
+      const manpowers = body?.docs?.map(manpower => ({
         ...manpower,
         manpowerContacts: { title: manpower?.email, text: manpower?.phone },
         role: manpower?.role?.join(', '),
@@ -313,7 +313,7 @@ export async function getManpowers(): Promise<UseManpowersResult> {
  */
 export async function getManpower(id: string | string[]): Promise<ManpowerValues> {
   try {
-    const { body: manpower, success } = await useApiFetch(`manpower/${id}`);
+    const { body: manpower } = await useApiFetch(`manpower/${id}`);
     return manpower;
   } catch (error) {
     console.error('Error fetching manpower:', error instanceof Error ? error.message : error);

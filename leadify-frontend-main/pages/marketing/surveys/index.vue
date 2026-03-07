@@ -296,7 +296,7 @@ const form = ref(defaultForm());
 const summaryStats = computed(() => {
   const data = items.value;
   const total = data.length;
-  const active = data.filter((i) => i.status === 'ACTIVE').length;
+  const active = data.filter(i => i.status === 'ACTIVE').length;
   const totalResp = data.reduce((sum, i) => sum + (i.responseCount || 0), 0);
   return [
     { label: t('marketing.surveys.totalSurveys'), value: total, icon: 'ph:clipboard-text-bold', color: '#8b5cf6' },
@@ -308,11 +308,11 @@ const summaryStats = computed(() => {
 const filteredData = computed(() => {
   let data = items.value;
   if (filterStatus.value) {
-    data = data.filter((i) => i.status === filterStatus.value);
+    data = data.filter(i => i.status === filterStatus.value);
   }
   if (!search.value) return data;
   const q = search.value.toLowerCase();
-  return data.filter((i) => (i.title || '').toLowerCase().includes(q) || (i.description || '').toLowerCase().includes(q));
+  return data.filter(i => (i.title || '').toLowerCase().includes(q) || (i.description || '').toLowerCase().includes(q));
 });
 
 function navigateToSurvey(row: unknown) {
@@ -406,7 +406,7 @@ function openEditDialog(item: unknown) {
   editingItem.value = item;
   const questions =
     item.questions && Array.isArray(item.questions)
-      ? item.questions.map((q) => ({
+      ? item.questions.map(q => ({
           text: q.text || '',
           type: q.type || 'TEXT',
           required: q.required || false,

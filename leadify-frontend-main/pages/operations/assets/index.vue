@@ -155,7 +155,7 @@ async function confirmDelete() {
   try {
     const response = await deleteAssetById(deleteId.value);
     if (response?.success) {
-      table.data = table.data.filter((r) => r.id !== deleteId.value);
+      table.data = table.data.filter(r => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -172,7 +172,7 @@ const mobileFilteredData = computed(() => {
   const data = table.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((a) => {
+  return data.filter(a => {
     const name = (a.name || '').toLowerCase();
     return name.includes(q);
   });

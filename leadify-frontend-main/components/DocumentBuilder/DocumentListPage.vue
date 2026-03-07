@@ -584,11 +584,11 @@ const mobileStatusFilters = [
 const mobileFilteredDocs = computed(() => {
   let data = documents.value || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((d) => d.status === mobileStatusFilter.value);
+    data = data.filter(d => d.status === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((d) => {
+  return data.filter(d => {
     const title = (d.title || '').toLowerCase();
     const ref = (d.reference || '').toLowerCase();
     const client = (d.clientName || '').toLowerCase();

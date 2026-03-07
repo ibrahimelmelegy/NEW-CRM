@@ -48,7 +48,7 @@ export async function getAssets(): Promise<UseAssetsResult> {
 
     if (success) {
       // Return the docs (assets) from the response
-      const assets = body?.docs?.map((asset) => ({
+      const assets = body?.docs?.map(asset => ({
         ...asset,
         createdAt: formatDate(asset.createdAt),
         // updatedAt: formatDate(asset.updatedAt),
@@ -81,7 +81,7 @@ export async function getAssets(): Promise<UseAssetsResult> {
  */
 export async function getAsset(id: string | string[]): Promise<Asset> {
   try {
-    const { body: asset, success } = await useApiFetch(`asset/${id}`);
+    const { body: asset } = await useApiFetch(`asset/${id}`);
     return asset;
   } catch (error) {
     console.error('Error fetching asset:', error instanceof Error ? error.message : error);

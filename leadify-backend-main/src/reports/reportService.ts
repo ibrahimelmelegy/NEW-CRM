@@ -1,4 +1,4 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import ExcelJS from 'exceljs';
 import SavedReport from './reportModel';
 import Lead from '../lead/leadModel';
@@ -200,7 +200,7 @@ class ReportService {
     });
 
     // Auto-size columns
-    worksheet.columns.forEach((column) => {
+    worksheet.columns.forEach(column => {
       let maxLength = 0;
       column!.eachCell!({ includeEmpty: true }, (cell: any) => {
         const length = cell.value ? String(cell.value).length : 10;

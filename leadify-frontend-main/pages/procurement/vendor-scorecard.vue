@@ -325,7 +325,7 @@ const stats = computed(() => {
 const filteredScorecards = computed(() => {
   if (!searchQuery.value) return scorecards.value;
   const q = searchQuery.value.toLowerCase();
-  return scorecards.value.filter((s) => {
+  return scorecards.value.filter(s => {
     const vendor = (s.vendorName || s.vendorId || '').toString().toLowerCase();
     const period = (s.period || '').toLowerCase();
     return vendor.includes(q) || period.includes(q);

@@ -1,6 +1,5 @@
 import { ref, computed } from 'vue';
 import { useApiFetch } from './useApiFetch';
-import { user } from './useUser';
 
 export interface Priority {
   id: string;
@@ -160,7 +159,7 @@ export function useDailyBriefing() {
       // 1. Overdue tasks
       if (tasksRes.success && tasksRes.body) {
         const tasks = (tasksRes.body as unknown)?.docs || (Array.isArray(tasksRes.body) ? tasksRes.body : []);
-        const overdueTasks = tasks.filter((t) => {
+        const overdueTasks = tasks.filter(t => {
           const dueDate = t.endDate || t.dueDate;
           return dueDate && isOverdue(dueDate) && t.status !== 'COMPLETED';
         });
@@ -176,7 +175,7 @@ export function useDailyBriefing() {
         }
 
         // Follow-ups due today
-        const todayTasks = tasks.filter((t) => {
+        const todayTasks = tasks.filter(t => {
           const dueDate = t.endDate || t.dueDate;
           return dueDate && isToday(dueDate) && t.status !== 'COMPLETED';
         });
@@ -192,7 +191,7 @@ export function useDailyBriefing() {
         }
 
         // Tasks completed today for highlights
-        const completedToday = tasks.filter((t) => t.status === 'COMPLETED' && isToday(t.updatedAt));
+        const completedToday = tasks.filter(t => t.status === 'COMPLETED' && isToday(t.updatedAt));
         if (completedToday.length > 0) {
           yesterdayHighlights.value.push({
             icon: 'ph:check-circle-bold',
@@ -206,7 +205,7 @@ export function useDailyBriefing() {
       // 2. Deals at risk (no recent activity in 7+ days)
       if (dealsRes.success && dealsRes.body) {
         const deals = (dealsRes.body as unknown)?.rows || (dealsRes.body as unknown)?.docs || (Array.isArray(dealsRes.body) ? dealsRes.body : []);
-        const atRiskDeals = deals.filter((d) => daysSinceUpdate(d.updatedAt) >= 7);
+        const atRiskDeals = deals.filter(d => daysSinceUpdate(d.updatedAt) >= 7);
         if (atRiskDeals.length > 0) {
           generatedPriorities.push({
             id: 'deals-at-risk',
@@ -219,7 +218,7 @@ export function useDailyBriefing() {
         }
 
         // New deals for highlights
-        const recentDeals = deals.filter((d) => {
+        const recentDeals = deals.filter(d => {
           const created = new Date(d.createdAt);
           const yesterday = new Date();
           yesterday.setDate(yesterday.getDate() - 1);
@@ -240,8 +239,10 @@ export function useDailyBriefing() {
 
       // 3. Calendar events today (meetings)
       if (calendarRes.success && calendarRes.body) {
-        const events = Array.isArray(calendarRes.body) ? calendarRes.body : (calendarRes.body as unknown)?.rows || (calendarRes.body as unknown)?.docs || [];
-        const todayEvents = events.filter((e) => {
+        const events = Array.isArray(calendarRes.body)
+          ? calendarRes.body
+          : (calendarRes.body as unknown)?.rows || (calendarRes.body as unknown)?.docs || [];
+        const todayEvents = events.filter(e => {
           const eventDate = e.startDate || e.start || e.date;
           return eventDate && isToday(eventDate);
         });
@@ -258,7 +259,7 @@ export function useDailyBriefing() {
         }
 
         // Build today's schedule
-        todaySchedule.value = todayEvents.map((e) => {
+        todaySchedule.value = todayEvents.map(e => {
           const startTime = e.startDate || e.start || e.date;
           const formatted = startTime ? new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'All day';
           return {
@@ -285,7 +286,7 @@ export function useDailyBriefing() {
       // 5. New leads highlight
       if (leadsRes.success && leadsRes.body) {
         const leads = (leadsRes.body as unknown)?.rows || (leadsRes.body as unknown)?.docs || (Array.isArray(leadsRes.body) ? leadsRes.body : []);
-        const recentLeads = leads.filter((l) => {
+        const recentLeads = leads.filter(l => {
           const created = new Date(l.createdAt);
           const yesterday = new Date();
           yesterday.setDate(yesterday.getDate() - 1);
@@ -312,7 +313,7 @@ export function useDailyBriefing() {
 
       const tasksData: unknown = tasksRes.success ? tasksRes.body : null;
       const allTasks = tasksData?.docs || (Array.isArray(tasksData) ? tasksData : []);
-      const completedCount = allTasks.filter((t) => t.status === 'COMPLETED').length;
+      const completedCount = allTasks.filter(t => t.status === 'COMPLETED').length;
 
       const revenueSparkline = generateSparkline(revenue || 10000);
       const pipelineSparkline = generateSparkline(pipelineValue || 50000);

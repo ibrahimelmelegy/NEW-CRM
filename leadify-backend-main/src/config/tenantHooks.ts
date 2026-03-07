@@ -34,7 +34,7 @@ function shouldSkip(options: any, modelOrName?: any): string | null {
   // Check model has tenantId
   const model = modelOrName || getModelFromOptions(options);
   if (model) {
-    const name = typeof model === 'string' ? model : (model.name || model.modelName);
+    const name = typeof model === 'string' ? model : model.name || model.modelName;
     if (name && !isTenantScopedModel(name)) {
       // Also do a runtime check in case the model set wasn't built yet
       if (!modelHasTenantId(model)) {
@@ -103,7 +103,10 @@ export function registerTenantHooks(sequelize: Sequelize): void {
       (instance as any).tenantId = ctx.tenantId;
     } else if (current !== ctx.tenantId) {
       // Prevent cross-tenant creation — override with correct tenantId
-      logger.error({ model: model.name, attemptedTenantId: current, correctedTenantId: ctx.tenantId }, 'SECURITY: Cross-tenant create attempt blocked');
+      logger.error(
+        { model: model.name, attemptedTenantId: current, correctedTenantId: ctx.tenantId },
+        'SECURITY: Cross-tenant create attempt blocked'
+      );
       (instance as any).tenantId = ctx.tenantId;
     }
   });
@@ -135,8 +138,7 @@ export function registerTenantHooks(sequelize: Sequelize): void {
     // Prevent changing tenantId to a different tenant
     if (current && current !== ctx.tenantId) {
       throw new Error(
-        `[TenantScope] SECURITY: Cannot update record belonging to tenant ${current}. ` +
-        `Current tenant: ${ctx.tenantId}. Model: ${model.name}`
+        `[TenantScope] SECURITY: Cannot update record belonging to tenant ${current}. ` + `Current tenant: ${ctx.tenantId}. Model: ${model.name}`
       );
     }
   });
@@ -169,7 +171,7 @@ export function registerTenantHooks(sequelize: Sequelize): void {
     if (instanceTenantId && instanceTenantId !== ctx.tenantId) {
       throw new Error(
         `[TenantScope] SECURITY: Cannot delete record belonging to tenant ${instanceTenantId}. ` +
-        `Current tenant: ${ctx.tenantId}. Model: ${model.name}`
+          `Current tenant: ${ctx.tenantId}. Model: ${model.name}`
       );
     }
   });
@@ -188,5 +190,4 @@ export function registerTenantHooks(sequelize: Sequelize): void {
       options.where.tenantId = ctx.tenantId;
     }
   });
-
 }

@@ -25,7 +25,7 @@ class ProcurementService {
           throw new BaseError(400, 400, 'Purchase Order must have at least one item');
         }
 
-        const poItems = items.map((item) => {
+        const poItems = items.map(item => {
           if (Number(item.unitPrice) < 0) throw new BaseError(400, 400, `Invalid Unit Price for item: ${item.description}`);
           if (Number(item.quantity) <= 0) throw new BaseError(400, 400, `Invalid Quantity for item: ${item.description}`);
 
@@ -194,7 +194,7 @@ class ProcurementService {
       const variances: Array<{ itemId: number; ordered: number; received: number; variance: number }> = [];
       if (receivedItems && receivedItems.length > 0) {
         for (const ri of receivedItems) {
-          const poItem = po.items?.find((item) => item.id === ri.itemId);
+          const poItem = po.items?.find(item => item.id === ri.itemId);
           if (poItem) {
             const variance = ri.receivedQuantity - poItem.quantity;
             variances.push({
@@ -241,13 +241,13 @@ class ProcurementService {
         const totalSpend = allPOs.reduce((sum: number, po: any) => sum + Number(po.totalAmount || 0), 0);
         const avgOrderValue = totalPOs > 0 ? Math.round((totalSpend / totalPOs) * 100) / 100 : 0;
 
-        const approvedCount = allPOs.filter((po) => po.status === POStatusEnum.APPROVED || po.status === POStatusEnum.ARCHIVED).length;
-        const rejectedCount = allPOs.filter((po) => po.status === POStatusEnum.REJECTED).length;
-        const pendingCount = allPOs.filter((po) => po.status === POStatusEnum.PENDING).length;
+        const approvedCount = allPOs.filter(po => po.status === POStatusEnum.APPROVED || po.status === POStatusEnum.ARCHIVED).length;
+        const rejectedCount = allPOs.filter(po => po.status === POStatusEnum.REJECTED).length;
+        const pendingCount = allPOs.filter(po => po.status === POStatusEnum.PENDING).length;
         const rejectionRate = totalPOs > 0 ? Math.round((rejectedCount / totalPOs) * 10000) / 100 : 0;
 
         // On-time: POs that were archived (received) before or on dueDate
-        const onTimeCount = allPOs.filter((po) => {
+        const onTimeCount = allPOs.filter(po => {
           if (po.status !== POStatusEnum.ARCHIVED || !po.dueDate) return false;
           return new Date(po.updatedAt) <= new Date(po.dueDate);
         }).length;

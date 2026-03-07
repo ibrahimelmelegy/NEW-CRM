@@ -237,15 +237,8 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  CustomField,
-  FieldOption,
-  FieldValuePayload,
-} from '~/composables/useCustomFields';
-import {
-  fetchCustomFields,
-  fetchFieldValues,
-} from '~/composables/useCustomFields';
+import type { CustomField, FieldOption, FieldValuePayload } from '~/composables/useCustomFields';
+import { fetchCustomFields, fetchFieldValues } from '~/composables/useCustomFields';
 
 // ─── Props ───────────────────────────────────────────────────────────────────
 
@@ -263,7 +256,7 @@ const props = withDefaults(
     readonly: false,
     disabled: false,
     showTitle: true,
-    columns: 2,
+    columns: 2
   }
 );
 
@@ -386,7 +379,7 @@ function initFieldValues() {
 function emitChange() {
   const payload: FieldValuePayload[] = fields.value.map(field => ({
     customFieldId: field.id,
-    value: localValues.value[field.id] ?? null,
+    value: localValues.value[field.id] ?? null
   }));
   emit('change', payload);
 }
@@ -420,10 +413,7 @@ async function loadAll() {
     fields.value = await fetchCustomFields(props.entityType);
 
     if (props.entityId) {
-      const existingValues = await fetchFieldValues(
-        props.entityType,
-        props.entityId
-      );
+      const existingValues = await fetchFieldValues(props.entityType, props.entityId);
       for (const fv of existingValues) {
         localValues.value[fv.customFieldId] = fv.value;
       }
@@ -444,7 +434,7 @@ async function loadAll() {
 function getPayload(): FieldValuePayload[] {
   return fields.value.map(field => ({
     customFieldId: field.id,
-    value: localValues.value[field.id] ?? null,
+    value: localValues.value[field.id] ?? null
   }));
 }
 
@@ -471,7 +461,7 @@ watch(
 
 watch(
   () => props.entityId,
-  (newId) => {
+  newId => {
     if (newId) loadAll();
   }
 );

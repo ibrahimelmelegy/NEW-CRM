@@ -10,7 +10,7 @@
  * - Heavy operations get dedicated, stricter limits
  */
 
-import rateLimit, { Options } from 'express-rate-limit';
+import rateLimit from 'express-rate-limit';
 import { Request, Response } from 'express';
 
 /**

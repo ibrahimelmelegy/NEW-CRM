@@ -127,7 +127,7 @@ function hasAccessToSection(navLink: unknown): boolean {
 
   // If it has a submenu, show section only if user can access at least one child
   if (navLink.submenu) {
-    return navLink.submenu.some((sub) => !getDisabled(sub.role));
+    return navLink.submenu.some(sub => !getDisabled(sub.role));
   }
 
   return true;

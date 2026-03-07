@@ -71,14 +71,14 @@ export function getPieChartsData(data: unknown, colorpallete: unknown, position 
   };
 }
 
-export function getBarChartData(data: unknown, colorpallete: unknown) {
+export function getBarChartData(data: unknown, _colorpallete: unknown) {
   if (!data) return {};
   return {
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, ...THEME.glassTooltip },
     grid: { top: 20, right: 20, bottom: 20, left: 20, containLabel: true },
     xAxis: {
       type: 'category',
-      data: data.map((val) => val.name),
+      data: data.map(val => val.name),
       axisLabel: { color: '#94A3B8', fontWeight: 500 },
       axisLine: { show: false },
       axisTick: { show: false }
@@ -92,7 +92,7 @@ export function getBarChartData(data: unknown, colorpallete: unknown) {
       {
         type: 'bar',
         barWidth: '30%',
-        data: data.map((val) => Number(val.value)),
+        data: data.map(val => Number(val.value)),
         itemStyle: {
           borderRadius: [6, 6, 6, 6], // Fully rounded
           color: new graphic.LinearGradient(0, 0, 0, 1, [
@@ -121,7 +121,7 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-export function getBarHorizontalChartData(data: unknown, colorpallete: unknown) {
+export function getBarHorizontalChartData(data: unknown, _colorpallete: unknown) {
   if (!data) return {};
   return {
     tooltip: { trigger: 'item', ...THEME.glassTooltip },
@@ -133,7 +133,7 @@ export function getBarHorizontalChartData(data: unknown, colorpallete: unknown) 
     },
     yAxis: {
       type: 'category',
-      data: data.map((val) => val.name),
+      data: data.map(val => val.name),
       inverse: true,
       axisLabel: {
         color: '#94A3B8',
@@ -147,7 +147,7 @@ export function getBarHorizontalChartData(data: unknown, colorpallete: unknown) 
     series: [
       {
         type: 'bar',
-        data: data.map((val) => val.value),
+        data: data.map(val => val.value),
         barWidth: 16,
         showBackground: true,
         backgroundStyle: {
@@ -210,7 +210,7 @@ export function getConversionGauge(value: number) {
   };
 }
 
-export function getIncreaseLineChart(data: unknown, colorPalette: unknown) {
+export function getIncreaseLineChart(data: unknown, _colorPalette: unknown) {
   if (!data) return {};
   return {
     tooltip: { trigger: 'axis', ...THEME.glassTooltip },
@@ -218,7 +218,7 @@ export function getIncreaseLineChart(data: unknown, colorPalette: unknown) {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: data.map((val) => val.name),
+      data: data.map(val => val.name),
       axisLabel: { color: '#94A3B8' },
       axisLine: { show: false },
       axisTick: { show: false }
@@ -231,7 +231,7 @@ export function getIncreaseLineChart(data: unknown, colorPalette: unknown) {
     series: [
       {
         type: 'line',
-        data: data.map((val) => val.value),
+        data: data.map(val => val.value),
         smooth: true, // Smooth curves for organic feel
         showSymbol: false,
         symbolSize: 10,
@@ -297,7 +297,7 @@ export async function getLeadsStatics() {
             : capitalizeName(name),
         value
       })),
-      salesPerformance: (body.salesPerformance || []).map((i) => ({ name: i.date, value: i.revenue }))
+      salesPerformance: (body.salesPerformance || []).map(i => ({ name: i.date, value: i.revenue }))
     };
   } catch (error: unknown) {
     statsLoading.value = false;
@@ -407,7 +407,7 @@ export function getBarChartWithLineData(data: unknown, legend: string[], colorpa
     grid: { top: 40, right: 40, bottom: 40, left: 40, containLabel: true },
     xAxis: {
       type: 'category',
-      data: data.map((val) => val.name),
+      data: data.map(val => val.name),
       axisLabel: { color: '#94A3B8' },
       axisLine: { show: false }
     },
@@ -420,7 +420,7 @@ export function getBarChartWithLineData(data: unknown, legend: string[], colorpa
         name: legend[0],
         type: 'bar',
         barWidth: '20%',
-        data: data.map((val) => val.value),
+        data: data.map(val => val.value),
         itemStyle: {
           borderRadius: [4, 4, 0, 0],
           color: colorpallete[0] || THEME.purple
@@ -431,7 +431,7 @@ export function getBarChartWithLineData(data: unknown, legend: string[], colorpa
         type: 'line',
         yAxisIndex: 1,
         smooth: true,
-        data: data.map((val) => val.totalPaid || 0),
+        data: data.map(val => val.totalPaid || 0),
         lineStyle: { width: 3, color: THEME.green },
         itemStyle: { color: THEME.green }
       }

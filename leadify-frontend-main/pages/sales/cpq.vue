@@ -301,7 +301,7 @@ const fetchQuotes = async () => {
   try {
     const res = await useApiFetch('proposal');
     if (res?.success) {
-      quotes.value = (res.body?.docs || res.body || []).map((p) => ({
+      quotes.value = (res.body?.docs || res.body || []).map(p => ({
         id: p.id,
         name: p.name || p.title || `Quote #${p.id}`,
         clientName: p.client?.name || p.clientName || '',

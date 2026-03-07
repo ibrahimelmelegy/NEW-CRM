@@ -582,7 +582,7 @@ async function loadTeamMembers() {
     if (success && body) {
       const members = Array.isArray(body) ? body : (body as unknown)?.docs || (body as unknown)?.rows || [];
       // Simulate online status based on lastActiveAt or random for demo
-      teamMembers.value = members.map((m) => ({
+      teamMembers.value = members.map(m => ({
         ...m,
         isOnline: m.isOnline ?? (m.lastActiveAt ? isRecentlyActive(m.lastActiveAt) : false)
       }));
@@ -603,14 +603,14 @@ async function loadStats() {
 
     if (dealsRes.success && dealsRes.body) {
       const deals = Array.isArray(dealsRes.body) ? dealsRes.body : (dealsRes.body as unknown)?.docs || (dealsRes.body as unknown)?.rows || [];
-      const closedDeals = deals.filter((d) => d.status === 'Won' || d.stage === 'Closed Won');
-      stats.dealsClosedToday = closedDeals.filter((d) => d.closedAt?.slice(0, 10) === today || d.updatedAt?.slice(0, 10) === today).length;
-      stats.dealsClosedWeek = closedDeals.filter((d) => (d.closedAt || d.updatedAt) >= weekStart).length;
+      const closedDeals = deals.filter(d => d.status === 'Won' || d.stage === 'Closed Won');
+      stats.dealsClosedToday = closedDeals.filter(d => d.closedAt?.slice(0, 10) === today || d.updatedAt?.slice(0, 10) === today).length;
+      stats.dealsClosedWeek = closedDeals.filter(d => (d.closedAt || d.updatedAt) >= weekStart).length;
     }
 
     if (leadsRes.success && leadsRes.body) {
       const leads = Array.isArray(leadsRes.body) ? leadsRes.body : (leadsRes.body as unknown)?.docs || (leadsRes.body as unknown)?.rows || [];
-      stats.leadsCreated = leads.filter((l) => l.createdAt?.slice(0, 10) === today).length;
+      stats.leadsCreated = leads.filter(l => l.createdAt?.slice(0, 10) === today).length;
       stats.openTasks = stats.openTasks ?? 0;
       stats.avgResponseTime = stats.avgResponseTime ?? 0;
     }

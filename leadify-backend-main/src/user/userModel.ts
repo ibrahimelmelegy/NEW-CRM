@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { BelongsTo, BelongsToMany, Column, DataType, Default, ForeignKey, Model, Table } from 'sequelize-typescript';
-import Project from '../project/models/projectModel';
+import { BelongsTo, Column, DataType, Default, ForeignKey, Model, Table } from 'sequelize-typescript';
 import Role from '../role/roleModel';
 import Tenant from '../tenant/tenantModel';
 import { UserStatusEnum } from './userEnum';

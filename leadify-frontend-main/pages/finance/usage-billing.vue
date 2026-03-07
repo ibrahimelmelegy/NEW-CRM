@@ -478,7 +478,7 @@ const meterForm = ref({
 
 function addTierRow() {
   const lastTier = meterForm.value.tiers[meterForm.value.tiers.length - 1];
-  const nextFrom = lastTier && lastTier.to != null ? lastTier.to + 1 : 0;
+  const nextFrom = lastTier && lastTier.to !== null && lastTier.to !== undefined ? lastTier.to + 1 : 0;
   meterForm.value.tiers.push({ from: nextFrom, to: null, price: 0 });
 }
 
@@ -603,11 +603,13 @@ const currentMeterTiers = computed((): PricingTier[] => {
       name: tier.name,
       description: getTierDescription(tier, meter.unit),
       rangeLabel:
-        tier.to != null ? `${formatNumber(tier.from)} - ${formatNumber(tier.to)} ${meter.unit}` : `${formatNumber(tier.from)}+ ${meter.unit}`,
+        tier.to !== null && tier.to !== undefined
+          ? `${formatNumber(tier.from)} - ${formatNumber(tier.to)} ${meter.unit}`
+          : `${formatNumber(tier.from)}+ ${meter.unit}`,
       unitPrice: tier.price,
       customerCount: custCount,
       customerPercent: totalCustomers > 0 ? Math.round((custCount / totalCustomers) * 100) : 0,
-      monthlyRevenue: Math.round(tier.price * (tier.to != null ? (tier.to - tier.from) * 0.6 : 10000) * custCount),
+      monthlyRevenue: Math.round(tier.price * (tier.to !== null && tier.to !== undefined ? (tier.to - tier.from) * 0.6 : 10000) * custCount),
       color: tierColors[idx] || '#7849ff',
       popular: idx === 1
     };
@@ -680,7 +682,7 @@ function getInvoiceStatusTag(status: string): string {
 }
 
 function getTierDescription(tier: TierConfig, unit: string): string {
-  if (tier.to != null) {
+  if (tier.to !== null && tier.to !== undefined) {
     return `${t('usageBilling.from')} ${formatNumber(tier.from)} ${t('usageBilling.to').toLowerCase()} ${formatNumber(tier.to)} ${unit}`;
   }
   return `${formatNumber(tier.from)}+ ${unit} (${t('usageBilling.unlimited')})`;

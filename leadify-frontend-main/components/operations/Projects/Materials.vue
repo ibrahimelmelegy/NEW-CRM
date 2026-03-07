@@ -180,12 +180,12 @@ function materialMappedData() {
     }, 0);
 
     const totalRelatedQuantity = materials.value
-      .filter((m) => m.additionalMaterialId === material.additionalMaterialId)
+      .filter(m => m.additionalMaterialId === material.additionalMaterialId)
       .reduce((sum: number, item: unknown) => sum + item.quantity, 0);
 
     const additionalMaterialCost = totalRelatedQuantity > 0 ? totalAdditionalMaterialCost / totalRelatedQuantity : 0;
     const marginCommission = (material.unitPrice + additionalMaterialCost) * (materialMargin.value / 100 || 0);
-    const servicePrice = material.serviceId ? services.value.find((s) => s.id === material.serviceId)?.price : 0;
+    const servicePrice = material.serviceId ? services.value.find(s => s.id === material.serviceId)?.price : 0;
     const materialCost = material.unitPrice + additionalMaterialCost + marginCommission + (servicePrice || 0);
     const totalMaterialCost = materialCost * material.quantity;
 
@@ -193,9 +193,7 @@ function materialMappedData() {
       projectId: project.value.id,
       materialId: material.id,
       additionalMaterialId: material.additionalMaterialId,
-      additionalMaterial: material.additionalMaterialId
-        ? addMaterials.value.find((item) => item.id === material.additionalMaterialId)?.name
-        : '-',
+      additionalMaterial: material.additionalMaterialId ? addMaterials.value.find(item => item.id === material.additionalMaterialId)?.name : '-',
       description: material.description,
       quantity: material.quantity,
       unitPrice: material.unitPrice,
@@ -203,7 +201,7 @@ function materialMappedData() {
       marginCommission: +marginCommission.toFixed(2),
       materialCost: +materialCost.toFixed(2),
       totalMaterialCost: +totalMaterialCost.toFixed(2),
-      service: material.serviceId ? services.value.find((s) => s.id === material.serviceId)?.type : '-',
+      service: material.serviceId ? services.value.find(s => s.id === material.serviceId)?.type : '-',
       servicePrice,
       id: material.id
     };

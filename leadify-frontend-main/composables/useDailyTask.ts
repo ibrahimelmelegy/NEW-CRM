@@ -78,21 +78,11 @@ interface UseDailyTaskResult {
  */
 export async function getDailyTasks(all?: boolean): Promise<UseDailyTaskResult> {
   try {
-    interface DailyTaskDoc extends DailyTask {
-      createdAt?: string;
-      client?: { clientName: string };
-      salesRepresentative?: { name: string };
-      user?: { name: string };
-    }
-    interface DailyTaskApiResponse {
-      docs: DailyTaskDoc[];
-      pagination: UseDailyTaskResult['pagination'];
-    }
     const { body, success, message } = all ? await useApiFetch('daily-task?limit=1000') : await useApiFetch('daily-task');
 
     if (success && body) {
       const tasks =
-        (body as unknown).docs?.map((task) => ({
+        (body as unknown).docs?.map(task => ({
           ...task,
           createdAt: formatDate(task.createdAt ?? ''),
           updatedAt: '-',
@@ -122,7 +112,7 @@ export async function getDailyTasks(all?: boolean): Promise<UseDailyTaskResult> 
  */
 export async function getDailyTask(id: string | string[]): Promise<DailyTask> {
   try {
-    const { body: task, success } = await useApiFetch(`daily-task/${id}`);
+    const { body: task } = await useApiFetch(`daily-task/${id}`);
     return task as DailyTask;
   } catch (error) {
     console.error('Error fetching daily task:', error instanceof Error ? error.message : error);
@@ -139,7 +129,7 @@ export async function createDailyTask(values: DailyTask) {
   try {
     const dataSend = {
       ...values,
-      clientId: values?.clientId == '' ? undefined : values?.clientId
+      clientId: values?.clientId === '' ? undefined : values?.clientId
     };
     const response = await useApiFetch('daily-task', 'POST', dataSend);
 
@@ -161,7 +151,7 @@ export async function updateDailyTask(values: DailyTask, id: string) {
   try {
     const dataSend = {
       ...values,
-      clientId: values?.clientId == '' ? undefined : values?.clientId
+      clientId: values?.clientId === '' ? undefined : values?.clientId
     };
     const response = await useApiFetch(`daily-task/${id}`, 'PUT', dataSend);
 
@@ -206,17 +196,6 @@ interface DailyTaskStatistics {
   salesPerformance: { name: string; value: number; value2: number }[];
 }
 
-interface RawDailyTaskStatistics {
-  activeTasks: number;
-  completedTasks: number;
-  grantedTasks: number;
-  totalRevenue: number;
-  taskStatusPercentage: Record<string, number>;
-  monthlyRevenue: { month: string; totalPaid: number }[];
-  taskDistributionByClient: { clientName: string; taskCount: number }[];
-  salesPerformance: { name: string; tasksCount: number; totalPaid: number }[];
-}
-
 export async function getDailyTaskStatistics(): Promise<DailyTaskStatistics> {
   dailyTaskStatisticsLoading.value = true;
   const { body, success, message } = await useApiFetch('daily-task/statistics');
@@ -244,16 +223,16 @@ export async function getDailyTaskStatistics(): Promise<DailyTaskStatistics> {
     grantedTasks,
     totalRevenue,
     taskStatusPercentage: toNameValueArray(taskStatusPercentage),
-    taskDistributionByClient: taskDistributionByClient.map((item) => ({
+    taskDistributionByClient: taskDistributionByClient.map(item => ({
       name: item.clientName,
       value: item.taskCount
     })),
-    salesPerformance: salesPerformance.map((item) => ({
+    salesPerformance: salesPerformance.map(item => ({
       name: item.name,
       value: item.tasksCount,
       value2: item.totalPaid
     })),
-    monthlyRevenue: monthlyRevenue.map((item) => ({
+    monthlyRevenue: monthlyRevenue.map(item => ({
       name: item.month,
       value: item.totalPaid
     }))

@@ -11,7 +11,9 @@ class ComplianceService {
   async createConsent(data: any, tenantId?: string) {
     if (!data.consentDate) data.consentDate = new Date();
     const record = await ConsentRecord.create({ ...data, tenantId });
-    try { io.emit('consent:created', { id: record.id, contactId: record.contactId }); } catch {}
+    try {
+      io.emit('consent:created', { id: record.id, contactId: record.contactId });
+    } catch {}
     return record;
   }
 
@@ -25,7 +27,11 @@ class ComplianceService {
     if (query.search) where.contactEmail = { [Op.iLike]: `%${query.search}%` };
 
     const { rows, count } = await ConsentRecord.findAndCountAll({
-      where, order: [['consentDate', 'DESC']], limit, offset, distinct: true
+      where,
+      order: [['consentDate', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -42,7 +48,9 @@ class ComplianceService {
       data.withdrawnAt = new Date();
     }
     await item.update(data);
-    try { io.emit('consent:updated', { id: item.id, status: item.status }); } catch {}
+    try {
+      io.emit('consent:updated', { id: item.id, status: item.status });
+    } catch {}
     return item;
   }
 
@@ -63,7 +71,9 @@ class ComplianceService {
       data.deadline = deadline;
     }
     const request = await DataRequest.create({ ...data, tenantId });
-    try { io.emit('dataRequest:created', { id: request.id, type: request.type }); } catch {}
+    try {
+      io.emit('dataRequest:created', { id: request.id, type: request.type });
+    } catch {}
     return request;
   }
 
@@ -79,7 +89,9 @@ class ComplianceService {
       where,
       include: [{ model: User, as: 'assignee', attributes: ['id', 'name', 'email'] }],
       order: [['deadline', 'ASC']],
-      limit, offset, distinct: true
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -100,7 +112,9 @@ class ComplianceService {
     if (data.status === 'COMPLETED') updateData.completedAt = new Date();
 
     await request.update(updateData);
-    try { io.emit('dataRequest:processed', { id: request.id, status: data.status }); } catch {}
+    try {
+      io.emit('dataRequest:processed', { id: request.id, status: data.status });
+    } catch {}
     return request;
   }
 
@@ -122,7 +136,12 @@ class ComplianceService {
       where: { ...where, status: 'ACTIVE', expiryDate: { [Op.lt]: now } }
     });
     for (const c of expiredConsents) {
-      issues.push({ type: 'EXPIRED_CONSENT', severity: 'HIGH', description: `Consent ${c.id} for contact ${c.contactId} has expired but is still active`, entityId: c.id });
+      issues.push({
+        type: 'EXPIRED_CONSENT',
+        severity: 'HIGH',
+        description: `Consent ${c.id} for contact ${c.contactId} has expired but is still active`,
+        entityId: c.id
+      });
       await c.update({ status: 'EXPIRED' });
     }
 
@@ -131,7 +150,12 @@ class ComplianceService {
       where: { ...where, status: { [Op.in]: ['PENDING', 'IN_PROGRESS'] }, deadline: { [Op.lt]: now } }
     });
     for (const r of overdueRequests) {
-      issues.push({ type: 'OVERDUE_REQUEST', severity: 'CRITICAL', description: `Data request ${r.id} (${r.type}) is past deadline`, entityId: r.id });
+      issues.push({
+        type: 'OVERDUE_REQUEST',
+        severity: 'CRITICAL',
+        description: `Data request ${r.id} (${r.type}) is past deadline`,
+        entityId: r.id
+      });
       await r.update({ status: 'OVERDUE' });
     }
 
@@ -141,10 +165,17 @@ class ComplianceService {
       where: { ...where, status: { [Op.in]: ['PENDING', 'IN_PROGRESS'] }, deadline: { [Op.between]: [now, fiveDaysFromNow] } }
     });
     for (const r of approachingDeadline) {
-      issues.push({ type: 'APPROACHING_DEADLINE', severity: 'MEDIUM', description: `Data request ${r.id} (${r.type}) deadline approaching`, entityId: r.id });
+      issues.push({
+        type: 'APPROACHING_DEADLINE',
+        severity: 'MEDIUM',
+        description: `Data request ${r.id} (${r.type}) deadline approaching`,
+        entityId: r.id
+      });
     }
 
-    try { io.emit('compliance:auditCompleted', { issueCount: issues.length }); } catch {}
+    try {
+      io.emit('compliance:auditCompleted', { issueCount: issues.length });
+    } catch {}
 
     return {
       auditDate: now,

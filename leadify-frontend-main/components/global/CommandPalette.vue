@@ -284,7 +284,7 @@ async function search(q: string) {
       const config = searches[i];
       if (!config) return;
 
-      docs.forEach((doc) => {
+      docs.forEach(doc => {
         allResults.push({
           id: doc.id,
           name: doc[config.nameKey] || doc.name || 'Untitled',

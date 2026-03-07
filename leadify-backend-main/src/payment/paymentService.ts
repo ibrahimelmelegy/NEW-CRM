@@ -50,7 +50,7 @@ class PaymentService {
   /**
    * Update invoice collection status after payment
    */
-  private async updateInvoiceCollectionStatus(invoiceId: number, paymentAmount: number): Promise<void> {
+  private async updateInvoiceCollectionStatus(invoiceId: number, _paymentAmount: number): Promise<void> {
     const invoice = await Invoice.findByPk(invoiceId);
     if (!invoice) return;
 

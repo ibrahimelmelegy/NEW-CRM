@@ -153,7 +153,7 @@ const handlePictureCardPreview = () => {
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile: unknown) => {
   if (!props.formats.includes(rawFile.type)) {
     ElMessage.error({
-      message: `acceptUpload ${props.formats.map((format) => format.split('/').pop()).join(' , ')}`
+      message: `acceptUpload ${props.formats.map(format => format.split('/').pop()).join(' , ')}`
     });
     return false;
   } else if (rawFile.size / 1024 / 1024 > props.sizeInMb) {

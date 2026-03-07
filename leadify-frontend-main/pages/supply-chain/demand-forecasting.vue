@@ -449,7 +449,7 @@ const forecastChartOption = computed(() => {
       formatter: (params: unknown) => {
         const idx = params[0]?.dataIndex ?? 0;
         let html = `<strong>${data.labels[idx]}</strong><br/>`;
-        params.forEach((p) => {
+        params.forEach(p => {
           if (p.seriesName === 'Upper Bound' || p.seriesName === 'Lower Bound') return;
           const val = p.value;
           if (val === undefined || val === null || isNaN(val)) return;
@@ -764,7 +764,7 @@ calculateSafetyStock();
 // ─── Stock vs Reorder Point Chart ───────────────────────────
 const stockReorderChartOption = computed(() => {
   const top10 = [...productForecasts.value]
-    .filter((p) => p.reorderPoint > 0)
+    .filter(p => p.reorderPoint > 0)
     .sort((a, b) => a.currentStock / a.reorderPoint - b.currentStock / b.reorderPoint)
     .slice(0, 10);
 
@@ -782,7 +782,7 @@ const stockReorderChartOption = computed(() => {
         const product = top10[idx];
         if (!product) return '';
         let html = `<strong>${product.name}</strong><br/>`;
-        params.forEach((p) => {
+        params.forEach(p => {
           html += `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${p.color};margin-right:6px;"></span>`;
           html += `${p.seriesName}: <strong>${p.value.toLocaleString()}</strong><br/>`;
         });
@@ -900,8 +900,8 @@ function getStockGaugeColor(current: number, reorderPoint: number, _max: number)
 
 function deriveReorderItems(forecasts: Record<string, unknown>[]): Record<string, unknown>[] {
   return forecasts
-    .filter((p) => p.currentStock < p.reorderPoint)
-    .map((p) => ({
+    .filter(p => p.currentStock < p.reorderPoint)
+    .map(p => ({
       name: p.name,
       currentStock: p.currentStock,
       maxStock: Math.round(p.reorderPoint * 2.5),

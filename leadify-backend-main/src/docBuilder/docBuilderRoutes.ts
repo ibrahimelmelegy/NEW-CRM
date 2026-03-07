@@ -322,11 +322,7 @@ router.post(
  *       403:
  *         description: Not the assigned approver
  */
-router.put(
-  '/:id/approve',
-  authenticateUser,
-  docBuilderController.approveDocument
-);
+router.put('/:id/approve', authenticateUser, docBuilderController.approveDocument);
 
 /**
  * @swagger
@@ -360,11 +356,7 @@ router.put(
  *       403:
  *         description: Not the assigned approver
  */
-router.put(
-  '/:id/reject',
-  authenticateUser,
-  docBuilderController.rejectDocument
-);
+router.put('/:id/reject', authenticateUser, docBuilderController.rejectDocument);
 
 router.put(
   '/:id/status',

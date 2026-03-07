@@ -66,7 +66,9 @@ class ClientService {
     }
     await createActivityLog('client', 'create', client.id, admin.id, null, 'Client created succesfully');
 
-    try { io.emit('client:created', { id: client.id, clientName: client.clientName, companyName: client.companyName }); } catch {}
+    try {
+      io.emit('client:created', { id: client.id, clientName: client.clientName, companyName: client.companyName });
+    } catch {}
 
     // Trigger workflow automation for client creation
     workflowService.processEntityEvent('client', String(client.id), TriggerType.ON_CREATE, null, client.toJSON(), admin.id).catch((err: Error) => {
@@ -105,13 +107,17 @@ class ClientService {
     }
 
     const updatedClient = await client.save();
-    try { io.emit('client:updated', { id: updatedClient.id, clientName: updatedClient.clientName, companyName: updatedClient.companyName }); } catch {}
+    try {
+      io.emit('client:updated', { id: updatedClient.id, clientName: updatedClient.clientName, companyName: updatedClient.companyName });
+    } catch {}
 
     // Trigger workflow automation for client update
     const newClientData = updatedClient.toJSON();
-    workflowService.processEntityEvent('client', String(client.id), TriggerType.ON_UPDATE, oldClientData, newClientData, user.id).catch((err: Error) => {
-      console.error('Workflow processEntityEvent (client.update) error:', err.message);
-    });
+    workflowService
+      .processEntityEvent('client', String(client.id), TriggerType.ON_UPDATE, oldClientData, newClientData, user.id)
+      .catch((err: Error) => {
+        console.error('Workflow processEntityEvent (client.update) error:', err.message);
+      });
 
     return updatedClient;
   }
@@ -465,12 +471,13 @@ class ClientService {
       .slice(0, 10)
       .map(([id]) => id);
 
-    const topClientsData = topClientIds.length > 0
-      ? await Client.findAll({
-          where: { id: { [Op.in]: topClientIds } },
-          attributes: ['id', 'clientName']
-        })
-      : [];
+    const topClientsData =
+      topClientIds.length > 0
+        ? await Client.findAll({
+            where: { id: { [Op.in]: topClientIds } },
+            attributes: ['id', 'clientName']
+          })
+        : [];
 
     const topByDealValue = topClientIds.map(id => {
       const c = topClientsData.find(cl => cl.id === id);
@@ -689,7 +696,7 @@ class ClientService {
 
     // Combine and sort all timeline items
     const timeline = [
-      ...deals.map((d) => ({
+      ...deals.map(d => ({
         id: d.id,
         type: 'DEAL',
         title: d.name,
@@ -697,7 +704,7 @@ class ClientService {
         timestamp: d.createdAt,
         data: d.toJSON()
       })),
-      ...activities.map((a) => ({
+      ...activities.map(a => ({
         id: a.id,
         type: 'ACTIVITY',
         title: a.subject || a.type,
@@ -706,7 +713,7 @@ class ClientService {
         user: a.user,
         data: a.toJSON()
       })),
-      ...calls.map((c) => ({
+      ...calls.map(c => ({
         id: c.id,
         type: 'CALL',
         title: `${(c as any).direction} Call`,
@@ -714,7 +721,7 @@ class ClientService {
         timestamp: c.createdAt,
         data: c.toJSON()
       })),
-      ...meetings.map((m) => ({
+      ...meetings.map(m => ({
         id: m.id,
         type: 'MEETING',
         title: m.title,
@@ -831,10 +838,7 @@ class ClientService {
   }
 
   async mergeCompanies(sourceId: string, targetId: string, user: User): Promise<Client> {
-    const [source, target] = await Promise.all([
-      this.clientOrError({ id: sourceId }),
-      this.clientOrError({ id: targetId })
-    ]);
+    const [source, target] = await Promise.all([this.clientOrError({ id: sourceId }), this.clientOrError({ id: targetId })]);
 
     // Merge logic: move all deals, notes, activities to target
     await Deal.update({ clientId: targetId }, { where: { clientId: sourceId } });

@@ -148,10 +148,10 @@ class RequestMetrics {
 
     if (recentEntries.length === 0) return;
 
-    const avgDuration = recentEntries.reduce((sum, e) => sum + e.durationMs, 0) / recentEntries.length;
-    const slowCount = recentEntries.filter(e => e.slow).length;
-    const errorCount = recentEntries.filter(e => e.statusCode >= 400).length;
-    const rps = (recentEntries.length / periodSec).toFixed(1);
+    const _avgDuration = recentEntries.reduce((sum, e) => sum + e.durationMs, 0) / recentEntries.length;
+    const _slowCount = recentEntries.filter(e => e.slow).length;
+    const _errorCount = recentEntries.filter(e => e.statusCode >= 400).length;
+    const _rps = (recentEntries.length / periodSec).toFixed(1);
 
     // Request metrics collected (period stats available via getMetrics())
   }

@@ -20,7 +20,7 @@ const emit = defineEmits(['showFilter']);
 
 const data = ref('');
 const users = await useApiFetch('users');
-const mappedUsers = users?.body?.docs?.map((e) => ({
+const mappedUsers = users?.body?.docs?.map(e => ({
   label: e.name,
   value: e.id
 }));

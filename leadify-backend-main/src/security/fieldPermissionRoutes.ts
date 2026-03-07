@@ -3,7 +3,7 @@ import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import { wrapResult } from '../utils/response/responseWrapper';
 import { AuthenticatedRequest } from '../types';
 import { FieldAccess } from './fieldPermissionModel';
-import { getFieldPermissions, bulkSetPermissions, getEditableFields, checkFieldAccess } from './fieldPermissionService';
+import { getFieldPermissions, bulkSetPermissions, getEditableFields } from './fieldPermissionService';
 
 const router = express.Router();
 

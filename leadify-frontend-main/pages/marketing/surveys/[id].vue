@@ -301,7 +301,7 @@ function formatAnswer(value: unknown): string {
 
 function getQuestionLabel(qId: string): string {
   if (!survey.value?.questions) return qId;
-  const q = survey.value.questions.find((q) => q.id === qId);
+  const q = survey.value.questions.find(q => q.id === qId);
   return q ? q.text.substring(0, 40) + (q.text.length > 40 ? '...' : '') : qId;
 }
 

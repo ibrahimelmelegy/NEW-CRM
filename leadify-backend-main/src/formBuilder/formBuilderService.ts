@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { Op, fn, col, literal } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import { FormTemplate, FormSubmission } from './formBuilderModel';
 import { clampPagination } from '../utils/pagination';
 import logger from '../config/logger';
@@ -89,7 +89,7 @@ class FormBuilderService {
     return submission;
   }
 
-  private async sendAutoResponseEmail(form: FormTemplate, data: Record<string, any>) {
+  private async sendAutoResponseEmail(_form: FormTemplate, _data: Record<string, any>) {
     try {
       // TODO: Integrate with email service
       // TODO: Integrate with email service
@@ -216,27 +216,27 @@ class FormBuilderService {
     const conversionRate = totalViews > 0 ? Math.round((totalSubmissions / totalViews) * 10000) / 100 : 0;
 
     // Submissions per day (last 30 days)
-    const dailySubmissions = await FormSubmission.findAll({
+    const dailySubmissions = (await FormSubmission.findAll({
       where: { formId, createdAt: { [Op.gte]: thirtyDaysAgo } },
       attributes: [
         [fn('DATE', col('createdAt')), 'date'],
-        [fn('COUNT', col('id')), 'count'],
+        [fn('COUNT', col('id')), 'count']
       ],
       group: [fn('DATE', col('createdAt'))],
       order: [[fn('DATE', col('createdAt')), 'ASC']],
-      raw: true,
-    }) as unknown as Array<{ date: string; count: string }>;
+      raw: true
+    })) as unknown as Array<{ date: string; count: string }>;
 
     // Source breakdown
-    const sourceBreakdown = await FormSubmission.findAll({
+    const sourceBreakdown = (await FormSubmission.findAll({
       where: { formId },
       attributes: [
         ['source', 'source'],
-        [fn('COUNT', col('id')), 'count'],
+        [fn('COUNT', col('id')), 'count']
       ],
       group: ['source'],
-      raw: true,
-    }) as unknown as Array<{ source: string; count: string }>;
+      raw: true
+    })) as unknown as Array<{ source: string; count: string }>;
 
     // Field completion rates
     const fields: FormField[] = form.fields || [];
@@ -256,7 +256,7 @@ class FormBuilderService {
         fieldCompletionRates[field.name] = {
           completed,
           total: totalSubmissions,
-          rate: Math.round((completed / totalSubmissions) * 10000) / 100,
+          rate: Math.round((completed / totalSubmissions) * 10000) / 100
         };
       }
     }
@@ -267,9 +267,9 @@ class FormBuilderService {
       totalSubmissions,
       totalViews,
       conversionRate,
-      dailySubmissions: dailySubmissions.map((d) => ({ date: d.date, count: Number(d.count) })),
-      sourceBreakdown: sourceBreakdown.map((s) => ({ source: s.source || 'direct', count: Number(s.count) })),
-      fieldCompletionRates,
+      dailySubmissions: dailySubmissions.map(d => ({ date: d.date, count: Number(d.count) })),
+      sourceBreakdown: sourceBreakdown.map(s => ({ source: s.source || 'direct', count: Number(s.count) })),
+      fieldCompletionRates
     };
   }
 
@@ -290,7 +290,7 @@ class FormBuilderService {
       redirectUrl: original.redirectUrl,
       createLead: original.createLead,
       submissionCount: 0,
-      tenantId: tenantId || original.tenantId,
+      tenantId: tenantId || original.tenantId
     });
 
     return clone;
@@ -307,28 +307,23 @@ class FormBuilderService {
     const fields: FormField[] = form.fields || [];
     const submissions = await FormSubmission.findAll({
       where: { formId },
-      order: [['createdAt', 'ASC']],
+      order: [['createdAt', 'ASC']]
     });
 
-    const headers = [
-      'Submission ID',
-      'Submitted At',
-      'Source',
-      ...fields.map((f) => f.label),
-    ];
+    const headers = ['Submission ID', 'Submitted At', 'Source', ...fields.map(f => f.label)];
 
-    const rows = submissions.map((sub) => {
+    const rows = submissions.map(sub => {
       const data = sub.data as Record<string, any>;
       return [
         sub.id,
         sub.createdAt,
         sub.source || '',
-        ...fields.map((f) => {
+        ...fields.map(f => {
           const val = data[f.name];
           if (val === undefined || val === null) return '';
           if (Array.isArray(val)) return val.join('; ');
           return String(val);
-        }),
+        })
       ];
     });
 
@@ -340,10 +335,7 @@ class FormBuilderService {
         }
         return str;
       };
-      const csvContent = [
-        headers.map(escapeCsv).join(','),
-        ...rows.map((row) => row.map(escapeCsv).join(',')),
-      ].join('\n');
+      const csvContent = [headers.map(escapeCsv).join(','), ...rows.map(row => row.map(escapeCsv).join(','))].join('\n');
       return { csv: csvContent, totalRows: rows.length };
     }
 

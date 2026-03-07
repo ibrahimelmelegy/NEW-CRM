@@ -68,12 +68,7 @@ export function useBackups() {
 
   // ─── Fetch Backups List ────────────────────────────────────────────
 
-  async function fetchBackups(
-    page: number = 1,
-    limit: number = 20,
-    status?: string,
-    type?: string
-  ): Promise<void> {
+  async function fetchBackups(page: number = 1, limit: number = 20, status?: string, type?: string): Promise<void> {
     loading.value = true;
     error.value = null;
     try {
@@ -138,10 +133,7 @@ export function useBackups() {
     actionLoading.value = true;
     error.value = null;
     try {
-      const response = await useApiFetch<{ success: boolean; message: string }>(
-        `backups/${id}/restore`,
-        'POST'
-      );
+      const response = await useApiFetch<{ success: boolean; message: string }>(`backups/${id}/restore`, 'POST');
       if (response.success) {
         return true;
       }
@@ -163,7 +155,7 @@ export function useBackups() {
     try {
       const response = await useApiFetch(`backups/${id}`, 'DELETE');
       if (response.success) {
-        backups.value = backups.value.filter((b) => b.id !== id);
+        backups.value = backups.value.filter(b => b.id !== id);
         return true;
       }
       error.value = response.message;
@@ -190,11 +182,7 @@ export function useBackups() {
     actionLoading.value = true;
     error.value = null;
     try {
-      const response = await useApiFetch<{ deleted: number; freedBytes: number }>(
-        'backups/cleanup',
-        'POST',
-        { retentionDays }
-      );
+      const response = await useApiFetch<{ deleted: number; freedBytes: number }>('backups/cleanup', 'POST', { retentionDays });
       if (response.success && response.body) {
         // Refresh the list after cleanup
         await fetchBackups(pagination.value.page, pagination.value.limit);
@@ -216,11 +204,7 @@ export function useBackups() {
     actionLoading.value = true;
     error.value = null;
     try {
-      const response = await useApiFetch<{ autoBackupActive: boolean }>(
-        'backups/schedule',
-        'POST',
-        { enabled, cronExpression }
-      );
+      const response = await useApiFetch<{ autoBackupActive: boolean }>('backups/schedule', 'POST', { enabled, cronExpression });
       if (response.success && response.body) {
         if (stats.value) {
           stats.value.autoBackupActive = response.body.autoBackupActive;

@@ -462,7 +462,9 @@ const createGoal = async () => {
 
   // Format dueDate to YYYY-MM-DD string if it's a Date object
   const dueDate =
-    (newGoal.value.dueDate as unknown) instanceof Date ? (newGoal.value.dueDate as unknown as Date).toISOString().slice(0, 10) : newGoal.value.dueDate;
+    (newGoal.value.dueDate as unknown) instanceof Date
+      ? (newGoal.value.dueDate as unknown as Date).toISOString().slice(0, 10)
+      : newGoal.value.dueDate;
 
   const payload = {
     title: newGoal.value.title,
@@ -561,7 +563,7 @@ const fetchOverdueGoals = async () => {
     const res = await useApiFetch('goals/overdue');
     if (res?.success && res.body) {
       const docs = (res.body as unknown).docs || res.body || [];
-      overdueGoals.value = docs.map((g) => {
+      overdueGoals.value = docs.map(g => {
         const dueDate = new Date(g.dueDate);
         const now = new Date();
         const diffMs = now.getTime() - dueDate.getTime();

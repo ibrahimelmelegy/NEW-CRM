@@ -320,7 +320,7 @@ const kpiCards = computed(() => {
   const totalCustomers = segments.reduce((sum, s) => sum + (s.customerCount || 0), 0);
   const totalRevenue = segments.reduce((sum, s) => sum + (s.totalRevenue || 0), 0);
   const avgClv = totalCustomers > 0 ? Math.round(totalRevenue / totalCustomers) : 0;
-  const churnCount = churnCustomers.value.filter((c) => c.riskLevel === 'high').length;
+  const churnCount = churnCustomers.value.filter(c => c.riskLevel === 'high').length;
   const churnRate = totalCustomers > 0 ? ((churnCount / totalCustomers) * 100).toFixed(1) : '0';
   const retentionRate = totalCustomers > 0 ? (100 - parseFloat(churnRate as string)).toFixed(1) : '0';
 
@@ -421,7 +421,7 @@ async function loadData() {
       if (docs && docs.length > 0) {
         // Group CLV records by segment
         const segmentMap = new Map<string, { count: number; totalClv: number; totalRevenue: number; growthSum: number }>();
-        docs.forEach((record) => {
+        docs.forEach(record => {
           const seg = record.segment || 'Other';
           if (!segmentMap.has(seg)) {
             segmentMap.set(seg, { count: 0, totalClv: 0, totalRevenue: 0, growthSum: 0 });

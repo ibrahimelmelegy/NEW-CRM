@@ -1,7 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { wrapResult } from '../utils/response/responseWrapper';
 import proposalFinanceTableService from './proposalFinanceTableService';
-import proposalContentService from '../proposalContent/proposalContentService';
 import User from '../user/userModel';
 import { AuthenticatedRequest } from '../types';
 

@@ -689,7 +689,7 @@ const revenueBarChartOption = computed(() => {
         const idx = params[0]?.dataIndex ?? 0;
         const weekLabel = data[idx]?.week || '';
         let html = `<strong>${weekLabel}</strong><br/>`;
-        params.forEach((p) => {
+        params.forEach(p => {
           html += `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${p.color};margin-right:6px;"></span>`;
           html += `${p.seriesName}: <strong>$${p.value.toLocaleString()}</strong><br/>`;
         });

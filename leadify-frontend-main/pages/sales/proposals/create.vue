@@ -77,7 +77,7 @@ function transformToApiPayload(data: unknown) {
     }),
     relatedEntityType: data.selectedEntity?.type,
     relatedEntityId: data.selectedEntity?.id,
-    fileAttachments: data.attachments?.map((f) => f.url) || []
+    fileAttachments: data.attachments?.map(f => f.url) || []
   };
 }
 </script>

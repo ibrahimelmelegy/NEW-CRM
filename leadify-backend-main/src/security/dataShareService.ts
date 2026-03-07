@@ -1,7 +1,6 @@
 import { Op } from 'sequelize';
 import { DataSharingRule, RecordShare, DefaultAccessLevel, ShareAccessLevel } from './dataShareModel';
 import User from '../user/userModel';
-import Role from '../role/roleModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 

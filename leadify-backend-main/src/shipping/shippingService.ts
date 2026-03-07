@@ -25,11 +25,12 @@ class ShippingService {
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.carrier) where.carrier = query.carrier;
-    if (query.search) where[Op.or] = [
-      { shipmentNumber: { [Op.iLike]: `%${query.search}%` } },
-      { trackingNumber: { [Op.iLike]: `%${query.search}%` } },
-      { recipientName: { [Op.iLike]: `%${query.search}%` } }
-    ];
+    if (query.search)
+      where[Op.or] = [
+        { shipmentNumber: { [Op.iLike]: `%${query.search}%` } },
+        { trackingNumber: { [Op.iLike]: `%${query.search}%` } },
+        { recipientName: { [Op.iLike]: `%${query.search}%` } }
+      ];
     const { rows, count } = await Shipment.findAndCountAll({ where, order: [['createdAt', 'DESC']], limit, offset });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -49,14 +50,22 @@ class ShippingService {
     return true;
   }
 
-  async createRate(data: any, tenantId?: string) { return ShippingRate.create({ ...data, tenantId }); }
+  async createRate(data: any, tenantId?: string) {
+    return ShippingRate.create({ ...data, tenantId });
+  }
 
   async getRates(query: any, tenantId?: string) {
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.carrier) where.carrier = query.carrier;
     if (query.isActive !== undefined) where.isActive = query.isActive === 'true';
-    return ShippingRate.findAll({ where, order: [['carrier', 'ASC'], ['weightMin', 'ASC']] });
+    return ShippingRate.findAll({
+      where,
+      order: [
+        ['carrier', 'ASC'],
+        ['weightMin', 'ASC']
+      ]
+    });
   }
 
   async updateRate(id: number, data: any) {
@@ -134,9 +143,7 @@ class ShippingService {
       throw new Error(`Unknown current status: ${currentStatus}`);
     }
     if (!allowedNext.includes(newStatus)) {
-      throw new Error(
-        `Invalid status transition: ${currentStatus} -> ${newStatus}. Allowed: ${allowedNext.join(', ') || 'none (terminal state)'}`
-      );
+      throw new Error(`Invalid status transition: ${currentStatus} -> ${newStatus}. Allowed: ${allowedNext.join(', ') || 'none (terminal state)'}`);
     }
 
     const updateData: Record<string, any> = { status: newStatus };
@@ -150,9 +157,13 @@ class ShippingService {
     }
 
     await shipment.update(updateData);
-    try { io.emit('shipping:status_changed', { id: shipment.id, shipmentNumber: shipment.shipmentNumber, previousStatus: currentStatus, newStatus }); } catch {}
+    try {
+      io.emit('shipping:status_changed', { id: shipment.id, shipmentNumber: shipment.shipmentNumber, previousStatus: currentStatus, newStatus });
+    } catch {}
     if (newStatus === 'DELIVERED') {
-      try { io.emit('shipping:delivered', { id: shipment.id, shipmentNumber: shipment.shipmentNumber, recipientName: shipment.recipientName }); } catch {}
+      try {
+        io.emit('shipping:delivered', { id: shipment.id, shipmentNumber: shipment.shipmentNumber, recipientName: shipment.recipientName });
+      } catch {}
     }
     return shipment;
   }
@@ -262,7 +273,9 @@ class ShippingService {
     const successCount = results.filter(r => r.success).length;
     const failCount = results.filter(r => !r.success).length;
 
-    try { io.emit('shipping:bulk_status_updated', { successCount, failCount }); } catch {}
+    try {
+      io.emit('shipping:bulk_status_updated', { successCount, failCount });
+    } catch {}
 
     return { total: updates.length, successCount, failCount, results };
   }
@@ -278,12 +291,12 @@ class ShippingService {
     const totalShipments = await Shipment.count({ where });
 
     // Count by status
-    const statusCounts = await Shipment.findAll({
+    const statusCounts = (await Shipment.findAll({
       where,
       attributes: ['status', [fn('COUNT', col('id')), 'count']],
       group: ['status'],
       raw: true
-    }) as unknown as Array<{ status: string; count: string }>;
+    })) as unknown as Array<{ status: string; count: string }>;
 
     const byStatus: Record<string, number> = {};
     for (const row of statusCounts) byStatus[row.status] = Number(row.count);
@@ -299,9 +312,7 @@ class ShippingService {
 
     for (const s of delivered) {
       if (s.createdAt && s.actualDelivery) {
-        const days = Math.ceil(
-          (new Date(s.actualDelivery).getTime() - new Date(s.createdAt as any).getTime()) / (1000 * 60 * 60 * 24)
-        );
+        const days = Math.ceil((new Date(s.actualDelivery).getTime() - new Date(s.createdAt as any).getTime()) / (1000 * 60 * 60 * 24));
         totalDeliveryDays += days;
       }
       if (s.estimatedDelivery && s.actualDelivery) {
@@ -313,9 +324,7 @@ class ShippingService {
     }
 
     const avgDeliveryDays = delivered.length > 0 ? Number((totalDeliveryDays / delivered.length).toFixed(1)) : null;
-    const onTimeRate = deliveredWithEstimate > 0
-      ? Number(((onTimeCount / deliveredWithEstimate) * 100).toFixed(1))
-      : null;
+    const onTimeRate = deliveredWithEstimate > 0 ? Number(((onTimeCount / deliveredWithEstimate) * 100).toFixed(1)) : null;
 
     return {
       totalShipments,

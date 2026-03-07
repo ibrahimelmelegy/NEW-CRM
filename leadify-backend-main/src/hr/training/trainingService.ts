@@ -13,9 +13,11 @@ class TrainingService {
   async getProgramById(id: number) {
     return TrainingProgram.findByPk(id, {
       include: [
-        { model: TrainingEnrollment, as: 'enrollments', include: [
-          { model: Employee, as: 'employee', attributes: ['id', 'firstName', 'lastName', 'jobTitle'] }
-        ]}
+        {
+          model: TrainingEnrollment,
+          as: 'enrollments',
+          include: [{ model: Employee, as: 'employee', attributes: ['id', 'firstName', 'lastName', 'jobTitle'] }]
+        }
       ]
     });
   }
@@ -29,7 +31,11 @@ class TrainingService {
     if (query.search) where.title = { [Op.iLike]: `%${query.search}%` };
 
     const { rows, count } = await TrainingProgram.findAndCountAll({
-      where, order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      where,
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -68,7 +74,9 @@ class TrainingService {
         { model: Employee, as: 'employee', attributes: ['id', 'firstName', 'lastName', 'jobTitle'] }
       ],
       order: [['createdAt', 'DESC']],
-      limit, offset, distinct: true
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -127,9 +135,7 @@ class TrainingService {
       });
 
       if (currentEnrollmentCount >= program.maxParticipants) {
-        throw new Error(
-          `Program is full (${currentEnrollmentCount}/${program.maxParticipants} participants)`
-        );
+        throw new Error(`Program is full (${currentEnrollmentCount}/${program.maxParticipants} participants)`);
       }
     }
 
@@ -144,7 +150,9 @@ class TrainingService {
       progress: 0
     });
 
-    try { io.emit('training:enrolled', { id: enrollment.id, programId, employeeId, programTitle: program.title }); } catch {}
+    try {
+      io.emit('training:enrolled', { id: enrollment.id, programId, employeeId, programTitle: program.title });
+    } catch {}
     return enrollment;
   }
 
@@ -169,7 +177,9 @@ class TrainingService {
       completedAt: new Date()
     });
 
-    try { io.emit('training:completed', { id: enrollmentId, programId: enrollment.programId, employeeId: enrollment.employeeId }); } catch {}
+    try {
+      io.emit('training:completed', { id: enrollmentId, programId: enrollment.programId, employeeId: enrollment.employeeId });
+    } catch {}
     return enrollment.reload();
   }
 
@@ -191,9 +201,7 @@ class TrainingService {
       programId,
       totalEnrolled,
       completedCount,
-      completionRate: totalEnrolled > 0
-        ? Math.round((completedCount / totalEnrolled) * 100)
-        : 0
+      completionRate: totalEnrolled > 0 ? Math.round((completedCount / totalEnrolled) * 100) : 0
     };
   }
 
@@ -216,9 +224,7 @@ class TrainingService {
 
     const completed = enrollments.filter(e => e.status === 'COMPLETED').length;
     const inProgress = enrollments.filter(e => ['ENROLLED', 'IN_PROGRESS'].includes(e.status)).length;
-    const totalHours = enrollments
-      .filter(e => e.status === 'COMPLETED')
-      .reduce((sum, e) => sum + ((e.program as any)?.durationHours || 0), 0);
+    const totalHours = enrollments.filter(e => e.status === 'COMPLETED').reduce((sum, e) => sum + ((e.program as any)?.durationHours || 0), 0);
 
     return {
       employeeId,
@@ -242,66 +248,61 @@ class TrainingService {
   async getTrainingDashboard(tenantId: string) {
     const today = new Date().toISOString().split('T')[0];
 
-    const [
-      totalPrograms,
-      activePrograms,
-      activeEnrollments,
-      completedEnrollments,
-      totalEnrollments,
-      upcomingPrograms,
-      overdueEnrollments
-    ] = await Promise.all([
-      TrainingProgram.count({ where: { tenantId } }),
-      TrainingProgram.count({ where: { tenantId, status: 'ACTIVE' } }),
-      TrainingEnrollment.count({
-        where: { tenantId, status: { [Op.in]: ['ENROLLED', 'IN_PROGRESS'] } }
-      }),
-      TrainingEnrollment.count({
-        where: { tenantId, status: 'COMPLETED' }
-      }),
-      TrainingEnrollment.count({
-        where: { tenantId, status: { [Op.notIn]: ['DROPPED'] } }
-      }),
-      TrainingProgram.findAll({
-        where: {
-          tenantId,
-          status: 'ACTIVE',
-          startDate: { [Op.gt]: today }
-        },
-        attributes: ['id', 'title', 'startDate', 'maxParticipants', 'type'],
-        order: [['startDate', 'ASC']],
-        limit: 10
-      }),
-      // Overdue: enrolled/in-progress in programs whose endDate has passed
-      TrainingEnrollment.count({
-        where: {
-          tenantId,
-          status: { [Op.in]: ['ENROLLED', 'IN_PROGRESS'] }
-        },
-        include: [{
-          model: TrainingProgram,
-          as: 'program',
+    const [totalPrograms, activePrograms, activeEnrollments, completedEnrollments, totalEnrollments, upcomingPrograms, overdueEnrollments] =
+      await Promise.all([
+        TrainingProgram.count({ where: { tenantId } }),
+        TrainingProgram.count({ where: { tenantId, status: 'ACTIVE' } }),
+        TrainingEnrollment.count({
+          where: { tenantId, status: { [Op.in]: ['ENROLLED', 'IN_PROGRESS'] } }
+        }),
+        TrainingEnrollment.count({
+          where: { tenantId, status: 'COMPLETED' }
+        }),
+        TrainingEnrollment.count({
+          where: { tenantId, status: { [Op.notIn]: ['DROPPED'] } }
+        }),
+        TrainingProgram.findAll({
           where: {
-            endDate: { [Op.lt]: today, [Op.ne]: null }
+            tenantId,
+            status: 'ACTIVE',
+            startDate: { [Op.gt]: today }
           },
-          attributes: []
-        }]
-      })
-    ]);
+          attributes: ['id', 'title', 'startDate', 'maxParticipants', 'type'],
+          order: [['startDate', 'ASC']],
+          limit: 10
+        }),
+        // Overdue: enrolled/in-progress in programs whose endDate has passed
+        TrainingEnrollment.count({
+          where: {
+            tenantId,
+            status: { [Op.in]: ['ENROLLED', 'IN_PROGRESS'] }
+          },
+          include: [
+            {
+              model: TrainingProgram,
+              as: 'program',
+              where: {
+                endDate: { [Op.lt]: today, [Op.ne]: null }
+              },
+              attributes: []
+            }
+          ]
+        })
+      ]);
 
-    const overallCompletionRate = totalEnrollments > 0
-      ? Math.round((completedEnrollments / totalEnrollments) * 100)
-      : 0;
+    const overallCompletionRate = totalEnrollments > 0 ? Math.round((completedEnrollments / totalEnrollments) * 100) : 0;
 
     // Top categories by enrollment
-    const categoryCounts = await TrainingEnrollment.findAll({
+    const categoryCounts = (await TrainingEnrollment.findAll({
       where: { tenantId },
-      include: [{
-        model: TrainingProgram,
-        as: 'program',
-        attributes: ['category'],
-        where: { category: { [Op.ne]: null } }
-      }],
+      include: [
+        {
+          model: TrainingProgram,
+          as: 'program',
+          attributes: ['category'],
+          where: { category: { [Op.ne]: null } }
+        }
+      ],
       attributes: [
         [col('program.category'), 'category'],
         [fn('COUNT', col('TrainingEnrollment.id')), 'count']
@@ -310,7 +311,7 @@ class TrainingService {
       order: [[fn('COUNT', col('TrainingEnrollment.id')), 'DESC']],
       limit: 5,
       raw: true
-    }) as unknown as Array<{ category: string; count: string }>;
+    })) as unknown as Array<{ category: string; count: string }>;
 
     return {
       totalPrograms,
@@ -345,7 +346,10 @@ class TrainingService {
     if (program.description) {
       const match = program.description.match(/prereqs:\[([0-9,\s]+)\]/);
       if (match) {
-        prerequisiteIds = match[1].split(',').map((id: string) => parseInt(id.trim(), 10)).filter((n: number) => !isNaN(n));
+        prerequisiteIds = match[1]
+          .split(',')
+          .map((id: string) => parseInt(id.trim(), 10))
+          .filter((n: number) => !isNaN(n));
       }
     }
 
@@ -364,7 +368,7 @@ class TrainingService {
       raw: true
     });
 
-    const completedIds = new Set(completedPrereqs.map((e) => e.programId));
+    const completedIds = new Set(completedPrereqs.map(e => e.programId));
     const missingIds = prerequisiteIds.filter(id => !completedIds.has(id));
 
     if (missingIds.length > 0) {
@@ -375,7 +379,7 @@ class TrainingService {
         raw: true
       });
 
-      const missingTitles = missingPrograms.map((p) => `"${p.title}" (ID: ${p.id})`).join(', ');
+      const missingTitles = missingPrograms.map(p => `"${p.title}" (ID: ${p.id})`).join(', ');
       throw new Error(`Prerequisites not met. Employee must first complete: ${missingTitles}`);
     }
 

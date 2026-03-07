@@ -44,7 +44,7 @@ const evictIfNeeded = () => {
 /**
  * Generate a cache key from URL and params
  */
-const generateCacheKey = (url: string, params?: Record<string, unknown>): string => {
+const _generateCacheKey = (url: string, params?: Record<string, unknown>): string => {
   const paramString = params ? JSON.stringify(params) : '';
   return `${url}:${paramString}`;
 };

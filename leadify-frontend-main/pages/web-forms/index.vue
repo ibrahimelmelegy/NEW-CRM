@@ -352,9 +352,9 @@ function renderCharts() {
     const chart = echarts.init(trendChartRef.value);
     chart.setOption({
       tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: analytics.dailySubmissions.map((d) => d.date) },
+      xAxis: { type: 'category', data: analytics.dailySubmissions.map(d => d.date) },
       yAxis: { type: 'value' },
-      series: [{ data: analytics.dailySubmissions.map((d) => d.count), type: 'line', smooth: true, itemStyle: { color: '#7c3aed' } }]
+      series: [{ data: analytics.dailySubmissions.map(d => d.count), type: 'line', smooth: true, itemStyle: { color: '#7c3aed' } }]
     });
   }
   if (sourceChartRef.value && analytics.sourceBreakdown?.length) {
@@ -365,7 +365,7 @@ function renderCharts() {
         {
           type: 'pie',
           radius: '60%',
-          data: analytics.sourceBreakdown.map((s) => ({ name: s.source, value: s.count })),
+          data: analytics.sourceBreakdown.map(s => ({ name: s.source, value: s.count })),
           itemStyle: { borderRadius: 8 }
         }
       ]

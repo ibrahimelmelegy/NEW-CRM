@@ -47,7 +47,7 @@ export async function getServices(): Promise<UseServicesResult> {
 
     if (success) {
       // Return the docs (services) from the response
-      const services = body?.docs?.map((service) => ({
+      const services = body?.docs?.map(service => ({
         ...service,
         createdAt: formatDate(service.createdAt),
         // updatedAt: formatDate(service.updatedAt),
@@ -80,7 +80,7 @@ export async function getServices(): Promise<UseServicesResult> {
  */
 export async function getService(id: string | string[]): Promise<Service> {
   try {
-    const { body: service, success } = await useApiFetch(`service/${id}`);
+    const { body: service } = await useApiFetch(`service/${id}`);
     return service;
   } catch (error) {
     console.error('Error fetching service:', error instanceof Error ? error.message : error);

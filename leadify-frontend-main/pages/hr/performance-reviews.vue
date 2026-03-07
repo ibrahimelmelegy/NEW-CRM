@@ -131,7 +131,13 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('hr.performance.period')">
-          <el-date-picker v-model="newReview.period" type="daterange" :start-placeholder="$t('common.startDate')" :end-placeholder="$t('common.endDate')" class="w-full" />
+          <el-date-picker
+            v-model="newReview.period"
+            type="daterange"
+            :start-placeholder="$t('common.startDate')"
+            :end-placeholder="$t('common.endDate')"
+            class="w-full"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -177,7 +183,7 @@ const newReview = ref({ employeeId: '', reviewType: 'QUARTERLY', period: null as
 function calcGoalCompletion(goals: Record<string, unknown>[] | null | undefined): number {
   if (!goals || !Array.isArray(goals) || goals.length === 0) return 0;
 
-  const hasWeights = goals.some(g => g.weight != null && g.weight > 0);
+  const hasWeights = goals.some(g => g.weight !== null && g.weight !== undefined && g.weight > 0);
 
   if (hasWeights) {
     const totalWeight = goals.reduce((sum, g) => sum + (Number(g.weight) || 0), 0);

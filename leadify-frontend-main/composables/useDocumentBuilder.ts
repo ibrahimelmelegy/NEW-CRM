@@ -128,7 +128,7 @@ export function useDocumentBuilder() {
       for (const part of parts) {
         value = value?.[part];
       }
-      return value != null ? String(value) : `{{${key}}}`;
+      return value !== null && value !== undefined ? String(value) : `{{${key}}}`;
     });
   }
 

@@ -10,8 +10,12 @@ function analyzeSentiment(text: string): { sentiment: string; score: number } {
   const negativeWords = ['bad', 'terrible', 'awful', 'worst', 'hate', 'horrible', 'disappointed', 'poor', 'broken', 'issue'];
 
   let score = 0;
-  for (const w of positiveWords) { if (lower.includes(w)) score += 1; }
-  for (const w of negativeWords) { if (lower.includes(w)) score -= 1; }
+  for (const w of positiveWords) {
+    if (lower.includes(w)) score += 1;
+  }
+  for (const w of negativeWords) {
+    if (lower.includes(w)) score -= 1;
+  }
 
   const normalised = Math.max(-1, Math.min(1, score / 3));
   const sentiment = normalised > 0.2 ? 'POSITIVE' : normalised < -0.2 ? 'NEGATIVE' : 'NEUTRAL';
@@ -29,7 +33,9 @@ class SocialListeningService {
       data.sentimentScore = analysis.score;
     }
     const mention = await SocialMention.create({ ...data, tenantId });
-    try { io.emit('socialMention:created', { id: mention.id, platform: mention.platform }); } catch {}
+    try {
+      io.emit('socialMention:created', { id: mention.id, platform: mention.platform });
+    } catch {}
     return mention;
   }
 
@@ -49,7 +55,11 @@ class SocialListeningService {
     }
 
     const { rows, count } = await SocialMention.findAndCountAll({
-      where, order: [['mentionDate', 'DESC']], limit, offset, distinct: true
+      where,
+      order: [['mentionDate', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -62,7 +72,9 @@ class SocialListeningService {
     const item = await SocialMention.findByPk(id);
     if (!item) return null;
     await item.update(data);
-    try { io.emit('socialMention:updated', { id: item.id }); } catch {}
+    try {
+      io.emit('socialMention:updated', { id: item.id });
+    } catch {}
     return item;
   }
 
@@ -70,7 +82,9 @@ class SocialListeningService {
     const item = await SocialMention.findByPk(id);
     if (!item) return false;
     await item.destroy();
-    try { io.emit('socialMention:deleted', { id }); } catch {}
+    try {
+      io.emit('socialMention:deleted', { id });
+    } catch {}
     return true;
   }
 
@@ -88,7 +102,9 @@ class SocialListeningService {
 
     // Group by platform
     const byPlatform: Record<string, { positive: number; negative: number; neutral: number; total: number; avgScore: number }> = {};
-    let totalPositive = 0, totalNegative = 0, totalNeutral = 0;
+    let totalPositive = 0,
+      totalNegative = 0,
+      totalNeutral = 0;
     let scoreSum = 0;
 
     for (const m of mentions) {
@@ -96,16 +112,23 @@ class SocialListeningService {
       if (!byPlatform[p]) byPlatform[p] = { positive: 0, negative: 0, neutral: 0, total: 0, avgScore: 0 };
       byPlatform[p].total++;
       const sentiment = (m as any).sentiment;
-      if (sentiment === 'POSITIVE') { byPlatform[p].positive++; totalPositive++; }
-      else if (sentiment === 'NEGATIVE') { byPlatform[p].negative++; totalNegative++; }
-      else { byPlatform[p].neutral++; totalNeutral++; }
+      if (sentiment === 'POSITIVE') {
+        byPlatform[p].positive++;
+        totalPositive++;
+      } else if (sentiment === 'NEGATIVE') {
+        byPlatform[p].negative++;
+        totalNegative++;
+      } else {
+        byPlatform[p].neutral++;
+        totalNeutral++;
+      }
       scoreSum += Number((m as any).sentimentScore) || 0;
     }
 
     for (const p of Object.keys(byPlatform)) {
       const group = byPlatform[p];
       // Compute average sentiment score per platform from raw mentions
-      const platformMentions = mentions.filter((m) => m.platform === p);
+      const platformMentions = mentions.filter(m => m.platform === p);
       const platformScoreSum = platformMentions.reduce((s: number, m: any) => s + (Number(m.sentimentScore) || 0), 0);
       group.avgScore = platformMentions.length > 0 ? parseFloat((platformScoreSum / platformMentions.length).toFixed(2)) : 0;
     }

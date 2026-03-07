@@ -10,11 +10,13 @@ class CartRecoveryService {
   async create(data: any, tenantId?: string) {
     // Auto-calculate totalValue from items if not provided
     if (data.items && Array.isArray(data.items) && !data.totalValue) {
-      data.totalValue = data.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+      data.totalValue = data.items.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
     }
     if (!data.abandonedAt) data.abandonedAt = new Date();
     const cart = await AbandonedCart.create({ ...data, tenantId });
-    try { io.emit('cart:abandoned', { id: cart.id, totalValue: cart.totalValue }); } catch {}
+    try {
+      io.emit('cart:abandoned', { id: cart.id, totalValue: cart.totalValue });
+    } catch {}
     return cart;
   }
 
@@ -37,7 +39,9 @@ class CartRecoveryService {
         where,
         include: [{ model: Client, as: 'customer', attributes: ['id', 'name', 'email'], required: false }],
         order: [['abandonedAt', 'DESC']],
-        limit, offset, distinct: true
+        limit,
+        offset,
+        distinct: true
       });
       return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
     } catch {
@@ -55,7 +59,9 @@ class CartRecoveryService {
     const item = await AbandonedCart.findByPk(id);
     if (!item) return null;
     await item.update(data);
-    try { io.emit('cart:updated', { id: item.id }); } catch {}
+    try {
+      io.emit('cart:updated', { id: item.id });
+    } catch {}
     return item;
   }
 
@@ -85,7 +91,9 @@ class CartRecoveryService {
       reminderCount: cart.reminderCount + 1
     });
 
-    try { io.emit('cart:reminderSent', { id: cart.id, customerId: cart.customerId, reminderCount: cart.reminderCount }); } catch {}
+    try {
+      io.emit('cart:reminderSent', { id: cart.id, customerId: cart.customerId, reminderCount: cart.reminderCount });
+    } catch {}
 
     return {
       success: true,
@@ -107,7 +115,9 @@ class CartRecoveryService {
       recoveredAt: new Date()
     });
 
-    try { io.emit('cart:recovered', { id: cart.id, totalValue: cart.totalValue }); } catch {}
+    try {
+      io.emit('cart:recovered', { id: cart.id, totalValue: cart.totalValue });
+    } catch {}
     return cart;
   }
 
@@ -122,10 +132,7 @@ class CartRecoveryService {
     };
     if (tenantId) where.tenantId = tenantId;
 
-    const [affectedCount] = await AbandonedCart.update(
-      { recoveryStatus: 'EXPIRED' },
-      { where }
-    );
+    const [affectedCount] = await AbandonedCart.update({ recoveryStatus: 'EXPIRED' }, { where });
 
     return { expiredCount: affectedCount };
   }
@@ -139,17 +146,32 @@ class CartRecoveryService {
 
     const all = await AbandonedCart.findAll({ where, raw: true });
 
-    let totalAbandoned = 0, totalReminded = 0, totalRecovered = 0, totalExpired = 0;
-    let abandonedValue = 0, recoveredValue = 0;
+    let totalAbandoned = 0,
+      totalReminded = 0,
+      totalRecovered = 0,
+      totalExpired = 0;
+    let abandonedValue = 0,
+      recoveredValue = 0;
 
     for (const c of all) {
       const cart = c as any;
       const val = Number(cart.totalValue) || 0;
       switch (cart.recoveryStatus) {
-        case 'ABANDONED': totalAbandoned++; abandonedValue += val; break;
-        case 'REMINDED': totalReminded++; abandonedValue += val; break;
-        case 'RECOVERED': totalRecovered++; recoveredValue += val; break;
-        case 'EXPIRED': totalExpired++; break;
+        case 'ABANDONED':
+          totalAbandoned++;
+          abandonedValue += val;
+          break;
+        case 'REMINDED':
+          totalReminded++;
+          abandonedValue += val;
+          break;
+        case 'RECOVERED':
+          totalRecovered++;
+          recoveredValue += val;
+          break;
+        case 'EXPIRED':
+          totalExpired++;
+          break;
       }
     }
 

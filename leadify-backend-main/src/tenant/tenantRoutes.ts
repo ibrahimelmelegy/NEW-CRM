@@ -22,13 +22,9 @@ router
   .put(authenticateUser, HasPermission(['MANAGE_SETTINGS']), tenantController.updateTenant);
 
 // PUT  /api/admin/tenants/:id/settings - Update tenant settings (JSONB merge)
-router
-  .route('/:id/settings')
-  .put(authenticateUser, HasPermission(['MANAGE_SETTINGS']), tenantController.updateTenantSettings);
+router.route('/:id/settings').put(authenticateUser, HasPermission(['MANAGE_SETTINGS']), tenantController.updateTenantSettings);
 
 // GET  /api/admin/tenants/:id/usage - Get tenant resource usage
-router
-  .route('/:id/usage')
-  .get(authenticateUser, HasPermission(['MANAGE_SETTINGS']), tenantController.getTenantUsage);
+router.route('/:id/usage').get(authenticateUser, HasPermission(['MANAGE_SETTINGS']), tenantController.getTenantUsage);
 
 export default router;

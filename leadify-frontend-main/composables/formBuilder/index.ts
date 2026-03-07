@@ -72,7 +72,7 @@ export function useFormBuilder() {
       if (success && body) {
         const data = body as unknown;
         const docs: Record<string, unknown>[] = data.docs || data || [];
-        forms.value = docs.map((f) => ({
+        forms.value = docs.map(f => ({
           id: f.id,
           name: f.name || f.title || 'Untitled Form',
           title: f.title || f.name || '',

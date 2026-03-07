@@ -37,18 +37,18 @@ const enabledState: Record<ProviderName, boolean> = {
   hubspot: true,
   mailchimp: true,
   slack: true,
-  whatsapp: true,
+  whatsapp: true
 };
 
 const providerMeta: Record<ProviderName, { label: string; category: string; isConfigured: () => boolean }> = {
-  stripe:     { label: 'Stripe',           category: 'payment',       isConfigured: () => StripeProvider.isConfigured() },
-  sendgrid:   { label: 'SendGrid',         category: 'email',         isConfigured: () => SendGridProvider.isConfigured() },
-  twilio:     { label: 'Twilio',           category: 'sms',           isConfigured: () => TwilioProvider.isConfigured() },
-  salesforce: { label: 'Salesforce',       category: 'crm-sync',      isConfigured: () => SalesforceProvider.isConfigured() },
-  hubspot:    { label: 'HubSpot',          category: 'crm-sync',      isConfigured: () => HubSpotProvider.isConfigured() },
-  mailchimp:  { label: 'Mailchimp',        category: 'marketing',     isConfigured: () => MailchimpProvider.isConfigured() },
-  slack:      { label: 'Slack',            category: 'communication', isConfigured: () => SlackProvider.isConfigured() },
-  whatsapp:   { label: 'WhatsApp Business', category: 'communication', isConfigured: () => WhatsAppProvider.isConfigured() },
+  stripe: { label: 'Stripe', category: 'payment', isConfigured: () => StripeProvider.isConfigured() },
+  sendgrid: { label: 'SendGrid', category: 'email', isConfigured: () => SendGridProvider.isConfigured() },
+  twilio: { label: 'Twilio', category: 'sms', isConfigured: () => TwilioProvider.isConfigured() },
+  salesforce: { label: 'Salesforce', category: 'crm-sync', isConfigured: () => SalesforceProvider.isConfigured() },
+  hubspot: { label: 'HubSpot', category: 'crm-sync', isConfigured: () => HubSpotProvider.isConfigured() },
+  mailchimp: { label: 'Mailchimp', category: 'marketing', isConfigured: () => MailchimpProvider.isConfigured() },
+  slack: { label: 'Slack', category: 'communication', isConfigured: () => SlackProvider.isConfigured() },
+  whatsapp: { label: 'WhatsApp Business', category: 'communication', isConfigured: () => WhatsAppProvider.isConfigured() }
 };
 
 class IntegrationManager {
@@ -58,7 +58,7 @@ class IntegrationManager {
       label: providerMeta[provider].label,
       category: providerMeta[provider].category,
       configured: providerMeta[provider].isConfigured(),
-      enabled: enabledState[provider] ?? true,
+      enabled: enabledState[provider] ?? true
     }));
   }
 
@@ -70,7 +70,7 @@ class IntegrationManager {
       label: meta.label,
       category: meta.category,
       configured: meta.isConfigured(),
-      enabled: enabledState[provider] ?? true,
+      enabled: enabledState[provider] ?? true
     };
   }
 

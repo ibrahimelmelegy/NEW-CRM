@@ -5,7 +5,7 @@
  * Jobs survive server restarts and are shared across instances.
  */
 
-import { Queue, Worker, Job, QueueEvents } from 'bullmq';
+import { Queue, Worker, Job } from 'bullmq';
 import IORedis from 'ioredis';
 
 export interface JobOptions {
@@ -175,7 +175,7 @@ class JobQueue {
             queueName,
             status: state as JobStatus,
             attempts: job.attemptsMade,
-            maxAttempts: (job.opts.attempts ?? 3),
+            maxAttempts: job.opts.attempts ?? 3,
             error: job.failedReason,
             result: job.returnvalue,
             createdAt: job.timestamp,

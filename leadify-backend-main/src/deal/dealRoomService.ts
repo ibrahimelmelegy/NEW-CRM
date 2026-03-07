@@ -4,9 +4,6 @@ import User from '../user/userModel';
 import Task from '../tasks/taskModel';
 import Comment from '../comments/commentModel';
 import Attachment from '../attachments/attachmentModel';
-import DealDelivery from './model/dealDeliveryModel';
-import Invoice from './model/invoiceMode';
-import { Op } from 'sequelize';
 
 class DealRoomService {
   async getDealRoom(dealId: string): Promise<any> {
@@ -59,7 +56,7 @@ class DealRoomService {
     const dealAge = Math.floor((now.getTime() - new Date(deal.createdAt).getTime()) / (1000 * 60 * 60 * 24));
     const lastActivity = activities[0]?.createdAt ? new Date(activities[0].createdAt) : null;
     const daysSinceActivity = lastActivity ? Math.floor((now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24)) : 999;
-    const completedTasks = tasks.filter((t) => (t.status as string) === 'completed').length;
+    const completedTasks = tasks.filter(t => (t.status as string) === 'completed').length;
     const totalTasks = tasks.length;
 
     // Health: activity recency (30) + stage age (25) + engagement (25) + tasks (20)
@@ -86,7 +83,7 @@ class DealRoomService {
     }
 
     // Timeline data
-    const timeline = activities.map((a) => ({
+    const timeline = activities.map(a => ({
       id: a.id,
       type: getActivityType(a.description),
       description: a.description,
@@ -109,14 +106,14 @@ class DealRoomService {
       healthScore,
       timeline,
       stakeholders: {
-        sellers: sellerSide.map((u) => ({
+        sellers: sellerSide.map((u: any) => ({
           id: u.id,
           name: u.name,
           profilePicture: u.profilePicture,
           role: 'Sales Rep'
         }))
       },
-      tasks: tasks.map((t) => ({
+      tasks: tasks.map(t => ({
         id: t.id,
         title: t.title,
         status: t.status,

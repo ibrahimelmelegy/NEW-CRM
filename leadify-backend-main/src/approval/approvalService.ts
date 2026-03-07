@@ -97,7 +97,7 @@ class ApprovalService {
     return pendingRequests.filter(request => {
       const workflow = request.workflow;
       if (!workflow || !workflow.steps) return false;
-      const currentStepDef = workflow.steps.find((s) => s.order === request.currentStep);
+      const currentStepDef = workflow.steps.find(s => s.order === request.currentStep);
       return currentStepDef && currentStepDef.approverUserId === userId;
     });
   }
@@ -131,7 +131,7 @@ class ApprovalService {
     const workflow = request.workflow;
     if (!workflow || !workflow.steps) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
 
-    const currentStepDef = workflow.steps.find((s) => s.order === request.currentStep);
+    const currentStepDef = workflow.steps.find(s => s.order === request.currentStep);
     if (!currentStepDef || currentStepDef.approverUserId !== userId) {
       throw new BaseError(ERRORS.ACCESS_DENIED);
     }
@@ -146,7 +146,7 @@ class ApprovalService {
     });
 
     const nextStep = request.currentStep + 1;
-    const hasNextStep = workflow.steps.some((s) => s.order === nextStep);
+    const hasNextStep = workflow.steps.some(s => s.order === nextStep);
 
     if (hasNextStep) {
       await request.update({ currentStep: nextStep, stepResults });
@@ -173,7 +173,7 @@ class ApprovalService {
     const workflow = request.workflow;
     if (!workflow || !workflow.steps) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
 
-    const currentStepDef = workflow.steps.find((s) => s.order === request.currentStep);
+    const currentStepDef = workflow.steps.find(s => s.order === request.currentStep);
     if (!currentStepDef || currentStepDef.approverUserId !== userId) {
       throw new BaseError(ERRORS.ACCESS_DENIED);
     }

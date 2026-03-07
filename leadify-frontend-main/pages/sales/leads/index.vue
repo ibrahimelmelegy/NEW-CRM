@@ -245,9 +245,9 @@ const table = ref({
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.value.data || [];
   const total = data.length;
-  const newLeads = data.filter((l) => l.status === 'NEW').length;
-  const qualified = data.filter((l) => l.status === 'QUALIFIED').length;
-  const contacted = data.filter((l) => l.status === 'CONTACTED').length;
+  const newLeads = data.filter(l => l.status === 'NEW').length;
+  const qualified = data.filter(l => l.status === 'QUALIFIED').length;
+  const contacted = data.filter(l => l.status === 'CONTACTED').length;
   const rate = total > 0 ? Math.round((qualified / total) * 100) : 0;
 
   return [
@@ -362,7 +362,7 @@ function handleRowClick(val: unknown) {
 }
 
 const mappedUsers =
-  usersResponse?.body?.docs?.map((e) => ({
+  usersResponse?.body?.docs?.map(e => ({
     label: e.name,
     value: e.id
   })) || [];
@@ -402,8 +402,8 @@ const advancedSearchFields = [
   { key: 'name', label: t('leads.table.leadName'), type: 'string' },
   { key: 'email', label: t('leads.table.email'), type: 'string' },
   { key: 'phone', label: t('leads.table.phone'), type: 'string' },
-  { key: 'status', label: t('leads.table.status'), type: 'select', options: leadStates.map((s) => ({ value: s.value, label: s.label })) },
-  { key: 'leadSource', label: t('leads.table.source'), type: 'select', options: leadSources.map((s) => ({ value: s.value, label: s.label })) },
+  { key: 'status', label: t('leads.table.status'), type: 'select', options: leadStates.map(s => ({ value: s.value, label: s.label })) },
+  { key: 'leadSource', label: t('leads.table.source'), type: 'select', options: leadSources.map(s => ({ value: s.value, label: s.label })) },
   { key: 'createdAt', label: t('leads.table.created'), type: 'date' }
 ];
 
@@ -455,10 +455,10 @@ const statusFilters = computed(() => {
   const data = table.value.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#7849ff', count: data.length },
-    { value: 'NEW', label: t('crm.stages.new'), color: '#7849ff', count: data.filter((l) => l.status === 'NEW').length },
-    { value: 'CONTACTED', label: t('crm.stages.contacted'), color: '#3b82f6', count: data.filter((l) => l.status === 'CONTACTED').length },
-    { value: 'QUALIFIED', label: t('crm.stages.qualified'), color: '#10b981', count: data.filter((l) => l.status === 'QUALIFIED').length },
-    { value: 'DISQUALIFIED', label: t('crm.stages.lost'), color: '#ef4444', count: data.filter((l) => l.status === 'DISQUALIFIED').length }
+    { value: 'NEW', label: t('crm.stages.new'), color: '#7849ff', count: data.filter(l => l.status === 'NEW').length },
+    { value: 'CONTACTED', label: t('crm.stages.contacted'), color: '#3b82f6', count: data.filter(l => l.status === 'CONTACTED').length },
+    { value: 'QUALIFIED', label: t('crm.stages.qualified'), color: '#10b981', count: data.filter(l => l.status === 'QUALIFIED').length },
+    { value: 'DISQUALIFIED', label: t('crm.stages.lost'), color: '#ef4444', count: data.filter(l => l.status === 'DISQUALIFIED').length }
   ];
 });
 
@@ -470,11 +470,11 @@ function setMobileStatusFilter(value: string) {
 const mobileFilteredData = computed(() => {
   let data = table.value.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((lead) => lead.status === mobileStatusFilter.value);
+    data = data.filter(lead => lead.status === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((lead) => {
+  return data.filter(lead => {
     const name = (lead.leadDetails?.title || lead.name || '').toLowerCase();
     const company = (lead.leadDetails?.text || lead.companyName || '').toLowerCase();
     const email = (lead.email || '').toLowerCase();
@@ -565,7 +565,7 @@ async function confirmDelete() {
   try {
     const response = await deleteLead(deleteId.value);
     if (response?.success) {
-      table.value.data = table.value.data.filter((r) => r.id !== deleteId.value);
+      table.value.data = table.value.data.filter(r => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -600,7 +600,7 @@ async function handleBulkExport() {
   if (!selectedRows.value.length) return;
   try {
     loading.value = true;
-    const ids = selectedRows.value.map((r) => r.id);
+    const ids = selectedRows.value.map(r => r.id);
     await useApiFetch('lead/export', 'POST', { ids });
     ElNotification({ type: 'success', title: t('common.success'), message: t('leads.exportSuccess') });
     selectedRows.value = [];

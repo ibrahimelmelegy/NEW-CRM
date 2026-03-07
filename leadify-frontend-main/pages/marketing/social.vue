@@ -244,7 +244,14 @@
     <el-dialog v-model="showComposeDialog" :title="$t('socialCrm.composePost')" width="560px">
       <el-form label-position="top">
         <el-form-item :label="$t('socialCrm.content')">
-          <el-input v-model="newPost.content" type="textarea" :rows="4" :placeholder="$t('socialCrm.whatsOnYourMind')" show-word-limit :maxlength="280" />
+          <el-input
+            v-model="newPost.content"
+            type="textarea"
+            :rows="4"
+            :placeholder="$t('socialCrm.whatsOnYourMind')"
+            show-word-limit
+            :maxlength="280"
+          />
         </el-form-item>
         <el-form-item :label="$t('socialCrm.platforms')">
           <el-checkbox-group v-model="newPost.platforms">
@@ -629,7 +636,7 @@ async function fetchPosts() {
     const res = await useApiFetch('social-crm/posts');
     if (res?.success) {
       const docs = res.body?.docs || res.body || [];
-      scheduledPosts.value = docs.map((p) => ({
+      scheduledPosts.value = docs.map(p => ({
         id: p.id,
         content: p.content || '',
         platforms: p.platforms || [],

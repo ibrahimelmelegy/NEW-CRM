@@ -28,7 +28,7 @@ class AttachmentService {
     return Attachment.create({ ...data, uploadedBy: userId });
   }
 
-  async deleteAttachment(id: number, userId: number) {
+  async deleteAttachment(id: number, _userId: number) {
     const attachment = await Attachment.findByPk(id);
     if (!attachment) throw new Error('Attachment not found');
     await attachment.destroy();

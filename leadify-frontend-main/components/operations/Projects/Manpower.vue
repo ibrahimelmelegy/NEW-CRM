@@ -239,7 +239,7 @@ const totalCarRentDuration = (data: unknown) => {
 let filteredData: unknown = [];
 const fetchProjectsManpowers = async () => {
   const response = await getProjectManpowers();
-  filteredData = response.filter((item) => item?.projectId === projectId.value);
+  filteredData = response.filter(item => item?.projectId === projectId.value);
   if (response) {
     const accommodationCost =
       typeof Number(values.accommodationCost) === 'number' && !isNaN(Number(values.accommodationCost)) ? Number(values.accommodationCost) : 0;
@@ -247,7 +247,7 @@ const fetchProjectsManpowers = async () => {
 
     // Ensure data is an array and get its length
     const numManpowers = Array.isArray(filteredData) ? filteredData.length : 0;
-    manpowers.value.data = filteredData?.map((manpower) => {
+    manpowers.value.data = filteredData?.map(manpower => {
       const accommodationCostPerManpower = numManpowers ? accommodationCost / numManpowers : 0;
       const estimatedWorkDays =
         typeof Number(manpower?.estimatedWorkDays) === 'number' && !isNaN(Number(manpower?.estimatedWorkDays))
@@ -313,7 +313,7 @@ watch(
     // Ensure data is an array and get its length
     const numManpowers = Array.isArray(filteredData) ? filteredData.length : 0;
     // Map each manpower entry with extra numeric checks
-    manpowers.value.data = filteredData?.map((manpower) => {
+    manpowers.value.data = filteredData?.map(manpower => {
       const estimatedWorkDays =
         typeof Number(manpower?.estimatedWorkDays) === 'number' && !isNaN(Number(manpower?.estimatedWorkDays))
           ? Number(manpower.estimatedWorkDays)

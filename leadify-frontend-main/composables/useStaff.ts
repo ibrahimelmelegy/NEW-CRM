@@ -99,7 +99,7 @@ export async function getStaffs(): Promise<UseStaffResult> {
  */
 export async function getStaff(id: string | string[]): Promise<Staff> {
   try {
-    const { body: staff, success } = await useApiFetch(`users/${id}`);
+    const { body: staff } = await useApiFetch(`users/${id}`);
     return staff;
   } catch (error) {
     console.error('Error fetching staff:', error instanceof Error ? error.message : error);

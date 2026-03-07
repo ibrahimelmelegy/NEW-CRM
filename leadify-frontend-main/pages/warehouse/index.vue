@@ -485,7 +485,7 @@ function formatDate(dateStr: string): string {
 const filteredWarehouses = computed(() => {
   if (!warehouseSearch.value) return warehouses.value;
   const q = warehouseSearch.value.toLowerCase();
-  return warehouses.value.filter((w) => {
+  return warehouses.value.filter(w => {
     return (w.name || '').toLowerCase().includes(q) || (w.location || '').toLowerCase().includes(q);
   });
 });
@@ -493,7 +493,7 @@ const filteredWarehouses = computed(() => {
 const filteredZones = computed(() => {
   if (!zoneSearch.value) return zones.value;
   const q = zoneSearch.value.toLowerCase();
-  return zones.value.filter((z) => {
+  return zones.value.filter(z => {
     return (z.name || '').toLowerCase().includes(q) || (z.warehouseName || '').toLowerCase().includes(q);
   });
 });
@@ -501,7 +501,7 @@ const filteredZones = computed(() => {
 const filteredTransfers = computed(() => {
   if (!transferSearch.value) return transfers.value;
   const q = transferSearch.value.toLowerCase();
-  return transfers.value.filter((tr) => {
+  return transfers.value.filter(tr => {
     return (
       (tr.transferNumber || '').toLowerCase().includes(q) ||
       (tr.fromWarehouseName || '').toLowerCase().includes(q) ||
@@ -697,7 +697,7 @@ async function updateTransferStatus(transfer: unknown) {
 // KPI Computation (derived from loaded data)
 function computeKpis() {
   kpiData.totalWarehouses = warehouses.value.length;
-  kpiData.pendingTransfers = transfers.value.filter((t) => t.status === 'PENDING').length;
+  kpiData.pendingTransfers = transfers.value.filter(t => t.status === 'PENDING').length;
 }
 
 // Low Stock Alerts
@@ -765,7 +765,7 @@ function exportWarehousesCSV() {
   const headers = ['Name', 'Location', 'Manager', 'Capacity', 'Occupancy', 'Status'];
   const csv = [
     headers.join(','),
-    ...data.map((row) =>
+    ...data.map(row =>
       [
         `"${row.name || ''}"`,
         `"${row.location || ''}"`,
@@ -792,7 +792,7 @@ function exportTransfersCSV() {
   const headers = ['Transfer #', 'From Warehouse', 'To Warehouse', 'Items', 'Status', 'Created', 'Completed'];
   const csv = [
     headers.join(','),
-    ...data.map((row) =>
+    ...data.map(row =>
       [
         `"${row.transferNumber || ''}"`,
         `"${row.fromWarehouseName || row.fromWarehouseId || ''}"`,

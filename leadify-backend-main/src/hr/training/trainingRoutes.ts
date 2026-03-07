@@ -15,8 +15,18 @@ router.put('/programs/:id', authenticateUser, HasPermission([TrainingPermissions
 router.delete('/programs/:id', authenticateUser, HasPermission([TrainingPermissionsEnum.DELETE_TRAINING]), controller.deleteProgram);
 
 // Program analytics
-router.get('/programs/:programId/completion-rate', authenticateUser, HasPermission([TrainingPermissionsEnum.VIEW_TRAINING]), controller.getCompletionRate);
-router.get('/programs/:programId/prerequisites', authenticateUser, HasPermission([TrainingPermissionsEnum.VIEW_TRAINING]), controller.checkPrerequisites);
+router.get(
+  '/programs/:programId/completion-rate',
+  authenticateUser,
+  HasPermission([TrainingPermissionsEnum.VIEW_TRAINING]),
+  controller.getCompletionRate
+);
+router.get(
+  '/programs/:programId/prerequisites',
+  authenticateUser,
+  HasPermission([TrainingPermissionsEnum.VIEW_TRAINING]),
+  controller.checkPrerequisites
+);
 
 // Dashboard
 router.get('/dashboard', authenticateUser, HasPermission([TrainingPermissionsEnum.VIEW_TRAINING]), controller.getDashboard);

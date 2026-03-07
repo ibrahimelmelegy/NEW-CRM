@@ -883,9 +883,7 @@ const marketplaceIntegrations = ref<IntegrationItem[]>([
     lastSyncLabel: '',
     flowStatus: '',
     type: 'ZAPIER',
-    configFields: [
-      { key: 'webhookUrl', label: 'Webhook URL', type: 'url', placeholder: 'https://hooks.zapier.com/...', required: true }
-    ]
+    configFields: [{ key: 'webhookUrl', label: 'Webhook URL', type: 'url', placeholder: 'https://hooks.zapier.com/...', required: true }]
   },
   {
     id: 'jira',

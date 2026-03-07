@@ -3,7 +3,6 @@ import Lead from '../lead/leadModel';
 import Deal from '../deal/model/dealModel';
 import Client from '../client/clientModel';
 import Invoice from '../deal/model/invoiceMode';
-import Opportunity from '../opportunity/opportunityModel';
 import { DealActivity } from '../activity-logs/model/dealActivities';
 import { DealStageEnums } from '../deal/dealEnum';
 import User from '../user/userModel';
@@ -73,7 +72,9 @@ export interface SmartSuggestionsResult {
 
 async function getOpenAIClient(): Promise<any | null> {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const OpenAI = require('openai').default;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const Integration = require('../integration/integrationModel').default;
 
     const integration = await Integration.findOne({ where: { provider: 'openai', isActive: true } });
@@ -81,6 +82,7 @@ async function getOpenAIClient(): Promise<any | null> {
 
     if (integration?.config?.apiKey) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { decrypt } = require('../utils/encryption');
         apiKey = decrypt(integration.config.apiKey);
       } catch {
@@ -104,7 +106,7 @@ class AIAssistantService {
   // 1. LEAD SCORING - Analyze lead quality and return score 1-100
   // ===================================================================
   async scoreLeadQuality(leadId: string): Promise<LeadScoreResult> {
-    const lead = await Lead.findByPk(leadId, { raw: true }) as any;
+    const lead = (await Lead.findByPk(leadId, { raw: true })) as any;
     if (!lead) throw new Error('Lead not found');
 
     const factors: LeadScoreResult['factors'] = [];
@@ -126,7 +128,12 @@ class AIAssistantService {
       totalScore += 12;
       reasoning.push(`Strong profile completeness at ${completeness}%`);
     } else if (completeness >= 50) {
-      factors.push({ name: 'Profile Completeness', impact: 'neutral', score: 3, detail: `Lead profile is ${completeness}% complete - missing some information` });
+      factors.push({
+        name: 'Profile Completeness',
+        impact: 'neutral',
+        score: 3,
+        detail: `Lead profile is ${completeness}% complete - missing some information`
+      });
       totalScore += 3;
       recommendations.push('Complete the lead profile by adding missing contact information');
     } else {
@@ -305,7 +312,8 @@ class AIAssistantService {
           messages: [
             {
               role: 'system',
-              content: 'You are a professional email writer for a CRM platform. Generate polished, effective business emails. Always respond with valid JSON containing "subject" and "body" fields. Do not use markdown in the body.'
+              content:
+                'You are a professional email writer for a CRM platform. Generate polished, effective business emails. Always respond with valid JSON containing "subject" and "body" fields. Do not use markdown in the body.'
             },
             {
               role: 'user',
@@ -355,14 +363,14 @@ class AIAssistantService {
   // 3. DEAL WIN PROBABILITY
   // ===================================================================
   async calculateDealWinProbability(dealId: string): Promise<DealWinProbabilityResult> {
-    const deal = await Deal.findByPk(dealId, {
+    const deal = (await Deal.findByPk(dealId, {
       include: [
         { model: User, as: 'users' },
         { model: Client, as: 'client' },
         { model: Lead, as: 'lead' },
         { model: Invoice, as: 'invoice' }
       ]
-    }) as any;
+    })) as any;
 
     if (!deal) throw new Error('Deal not found');
 
@@ -386,7 +394,7 @@ class AIAssistantService {
 
     // Factor 2: Deal age vs average
     const dealAge = Math.floor((now.getTime() - new Date(deal.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-    const avgDealAgeResult = await Deal.findOne({
+    const _avgDealAgeResult = await Deal.findOne({
       where: { stage: DealStageEnums.PROGRESS },
       attributes: [[fn('AVG', col('price')), 'avgPrice']],
       raw: true
@@ -413,9 +421,7 @@ class AIAssistantService {
 
     const activityCount = activities.length;
     const lastActivity = activities[0]?.createdAt ? new Date(activities[0].createdAt) : null;
-    const daysSinceActivity = lastActivity
-      ? Math.floor((now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24))
-      : dealAge;
+    const daysSinceActivity = lastActivity ? Math.floor((now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24)) : dealAge;
 
     if (daysSinceActivity <= 3) {
       probability += 10;
@@ -484,7 +490,7 @@ class AIAssistantService {
     // Factor 7: Invoice status
     const invoices = deal.invoice || [];
     if (invoices.length > 0) {
-      const collectedCount = invoices.filter((inv) => inv.collected).length;
+      const collectedCount = invoices.filter((inv: any) => inv.collected).length;
       if (collectedCount > 0) {
         probability += 8;
         positiveSignals.push(`${collectedCount} of ${invoices.length} invoices collected`);
@@ -492,10 +498,10 @@ class AIAssistantService {
     }
 
     // Factor 8: Deal value vs average
-    const avgPriceResult = await Deal.findOne({
+    const avgPriceResult = (await Deal.findOne({
       attributes: [[fn('AVG', col('price')), 'avgPrice']],
       raw: true
-    }) as any;
+    })) as any;
     const avgPrice = avgPriceResult?.avgPrice || 10000;
     const dealPrice = deal.price || 0;
 
@@ -541,9 +547,10 @@ class AIAssistantService {
       attributes: ['id', 'price'],
       raw: true
     });
-    const pipelineRank = dealsInSameStage.length > 0
-      ? `${Math.min(dealsInSameStage.length, Math.max(1, Math.round(probability / 100 * dealsInSameStage.length)))} of ${dealsInSameStage.length}`
-      : '1 of 1';
+    const pipelineRank =
+      dealsInSameStage.length > 0
+        ? `${Math.min(dealsInSameStage.length, Math.max(1, Math.round((probability / 100) * dealsInSameStage.length)))} of ${dealsInSameStage.length}`
+        : '1 of 1';
 
     // Clamp probability
     probability = Math.max(5, Math.min(95, probability));
@@ -596,7 +603,7 @@ class AIAssistantService {
     const now = new Date();
 
     if (entityType === 'lead') {
-      const lead = await Lead.findByPk(entityId, { raw: true }) as any;
+      const lead = (await Lead.findByPk(entityId, { raw: true })) as any;
       if (!lead) throw new Error('Lead not found');
       entityName = lead.name || 'Unknown Lead';
 
@@ -672,26 +679,25 @@ class AIAssistantService {
           confidence: 78
         });
       }
-
     } else if (entityType === 'deal') {
-      const deal = await Deal.findByPk(entityId, {
+      const deal = (await Deal.findByPk(entityId, {
         include: [
           { model: Client, as: 'client' },
           { model: Invoice, as: 'invoice' }
         ]
-      }) as any;
+      })) as any;
       if (!deal) throw new Error('Deal not found');
       entityName = deal.name || 'Unknown Deal';
 
       const dealAge = Math.floor((now.getTime() - new Date(deal.createdAt).getTime()) / (1000 * 60 * 60 * 24));
 
       // Check recent activity
-      const lastActivity = await DealActivity.findOne({
+      const lastActivity = (await DealActivity.findOne({
         where: { dealId: entityId },
         order: [['createdAt', 'DESC']],
         attributes: ['createdAt'],
         raw: true
-      }) as any;
+      })) as any;
 
       const daysSinceActivity = lastActivity
         ? Math.floor((now.getTime() - new Date(lastActivity.createdAt).getTime()) / (1000 * 60 * 60 * 24))
@@ -727,7 +733,7 @@ class AIAssistantService {
 
       // Suggestion: overdue invoices
       const invoices = deal.invoice || [];
-      const overdueInvoices = invoices.filter((inv) => !inv.collected && new Date(inv.invoiceDate) < now);
+      const overdueInvoices = invoices.filter((inv: any) => !inv.collected && new Date(inv.invoiceDate) < now);
       if (overdueInvoices.length > 0) {
         const totalOverdue = overdueInvoices.reduce((s: number, inv: any) => s + (inv.amount || 0), 0);
         suggestions.push({
@@ -769,9 +775,8 @@ class AIAssistantService {
           confidence: 80
         });
       }
-
     } else if (entityType === 'client') {
-      const client = await Client.findByPk(entityId, { raw: true }) as any;
+      const client = (await Client.findByPk(entityId, { raw: true })) as any;
       if (!client) throw new Error('Client not found');
       entityName = client.clientName || client.companyName || 'Unknown Client';
 
@@ -887,7 +892,8 @@ class AIAssistantService {
         messages: [
           {
             role: 'system',
-            content: 'You are a lead qualification expert. Given lead data and a preliminary score, provide a brief one-sentence analysis and optionally one actionable recommendation. Respond with JSON: {"reasoning": "...", "recommendation": "..."}'
+            content:
+              'You are a lead qualification expert. Given lead data and a preliminary score, provide a brief one-sentence analysis and optionally one actionable recommendation. Respond with JSON: {"reasoning": "...", "recommendation": "..."}'
           },
           {
             role: 'user',
@@ -937,11 +943,11 @@ class AIAssistantService {
         subject: `Following Up${context.dealName ? ' - ' + context.dealName : ''}`,
         body: `Dear ${recipient},\n\nI hope this message finds you well. I wanted to follow up on our recent conversation${context.dealName ? ` regarding ${context.dealName}` : ''}.\n\n${context.dealValue ? `As discussed, the proposed investment of $${context.dealValue.toLocaleString()} covers the full scope of our solution. ` : ''}I believe there is a strong opportunity for us to work together, and I would love to discuss the next steps at your convenience.\n\nPlease let me know a time that works for you.\n\nBest regards,\n${sender}`
       },
-      'introduction': {
+      introduction: {
         subject: `Introduction${context.recipientCompany ? ' - ' + context.recipientCompany : ''}`,
         body: `Dear ${recipient},\n\nMy name is ${sender}, and I am reaching out because I believe we could create significant value together${context.recipientCompany ? ` for ${context.recipientCompany}` : ''}.\n\nI would welcome the opportunity to connect and explore how we might collaborate.\n\nLooking forward to hearing from you.\n\nBest regards,\n${sender}`
       },
-      'proposal': {
+      proposal: {
         subject: `Proposal${context.dealName ? ': ' + context.dealName : ''}`,
         body: `Dear ${recipient},\n\nThank you for the opportunity to present our proposal${context.dealName ? ` for ${context.dealName}` : ''}.\n\n${context.dealValue ? `Based on our discussions, our tailored solution is available at an investment of $${context.dealValue.toLocaleString()}. ` : ''}I would love to walk you through the details at your earliest convenience.\n\nBest regards,\n${sender}`
       },

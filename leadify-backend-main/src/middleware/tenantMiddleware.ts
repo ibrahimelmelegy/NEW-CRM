@@ -15,11 +15,7 @@ import { TENANT_BYPASS } from './tenantContext';
  * 4. Verifies the tenant exists and is active (not SUSPENDED).
  * 5. Attaches the full tenant object to req.tenant for downstream use.
  */
-export const validateTenant = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const validateTenant = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const user = req.user;
     if (!user) {
@@ -28,8 +24,7 @@ export const validateTenant = async (
     }
 
     // Superadmin bypasses all tenant checks
-    const isSuperAdmin =
-      user.role?.name === 'SUPER_ADMIN' || user.role?.name === 'Super Admin';
+    const isSuperAdmin = user.role?.name === 'SUPER_ADMIN' || user.role?.name === 'Super Admin';
     if (isSuperAdmin) {
       return next();
     }
@@ -84,19 +79,14 @@ export const validateTenant = async (
  * Does NOT hit the database. Use when you need fast tenant gating
  * without the overhead of a DB lookup (e.g., high-frequency endpoints).
  */
-export const requireTenantId = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): void => {
+export const requireTenantId = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const user = req.user;
   if (!user) {
     res.status(401).json({ message: 'Authentication required' });
     return;
   }
 
-  const isSuperAdmin =
-    user.role?.name === 'SUPER_ADMIN' || user.role?.name === 'Super Admin';
+  const isSuperAdmin = user.role?.name === 'SUPER_ADMIN' || user.role?.name === 'Super Admin';
   if (isSuperAdmin) {
     return next();
   }

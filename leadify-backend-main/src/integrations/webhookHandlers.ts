@@ -36,10 +36,7 @@ router.post('/stripe', async (req: Request, res: Response) => {
     // Verify signature if webhook secret is configured
     if (webhookSecret && sig) {
       const payload = JSON.stringify(req.body);
-      const expectedSig = crypto
-        .createHmac('sha256', webhookSecret)
-        .update(payload)
-        .digest('hex');
+      const expectedSig = crypto.createHmac('sha256', webhookSecret).update(payload).digest('hex');
 
       // Extract the v1 signature from the Stripe header (format: t=timestamp,v1=sig)
       const sigParts = sig.split(',');
@@ -135,10 +132,7 @@ router.post('/hubspot', async (req: Request, res: Response) => {
 
     if (clientSecret && signature) {
       const payload = JSON.stringify(req.body);
-      const expectedSig = crypto
-        .createHmac('sha256', clientSecret)
-        .update(payload)
-        .digest('base64');
+      const expectedSig = crypto.createHmac('sha256', clientSecret).update(payload).digest('base64');
 
       if (signature !== expectedSig) {
         logger.warn('HubSpot webhook invalid signature');

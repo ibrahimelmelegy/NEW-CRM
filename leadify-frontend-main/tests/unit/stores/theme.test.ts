@@ -87,7 +87,7 @@ describe('useThemeStore', () => {
     });
 
     it('each preset should have required fields', () => {
-      THEME_PRESETS.forEach((preset) => {
+      THEME_PRESETS.forEach(preset => {
         expect(preset).toHaveProperty('id');
         expect(preset).toHaveProperty('name');
         expect(preset).toHaveProperty('accentColor');
@@ -213,7 +213,7 @@ describe('useThemeStore', () => {
   // ============================================
   describe('initializeTheme', () => {
     it('should load light theme from localStorage', () => {
-      storageData['theme'] = 'light';
+      storageData.theme = 'light';
 
       store.initializeTheme();
 
@@ -221,7 +221,7 @@ describe('useThemeStore', () => {
     });
 
     it('should load dark theme from localStorage', () => {
-      storageData['theme'] = 'dark';
+      storageData.theme = 'dark';
 
       store.initializeTheme();
 

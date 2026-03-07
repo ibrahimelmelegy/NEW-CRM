@@ -431,7 +431,7 @@ function getMonthLabel(key: string): string {
 function getFilteredDeals(): Record<string, unknown>[] {
   if (!dateRange.value) return rawDeals.value;
   const [start, end] = dateRange.value;
-  return rawDeals.value.filter((d) => {
+  return rawDeals.value.filter(d => {
     const created = new Date(d.createdAt || d.created_at);
     return created >= start && created <= end;
   });
@@ -445,8 +445,16 @@ async function loadData() {
       useApiFetch('lead').catch(() => ({ body: [] }))
     ]);
 
-    rawDeals.value = Array.isArray(dealsRes?.body) ? dealsRes.body : Array.isArray((dealsRes?.body as unknown)?.docs) ? (dealsRes.body as unknown).docs : [];
-    rawLeads.value = Array.isArray(leadsRes?.body) ? leadsRes.body : Array.isArray((leadsRes?.body as unknown)?.docs) ? (leadsRes.body as unknown).docs : [];
+    rawDeals.value = Array.isArray(dealsRes?.body)
+      ? dealsRes.body
+      : Array.isArray((dealsRes?.body as unknown)?.docs)
+        ? (dealsRes.body as unknown).docs
+        : [];
+    rawLeads.value = Array.isArray(leadsRes?.body)
+      ? leadsRes.body
+      : Array.isArray((leadsRes?.body as unknown)?.docs)
+        ? (leadsRes.body as unknown).docs
+        : [];
 
     computeAll();
   } catch (e) {
@@ -472,7 +480,7 @@ function refreshData() {
 
 function computeKPIs() {
   const deals = getFilteredDeals();
-  const wonDeals = deals.filter((d) => {
+  const wonDeals = deals.filter(d => {
     const s = (d.status || d.stage || '').toLowerCase();
     return s.includes('won') || s.includes('closed');
   });
@@ -489,7 +497,7 @@ function computeKPIs() {
   const winRate = (wonDeals.length / totalDeals) * 100;
   predictionAccuracy.value = parseFloat(Math.min(95, Math.max(50, 50 + winRate * 0.5)).toFixed(1));
 
-  const values = deals.map((d) => parseFloat(d.value || d.amount || d.dealValue || 0)).filter(v => v > 0);
+  const values = deals.map(d => parseFloat(d.value || d.amount || d.dealValue || 0)).filter(v => v > 0);
   const mean = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
   const variance = values.length > 0 ? values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length : 0;
   const stdDev = Math.sqrt(variance);
@@ -510,7 +518,7 @@ function computeWinProbability() {
     return;
   }
 
-  const scoredDeals = deals.map((d) => {
+  const scoredDeals = deals.map(d => {
     const value = parseFloat(d.value || d.amount || d.dealValue || 0);
     const stage = (d.status || d.stage || d.dealStage || '').toLowerCase();
     const name = d.name || d.title || d.dealName || 'Untitled Deal';
@@ -550,7 +558,7 @@ function computeChurnRisk() {
   }
 
   const customers = new Map<string, Record<string, unknown>>();
-  deals.forEach((d) => {
+  deals.forEach(d => {
     const name = d.company?.name || d.companyName || d.client || d.name || '';
     if (!name) return;
     if (!customers.has(name)) {
@@ -568,7 +576,7 @@ function computeChurnRisk() {
   });
 
   if (customers.size < 3) {
-    leads.slice(0, 10).forEach((l) => {
+    leads.slice(0, 10).forEach(l => {
       const name = l.company || l.name || l.fullName || '';
       if (!name || customers.has(name)) return;
       customers.set(name, {
@@ -634,7 +642,7 @@ const revenueForecastOption = computed(() => {
     const key = getMonthKey(d);
     monthMap.set(key, 0);
   }
-  deals.forEach((d) => {
+  deals.forEach(d => {
     const created = new Date(d.createdAt || d.created_at || Date.now());
     const key = getMonthKey(created);
     const val = parseFloat(d.value || d.amount || d.dealValue || 0);
@@ -684,7 +692,7 @@ const revenueForecastOption = computed(() => {
       ...tooltipStyle,
       formatter: (params: unknown) => {
         let result = `<strong>${params[0]?.axisValue}</strong><br/>`;
-        params.forEach((p) => {
+        params.forEach(p => {
           if (p.value !== null && p.value !== undefined) {
             result += `${p.marker} ${p.seriesName}: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(p.value)}<br/>`;
           }

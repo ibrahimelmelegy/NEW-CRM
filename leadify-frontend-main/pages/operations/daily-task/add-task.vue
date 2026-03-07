@@ -38,7 +38,7 @@ const ClientNew = ref({
 });
 
 let users = await useApiFetch('users');
-users = users?.body?.docs?.map((e) => ({
+users = users?.body?.docs?.map(e => ({
   label: e.name,
   value: e.id
 }));
@@ -65,7 +65,7 @@ async function setType(pre: unknown) {
 }
 
 const fetchClient = (clientId: string) => {
-  if (clientId == '0') openFormClient.value = true;
+  if (clientId === '0') openFormClient.value = true;
 };
 
 const loading = ref(false);

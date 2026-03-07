@@ -28,7 +28,9 @@ interface TestResultVariant extends VariantResults {
 }
 
 class ABTestService {
-  async create(data: any, tenantId?: string) { return ABTest.create({ ...data, tenantId }); }
+  async create(data: any, tenantId?: string) {
+    return ABTest.create({ ...data, tenantId });
+  }
 
   async getAll(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
@@ -69,9 +71,7 @@ class ABTestService {
       results[variantId] = { impressions: 0, conversions: 0, conversionRate: 0 };
     }
     results[variantId].impressions += 1;
-    results[variantId].conversionRate = results[variantId].impressions > 0
-      ? results[variantId].conversions / results[variantId].impressions
-      : 0;
+    results[variantId].conversionRate = results[variantId].impressions > 0 ? results[variantId].conversions / results[variantId].impressions : 0;
 
     await test.update({ results });
     return results[variantId];
@@ -90,9 +90,7 @@ class ABTestService {
       results[variantId] = { impressions: 0, conversions: 0, conversionRate: 0 };
     }
     results[variantId].conversions += 1;
-    results[variantId].conversionRate = results[variantId].impressions > 0
-      ? results[variantId].conversions / results[variantId].impressions
-      : 0;
+    results[variantId].conversionRate = results[variantId].impressions > 0 ? results[variantId].conversions / results[variantId].impressions : 0;
 
     await test.update({ results });
     return results[variantId];
@@ -122,15 +120,12 @@ class ABTestService {
         name,
         impressions: data.impressions,
         conversions: data.conversions,
-        conversionRate: rate,
+        conversionRate: rate
       };
 
       // Calculate significance vs control for non-control variants
       if (idx > 0 && controlData.impressions > 0 && data.impressions > 0) {
-        entry.significance = this.calculateSignificance(
-          controlRate, controlData.impressions,
-          rate, data.impressions
-        );
+        entry.significance = this.calculateSignificance(controlRate, controlData.impressions, rate, data.impressions);
       }
 
       return entry;
@@ -142,7 +137,7 @@ class ABTestService {
       status: test.status,
       variants: variantResults,
       totalImpressions: variantResults.reduce((sum, v) => sum + v.impressions, 0),
-      totalConversions: variantResults.reduce((sum, v) => sum + v.conversions, 0),
+      totalConversions: variantResults.reduce((sum, v) => sum + v.conversions, 0)
     };
   }
 
@@ -178,7 +173,7 @@ class ABTestService {
       zScore: Math.round(zScore * 10000) / 10000,
       pValue: Math.round(pValue * 10000) / 10000,
       isSignificant: pValue < 0.05,
-      confidenceLevel: Math.round(confidenceLevel * 100) / 100,
+      confidenceLevel: Math.round(confidenceLevel * 100) / 100
     };
   }
 
@@ -200,7 +195,7 @@ class ABTestService {
     const sign = x < 0 ? -1 : 1;
     const absX = Math.abs(x) / Math.SQRT2;
     const t = 1.0 / (1.0 + p * absX);
-    const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-absX * absX);
+    const y = 1.0 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-absX * absX);
 
     return 0.5 * (1.0 + sign * y);
   }
@@ -255,7 +250,7 @@ class ABTestService {
       status: 'COMPLETED',
       winnerVariant: bestVariant,
       confidence: bestConfidence,
-      endDate: new Date().toISOString().split('T')[0],
+      endDate: new Date().toISOString().split('T')[0]
     });
 
     const result = {
@@ -263,10 +258,12 @@ class ABTestService {
       winner: bestVariant,
       winnerConversionRate: bestRate,
       confidence: bestConfidence,
-      status: 'COMPLETED',
+      status: 'COMPLETED'
     };
 
-    try { io.emit('abtest:winner_declared', { testId, testName: test.name, winner: bestVariant, confidence: bestConfidence }); } catch {}
+    try {
+      io.emit('abtest:winner_declared', { testId, testName: test.name, winner: bestVariant, confidence: bestConfidence });
+    } catch {}
     return result;
   }
 
@@ -276,10 +273,10 @@ class ABTestService {
   async getActiveTests(tenantId: string) {
     const tests = await ABTest.findAll({
       where: { tenantId, status: 'RUNNING' },
-      order: [['createdAt', 'DESC']],
+      order: [['createdAt', 'DESC']]
     });
 
-    return tests.map((test) => {
+    return tests.map(test => {
       const results: Record<string, VariantResults> = (test.results as any) || {};
       const variants = (test.variants || []).map((v: VariantData) => {
         const data = results[v.name] || { impressions: 0, conversions: 0, conversionRate: 0 };
@@ -288,7 +285,7 @@ class ABTestService {
           traffic: v.traffic,
           impressions: data.impressions,
           conversions: data.conversions,
-          conversionRate: data.impressions > 0 ? data.conversions / data.impressions : 0,
+          conversionRate: data.impressions > 0 ? data.conversions / data.impressions : 0
         };
       });
 
@@ -300,7 +297,7 @@ class ABTestService {
         startDate: test.startDate,
         variants,
         totalImpressions: variants.reduce((sum: number, v: any) => sum + v.impressions, 0),
-        totalConversions: variants.reduce((sum: number, v: any) => sum + v.conversions, 0),
+        totalConversions: variants.reduce((sum: number, v: any) => sum + v.conversions, 0)
       };
     });
   }

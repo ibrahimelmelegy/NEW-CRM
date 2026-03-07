@@ -1,4 +1,4 @@
-import { Column, DataType, ForeignKey, BelongsTo, Model, Table, Index } from 'sequelize-typescript';
+import { Column, DataType, ForeignKey, BelongsTo, Model, Table } from 'sequelize-typescript';
 import User from '../user/userModel';
 
 export interface NotificationChannels {

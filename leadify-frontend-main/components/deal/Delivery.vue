@@ -44,7 +44,7 @@ const deliveriesList = ref<Delivery[]>([
 ]);
 
 if (props.deliveries?.length) {
-  deliveriesList.value = props.deliveries.map((delivery) => ({
+  deliveriesList.value = props.deliveries.map(delivery => ({
     deliveryDetails: delivery.deliveryDetails,
     deliveryDate: delivery.deliveryDate,
     id: delivery.id

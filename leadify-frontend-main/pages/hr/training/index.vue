@@ -561,7 +561,7 @@ async function loadData() {
     if (empRes?.success && empRes.body) {
       const data = empRes.body as unknown;
       const docs = data.docs || data || [];
-      employees.value = docs.map((e) => ({
+      employees.value = docs.map(e => ({
         id: e.id,
         name: e.firstName ? `${e.firstName} ${e.lastName || ''}`.trim() : e.name || `Employee #${e.id}`
       }));
@@ -583,7 +583,7 @@ async function loadDashboard() {
       dashboardData.completionRate = d.completionRate ?? 0;
       dashboardData.upcoming = d.upcoming ?? d.upcomingPrograms ?? 0;
       dashboardData.overdue = d.overdue ?? 0;
-      dashboardData.topCategories = (d.topCategories || []).map((c) => ({
+      dashboardData.topCategories = (d.topCategories || []).map(c => ({
         name: c.name || c.category || '--',
         count: c.count ?? 0
       }));

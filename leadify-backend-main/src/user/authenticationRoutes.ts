@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import { loginUser, logoutUser, forgotPassword, resetPassword, checkResetToken, getUserProfile, registerWorkspace } from './authController';
 import { authenticateUser } from '../middleware/authMiddleware';
 import { setup2FA, verify2FA, disable2FA, validateLoginCode } from './twoFactorController';

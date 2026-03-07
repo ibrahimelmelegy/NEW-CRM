@@ -9,7 +9,9 @@ class SegmentService {
 
   async create(data: any, tenantId?: string, createdBy?: number) {
     const segment = await Segment.create({ ...data, tenantId, createdBy });
-    try { io.emit('segment:created', { id: segment.id, name: segment.name }); } catch {}
+    try {
+      io.emit('segment:created', { id: segment.id, name: segment.name });
+    } catch {}
     return segment;
   }
 
@@ -22,7 +24,11 @@ class SegmentService {
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
 
     const { rows, count } = await Segment.findAndCountAll({
-      where, order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      where,
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -35,7 +41,9 @@ class SegmentService {
     const item = await Segment.findByPk(id);
     if (!item) return null;
     await item.update(data);
-    try { io.emit('segment:updated', { id: item.id, name: item.name }); } catch {}
+    try {
+      io.emit('segment:updated', { id: item.id, name: item.name });
+    } catch {}
     return item;
   }
 
@@ -43,7 +51,9 @@ class SegmentService {
     const item = await Segment.findByPk(id);
     if (!item) return false;
     await item.destroy();
-    try { io.emit('segment:deleted', { id }); } catch {}
+    try {
+      io.emit('segment:deleted', { id });
+    } catch {}
     return true;
   }
 
@@ -91,7 +101,9 @@ class SegmentService {
 
     await segment.update({ customerCount: count, lastEvaluatedAt: new Date() });
 
-    try { io.emit('segment:evaluated', { id: segment.id, customerCount: count }); } catch {}
+    try {
+      io.emit('segment:evaluated', { id: segment.id, customerCount: count });
+    } catch {}
 
     return {
       segment,

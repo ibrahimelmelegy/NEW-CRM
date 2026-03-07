@@ -234,7 +234,7 @@ const getPath = (routeSegment: any) => {
   const pathSegments = route.path.split('/').filter(Boolean);
   let pathGo = '';
   // Find index using the raw path segment
-  const indexStop = pathSegments.findIndex(segment => segment == routeSegment.path);
+  const indexStop = pathSegments.findIndex(segment => segment === routeSegment.path);
   pathSegments.forEach((el, index) => {
     if (index <= indexStop) pathGo = pathGo + '/' + el;
   });

@@ -206,13 +206,13 @@ const activeCount = computed(() => sequences.value.filter(s => s.isActive).lengt
 const totalContacts = computed(() => sequences.value.reduce((sum, s) => sum + ((s as unknown).enrolledCount || 0), 0));
 
 const avgOpenRate = computed(() => {
-  const withRate = sequences.value.filter(s => (s as unknown).openRate != null);
+  const withRate = sequences.value.filter(s => (s as unknown).openRate !== null && (s as unknown).openRate !== undefined);
   if (!withRate.length) return 0;
   return Math.round(withRate.reduce((sum, s) => sum + ((s as unknown).openRate || 0), 0) / withRate.length);
 });
 
 const avgReplyRate = computed(() => {
-  const withRate = sequences.value.filter(s => (s as unknown).replyRate != null);
+  const withRate = sequences.value.filter(s => (s as unknown).replyRate !== null && (s as unknown).replyRate !== undefined);
   if (!withRate.length) return 0;
   return Math.round(withRate.reduce((sum, s) => sum + ((s as unknown).replyRate || 0), 0) / withRate.length);
 });
@@ -255,7 +255,7 @@ function cumulativeDay(steps: Record<string, unknown>[], idx: number): number {
 }
 
 function hasAnyABTest(seq: unknown): boolean {
-  return seq.steps?.some((s) => s.variantB) || false;
+  return seq.steps?.some(s => s.variantB) || false;
 }
 
 function toggleSequenceExpand(id: string) {

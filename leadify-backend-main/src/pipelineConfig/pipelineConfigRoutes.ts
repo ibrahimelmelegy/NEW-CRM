@@ -86,7 +86,13 @@ router.get('/', authenticateUser, HasPermission([SettingsPermissionsEnum.VIEW_SE
  *       500:
  *         description: Server error
  */
-router.post('/', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), validateBody(CreateStageInput), pipelineConfigController.createStage);
+router.post(
+  '/',
+  authenticateUser,
+  HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]),
+  validateBody(CreateStageInput),
+  pipelineConfigController.createStage
+);
 
 /**
  * @swagger
@@ -131,7 +137,13 @@ router.post('/', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_S
  *       500:
  *         description: Server error
  */
-router.put('/:id', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), validateBody(UpdateStageInput), pipelineConfigController.updateStage);
+router.put(
+  '/:id',
+  authenticateUser,
+  HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]),
+  validateBody(UpdateStageInput),
+  pipelineConfigController.updateStage
+);
 
 /**
  * @swagger
@@ -192,6 +204,12 @@ router.delete('/:id', authenticateUser, HasPermission([SettingsPermissionsEnum.E
  *       500:
  *         description: Server error
  */
-router.post('/reorder', authenticateUser, HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]), validateBody(ReorderStagesInput), pipelineConfigController.reorderStages);
+router.post(
+  '/reorder',
+  authenticateUser,
+  HasPermission([SettingsPermissionsEnum.EDIT_SETTINGS]),
+  validateBody(ReorderStagesInput),
+  pipelineConfigController.reorderStages
+);
 
 export default router;

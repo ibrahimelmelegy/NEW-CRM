@@ -1,4 +1,4 @@
-import { IsOptional, IsInt, IsString, IsIn, IsISO8601, Min, IsArray, ArrayNotEmpty, ArrayUnique } from 'class-validator';
+import { IsOptional, IsInt, IsString, IsIn, IsISO8601, IsArray, ArrayNotEmpty, ArrayUnique } from 'class-validator';
 import { LeadSourceEnums, LeadStatusEnums, SortByEnum, SortEnum } from '../leadEnum';
 import { Expose, Transform } from 'class-transformer';
 

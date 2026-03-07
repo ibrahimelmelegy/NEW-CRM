@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsString, MaxLength, IsOptional, IsEnum, IsArray, IsUUID, IsDateString, IsIn } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength, IsOptional, IsArray, IsUUID, IsDateString, IsIn } from 'class-validator';
 import { ProposalModelEnum, ProposalTypeEnum } from '../proposalEnum';
 
 export class CreateProposalInput {

@@ -684,10 +684,10 @@ const filteredProducts = computed(() => {
   }
 
   // Price range
-  if (priceMin.value != null) {
+  if (priceMin.value !== null && priceMin.value !== undefined) {
     result = result.filter(p => (p.unitPrice || 0) >= (priceMin.value || 0));
   }
-  if (priceMax.value != null) {
+  if (priceMax.value !== null && priceMax.value !== undefined) {
     result = result.filter(p => (p.unitPrice || 0) <= (priceMax.value || 0));
   }
 
@@ -727,7 +727,7 @@ async function loadProducts() {
   loading.value = true;
   try {
     const result = await apiFetchProducts({ page: String(pagination.page), limit: String(pagination.limit) });
-    products.value = (result.docs || []).map((p) => ({
+    products.value = (result.docs || []).map(p => ({
       ...p,
       status: p.status || (p.isActive === false ? 'inactive' : 'active'),
       costPrice: p.costPrice || 0
@@ -835,7 +835,7 @@ async function deactivateProduct(prod: unknown) {
 }
 
 async function quickUpdatePrice(id: string, price: number) {
-  if (price == null || price < 0) return;
+  if (price === null || price === undefined || price < 0) return;
   const res = await apiUpdateProduct(id, { unitPrice: price } as unknown);
   if (res.success) {
     const p = products.value.find(pr => pr.id === id);
@@ -933,7 +933,7 @@ function openPriceListDialog(pl?: unknown) {
       validTo: pl.validTo || '',
       isActive: pl.isActive ?? true,
       items: pl.items?.length
-        ? pl.items.map((i) => ({ ...i }))
+        ? pl.items.map(i => ({ ...i }))
         : [{ productId: '', productName: '', standardPrice: 0, listPrice: 0, discountPercent: 0 }]
     });
   } else {
@@ -1129,7 +1129,7 @@ function openBundleDialog(bundle?: unknown) {
       description: bundle.description || '',
       bundlePrice: bundle.bundlePrice || 0,
       discountPercent: bundle.discountPercent || 0,
-      items: bundle.items?.length ? bundle.items.map((i) => ({ ...i })) : [{ productId: '', productName: '', unitPrice: 0, quantity: 1 }]
+      items: bundle.items?.length ? bundle.items.map(i => ({ ...i })) : [{ productId: '', productName: '', unitPrice: 0, quantity: 1 }]
     });
   } else {
     editingBundleId.value = null;
@@ -1250,7 +1250,7 @@ function getStatusLabel(status: string) {
 }
 
 function getStockTagType(stock: number | null | undefined): string {
-  if (stock == null) return 'info';
+  if (stock === null || stock === undefined) return 'info';
   if (stock === 0) return 'danger';
   if (stock <= 10) return 'warning';
   return 'success';
@@ -1271,7 +1271,7 @@ function exportCsv() {
     p.status || 'active',
     p.stockQuantity ?? ''
   ]);
-  const csv = [headers, ...rows].map(r => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

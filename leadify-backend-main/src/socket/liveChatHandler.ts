@@ -29,7 +29,7 @@ export function setupLiveChatHandlers(io: Server) {
         conversationId: data.conversationId,
         userId: data.userId,
         name: data.name,
-        socketId: socket.id,
+        socketId: socket.id
       });
     });
 
@@ -43,7 +43,7 @@ export function setupLiveChatHandlers(io: Server) {
       socket.to(room).emit('chat:user_left', {
         conversationId: data.conversationId,
         userId: data.userId,
-        socketId: socket.id,
+        socketId: socket.id
       });
     });
 
@@ -67,7 +67,7 @@ export function setupLiveChatHandlers(io: Server) {
           conversationId: data.conversationId,
           userId: data.userId,
           name: data.name,
-          isTyping: true,
+          isTyping: true
         });
 
         // Auto-stop after 3 seconds
@@ -76,7 +76,7 @@ export function setupLiveChatHandlers(io: Server) {
             conversationId: data.conversationId,
             userId: data.userId,
             name: data.name,
-            isTyping: false,
+            isTyping: false
           });
           typingTimers.delete(timerKey);
         }, 3000);
@@ -88,7 +88,7 @@ export function setupLiveChatHandlers(io: Server) {
           conversationId: data.conversationId,
           userId: data.userId,
           name: data.name,
-          isTyping: false,
+          isTyping: false
         });
         typingTimers.delete(timerKey);
       }
@@ -103,7 +103,7 @@ export function setupLiveChatHandlers(io: Server) {
       onlineAgents.set(socket.id, {
         socketId: socket.id,
         userId: data.userId,
-        name: data.name,
+        name: data.name
       });
 
       io.emit('chat:agents_online', Array.from(onlineAgents.values()));

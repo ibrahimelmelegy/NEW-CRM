@@ -7,7 +7,7 @@ class OCRService {
    * For now, this is a placeholder structure that can be integrated with
    * Google Vision API or AWS Textract.
    */
-  async extractPOData(file: any): Promise<any> {
+  async extractPOData(_file: any): Promise<any> {
     try {
       // Placeholder: Logic to send file to OCR provider would go here
       // For demonstration, we'll return a mock structure.

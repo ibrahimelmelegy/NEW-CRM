@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
-import { IsString, MaxLength, IsOptional, IsEnum, IsArray, IsUUID, IsDateString, IsIn } from 'class-validator';
-import { ProposalModelEnum, ProposalStatusEnum, ProposalTypeEnum } from '../proposalEnum';
+import { IsString, MaxLength, IsOptional, IsArray, IsUUID, IsDateString, IsIn } from 'class-validator';
+import { ProposalModelEnum, ProposalTypeEnum } from '../proposalEnum';
 
 export class UpdateProposalInput {
   @Expose()

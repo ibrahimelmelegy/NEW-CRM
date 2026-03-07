@@ -92,7 +92,7 @@ export async function safeSchemaSync(sequelize: Sequelize): Promise<SyncResult> 
 function buildColumnDefinition(attrDef: ModelAttributeColumnOptions): ModelAttributeColumnOptions {
   const colDef: ModelAttributeColumnOptions = {
     type: attrDef.type || DataTypes.STRING,
-    allowNull: attrDef.allowNull !== false, // Default to true for new columns (safe)
+    allowNull: attrDef.allowNull !== false // Default to true for new columns (safe)
   };
 
   // Carry over default value

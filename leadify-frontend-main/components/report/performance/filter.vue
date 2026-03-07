@@ -55,7 +55,7 @@ const mappedRoles = ref<{ label: string; value: unknown }[]>();
 //  Get roles
 const repsonse = await useApiFetch('role');
 // Map clients to Select Options
-mappedRoles.value = repsonse.body?.docs?.map((e) => ({
+mappedRoles.value = repsonse.body?.docs?.map(e => ({
   label: e.name,
   value: e.id
 }));
@@ -164,7 +164,7 @@ async function confirmClick() {
   loadingExport.value = true;
   try {
     const res = await useTableFilter(`users/excel/${email.value}`, filter.value);
-    if (res?.status == '200') {
+    if (res?.status === '200') {
       ElNotification({
         type: 'success',
         title: 'Success',

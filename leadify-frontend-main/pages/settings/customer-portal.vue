@@ -1010,7 +1010,7 @@ async function loadPortalConfig() {
       if (data.articles) articles.value = data.articles;
       if (data.faqs) faqs.value = data.faqs;
       if (data.features) {
-        data.features.forEach((feat) => {
+        data.features.forEach(feat => {
           if (feat.key in featureEnabledState) {
             featureEnabledState[feat.key] = feat.enabled;
           }

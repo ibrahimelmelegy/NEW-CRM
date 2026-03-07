@@ -207,7 +207,14 @@ div
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
-import { fetchEmployees, fetchDepartments, deleteEmployee, EMPLOYEE_STATUSES, getEmployeeStatusType, getEmployeeStatusLabel } from '~/composables/useEmployees';
+import {
+  fetchEmployees,
+  fetchDepartments,
+  deleteEmployee,
+  EMPLOYEE_STATUSES,
+  getEmployeeStatusType,
+  getEmployeeStatusLabel
+} from '~/composables/useEmployees';
 import type { Employee, DepartmentItem } from '~/composables/useEmployees';
 
 definePageMeta({ middleware: 'permissions' });

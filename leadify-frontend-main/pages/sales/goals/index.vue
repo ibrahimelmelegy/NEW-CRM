@@ -1034,7 +1034,7 @@ async function loadData() {
     const { body: usersBody, success: usersOk } = await useApiFetch('users?limit=50');
     if (usersOk && usersBody) {
       const users = (usersBody as unknown).docs || usersBody || [];
-      teamMembers.value = users.map((u) => ({
+      teamMembers.value = users.map(u => ({
         id: u.id || u._id,
         name: u.name || u.fullName || 'Unknown',
         role: u.role || u.position || '',
@@ -1049,7 +1049,7 @@ async function loadData() {
         const goalsDocs = (goalsBody as unknown).docs || goalsBody || [];
         if (goalsDocs.length) {
           // Parse real objectives and key results from API
-          goalsDocs.forEach((g) => {
+          goalsDocs.forEach(g => {
             if (g.type === 'objective') {
               objectives.value.push({
                 id: g.id || g._id,

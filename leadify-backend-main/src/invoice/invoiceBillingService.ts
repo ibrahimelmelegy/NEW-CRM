@@ -7,7 +7,6 @@ import SalesOrder from '../salesOrder/models/salesOrderModel';
 import SalesOrderItem from '../salesOrder/models/salesOrderItemModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
-import { tenantWhere } from '../utils/tenantScope';
 
 class InvoiceBillingService {
   async listInvoices(page = 1, limit = 20): Promise<{ docs: any[]; pagination: { total: number; page: number; limit: number; totalPages: number } }> {

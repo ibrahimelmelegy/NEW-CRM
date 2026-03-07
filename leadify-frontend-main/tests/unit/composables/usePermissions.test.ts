@@ -44,10 +44,10 @@ describe('usePermissions.ts', () => {
   // ============================================
   describe('usePermissions function signature', () => {
     it('should accept isUpdated boolean parameter', () => {
-      const mockUsePermissions = async (isUpdated = false) => {
+      const mockUsePermissions = async (_isUpdated = false) => {
         return {
-          hasPermission: (perm: string) => false,
-          hasAnyPermission: (perms: string[]) => false
+          hasPermission: (_perm: string) => false,
+          hasAnyPermission: (_perms: string[]) => false
         };
       };
 

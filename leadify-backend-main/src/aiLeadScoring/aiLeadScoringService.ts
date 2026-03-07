@@ -9,7 +9,9 @@ class AiLeadScoringService {
 
   async create(data: any, tenantId?: string, createdBy?: number) {
     const model = await ScoringModelConfig.create({ ...data, tenantId, createdBy });
-    try { io.emit('scoringModel:created', { id: model.id, name: model.name }); } catch {}
+    try {
+      io.emit('scoringModel:created', { id: model.id, name: model.name });
+    } catch {}
     return model;
   }
 
@@ -23,7 +25,11 @@ class AiLeadScoringService {
 
     try {
       const { rows, count } = await ScoringModelConfig.findAndCountAll({
-        where, order: [['createdAt', 'DESC']], limit, offset, distinct: true
+        where,
+        order: [['createdAt', 'DESC']],
+        limit,
+        offset,
+        distinct: true
       });
       return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
     } catch {
@@ -39,7 +45,9 @@ class AiLeadScoringService {
     const item = await ScoringModelConfig.findByPk(id);
     if (!item) return null;
     await item.update(data);
-    try { io.emit('scoringModel:updated', { id: item.id }); } catch {}
+    try {
+      io.emit('scoringModel:updated', { id: item.id });
+    } catch {}
     return item;
   }
 
@@ -122,9 +130,7 @@ class AiLeadScoringService {
       }
 
       // Normalise to 0-100
-      const normalisedScore = maxPossibleScore > 0
-        ? Math.max(0, Math.min(100, Math.round((rawScore / maxPossibleScore) * 100)))
-        : 0;
+      const normalisedScore = maxPossibleScore > 0 ? Math.max(0, Math.min(100, Math.round((rawScore / maxPossibleScore) * 100))) : 0;
 
       results.push({
         leadId: l.id,
@@ -140,7 +146,9 @@ class AiLeadScoringService {
     // Update the model's leadsScored count
     await model.update({ leadsScored: (model.leadsScored || 0) + results.length });
 
-    try { io.emit('scoringModel:leadsScored', { modelId, count: results.length }); } catch {}
+    try {
+      io.emit('scoringModel:leadsScored', { modelId, count: results.length });
+    } catch {}
 
     return {
       modelId,
@@ -183,10 +191,17 @@ class AiLeadScoringService {
         let matched = false;
 
         switch (param.condition) {
-          case 'exists': matched = !!fieldValue; break;
-          case 'equals': matched = fieldValue === param.value; break;
-          case 'greater_than': matched = typeof fieldValue === 'number' && fieldValue > Number(param.value); break;
-          default: break;
+          case 'exists':
+            matched = !!fieldValue;
+            break;
+          case 'equals':
+            matched = fieldValue === param.value;
+            break;
+          case 'greater_than':
+            matched = typeof fieldValue === 'number' && fieldValue > Number(param.value);
+            break;
+          default:
+            break;
         }
 
         if (matched) featureStats[param.feature].matchCount++;
@@ -196,17 +211,19 @@ class AiLeadScoringService {
     }
 
     // Calculate importance as combination of coverage and point weight
-    const features = Object.entries(featureStats).map(([feature, stats]) => {
-      const coverage = leads.length > 0 ? stats.matchCount / leads.length : 0;
-      const importance = parseFloat((coverage * stats.totalPoints * stats.weight).toFixed(2));
-      return {
-        feature,
-        coverage: parseFloat((coverage * 100).toFixed(1)),
-        totalPoints: stats.totalPoints,
-        weight: stats.weight,
-        importance
-      };
-    }).sort((a, b) => b.importance - a.importance);
+    const features = Object.entries(featureStats)
+      .map(([feature, stats]) => {
+        const coverage = leads.length > 0 ? stats.matchCount / leads.length : 0;
+        const importance = parseFloat((coverage * stats.totalPoints * stats.weight).toFixed(2));
+        return {
+          feature,
+          coverage: parseFloat((coverage * 100).toFixed(1)),
+          totalPoints: stats.totalPoints,
+          weight: stats.weight,
+          importance
+        };
+      })
+      .sort((a, b) => b.importance - a.importance);
 
     // Normalise importance to 0-100
     const maxImportance = features.length > 0 ? features[0].importance : 1;
@@ -225,13 +242,13 @@ class AiLeadScoringService {
   // ─── Model Comparison ─────────────────────────────────────────────────────────
 
   /** Compare accuracy and coverage of multiple scoring models side-by-side */
-  async compareModels(modelIds: number[], tenantId?: string) {
+  async compareModels(modelIds: number[], _tenantId?: string) {
     const models = await ScoringModelConfig.findAll({
       where: { id: { [Op.in]: modelIds } },
       raw: true
     });
 
-    const comparison = models.map((m) => ({
+    const comparison = models.map(m => ({
       id: m.id,
       name: m.name,
       type: m.type,
@@ -239,7 +256,7 @@ class AiLeadScoringService {
       accuracy: m.accuracy,
       leadsScored: m.leadsScored || 0,
       parameterCount: (m.parameters || []).length,
-      features: (m.parameters || []).map((p) => p.feature).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i),
+      features: (m.parameters || []).map(p => p.feature).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i),
       lastTrainedAt: m.lastTrainedAt
     }));
 

@@ -151,22 +151,6 @@ div
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
 import { getPieChartsData } from '~/composables/charts';
-
-// Lazy-load heavy chart dependencies for faster initial page load
-let graphic: any;
-const VChart = defineAsyncComponent(() =>
-  Promise.all([
-    import('echarts/core'),
-    import('echarts/renderers'),
-    import('echarts/charts'),
-    import('echarts/components'),
-    import('vue-echarts')
-  ]).then(([echartsCore, { CanvasRenderer }, { BarChart, PieChart }, { TitleComponent, TooltipComponent, LegendComponent, GridComponent }, VChartModule]) => {
-    echartsCore.use([CanvasRenderer, BarChart, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
-    graphic = echartsCore.graphic;
-    return VChartModule;
-  })
-);
 import {
   fetchExpenses,
   fetchExpenseSummary,
@@ -177,6 +161,30 @@ import {
   type ExpenseCategory
 } from '~/composables/useFinance';
 import { getCollectionDashboard, type CollectionDashboard } from '~/composables/usePayments';
+
+// Lazy-load heavy chart dependencies for faster initial page load
+let graphic: any;
+const VChart = defineAsyncComponent(() =>
+  Promise.all([
+    import('echarts/core'),
+    import('echarts/renderers'),
+    import('echarts/charts'),
+    import('echarts/components'),
+    import('vue-echarts')
+  ]).then(
+    ([
+      echartsCore,
+      { CanvasRenderer },
+      { BarChart, PieChart },
+      { TitleComponent, TooltipComponent, LegendComponent, GridComponent },
+      VChartModule
+    ]) => {
+      echartsCore.use([CanvasRenderer, BarChart, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
+      graphic = echartsCore.graphic;
+      return VChartModule;
+    }
+  )
+);
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -325,10 +333,12 @@ const cashFlowOption = computed(() => {
         data: sortedMonths.map(() => revenuePerMonth),
         itemStyle: {
           borderRadius: [6, 6, 0, 0],
-          color: graphic ? new graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: '#10B981' },
-            { offset: 1, color: 'rgba(16, 185, 129, 0.3)' }
-          ]) : '#10B981'
+          color: graphic
+            ? new graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#10B981' },
+                { offset: 1, color: 'rgba(16, 185, 129, 0.3)' }
+              ])
+            : '#10B981'
         }
       },
       {
@@ -338,10 +348,12 @@ const cashFlowOption = computed(() => {
         data: expenseValues,
         itemStyle: {
           borderRadius: [6, 6, 0, 0],
-          color: graphic ? new graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: '#EF4444' },
-            { offset: 1, color: 'rgba(239, 68, 68, 0.3)' }
-          ]) : '#EF4444'
+          color: graphic
+            ? new graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: '#EF4444' },
+                { offset: 1, color: 'rgba(239, 68, 68, 0.3)' }
+              ])
+            : '#EF4444'
         }
       }
     ]

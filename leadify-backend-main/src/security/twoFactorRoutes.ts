@@ -3,16 +3,7 @@ import { authenticateUser } from '../middleware/authMiddleware';
 import { authLimiter } from '../middleware/rateLimiter';
 import { wrapResult } from '../utils/response/responseWrapper';
 import { AuthenticatedRequest } from '../types';
-import {
-  generateSecret,
-  verifyToken,
-  enable2FA,
-  disable2FA,
-  generateBackupCodes,
-  verifyBackupCode,
-  is2FAEnabled,
-  getSetupData
-} from './twoFactorService';
+import { generateSecret, verifyToken, enable2FA, disable2FA, generateBackupCodes, verifyBackupCode, getSetupData } from './twoFactorService';
 
 const router = express.Router();
 

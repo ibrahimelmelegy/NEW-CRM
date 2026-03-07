@@ -173,9 +173,9 @@ const pagination = ref(result.value.pagination);
 
 const summaryStats = computed(() => {
   const docs = result.value.docs || [];
-  const pending = docs.filter((r) => r.status === 'PENDING').length;
-  const approved = docs.filter((r) => r.status === 'APPROVED').length;
-  const rejected = docs.filter((r) => r.status === 'REJECTED').length;
+  const pending = docs.filter(r => r.status === 'PENDING').length;
+  const approved = docs.filter(r => r.status === 'APPROVED').length;
+  const rejected = docs.filter(r => r.status === 'REJECTED').length;
   return [
     { label: t('hr.leave.pending'), value: pending, icon: 'ph:clock-bold', color: '#f59e0b' },
     { label: t('hr.leave.approved'), value: approved, icon: 'ph:check-circle-bold', color: '#22c55e' },
@@ -291,9 +291,9 @@ const statusFilters = computed(() => {
   const data = table.value.data || [];
   return [
     { value: 'ALL', label: t('hr.leave.allStatuses'), color: '#f59e0b', count: data.length },
-    { value: 'PENDING', label: t('hr.leave.pending'), color: '#f59e0b', count: data.filter((r) => r.status === 'PENDING').length },
-    { value: 'APPROVED', label: t('hr.leave.approved'), color: '#22c55e', count: data.filter((r) => r.status === 'APPROVED').length },
-    { value: 'REJECTED', label: t('hr.leave.rejected'), color: '#ef4444', count: data.filter((r) => r.status === 'REJECTED').length }
+    { value: 'PENDING', label: t('hr.leave.pending'), color: '#f59e0b', count: data.filter(r => r.status === 'PENDING').length },
+    { value: 'APPROVED', label: t('hr.leave.approved'), color: '#22c55e', count: data.filter(r => r.status === 'APPROVED').length },
+    { value: 'REJECTED', label: t('hr.leave.rejected'), color: '#ef4444', count: data.filter(r => r.status === 'REJECTED').length }
   ];
 });
 
@@ -305,11 +305,11 @@ function setMobileStatusFilter(value: string) {
 const mobileFilteredData = computed(() => {
   let data = table.value.data || [];
   if (mobileStatusFilter.value !== 'ALL') {
-    data = data.filter((r) => r.status === mobileStatusFilter.value);
+    data = data.filter(r => r.status === mobileStatusFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((r) => {
+  return data.filter(r => {
     const name = (r.employeeDetails?.title || '').toLowerCase();
     const type = (r.leaveTypeLabel || '').toLowerCase();
     const reason = (r.reason || '').toLowerCase();

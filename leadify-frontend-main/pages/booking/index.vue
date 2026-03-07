@@ -485,18 +485,18 @@ function renderCharts() {
     const chart = echarts.init(popularSlotsChartRef.value);
     chart.setOption({
       tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: analyticsData.value.popularSlots.map((s) => s.slot) },
+      xAxis: { type: 'category', data: analyticsData.value.popularSlots.map(s => s.slot) },
       yAxis: { type: 'value' },
-      series: [{ data: analyticsData.value.popularSlots.map((s) => s.count), type: 'bar', itemStyle: { color: '#10B981' } }]
+      series: [{ data: analyticsData.value.popularSlots.map(s => s.count), type: 'bar', itemStyle: { color: '#10B981' } }]
     });
   }
   if (trendChartRef.value && analyticsData.value.dailyTrend?.length) {
     const chart = echarts.init(trendChartRef.value);
     chart.setOption({
       tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: analyticsData.value.dailyTrend.map((d) => d.date) },
+      xAxis: { type: 'category', data: analyticsData.value.dailyTrend.map(d => d.date) },
       yAxis: { type: 'value' },
-      series: [{ data: analyticsData.value.dailyTrend.map((d) => d.count), type: 'line', smooth: true, itemStyle: { color: '#6366F1' } }]
+      series: [{ data: analyticsData.value.dailyTrend.map(d => d.count), type: 'line', smooth: true, itemStyle: { color: '#6366F1' } }]
     });
   }
 }

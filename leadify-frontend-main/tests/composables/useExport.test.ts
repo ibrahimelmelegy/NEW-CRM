@@ -7,7 +7,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ref } from 'vue';
+
+import { useExport } from '@/composables/useExport';
 
 // ============================================
 // Global mocks required by the composable
@@ -17,8 +18,6 @@ import { ref } from 'vue';
 // Mock the global fetch
 const mockGlobalFetch = vi.fn();
 (globalThis as any).fetch = mockGlobalFetch;
-
-import { useExport } from '@/composables/useExport';
 
 describe('useExport composable', () => {
   let exportInstance: ReturnType<typeof useExport>;
@@ -144,9 +143,7 @@ describe('useExport composable', () => {
     });
 
     it('should escape CSV values with commas', () => {
-      const dataWithCommas = [
-        { name: 'Smith, John', email: 'john@test.com', value: 1000 }
-      ];
+      const dataWithCommas = [{ name: 'Smith, John', email: 'john@test.com', value: 1000 }];
 
       exportInstance.exportToCSV('Report', dataWithCommas, columns);
 
@@ -154,9 +151,7 @@ describe('useExport composable', () => {
     });
 
     it('should escape CSV values with double quotes', () => {
-      const dataWithQuotes = [
-        { name: 'He said "hello"', email: 'test@test.com', value: 500 }
-      ];
+      const dataWithQuotes = [{ name: 'He said "hello"', email: 'test@test.com', value: 500 }];
 
       exportInstance.exportToCSV('Report', dataWithQuotes, columns);
 
@@ -164,9 +159,7 @@ describe('useExport composable', () => {
     });
 
     it('should escape CSV values with newlines', () => {
-      const dataWithNewlines = [
-        { name: 'Line1\nLine2', email: 'test@test.com', value: 100 }
-      ];
+      const dataWithNewlines = [{ name: 'Line1\nLine2', email: 'test@test.com', value: 100 }];
 
       exportInstance.exportToCSV('Report', dataWithNewlines, columns);
 
@@ -174,9 +167,7 @@ describe('useExport composable', () => {
     });
 
     it('should handle null and undefined values', () => {
-      const dataWithNulls = [
-        { name: null, email: undefined, value: 0 }
-      ];
+      const dataWithNulls = [{ name: null, email: undefined, value: 0 }];
 
       exportInstance.exportToCSV('Report', dataWithNulls as any, columns);
 
@@ -416,10 +407,7 @@ describe('useExport composable', () => {
 
       await exportInstance.exportSavedReport(10, 'xlsx');
 
-      expect(mockGlobalFetch).toHaveBeenCalledWith(
-        'http://localhost:3001/api/v1/reports/10/export/xlsx',
-        expect.objectContaining({ method: 'GET' })
-      );
+      expect(mockGlobalFetch).toHaveBeenCalledWith('http://localhost:3001/api/v1/reports/10/export/xlsx', expect.objectContaining({ method: 'GET' }));
       expect(mockLink.download).toBe('report-10.xlsx');
     });
 
@@ -477,10 +465,7 @@ describe('useExport composable', () => {
 
       await exportInstance.exportSavedReport('abc-123', 'csv');
 
-      expect(mockGlobalFetch).toHaveBeenCalledWith(
-        expect.stringContaining('reports/abc-123/export/csv'),
-        expect.any(Object)
-      );
+      expect(mockGlobalFetch).toHaveBeenCalledWith(expect.stringContaining('reports/abc-123/export/csv'), expect.any(Object));
     });
   });
 

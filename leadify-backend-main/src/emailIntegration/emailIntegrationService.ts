@@ -1,4 +1,4 @@
-import { Op, WhereOptions } from 'sequelize';
+import { WhereOptions } from 'sequelize';
 import { clampPagination } from '../utils/pagination';
 import EmailAccount from './emailAccountModel';
 import EmailMessage from './emailMessageModel';

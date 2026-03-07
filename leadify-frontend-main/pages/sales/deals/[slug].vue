@@ -103,7 +103,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
       .mt-6
         ActivityTimeline(:activities="activity?.docs")
       .flex.justify-center.items-center.w-full
-        el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages == activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
+        el-button( v-if="activity?.docs?.length >0" :loading = "loading" class="!rounded-2xl mb-2"  type= 'primary' size="large" :disabled="activity?.pagination?.totalPages === activity?.pagination?.page" @click="getActivityPage(Number(activity?.pagination?.page)+1)") {{ $t('common.view') }} More
   el-tab-pane(:label="$t('common.timeline')" name="timeline")
     RecordTimeline(:entityType="'deal'" :entityId="route.params.slug as string")
   el-tab-pane(:label="$t('common.comments')" name="comments")
@@ -354,7 +354,7 @@ const table = reactive({
 });
 
 const checkProposalResponse = await useTableFilter(`proposal?relatedEntityId=${route.params.slug as string}&page=1&limit=100`);
-table.data = checkProposalResponse.formattedData?.map((el) => {
-  return { ...el, type: el.type == 'Mixed' ? 'Tech & Financial' : el.type };
+table.data = checkProposalResponse.formattedData?.map(el => {
+  return { ...el, type: el.type === 'Mixed' ? 'Tech & Financial' : el.type };
 });
 </script>

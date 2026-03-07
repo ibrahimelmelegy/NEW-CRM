@@ -79,7 +79,7 @@ const priorityOptions = [
 
 // Fetch users
 const usersResponse: unknown = await useApiFetch('users');
-const users = ref(usersResponse?.body?.docs?.map((u) => ({ label: u.name, value: u.id })) || []);
+const users = ref(usersResponse?.body?.docs?.map(u => ({ label: u.name, value: u.id })) || []);
 
 function goBack() {
   router.back();

@@ -313,9 +313,9 @@ const form = ref(defaultForm());
 const summaryStats = computed(() => {
   const data = items.value;
   const total = data.length;
-  const running = data.filter((i) => i.status === 'RUNNING').length;
-  const completed = data.filter((i) => i.status === 'COMPLETED').length;
-  const confidences = data.filter((i) => i.confidence != null).map((i) => i.confidence);
+  const running = data.filter(i => i.status === 'RUNNING').length;
+  const completed = data.filter(i => i.status === 'COMPLETED').length;
+  const confidences = data.filter(i => i.confidence !== null && i.confidence !== undefined).map(i => i.confidence);
   const avgConf = confidences.length ? Math.round(confidences.reduce((a: number, b: number) => a + b, 0) / confidences.length) : 0;
   return [
     { label: t('marketing.abTesting.totalTests'), value: total, icon: 'ph:flask-bold', color: '#7849ff' },
@@ -328,7 +328,7 @@ const summaryStats = computed(() => {
 const filteredData = computed(() => {
   let data = items.value;
   if (filterStatus.value) {
-    data = data.filter((i) => i.status === filterStatus.value);
+    data = data.filter(i => i.status === filterStatus.value);
   }
   if (!search.value) return data;
   const q = search.value.toLowerCase();
@@ -367,10 +367,10 @@ async function fetchData() {
     const res = await useApiFetch(`ab-tests?page=${pagination.page}&limit=${pagination.limit}`);
     if (res.success && res.body) {
       const data = res.body as unknown;
-      items.value = (data.docs || data.rows || (Array.isArray(data) ? data : [])).map((item) => ({
+      items.value = (data.docs || data.rows || (Array.isArray(data) ? data : [])).map(item => ({
         ...item,
         winner: item.winnerVariant || null,
-        confidence: item.confidence != null ? Number(item.confidence) : null
+        confidence: item.confidence !== null && item.confidence !== undefined ? Number(item.confidence) : null
       }));
       pagination.total = data.pagination?.totalItems ?? data.count ?? data.total ?? items.value.length;
     }
@@ -477,7 +477,7 @@ async function openResultsDialog(test: unknown) {
     if (res.success && res.body) {
       const data = res.body as unknown;
       // Derive overall significance and confidence from variant significance data
-      const variantsWithSig = (data.variants || []).filter((v) => v.significance);
+      const variantsWithSig = (data.variants || []).filter(v => v.significance);
       const bestSignificance =
         variantsWithSig.length > 0
           ? variantsWithSig.reduce(
@@ -489,7 +489,7 @@ async function openResultsDialog(test: unknown) {
         ...data,
         winner: test.winner || test.winnerVariant || null,
         isSignificant: bestSignificance?.isSignificant || false,
-        confidence: bestSignificance?.confidenceLevel ?? (test.confidence != null ? Number(test.confidence) : null)
+        confidence: bestSignificance?.confidenceLevel ?? (test.confidence !== null && test.confidence !== undefined ? Number(test.confidence) : null)
       };
     }
   } catch {

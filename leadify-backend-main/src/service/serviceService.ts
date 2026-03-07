@@ -129,7 +129,6 @@ class ServiceService {
     if (!service) throw new BaseError(ERRORS.SERVICE_NOT_FOUND);
     await service.destroy();
   }
-
 }
 
 export default new ServiceService();

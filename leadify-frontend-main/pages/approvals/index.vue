@@ -167,13 +167,13 @@ const summaryStats = computed(() => [
   { label: t('approvals.myRequests'), value: allRequests.value.length, icon: 'ph:file-text-bold', color: '#7849ff' },
   {
     label: t('hr.leave.approved'),
-    value: allRequests.value.filter((r) => r.status === 'APPROVED').length,
+    value: allRequests.value.filter(r => r.status === 'APPROVED').length,
     icon: 'ph:check-circle-bold',
     color: '#22c55e'
   },
   {
     label: t('hr.leave.rejected'),
-    value: allRequests.value.filter((r) => r.status === 'REJECTED').length,
+    value: allRequests.value.filter(r => r.status === 'REJECTED').length,
     icon: 'ph:x-circle-bold',
     color: '#ef4444'
   }

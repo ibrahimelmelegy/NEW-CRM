@@ -43,13 +43,36 @@ interface SeedTemplate {
 }
 
 const COMMON_VARS = [
-  'brand.companyName', 'brand.companyAddress', 'brand.companyEmail', 'brand.companyPhone',
-  'brand.companyTaxId', 'brand.primaryColor', 'brand.footerText', 'brand.logo',
-  'refNumber', 'formattedDate', 'formattedDueDate', 'formattedValidUntil',
-  'clientName', 'clientCompany', 'clientEmail', 'clientPhone', 'clientAddress', 'clientTaxId',
-  'subtotal', 'discountAmount', 'taxAmount', 'total', 'currency',
-  'bankName', 'bankAccountName', 'bankIban', 'bankSwift',
-  'notes', 'paymentTerms', 'termsAndConditions'
+  'brand.companyName',
+  'brand.companyAddress',
+  'brand.companyEmail',
+  'brand.companyPhone',
+  'brand.companyTaxId',
+  'brand.primaryColor',
+  'brand.footerText',
+  'brand.logo',
+  'refNumber',
+  'formattedDate',
+  'formattedDueDate',
+  'formattedValidUntil',
+  'clientName',
+  'clientCompany',
+  'clientEmail',
+  'clientPhone',
+  'clientAddress',
+  'clientTaxId',
+  'subtotal',
+  'discountAmount',
+  'taxAmount',
+  'total',
+  'currency',
+  'bankName',
+  'bankAccountName',
+  'bankIban',
+  'bankSwift',
+  'notes',
+  'paymentTerms',
+  'termsAndConditions'
 ];
 
 /* ─── 1. Invoice Classic ──────────────────────────────────────────────────── */
@@ -1361,8 +1384,8 @@ const SEED_TEMPLATES: SeedTemplate[] = [
 export async function seedTemplates(): Promise<void> {
   // Starting template seed
 
-  let created = 0;
-  let skipped = 0;
+  let _created = 0;
+  let _skipped = 0;
 
   for (const tpl of SEED_TEMPLATES) {
     const [, wasCreated] = await DocumentTemplate.findOrCreate({
@@ -1379,10 +1402,10 @@ export async function seedTemplates(): Promise<void> {
     });
 
     if (wasCreated) {
-      created++;
+      _created++;
       // Template created
     } else {
-      skipped++;
+      _skipped++;
       // Template already exists
     }
   }

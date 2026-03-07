@@ -1,5 +1,4 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
-import { sequelize } from '../../config/db'; // Make sure sequelize is configured with sequelize-typescript
 
 // Define the attributes for the LoginFailure model
 interface LoginFailureAttributes {

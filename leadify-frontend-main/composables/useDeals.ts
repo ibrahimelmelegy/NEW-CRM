@@ -129,7 +129,7 @@ export async function getDeals(all?: false): Promise<UseDealResult> {
  */
 export async function getDeal(id: string | string[]): Promise<Deal> {
   try {
-    const { body: deal, success } = await useApiFetch(`deal/${id}`);
+    const { body: deal } = await useApiFetch(`deal/${id}`);
     return deal;
   } catch (error) {
     console.error('Error fetching deal:', error instanceof Error ? error.message : error);
@@ -140,7 +140,7 @@ export async function getDeal(id: string | string[]): Promise<Deal> {
 
 export async function getDealActivity(id: string | string[]): Promise<Lead> {
   try {
-    const { body: lead, success } = await useApiFetch(`activity/deal/${id}`);
+    const { body: lead } = await useApiFetch(`activity/deal/${id}`);
     return lead;
   } catch (error) {
     console.error('Error fetching lead:', error instanceof Error ? error.message : error);

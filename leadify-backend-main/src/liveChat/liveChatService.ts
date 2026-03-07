@@ -15,7 +15,7 @@ class LiveChatService {
       startedAt: new Date(),
       status: data.status || 'OPEN',
       channel: data.channel || 'WEB',
-      priority: data.priority || 'NORMAL',
+      priority: data.priority || 'NORMAL'
     });
 
     // Broadcast to all agents so their conversation list updates
@@ -23,7 +23,7 @@ class LiveChatService {
       id: conversation.id,
       visitorName: conversation.visitorName,
       status: conversation.status,
-      channel: conversation.channel,
+      channel: conversation.channel
     });
 
     return conversation;
@@ -41,7 +41,7 @@ class LiveChatService {
       where[Op.or] = [
         { subject: { [Op.iLike]: `%${query.search}%` } },
         { visitorName: { [Op.iLike]: `%${query.search}%` } },
-        { visitorEmail: { [Op.iLike]: `%${query.search}%` } },
+        { visitorEmail: { [Op.iLike]: `%${query.search}%` } }
       ];
     }
 
@@ -50,12 +50,12 @@ class LiveChatService {
         where,
         include: [
           { model: Client, as: 'client', attributes: ['id', 'name', 'email'], required: false },
-          { model: User, as: 'staff', attributes: ['id', 'name', 'email'], required: false },
+          { model: User, as: 'staff', attributes: ['id', 'name', 'email'], required: false }
         ],
         order: [['updatedAt', 'DESC']],
         limit,
         offset,
-        distinct: true,
+        distinct: true
       });
 
       return {
@@ -64,13 +64,13 @@ class LiveChatService {
           page,
           limit,
           totalItems: count,
-          totalPages: Math.ceil(count / limit),
-        },
+          totalPages: Math.ceil(count / limit)
+        }
       };
     } catch (error) {
       return {
         docs: [],
-        pagination: { page: 1, limit: 10, totalItems: 0, totalPages: 0 },
+        pagination: { page: 1, limit: 10, totalItems: 0, totalPages: 0 }
       };
     }
   }
@@ -79,8 +79,8 @@ class LiveChatService {
     return ChatConversation.findByPk(id, {
       include: [
         { model: Client, as: 'client', attributes: ['id', 'name', 'email'] },
-        { model: User, as: 'staff', attributes: ['id', 'name', 'email'] },
-      ],
+        { model: User, as: 'staff', attributes: ['id', 'name', 'email'] }
+      ]
     });
   }
 
@@ -102,7 +102,7 @@ class LiveChatService {
       io.to(`conversation:${id}`).emit('chat:status_changed', {
         conversationId: id,
         previousStatus,
-        newStatus: data.status,
+        newStatus: data.status
       });
       io.emit('chat:conversation_updated', { conversationId: id, status: data.status });
     }
@@ -129,9 +129,7 @@ class LiveChatService {
       {
         messageCount: literal('"messageCount" + 1'),
         lastMessage: data.content?.substring(0, 200) || '',
-        unreadCount: data.senderType !== 'STAFF'
-          ? literal('"unreadCount" + 1')
-          : literal('"unreadCount"'),
+        unreadCount: data.senderType !== 'STAFF' ? literal('"unreadCount" + 1') : literal('"unreadCount"')
       },
       { where: { id: data.conversationId } }
     );
@@ -143,7 +141,7 @@ class LiveChatService {
         await conv.update({ status: 'ACTIVE' });
         io.emit('chat:conversation_updated', {
           conversationId: data.conversationId,
-          status: 'ACTIVE',
+          status: 'ACTIVE'
         });
       }
     }
@@ -160,7 +158,7 @@ class LiveChatService {
       fileUrl: message.fileUrl,
       fileName: message.fileName,
       isRead: message.isRead,
-      createdAt: message.createdAt,
+      createdAt: message.createdAt
     };
 
     io.to(`conversation:${data.conversationId}`).emit('chat:message', messagePayload);
@@ -170,7 +168,7 @@ class LiveChatService {
       conversationId: data.conversationId,
       messageId: message.id,
       senderType: data.senderType,
-      content: data.content?.substring(0, 100),
+      content: data.content?.substring(0, 100)
     });
 
     return message;
@@ -182,7 +180,7 @@ class LiveChatService {
       where: { conversationId },
       order: [['createdAt', 'ASC']],
       limit,
-      offset,
+      offset
     });
     return {
       docs: rows,
@@ -190,8 +188,8 @@ class LiveChatService {
         page,
         limit,
         totalItems: count,
-        totalPages: Math.ceil(count / limit),
-      },
+        totalPages: Math.ceil(count / limit)
+      }
     };
   }
 
@@ -203,23 +201,20 @@ class LiveChatService {
         where: {
           conversationId,
           isRead: false,
-          senderId: { [Op.ne]: readerId },
-        },
+          senderId: { [Op.ne]: readerId }
+        }
       }
     );
 
     // Reset unread counter on the conversation
     if (updated > 0) {
-      await ChatConversation.update(
-        { unreadCount: 0 },
-        { where: { id: conversationId } }
-      );
+      await ChatConversation.update({ unreadCount: 0 }, { where: { id: conversationId } });
 
       io.to(`conversation:${conversationId}`).emit('chat:messages_read', {
         conversationId,
         readerId,
         readAt: now.toISOString(),
-        count: updated,
+        count: updated
       });
     }
 
@@ -248,22 +243,25 @@ class LiveChatService {
       agentId,
       agentName: agent?.name || 'Unknown',
       previousAgentId: previousAgent,
-      status: conv.status,
+      status: conv.status
     });
 
     io.emit('chat:conversation_updated', {
       conversationId,
       staffId: agentId,
-      status: conv.status,
+      status: conv.status
     });
 
     // Create a system message noting the assignment
-    await this.sendMessage({
-      conversationId,
-      senderType: 'SYSTEM',
-      content: `Conversation assigned to ${agent?.name || 'Agent #' + agentId}`,
-      messageType: 'SYSTEM',
-    }, conv.tenantId);
+    await this.sendMessage(
+      {
+        conversationId,
+        senderType: 'SYSTEM',
+        content: `Conversation assigned to ${agent?.name || 'Agent #' + agentId}`,
+        messageType: 'SYSTEM'
+      },
+      conv.tenantId
+    );
 
     return conv;
   }
@@ -275,7 +273,7 @@ class LiveChatService {
     // Find all staff users for this tenant
     const agents = await User.findAll({
       where: { tenantId },
-      attributes: ['id', 'name', 'email'],
+      attributes: ['id', 'name', 'email']
     });
 
     if (agents.length === 0) return null;
@@ -289,8 +287,8 @@ class LiveChatService {
         where: {
           tenantId,
           staffId: agent.id,
-          status: { [Op.in]: ['OPEN', 'ACTIVE', 'WAITING'] },
-        },
+          status: { [Op.in]: ['OPEN', 'ACTIVE', 'WAITING'] }
+        }
       });
 
       if (activeCount < minConversations) {
@@ -314,24 +312,27 @@ class LiveChatService {
     await conv.update({ staffId: toAgentId });
 
     // System message
-    await this.sendMessage({
-      conversationId,
-      senderType: 'SYSTEM',
-      content: `Conversation transferred from ${fromAgent?.name || 'Agent'} to ${toAgent?.name || 'Agent'}`,
-      messageType: 'SYSTEM',
-    }, conv.tenantId);
+    await this.sendMessage(
+      {
+        conversationId,
+        senderType: 'SYSTEM',
+        content: `Conversation transferred from ${fromAgent?.name || 'Agent'} to ${toAgent?.name || 'Agent'}`,
+        messageType: 'SYSTEM'
+      },
+      conv.tenantId
+    );
 
     io.to(`conversation:${conversationId}`).emit('chat:transferred', {
       conversationId,
       fromAgentId,
       fromAgentName: fromAgent?.name,
       toAgentId,
-      toAgentName: toAgent?.name,
+      toAgentName: toAgent?.name
     });
 
     io.emit('chat:conversation_updated', {
       conversationId,
-      staffId: toAgentId,
+      staffId: toAgentId
     });
 
     return conv;
@@ -352,30 +353,31 @@ class LiveChatService {
     let firstResponseTimeMinutes: number | null = null;
     const firstStaffMessage = await ChatMessage.findOne({
       where: { conversationId, senderType: 'STAFF' },
-      order: [['createdAt', 'ASC']],
+      order: [['createdAt', 'ASC']]
     });
     if (firstStaffMessage) {
-      firstResponseTimeMinutes = Math.round(
-        (new Date(firstStaffMessage.createdAt).getTime() - createdAt.getTime()) / 60000
-      );
+      firstResponseTimeMinutes = Math.round((new Date(firstStaffMessage.createdAt).getTime() - createdAt.getTime()) / 60000);
     }
 
     await conv.update({ status: 'RESOLVED', resolvedAt });
 
     if (resolution) {
-      await this.sendMessage({
-        conversationId,
-        senderType: 'SYSTEM',
-        content: `Conversation resolved: ${resolution}`,
-        messageType: 'SYSTEM',
-      }, conv.tenantId);
+      await this.sendMessage(
+        {
+          conversationId,
+          senderType: 'SYSTEM',
+          content: `Conversation resolved: ${resolution}`,
+          messageType: 'SYSTEM'
+        },
+        conv.tenantId
+      );
     }
 
     io.to(`conversation:${conversationId}`).emit('chat:resolved', {
       conversationId,
       resolvedAt: resolvedAt.toISOString(),
       resolutionTimeMinutes,
-      firstResponseTimeMinutes,
+      firstResponseTimeMinutes
     });
 
     io.emit('chat:conversation_updated', { conversationId, status: 'RESOLVED' });
@@ -384,7 +386,7 @@ class LiveChatService {
       conversation: conv,
       resolvedAt,
       resolutionTimeMinutes,
-      firstResponseTimeMinutes,
+      firstResponseTimeMinutes
     };
   }
 
@@ -421,7 +423,7 @@ class LiveChatService {
     // Fetch from the first conversation with canned responses, or return defaults
     const conv = await ChatConversation.findOne({
       where: { tenantId, cannedResponses: { [Op.ne]: null } },
-      attributes: ['cannedResponses'],
+      attributes: ['cannedResponses']
     });
 
     const defaults = [
@@ -429,7 +431,7 @@ class LiveChatService {
       { id: '2', label: 'Transfer', text: 'Let me transfer you to a specialist who can better assist you.' },
       { id: '3', label: 'Follow-up', text: 'I will follow up on this and get back to you shortly.' },
       { id: '4', label: 'Closing', text: 'Thank you for contacting us! Is there anything else I can help with?' },
-      { id: '5', label: 'Hold', text: 'Please hold on for a moment while I look into this for you.' },
+      { id: '5', label: 'Hold', text: 'Please hold on for a moment while I look into this for you.' }
     ];
 
     return conv?.cannedResponses?.length ? conv.cannedResponses : defaults;
@@ -442,8 +444,8 @@ class LiveChatService {
       where: {
         tenantId,
         staffId: agentId,
-        status: { [Op.in]: ['OPEN', 'ACTIVE', 'WAITING'] },
-      },
+        status: { [Op.in]: ['OPEN', 'ACTIVE', 'WAITING'] }
+      }
     });
     return result || 0;
   }
@@ -459,7 +461,7 @@ class LiveChatService {
         conversationId,
         status: conv.status,
         position: 0,
-        message: 'Conversation is not in the waiting queue',
+        message: 'Conversation is not in the waiting queue'
       };
     }
 
@@ -467,25 +469,23 @@ class LiveChatService {
       where: {
         tenantId: conv.tenantId,
         status: 'WAITING',
-        createdAt: { [Op.lt]: conv.createdAt },
-      },
+        createdAt: { [Op.lt]: conv.createdAt }
+      }
     });
 
     return {
       conversationId,
       status: 'WAITING',
       position: aheadCount + 1,
-      aheadInQueue: aheadCount,
+      aheadInQueue: aheadCount
     };
   }
 
   async getWaitingQueue(tenantId: string) {
     const waiting = await ChatConversation.findAll({
       where: { tenantId, status: 'WAITING' },
-      include: [
-        { model: Client, as: 'client', attributes: ['id', 'name', 'email'] },
-      ],
-      order: [['createdAt', 'ASC']],
+      include: [{ model: Client, as: 'client', attributes: ['id', 'name', 'email'] }],
+      order: [['createdAt', 'ASC']]
     });
     return waiting;
   }
@@ -495,24 +495,24 @@ class LiveChatService {
   async getChatMetrics(tenantId: string) {
     // Active conversations count
     const activeConversations = await ChatConversation.count({
-      where: { tenantId, status: { [Op.in]: ['OPEN', 'ACTIVE'] } },
+      where: { tenantId, status: { [Op.in]: ['OPEN', 'ACTIVE'] } }
     });
 
     // Waiting in queue
     const waitingInQueue = await ChatConversation.count({
-      where: { tenantId, status: 'WAITING' },
+      where: { tenantId, status: 'WAITING' }
     });
 
     // Today's conversations
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
     const todayConversations = await ChatConversation.count({
-      where: { tenantId, createdAt: { [Op.gte]: startOfDay } },
+      where: { tenantId, createdAt: { [Op.gte]: startOfDay } }
     });
 
     // Total closed
     const totalClosed = await ChatConversation.count({
-      where: { tenantId, status: { [Op.in]: ['RESOLVED', 'CLOSED'] } },
+      where: { tenantId, status: { [Op.in]: ['RESOLVED', 'CLOSED'] } }
     });
 
     // Calculate avg response time from resolved/closed conversations
@@ -520,7 +520,7 @@ class LiveChatService {
       where: { tenantId, status: { [Op.in]: ['RESOLVED', 'CLOSED'] } },
       attributes: ['id', 'createdAt', 'resolvedAt', 'updatedAt'],
       order: [['updatedAt', 'DESC']],
-      limit: 100, // Sample last 100 for performance
+      limit: 100 // Sample last 100 for performance
     });
 
     let totalResponseTimeMs = 0;
@@ -530,9 +530,7 @@ class LiveChatService {
 
     for (const conv of closedConvos) {
       const createdAt = new Date(conv.createdAt).getTime();
-      const closedAt = conv.resolvedAt
-        ? new Date(conv.resolvedAt).getTime()
-        : new Date(conv.updatedAt).getTime();
+      const closedAt = conv.resolvedAt ? new Date(conv.resolvedAt).getTime() : new Date(conv.updatedAt).getTime();
 
       if (closedAt > createdAt) {
         totalResolutionTimeMs += closedAt - createdAt;
@@ -542,7 +540,7 @@ class LiveChatService {
       const firstStaffMsg = await ChatMessage.findOne({
         where: { conversationId: conv.id, senderType: 'STAFF' },
         order: [['createdAt', 'ASC']],
-        attributes: ['createdAt'],
+        attributes: ['createdAt']
       });
 
       if (firstStaffMsg) {
@@ -554,12 +552,8 @@ class LiveChatService {
       }
     }
 
-    const avgResponseMinutes = responseTimeCount > 0
-      ? Math.round(totalResponseTimeMs / responseTimeCount / 60000)
-      : 0;
-    const avgResolutionMinutes = resolutionTimeCount > 0
-      ? Math.round(totalResolutionTimeMs / resolutionTimeCount / 60000)
-      : 0;
+    const avgResponseMinutes = responseTimeCount > 0 ? Math.round(totalResponseTimeMs / responseTimeCount / 60000) : 0;
+    const avgResolutionMinutes = resolutionTimeCount > 0 ? Math.round(totalResolutionTimeMs / resolutionTimeCount / 60000) : 0;
 
     // Format as human-readable strings
     const formatDuration = (minutes: number): string => {
@@ -573,26 +567,21 @@ class LiveChatService {
     // Average satisfaction rating
     const ratedConvos = await ChatConversation.findAll({
       where: { tenantId, rating: { [Op.ne]: null } },
-      attributes: ['rating'],
+      attributes: ['rating']
     });
-    const avgRating = ratedConvos.length > 0
-      ? (ratedConvos.reduce((sum, c) => sum + (c.rating || 0), 0) / ratedConvos.length).toFixed(1)
-      : null;
+    const avgRating = ratedConvos.length > 0 ? (ratedConvos.reduce((sum, c) => sum + (c.rating || 0), 0) / ratedConvos.length).toFixed(1) : null;
 
     // Conversations per agent
-    const agentConversations = await ChatConversation.findAll({
+    const agentConversations = (await ChatConversation.findAll({
       where: {
         tenantId,
         staffId: { [Op.ne]: null },
-        status: { [Op.in]: ['OPEN', 'ACTIVE', 'WAITING'] },
+        status: { [Op.in]: ['OPEN', 'ACTIVE', 'WAITING'] }
       },
-      attributes: [
-        'staffId',
-        [fn('COUNT', col('id')), 'conversationCount'],
-      ],
+      attributes: ['staffId', [fn('COUNT', col('id')), 'conversationCount']],
       group: ['staffId'],
-      raw: true,
-    }) as unknown as Array<{ staffId: number; conversationCount: string }>;
+      raw: true
+    })) as unknown as Array<{ staffId: number; conversationCount: string }>;
 
     return {
       activeConversations,
@@ -604,10 +593,10 @@ class LiveChatService {
       avgResponseMinutes,
       avgResolutionMinutes,
       avgRating,
-      conversationsPerAgent: agentConversations.map((a) => ({
+      conversationsPerAgent: agentConversations.map(a => ({
         staffId: a.staffId,
-        activeConversations: Number(a.conversationCount),
-      })),
+        activeConversations: Number(a.conversationCount)
+      }))
     };
   }
 }

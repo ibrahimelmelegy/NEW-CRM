@@ -494,7 +494,9 @@ async function selectConversation(conv: Conversation) {
     if (res.success && Array.isArray(res.body)) {
       messageThreads.value[conv.id] = res.body;
     }
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   nextTick(() => scrollToBottom());
 }
 

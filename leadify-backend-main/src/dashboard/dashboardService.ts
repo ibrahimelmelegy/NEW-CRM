@@ -1,4 +1,4 @@
-import { Op, fn, col, literal, Sequelize } from 'sequelize';
+import { Op, fn, col, literal } from 'sequelize';
 import Dashboard, { Widget, WidgetConfig } from './dashboardModel';
 import Lead from '../lead/leadModel';
 import Deal from '../deal/model/dealModel';
@@ -10,7 +10,6 @@ import DailyTask from '../dailyTask/dailyTaskModel';
 import User from '../user/userModel';
 import { DealStageEnums } from '../deal/dealEnum';
 import { LeadStatusEnums } from '../lead/leadEnum';
-import { OpportunityStageEnums } from '../opportunity/opportunityEnum';
 import { ProjectStatusEnum } from '../project/projectEnum';
 import { DailyTaskStatusEnum } from '../dailyTask/dailyTaskEnum';
 import BaseError from '../utils/error/base-http-exception';
@@ -298,10 +297,10 @@ class DashboardService {
     });
 
     return {
-      labels: results.map((r) => r[groupBy]),
+      labels: results.map((r: any) => r[groupBy]),
       datasets: [
         {
-          data: results.map((r) => Number(r.value || 0)),
+          data: results.map((r: any) => Number(r.value || 0)),
           chartType: config.chartType || 'bar'
         }
       ]
@@ -377,9 +376,9 @@ class DashboardService {
     ]);
 
     const activities = [
-      ...recentLeads.map((l) => ({ entityType: 'lead', ...l })),
-      ...recentDeals.map((d) => ({ entityType: 'deal', ...d })),
-      ...recentOpportunities.map((o) => ({ entityType: 'opportunity', ...o }))
+      ...recentLeads.map(l => ({ entityType: 'lead', ...l })),
+      ...recentDeals.map(d => ({ entityType: 'deal', ...d })),
+      ...recentOpportunities.map(o => ({ entityType: 'opportunity', ...o }))
     ]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, limit);
@@ -430,7 +429,7 @@ class DashboardService {
     });
 
     const leaderboard = results
-      .map((r) => {
+      .map(r => {
         const userData = r.users?.[0];
         return {
           userId: userData?.id,
@@ -439,16 +438,20 @@ class DashboardService {
           dealCount: Number(r.getDataValue('dealCount') || 0)
         };
       })
-      .filter((entry) => entry.userId);
+      .filter(entry => entry.userId);
 
     return { leaderboard };
   }
 
   // ─── PREDEFINED ANALYTICS ENDPOINTS ───────────────────
   async getExecutiveSummary() {
-    return cacheService.getOrSet('dashboard:executive_summary', async () => {
-      return this._computeExecutiveSummary();
-    }, DASHBOARD_CACHE_TTL);
+    return cacheService.getOrSet(
+      'dashboard:executive_summary',
+      async () => {
+        return this._computeExecutiveSummary();
+      },
+      DASHBOARD_CACHE_TTL
+    );
   }
 
   private async _computeExecutiveSummary() {
@@ -494,9 +497,13 @@ class DashboardService {
 
   async getSalesPipelineData(dateRange?: string) {
     const cacheKey = `dashboard:sales_pipeline:${dateRange || 'all'}`;
-    return cacheService.getOrSet(cacheKey, async () => {
-      return this._computeSalesPipelineData(dateRange);
-    }, DASHBOARD_CACHE_TTL);
+    return cacheService.getOrSet(
+      cacheKey,
+      async () => {
+        return this._computeSalesPipelineData(dateRange);
+      },
+      DASHBOARD_CACHE_TTL
+    );
   }
 
   private async _computeSalesPipelineData(dateRange?: string) {
@@ -510,7 +517,7 @@ class DashboardService {
     });
 
     const stages = Object.values(DealStageEnums).map(stage => {
-      const found = stageResults.find((r) => r.stage === stage);
+      const found = stageResults.find(r => r.stage === stage);
       return {
         stage,
         count: found ? Number((found as any).count) : 0,
@@ -523,9 +530,13 @@ class DashboardService {
 
   async getRevenueChart(period: string = 'monthly', dateRange?: string) {
     const cacheKey = `dashboard:revenue_chart:${period}:${dateRange || 'all'}`;
-    return cacheService.getOrSet(cacheKey, async () => {
-      return this._computeRevenueChart(period, dateRange);
-    }, DASHBOARD_CACHE_TTL);
+    return cacheService.getOrSet(
+      cacheKey,
+      async () => {
+        return this._computeRevenueChart(period, dateRange);
+      },
+      DASHBOARD_CACHE_TTL
+    );
   }
 
   private async _computeRevenueChart(period: string = 'monthly', dateRange?: string) {
@@ -561,17 +572,21 @@ class DashboardService {
     });
 
     return {
-      labels: results.map((r) => (r as any).period),
-      revenue: results.map((r) => Number((r as any).revenue || 0)),
-      dealCount: results.map((r) => Number((r as any).dealCount || 0))
+      labels: results.map(r => (r as any).period),
+      revenue: results.map(r => Number((r as any).revenue || 0)),
+      dealCount: results.map(r => Number((r as any).dealCount || 0))
     };
   }
 
   async getActivitySummary(userId?: number, dateRange?: string) {
     const cacheKey = `dashboard:activity_summary:${userId || 'all'}:${dateRange || 'all'}`;
-    return cacheService.getOrSet(cacheKey, async () => {
-      return this._computeActivitySummary(userId, dateRange);
-    }, DASHBOARD_CACHE_TTL);
+    return cacheService.getOrSet(
+      cacheKey,
+      async () => {
+        return this._computeActivitySummary(userId, dateRange);
+      },
+      DASHBOARD_CACHE_TTL
+    );
   }
 
   private async _computeActivitySummary(userId?: number, dateRange?: string) {
@@ -726,7 +741,7 @@ class DashboardService {
       raw: true
     });
 
-    return results.map((r) => ({
+    return results.map(r => ({
       source: r.leadSource,
       count: Number((r as any).count)
     }));
@@ -764,7 +779,7 @@ class DashboardService {
       raw: true
     });
 
-    return results.map((r) => ({
+    return results.map(r => ({
       month: (r as any).month,
       avgValue: Math.round(Number((r as any).avgValue || 0)),
       dealCount: Number((r as any).dealCount)

@@ -122,7 +122,7 @@ const { handleSubmit } = useForm({
 const onSubmit = handleSubmit((values: unknown, actions: unknown) => {
   const formattedValues = cleanObject({
     ...values,
-    ...(values.file?.length && { fileUpload: values.file?.map((file) => file.response) }),
+    ...(values.file?.length && { fileUpload: values.file?.map(file => file.response) }),
     ...(selectedLead.value && switchValue.value && !props.editMode && { leadId: selectedLead.value?.id })
   });
   delete formattedValues.file;
@@ -131,7 +131,7 @@ const onSubmit = handleSubmit((values: unknown, actions: unknown) => {
 });
 
 let users: unknown = await useApiFetch('users');
-users = users?.body?.docs?.map((e) => ({
+users = users?.body?.docs?.map(e => ({
   label: e.name,
   value: e.id
 }));
@@ -140,7 +140,7 @@ const selectedLead = ref<Record<string, unknown>>([]);
 const response = await getLeads();
 const leads = response.leads;
 
-const mappedLeads = leads?.map((e) => ({
+const mappedLeads = leads?.map(e => ({
   label: e.name,
   value: e.name,
   id: e.id
@@ -157,7 +157,7 @@ if (leadId) {
       selectedLead.value = lead;
     }
   } else {
-    selectedLead.value = leads?.find((lead) => lead.id === leadId);
+    selectedLead.value = leads?.find(lead => lead.id === leadId);
   }
 
   if (selectedLead.value) {
@@ -167,7 +167,7 @@ if (leadId) {
 }
 
 function getSelectedLead(e: unknown) {
-  selectedLead.value = leads?.find((lead) => lead.id === e.id);
+  selectedLead.value = leads?.find(lead => lead.id === e.id);
   if (selectedLead.value?.email) {
     isEmail.value = true;
   } else if (selectedLead.value?.phone) {

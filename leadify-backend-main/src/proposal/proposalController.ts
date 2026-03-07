@@ -179,7 +179,7 @@ function buildProposalHtml(proposal: any, settings: any): string {
   const subtotal = financeTable?.grandTotalPrice || items.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0);
   const discount = financeTable?.discount || 0;
   const vat = financeTable?.vat || 0;
-  const total = financeTable?.finalTotalPrice || (subtotal - discount + vat);
+  const total = financeTable?.finalTotalPrice || subtotal - discount + vat;
 
   // Parse rich content if present
   let contentSections = '';
@@ -209,7 +209,9 @@ function buildProposalHtml(proposal: any, settings: any): string {
     }
   }
 
-  const itemRows = items.map((item: any, i: number) => `
+  const itemRows = items
+    .map(
+      (item: any, i: number) => `
     <tr>
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${i + 1}</td>
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-weight: 600;">${escapeHtml(item.description)}</td>
@@ -218,7 +220,9 @@ function buildProposalHtml(proposal: any, settings: any): string {
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; text-align: right;">${formatCurrency(item.marginAmount || 0)}</td>
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; text-align: right; font-weight: 700;">${formatCurrency(item.totalPrice || 0)}</td>
     </tr>
-  `).join('');
+  `
+    )
+    .join('');
 
   const statusColor: Record<string, string> = {
     APPROVED: '#22c55e',
@@ -278,7 +282,9 @@ function buildProposalHtml(proposal: any, settings: any): string {
   ${contentSections}
 
   <!-- Items Table -->
-  ${items.length > 0 ? `
+  ${
+    items.length > 0
+      ? `
   <h3 style="font-size: 16px; font-weight: 700; color: ${color}; margin-bottom: 12px;">Financial Details</h3>
   <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px;">
     <thead>
@@ -295,7 +301,9 @@ function buildProposalHtml(proposal: any, settings: any): string {
       ${itemRows}
     </tbody>
   </table>
-  ` : ''}
+  `
+      : ''
+  }
 
   <!-- Totals -->
   <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
@@ -304,18 +312,26 @@ function buildProposalHtml(proposal: any, settings: any): string {
         <td style="padding: 8px 0; color: #64748b;">Subtotal</td>
         <td style="padding: 8px 0; text-align: right; font-weight: 600;">${formatCurrency(subtotal)}</td>
       </tr>
-      ${discount > 0 ? `
+      ${
+        discount > 0
+          ? `
       <tr>
         <td style="padding: 8px 0; color: #64748b;">Discount</td>
         <td style="padding: 8px 0; text-align: right; color: #ef4444;">-${formatCurrency(discount)}</td>
       </tr>
-      ` : ''}
-      ${vat > 0 ? `
+      `
+          : ''
+      }
+      ${
+        vat > 0
+          ? `
       <tr>
         <td style="padding: 8px 0; color: #64748b;">VAT</td>
         <td style="padding: 8px 0; text-align: right;">${formatCurrency(vat)}</td>
       </tr>
-      ` : ''}
+      `
+          : ''
+      }
       <tr style="border-top: 2px solid ${color};">
         <td style="padding: 12px 0; font-weight: 800; font-size: 16px; color: ${color};">Total</td>
         <td style="padding: 12px 0; text-align: right; font-weight: 800; font-size: 16px; color: ${color};">${formatCurrency(total)}</td>
@@ -324,20 +340,28 @@ function buildProposalHtml(proposal: any, settings: any): string {
   </div>
 
   <!-- Notes -->
-  ${proposal.notes ? `
+  ${
+    proposal.notes
+      ? `
   <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 12px; margin-bottom: 20px;">
     <h3 style="font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 4px;">Notes</h3>
     <div style="font-size: 12px; color: #78350f;">${escapeHtml(proposal.notes)}</div>
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
   <!-- Assigned Users -->
-  ${proposal.users && proposal.users.length > 0 ? `
+  ${
+    proposal.users && proposal.users.length > 0
+      ? `
   <div style="margin-bottom: 20px;">
     <h3 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Prepared By</h3>
     <p style="font-size: 13px; color: #475569;">${proposal.users.map((u: any) => escapeHtml(u.name)).join(', ')}</p>
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
   <!-- Footer -->
   <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center;">

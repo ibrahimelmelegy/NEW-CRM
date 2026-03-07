@@ -5,7 +5,6 @@ import UserStreak from './streakModel';
 import Challenge from './challengeModel';
 import UserChallenge from './userChallengeModel';
 import Deal from '../deal/model/dealModel';
-import Lead from '../lead/leadModel';
 import { io } from '../server';
 
 // Achievement definitions with auto-check criteria

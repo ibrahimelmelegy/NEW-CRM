@@ -5,7 +5,9 @@ import { sequelize } from '../config/db';
 import { io } from '../server';
 
 class WarehouseService {
-  async createWarehouse(data: any, tenantId?: string) { return Warehouse.create({ ...data, tenantId }); }
+  async createWarehouse(data: any, tenantId?: string) {
+    return Warehouse.create({ ...data, tenantId });
+  }
 
   async getWarehouses(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
@@ -16,7 +18,10 @@ class WarehouseService {
     const { rows, count } = await Warehouse.findAndCountAll({
       where,
       include: [{ model: WarehouseZone, as: 'zones' }],
-      order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -48,7 +53,9 @@ class WarehouseService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async createZone(data: any, tenantId?: string) { return WarehouseZone.create({ ...data, tenantId }); }
+  async createZone(data: any, tenantId?: string) {
+    return WarehouseZone.create({ ...data, tenantId });
+  }
 
   async getStockCount(tenantId?: string) {
     const where: Record<string, any> = {};
@@ -75,7 +82,10 @@ class WarehouseService {
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     const { rows, count } = await StockTransfer.findAndCountAll({
-      where, order: [['createdAt', 'DESC']], limit, offset
+      where,
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -101,7 +111,7 @@ class WarehouseService {
       where: { toWarehouseId: warehouseId, status: 'RECEIVED' }
     });
     for (const t of inTransfers) {
-      for (const item of (t.items || [])) {
+      for (const item of t.items || []) {
         const current = ledger.get(item.productName) || 0;
         ledger.set(item.productName, current + item.quantity);
       }
@@ -112,7 +122,7 @@ class WarehouseService {
       where: { fromWarehouseId: warehouseId, status: 'RECEIVED' }
     });
     for (const t of outTransfers) {
-      for (const item of (t.items || [])) {
+      for (const item of t.items || []) {
         const current = ledger.get(item.productName) || 0;
         ledger.set(item.productName, current - item.quantity);
       }
@@ -139,9 +149,7 @@ class WarehouseService {
       if (item.type === 'OUT') {
         const currentStock = ledger.get(item.productName) || 0;
         if (currentStock < item.quantity) {
-          throw new Error(
-            `Insufficient stock for "${item.productName}": available ${currentStock}, requested ${item.quantity}`
-          );
+          throw new Error(`Insufficient stock for "${item.productName}": available ${currentStock}, requested ${item.quantity}`);
         }
       }
     }
@@ -188,7 +196,9 @@ class WarehouseService {
     for (const qty of updatedLedger.values()) totalQty += Math.max(qty, 0);
     await warehouse.update({ currentOccupancy: totalQty });
 
-    try { io.emit('warehouse:stock_updated', { warehouseId, currentOccupancy: totalQty, itemCount: items.length }); } catch {}
+    try {
+      io.emit('warehouse:stock_updated', { warehouseId, currentOccupancy: totalQty, itemCount: items.length });
+    } catch {}
     return { transfers: results, currentOccupancy: totalQty };
   }
 
@@ -207,22 +217,23 @@ class WarehouseService {
 
       // Validate source warehouse has enough stock
       const sourceLedger = await this.buildStockLedger(transfer.fromWarehouseId);
-      for (const item of (transfer.items || [])) {
+      for (const item of transfer.items || []) {
         const available = sourceLedger.get(item.productName) || 0;
         if (available < item.quantity) {
-          throw new Error(
-            `Insufficient stock at source warehouse for "${item.productName}": available ${available}, required ${item.quantity}`
-          );
+          throw new Error(`Insufficient stock at source warehouse for "${item.productName}": available ${available}, required ${item.quantity}`);
         }
       }
 
       // Mark transfer as RECEIVED
       const today = new Date().toISOString().slice(0, 10);
-      await transfer.update({
-        status: 'RECEIVED',
-        receivedDate: today,
-        shippedDate: transfer.shippedDate || today
-      }, { transaction });
+      await transfer.update(
+        {
+          status: 'RECEIVED',
+          receivedDate: today,
+          shippedDate: transfer.shippedDate || today
+        },
+        { transaction }
+      );
 
       // Update currentOccupancy on both warehouses
       const srcLedger = await this.buildStockLedger(transfer.fromWarehouseId);
@@ -237,7 +248,14 @@ class WarehouseService {
       await Warehouse.update({ currentOccupancy: destTotal }, { where: { id: transfer.toWarehouseId }, transaction });
 
       await transaction.commit();
-      try { io.emit('warehouse:transfer_processed', { transferId, fromWarehouseId: transfer.fromWarehouseId, toWarehouseId: transfer.toWarehouseId, status: 'RECEIVED' }); } catch {}
+      try {
+        io.emit('warehouse:transfer_processed', {
+          transferId,
+          fromWarehouseId: transfer.fromWarehouseId,
+          toWarehouseId: transfer.toWarehouseId,
+          status: 'RECEIVED'
+        });
+      } catch {}
       return transfer;
     } catch (err) {
       await transaction.rollback();
@@ -264,7 +282,9 @@ class WarehouseService {
 
     alerts.sort((a, b) => a.quantity - b.quantity);
     if (alerts.length > 0) {
-      try { io.emit('warehouse:low_stock_alert', { tenantId, threshold, alertCount: alerts.length, alerts: alerts.slice(0, 10) }); } catch {}
+      try {
+        io.emit('warehouse:low_stock_alert', { tenantId, threshold, alertCount: alerts.length, alerts: alerts.slice(0, 10) });
+      } catch {}
     }
     return alerts;
   }
@@ -334,7 +354,7 @@ class WarehouseService {
 
     // Create an outbound adjustment transfer to record the pick
     const transferNumber = `PICK-${Date.now().toString(36).toUpperCase()}`;
-    const transfer = await StockTransfer.create({
+    const _transfer = await StockTransfer.create({
       transferNumber,
       fromWarehouseId: warehouseId,
       toWarehouseId: 0, // outbound fulfillment
@@ -363,7 +383,9 @@ class WarehouseService {
       packedAt: new Date().toISOString()
     };
 
-    try { io.emit('warehouse:pick_pack_completed', packingSlip); } catch {}
+    try {
+      io.emit('warehouse:pick_pack_completed', packingSlip);
+    } catch {}
     return packingSlip;
   }
 
@@ -397,8 +419,8 @@ class WarehouseService {
     // Aggregate quantities
     let totalIn = 0;
     let totalOut = 0;
-    for (const t of inbound) for (const item of (t.items || [])) totalIn += item.quantity;
-    for (const t of outbound) for (const item of (t.items || [])) totalOut += item.quantity;
+    for (const t of inbound) for (const item of t.items || []) totalIn += item.quantity;
+    for (const t of outbound) for (const item of t.items || []) totalOut += item.quantity;
 
     return {
       warehouseId,

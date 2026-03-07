@@ -235,7 +235,7 @@ const formFieldsPreview = ref<Record<string, unknown>[]>([]);
 const summaryStats = computed(() => {
   const data = items.value;
   const total = data.length;
-  const active = data.filter((i) => i.status === 'ACTIVE').length;
+  const active = data.filter(i => i.status === 'ACTIVE').length;
   const totalSubs = data.reduce((sum, i) => sum + (i.submissionCount || 0), 0);
   return [
     { label: t('marketing.formBuilder.totalForms'), value: total, icon: 'ph:note-pencil-bold', color: '#7849ff' },
@@ -247,7 +247,7 @@ const summaryStats = computed(() => {
 const filteredData = computed(() => {
   if (!search.value) return items.value;
   const q = search.value.toLowerCase();
-  return items.value.filter((i) => (i.name || '').toLowerCase().includes(q) || (i.description || '').toLowerCase().includes(q));
+  return items.value.filter(i => (i.name || '').toLowerCase().includes(q) || (i.description || '').toLowerCase().includes(q));
 });
 
 function formatDate(d: string): string {
@@ -267,7 +267,7 @@ async function fetchData() {
     if (res.success && res.body) {
       const data = res.body as unknown;
       const rawItems = data.rows || data.docs || (Array.isArray(data) ? data : []);
-      items.value = rawItems.map((item) => ({
+      items.value = rawItems.map(item => ({
         ...item,
         fieldsCount: item.fieldsCount ?? (Array.isArray(item.fields) ? item.fields.length : 0)
       }));
@@ -395,7 +395,7 @@ async function openAnalyticsDialog(formItem: unknown) {
 
 const maxDailyCount = computed(() => {
   if (!formAnalytics.value?.dailyTrend?.length) return 0;
-  return Math.max(...formAnalytics.value.dailyTrend.map((d) => d.count || 0));
+  return Math.max(...formAnalytics.value.dailyTrend.map(d => d.count || 0));
 });
 
 function formatShortDate(d: string): string {

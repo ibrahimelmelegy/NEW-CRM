@@ -6,7 +6,6 @@ import { IPaginationRes } from '../types';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import { CreateMaterialInput } from './input/create-material.input';
-import { GetMaterialsInput } from './input/getMaterialsInput';
 import { Material } from './material.model';
 
 class MaterialService {

@@ -128,7 +128,7 @@ const formData = ref<EntryData>({
   date: props.entry?.date ? props.entry.date.substring(0, 10) : new Date().toISOString().substring(0, 10),
   reference: props.entry?.reference || '',
   description: props.entry?.description || '',
-  lines: props.entry?.lines?.map((l) => ({
+  lines: props.entry?.lines?.map(l => ({
     accountId: l.accountId,
     debit: Number(l.debit) || 0,
     credit: Number(l.credit) || 0,

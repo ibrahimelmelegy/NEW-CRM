@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import customerSuccessService from './customerSuccessService';
 import { wrapResult } from '../utils/response/responseWrapper';
 

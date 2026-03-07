@@ -311,9 +311,21 @@ async function loadAllData() {
       useApiFetch('opportunity').catch(() => ({ body: [] }))
     ]);
 
-    rawDeals.value = Array.isArray(dealsRes?.body) ? dealsRes.body : Array.isArray((dealsRes?.body as unknown)?.docs) ? (dealsRes.body as unknown).docs : [];
-    rawLeads.value = Array.isArray(leadsRes?.body) ? leadsRes.body : Array.isArray((leadsRes?.body as unknown)?.docs) ? (leadsRes.body as unknown).docs : [];
-    rawStaff.value = Array.isArray(staffRes?.body) ? staffRes.body : Array.isArray((staffRes?.body as unknown)?.docs) ? (staffRes.body as unknown).docs : [];
+    rawDeals.value = Array.isArray(dealsRes?.body)
+      ? dealsRes.body
+      : Array.isArray((dealsRes?.body as unknown)?.docs)
+        ? (dealsRes.body as unknown).docs
+        : [];
+    rawLeads.value = Array.isArray(leadsRes?.body)
+      ? leadsRes.body
+      : Array.isArray((leadsRes?.body as unknown)?.docs)
+        ? (leadsRes.body as unknown).docs
+        : [];
+    rawStaff.value = Array.isArray(staffRes?.body)
+      ? staffRes.body
+      : Array.isArray((staffRes?.body as unknown)?.docs)
+        ? (staffRes.body as unknown).docs
+        : [];
     rawOpportunities.value = Array.isArray(oppsRes?.body)
       ? oppsRes.body
       : Array.isArray((oppsRes?.body as unknown)?.docs)
@@ -348,7 +360,7 @@ function refreshAll() {
 function getFilteredDeals() {
   if (!globalDateRange.value) return rawDeals.value;
   const [start, end] = globalDateRange.value;
-  return rawDeals.value.filter((d) => {
+  return rawDeals.value.filter(d => {
     const created = new Date(d.createdAt || d.created_at);
     return created >= start && created <= end;
   });
@@ -357,7 +369,7 @@ function getFilteredDeals() {
 function getFilteredLeads() {
   if (!globalDateRange.value) return rawLeads.value;
   const [start, end] = globalDateRange.value;
-  return rawLeads.value.filter((l) => {
+  return rawLeads.value.filter(l => {
     const created = new Date(l.createdAt || l.created_at);
     return created >= start && created <= end;
   });
@@ -417,7 +429,7 @@ function computeCohort() {
 
   // Group deals by the month they were created
   const cohortMap = new Map<string, any[]>();
-  deals.forEach((deal) => {
+  deals.forEach(deal => {
     const created = new Date(deal.createdAt || deal.created_at || Date.now());
     const key = getMonthKey(created);
     if (!cohortMap.has(key)) cohortMap.set(key, []);
@@ -445,7 +457,7 @@ function computeCohort() {
 
       if (cohortMetric.value === 'retention') {
         // Retention: how many deals are still active/won after m months
-        const retained = coDeals.filter((d) => {
+        const retained = coDeals.filter(d => {
           const status = (d.status || d.stage || '').toLowerCase();
           if (m === 0) return true;
           // A deal is "retained" if it's still active or was won after this period
@@ -473,7 +485,7 @@ function computeCohort() {
         cells.push({ value: pct, count: Math.round(cumRev), rawValue: cumRev });
       } else {
         // Engagement: simulate based on deal activity
-        const active = coDeals.filter((d) => {
+        const active = coDeals.filter(d => {
           const updated = new Date(d.updatedAt || d.updated_at || d.createdAt || d.created_at);
           const diff = (updated.getFullYear() - targetDate.getFullYear()) * 12 + updated.getMonth() - targetDate.getMonth();
           return Math.abs(diff) <= 1;
@@ -508,7 +520,7 @@ function computeFunnel() {
   };
 
   // Count deals by stage
-  deals.forEach((d) => {
+  deals.forEach(d => {
     const stage = (d.status || d.stage || d.dealStage || '').toLowerCase();
     if (stage.includes('qualif')) stageCounts.qualified = (stageCounts.qualified || 0) + 1;
     else if (stage.includes('propos')) stageCounts.proposal = (stageCounts.proposal || 0) + 1;
@@ -556,7 +568,7 @@ function computeFunnel() {
 
 function onFunnelClick(params: unknown) {
   if (params.name) {
-    const stage = funnelStages.value.find((s) => s.name === params.name);
+    const stage = funnelStages.value.find(s => s.name === params.name);
     if (stage) drillDownStage(stage);
   }
 }
@@ -568,7 +580,7 @@ function drillDownStage(stage: unknown) {
   // Filter deals for this stage
   const deals = getFilteredDeals();
   const stageDeals = deals
-    .filter((d) => {
+    .filter(d => {
       const s = (d.status || d.stage || d.dealStage || '').toLowerCase();
       if (stage.key === 'lead') return true;
       if (stage.key === 'qualified') return s.includes('qualif') || (!s.includes('propos') && !s.includes('negoti') && !s.includes('won'));
@@ -580,7 +592,7 @@ function drillDownStage(stage: unknown) {
     })
     .slice(0, 20);
 
-  drillDownDeals.value = stageDeals.map((d) => ({
+  drillDownDeals.value = stageDeals.map(d => ({
     name: d.name || d.title || d.dealName || 'Untitled Deal',
     company: d.company?.name || d.companyName || d.client || '-',
     value: parseFloat(d.value || d.amount || d.dealValue || 0),
@@ -607,7 +619,7 @@ function computeTrends() {
     monthMap.set(key, { revenue: 0, leads: 0, dealsWon: 0, dealValues: [] });
   }
 
-  deals.forEach((d) => {
+  deals.forEach(d => {
     const created = new Date(d.createdAt || d.created_at || Date.now());
     const key = getMonthKey(created);
     if (!monthMap.has(key)) monthMap.set(key, { revenue: 0, leads: 0, dealsWon: 0, dealValues: [] });
@@ -619,7 +631,7 @@ function computeTrends() {
     if (status.includes('won') || status.includes('closed')) entry.dealsWon++;
   });
 
-  leads.forEach((l) => {
+  leads.forEach(l => {
     const created = new Date(l.createdAt || l.created_at || Date.now());
     const key = getMonthKey(created);
     if (!monthMap.has(key)) monthMap.set(key, { revenue: 0, leads: 0, dealsWon: 0, dealValues: [] });
@@ -766,7 +778,7 @@ const funnelChartOption = computed(() => {
       trigger: 'item',
       ...tooltipStyle,
       formatter: (params: unknown) => {
-        const stage = funnelStages.value.find((s) => s.name === params.name);
+        const stage = funnelStages.value.find(s => s.name === params.name);
         if (!stage) return params.name;
         return `<strong>${params.name}</strong><br/>
           ${t('advancedAnalytics.count')}: ${stage.count}<br/>
@@ -847,13 +859,13 @@ function computeLeaderboard() {
   const staffMap = new Map<string, { name: string; revenue: number; dealsWon: number; totalDeals: number; quota: number }>();
 
   // Initialize from staff
-  staff.forEach((s) => {
+  staff.forEach(s => {
     const name = s.name || s.fullName || `${s.firstName || ''} ${s.lastName || ''}`.trim() || 'Unknown';
     const id = s._id || s.id || name;
     staffMap.set(id, { name, revenue: 0, dealsWon: 0, totalDeals: 0, quota: parseFloat(s.quota || s.target || '50000') || 50000 });
   });
 
-  deals.forEach((d) => {
+  deals.forEach(d => {
     const created = new Date(d.createdAt || d.created_at || Date.now());
     if (created < periodStart) return;
 
@@ -898,7 +910,7 @@ function computeInsights() {
     return acc;
   }, 0);
 
-  const wonDeals = deals.filter((d) => {
+  const wonDeals = deals.filter(d => {
     const s = (d.status || d.stage || '').toLowerCase();
     return s.includes('won') || s.includes('closed');
   });
@@ -907,7 +919,7 @@ function computeInsights() {
 
   // Top lead source
   const sourceMap = new Map<string, number>();
-  leads.forEach((l) => {
+  leads.forEach(l => {
     const src = l.source || l.leadSource || 'Unknown';
     sourceMap.set(src, (sourceMap.get(src) || 0) + 1);
   });
@@ -920,7 +932,7 @@ function computeInsights() {
   }
 
   // Average deal cycle
-  const cycleDays = wonDeals.map((d) => {
+  const cycleDays = wonDeals.map(d => {
     const created = new Date(d.createdAt || d.created_at || Date.now());
     const closed = new Date(d.closedAt || d.closed_at || d.updatedAt || d.updated_at || Date.now());
     return Math.max(1, Math.round((closed.getTime() - created.getTime()) / (1000 * 60 * 60 * 24)));

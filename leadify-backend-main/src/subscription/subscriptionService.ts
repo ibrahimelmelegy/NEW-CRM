@@ -461,7 +461,7 @@ class SubscriptionService {
       const label = `${y}-${String(m).padStart(2, '0')}`;
 
       // For historical MRR, count subscriptions active during that month
-      const monthStart = new Date(y, m - 1, 1);
+      const _monthStart = new Date(y, m - 1, 1);
       const monthEnd = new Date(y, m, 0, 23, 59, 59);
 
       const activeSubs = await CustomerSubscription.findAll({

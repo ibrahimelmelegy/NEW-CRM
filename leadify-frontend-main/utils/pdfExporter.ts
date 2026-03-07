@@ -10,7 +10,7 @@ export interface PDFData {
 function resolveVariable(content: string, data: PDFData): string {
   return content.replace(/\{\{(\w+)\}\}/g, (_: string, key: string) => {
     const val = data[key];
-    return val != null ? String(val) : '';
+    return val !== null && val !== undefined ? String(val) : '';
   });
 }
 

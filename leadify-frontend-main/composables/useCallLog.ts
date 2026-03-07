@@ -95,7 +95,7 @@ export function useCallLog() {
       const { body, success } = await useApiFetch(`communications/call-logs?page=${page}&limit=100`);
       if (success && body) {
         const data = body as unknown;
-        calls.value = (data.docs || []).map((a) => ({
+        calls.value = (data.docs || []).map(a => ({
           id: a.id,
           contactName: a.subject || a.contactId || 'Unknown',
           phone: a.callLog?.phoneNumber || '',

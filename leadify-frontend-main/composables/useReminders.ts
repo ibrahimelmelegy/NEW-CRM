@@ -59,7 +59,7 @@ export function useReminders() {
       if (success && body) {
         const data = body as unknown;
         const docs = data.docs || data || [];
-        reminders.value = docs.map((e) => ({
+        reminders.value = docs.map(e => ({
           id: e.id,
           title: e.title || '',
           description: e.description || '',
@@ -95,7 +95,7 @@ export function useReminders() {
   };
 
   async function addReminder(data: Omit<Reminder, 'id' | 'completed' | 'createdAt'>): Promise<Reminder | null> {
-    const { body, success } = await useApiFetch('calendar', 'POST', {
+    const { success } = await useApiFetch('calendar', 'POST', {
       title: data.title,
       description: data.description,
       startDate: data.dueDate,

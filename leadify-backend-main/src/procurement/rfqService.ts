@@ -29,7 +29,7 @@ class RFQService {
       );
 
       if (items && Array.isArray(items)) {
-        const rfqItems = items.map((item) => ({
+        const rfqItems = items.map(item => ({
           ...item,
           rfqId: rfq.id
         }));
@@ -94,7 +94,7 @@ class RFQService {
         // Delete existing response items if any
         await RFQVendorItem.destroy({ where: { rfqVendorId: rfqVendor.id }, transaction });
 
-        const responseItems = items.map((item) => {
+        const responseItems = items.map(item => {
           totalOffer += Number(item.price) || 0;
           return {
             rfqVendorId: rfqVendor.id,

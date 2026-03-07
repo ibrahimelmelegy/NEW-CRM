@@ -1,14 +1,11 @@
-import { Column, DataType, ForeignKey, BelongsTo, Model, Table, Index } from 'sequelize-typescript';
+import { Column, DataType, ForeignKey, BelongsTo, Model, Table } from 'sequelize-typescript';
 import User from '../user/userModel';
 
 @Table({
   tableName: 'push_subscriptions',
   modelName: 'PushSubscription',
   timestamps: true,
-  indexes: [
-    { fields: ['userId'] },
-    { fields: ['endpoint'], unique: true }
-  ]
+  indexes: [{ fields: ['userId'] }, { fields: ['endpoint'], unique: true }]
 })
 export default class PushSubscription extends Model {
   @Column({

@@ -25,6 +25,7 @@ class ReportPdfService {
     const html = this.buildReportHtml(options);
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const puppeteer = require('puppeteer');
       const browser = await puppeteer.launch({
         headless: true,

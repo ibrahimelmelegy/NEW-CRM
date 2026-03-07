@@ -8,7 +8,7 @@ const SETTINGS_CACHE_KEY = 'settings:global';
 const SETTINGS_CACHE_TTL = 300; // 5 minutes
 
 class SettingService {
-  async createOrUpdateSetting(input: CreateOrUpdateSettingInput, adminId: number, t?: Transaction): Promise<Setting> {
+  async createOrUpdateSetting(input: CreateOrUpdateSettingInput, _adminId: number, _t?: Transaction): Promise<Setting> {
     let existingSetting = await Setting.findOne({});
     if (!existingSetting) {
       existingSetting = await Setting.create({});

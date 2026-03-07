@@ -109,7 +109,7 @@ function onUpdateConfig(config: Record<string, unknown>) {
 
 function onUpdateLabel(label: string) {
   if (selectedNode.value) {
-    const node = nodes.value.find((n) => n.id === selectedNode.value.id);
+    const node = nodes.value.find(n => n.id === selectedNode.value.id);
     if (node) node.data = { ...node.data, label };
   }
 }

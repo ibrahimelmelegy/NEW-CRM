@@ -3,7 +3,6 @@ import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import uploaderService from '../uploader/uploader.service';
 import ProposalContent from './proposalContentModel';
-import proposalFinanceTableService from '../proposalFinanceTable/proposalFinanceTableService';
 import proposalService from '../proposal/proposalService';
 import User from '../user/userModel';
 import proposalLogService from '../proposalLog/proposalLogService';

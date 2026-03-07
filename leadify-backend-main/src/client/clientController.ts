@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from '../types';
 import { wrapResult } from '../utils/response/responseWrapper';
 import ClientService from './clientService';
@@ -9,7 +9,9 @@ class ClientController {
   public async createClient(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const body = req.body as CreateClientInput;
-      !body.users?.length && (body.users = [req.user!.id]);
+      if (!body.users?.length) {
+        body.users = [req.user!.id];
+      }
       const responseFromService = await ClientService.createClient(body, req.user as User);
       wrapResult(res, responseFromService, 201);
     } catch (error) {

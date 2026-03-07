@@ -247,10 +247,30 @@ router.get('/call-logs', authenticateUser, HasPermission([CommunicationPermissio
 
 // ─── Meeting Notes ──────────────────────────────────────────────────────────
 
-router.get('/meeting-notes', authenticateUser, HasPermission([CommunicationPermissionsEnum.VIEW_ACTIVITIES]), communicationController.getMeetingNotes);
-router.post('/meeting-notes', authenticateUser, HasPermission([CommunicationPermissionsEnum.LOG_ACTIVITIES]), communicationController.createMeetingNote);
-router.put('/meeting-notes/:id', authenticateUser, HasPermission([CommunicationPermissionsEnum.LOG_ACTIVITIES]), communicationController.updateMeetingNote);
-router.delete('/meeting-notes/:id', authenticateUser, HasPermission([CommunicationPermissionsEnum.LOG_ACTIVITIES]), communicationController.deleteMeetingNote);
+router.get(
+  '/meeting-notes',
+  authenticateUser,
+  HasPermission([CommunicationPermissionsEnum.VIEW_ACTIVITIES]),
+  communicationController.getMeetingNotes
+);
+router.post(
+  '/meeting-notes',
+  authenticateUser,
+  HasPermission([CommunicationPermissionsEnum.LOG_ACTIVITIES]),
+  communicationController.createMeetingNote
+);
+router.put(
+  '/meeting-notes/:id',
+  authenticateUser,
+  HasPermission([CommunicationPermissionsEnum.LOG_ACTIVITIES]),
+  communicationController.updateMeetingNote
+);
+router.delete(
+  '/meeting-notes/:id',
+  authenticateUser,
+  HasPermission([CommunicationPermissionsEnum.LOG_ACTIVITIES]),
+  communicationController.deleteMeetingNote
+);
 
 // ─── Call Analytics ─────────────────────────────────────────────────────────
 
@@ -258,7 +278,12 @@ router.get('/call-analytics', authenticateUser, HasPermission([CommunicationPerm
 
 // ─── Participants Search ────────────────────────────────────────────────────
 
-router.get('/participants/search', authenticateUser, HasPermission([CommunicationPermissionsEnum.VIEW_ACTIVITIES]), communicationController.searchParticipants);
+router.get(
+  '/participants/search',
+  authenticateUser,
+  HasPermission([CommunicationPermissionsEnum.VIEW_ACTIVITIES]),
+  communicationController.searchParticipants
+);
 
 // ─── Stats & Recent ──────────────────────────────────────────────────────────
 

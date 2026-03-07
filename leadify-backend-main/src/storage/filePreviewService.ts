@@ -211,9 +211,7 @@ class FilePreviewService {
    * Attempt to read PNG/JPEG image dimensions from the first bytes of a local file.
    * Returns null if the file is remote or dimensions cannot be determined.
    */
-  private async getImageDimensions(
-    fileUrl: string
-  ): Promise<{ width: number; height: number } | null> {
+  private async getImageDimensions(fileUrl: string): Promise<{ width: number; height: number } | null> {
     // Only attempt for local files
     if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
       return null;

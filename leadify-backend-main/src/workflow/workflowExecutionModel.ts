@@ -1,4 +1,4 @@
-import { AllowNull, BelongsTo, Column, DataType, Default, ForeignKey, Model, Table } from 'sequelize-typescript';
+import { AllowNull, BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 import WorkflowRule from './workflowModel';
 
 // ── Per-action result stored in actionsExecuted JSONB ──

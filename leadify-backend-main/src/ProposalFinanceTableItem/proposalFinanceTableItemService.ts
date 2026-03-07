@@ -6,7 +6,6 @@ import materialService from '../additionalMaterial/material.service';
 import proposalFinanceTableService from '../proposalFinanceTable/proposalFinanceTableService';
 import proposalLogService from '../proposalLog/proposalLogService';
 import User from '../user/userModel';
-import ProposalContent from '../proposalContent/proposalContentModel';
 import { ProposalActionEnum } from '../proposalLog/proposalLogEnum';
 import proposalService from '../proposal/proposalService';
 import { clampPagination } from '../utils/pagination';

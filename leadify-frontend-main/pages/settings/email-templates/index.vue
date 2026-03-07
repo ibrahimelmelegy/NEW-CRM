@@ -355,7 +355,7 @@ async function fetchTemplates() {
     const { body, success } = await useApiFetch('document-templates?type=EMAIL', 'GET');
     if (success && body) {
       const docs = (body as unknown).docs || (Array.isArray(body) ? body : []);
-      templates.value = docs.map((d) => ({
+      templates.value = docs.map(d => ({
         id: d.id,
         name: d.name || '',
         category: d.category || d.emailCategory || '',

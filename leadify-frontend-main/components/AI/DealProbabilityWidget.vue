@@ -133,9 +133,12 @@ onMounted(() => {
   if (props.dealId) calculateDealProbability(props.dealId);
 });
 
-watch(() => props.dealId, (newId) => {
-  if (newId) calculateDealProbability(newId);
-});
+watch(
+  () => props.dealId,
+  newId => {
+    if (newId) calculateDealProbability(newId);
+  }
+);
 </script>
 
 <style lang="scss" scoped>
@@ -156,16 +159,28 @@ watch(() => props.dealId, (newId) => {
   border-bottom: 1px solid var(--glass-border-color, var(--border-default));
 }
 
-.probability-gauge-wrapper { text-align: center; }
+.probability-gauge-wrapper {
+  text-align: center;
+}
 
 .probability-gauge {
   width: 100px;
   height: 100px;
   position: relative;
 
-  .gauge-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .gauge-bg { stroke: rgba(120, 73, 255, 0.1); }
-  .gauge-progress { transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease; }
+  .gauge-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .gauge-bg {
+    stroke: rgba(120, 73, 255, 0.1);
+  }
+  .gauge-progress {
+    transition:
+      stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1),
+      stroke 0.3s ease;
+  }
 
   .gauge-center {
     position: absolute;
@@ -173,17 +188,38 @@ watch(() => props.dealId, (newId) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    .gauge-value { font-size: 28px; font-weight: 800; color: var(--text-primary); line-height: 1; }
-    .gauge-percent { font-size: 12px; font-weight: 600; color: var(--text-primary); opacity: 0.6; margin-top: 4px; }
+    .gauge-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+    .gauge-percent {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      opacity: 0.6;
+      margin-top: 4px;
+    }
   }
 }
 
-.gauge-label { font-size: 11px; color: var(--text-primary); opacity: 0.6; margin-top: 4px; }
+.gauge-label {
+  font-size: 11px;
+  color: var(--text-primary);
+  opacity: 0.6;
+  margin-top: 4px;
+}
 
 .probability-details {
   flex: 1;
 
-  .deal-name { font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 6px 0 4px; }
+  .deal-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 6px 0 4px;
+  }
 
   .meta-row {
     display: flex;
@@ -192,7 +228,11 @@ watch(() => props.dealId, (newId) => {
     margin-top: 4px;
   }
 
-  .pipeline-rank { font-size: 11px; color: var(--text-primary); opacity: 0.5; }
+  .pipeline-rank {
+    font-size: 11px;
+    color: var(--text-primary);
+    opacity: 0.5;
+  }
 }
 
 .grade-badge {
@@ -202,14 +242,35 @@ watch(() => props.dealId, (newId) => {
   padding: 4px 12px;
   border-radius: 8px;
   font-weight: 700;
-  .grade-letter { font-size: 18px; }
-  .grade-text { font-size: 10px; text-transform: uppercase; opacity: 0.8; }
+  .grade-letter {
+    font-size: 18px;
+  }
+  .grade-text {
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
 
-  &.grade-a { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-  &.grade-b { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-  &.grade-c { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-  &.grade-d { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-  &.grade-f { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+  &.grade-a {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+  &.grade-b {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+  }
+  &.grade-c {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+  }
+  &.grade-d {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+  &.grade-f {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
 }
 
 .signals-section {
@@ -225,9 +286,15 @@ watch(() => props.dealId, (newId) => {
   color: var(--text-primary);
   margin-bottom: 8px;
 
-  &.section-positive { color: #22c55e; }
-  &.section-risk { color: #ef4444; }
-  &.section-steps { color: #3b82f6; }
+  &.section-positive {
+    color: #22c55e;
+  }
+  &.section-risk {
+    color: #ef4444;
+  }
+  &.section-steps {
+    color: #3b82f6;
+  }
 }
 
 .signal-item {
@@ -240,15 +307,34 @@ watch(() => props.dealId, (newId) => {
   line-height: 1.4;
   padding: 4px 0;
 
-  .signal-icon { min-width: 12px; margin-top: 2px; }
+  .signal-icon {
+    min-width: 12px;
+    margin-top: 2px;
+  }
 
-  &.positive .signal-icon { color: #22c55e; }
-  &.negative .signal-icon { color: #ef4444; }
-  &.action .signal-icon { color: #3b82f6; }
+  &.positive .signal-icon {
+    color: #22c55e;
+  }
+  &.negative .signal-icon {
+    color: #ef4444;
+  }
+  &.action .signal-icon {
+    color: #3b82f6;
+  }
 }
 
-.score-footer { margin-top: 16px; display: flex; justify-content: center; }
-.refresh-btn { border-radius: 10px; display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.score-footer {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+.refresh-btn {
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
 
 .empty-score {
   display: flex;
@@ -269,17 +355,68 @@ watch(() => props.dealId, (newId) => {
     justify-content: center;
   }
 
-  p { font-size: 13px; color: var(--text-primary); opacity: 0.6; margin: 0; }
+  p {
+    font-size: 13px;
+    color: var(--text-primary);
+    opacity: 0.6;
+    margin: 0;
+  }
 }
 
 // Skeleton
-.skeleton-container { animation: skeleton-pulse 1.5s ease-in-out infinite; }
-.skeleton-header { display: flex; gap: 16px; margin-bottom: 20px; }
-.skeleton-circle { width: 80px; height: 80px; border-radius: 50%; background: rgba(120, 73, 255, 0.08); }
-.skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
-.skeleton-line { height: 12px; border-radius: 6px; background: rgba(120, 73, 255, 0.08); &.w-32 { width: 128px; } &.w-20 { width: 80px; } &.w-full { width: 100%; } }
-.skeleton-factors { display: flex; flex-direction: column; gap: 10px; }
-.skeleton-factor { height: 40px; border-radius: 10px; background: rgba(120, 73, 255, 0.05); }
+.skeleton-container {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+.skeleton-header {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.skeleton-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(120, 73, 255, 0.08);
+}
+.skeleton-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+}
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background: rgba(120, 73, 255, 0.08);
+  &.w-32 {
+    width: 128px;
+  }
+  &.w-20 {
+    width: 80px;
+  }
+  &.w-full {
+    width: 100%;
+  }
+}
+.skeleton-factors {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.skeleton-factor {
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(120, 73, 255, 0.05);
+}
 
-@keyframes skeleton-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 </style>

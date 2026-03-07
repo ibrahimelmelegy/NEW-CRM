@@ -1,5 +1,5 @@
 import { Table, Column, Model, DataType, Default, AllowNull } from 'sequelize-typescript';
-import { ManpowerAvailabilityStatusEnums, ManpowerNationalityEnums, ManpowerRoleEnums } from './manpowerEnum';
+import { ManpowerAvailabilityStatusEnums, ManpowerNationalityEnums } from './manpowerEnum';
 
 @Table({
   tableName: 'manpowers',

@@ -45,7 +45,9 @@ class NotificationService {
         where: { userId: user.id, read: NotificationReadEnums.UN_READ }
       }
     );
-    try { io.emit('notification:read', { userId: user.id, readAll: true }); } catch {}
+    try {
+      io.emit('notification:read', { userId: user.id, readAll: true });
+    } catch {}
   }
 
   async updateNotificationToClicked(id: string, user: User): Promise<any> {
@@ -64,8 +66,12 @@ class NotificationService {
       body_ar: 'New Lead assigned to you.',
       type: NotificationTypeEnums.LEAD_ASSIGNED
     });
-    try { io.emit('lead:assigned', { leadId: input.target, assignedTo: input.userId }); } catch {}
-    try { io.emit('notification:new', { userId: input.userId, notification: { id: notification.id, type: NotificationTypeEnums.LEAD_ASSIGNED } }); } catch {}
+    try {
+      io.emit('lead:assigned', { leadId: input.target, assignedTo: input.userId });
+    } catch {}
+    try {
+      io.emit('notification:new', { userId: input.userId, notification: { id: notification.id, type: NotificationTypeEnums.LEAD_ASSIGNED } });
+    } catch {}
   }
 
   async sendAssignOpportunityNotification(input: any, opportunity: Opportunity, admin: User): Promise<any> {

@@ -73,8 +73,8 @@ export class MailchimpProvider {
         if (!response.ok) {
           return { success: false, data: null, error: `Mailchimp error: ${response.status}`, mock: false };
         }
-        const body = await response.json() as { lists: Array<{ id: string; name: string; stats: { member_count: number } }> };
-        const lists = body.lists.map((l) => ({
+        const body = (await response.json()) as { lists: Array<{ id: string; name: string; stats: { member_count: number } }> };
+        const lists = body.lists.map(l => ({
           id: l.id,
           name: l.name,
           memberCount: l.stats.member_count
@@ -116,10 +116,10 @@ export class MailchimpProvider {
           signal: AbortSignal.timeout(10000)
         });
         if (!response.ok) {
-          const errorBody = await response.json() as { detail?: string };
+          const errorBody = (await response.json()) as { detail?: string };
           return { success: false, data: null, error: errorBody.detail || `HTTP ${response.status}`, mock: false };
         }
-        const result = await response.json() as { id: string; email_address: string; status: string };
+        const result = (await response.json()) as { id: string; email_address: string; status: string };
         return { success: true, data: { id: result.id, email: result.email_address, status: result.status }, mock: false };
       }
       return { success: true, data: { id: `mock_member_${Date.now()}`, email: input.email, status: 'subscribed' }, mock: true };
@@ -130,7 +130,10 @@ export class MailchimpProvider {
     }
   }
 
-  async syncContacts(listId: string, contacts: Array<{ email: string; firstName?: string; lastName?: string }>): Promise<MailchimpResult<{ added: number; updated: number; errors: number }>> {
+  async syncContacts(
+    listId: string,
+    contacts: Array<{ email: string; firstName?: string; lastName?: string }>
+  ): Promise<MailchimpResult<{ added: number; updated: number; errors: number }>> {
     try {
       const auth = this.getAuth();
       if (auth) {
@@ -186,7 +189,7 @@ export class MailchimpProvider {
         if (!campaignResponse.ok) {
           return { success: false, data: null, error: `Campaign creation failed: ${campaignResponse.status}`, mock: false };
         }
-        const campaign = await campaignResponse.json() as { id: string; web_id: number; status: string };
+        const campaign = (await campaignResponse.json()) as { id: string; web_id: number; status: string };
 
         // Set campaign content if provided
         if (input.htmlContent) {
@@ -208,7 +211,9 @@ export class MailchimpProvider {
     }
   }
 
-  async getCampaignStats(campaignId: string): Promise<MailchimpResult<{ sent: number; opens: number; clicks: number; bounces: number; unsubscribes: number }>> {
+  async getCampaignStats(
+    campaignId: string
+  ): Promise<MailchimpResult<{ sent: number; opens: number; clicks: number; bounces: number; unsubscribes: number }>> {
     try {
       const auth = this.getAuth();
       if (auth) {
@@ -219,7 +224,7 @@ export class MailchimpProvider {
         if (!response.ok) {
           return { success: false, data: null, error: `Report fetch failed: ${response.status}`, mock: false };
         }
-        const report = await response.json() as {
+        const report = (await response.json()) as {
           emails_sent: number;
           opens: { unique_opens: number };
           clicks: { unique_clicks: number };
@@ -247,6 +252,7 @@ export class MailchimpProvider {
   }
 
   private emailHash(email: string): string {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const crypto = require('crypto');
     return crypto.createHash('md5').update(email.toLowerCase()).digest('hex');
   }

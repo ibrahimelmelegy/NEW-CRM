@@ -50,14 +50,11 @@ class PipelineConfigService {
   }
 
   async updateStage(id: string, data: any): Promise<PipelineStage> {
-    const result = await sequelize.transaction(async (t) => {
+    const result = await sequelize.transaction(async t => {
       const stage = await PipelineStage.findByPk(id, { transaction: t, lock: true });
       if (!stage) throw new BaseError(ERRORS.NOT_FOUND);
       if (data.isDefault) {
-        await PipelineStage.update(
-          { isDefault: false },
-          { where: { entityType: stage.entityType }, transaction: t }
-        );
+        await PipelineStage.update({ isDefault: false }, { where: { entityType: stage.entityType }, transaction: t });
       }
       stage.set(data);
       return stage.save({ transaction: t });
@@ -133,7 +130,7 @@ class PipelineConfigService {
         const lostStages = stages.filter(s => s.isLost);
         for (const lost of lostStages) {
           // Avoid duplicate if the lost stage is already the next stage
-          if (lost.order !== (stages[i + 1]?.order)) {
+          if (lost.order !== stages[i + 1]?.order) {
             rules.push({
               fromStage: current.name,
               toStage: lost.name,

@@ -145,18 +145,6 @@ div
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
-// Lazy-load heavy chart dependencies for faster initial page load
-const VChart = defineAsyncComponent(() =>
-  Promise.all([
-    import('echarts/core'),
-    import('echarts/renderers'),
-    import('echarts/charts'),
-    import('echarts/components'),
-    import('vue-echarts')
-  ]).then(([{ use }, { CanvasRenderer }, { BarChart, PieChart, LineChart }, { TitleComponent, TooltipComponent, LegendComponent, GridComponent }, VChartModule]) => {
-    return VChartModule;
-  })
-);
 import {
   fetchDashboards,
   createDashboard,
@@ -166,7 +154,26 @@ import {
   type Dashboard,
   type DashboardWidget
 } from '~/composables/useDashboard';
-
+// Lazy-load heavy chart dependencies for faster initial page load
+const VChart = defineAsyncComponent(() =>
+  Promise.all([
+    import('echarts/core'),
+    import('echarts/renderers'),
+    import('echarts/charts'),
+    import('echarts/components'),
+    import('vue-echarts')
+  ]).then(
+    ([
+      { use },
+      { CanvasRenderer },
+      { BarChart, PieChart, LineChart },
+      { TitleComponent, TooltipComponent, LegendComponent, GridComponent },
+      VChartModule
+    ]) => {
+      return VChartModule;
+    }
+  )
+);
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -240,8 +247,8 @@ function buildChartOption(widget: WidgetView, data: unknown) {
   const items = data.items || data.data || [];
   if (!items.length) return null;
 
-  const labels = items.map((i) => i.name || i.label || '');
-  const values = items.map((i) => i.value || i.count || 0);
+  const labels = items.map(i => i.name || i.label || '');
+  const values = items.map(i => i.value || i.count || 0);
 
   if (chartType === 'pie') {
     return {

@@ -70,7 +70,7 @@ const { handleSubmit, errors, validate, values, resetForm } = useForm({
   validationSchema: formSchema,
   initialValues: {
     name: props.folder?.name || '',
-    file: props.folder?.refs?.map((file) => ({ name: file, response: file })) || []
+    file: props.folder?.refs?.map(file => ({ name: file, response: file })) || []
   }
 });
 
@@ -82,7 +82,7 @@ watch(
       resetForm({
         values: {
           name: newFolder.name || '',
-          file: newFolder.refs?.map((file) => ({ name: file, response: file })) || []
+          file: newFolder.refs?.map(file => ({ name: file, response: file })) || []
         }
       });
     }

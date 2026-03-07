@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import virtualOfficeService from './virtualOfficeService';
 import { wrapResult } from '../utils/response/responseWrapper';
 import { AuthenticatedRequest } from '../types';

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { wrapResult } from '../utils/response/responseWrapper';
 import kbService from './kbService';
 import { AuthenticatedRequest } from '../types';

@@ -1,6 +1,6 @@
 import Deal from '../deal/model/dealModel';
 import { DealActivity } from '../activity-logs/model/dealActivities';
-import { Op, fn, col } from 'sequelize';
+import { Op } from 'sequelize';
 import User from '../user/userModel';
 
 interface DealCoachResult {

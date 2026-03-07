@@ -326,7 +326,6 @@ class ManpowerService {
     if (!manpower) throw new BaseError(ERRORS.MANPOWER_NOT_FOUND);
     await manpower.destroy();
   }
-
 }
 
 export default new ManpowerService();

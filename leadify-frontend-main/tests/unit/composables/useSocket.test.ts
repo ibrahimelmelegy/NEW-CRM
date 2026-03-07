@@ -10,7 +10,7 @@
  * - Disconnects on unmount
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { useSocket } from '~/composables/useSocket';
 

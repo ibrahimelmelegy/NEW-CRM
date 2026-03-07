@@ -126,11 +126,19 @@ const VChart = defineAsyncComponent(() =>
     import('echarts/charts'),
     import('echarts/components'),
     import('vue-echarts')
-  ]).then(([echartsCore, { CanvasRenderer }, { BarChart, LineChart, PieChart, FunnelChart }, { TitleComponent, TooltipComponent, LegendComponent, GridComponent }, VChartModule]) => {
-    echartsCore.use([CanvasRenderer, BarChart, LineChart, PieChart, FunnelChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
-    graphic = echartsCore.graphic;
-    return VChartModule;
-  })
+  ]).then(
+    ([
+      echartsCore,
+      { CanvasRenderer },
+      { BarChart, LineChart, PieChart, FunnelChart },
+      { TitleComponent, TooltipComponent, LegendComponent, GridComponent },
+      VChartModule
+    ]) => {
+      echartsCore.use([CanvasRenderer, BarChart, LineChart, PieChart, FunnelChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
+      graphic = echartsCore.graphic;
+      return VChartModule;
+    }
+  )
 );
 
 definePageMeta({ middleware: 'permissions' });
@@ -225,7 +233,7 @@ async function loadPipeline() {
   try {
     const data = await fetchPipelineData(getDateRangeParams());
     if (data?.stages?.length) {
-      const chartData = data.stages.map((s) => ({ name: s.name || s.stage, value: s.count || s.value || 0 }));
+      const chartData = data.stages.map(s => ({ name: s.name || s.stage, value: s.count || s.value || 0 }));
       pipelineOption.value = getBarChartData(chartData, COLORS);
     } else {
       pipelineOption.value = null;
@@ -242,7 +250,7 @@ async function loadRevenue() {
   try {
     const data = await fetchRevenueChart('monthly', getDateRangeParams());
     if (data?.data?.length) {
-      const chartData = data.data.map((d) => ({ name: d.label || d.month, value: d.value || d.revenue || 0 }));
+      const chartData = data.data.map(d => ({ name: d.label || d.month, value: d.value || d.revenue || 0 }));
       revenueOption.value = getIncreaseLineChart(chartData, ['#10B981']);
     } else {
       revenueOption.value = null;
@@ -260,7 +268,7 @@ async function loadLeadSources() {
     const qs = dateRange.value ? `?startDate=${dateRange.value[0]}&endDate=${dateRange.value[1]}` : '';
     const { body, success } = await useApiFetch(`dashboards/lead-sources${qs}`);
     if (success && body && Array.isArray(body) && body.length) {
-      const pieData = body.map((s) => ({ name: s.source || s.name, value: s.count || s.value || 0 }));
+      const pieData = body.map(s => ({ name: s.source || s.name, value: s.count || s.value || 0 }));
       leadSourcesOption.value = getPieChartsData(pieData, COLORS, '5%');
     } else {
       leadSourcesOption.value = null;
@@ -289,7 +297,7 @@ async function loadFunnel() {
             bottom: 20,
             width: '80%',
             min: 0,
-            max: Math.max(...body.map((b) => b.value || 0)) || 100,
+            max: Math.max(...body.map(b => b.value || 0)) || 100,
             minSize: '10%',
             maxSize: '100%',
             sort: 'descending',
@@ -297,7 +305,7 @@ async function loadFunnel() {
             label: { show: true, position: 'inside', formatter: '{b}\n{c}', color: '#fff', fontSize: 12 },
             itemStyle: { borderColor: 'transparent', borderWidth: 1, borderRadius: 4 },
             emphasis: { label: { fontSize: 16, fontWeight: 'bold' } },
-            data: body.map((b) => ({ name: b.name || b.stage, value: b.value || b.count || 0 }))
+            data: body.map(b => ({ name: b.name || b.stage, value: b.value || b.count || 0 }))
           }
         ]
       };
@@ -340,7 +348,7 @@ async function loadDealSize() {
     const qs = dateRange.value ? `?startDate=${dateRange.value[0]}&endDate=${dateRange.value[1]}` : '';
     const { body, success } = await useApiFetch(`dashboards/avg-deal-size${qs}`);
     if (success && body && Array.isArray(body) && body.length) {
-      const chartData = body.map((d) => ({ name: d.month || d.label, value: d.avgValue || d.value || 0 }));
+      const chartData = body.map(d => ({ name: d.month || d.label, value: d.avgValue || d.value || 0 }));
       dealSizeOption.value = getIncreaseLineChart(chartData, ['#A855F7']);
     } else {
       dealSizeOption.value = null;

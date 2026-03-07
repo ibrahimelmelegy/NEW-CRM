@@ -133,7 +133,7 @@
           .flex.items-center.gap-2
             p.text-xs {{ row.coverage }}
             el-progress(
-              v-if="row.coveragePercent != null"
+              v-if="row.coveragePercent !== null && row.coveragePercent !== undefined"
               :percentage="row.coveragePercent"
               :stroke-width="4"
               :show-text="false"
@@ -554,9 +554,9 @@ async function loadExpiringWarranties() {
       const items = data?.rows || data?.docs || (Array.isArray(data) ? data : []);
       // Compute daysRemaining if not provided
       const today = new Date();
-      expiringWarranties.value = items.map((w) => {
+      expiringWarranties.value = items.map(w => {
         let daysRemaining = w.daysRemaining;
-        if (daysRemaining == null && w.endDate) {
+        if ((daysRemaining === null || daysRemaining === undefined) && w.endDate) {
           const end = new Date(w.endDate);
           daysRemaining = Math.max(0, Math.ceil((end.getTime() - today.getTime()) / 86400000));
         }

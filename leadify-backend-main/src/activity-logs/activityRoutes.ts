@@ -1,5 +1,5 @@
 import express, { Response } from 'express';
-import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
+import { authenticateUser } from '../middleware/authMiddleware';
 import { getActivityLogs } from './activityService';
 import { wrapResult } from '../utils/response/responseWrapper';
 import { NextFunction } from 'express-serve-static-core';
@@ -38,6 +38,7 @@ const router = express.Router();
 router.get('/', authenticateUser, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const limit = Number(req.query.limit) || 100;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { getAllActivityLogs } = require('./activityService');
     const logs = await getAllActivityLogs(limit);
     wrapResult(res, logs);

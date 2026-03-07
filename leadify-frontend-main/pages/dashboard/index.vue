@@ -121,10 +121,12 @@ const VChart = defineAsyncComponent(() =>
     import('echarts/charts'),
     import('echarts/components'),
     import('vue-echarts')
-  ]).then(([{ use }, { CanvasRenderer }, { BarChart, LineChart }, { TitleComponent, TooltipComponent, LegendComponent, GridComponent }, VChartModule]) => {
-    use([CanvasRenderer, BarChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
-    return VChartModule;
-  })
+  ]).then(
+    ([{ use }, { CanvasRenderer }, { BarChart, LineChart }, { TitleComponent, TooltipComponent, LegendComponent, GridComponent }, VChartModule]) => {
+      use([CanvasRenderer, BarChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
+      return VChartModule;
+    }
+  )
 );
 
 definePageMeta({ middleware: 'permissions' });
@@ -182,7 +184,7 @@ const kpiCards = computed(() => [
 // Revenue Chart
 const revenueChartOption = computed(() => {
   if (!revenueData.value?.data?.length) return null;
-  const chartData = revenueData.value.data.map((item) => ({
+  const chartData = revenueData.value.data.map(item => ({
     name: item.label || item.month || item.period,
     value: item.value || item.revenue || 0
   }));
@@ -192,7 +194,7 @@ const revenueChartOption = computed(() => {
 // Pipeline Chart
 const pipelineChartOption = computed(() => {
   if (!pipelineData.value?.stages?.length) return null;
-  const chartData = pipelineData.value.stages.map((stage) => ({
+  const chartData = pipelineData.value.stages.map(stage => ({
     name: stage.name || stage.stage,
     value: stage.count || stage.value || 0
   }));

@@ -140,7 +140,7 @@ async function captureAuditAfterUpdate(req: AuthenticatedRequest): Promise<void>
     userAgent: req.get('user-agent')
   };
 
-  await logChange(entityType, entityId, action, req.user?.id!, changes, metadata);
+  await logChange(entityType, entityId, action, req.user!.id, changes, metadata);
 }
 
 /**
@@ -176,7 +176,7 @@ export async function auditCreate(
     userAgent: req.get('user-agent')
   };
 
-  await logChange(entityType, String(entityId), AuditAction.CREATE, req.user?.id!, changes, metadata);
+  await logChange(entityType, String(entityId), AuditAction.CREATE, req.user!.id, changes, metadata);
 }
 
 /**
@@ -209,5 +209,5 @@ export async function auditDelete(
     userAgent: req.get('user-agent')
   };
 
-  await logChange(entityType, String(entityId), AuditAction.DELETE, req.user?.id!, changes, metadata);
+  await logChange(entityType, String(entityId), AuditAction.DELETE, req.user!.id, changes, metadata);
 }

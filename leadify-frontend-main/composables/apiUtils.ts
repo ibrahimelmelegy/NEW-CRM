@@ -1,5 +1,4 @@
 import { ElNotification } from 'element-plus';
-import { useMain } from '~/stores/common';
 import { useAuthStore } from '~/stores/auth';
 
 // ✅ Removed top-level useRuntimeConfig to prevent Nuxt context errors
@@ -78,7 +77,7 @@ export function uploadFile(params: { file: File; [key: string]: unknown }) {
         const gqlResult = data.value?.generateUploadLink as { data: string } | undefined;
         const link = gqlResult?.data;
         try {
-          const response = await $fetch(link as string, {
+          const _response = await $fetch(link as string, {
             method: 'PUT',
             body: myRenamedFile
           });

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { wrapResult } from '../utils/response/responseWrapper';
 import twilioService from '../integration/twilioService';
 import communicationService from './communicationService';
@@ -56,7 +56,7 @@ class VoipController {
   /**
    * Webhook endpoint for Twilio call status updates
    */
-  public async statusCallback(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async statusCallback(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
     try {
       const { CallStatus, CallDuration, To, RecordingUrl } = req.body;
       const { contactId, contactType, userId } = req.query;

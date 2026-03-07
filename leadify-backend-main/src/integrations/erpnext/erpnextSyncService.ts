@@ -145,7 +145,8 @@ class ERPNextSyncService {
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
     } catch (err: unknown) {
-      const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : (err as Error).message || 'Unknown error';
+      const message =
+        err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : (err as Error).message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
     }
@@ -167,7 +168,8 @@ class ERPNextSyncService {
       await this.markSuccess(syncLog, erpnextPaymentName, payment);
       return { success: true, data: payment };
     } catch (err: unknown) {
-      const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : (err as Error).message || 'Unknown error';
+      const message =
+        err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : (err as Error).message || 'Unknown error';
       await this.markFailed(syncLog, message);
       return { success: false, error: message };
     }
@@ -221,7 +223,8 @@ class ERPNextSyncService {
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
     } catch (err: unknown) {
-      const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : (err as Error).message || 'Unknown error';
+      const message =
+        err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : (err as Error).message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
     }
@@ -276,7 +279,8 @@ class ERPNextSyncService {
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
     } catch (err: unknown) {
-      const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : (err as Error).message || 'Unknown error';
+      const message =
+        err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : (err as Error).message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
     }
@@ -344,7 +348,8 @@ class ERPNextSyncService {
       await this.markSuccess(syncLog, erpnextName, result);
       return { success: true, erpnextName };
     } catch (err: unknown) {
-      const message = err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : (err as Error).message || 'Unknown error';
+      const message =
+        err instanceof ERPNextApiError ? `ERPNext API Error (${err.httpCode}): ${err.message}` : (err as Error).message || 'Unknown error';
       await this.markFailed(syncLog, message, err instanceof ERPNextApiError ? { serverMessages: err.serverMessages } : undefined);
       return { success: false, error: message };
     }
@@ -393,7 +398,7 @@ class ERPNextSyncService {
           0
         );
         return accounts;
-      } catch (fallbackErr: any) {
+      } catch (_fallbackErr: any) {
         throw new Error(`Failed to pull account balances: ${(err as Error).message}`);
       }
     }

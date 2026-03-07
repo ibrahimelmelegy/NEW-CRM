@@ -155,7 +155,6 @@ class AssetService {
     if (!asset) throw new BaseError(ERRORS.ASSET_NOT_FOUND);
     await asset.destroy();
   }
-
 }
 
 export default new AssetService();

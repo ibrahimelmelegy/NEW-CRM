@@ -6,7 +6,7 @@ import User from '../user/userModel';
 import cacheService from '../infrastructure/cacheService';
 
 class InsightController {
-  async getLeadsSalesInsights(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  async getLeadsSalesInsights(req: AuthenticatedRequest, res: Response, _next: NextFunction) {
     try {
       const userId = (req.user as User).id;
       const cacheKey = `insights:leadsSales:${userId}`;

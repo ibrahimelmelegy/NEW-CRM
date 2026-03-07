@@ -31,13 +31,15 @@ export async function getTenantById(id: string): Promise<Tenant | null> {
 /**
  * Get all tenants with optional filtering and pagination.
  */
-export async function getAllTenants(options: {
-  page?: number;
-  limit?: number;
-  status?: string;
-  plan?: TenantPlan;
-  search?: string;
-} = {}): Promise<{ rows: Tenant[]; count: number }> {
+export async function getAllTenants(
+  options: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    plan?: TenantPlan;
+    search?: string;
+  } = {}
+): Promise<{ rows: Tenant[]; count: number }> {
   const page = Math.max(1, options.page || 1);
   const limit = Math.min(100, Math.max(1, options.limit || 20));
   const offset = (page - 1) * limit;
@@ -53,18 +55,17 @@ export async function getAllTenants(options: {
   }
 
   if (options.search) {
-    where[Op.or as any] = [
-      { name: { [Op.iLike]: `%${options.search}%` } },
-      { domain: { [Op.iLike]: `%${options.search}%` } }
-    ];
+    where[Op.or as any] = [{ name: { [Op.iLike]: `%${options.search}%` } }, { domain: { [Op.iLike]: `%${options.search}%` } }];
   }
 
-  return Tenant.findAndCountAll(bypass({
-    where,
-    limit,
-    offset,
-    order: [['createdAt', 'DESC']]
-  }));
+  return Tenant.findAndCountAll(
+    bypass({
+      where,
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']]
+    })
+  );
 }
 
 /**
@@ -89,17 +90,20 @@ export async function createTenant(data: {
   maxStorageMB?: number;
   settings?: TenantSettings;
 }): Promise<Tenant> {
-  const tenant = await Tenant.create({
-    name: data.name,
-    domain: data.domain,
-    logo: data.logo,
-    plan: data.plan || 'free',
-    maxUsers: data.maxUsers || 5,
-    maxStorageMB: data.maxStorageMB || 500,
-    settings: data.settings || {},
-    status: 'ACTIVE',
-    isActive: true
-  } as any, bypass());
+  const tenant = await Tenant.create(
+    {
+      name: data.name,
+      domain: data.domain,
+      logo: data.logo,
+      plan: data.plan || 'free',
+      maxUsers: data.maxUsers || 5,
+      maxStorageMB: data.maxStorageMB || 500,
+      settings: data.settings || {},
+      status: 'ACTIVE',
+      isActive: true
+    } as any,
+    bypass()
+  );
   return tenant as Tenant;
 }
 
@@ -129,10 +133,7 @@ export async function updateTenant(
 /**
  * Update tenant settings (merge with existing).
  */
-export async function updateTenantSettings(
-  tenantId: string,
-  settings: Partial<TenantSettings>
-): Promise<TenantSettings | null> {
+export async function updateTenantSettings(tenantId: string, settings: Partial<TenantSettings>): Promise<TenantSettings | null> {
   const tenant = await getTenantById(tenantId);
   if (!tenant) return null;
 

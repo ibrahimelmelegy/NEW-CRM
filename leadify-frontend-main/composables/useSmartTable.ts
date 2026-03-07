@@ -84,7 +84,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
       result = result.filter(row =>
         columns.value.some(col => {
           const val = row[col.prop];
-          if (val == null) return false;
+          if (val === null || val === undefined) return false;
           return String(val).toLowerCase().includes(q);
         })
       );
@@ -136,9 +136,9 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
       result.sort((a, b) => {
         const aVal = a[prop];
         const bVal = b[prop];
-        if (aVal == null && bVal == null) return 0;
-        if (aVal == null) return 1;
-        if (bVal == null) return -1;
+        if ((aVal === null || aVal === undefined) && (bVal === null || bVal === undefined)) return 0;
+        if (aVal === null || aVal === undefined) return 1;
+        if (bVal === null || bVal === undefined) return -1;
 
         let comparison: number;
         if (typeof aVal === 'number' && typeof bVal === 'number') {
@@ -246,7 +246,7 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
     const rows = data.map(row =>
       exportColumns.map(col => {
         const val = row[col.prop];
-        if (val == null) return '';
+        if (val === null || val === undefined) return '';
         if (typeof val === 'object' && val.title) return val.title;
         return val;
       })

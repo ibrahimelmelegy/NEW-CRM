@@ -121,7 +121,6 @@ import type { Employee, DepartmentItem } from '~/composables/useEmployees';
 import { getPieChartsData, getBarChartData } from '~/composables/charts';
 import { formatDate, formatLargeNumber } from '~/composables/format';
 
-
 definePageMeta({ middleware: 'permissions' });
 
 const { t } = useI18n();

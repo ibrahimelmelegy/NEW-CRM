@@ -269,7 +269,7 @@ export function useCommandTerminal() {
         }
 
         // Show as table
-        const displayItems = items.slice(0, 10).map((item) => ({
+        const displayItems = items.slice(0, 10).map(item => ({
           ID: item.id || '-',
           Name: item.name || item.title || item.companyName || '-',
           Status: item.status || item.stage || '-',
@@ -312,7 +312,7 @@ export function useCommandTerminal() {
           return;
         }
 
-        const displayItems = items.slice(0, 10).map((item) => ({
+        const displayItems = items.slice(0, 10).map(item => ({
           Type: item.entityType || '-',
           Name: item.name || item.title || item.email || '-',
           ID: item.id || '-'

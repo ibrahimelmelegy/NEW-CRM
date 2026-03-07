@@ -1,4 +1,4 @@
-import { Op, WhereOptions, Includeable, fn, col, literal } from 'sequelize';
+import { Op, WhereOptions, Includeable, fn, col } from 'sequelize';
 import { clampPagination } from '../utils/pagination';
 import DocBuilderDocument, { DocTypeEnum, DocStatusEnum } from './models/docBuilderModel';
 import DocBuilderVersion from './models/docBuilderVersionModel';
@@ -12,7 +12,7 @@ import { DocBuilderPermissionsEnum } from '../role/roleEnum';
 import { SortEnum } from '../lead/leadEnum';
 import { DocSortByEnum } from './inputs/getDocsInput';
 import { sendEmail } from '../utils/emailHelper';
-import { renderDocumentHtml, renderWithTemplate } from './templateRenderer';
+import { renderWithTemplate } from './templateRenderer';
 import storageService from '../storage/storageService';
 import type { BrandSettings } from './templateEngine';
 import notificationCenterService from '../notification/notificationCenterService';
@@ -358,37 +358,30 @@ class DocBuilderService {
     }
 
     // Total count and total value via SQL
-    const totalResult = await DocBuilderDocument.findOne({
+    const totalResult = (await DocBuilderDocument.findOne({
       where,
       attributes: [
         [fn('COUNT', col('id')), 'total'],
         [fn('COALESCE', fn('SUM', col('total')), 0), 'totalValue']
       ],
       raw: true
-    }) as any;
+    })) as any;
 
     // Counts grouped by status
-    const byStatusRows = await DocBuilderDocument.findAll({
+    const byStatusRows = (await DocBuilderDocument.findAll({
       where,
-      attributes: [
-        'status',
-        [fn('COUNT', col('id')), 'count']
-      ],
+      attributes: ['status', [fn('COUNT', col('id')), 'count']],
       group: ['status'],
       raw: true
-    }) as any[];
+    })) as any[];
 
     // Counts and value grouped by type
-    const byTypeRows = await DocBuilderDocument.findAll({
+    const byTypeRows = (await DocBuilderDocument.findAll({
       where,
-      attributes: [
-        'type',
-        [fn('COUNT', col('id')), 'count'],
-        [fn('COALESCE', fn('SUM', col('total')), 0), 'value']
-      ],
+      attributes: ['type', [fn('COUNT', col('id')), 'count'], [fn('COALESCE', fn('SUM', col('total')), 0), 'value']],
       group: ['type'],
       raw: true
-    }) as any[];
+    })) as any[];
 
     const byStatus: Record<string, number> = {};
     for (const row of byStatusRows) {
@@ -417,6 +410,7 @@ class DocBuilderService {
     // Generate PDF if not already generated
     let pdfUrl = document.pdfUrl;
     if (!pdfUrl) {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const pdfService = require('./pdfService').default;
       pdfUrl = await pdfService.generatePdf(id);
     }
@@ -519,6 +513,7 @@ class DocBuilderService {
    */
   public async generateBulkPdf(ids: string[], user: User): Promise<{ id: string; pdfUrl: string }[]> {
     const results: { id: string; pdfUrl: string }[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const pdfService = require('./pdfService').default;
 
     for (const id of ids) {
@@ -596,7 +591,12 @@ class DocBuilderService {
 
     // Emit socket event
     const io = (() => {
-      try { return require('../server').io; } catch { return null; }
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        return require('../server').io;
+      } catch {
+        return null;
+      }
     })();
     if (io) {
       io.emit('document:approved', {
@@ -643,7 +643,12 @@ class DocBuilderService {
 
     // Emit socket event
     const io = (() => {
-      try { return require('../server').io; } catch { return null; }
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        return require('../server').io;
+      } catch {
+        return null;
+      }
     })();
     if (io) {
       io.emit('document:rejected', {

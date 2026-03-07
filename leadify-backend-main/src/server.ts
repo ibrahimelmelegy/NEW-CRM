@@ -59,10 +59,12 @@ async function runTypoMigration(sequelize: Sequelize) {
 
 // Socket.io JWT authentication middleware
 io.use((socket, next) => {
-  const token = socket.handshake.auth?.token || socket.handshake.headers?.cookie
-    ?.split(';')
-    .find((c: string) => c.trim().startsWith('token='))
-    ?.split('=')[1];
+  const token =
+    socket.handshake.auth?.token ||
+    socket.handshake.headers?.cookie
+      ?.split(';')
+      .find((c: string) => c.trim().startsWith('token='))
+      ?.split('=')[1];
 
   if (!token) {
     return next(new Error('Authentication required'));
@@ -113,6 +115,7 @@ sequelize
     // Database schema sync — safe for both development and production.
     // Only adds missing columns/tables, never drops or modifies existing ones.
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { safeSchemaSync } = require('./infrastructure/safeSchemaSync');
       const syncResult = await safeSchemaSync(sequelize);
       // SchemaSync complete
@@ -125,6 +128,7 @@ sequelize
 
     // Add performance indexes (non-blocking - failures are logged and skipped)
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { addPerformanceIndexes } = require('./infrastructure/dbIndexes');
       await addPerformanceIndexes(sequelize);
     } catch (e) {
@@ -133,6 +137,7 @@ sequelize
 
     // Initialize job queue for background processing
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const jobQueue = require('./infrastructure/jobQueue').default;
       jobQueue.processJobs();
     } catch (e) {
@@ -145,12 +150,15 @@ sequelize
 
       // Start Background Jobs
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const PaymentReminderScheduler = require('./cron/paymentReminders').default;
         PaymentReminderScheduler.start();
 
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const ChurnPredictionScheduler = require('./cron/churnPrediction').default;
         ChurnPredictionScheduler.start();
 
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { sessionCleanupCron } = require('./cron/sessionCleanup');
         sessionCleanupCron.start();
       } catch (e) {
@@ -159,6 +167,7 @@ sequelize
 
       // Start automated database backup schedule (daily at 2:00 AM)
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { scheduleAutoBackup } = require('./backup/backupService');
         const cronExpr = process.env.BACKUP_CRON || '0 2 * * *';
         if (process.env.BACKUP_ENABLED !== 'false') {
@@ -174,18 +183,18 @@ sequelize
   });
 
 // Global error handlers - prevent silent crashes in production
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', err => {
   logger.fatal({ err }, 'Uncaught Exception');
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', reason => {
   logger.fatal({ reason }, 'Unhandled Rejection');
   process.exit(1);
 });
 
 // Graceful shutdown
-function gracefulShutdown(signal: string) {
+function gracefulShutdown(_signal: string) {
   // Graceful shutdown initiated
 
   server.close(() => {

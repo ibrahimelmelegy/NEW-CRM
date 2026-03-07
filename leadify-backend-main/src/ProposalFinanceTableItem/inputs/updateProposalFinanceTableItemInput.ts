@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsOptional, IsUUID, IsNumber, Max, IsArray, ValidateNested } from 'class-validator';
+import { IsOptional, IsNumber, Max, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CustomColumnInput } from './customColumnInput';
 

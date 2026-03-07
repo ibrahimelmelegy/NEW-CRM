@@ -1,8 +1,7 @@
-import { Op, fn, col, literal, cast, QueryTypes } from 'sequelize';
+import { Op, fn, col, literal, QueryTypes } from 'sequelize';
 import Invoice from '../deal/model/invoiceMode';
 import Deal from '../deal/model/dealModel';
 import Client from '../client/clientModel';
-import User from '../user/userModel';
 import { tenantWhere } from '../utils/tenantScope';
 import { clampPagination } from '../utils/pagination';
 import { sequelize } from '../config/db';
@@ -97,7 +96,7 @@ class InvoiceService {
   }
 
   async getSummary(user?: Record<string, any>) {
-    const result = await Invoice.findOne({
+    const result = (await Invoice.findOne({
       where: { ...(user ? tenantWhere(user) : {}) },
       attributes: [
         [fn('COUNT', col('id')), 'totalInvoices'],
@@ -108,7 +107,7 @@ class InvoiceService {
         [fn('COUNT', literal('CASE WHEN "collected" IS NOT TRUE THEN 1 END')), 'pendingCount']
       ],
       raw: true
-    }) as any;
+    })) as any;
 
     return {
       totalInvoices: Number(result?.totalInvoices) || 0,
@@ -168,7 +167,7 @@ class InvoiceService {
       discountAmount: Math.round(discountAmount * 100) / 100,
       taxableAmount: Math.round(taxableAmount * 100) / 100,
       taxAmount: Math.round(taxAmount * 100) / 100,
-      total: Math.round(total * 100) / 100,
+      total: Math.round(total * 100) / 100
     };
   }
 
@@ -191,9 +190,7 @@ class InvoiceService {
     buckets: AgingBucket[];
     totalOutstanding: number;
   }> {
-    const tenantFilter = tenantId
-      ? `AND "tenantId" = :tenantId`
-      : '';
+    const tenantFilter = tenantId ? `AND "tenantId" = :tenantId` : '';
 
     const query = `
       SELECT
@@ -225,7 +222,7 @@ class InvoiceService {
 
     const rows: Record<string, any>[] = await sequelize.query(query, {
       replacements,
-      type: QueryTypes.SELECT,
+      type: QueryTypes.SELECT
     });
 
     // Map labels
@@ -234,20 +231,20 @@ class InvoiceService {
       '1-30': '1-30 days overdue',
       '31-60': '31-60 days overdue',
       '61-90': '61-90 days overdue',
-      '90+': '90+ days overdue',
+      '90+': '90+ days overdue'
     };
 
-    const buckets: AgingBucket[] = rows.map((r) => ({
+    const buckets: AgingBucket[] = rows.map(r => ({
       label: labelMap[r.bucket] || r.bucket,
       count: Number(r.count) || 0,
-      totalAmount: Math.round((Number(r.totalAmount) || 0) * 100) / 100,
+      totalAmount: Math.round((Number(r.totalAmount) || 0) * 100) / 100
     }));
 
     const totalOutstanding = buckets.reduce((sum, b) => sum + b.totalAmount, 0);
 
     return {
       buckets,
-      totalOutstanding: Math.round(totalOutstanding * 100) / 100,
+      totalOutstanding: Math.round(totalOutstanding * 100) / 100
     };
   }
 
@@ -264,9 +261,7 @@ class InvoiceService {
    */
   async getRevenueSummary(tenantId?: string, period: number = 12): Promise<RevenueSummaryRow[]> {
     const safePeriod = Math.max(1, Math.min(120, Math.floor(Number(period) || 12)));
-    const tenantFilter = tenantId
-      ? `AND "tenantId" = :tenantId`
-      : '';
+    const tenantFilter = tenantId ? `AND "tenantId" = :tenantId` : '';
 
     const query = `
       SELECT
@@ -286,14 +281,14 @@ class InvoiceService {
 
     const rows: Record<string, any>[] = await sequelize.query(query, {
       replacements,
-      type: QueryTypes.SELECT,
+      type: QueryTypes.SELECT
     });
 
-    return rows.map((r) => ({
+    return rows.map(r => ({
       month: r.month,
       totalRevenue: Math.round((Number(r.totalRevenue) || 0) * 100) / 100,
       collectedRevenue: Math.round((Number(r.collectedRevenue) || 0) * 100) / 100,
-      outstandingRevenue: Math.round((Number(r.outstandingRevenue) || 0) * 100) / 100,
+      outstandingRevenue: Math.round((Number(r.outstandingRevenue) || 0) * 100) / 100
     }));
   }
 
@@ -310,9 +305,7 @@ class InvoiceService {
   async getOverdueInvoices(tenantId?: string): Promise<any[]> {
     const where: Record<string, any> = {
       collected: { [Op.or]: [false, null] },
-      [Op.and]: [
-        literal(`COALESCE("Invoice"."dueDate", "Invoice"."invoiceDate") < NOW()`)
-      ],
+      [Op.and]: [literal(`COALESCE("Invoice"."dueDate", "Invoice"."invoiceDate") < NOW()`)]
     };
 
     if (tenantId) {
@@ -323,22 +316,17 @@ class InvoiceService {
       where,
       include: [{ model: Deal, as: 'deal', attributes: ['id', 'name'] }],
       attributes: {
-        include: [
-          [
-            literal(`(NOW()::date - COALESCE("Invoice"."dueDate", "Invoice"."invoiceDate")::date)`),
-            'daysOverdue',
-          ],
-        ],
+        include: [[literal(`(NOW()::date - COALESCE("Invoice"."dueDate", "Invoice"."invoiceDate")::date)`), 'daysOverdue']]
       },
       order: [[literal(`COALESCE("Invoice"."dueDate", "Invoice"."invoiceDate")`), 'ASC']],
-      raw: false,
+      raw: false
     });
 
-    return invoices.map((inv) => {
+    return invoices.map(inv => {
       const json = inv.toJSON() as any;
       return {
         ...json,
-        daysOverdue: Number(json.daysOverdue) || 0,
+        daysOverdue: Number(json.daysOverdue) || 0
       };
     });
   }

@@ -157,7 +157,7 @@ export async function getOpportunities(all?: false): Promise<UseOpportunitiesRes
  */
 export async function getOpportunity(id: string | string[]): Promise<Opportunities> {
   try {
-    const { body: opportunity, success } = await useApiFetch(`opportunity/${id}`);
+    const { body: opportunity } = await useApiFetch(`opportunity/${id}`);
     return opportunity;
   } catch (error) {
     console.error('Error fetching opportunity:', error instanceof Error ? error.message : error);
@@ -168,7 +168,7 @@ export async function getOpportunity(id: string | string[]): Promise<Opportuniti
 
 export async function getOpportunityActivity(id: string | string[]): Promise<ActivityResponse> {
   try {
-    const { body: activity, success } = await useApiFetch(`activity/opportunity/${id}`);
+    const { body: activity } = await useApiFetch(`activity/opportunity/${id}`);
     return activity as unknown as ActivityResponse;
   } catch (error) {
     console.error('Error fetching activity:', error instanceof Error ? error.message : error);

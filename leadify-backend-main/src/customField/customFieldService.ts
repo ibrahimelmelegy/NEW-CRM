@@ -36,7 +36,10 @@ class CustomFieldService {
   async getFieldsByEntity(entityType: string) {
     return CustomField.findAll({
       where: { entityType, isActive: true },
-      order: [['sortOrder', 'ASC'], ['createdAt', 'ASC']]
+      order: [
+        ['sortOrder', 'ASC'],
+        ['createdAt', 'ASC']
+      ]
     });
   }
 
@@ -46,7 +49,10 @@ class CustomFieldService {
   async getAllFieldsByEntity(entityType: string) {
     return CustomField.findAll({
       where: { entityType },
-      order: [['sortOrder', 'ASC'], ['createdAt', 'ASC']]
+      order: [
+        ['sortOrder', 'ASC'],
+        ['createdAt', 'ASC']
+      ]
     });
   }
 
@@ -82,7 +88,10 @@ class CustomFieldService {
     }
 
     // Validate options for select/multiselect types
-    if ((data.fieldType === CustomFieldType.SELECT || data.fieldType === CustomFieldType.MULTISELECT) && (!data.options || data.options.length === 0)) {
+    if (
+      (data.fieldType === CustomFieldType.SELECT || data.fieldType === CustomFieldType.MULTISELECT) &&
+      (!data.options || data.options.length === 0)
+    ) {
       throw new BaseError(ERRORS.CUSTOM_FIELD_VALIDATION_ERROR, 400, 'Select and multiselect fields must have at least one option');
     }
 
@@ -109,7 +118,10 @@ class CustomFieldService {
       if (!Object.values(CustomFieldType).includes(data.fieldType as CustomFieldType)) {
         throw new BaseError(ERRORS.CUSTOM_FIELD_VALIDATION_ERROR, 400, 'Invalid field type');
       }
-      if ((data.fieldType === CustomFieldType.SELECT || data.fieldType === CustomFieldType.MULTISELECT) && (!data.options || data.options.length === 0)) {
+      if (
+        (data.fieldType === CustomFieldType.SELECT || data.fieldType === CustomFieldType.MULTISELECT) &&
+        (!data.options || data.options.length === 0)
+      ) {
         throw new BaseError(ERRORS.CUSTOM_FIELD_VALIDATION_ERROR, 400, 'Select and multiselect fields must have at least one option');
       }
     }
@@ -142,11 +154,7 @@ class CustomFieldService {
    * Reorder fields by updating sortOrder values
    */
   async reorderFields(fields: { id: string; sortOrder: number }[]) {
-    await Promise.all(
-      fields.map(f =>
-        CustomField.update({ sortOrder: f.sortOrder }, { where: { id: f.id } })
-      )
-    );
+    await Promise.all(fields.map(f => CustomField.update({ sortOrder: f.sortOrder }, { where: { id: f.id } })));
     return { reordered: true };
   }
 
@@ -219,11 +227,7 @@ class CustomFieldService {
             where: { entityId, entityType, customFieldId: requiredField.id }
           });
           if (!existingValue || !existingValue.value) {
-            throw new BaseError(
-              ERRORS.CUSTOM_FIELD_VALIDATION_ERROR,
-              400,
-              `Field "${requiredField.fieldLabel}" is required`
-            );
+            throw new BaseError(ERRORS.CUSTOM_FIELD_VALIDATION_ERROR, 400, `Field "${requiredField.fieldLabel}" is required`);
           }
         }
       }
@@ -256,11 +260,7 @@ class CustomFieldService {
     // Null/empty is OK for non-required fields
     if (value === null || value === undefined || value === '') {
       if (field.isRequired) {
-        throw new BaseError(
-          ERRORS.CUSTOM_FIELD_VALIDATION_ERROR,
-          400,
-          `Field "${field.fieldLabel}" is required`
-        );
+        throw new BaseError(ERRORS.CUSTOM_FIELD_VALIDATION_ERROR, 400, `Field "${field.fieldLabel}" is required`);
       }
       return;
     }
@@ -359,7 +359,11 @@ class CustomFieldService {
       case CustomFieldType.TEXT:
       case CustomFieldType.TEXTAREA: {
         if (rules.minLength !== undefined && strValue.length < rules.minLength) {
-          throw new BaseError(ERRORS.CUSTOM_FIELD_VALIDATION_ERROR, 400, `Field "${field.fieldLabel}" must be at least ${rules.minLength} characters`);
+          throw new BaseError(
+            ERRORS.CUSTOM_FIELD_VALIDATION_ERROR,
+            400,
+            `Field "${field.fieldLabel}" must be at least ${rules.minLength} characters`
+          );
         }
         if (rules.maxLength !== undefined && strValue.length > rules.maxLength) {
           throw new BaseError(ERRORS.CUSTOM_FIELD_VALIDATION_ERROR, 400, `Field "${field.fieldLabel}" must be at most ${rules.maxLength} characters`);

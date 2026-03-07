@@ -168,12 +168,12 @@ const movementForm = reactive({ productId: null as number | null, type: 'IN', qu
 
 const formRules = {
   name: [{ required: true, message: t('inventory.nameRequired'), trigger: 'blur' }],
-  sku: [{ required: true, message: t('inventory.skuRequired'), trigger: 'blur' }],
+  sku: [{ required: true, message: t('inventory.skuRequired'), trigger: 'blur' }]
 };
 
 const movementRules = {
   type: [{ required: true, message: t('inventory.typeRequired'), trigger: 'change' }],
-  quantity: [{ required: true, message: t('inventory.quantityRequired'), trigger: 'blur' }],
+  quantity: [{ required: true, message: t('inventory.quantityRequired'), trigger: 'blur' }]
 };
 
 const headerActions = computed(() => [{ label: t('inventory.addProduct'), onClick: () => openForm(), type: 'primary' }]);

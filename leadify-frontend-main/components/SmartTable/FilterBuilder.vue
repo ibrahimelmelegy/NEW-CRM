@@ -277,7 +277,7 @@ const applyAll = () => {
       if (r.operator === 'in') {
         return Array.isArray(r.value) && r.value.length > 0;
       }
-      return r.value !== '' && r.value != null;
+      return r.value !== '' && r.value !== null && r.value !== undefined;
     })
     .map(r => ({
       field: r.field,

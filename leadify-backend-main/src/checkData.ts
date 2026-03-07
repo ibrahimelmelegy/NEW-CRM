@@ -10,13 +10,13 @@ const checkData = async () => {
     // DB Connected
 
     const leads = await Lead.count();
-    const deals = await Deal.count();
-    const users = await User.count();
+    const _deals = await Deal.count();
+    const _users = await User.count();
 
     // Data counts retrieved
 
     if (leads > 0) {
-      const sample = await Lead.findOne({ order: [['id', 'DESC']] });
+      const _sample = await Lead.findOne({ order: [['id', 'DESC']] });
       // Latest lead retrieved
     }
 
@@ -24,7 +24,7 @@ const checkData = async () => {
       console.warn('DATABASE IS EMPTY OF LEADS.');
     }
   } catch (e) {
-    console.error('Data Audit Error:', e.message);
+    console.error('Data Audit Error:', (e as Error).message);
   }
   // Audit complete
   process.exit();

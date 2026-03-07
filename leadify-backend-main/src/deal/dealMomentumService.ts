@@ -22,7 +22,7 @@ class DealMomentumService {
    * Calculate momentum score for a deal based on velocity, engagement,
    * progression, and responsiveness factors.
    */
-  async calculateMomentum(dealId: string, tenantId?: string): Promise<MomentumResult> {
+  async calculateMomentum(dealId: string, _tenantId?: string): Promise<MomentumResult> {
     const deal = await Deal.findByPk(dealId);
 
     if (!deal) {
@@ -81,7 +81,7 @@ class DealMomentumService {
    * Count simulated activities in last 14 days, weighted by recency.
    */
   private calculateEngagement(createdAt: Date, updatedAt: Date, now: Date): number {
-    const dealAgeDays = Math.max(1, this.daysBetween(createdAt, now));
+    const _dealAgeDays = Math.max(1, this.daysBetween(createdAt, now));
     const daysSinceUpdate = this.daysBetween(updatedAt, now);
 
     // Estimate activity frequency: shorter time between create and last update = more active
@@ -119,7 +119,7 @@ class DealMomentumService {
    * < 1 day avg = 20pts, 1-3 days = 15, 3-7 days = 10, 7+ days = 5
    */
   private calculateResponsiveness(createdAt: Date, updatedAt: Date, now: Date): number {
-    const dealAgeDays = Math.max(0.5, this.daysBetween(createdAt, now));
+    const _dealAgeDays = Math.max(0.5, this.daysBetween(createdAt, now));
     const activeDays = Math.max(0.5, this.daysBetween(createdAt, updatedAt));
 
     // Estimate average gap between activities

@@ -9,6 +9,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref } from 'vue';
 
+import {
+  fetchInvoices,
+  fetchInvoiceById,
+  markCollected,
+  markUncollected,
+  fetchInvoiceSummary,
+  downloadInvoicePdf,
+  type InvoiceItem,
+  type InvoiceSummary
+} from '@/composables/useInvoices';
+
 // ============================================
 // Global mocks required by the composable
 // ============================================
@@ -27,17 +38,6 @@ vi.mock('element-plus', () => ({
 (globalThis as any).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
 (globalThis as any).$fetch = mockFetch;
 
-import {
-  fetchInvoices,
-  fetchInvoiceById,
-  markCollected,
-  markUncollected,
-  fetchInvoiceSummary,
-  downloadInvoicePdf,
-  type InvoiceItem,
-  type InvoiceSummary
-} from '@/composables/useInvoices';
-
 describe('useInvoices composable', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -51,9 +51,7 @@ describe('useInvoices composable', () => {
   describe('fetchInvoices', () => {
     it('should fetch invoices with default parameters', async () => {
       const mockBody = {
-        docs: [
-          { id: 1, invoiceNumber: 'INV-001', amount: 5000, collected: false, dealId: 'deal-1' }
-        ],
+        docs: [{ id: 1, invoiceNumber: 'INV-001', amount: 5000, collected: false, dealId: 'deal-1' }],
         pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 }
       };
 
@@ -220,11 +218,7 @@ describe('useInvoices composable', () => {
 
       await markCollected(1, '2024-03-01');
 
-      expect(mockUseApiFetch).toHaveBeenCalledWith(
-        'invoices/1/collect',
-        'PUT',
-        { collectedDate: '2024-03-01' }
-      );
+      expect(mockUseApiFetch).toHaveBeenCalledWith('invoices/1/collect', 'PUT', { collectedDate: '2024-03-01' });
     });
 
     it('should mark invoice as collected without date', async () => {
@@ -232,11 +226,7 @@ describe('useInvoices composable', () => {
 
       await markCollected(5);
 
-      expect(mockUseApiFetch).toHaveBeenCalledWith(
-        'invoices/5/collect',
-        'PUT',
-        { collectedDate: undefined }
-      );
+      expect(mockUseApiFetch).toHaveBeenCalledWith('invoices/5/collect', 'PUT', { collectedDate: undefined });
     });
 
     it('should return the API response', async () => {
@@ -390,9 +380,7 @@ describe('useInvoices composable', () => {
       const result = await downloadInvoicePdf(1);
 
       expect(result).toBe(false);
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
 
     it('should clean up DOM elements after download', async () => {
@@ -412,10 +400,7 @@ describe('useInvoices composable', () => {
 
       await downloadInvoicePdf(99);
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        'http://localhost:3001/api/v1/invoices/99/pdf',
-        expect.any(Object)
-      );
+      expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/v1/invoices/99/pdf', expect.any(Object));
     });
   });
 

@@ -183,7 +183,7 @@ async function confirmDelete() {
   try {
     const response = await deleteDeal(deleteId.value);
     if (response?.success) {
-      table.data = table.data.filter((r) => r.id !== deleteId.value);
+      table.data = table.data.filter(r => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -217,7 +217,7 @@ async function handleBulkExport() {
   if (!selectedRows.value.length) return;
   try {
     loading.value = true;
-    const ids = selectedRows.value.map((r) => r.id);
+    const ids = selectedRows.value.map(r => r.id);
     await useApiFetch('deal/export', 'POST', { ids });
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.exportSentToEmail') });
     selectedRows.value = [];
@@ -293,13 +293,13 @@ fetchPipelineAnalytics();
 const kpiMetrics = computed<KPIMetric[]>(() => {
   const data = table.data || [];
   const total = data.length;
-  const wonDeals = data.filter((d) => d.stage === 'WON').length;
+  const wonDeals = data.filter(d => d.stage === 'WON').length;
   // Calculate total revenue from won deals
   const totalRevenue = data
-    .filter((d) => d.stage === 'WON')
+    .filter(d => d.stage === 'WON')
     .reduce((sum, d) => sum + (Number(d.price) || 0), 0)
     .toLocaleString('en-US', { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 });
-  const pending = data.filter((d) => d.stage !== 'WON' && d.stage !== 'LOST').length;
+  const pending = data.filter(d => d.stage !== 'WON' && d.stage !== 'LOST').length;
 
   return [
     { label: t('deals.kpi.totalDeals'), value: total, icon: 'ph:handshake-bold', color: '#10b981' },
@@ -337,7 +337,7 @@ function handleRowClick(val: unknown) {
 }
 
 const mappedUsers =
-  usersResponse?.body?.docs?.map((e) => ({
+  usersResponse?.body?.docs?.map(e => ({
     label: e.name,
     value: e.id
   })) || [];
@@ -373,13 +373,13 @@ const filterOptions = computed(() => [
 // SavedViews & AdvancedSearch
 const advancedSearchFields = [
   { key: 'name', label: t('deals.table.dealName'), type: 'string' },
-  { key: 'stage', label: t('deals.table.stage'), type: 'select', options: dealStageOptions.map((o) => ({ value: o.value, label: o.label })) },
+  { key: 'stage', label: t('deals.table.stage'), type: 'select', options: dealStageOptions.map(o => ({ value: o.value, label: o.label })) },
   { key: 'price', label: t('deals.table.price'), type: 'number' },
   {
     key: 'contractType',
     label: t('deals.table.contractType'),
     type: 'select',
-    options: contractTypeOptions.map((o) => ({ value: o.value, label: o.label }))
+    options: contractTypeOptions.map(o => ({ value: o.value, label: o.label }))
   },
   { key: 'signatureDate', label: t('deals.table.signatureDate'), type: 'date' },
   { key: 'createdAt', label: t('deals.table.created'), type: 'date' }
@@ -418,11 +418,11 @@ const stageFilters = computed(() => {
   const data = table.data || [];
   return [
     { value: 'ALL', label: t('common.all'), color: '#10b981', count: data.length },
-    { value: 'PROGRESS', label: t('kanban.stages.progress'), color: '#3b82f6', count: data.filter((d) => d.stage === 'PROGRESS').length },
-    { value: 'WON', label: t('kanban.stages.won'), color: '#10b981', count: data.filter((d) => d.stage === 'WON').length },
-    { value: 'LOST', label: t('kanban.stages.lost'), color: '#ef4444', count: data.filter((d) => d.stage === 'LOST').length },
-    { value: 'CLOSED', label: t('kanban.stages.closed'), color: '#8b5cf6', count: data.filter((d) => d.stage === 'CLOSED').length },
-    { value: 'CANCELLED', label: t('kanban.stages.cancelled'), color: '#94a3b8', count: data.filter((d) => d.stage === 'CANCELLED').length }
+    { value: 'PROGRESS', label: t('kanban.stages.progress'), color: '#3b82f6', count: data.filter(d => d.stage === 'PROGRESS').length },
+    { value: 'WON', label: t('kanban.stages.won'), color: '#10b981', count: data.filter(d => d.stage === 'WON').length },
+    { value: 'LOST', label: t('kanban.stages.lost'), color: '#ef4444', count: data.filter(d => d.stage === 'LOST').length },
+    { value: 'CLOSED', label: t('kanban.stages.closed'), color: '#8b5cf6', count: data.filter(d => d.stage === 'CLOSED').length },
+    { value: 'CANCELLED', label: t('kanban.stages.cancelled'), color: '#94a3b8', count: data.filter(d => d.stage === 'CANCELLED').length }
   ];
 });
 
@@ -434,11 +434,11 @@ function setMobileStageFilter(value: string) {
 const mobileFilteredData = computed(() => {
   let data = table.data || [];
   if (mobileStageFilter.value !== 'ALL') {
-    data = data.filter((deal) => deal.stage === mobileStageFilter.value);
+    data = data.filter(deal => deal.stage === mobileStageFilter.value);
   }
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((deal) => {
+  return data.filter(deal => {
     const name = (deal.dealDetails?.title || deal.name || '').toLowerCase();
     const assign = (deal.assign || '').toLowerCase();
     const contractType = (deal.contractType || '').toLowerCase();

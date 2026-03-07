@@ -15,8 +15,18 @@ router.put('/postings/:id/close', authenticateUser, HasPermission([RecruitmentPe
 router.delete('/postings/:id', authenticateUser, HasPermission([RecruitmentPermissionsEnum.DELETE_RECRUITMENT]), controller.deletePosting);
 
 // Posting analytics
-router.get('/postings/:postingId/funnel', authenticateUser, HasPermission([RecruitmentPermissionsEnum.VIEW_RECRUITMENT]), controller.getRecruitmentFunnel);
-router.get('/postings/:postingId/analytics', authenticateUser, HasPermission([RecruitmentPermissionsEnum.VIEW_RECRUITMENT]), controller.getPostingAnalytics);
+router.get(
+  '/postings/:postingId/funnel',
+  authenticateUser,
+  HasPermission([RecruitmentPermissionsEnum.VIEW_RECRUITMENT]),
+  controller.getRecruitmentFunnel
+);
+router.get(
+  '/postings/:postingId/analytics',
+  authenticateUser,
+  HasPermission([RecruitmentPermissionsEnum.VIEW_RECRUITMENT]),
+  controller.getPostingAnalytics
+);
 
 // Hiring metrics
 router.get('/metrics/time-to-hire', authenticateUser, HasPermission([RecruitmentPermissionsEnum.VIEW_RECRUITMENT]), controller.getTimeToHire);

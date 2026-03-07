@@ -100,7 +100,7 @@ function onFetchClient(id: string) {
 //  Get Users
 const usersRes: unknown = await useApiFetch('users?limit=10000');
 // Map Users to Select Options
-const users = usersRes?.body?.docs?.map((e) => ({
+const users = usersRes?.body?.docs?.map(e => ({
   label: e.name,
   value: e.id
 }));
@@ -110,7 +110,7 @@ const clientsRes: unknown = await useApiFetch('client?limit=10000');
 // Map Clients to Select Options
 const clients = computed(() => [
   { label: t('common.add') + ' ' + t('operations.dailyTasks.form.client'), value: 0 },
-  ...(clientsRes?.body?.docs?.map((e) => ({
+  ...(clientsRes?.body?.docs?.map(e => ({
     label: e.clientName,
     value: e.id
   })) || [])

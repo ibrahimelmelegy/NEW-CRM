@@ -254,6 +254,11 @@ router.get(
 
 //** --------------------- DELETE --------------------- */
 
-router.delete('/:id', authenticateUser, HasPermission([AdditionalMaterialPermissionsEnum.DELETE_ADDITIONAL_MATERIAL]), AdditionalMaterialController.deleteMaterial);
+router.delete(
+  '/:id',
+  authenticateUser,
+  HasPermission([AdditionalMaterialPermissionsEnum.DELETE_ADDITIONAL_MATERIAL]),
+  AdditionalMaterialController.deleteMaterial
+);
 
 export default router;

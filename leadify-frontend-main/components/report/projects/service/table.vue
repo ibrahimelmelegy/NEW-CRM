@@ -96,7 +96,7 @@ async function confirmClick() {
   loadingExport.value = true;
   try {
     const res = await useTableFilter(`service/excel/${email.value}`, props?.filters);
-    if (res?.status == '200') {
+    if (res?.status === '200') {
       ElNotification({
         type: 'success',
         title: 'Success',

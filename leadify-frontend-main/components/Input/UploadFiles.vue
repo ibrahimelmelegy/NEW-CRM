@@ -124,7 +124,7 @@ const loading = ref(false);
 
 const beforeUpload: UploadProps['beforeUpload'] = (file: File) => {
   if (!props.formats.includes(file.type)) {
-    ElMessage.error(t('common.acceptUpload', { formats: props.formats.map((format) => format.split('/').pop()).join(', ') }));
+    ElMessage.error(t('common.acceptUpload', { formats: props.formats.map(format => format.split('/').pop()).join(', ') }));
     return false;
   }
 
@@ -163,7 +163,7 @@ const handleUploadRequest = async (params: unknown) => {
 };
 
 const handleRemove = (file: UploadFile) => {
-  inputValue.value = (inputValue.value as unknown[])?.filter((f) => f.uid !== file.uid);
+  inputValue.value = (inputValue.value as unknown[])?.filter(f => f.uid !== file.uid);
 };
 </script>
 

@@ -152,11 +152,7 @@ class ForecastService {
     const prevEnd = new Date(start);
 
     // Get previous period data
-    const previous = await this.getByPeriod(
-      period,
-      prevStart.toISOString().split('T')[0],
-      prevEnd.toISOString().split('T')[0]
-    );
+    const previous = await this.getByPeriod(period, prevStart.toISOString().split('T')[0], prevEnd.toISOString().split('T')[0]);
 
     // Calculate totals
     const currentTotals = current.reduce(

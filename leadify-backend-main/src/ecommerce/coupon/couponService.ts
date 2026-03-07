@@ -17,10 +17,7 @@ class CouponService {
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [
-        { code: { [Op.iLike]: `%${searchKey}%` } },
-        { description: { [Op.iLike]: `%${searchKey}%` } }
-      ];
+      (where as any)[Op.or] = [{ code: { [Op.iLike]: `%${searchKey}%` } }, { description: { [Op.iLike]: `%${searchKey}%` } }];
     }
 
     if (type) {

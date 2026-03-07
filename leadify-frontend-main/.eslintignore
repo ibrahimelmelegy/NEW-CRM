@@ -11,3 +11,16 @@ coverage
 compare_locales.js
 
 components/DocumentBuilder/ProposalPrintTemplateVue.Raw.vue
+
+# Third-party / generated utility files
+utils/page-transition-mgmt.js
+utils/pdf-generator.js
+
+# One-off scripts
+fix_ar_json.js
+update_en_json.js
+update_phase2_keys.js
+update_role_keys.js
+verify_locales.js
+scripts/generate-pwa-icons.js
+scripts/health-dashboard.js

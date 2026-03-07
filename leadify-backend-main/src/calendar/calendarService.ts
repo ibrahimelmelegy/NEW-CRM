@@ -45,7 +45,7 @@ class CalendarService {
   }
 
   // ─── Update Event ─────────────────────────────────────────────────────────
-  async updateEvent(id: number, data: Record<string, any>, userId: number) {
+  async updateEvent(id: number, data: Record<string, any>, _userId: number) {
     const event = await CalendarEvent.findByPk(id);
     if (!event) throw new Error('Event not found');
     return event.update(data);

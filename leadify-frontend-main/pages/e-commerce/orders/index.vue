@@ -415,7 +415,7 @@ function exportSelectedCSV() {
   const data = selectedRows.value.length ? selectedRows.value : orders.value;
   if (!data.length) return;
   const headers = ['Order #', 'Client', 'Status', 'Items', 'Subtotal', 'Tax', 'Total', 'Currency', 'Date'];
-  const rows = data.map((o) => [
+  const rows = data.map(o => [
     o.orderNumber || '',
     o.client?.clientName || o.client?.name || o.clientId || '',
     o.status || '',

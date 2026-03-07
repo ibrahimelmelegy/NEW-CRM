@@ -457,7 +457,7 @@ async function loadCategories() {
       const data = res.body as unknown;
       const cats = data?.docs || data?.rows || data || [];
       if (cats.length > 0) {
-        categories.value = cats.map((c) => c.name || c);
+        categories.value = cats.map(c => c.name || c);
       }
     }
   } catch (e: unknown) {

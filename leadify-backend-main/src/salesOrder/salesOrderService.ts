@@ -79,7 +79,7 @@ class SalesOrderService {
         { transaction }
       );
 
-      const orderItems = items.map((item) => ({
+      const orderItems = items.map(item => ({
         ...item,
         salesOrderId: salesOrder.id,
         lineTotal: item.lineTotal
@@ -182,7 +182,7 @@ class SalesOrderService {
         // Remove old items and recreate
         await SalesOrderItem.destroy({ where: { salesOrderId: id }, transaction });
 
-        const orderItems = items.map((item) => ({
+        const orderItems = items.map(item => ({
           ...item,
           salesOrderId: id,
           lineTotal: item.lineTotal
@@ -393,7 +393,7 @@ class SalesOrderService {
       throw new BaseError(400, 400, 'Cart must have at least one item');
     }
 
-    const orderItems = items.map((item) => ({
+    const orderItems = items.map(item => ({
       productId: item.productId,
       description: item.productName || item.description || 'Cart item',
       quantity: item.quantity || 1,

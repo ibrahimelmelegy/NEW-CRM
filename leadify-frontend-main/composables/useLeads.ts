@@ -146,7 +146,7 @@ export async function getLeads(): Promise<UseLeadsResult> {
  */
 export async function getLead(id: string | string[]): Promise<Lead> {
   try {
-    const { body: lead, success } = await useApiFetch(`lead/${id}`);
+    const { body: lead } = await useApiFetch(`lead/${id}`);
     return lead;
   } catch (error) {
     console.error('Error fetching lead:', error instanceof Error ? error.message : error);
@@ -158,7 +158,7 @@ export async function getLead(id: string | string[]): Promise<Lead> {
 
 export async function getActivity(id: string | string[]): Promise<ActivityResponse> {
   try {
-    const { body: activities, success } = await useApiFetch(`activity/lead/${id}`);
+    const { body: activities } = await useApiFetch(`activity/lead/${id}`);
     return activities;
   } catch (error) {
     console.error('Error fetching activity:', error instanceof Error ? error.message : error);

@@ -1,13 +1,4 @@
-import {
-  AllowNull,
-  BelongsTo,
-  Column,
-  DataType,
-  Default,
-  ForeignKey,
-  Model,
-  Table
-} from 'sequelize-typescript';
+import { AllowNull, BelongsTo, Column, DataType, Default, ForeignKey, Model, Table } from 'sequelize-typescript';
 import User from '../user/userModel';
 
 export enum BackupType {
@@ -34,11 +25,7 @@ export interface BackupMetadata {
   tableName: 'backups',
   modelName: 'Backup',
   timestamps: true,
-  indexes: [
-    { fields: ['status'] },
-    { fields: ['backupType'] },
-    { fields: ['createdAt'] }
-  ]
+  indexes: [{ fields: ['status'] }, { fields: ['backupType'] }, { fields: ['createdAt'] }]
 })
 class Backup extends Model {
   @Column({

@@ -1,4 +1,3 @@
-import { Sequelize } from 'sequelize-typescript';
 import { sequelize } from './config/db';
 import WorkflowRule, { TriggerType, ConditionLogic } from './workflow/workflowModel';
 

@@ -222,9 +222,7 @@ class SupportService {
     // Bump priority
     const priorityLadder = [TicketPriority.LOW, TicketPriority.MEDIUM, TicketPriority.HIGH, TicketPriority.URGENT];
     const currentIndex = priorityLadder.indexOf(ticket.priority as TicketPriority);
-    const newPriority = currentIndex < priorityLadder.length - 1
-      ? priorityLadder[currentIndex + 1]
-      : TicketPriority.URGENT;
+    const newPriority = currentIndex < priorityLadder.length - 1 ? priorityLadder[currentIndex + 1] : TicketPriority.URGENT;
 
     const updateData: Record<string, any> = { priority: newPriority };
 
@@ -293,7 +291,9 @@ class SupportService {
       isInternal: true
     });
 
-    try { io.emit('ticket:reopened', { ticketId: ticket.id, ticketNumber: ticket.ticketNumber }); } catch {}
+    try {
+      io.emit('ticket:reopened', { ticketId: ticket.id, ticketNumber: ticket.ticketNumber });
+    } catch {}
     return this.getTicketById(ticketId);
   }
 
@@ -351,9 +351,7 @@ class SupportService {
         resolvedAt: { [Op.eq]: null },
         status: { [Op.notIn]: [TicketStatus.RESOLVED, TicketStatus.CLOSED] }
       },
-      include: [
-        { model: User, as: 'assignee', attributes: ['id', 'name', 'email'] }
-      ],
+      include: [{ model: User, as: 'assignee', attributes: ['id', 'name', 'email'] }],
       order: [['slaDeadline', 'ASC']]
     });
 
@@ -379,7 +377,7 @@ class SupportService {
         subject: t.subject,
         priority: t.priority,
         slaDeadline: t.slaDeadline,
-        breachedByHours: Math.round((Date.now() - new Date(t.slaDeadline!).getTime()) / (1000 * 60 * 60) * 10) / 10,
+        breachedByHours: Math.round(((Date.now() - new Date(t.slaDeadline!).getTime()) / (1000 * 60 * 60)) * 10) / 10,
         assignee: t.assignee,
         client: t.client
       })),
@@ -389,7 +387,7 @@ class SupportService {
         subject: t.subject,
         priority: t.priority,
         slaDeadline: t.slaDeadline,
-        hoursRemaining: Math.round((new Date(t.slaDeadline!).getTime() - Date.now()) / (1000 * 60 * 60) * 10) / 10,
+        hoursRemaining: Math.round(((new Date(t.slaDeadline!).getTime() - Date.now()) / (1000 * 60 * 60)) * 10) / 10,
         assignee: t.assignee
       })),
       breachedCount: currentlyBreached.length,

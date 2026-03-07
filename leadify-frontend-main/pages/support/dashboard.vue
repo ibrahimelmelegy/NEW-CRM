@@ -646,7 +646,7 @@ function exportTicketsCSV() {
   ];
   const csv = [
     headers.join(','),
-    ...data.map((row) =>
+    ...data.map(row =>
       [
         `"${row.ticketNumber || ''}"`,
         `"${(row.subject || '').replace(/"/g, '""')}"`,

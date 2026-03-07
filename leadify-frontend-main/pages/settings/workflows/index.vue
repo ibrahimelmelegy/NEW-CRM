@@ -131,13 +131,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import {
-  useWorkflows,
-  TRIGGER_TYPES,
-  CONDITION_OPERATORS,
-  ACTION_TYPES,
-  type WorkflowRule
-} from '~/composables/useWorkflows';
+import { useWorkflows, TRIGGER_TYPES, CONDITION_OPERATORS, ACTION_TYPES, type WorkflowRule } from '~/composables/useWorkflows';
 
 const {
   fetchWorkflows,
@@ -197,7 +191,10 @@ function editWorkflow(wf: WorkflowRule) {
     name: wf.name,
     trigger: wf.triggerType,
     conditions: [...(wf.conditions || [])],
-    actions: (wf.actions || []).map((a: Record<string, unknown>) => ({ type: a.type as string, config: { ...(a.config as Record<string, unknown> || {}) } })),
+    actions: (wf.actions || []).map((a: Record<string, unknown>) => ({
+      type: a.type as string,
+      config: { ...((a.config as Record<string, unknown>) || {}) }
+    })),
     isActive: wf.isActive
   };
   showBuilder.value = true;

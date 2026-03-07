@@ -20,7 +20,7 @@ interface DiscountRule {
 }
 
 /** Result of a single line in the generated quote */
-interface QuoteLineResult {
+interface _QuoteLineResult {
   entryId: number;
   productName: string;
   sku: string | null;
@@ -46,7 +46,10 @@ class CpqService {
     const { rows, count } = await PriceBook.findAndCountAll({
       where,
       include: [{ model: PriceBookEntry, as: 'entries' }],
-      order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -79,17 +82,17 @@ class CpqService {
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.search) {
-      where[Op.or as any] = [
-        { productName: { [Op.iLike]: `%${query.search}%` } },
-        { sku: { [Op.iLike]: `%${query.search}%` } }
-      ];
+      where[Op.or as any] = [{ productName: { [Op.iLike]: `%${query.search}%` } }, { sku: { [Op.iLike]: `%${query.search}%` } }];
     }
     if (query.priceBookId) where.priceBookId = Number(query.priceBookId);
 
     const { rows, count } = await PriceBookEntry.findAndCountAll({
       where,
       include: [{ model: PriceBook, as: 'priceBook', attributes: ['id', 'name', 'currency'] }],
-      order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -128,7 +131,12 @@ class CpqService {
 
     const { rows, count } = await PricingRule.findAndCountAll({
       where,
-      order: [['priority', 'ASC'], ['createdAt', 'DESC']], limit, offset
+      order: [
+        ['priority', 'ASC'],
+        ['createdAt', 'DESC']
+      ],
+      limit,
+      offset
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -176,7 +184,9 @@ class CpqService {
       tenantId,
       createdBy: userId
     });
-    try { io.emit('cpq:quote_created', { id: quote.id, quoteNumber }); } catch {}
+    try {
+      io.emit('cpq:quote_created', { id: quote.id, quoteNumber });
+    } catch {}
     return quote;
   }
 
@@ -185,10 +195,7 @@ class CpqService {
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.search) {
-      where[Op.or as any] = [
-        { title: { [Op.iLike]: `%${query.search}%` } },
-        { quoteNumber: { [Op.iLike]: `%${query.search}%` } }
-      ];
+      where[Op.or as any] = [{ title: { [Op.iLike]: `%${query.search}%` } }, { quoteNumber: { [Op.iLike]: `%${query.search}%` } }];
     }
     if (query.status) where.status = query.status;
     if (query.clientId) where.clientId = Number(query.clientId);
@@ -199,7 +206,10 @@ class CpqService {
         { model: Client, as: 'client', attributes: ['id', 'companyName'], required: false },
         { model: User, as: 'creator', attributes: ['id', 'name'], required: false }
       ],
-      order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -218,7 +228,9 @@ class CpqService {
     const quote = await CpqQuote.findByPk(id);
     if (!quote) return null;
     await quote.update(data);
-    try { io.emit('cpq:quote_updated', { id: quote.id, status: quote.status }); } catch {}
+    try {
+      io.emit('cpq:quote_updated', { id: quote.id, status: quote.status });
+    } catch {}
     return quote;
   }
 
@@ -234,7 +246,9 @@ class CpqService {
     if (!quote) return null;
     if (quote.status !== 'DRAFT' && quote.status !== 'SENT') return null;
     await quote.update({ status: 'APPROVED' });
-    try { io.emit('cpq:quote_approved', { id: quote.id, quoteNumber: quote.quoteNumber }); } catch {}
+    try {
+      io.emit('cpq:quote_approved', { id: quote.id, quoteNumber: quote.quoteNumber });
+    } catch {}
     return quote;
   }
 
@@ -242,7 +256,9 @@ class CpqService {
     const quote = await CpqQuote.findByPk(id);
     if (!quote) return null;
     await quote.update({ status: 'REJECTED' });
-    try { io.emit('cpq:quote_rejected', { id: quote.id, quoteNumber: quote.quoteNumber }); } catch {}
+    try {
+      io.emit('cpq:quote_rejected', { id: quote.id, quoteNumber: quote.quoteNumber });
+    } catch {}
     return quote;
   }
 
@@ -250,7 +266,9 @@ class CpqService {
     const quote = await CpqQuote.findByPk(id);
     if (!quote) return null;
     await quote.update({ status: 'SENT' });
-    try { io.emit('cpq:quote_sent', { id: quote.id, quoteNumber: quote.quoteNumber }); } catch {}
+    try {
+      io.emit('cpq:quote_sent', { id: quote.id, quoteNumber: quote.quoteNumber });
+    } catch {}
     return quote;
   }
 
@@ -263,10 +281,7 @@ class CpqService {
     };
     if (tenantId) where.tenantId = tenantId;
 
-    const [affectedCount] = await CpqQuote.update(
-      { status: 'EXPIRED' },
-      { where }
-    );
+    const [affectedCount] = await CpqQuote.update({ status: 'EXPIRED' }, { where });
     return { expired: affectedCount };
   }
 
@@ -379,7 +394,11 @@ class CpqService {
 
   // ─── Discount Rules Engine ───────────────────────────────────────────────────
 
-  applyDiscountRules(subtotal: number, rules: DiscountRule[], context?: { totalQuantity?: number; distinctItems?: number }): { totalDiscount: number; appliedRules: { rule: DiscountRule; amount: number }[] } {
+  applyDiscountRules(
+    subtotal: number,
+    rules: DiscountRule[],
+    context?: { totalQuantity?: number; distinctItems?: number }
+  ): { totalDiscount: number; appliedRules: { rule: DiscountRule; amount: number }[] } {
     let totalDiscount = 0;
     const appliedRules: { rule: DiscountRule; amount: number }[] = [];
 
@@ -421,7 +440,7 @@ class CpqService {
 
   // ─── Auto-apply Pricing Rules from DB ────────────────────────────────────────
 
-  async getApplicablePricingRules(tenantId?: string, totalQty?: number, distinctItems?: number): Promise<DiscountRule[]> {
+  async getApplicablePricingRules(tenantId?: string, totalQty?: number, _distinctItems?: number): Promise<DiscountRule[]> {
     const where: Record<string, any> = { isActive: true };
     if (tenantId) where.tenantId = tenantId;
 
@@ -561,7 +580,7 @@ class CpqService {
       lineItems,
       subtotal,
       discount: discountAmount,
-      quantityDiscountSavings: parseFloat((lineItems.reduce((sum, l) => sum + (l.unitPrice * l.quantity - l.amount), 0)).toFixed(2)),
+      quantityDiscountSavings: parseFloat(lineItems.reduce((sum, l) => sum + (l.unitPrice * l.quantity - l.amount), 0).toFixed(2)),
       appliedRules,
       tax: taxAmount,
       taxRate,
@@ -572,7 +591,9 @@ class CpqService {
       priceBook: { id: book!.id, name: book!.name, currency: book!.currency }
     };
 
-    try { io.emit('cpq:quote_generated', { priceBookId, grandTotal, totalItems: lineItems.length }); } catch {}
+    try {
+      io.emit('cpq:quote_generated', { priceBookId, grandTotal, totalItems: lineItems.length });
+    } catch {}
     return result;
   }
 }

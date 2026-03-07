@@ -130,7 +130,7 @@ async function confirmDelete() {
   try {
     const response = await deleteServiceById(deleteId.value);
     if (response?.success) {
-      table.data = table.data.filter((r) => r.id !== deleteId.value);
+      table.data = table.data.filter(r => r.id !== deleteId.value);
     }
   } finally {
     deleting.value = false;
@@ -147,7 +147,7 @@ const mobileFilteredData = computed(() => {
   const data = table.data || [];
   if (!mobileSearch.value) return data;
   const q = mobileSearch.value.toLowerCase();
-  return data.filter((s) => {
+  return data.filter(s => {
     const type = (s.type || '').toLowerCase();
     return type.includes(q);
   });

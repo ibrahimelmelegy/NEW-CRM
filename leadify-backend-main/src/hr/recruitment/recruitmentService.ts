@@ -1,4 +1,4 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import { JobPosting, Applicant } from './recruitmentModel';
 import Department from '../models/departmentModel';
 import { clampPagination } from '../../utils/pagination';
@@ -24,7 +24,9 @@ class RecruitmentService {
       where,
       include: [{ model: Department, as: 'department', attributes: ['id', 'name'] }],
       order: [['createdAt', 'DESC']],
-      limit, offset, distinct: true
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -60,7 +62,9 @@ class RecruitmentService {
       where,
       include: [{ model: JobPosting, as: 'jobPosting', attributes: ['id', 'title'] }],
       order: [['createdAt', 'DESC']],
-      limit, offset, distinct: true
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -127,9 +131,13 @@ class RecruitmentService {
       experience: { ...(applicant.experience || {}), stageHistory }
     });
 
-    try { io.emit('recruitment:stage_changed', { id: applicantId, name: applicant.name, previousStage: currentStage, newStage }); } catch {}
+    try {
+      io.emit('recruitment:stage_changed', { id: applicantId, name: applicant.name, previousStage: currentStage, newStage });
+    } catch {}
     if (newStage === 'HIRED') {
-      try { io.emit('recruitment:hired', { id: applicantId, name: applicant.name, jobPostingId: applicant.jobPostingId }); } catch {}
+      try {
+        io.emit('recruitment:hired', { id: applicantId, name: applicant.name, jobPostingId: applicant.jobPostingId });
+      } catch {}
     }
 
     return applicant.reload();
@@ -156,12 +164,12 @@ class RecruitmentService {
   async getRecruitmentFunnel(jobPostingId: number) {
     const stages: Applicant['stage'][] = ['APPLIED', 'SCREENING', 'INTERVIEW', 'ASSESSMENT', 'OFFER', 'HIRED', 'REJECTED'];
 
-    const counts = await Applicant.findAll({
+    const counts = (await Applicant.findAll({
       where: { jobPostingId },
       attributes: ['stage', [fn('COUNT', col('id')), 'count']],
       group: ['stage'],
       raw: true
-    }) as unknown as Array<{ stage: string; count: string }>;
+    })) as unknown as Array<{ stage: string; count: string }>;
 
     const stageCountMap: Record<string, number> = {};
     for (const row of counts) {
@@ -225,10 +233,8 @@ class RecruitmentService {
       const stageHistory = exp?.stageHistory || [];
 
       // Find the HIRED transition timestamp
-      const hiredEntry = stageHistory.find((h) => h.to === 'HIRED');
-      const hiredDate = hiredEntry?.timestamp
-        ? new Date(hiredEntry.timestamp)
-        : null;
+      const hiredEntry = stageHistory.find((h: any) => h.to === 'HIRED');
+      const hiredDate = hiredEntry?.timestamp ? new Date(hiredEntry.timestamp) : null;
       const appliedDate = new Date(applicant.createdAt as any);
 
       if (hiredDate) {
@@ -312,12 +318,12 @@ class RecruitmentService {
     }
 
     // Source breakdown
-    const sourceCounts = await Applicant.findAll({
+    const sourceCounts = (await Applicant.findAll({
       where: { jobPostingId: postingId, source: { [Op.ne]: null } },
       attributes: ['source', [fn('COUNT', col('id')), 'count']],
       group: ['source'],
       raw: true
-    }) as unknown as Array<{ source: string; count: string }>;
+    })) as unknown as Array<{ source: string; count: string }>;
 
     return {
       postingId,

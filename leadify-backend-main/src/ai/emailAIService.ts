@@ -30,7 +30,7 @@ interface EmailReplyContext {
   senderName?: string;
 }
 
-interface EmailImproveRequest {
+interface _EmailImproveRequest {
   draft: string;
   instruction: string;
 }
@@ -66,6 +66,7 @@ class EmailAIService {
 
       if (integration?.config?.apiKey) {
         try {
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
           const { decrypt } = require('../utils/encryption');
           apiKey = decrypt(integration.config.apiKey);
         } catch {

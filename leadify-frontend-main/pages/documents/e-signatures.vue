@@ -4,12 +4,12 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-rose-400">{{ $t("eSignatures.title") }}</h1>
-          <p class="text-slate-400 text-sm mt-1">{{ $t("eSignatures.subtitle") }}</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-rose-400">{{ $t('eSignatures.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('eSignatures.subtitle') }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showSendDialog = true">
           <Icon name="ph:paper-plane-tilt-bold" class="w-4 h-4 mr-2" />
-          {{ $t("eSignatures.sendForSignature") }}
+          {{ $t('eSignatures.sendForSignature') }}
         </el-button>
       </div>
     </div>
@@ -18,23 +18,23 @@
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ documents.length }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("eSignatures.totalDocuments") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('eSignatures.totalDocuments') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ documents.filter(d => d.status === 'SIGNED').length }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("eSignatures.signed") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('eSignatures.signed') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-amber-400">{{ documents.filter(d => d.status === 'PENDING').length }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("eSignatures.pending") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('eSignatures.pending') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-red-400">{{ documents.filter(d => d.status === 'EXPIRED').length }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("eSignatures.expired") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('eSignatures.expired') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-indigo-400">{{ avgSignTime }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("eSignatures.avgSignTime") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('eSignatures.avgSignTime') }}</div>
       </div>
     </div>
 
@@ -128,8 +128,8 @@
           <el-upload drag action="" :auto-upload="false" :limit="1" accept=".pdf,.doc,.docx" class="w-full">
             <div class="py-4">
               <Icon name="ph:cloud-arrow-up-bold" class="w-8 h-8 text-slate-500 mx-auto mb-2" />
-              <p class="text-sm text-slate-400">{{ $t("eSignatures.dropDocument") }}</p>
-              <p class="text-xs text-slate-600 mt-1">{{ $t("eSignatures.fileTypes") }}</p>
+              <p class="text-sm text-slate-400">{{ $t('eSignatures.dropDocument') }}</p>
+              <p class="text-xs text-slate-600 mt-1">{{ $t('eSignatures.fileTypes') }}</p>
             </div>
           </el-upload>
         </el-form-item>
@@ -147,7 +147,7 @@
             </div>
             <el-button text type="primary" @click="newSignRequest.recipients.push({ name: '', email: '' })">
               <Icon name="ph:plus-bold" class="w-4 h-4 mr-1" />
-              {{ $t("eSignatures.addRecipient") }}
+              {{ $t('eSignatures.addRecipient') }}
             </el-button>
           </div>
         </el-form-item>
@@ -159,10 +159,10 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showSendDialog = false">{{ $t("common.cancel") }}</el-button>
+        <el-button @click="showSendDialog = false">{{ $t('common.cancel') }}</el-button>
         <el-button type="primary" :loading="sending" @click="sendForSignature">
           <Icon name="ph:paper-plane-tilt-bold" class="w-4 h-4 mr-2" />
-          {{ $t("common.submit") }}
+          {{ $t('common.submit') }}
         </el-button>
       </template>
     </el-dialog>
@@ -228,7 +228,7 @@ function deriveType(title: string): string {
  */
 function mapRecord(record: unknown): DisplayDocument {
   const recipients = record.recipients || [];
-  const signedCount = recipients.filter((r) => r.status === 'SIGNED').length;
+  const signedCount = recipients.filter(r => r.status === 'SIGNED').length;
   const totalSigners = recipients.length;
   return {
     id: record.id,
@@ -276,10 +276,10 @@ const avgSignTime = computed(() => {
   let count = 0;
   for (const d of signed) {
     const sentTime = new Date(d._raw.sentAt || d._raw.createdAt).getTime();
-    const signedRecipients = (d._raw.recipients || []).filter((r) => r.signedAt);
+    const signedRecipients = (d._raw.recipients || []).filter(r => r.signedAt);
     if (signedRecipients.length > 0) {
       // Use the last signer's time
-      const lastSignedAt = Math.max(...signedRecipients.map((r) => new Date(r.signedAt).getTime()));
+      const lastSignedAt = Math.max(...signedRecipients.map(r => new Date(r.signedAt).getTime()));
       totalMs += lastSignedAt - sentTime;
       count++;
     }

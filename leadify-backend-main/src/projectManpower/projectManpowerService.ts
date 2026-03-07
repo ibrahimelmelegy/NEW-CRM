@@ -1,4 +1,4 @@
-import { Includeable, Op, WhereOptions, fn, col, literal } from 'sequelize';
+import { Includeable, Op, WhereOptions, fn, col } from 'sequelize';
 import ProjectManpower from './projectManpowerModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
@@ -39,7 +39,9 @@ class ProjectManpowerService {
       otherCostsReason
     });
     await projectService.recalculateProject(project);
-    project.isCompleted && (await createActivityLog('project', 'update', project.id, user.id, null, 'Prject manpower got updated Successfully'));
+    if (project.isCompleted) {
+      await createActivityLog('project', 'update', project.id, user.id, null, 'Prject manpower got updated Successfully');
+    }
 
     return this.projectManpowerById(projectManpower.id);
   }
@@ -64,7 +66,9 @@ class ProjectManpowerService {
 
     await projectManpower.update(data);
     await projectService.recalculateProject(project);
-    project.isCompleted && (await createActivityLog('project', 'update', project.id, user.id, null, 'Prject manpower got updated Successfully'));
+    if (project.isCompleted) {
+      await createActivityLog('project', 'update', project.id, user.id, null, 'Prject manpower got updated Successfully');
+    }
     return this.projectManpowerById(projectManpower.id);
   }
 
@@ -126,7 +130,9 @@ class ProjectManpowerService {
     await projectService.validateProjectAccess(id, user);
     await projectManpower.destroy();
     await projectService.recalculateProject(project);
-    project.isCompleted && (await createActivityLog('project', 'update', project.id, user.id, null, 'Prject manpower got updated Successfully'));
+    if (project.isCompleted) {
+      await createActivityLog('project', 'update', project.id, user.id, null, 'Prject manpower got updated Successfully');
+    }
   }
 
   /**
@@ -157,7 +163,7 @@ class ProjectManpowerService {
       raw: false
     });
 
-    const report = allocations.map((alloc) => {
+    const report = allocations.map(alloc => {
       const totalEstimatedDays = Number(alloc.getDataValue('totalEstimatedDays')) || 0;
       const totalActualDays = Number(alloc.getDataValue('totalActualDays')) || 0;
       const projectCount = Number(alloc.getDataValue('projectCount')) || 0;
@@ -183,10 +189,8 @@ class ProjectManpowerService {
 
     // Summary
     const totalResources = report.length;
-    const overAllocatedCount = report.filter((r) => r.overAllocated).length;
-    const avgUtilization = totalResources > 0
-      ? Math.round(report.reduce((s: number, r: any) => s + r.utilization, 0) / totalResources)
-      : 0;
+    const overAllocatedCount = report.filter(r => r.overAllocated).length;
+    const avgUtilization = totalResources > 0 ? Math.round(report.reduce((s: number, r: any) => s + r.utilization, 0) / totalResources) : 0;
     const totalAllocatedDays = report.reduce((s: number, r: any) => s + r.totalEstimatedDays, 0);
 
     return {

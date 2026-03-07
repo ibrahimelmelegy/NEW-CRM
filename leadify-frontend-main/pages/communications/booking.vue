@@ -314,9 +314,9 @@ const stats = computed(() => {
   const today = new Date().toISOString().split('T')[0]!;
   return {
     total: data.length,
-    today: data.filter((b) => b.date === today).length,
-    upcoming: data.filter((b) => b.date > today && b.status !== 'CANCELLED').length,
-    completed: data.filter((b) => b.status === 'COMPLETED').length
+    today: data.filter(b => b.date === today).length,
+    upcoming: data.filter(b => b.date > today && b.status !== 'CANCELLED').length,
+    completed: data.filter(b => b.status === 'COMPLETED').length
   };
 });
 
@@ -336,11 +336,11 @@ function getStatusType(status: string): string {
 const filteredBookings = computed(() => {
   let data = bookings.value;
   if (statusFilter.value) {
-    data = data.filter((b) => b.status === statusFilter.value);
+    data = data.filter(b => b.status === statusFilter.value);
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    data = data.filter((b) => {
+    data = data.filter(b => {
       const name = (b.clientName || '').toLowerCase();
       const email = (b.clientEmail || '').toLowerCase();
       const staff = (b.staffName || '').toLowerCase();

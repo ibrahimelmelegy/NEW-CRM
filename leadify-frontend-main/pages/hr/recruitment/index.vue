@@ -498,7 +498,7 @@ const filteredApplicants = computed(() => {
     data = data.filter(a => a.stage === applicantStageFilter.value);
   }
   if (applicantJobFilter.value) {
-    data = data.filter(a => a.jobPostingId == applicantJobFilter.value);
+    data = data.filter(a => String(a.jobPostingId) === String(applicantJobFilter.value));
   }
   if (applicantSearch.value) {
     const q = applicantSearch.value.toLowerCase();
@@ -571,7 +571,7 @@ async function fetchPostings() {
     const res = await useApiFetch(`hr/recruitment/postings?${params}`);
     if (res?.success && res.body) {
       const data = res.body as unknown;
-      postings.value = (data.docs || data.rows || data || []).map((p) => ({
+      postings.value = (data.docs || data.rows || data || []).map(p => ({
         ...p,
         applicantCount: p.applicants?.length ?? p.applicantCount ?? 0
       }));
@@ -806,7 +806,7 @@ function exportPostingsCSV() {
   const headers = ['Title', 'Department', 'Location', 'Type', 'Open Positions', 'Status', 'Posted Date'];
   const csv = [
     headers.join(','),
-    ...data.map((row) =>
+    ...data.map(row =>
       [
         `"${row.title || ''}"`,
         `"${row.department?.name || row.department || ''}"`,
@@ -849,7 +849,7 @@ function exportApplicantsCSV() {
   const headers = ['Name', 'Email', 'Job Posting', 'Stage', 'Source', 'Rating', 'Applied Date'];
   const csv = [
     headers.join(','),
-    ...data.map((row) =>
+    ...data.map(row =>
       [
         `"${row.name || ''}"`,
         `"${row.email || ''}"`,

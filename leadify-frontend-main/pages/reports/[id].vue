@@ -85,7 +85,6 @@ import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from
 import VChart from 'vue-echarts';
 import { fetchSavedReports, executeReport, exportReportBuilderCSV, type SavedReport, type ReportBuilderConfig } from '~/composables/useReportBuilder';
 
-
 definePageMeta({ middleware: 'permissions' });
 
 const route = useRoute();
@@ -128,8 +127,8 @@ const paginatedResults = computed(() => {
 const chartOption = computed(() => {
   if (!report.value?.config?.groupBy || !results.value.length) return {};
   const config = report.value.config;
-  const labels = results.value.map((r) => r[config.groupBy!] || 'N/A');
-  const values = results.value.map((r) => Number(r.count) || 0);
+  const labels = results.value.map(r => r[config.groupBy!] || 'N/A');
+  const values = results.value.map(r => Number(r.count) || 0);
 
   if (config.chartType === 'pie') {
     return {

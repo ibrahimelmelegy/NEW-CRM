@@ -18,19 +18,19 @@ export function checkRouteDispatch(to: RouteLocation, from: RouteLocation) {
   const toRoue = to.fullPath.split('/');
   const fromRoute = from.fullPath.split('/');
 
-  return toRoue[toRoue.length - 2] == fromRoute[fromRoute.length - 1];
+  return toRoue[toRoue.length - 2] === fromRoute[fromRoute.length - 1];
 }
 export function checkSecParent(to: RouteLocation, from: RouteLocation) {
   const toRoue = to.fullPath.split('/');
   const fromRoute = from.fullPath.includes('?') ? from.fullPath.split('?')[0]!.split('/') : from.fullPath.split('/');
 
-  return toRoue[2] == fromRoute[2];
+  return toRoue[2] === fromRoute[2];
 }
 export function checkparent(to: RouteLocation, from: RouteLocation) {
   const toRoue = to.fullPath.split('/');
   const fromRoute = from.fullPath.split('/');
 
-  return toRoue[1] == fromRoute[1];
+  return toRoue[1] === fromRoute[1];
 }
 export function isObjectValid(obj: unknown): boolean {
   // Check if the input is an object and not null
@@ -51,7 +51,7 @@ export function isObjectValid(obj: unknown): boolean {
 
 export const filterLength = (obj: Record<string, unknown>): number => {
   if (!Object.entries(obj).length) return 0;
-  return Object.entries(obj)?.reduce((total, [key, value]) => {
+  return Object.entries(obj)?.reduce((total, [_key, value]) => {
     if (Array.isArray(value) || typeof value === 'string') {
       // Add the length of arrays or strings
       return total + value.length;
@@ -62,7 +62,7 @@ export const filterLength = (obj: Record<string, unknown>): number => {
 
 export const cleanObject = (obj: Record<string, unknown>): Record<string, unknown> => {
   return Object.fromEntries(
-    Object.entries(obj).filter(([_, value]) => {
+    Object.entries(obj).filter(([_key, value]) => {
       // Remove falsy values, empty arrays, and empty objects
       if (value === null || value === undefined || value === '' || (typeof value === 'number' && Number.isNaN(value))) return false; // Falsy values
       if (Array.isArray(value) && value.length === 0) return false; // Empty array

@@ -603,11 +603,11 @@ const tierTotal = computed(() => tierData.value.reduce((sum, t) => sum + t.count
 const filteredPrograms = computed(() => {
   let data = programs.value;
   if (programStatusFilter.value) {
-    data = data.filter((p) => p.status === programStatusFilter.value);
+    data = data.filter(p => p.status === programStatusFilter.value);
   }
   if (programSearch.value) {
     const q = programSearch.value.toLowerCase();
-    data = data.filter((p) => (p.name || '').toLowerCase().includes(q));
+    data = data.filter(p => (p.name || '').toLowerCase().includes(q));
   }
   return data;
 });
@@ -623,17 +623,17 @@ const filteredPoints = computed(() => {
 const filteredMembers = computed(() => {
   let data = members.value;
   if (memberTierFilter.value) {
-    data = data.filter((m) => m.tier === memberTierFilter.value);
+    data = data.filter(m => m.tier === memberTierFilter.value);
   }
   if (memberSearch.value) {
     const q = memberSearch.value.toLowerCase();
-    data = data.filter((m) => (m.clientName || m.clientId || '').toLowerCase().includes(q));
+    data = data.filter(m => (m.clientName || m.clientId || '').toLowerCase().includes(q));
   }
   return data;
 });
 
 const redemptions = computed(() => {
-  return points.value.filter((p) => p.transactionType === 'REDEEM');
+  return points.value.filter(p => p.transactionType === 'REDEEM');
 });
 
 // ─── Helpers ─────────────────────────────────────────────
@@ -785,7 +785,7 @@ function openProgramDialog(program?: unknown) {
       status: program.status || 'ACTIVE',
       pointsPerCurrency: program.pointsPerCurrency || 1,
       tiers: program.tiers?.length
-        ? program.tiers.map((t) => ({ name: t.name, minPoints: t.minPoints || 0, benefits: t.benefits || [] }))
+        ? program.tiers.map(t => ({ name: t.name, minPoints: t.minPoints || 0, benefits: t.benefits || [] }))
         : defaultProgramForm().tiers
     } as unknown;
   } else {
@@ -901,7 +901,7 @@ async function handleAdjustPoints() {
 async function openMemberDetail(member: unknown) {
   memberDetail.value = { ...member };
   memberHistory.value = points.value
-    .filter((p) => p.clientId === member.clientId)
+    .filter(p => p.clientId === member.clientId)
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   // Try to get tier info from API
@@ -978,7 +978,7 @@ function exportMembersCSV() {
   const headers = ['Client Name', 'Client ID', 'Tier', 'Points Balance', 'Lifetime Points', 'Join Date'];
   const csv = [
     headers.join(','),
-    ...data.map((row) =>
+    ...data.map(row =>
       [
         `"${row.clientName || row.clientId || ''}"`,
         `"${row.clientId || ''}"`,

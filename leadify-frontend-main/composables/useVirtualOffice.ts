@@ -82,7 +82,7 @@ export function useVirtualOffice() {
     // Load rooms from API (seeds defaults on first call)
     const { body, success } = await useApiFetch('virtual-office/rooms');
     if (success && Array.isArray(body)) {
-      rooms.value = body.map((r) => ({ ...r, occupants: [] }));
+      rooms.value = body.map(r => ({ ...r, occupants: [] }));
     }
 
     // Announce presence and sync current state via socket

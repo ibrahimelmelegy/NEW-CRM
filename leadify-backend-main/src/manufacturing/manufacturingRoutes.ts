@@ -21,7 +21,11 @@ router.get('/work-orders', HasPermission([ManufacturingPermissionsEnum.VIEW_MANU
 router.get('/work-orders/:id', HasPermission([ManufacturingPermissionsEnum.VIEW_MANUFACTURING]), manufacturingController.getWorkOrderById);
 router.post('/work-orders', HasPermission([ManufacturingPermissionsEnum.CREATE_MANUFACTURING]), manufacturingController.createWorkOrder);
 router.patch('/work-orders/:id', HasPermission([ManufacturingPermissionsEnum.EDIT_MANUFACTURING]), manufacturingController.updateWorkOrder);
-router.patch('/work-orders/:id/production', HasPermission([ManufacturingPermissionsEnum.EDIT_MANUFACTURING]), manufacturingController.updateProduction);
+router.patch(
+  '/work-orders/:id/production',
+  HasPermission([ManufacturingPermissionsEnum.EDIT_MANUFACTURING]),
+  manufacturingController.updateProduction
+);
 router.post('/work-orders/:id/track', HasPermission([ManufacturingPermissionsEnum.EDIT_MANUFACTURING]), manufacturingController.trackProduction);
 router.delete('/work-orders/:id', HasPermission([ManufacturingPermissionsEnum.DELETE_MANUFACTURING]), manufacturingController.deleteWorkOrder);
 

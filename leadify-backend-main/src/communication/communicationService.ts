@@ -343,10 +343,7 @@ class CommunicationService {
   }
 
   // ─── Get All Call Logs ───────────────────────────────────────────────────
-  public async getCallLogs(
-    tenantId: string | null,
-    pagination: { page?: number; limit?: number; search?: string }
-  ): Promise<IPaginationRes<any>> {
+  public async getCallLogs(tenantId: string | null, pagination: { page?: number; limit?: number; search?: string }): Promise<IPaginationRes<any>> {
     const page = Number(pagination.page) || 1;
     const limit = Math.min(100, Math.max(1, Number(pagination.limit) || 20));
     const offset = (page - 1) * limit;
@@ -354,17 +351,12 @@ class CommunicationService {
     const where: any = { type: ActivityType.CALL };
     if (tenantId) where.tenantId = tenantId;
     if (pagination.search) {
-      where[Op.or] = [
-        { subject: { [Op.iLike]: `%${pagination.search}%` } },
-        { contactId: { [Op.iLike]: `%${pagination.search}%` } }
-      ];
+      where[Op.or] = [{ subject: { [Op.iLike]: `%${pagination.search}%` } }, { contactId: { [Op.iLike]: `%${pagination.search}%` } }];
     }
 
     const { rows, count } = await CommActivity.findAndCountAll({
       where,
-      include: [
-        { model: User, as: 'user', attributes: ['id', 'name', 'email', 'profilePicture'] }
-      ],
+      include: [{ model: User, as: 'user', attributes: ['id', 'name', 'email', 'profilePicture'] }],
       order: [['createdAt', 'DESC']],
       limit,
       offset
@@ -409,17 +401,12 @@ class CommunicationService {
     const where: any = { type: ActivityType.MEETING };
     if (tenantId) where.tenantId = tenantId;
     if (pagination.search) {
-      where[Op.or] = [
-        { subject: { [Op.iLike]: `%${pagination.search}%` } },
-        { body: { [Op.iLike]: `%${pagination.search}%` } }
-      ];
+      where[Op.or] = [{ subject: { [Op.iLike]: `%${pagination.search}%` } }, { body: { [Op.iLike]: `%${pagination.search}%` } }];
     }
 
     const { rows, count } = await CommActivity.findAndCountAll({
       where,
-      include: [
-        { model: User, as: 'user', attributes: ['id', 'name', 'email', 'profilePicture'] }
-      ],
+      include: [{ model: User, as: 'user', attributes: ['id', 'name', 'email', 'profilePicture'] }],
       order: [['createdAt', 'DESC']],
       limit,
       offset
@@ -578,10 +565,7 @@ class CommunicationService {
   }
 
   // ─── Get Call Analytics ───────────────────────────────────────────────────
-  public async getCallAnalytics(
-    tenantId: string | null,
-    dateRange?: { start?: string; end?: string }
-  ): Promise<any> {
+  public async getCallAnalytics(tenantId: string | null, dateRange?: { start?: string; end?: string }): Promise<any> {
     const where: Record<string, any> = { type: ActivityType.CALL };
     if (tenantId) where.tenantId = tenantId;
     if (dateRange?.start && dateRange?.end) {
@@ -602,7 +586,7 @@ class CommunicationService {
       attributes: ['activityId', 'outcome', 'disposition', 'duration']
     });
 
-    const callLogsMap = callLogs.reduce((map: Record<number, any>, log) => {
+    const _callLogsMap = callLogs.reduce((map: Record<number, any>, log) => {
       map[log.activityId] = log.toJSON();
       return map;
     }, {});
@@ -690,10 +674,7 @@ class CommunicationService {
     limit: number = 10
   ): Promise<Array<{ id: number; name: string; email: string; type: string }>> {
     const where: Record<string, any> = {
-      [Op.or]: [
-        { name: { [Op.iLike]: `%${search}%` } },
-        { email: { [Op.iLike]: `%${search}%` } }
-      ]
+      [Op.or]: [{ name: { [Op.iLike]: `%${search}%` } }, { email: { [Op.iLike]: `%${search}%` } }]
     };
     if (tenantId) where.tenantId = tenantId;
 

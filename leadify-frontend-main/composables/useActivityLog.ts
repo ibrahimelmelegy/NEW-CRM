@@ -43,7 +43,7 @@ export function useActivityLog() {
       if (success && body) {
         const data = body as unknown;
         const docs = data.docs || data || [];
-        activities.value = docs.map((a) => ({
+        activities.value = docs.map(a => ({
           id: a.id,
           action: actionMap[a.action] || 'updated',
           entityType: (a.entityType || '').toLowerCase(),
@@ -66,7 +66,7 @@ export function useActivityLog() {
     if (success && body) {
       const data = body as unknown;
       const docs = data.docs || data || [];
-      return docs.map((a) => ({
+      return docs.map(a => ({
         id: a.id,
         action: actionMap[a.action] || 'updated',
         entityType: (a.entityType || '').toLowerCase(),

@@ -471,14 +471,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessageBox } from 'element-plus';
-import {
-  useWorkflows,
-  ENTITY_TYPES,
-  TRIGGER_TYPES,
-  CONDITION_OPERATORS,
-  ACTION_TYPES,
-  type WorkflowRule
-} from '~/composables/useWorkflows';
+import { useWorkflows, ENTITY_TYPES, TRIGGER_TYPES, CONDITION_OPERATORS, ACTION_TYPES, type WorkflowRule } from '~/composables/useWorkflows';
 
 definePageMeta({
   layout: 'default',
@@ -659,11 +652,7 @@ async function handleCommand(command: string, wf: WorkflowRule) {
       break;
     case 'delete':
       try {
-        await ElMessageBox.confirm(
-          t('workflows.confirmDelete'),
-          t('common.warning'),
-          { type: 'warning' }
-        );
+        await ElMessageBox.confirm(t('workflows.confirmDelete'), t('common.warning'), { type: 'warning' });
         await apiDeleteWorkflow(wf.id);
         loadWorkflows();
       } catch {

@@ -1,4 +1,4 @@
-import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from 'sequelize-typescript';
+import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 import { AdditionalMaterial } from '../additionalMaterial/model/additional-material.model';
 import Service from '../service/serviceModel';
 import Project from '../project/models/projectModel';

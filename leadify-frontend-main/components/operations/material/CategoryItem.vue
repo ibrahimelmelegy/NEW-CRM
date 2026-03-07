@@ -190,7 +190,7 @@ async function onSubmitCategoryItems(): Promise<void> {
   if (route.path.includes('edit')) {
     const cleanedCategories = categoryItems.value.map(({ id, ...data }: CategoryItem) => ({
       ...data,
-      ...(props.items?.find((item) => item.id === id) ? { id } : {})
+      ...(props.items?.find(item => item.id === id) ? { id } : {})
     }));
     emit('onSubmit', cleanedCategories);
   } else {

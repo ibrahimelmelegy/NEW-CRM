@@ -261,7 +261,7 @@ async function fetchWorkflowOptions() {
   try {
     const { body, success } = await useApiFetch('workflows/rules?limit=100' as unknown);
     if (success && body?.docs) {
-      workflowOptions.value = body.docs.map((w) => ({ id: w.id, name: w.name }));
+      workflowOptions.value = body.docs.map(w => ({ id: w.id, name: w.name }));
     }
   } catch (err) {
     console.error('Failed to fetch workflow options:', err);

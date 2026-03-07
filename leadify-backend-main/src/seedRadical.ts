@@ -60,7 +60,7 @@ const seedRadical = async () => {
       stage: DealStageEnums.PROGRESS,
       signatureDate: new Date()
     }));
-    const createdDeals = await Deal.bulkCreate(dealsData);
+    const _createdDeals = await Deal.bulkCreate(dealsData);
     // Deals created
 
     // 4. Seed Projects (5)

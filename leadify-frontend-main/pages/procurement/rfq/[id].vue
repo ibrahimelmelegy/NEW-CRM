@@ -107,7 +107,7 @@ const getVendorStatus = (status: string) => {
 
 const getItemPrice = (vendor: unknown, itemId: string) => {
   // Navigate through RFQVendorItems to find price
-  const item = vendor.items?.find((i) => i.rfqItemId === itemId);
+  const item = vendor.items?.find(i => i.rfqItemId === itemId);
   return item ? item.price : null;
 };
 
@@ -118,9 +118,9 @@ const formatCurrency = (val: number) => {
 // Logic to highlight lowest price
 const isLowestPrice = (vendor: unknown) => {
   if (!rfq.value?.vendors) return false;
-  const respondedVendors = rfq.value.vendors.filter((v) => v.totalOfferAmount > 0);
+  const respondedVendors = rfq.value.vendors.filter(v => v.totalOfferAmount > 0);
   if (respondedVendors.length === 0) return false;
-  const min = Math.min(...respondedVendors.map((v) => parseFloat(v.totalOfferAmount)));
+  const min = Math.min(...respondedVendors.map(v => parseFloat(v.totalOfferAmount)));
   return parseFloat(vendor.totalOfferAmount) === min;
 };
 

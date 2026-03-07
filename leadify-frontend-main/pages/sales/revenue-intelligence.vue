@@ -705,7 +705,7 @@ function renderTrendChart() {
       ...tooltipStyle,
       formatter: (params: unknown) => {
         let html = `<strong>${params[0]?.axisValue}</strong><br/>`;
-        params.forEach((p) => {
+        params.forEach(p => {
           html += `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.color};margin-right:6px;"></span>${p.seriesName}: ${formatCurrency(p.value)}<br/>`;
         });
         return html;

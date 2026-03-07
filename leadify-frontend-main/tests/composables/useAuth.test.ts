@@ -11,6 +11,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref } from 'vue';
 import { createPinia, setActivePinia } from 'pinia';
 
+import { useUser, user, type CurrentUser } from '@/composables/useUser';
+import { useAuthStore } from '@/stores/auth';
+
 // ============================================
 // Global mocks required by the composables
 // ============================================
@@ -29,9 +32,6 @@ vi.mock('element-plus', () => ({
 (globalThis as any).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
 (globalThis as any).navigateTo = mockNavigateTo;
 (globalThis as any).useState = (key: string, init: () => any) => ref(init());
-
-import { useUser, user, type CurrentUser } from '@/composables/useUser';
-import { useAuthStore } from '@/stores/auth';
 
 describe('Auth: useUser composable', () => {
   beforeEach(() => {
@@ -132,7 +132,9 @@ describe('Auth: useUser composable', () => {
     it('should correctly populate user when response has valid id', async () => {
       mockUseApiFetch.mockResolvedValueOnce({
         body: { id: 5, name: 'Valid', email: 'valid@test.com' },
-        success: true, message: 'OK', code: 200
+        success: true,
+        message: 'OK',
+        code: 200
       });
 
       const result = await useUser();
@@ -174,7 +176,10 @@ describe('Auth: useAuthStore (Pinia)', () => {
   describe('changePassword', () => {
     it('should change password successfully', async () => {
       mockUseApiFetch.mockResolvedValueOnce({
-        success: true, body: null, message: 'Password changed', code: 200
+        success: true,
+        body: null,
+        message: 'Password changed',
+        code: 200
       });
 
       const store = useAuthStore();
@@ -209,7 +214,10 @@ describe('Auth: useAuthStore (Pinia)', () => {
 
     it('should show error notification when change fails', async () => {
       mockUseApiFetch.mockResolvedValueOnce({
-        success: false, body: null, message: 'Wrong old password', code: 400
+        success: false,
+        body: null,
+        message: 'Wrong old password',
+        code: 400
       });
 
       const store = useAuthStore();
@@ -221,14 +229,14 @@ describe('Auth: useAuthStore (Pinia)', () => {
 
       expect(result.success).toBe(false);
       expect(result.message).toBe('Wrong old password');
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
 
     it('should set loadingChangePassword during the request', async () => {
       let resolvePromise: (v: any) => void;
-      const pendingPromise = new Promise(resolve => { resolvePromise = resolve; });
+      const pendingPromise = new Promise(resolve => {
+        resolvePromise = resolve;
+      });
       mockUseApiFetch.mockReturnValueOnce(pendingPromise);
 
       const store = useAuthStore();
@@ -270,26 +278,25 @@ describe('Auth: useAuthStore (Pinia)', () => {
         confirmPassword: 'new'
       });
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error', message: 'Connection lost' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Connection lost' }));
     });
 
     it('should use fallback message when response message is empty', async () => {
       mockUseApiFetch.mockResolvedValueOnce({
-        success: false, body: null, message: '', code: 500
+        success: false,
+        body: null,
+        message: '',
+        code: 500
       });
 
       const store = useAuthStore();
-      const result = await store.changePassword({
+      const _result = await store.changePassword({
         oldPassword: 'old',
         password: 'new',
         confirmPassword: 'new'
       });
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error', message: 'Failed to change password' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Failed to change password' }));
     });
   });
 
@@ -403,11 +410,7 @@ describe('Auth: usePermissions composable', () => {
     });
 
     it('should support granular permission names', () => {
-      const permissions = [
-        'leads.view', 'leads.create', 'leads.edit', 'leads.delete',
-        'deals.view', 'deals.create',
-        'invoices.view'
-      ];
+      const permissions = ['leads.view', 'leads.create', 'leads.edit', 'leads.delete', 'deals.view', 'deals.create', 'invoices.view'];
       const hasPermission = (perm: string) => permissions.includes(perm);
 
       expect(hasPermission('leads.view')).toBe(true);

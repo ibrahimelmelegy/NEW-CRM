@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import proposalController from './proposalController';
 import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import { validateBody, validateQuery } from '../middleware/validation';

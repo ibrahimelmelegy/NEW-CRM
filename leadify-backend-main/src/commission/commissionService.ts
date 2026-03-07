@@ -2,14 +2,13 @@ import { Op, fn, col, literal } from 'sequelize';
 import Commission from './commissionModel';
 import User from '../user/userModel';
 import Deal from '../deal/model/dealModel';
-import { sequelize } from '../config/db';
 import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 
 /** Tier definition for tiered commission calculations */
 interface CommissionTier {
-  upTo: number;   // upper bound of the tier (use Infinity for the last tier)
-  rate: number;   // rate as a decimal, e.g. 0.05 for 5%
+  upTo: number; // upper bound of the tier (use Infinity for the last tier)
+  rate: number; // rate as a decimal, e.g. 0.05 for 5%
 }
 
 /** Commission Plan types */
@@ -31,7 +30,9 @@ class CommissionService {
 
   async create(data: any, tenantId?: string) {
     const commission = await Commission.create({ ...data, tenantId });
-    try { io.emit('commission:created', { id: commission.id, staffId: commission.staffId, amount: commission.amount, status: commission.status }); } catch {}
+    try {
+      io.emit('commission:created', { id: commission.id, staffId: commission.staffId, amount: commission.amount, status: commission.status });
+    } catch {}
     return commission;
   }
 
@@ -49,7 +50,10 @@ class CommissionService {
         { model: User, as: 'staff', attributes: ['id', 'name', 'email'] },
         { model: Deal, as: 'deal', attributes: ['id', 'name', 'price'] }
       ],
-      order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -98,7 +102,9 @@ class CommissionService {
       notes: `Auto-calculated ${rate}% commission on deal "${deal.name}"`
     });
 
-    try { io.emit('commission:created', { id: commission.id, staffId: userId, dealId, amount, status: 'PENDING' }); } catch {}
+    try {
+      io.emit('commission:created', { id: commission.id, staffId: userId, dealId, amount, status: 'PENDING' });
+    } catch {}
     return commission;
   }
 
@@ -111,7 +117,10 @@ class CommissionService {
    *   last  20K  -> 20000 * 0.07 = 1400
    *   total = 3700
    */
-  calculateTieredCommission(dealValue: number, tiers: CommissionTier[]): { total: number; breakdown: { from: number; to: number; rate: number; amount: number }[] } {
+  calculateTieredCommission(
+    dealValue: number,
+    tiers: CommissionTier[]
+  ): { total: number; breakdown: { from: number; to: number; rate: number; amount: number }[] } {
     if (dealValue <= 0) return { total: 0, breakdown: [] };
 
     // Sort tiers by upper bound ascending
@@ -183,7 +192,9 @@ class CommissionService {
     if (commission.status === 'PAID') return commission; // already paid
 
     await commission.update({ status: 'PAID', paidAt: new Date() });
-    try { io.emit('commission:paid', { id: commission.id, staffId: commission.staffId, amount: commission.amount }); } catch {}
+    try {
+      io.emit('commission:paid', { id: commission.id, staffId: commission.staffId, amount: commission.amount });
+    } catch {}
     return commission;
   }
 
@@ -266,7 +277,9 @@ class CommissionService {
       notes
     });
 
-    try { io.emit('commission:created', { id: commission.id, staffId: userId, dealId, amount, status: 'PENDING' }); } catch {}
+    try {
+      io.emit('commission:created', { id: commission.id, staffId: userId, dealId, amount, status: 'PENDING' });
+    } catch {}
     return commission;
   }
 
@@ -297,7 +310,9 @@ class CommissionService {
       { status: 'PAID', paidAt: now },
       { where: { id: { [Op.in]: ids }, status: { [Op.ne]: 'PAID' } } }
     );
-    try { io.emit('commission:bulkPaid', { count: affectedCount }); } catch {}
+    try {
+      io.emit('commission:bulkPaid', { count: affectedCount });
+    } catch {}
     return { paidCount: affectedCount };
   }
 
@@ -307,12 +322,15 @@ class CommissionService {
    * Commission analytics: aggregated stats across the tenant.
    * Filterable by period, staffId, dealType.
    */
-  async getAnalytics(tenantId?: string, query?: {
-    startDate?: string;
-    endDate?: string;
-    staffId?: number;
-    period?: 'monthly' | 'quarterly';
-  }) {
+  async getAnalytics(
+    tenantId?: string,
+    query?: {
+      startDate?: string;
+      endDate?: string;
+      staffId?: number;
+      period?: 'monthly' | 'quarterly';
+    }
+  ) {
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query?.staffId) where.staffId = query.staffId;
@@ -372,11 +390,7 @@ class CommissionService {
 
     // By status breakdown
     const byStatus = await Commission.findAll({
-      attributes: [
-        'status',
-        [fn('COUNT', col('id')), 'count'],
-        [fn('SUM', col('amount')), 'total']
-      ],
+      attributes: ['status', [fn('COUNT', col('id')), 'count'], [fn('SUM', col('amount')), 'total']],
       where,
       group: ['status'],
       raw: true

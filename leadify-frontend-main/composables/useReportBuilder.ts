@@ -58,6 +58,6 @@ export async function executeReport(config: ReportBuilderConfig) {
 }
 
 export async function exportReportBuilderCSV(config: ReportBuilderConfig) {
-  const { body, success } = await useApiFetch('report-builder/export-csv', 'POST', config as unknown);
+  const { body } = await useApiFetch('report-builder/export-csv', 'POST', config as unknown);
   return body;
 }

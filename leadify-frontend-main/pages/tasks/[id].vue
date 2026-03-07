@@ -169,7 +169,7 @@ try {
     editForm.assigneeId = task.value.assigneeId || null;
   }
   if (usersRes?.body?.docs) {
-    users.value = usersRes.body.docs.map((u) => ({ label: u.name, value: u.id }));
+    users.value = usersRes.body.docs.map(u => ({ label: u.name, value: u.id }));
   }
 } catch (e) {
   console.error('Failed to load task', e);

@@ -44,6 +44,7 @@ export class StripeProvider {
   private getClient() {
     if (!this.stripe && StripeProvider.isConfigured()) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const Stripe = require('stripe');
         this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
       } catch (err) {
@@ -77,11 +78,15 @@ export class StripeProvider {
           currency: input.currency,
           customer: input.customerId,
           description: input.description,
-          metadata: input.metadata,
+          metadata: input.metadata
         });
         return { success: true, data: { id: pi.id, clientSecret: pi.client_secret, status: pi.status }, mock: false };
       }
-      return { success: true, data: { id: `mock_pi_${Date.now()}`, clientSecret: `mock_secret_${Date.now()}`, status: 'requires_payment_method' }, mock: true };
+      return {
+        success: true,
+        data: { id: `mock_pi_${Date.now()}`, clientSecret: `mock_secret_${Date.now()}`, status: 'requires_payment_method' },
+        mock: true
+      };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[StripeProvider] createPaymentIntent error:', errMsg);
@@ -96,7 +101,7 @@ export class StripeProvider {
         const sub = await client.subscriptions.create({
           customer: input.customerId,
           items: [{ price: input.priceId }],
-          trial_period_days: input.trialDays,
+          trial_period_days: input.trialDays
         });
         return { success: true, data: { id: sub.id, status: sub.status, currentPeriodEnd: sub.current_period_end }, mock: false };
       }
@@ -131,7 +136,7 @@ export class StripeProvider {
         const refund = await client.refunds.create({
           payment_intent: input.paymentIntentId,
           amount: input.amount,
-          reason: input.reason,
+          reason: input.reason
         });
         return { success: true, data: { id: refund.id, status: refund.status, amount: refund.amount }, mock: false };
       }
@@ -157,9 +162,9 @@ export class StripeProvider {
         success: true,
         data: [
           { id: `mock_inv_1`, amount: 5000, status: 'paid', created: Math.floor(Date.now() / 1000) - 86400 },
-          { id: `mock_inv_2`, amount: 12000, status: 'open', created: Math.floor(Date.now() / 1000) },
+          { id: `mock_inv_2`, amount: 12000, status: 'open', created: Math.floor(Date.now() / 1000) }
         ],
-        mock: true,
+        mock: true
       };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';

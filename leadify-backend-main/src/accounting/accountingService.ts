@@ -1,9 +1,8 @@
 import { Op } from 'sequelize';
 import { clampPagination } from '../utils/pagination';
 import ChartOfAccounts, { AccountType } from './models/chartOfAccountsModel';
-import JournalEntry, { JournalEntryStatus, JournalEntrySourceType } from './models/journalEntryModel';
+import JournalEntry, { JournalEntryStatus } from './models/journalEntryModel';
 import JournalEntryLine from './models/journalEntryLineModel';
-import FiscalYear from './models/fiscalYearModel';
 
 class AccountingService {
   // ─── Chart of Accounts ────────────────────────────────────────────
@@ -167,7 +166,7 @@ class AccountingService {
     }
 
     // Validate all account IDs exist
-    const accountIds = lines.map((l) => l.accountId);
+    const accountIds = lines.map((l: any) => l.accountId);
     const accounts = await ChartOfAccounts.findAll({ where: { id: accountIds } });
     if (accounts.length !== new Set(accountIds).size) {
       throw new Error('One or more account IDs are invalid');

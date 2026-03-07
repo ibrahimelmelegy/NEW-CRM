@@ -275,10 +275,7 @@ onMounted(async () => {
 });
 
 async function refreshAll() {
-  await Promise.all([
-    fetchBackups(currentPage.value, pageSize, filterStatus.value || undefined, filterType.value || undefined),
-    fetchStats()
-  ]);
+  await Promise.all([fetchBackups(currentPage.value, pageSize, filterStatus.value || undefined, filterType.value || undefined), fetchStats()]);
   autoBackupEnabled.value = stats.value?.autoBackupActive || false;
 }
 
@@ -311,25 +308,23 @@ async function handleRestore() {
 }
 
 function confirmDelete(backup: BackupRecord) {
-  ElMessageBox.confirm(
-    t('backups.deleteConfirm'),
-    t('backups.deleteTitle'),
-    {
-      confirmButtonText: t('common.delete'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning'
-    }
-  ).then(async () => {
-    const success = await deleteBackup(backup.id);
-    if (success) {
-      ElMessage.success(t('backups.deleteSuccess'));
-      await fetchStats();
-    } else {
-      ElMessage.error(t('backups.deleteFailed'));
-    }
-  }).catch(() => {
-    // User cancelled
-  });
+  ElMessageBox.confirm(t('backups.deleteConfirm'), t('backups.deleteTitle'), {
+    confirmButtonText: t('common.delete'),
+    cancelButtonText: t('common.cancel'),
+    type: 'warning'
+  })
+    .then(async () => {
+      const success = await deleteBackup(backup.id);
+      if (success) {
+        ElMessage.success(t('backups.deleteSuccess'));
+        await fetchStats();
+      } else {
+        ElMessage.error(t('backups.deleteFailed'));
+      }
+    })
+    .catch(() => {
+      // User cancelled
+    });
 }
 
 function handleDownload(id: number) {

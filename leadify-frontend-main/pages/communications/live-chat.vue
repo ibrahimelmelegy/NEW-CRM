@@ -314,7 +314,7 @@ const chatMetrics = ref<Record<string, unknown>>({
 
 const queueColor = computed(() => {
   const q = chatMetrics.value.waitingInQueue;
-  if (q == null) return '#6b7280';
+  if (q === null || q === undefined) return '#6b7280';
   if (q > 10) return '#ef4444';
   if (q >= 5) return '#f59e0b';
   return '#22c55e';
@@ -373,22 +373,22 @@ const statusFilters = computed(() => {
   const data = conversations.value;
   return [
     { value: 'ALL', label: t('common.all'), type: '', count: data.length },
-    { value: 'OPEN', label: 'Open', type: 'warning', count: data.filter((c) => c.status === 'OPEN').length },
-    { value: 'ACTIVE', label: 'Active', type: 'success', count: data.filter((c) => c.status === 'ACTIVE').length },
-    { value: 'WAITING', label: 'Waiting', type: 'info', count: data.filter((c) => c.status === 'WAITING').length },
-    { value: 'RESOLVED', label: 'Resolved', type: '', count: data.filter((c) => c.status === 'RESOLVED').length },
-    { value: 'CLOSED', label: 'Closed', type: 'info', count: data.filter((c) => c.status === 'CLOSED').length }
+    { value: 'OPEN', label: 'Open', type: 'warning', count: data.filter(c => c.status === 'OPEN').length },
+    { value: 'ACTIVE', label: 'Active', type: 'success', count: data.filter(c => c.status === 'ACTIVE').length },
+    { value: 'WAITING', label: 'Waiting', type: 'info', count: data.filter(c => c.status === 'WAITING').length },
+    { value: 'RESOLVED', label: 'Resolved', type: '', count: data.filter(c => c.status === 'RESOLVED').length },
+    { value: 'CLOSED', label: 'Closed', type: 'info', count: data.filter(c => c.status === 'CLOSED').length }
   ];
 });
 
 const filteredConversations = computed(() => {
   let data = conversations.value;
   if (filterStatus.value !== 'ALL') {
-    data = data.filter((c) => c.status === filterStatus.value);
+    data = data.filter(c => c.status === filterStatus.value);
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    data = data.filter((c) => {
+    data = data.filter(c => {
       const name = (c.visitorName || '').toLowerCase();
       const email = (c.visitorEmail || '').toLowerCase();
       const subject = (c.subject || '').toLowerCase();
@@ -449,7 +449,7 @@ async function loadAgents() {
   try {
     const res = await useApiFetch('users?limit=100');
     if (res?.success) {
-      agents.value = (res.body?.docs || res.body || []).map((u) => ({
+      agents.value = (res.body?.docs || res.body || []).map(u => ({
         id: u.id,
         name: u.name || u.email
       }));
@@ -522,7 +522,7 @@ async function markAsRead(conversationId: number) {
   try {
     await useApiFetch(`live-chat/conversations/${conversationId}/read`, 'PUT');
     // Update local unread count
-    const conv = conversations.value.find((c) => c.id === conversationId);
+    const conv = conversations.value.find(c => c.id === conversationId);
     if (conv) conv.unreadCount = 0;
   } catch (e: unknown) {
     ElMessage.error(t('common.error'));
@@ -558,7 +558,7 @@ async function sendMessage() {
       // but in case it is slow, also load from API
       await loadMessages(selectedConversation.value.id);
       // Update conversation list item
-      const conv = conversations.value.find((c) => c.id === selectedConversation.value.id);
+      const conv = conversations.value.find(c => c.id === selectedConversation.value.id);
       if (conv) {
         conv.lastMessage = payload.content;
         conv.updatedAt = new Date().toISOString();
@@ -613,7 +613,7 @@ async function handleAssignAgent(command: string | number) {
     });
     await loadConversations();
     // Refresh selected conversation data
-    const updated = conversations.value.find((c) => c.id === convId);
+    const updated = conversations.value.find(c => c.id === convId);
     if (updated) selectedConversation.value = updated;
   } catch {
     ElNotification({
@@ -751,7 +751,7 @@ function setupSocketListeners() {
   socket.value.on('chat:message', (data: unknown) => {
     if (selectedConversation.value && data.conversationId === selectedConversation.value.id) {
       // Avoid duplicate messages (already added by API response)
-      const exists = messages.value.some((m) => m.id === data.id);
+      const exists = messages.value.some(m => m.id === data.id);
       if (!exists) {
         messages.value.push(data);
         nextTick(() => scrollToBottom());
@@ -763,7 +763,7 @@ function setupSocketListeners() {
 
   // Global message sent event - update conversation list
   socket.value.on('chat:message_sent', (data: unknown) => {
-    const conv = conversations.value.find((c) => c.id === data.conversationId);
+    const conv = conversations.value.find(c => c.id === data.conversationId);
     if (conv) {
       conv.lastMessage = data.content || conv.lastMessage;
       conv.updatedAt = new Date().toISOString();
@@ -791,7 +791,7 @@ function setupSocketListeners() {
 
   // Conversation status updates
   socket.value.on('chat:conversation_updated', (data: unknown) => {
-    const conv = conversations.value.find((c) => c.id === data.conversationId);
+    const conv = conversations.value.find(c => c.id === data.conversationId);
     if (conv) {
       if (data.status) conv.status = data.status;
       if (data.staffId) conv.staffId = data.staffId;
@@ -809,7 +809,7 @@ function setupSocketListeners() {
 
   // Conversation deleted
   socket.value.on('chat:conversation_deleted', (data: unknown) => {
-    conversations.value = conversations.value.filter((c) => c.id !== data.conversationId);
+    conversations.value = conversations.value.filter(c => c.id !== data.conversationId);
     if (selectedConversation.value?.id === data.conversationId) {
       selectedConversation.value = null;
       messages.value = [];
@@ -821,7 +821,7 @@ function setupSocketListeners() {
   socket.value.on('chat:messages_read', (data: unknown) => {
     if (selectedConversation.value && data.conversationId === selectedConversation.value.id) {
       // Mark all messages as read in the UI
-      messages.value.forEach((m) => {
+      messages.value.forEach(m => {
         if (!m.isRead && m.senderId !== String(data.readerId)) {
           m.isRead = true;
           m.readAt = data.readAt;
@@ -832,7 +832,7 @@ function setupSocketListeners() {
 
   // Agent assigned
   socket.value.on('chat:assigned', (data: unknown) => {
-    const conv = conversations.value.find((c) => c.id === data.conversationId);
+    const conv = conversations.value.find(c => c.id === data.conversationId);
     if (conv) {
       conv.staffId = data.agentId;
       if (data.status) conv.status = data.status;

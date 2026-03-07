@@ -36,7 +36,7 @@ export function useNotifications() {
       if (success && body) {
         const data = body as unknown;
         const docs = data.docs || data || [];
-        notifications.value = docs.map((n) => ({
+        notifications.value = docs.map(n => ({
           id: n.id,
           type: n.type || 'info',
           category: n.category || 'system',

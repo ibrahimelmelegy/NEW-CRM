@@ -1,6 +1,5 @@
-import { Table, Column, Model, DataType, AllowNull, ForeignKey, BelongsTo, HasOne, Default, HasMany } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, AllowNull, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
 import Proposal from '../proposal/models/proposalModel';
-import ProposalFinanceTable from '../proposalFinanceTable/proposalFinanceTableModel';
 
 @Table({
   tableName: 'proposal_contents',

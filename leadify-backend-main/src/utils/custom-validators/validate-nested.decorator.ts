@@ -22,8 +22,7 @@ export function CustomValidateNested(schema: any, validationOptions?: Validation
          * @param args - Validation arguments
          * @returns boolean indicating if validation passed
          */
-        validate(value: any, args: ValidationArguments) {
-          args.value;
+        validate(value: any, _args: ValidationArguments) {
           if (Array.isArray(value)) {
             // Validate each item in the array
             for (let i = 0; i < (<Array<any>>value).length; i++) {

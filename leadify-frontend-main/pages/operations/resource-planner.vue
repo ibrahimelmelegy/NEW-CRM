@@ -575,7 +575,7 @@ const projectSummaries = computed(() => {
     if (existing) {
       existing.hours += hours;
     } else {
-      const proj = alloc.project || projectList.value.find((p) => p.id === pid);
+      const proj = alloc.project || projectList.value.find(p => p.id === pid);
       const budgetHours = (proj?.resourceCount || 1) * (proj?.duration || 20) * 8 || 160;
       projMap.set(pid, {
         name: proj?.name || 'Unknown Project',
@@ -652,7 +652,7 @@ async function fetchData() {
       manpowerAllocMap.get(mpId)!.push(alloc);
     }
 
-    resources.value = mpList.map((mp) => {
+    resources.value = mpList.map(mp => {
       const id = mp.id;
       const weeklyHours = manpowerHoursMap.get(id) || [0, 0, 0, 0, 0];
       const roles = Array.isArray(mp.role) ? mp.role : [mp.role || 'Unassigned'];
@@ -723,7 +723,7 @@ function getUtilColor(res: Resource) {
 // --------------------------------------------------
 function editDayAllocation(res: Resource, dayIdx: number) {
   // Find all allocations for this resource, let user adjust estimatedWorkDays on each
-  const allocs = (res.allocations || []).map((a) => ({
+  const allocs = (res.allocations || []).map(a => ({
     ...a,
     _editDays: a.estimatedWorkDays
   }));
@@ -741,7 +741,7 @@ function editDayAllocation(res: Resource, dayIdx: number) {
 
 // Watch allocation edits to update total hours preview
 watch(
-  () => editingDay.value.allocations.map((a) => a._editDays),
+  () => editingDay.value.allocations.map(a => a._editDays),
   newVals => {
     const totalDays = newVals.reduce((s: number, d: number) => s + (d || 0), 0);
     const perDay = Math.min(8, Math.round((totalDays * 8) / 5));

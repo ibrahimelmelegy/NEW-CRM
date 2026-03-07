@@ -253,17 +253,11 @@
 <script setup lang="ts">
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import type { CustomField, CustomFieldType } from '~/composables/useCustomFields';
-import {
-  fetchCustomFields,
-  createCustomField,
-  updateCustomField,
-  deleteCustomField,
-  reorderCustomFields,
-} from '~/composables/useCustomFields';
+import { fetchCustomFields, createCustomField, updateCustomField, deleteCustomField, reorderCustomFields } from '~/composables/useCustomFields';
 
 definePageMeta({
   middleware: 'permissions',
-  permission: 'EDIT_SETTINGS',
+  permission: 'EDIT_SETTINGS'
 });
 
 const { $i18n } = useNuxtApp();
@@ -311,24 +305,18 @@ const defaultFormData = (): FormDataType => ({
   options: [],
   defaultValue: '',
   isRequired: false,
-  validationRules: {},
+  validationRules: {}
 });
 
 const formData = ref<FormDataType>(defaultFormData());
 
 // ─── Computed ────────────────────────────────────────────────────────────────
 
-const isChoiceType = computed(() =>
-  ['SELECT', 'MULTISELECT'].includes(formData.value.fieldType)
-);
+const isChoiceType = computed(() => ['SELECT', 'MULTISELECT'].includes(formData.value.fieldType));
 
-const supportsMinMax = computed(() =>
-  ['NUMBER', 'CURRENCY'].includes(formData.value.fieldType)
-);
+const supportsMinMax = computed(() => ['NUMBER', 'CURRENCY'].includes(formData.value.fieldType));
 
-const supportsTextValidation = computed(() =>
-  ['TEXT', 'TEXTAREA'].includes(formData.value.fieldType)
-);
+const supportsTextValidation = computed(() => ['TEXT', 'TEXTAREA'].includes(formData.value.fieldType));
 
 // ─── Methods ─────────────────────────────────────────────────────────────────
 
@@ -339,7 +327,7 @@ function getEntityLabel(entity: string): string {
     OPPORTUNITY: t('navigation.opportunities'),
     CLIENT: t('navigation.clients'),
     CONTACT: t('customFields.contacts'),
-    INVOICE: t('customFields.invoices'),
+    INVOICE: t('customFields.invoices')
   };
   return map[entity] || entity;
 }
@@ -361,16 +349,14 @@ function getFieldTypeTag(type: string): string {
     CHECKBOX: 'info',
     EMAIL: 'danger',
     PHONE: 'danger',
-    URL: 'danger',
+    URL: 'danger'
   };
   return map[type] || '';
 }
 
 function hasValidationRules(field: CustomField): boolean {
   if (!field.validationRules) return false;
-  return Object.values(field.validationRules).some(
-    v => v !== undefined && v !== null && v !== ''
-  );
+  return Object.values(field.validationRules).some(v => v !== undefined && v !== null && v !== '');
 }
 
 function autoGenerateFieldName() {
@@ -397,7 +383,7 @@ function addOption() {
   if (val) {
     formData.value.options.push({
       value: val,
-      label: lbl || val,
+      label: lbl || val
     });
     newOptionValue.value = '';
     newOptionLabel.value = '';
@@ -411,10 +397,7 @@ onMounted(() => loadFields());
 async function loadFields() {
   loading.value = true;
   try {
-    fields.value = await fetchCustomFields(
-      selectedEntity.value,
-      showInactive.value
-    );
+    fields.value = await fetchCustomFields(selectedEntity.value, showInactive.value);
   } finally {
     loading.value = false;
   }
@@ -437,12 +420,10 @@ function editField(field: CustomField) {
     fieldLabel: field.fieldLabel,
     fieldName: field.fieldName,
     fieldType: field.fieldType,
-    options: field.options
-      ? field.options.map(o => (typeof o === 'string' ? { value: o, label: o } : { ...o }))
-      : [],
+    options: field.options ? field.options.map(o => (typeof o === 'string' ? { value: o, label: o } : { ...o })) : [],
     defaultValue: field.defaultValue || '',
     isRequired: field.isRequired || field.required || false,
-    validationRules: { ...(field.validationRules || {}) },
+    validationRules: { ...(field.validationRules || {}) }
   };
   defaultCheckbox.value = field.defaultValue === 'true';
   showAddDialog.value = true;
@@ -455,7 +436,7 @@ async function saveField() {
     ElNotification({
       type: 'warning',
       title: t('common.warning'),
-      message: t('common.fillRequired'),
+      message: t('common.fillRequired')
     });
     return;
   }
@@ -465,7 +446,7 @@ async function saveField() {
     ElNotification({
       type: 'warning',
       title: t('common.warning'),
-      message: t('customFields.optionsRequired'),
+      message: t('customFields.optionsRequired')
     });
     return;
   }
@@ -489,9 +470,7 @@ async function saveField() {
       defaultValue: formData.value.defaultValue || null,
       options: isChoiceType.value ? formData.value.options : null,
       validationRules: Object.keys(cleanRules).length > 0 ? cleanRules : null,
-      sortOrder: editingField.value
-        ? editingField.value.sortOrder
-        : fields.value.length,
+      sortOrder: editingField.value ? editingField.value.sortOrder : fields.value.length
     };
 
     if (editingField.value) {
@@ -500,7 +479,7 @@ async function saveField() {
         ElNotification({
           type: 'error',
           title: t('common.error'),
-          message: result.message || t('common.error'),
+          message: result.message || t('common.error')
         });
         return;
       }
@@ -510,7 +489,7 @@ async function saveField() {
         ElNotification({
           type: 'error',
           title: t('common.error'),
-          message: result.message || t('common.error'),
+          message: result.message || t('common.error')
         });
         return;
       }
@@ -523,7 +502,7 @@ async function saveField() {
     ElNotification({
       type: 'success',
       title: t('common.success'),
-      message: t('common.saved'),
+      message: t('common.saved')
     });
   } finally {
     saving.value = false;
@@ -532,17 +511,13 @@ async function saveField() {
 
 async function removeField(id: string) {
   try {
-    await ElMessageBox.confirm(
-      t('customFields.confirmDelete'),
-      t('common.warning'),
-      { type: 'warning' }
-    );
+    await ElMessageBox.confirm(t('customFields.confirmDelete'), t('common.warning'), { type: 'warning' });
     await deleteCustomField(id);
     await loadFields();
     ElNotification({
       type: 'success',
       title: t('common.success'),
-      message: t('common.deleted'),
+      message: t('common.deleted')
     });
   } catch {
     // User cancelled or error
@@ -555,9 +530,7 @@ async function toggleFieldActive(field: CustomField) {
     ElNotification({
       type: 'success',
       title: t('common.success'),
-      message: field.isActive
-        ? t('customFields.fieldActivated')
-        : t('customFields.fieldDeactivated'),
+      message: field.isActive ? t('customFields.fieldActivated') : t('customFields.fieldDeactivated')
     });
   } catch {
     // Revert
@@ -604,7 +577,7 @@ function startDrag(index: number, event: MouseEvent | TouchEvent) {
     // Save new order
     const reorderData = fields.value.map((f, i) => ({
       id: f.id,
-      sortOrder: i,
+      sortOrder: i
     }));
     try {
       await reorderCustomFields(reorderData);

@@ -181,7 +181,10 @@ function getTagType(type: string): '' | 'success' | 'warning' | 'danger' | 'info
 }
 
 function formatType(type: string): string {
-  return type.replace(/_/g, ' ').toLowerCase().replace(/^\w/, (c: string) => c.toUpperCase());
+  return type
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/^\w/, (c: string) => c.toUpperCase());
 }
 
 function getNotifTitle(notif: any): string {
@@ -270,7 +273,9 @@ async function handleLoadMore() {
 }
 
 .stat-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
@@ -371,7 +376,12 @@ async function handleLoadMore() {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 </style>

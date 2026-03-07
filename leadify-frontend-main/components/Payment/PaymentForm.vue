@@ -187,7 +187,7 @@ async function searchClients(query: string) {
   try {
     const { body, success } = (await useApiFetch(`client?searchKey=${encodeURIComponent(query)}&limit=20`)) as unknown;
     if (success && body?.docs) {
-      clientOptions.value = body.docs.map((c) => ({ id: c.id, clientName: c.clientName }));
+      clientOptions.value = body.docs.map(c => ({ id: c.id, clientName: c.clientName }));
     }
   } finally {
     loadingClients.value = false;
@@ -199,7 +199,7 @@ async function loadInitialClients() {
   try {
     const { body, success } = (await useApiFetch('client?limit=50')) as unknown;
     if (success && body?.docs) {
-      clientOptions.value = body.docs.map((c) => ({ id: c.id, clientName: c.clientName }));
+      clientOptions.value = body.docs.map(c => ({ id: c.id, clientName: c.clientName }));
     }
   } catch {
     // Silently fail

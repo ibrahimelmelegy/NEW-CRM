@@ -136,5 +136,4 @@ export function validateEnvironment(): void {
     // Log errors but don't crash — allow server to start with partial config
     // Missing vars will cause runtime errors only when the relevant feature is used
   }
-
 }

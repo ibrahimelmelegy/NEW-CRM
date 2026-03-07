@@ -1,5 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { describe, it, expect, beforeEach } from 'vitest';
 
 // Mock DOM elements for body/html
 describe('UI Theme Switching Logic', () => {

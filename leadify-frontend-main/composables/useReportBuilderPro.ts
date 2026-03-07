@@ -559,8 +559,8 @@ export function useReportBuilderPro() {
 
     if (!xField) return {};
 
-    const labels = data.map((r) => r[xField] || 'N/A');
-    const values = data.map((r) => Number(r[yField]) || 0);
+    const labels = data.map(r => r[xField] || 'N/A');
+    const values = data.map(r => Number(r[yField]) || 0);
 
     const baseLegend = chartConfig.showLegend !== false ? { show: true, bottom: 0, textStyle: { color: 'var(--text-muted)' } } : { show: false };
 

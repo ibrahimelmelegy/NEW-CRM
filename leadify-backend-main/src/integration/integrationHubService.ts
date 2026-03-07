@@ -358,7 +358,10 @@ class IntegrationHubService {
             headers: { Authorization: `Basic ${twilioAuth}` },
             signal: AbortSignal.timeout(10000)
           });
-          return { success: twilioResponse.ok, message: twilioResponse.ok ? 'Twilio connection successful' : `Twilio error: ${twilioResponse.status}` };
+          return {
+            success: twilioResponse.ok,
+            message: twilioResponse.ok ? 'Twilio connection successful' : `Twilio error: ${twilioResponse.status}`
+          };
         }
 
         case IntegrationType.WHATSAPP: {
@@ -366,7 +369,10 @@ class IntegrationHubService {
             headers: { Authorization: `Bearer ${config.accessToken}` },
             signal: AbortSignal.timeout(10000)
           });
-          return { success: waResponse.ok, message: waResponse.ok ? 'WhatsApp Business connection successful' : `WhatsApp error: ${waResponse.status}` };
+          return {
+            success: waResponse.ok,
+            message: waResponse.ok ? 'WhatsApp Business connection successful' : `WhatsApp error: ${waResponse.status}`
+          };
         }
 
         case IntegrationType.SALESFORCE: {

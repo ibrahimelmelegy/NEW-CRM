@@ -1,4 +1,3 @@
-import { Op } from 'sequelize';
 import VendorScorecard from './vendorScorecardModel';
 import Vendor from '../vendor/vendorModel';
 import { clampPagination } from '../utils/pagination';
@@ -21,7 +20,10 @@ class VendorScorecardService {
     const { rows, count } = await VendorScorecard.findAndCountAll({
       where,
       include: [{ model: Vendor, as: 'vendor', attributes: ['id', 'name'] }],
-      order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -29,7 +31,12 @@ class VendorScorecardService {
   async update(id: number, data: any) {
     const item = await VendorScorecard.findByPk(id);
     if (!item) return null;
-    const scores = [data.qualityScore ?? item.qualityScore, data.deliveryScore ?? item.deliveryScore, data.priceScore ?? item.priceScore, data.communicationScore ?? item.communicationScore].filter(Boolean);
+    const scores = [
+      data.qualityScore ?? item.qualityScore,
+      data.deliveryScore ?? item.deliveryScore,
+      data.priceScore ?? item.priceScore,
+      data.communicationScore ?? item.communicationScore
+    ].filter(Boolean);
     if (scores.length > 0) data.overallScore = Number((scores.reduce((a: number, b: number) => a + b, 0) / scores.length).toFixed(1));
     await item.update(data);
     return item;
@@ -155,7 +162,11 @@ class VendorScorecardService {
       };
     }
 
-    let totalOverall = 0, totalQuality = 0, totalDelivery = 0, totalPrice = 0, totalComm = 0;
+    let totalOverall = 0,
+      totalQuality = 0,
+      totalDelivery = 0,
+      totalPrice = 0,
+      totalComm = 0;
     for (const sc of scorecards) {
       totalOverall += Number(sc.overallScore) || 0;
       totalQuality += Number(sc.qualityScore) || 0;

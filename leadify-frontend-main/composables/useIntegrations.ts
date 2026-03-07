@@ -226,7 +226,7 @@ export function useIntegrations() {
     try {
       const response = await useApiFetch(`integrations/hub/${type}/test`, 'POST', config);
       if (response.success) {
-        const msg = (response.body as Record<string, unknown>)?.message as string || 'Connection successful';
+        const msg = ((response.body as Record<string, unknown>)?.message as string) || 'Connection successful';
         ElNotification.success({ title: 'Test Passed', message: msg });
         return true;
       } else {
@@ -277,7 +277,13 @@ export function useIntegrations() {
     }
   }
 
-  async function createWebhook(data: { name: string; url: string; events: string[]; secret?: string; headers?: Record<string, string> }): Promise<boolean> {
+  async function createWebhook(data: {
+    name: string;
+    url: string;
+    events: string[];
+    secret?: string;
+    headers?: Record<string, string>;
+  }): Promise<boolean> {
     try {
       const response = await useApiFetch('integrations/hub/webhooks', 'POST', data);
       if (response.success) {
@@ -335,7 +341,10 @@ export function useIntegrations() {
     try {
       const response = await useApiFetch(`integrations/hub/webhooks/${id}/test`, 'POST');
       if (response.success) {
-        ElNotification.success({ title: 'Test Sent', message: (response.body as Record<string, unknown>)?.message as string || 'Webhook test successful' });
+        ElNotification.success({
+          title: 'Test Sent',
+          message: ((response.body as Record<string, unknown>)?.message as string) || 'Webhook test successful'
+        });
         return true;
       } else {
         ElNotification.warning({ title: 'Test Failed', message: response.message });

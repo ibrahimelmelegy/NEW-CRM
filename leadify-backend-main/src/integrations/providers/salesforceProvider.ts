@@ -36,13 +36,14 @@ export class SalesforceProvider {
   private async getConnection() {
     if (!this.connection && SalesforceProvider.isConfigured()) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const jsforce = require('jsforce');
         this.connection = new jsforce.Connection({
           oauth2: {
             clientId: process.env.SALESFORCE_CLIENT_ID,
             clientSecret: process.env.SALESFORCE_CLIENT_SECRET,
-            loginUrl: process.env.SALESFORCE_LOGIN_URL || 'https://login.salesforce.com',
-          },
+            loginUrl: process.env.SALESFORCE_LOGIN_URL || 'https://login.salesforce.com'
+          }
         });
         await this.connection.login(process.env.SALESFORCE_USERNAME!, process.env.SALESFORCE_PASSWORD!);
         // Connected to Salesforce
@@ -54,7 +55,9 @@ export class SalesforceProvider {
     return this.connection;
   }
 
-  async syncLeads(leads: Array<{ name: string; email: string; company?: string; phone?: string }>): Promise<SyncResult<{ synced: number; failed: number }>> {
+  async syncLeads(
+    leads: Array<{ name: string; email: string; company?: string; phone?: string }>
+  ): Promise<SyncResult<{ synced: number; failed: number }>> {
     try {
       const conn = await this.getConnection();
       if (conn) {
@@ -88,7 +91,9 @@ export class SalesforceProvider {
     }
   }
 
-  async syncDeals(deals: Array<{ name: string; amount: number; stage: string; closeDate: string }>): Promise<SyncResult<{ synced: number; failed: number }>> {
+  async syncDeals(
+    deals: Array<{ name: string; amount: number; stage: string; closeDate: string }>
+  ): Promise<SyncResult<{ synced: number; failed: number }>> {
     try {
       const conn = await this.getConnection();
       if (conn) {
@@ -112,7 +117,7 @@ export class SalesforceProvider {
         const fieldMap: Record<string, string> = {
           Lead: 'Id, Name, Email, Phone, Company, Status',
           Contact: 'Id, Name, Email, Phone, AccountId',
-          Opportunity: 'Id, Name, Amount, StageName, CloseDate',
+          Opportunity: 'Id, Name, Amount, StageName, CloseDate'
         };
         const records = await conn.sobject(objectType).find({}, fieldMap[objectType]).limit(limit).execute();
         const mapped = records.map((r: any) => ({ id: r.Id, name: r.Name, email: r.Email, phone: r.Phone, ...r }));
@@ -120,7 +125,7 @@ export class SalesforceProvider {
       }
       const mockRecords: SalesforceRecord[] = [
         { id: 'sf_001', name: 'Mock Lead A', email: 'leada@example.com' },
-        { id: 'sf_002', name: 'Mock Lead B', email: 'leadb@example.com' },
+        { id: 'sf_002', name: 'Mock Lead B', email: 'leadb@example.com' }
       ];
       return { success: true, data: mockRecords, mock: true, syncedAt: new Date().toISOString() };
     } catch (err) {
@@ -130,7 +135,10 @@ export class SalesforceProvider {
     }
   }
 
-  async exportToSalesforce(objectType: 'Lead' | 'Contact' | 'Opportunity', records: Record<string, any>[]): Promise<SyncResult<{ exported: number; failed: number }>> {
+  async exportToSalesforce(
+    objectType: 'Lead' | 'Contact' | 'Opportunity',
+    records: Record<string, any>[]
+  ): Promise<SyncResult<{ exported: number; failed: number }>> {
     try {
       const conn = await this.getConnection();
       if (conn) {

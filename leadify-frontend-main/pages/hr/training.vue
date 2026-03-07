@@ -4,12 +4,12 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">{{ $t("training.title") }}</h1>
-          <p class="text-slate-400 text-sm mt-1">{{ $t("training.subtitle") }}</p>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">{{ $t('training.title') }}</h1>
+          <p class="text-slate-400 text-sm mt-1">{{ $t('training.subtitle') }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showCourseDialog = true">
           <Icon name="ph:plus-bold" class="w-4 h-4 mr-2" />
-          {{ $t("training.createCourse") }}
+          {{ $t('training.createCourse') }}
         </el-button>
       </div>
     </div>
@@ -18,19 +18,19 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-slate-200">{{ totalCourses }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("training.totalCourses") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('training.totalCourses') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-blue-400">{{ activeLearners }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("training.activeLearners") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('training.activeLearners') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-emerald-400">{{ completionRate }}%</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("training.completionRate") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('training.completionRate') }}</div>
       </div>
       <div class="glass-panel p-4 rounded-xl text-center">
         <div class="text-2xl font-bold text-amber-400">{{ certificationsIssued }}</div>
-        <div class="text-xs text-slate-500 mt-1">{{ $t("training.certificationsIssued") }}</div>
+        <div class="text-xs text-slate-500 mt-1">{{ $t('training.certificationsIssued') }}</div>
       </div>
     </div>
 
@@ -82,7 +82,7 @@
               <!-- Progress -->
               <div v-if="course.progress !== undefined" class="mb-3">
                 <div class="flex justify-between text-xs text-slate-500 mb-1">
-                  <span>{{ $t("training.progress") }}</span>
+                  <span>{{ $t('training.progress') }}</span>
                   <span>{{ course.progress }}%</span>
                 </div>
                 <el-progress
@@ -96,10 +96,10 @@
               <div class="flex items-center justify-between text-xs text-slate-500">
                 <span class="flex items-center gap-1">
                   <Icon name="ph:users-bold" class="w-3 h-3" />
-                  {{ course.enrolled }} {{ $t("training.enrolled") }}
+                  {{ course.enrolled }} {{ $t('training.enrolled') }}
                 </span>
                 <el-button text type="primary" size="small" @click="enrollCourse(course)">
-                  {{ course.progress !== undefined ? $t("training.continue") : $t("training.enroll") }}
+                  {{ course.progress !== undefined ? $t('training.continue') : $t('training.enroll') }}
                 </el-button>
               </div>
             </div>
@@ -144,11 +144,11 @@
                       <Icon name="ph:calendar-bold" class="w-3 h-3" />
                       Due: {{ enrollment.dueDate }}
                     </span>
-                    <span v-if="enrollment.isOverdue" class="text-red-400 font-medium">{{ $t("training.overdue") }}</span>
+                    <span v-if="enrollment.isOverdue" class="text-red-400 font-medium">{{ $t('training.overdue') }}</span>
                   </div>
                   <el-button type="primary" size="small" class="!rounded-xl" @click="resumeCourse(enrollment)">
                     <Icon name="ph:play-bold" class="w-3 h-3 mr-1" />
-                    {{ $t("training.resume") }}
+                    {{ $t('training.resume') }}
                   </el-button>
                 </div>
               </div>
@@ -157,7 +157,7 @@
 
           <div v-if="!myEnrollments.length" class="text-center py-12">
             <Icon name="ph:graduation-cap-bold" class="w-16 h-16 text-slate-600 mx-auto" />
-            <p class="text-slate-500 mt-3">{{ $t("training.noEnrollments") }}</p>
+            <p class="text-slate-500 mt-3">{{ $t('training.noEnrollments') }}</p>
           </div>
         </div>
       </el-tab-pane>
@@ -185,11 +185,11 @@
                 </div>
                 <div class="flex items-center justify-between">
                   <el-tag :type="cert.isExpired ? 'danger' : 'success'" effect="dark" size="small" round>
-                    {{ cert.isExpired ? $t("training.expired") : $t("training.valid") }}
+                    {{ cert.isExpired ? $t('training.expired') : $t('training.valid') }}
                   </el-tag>
                   <el-button text type="primary" size="small" @click="downloadCert(cert)">
                     <Icon name="ph:download-bold" class="w-4 h-4 mr-1" />
-                    {{ $t("common.download") }}
+                    {{ $t('common.download') }}
                   </el-button>
                 </div>
               </div>
@@ -198,7 +198,7 @@
 
           <div v-if="!certifications.length" class="col-span-full text-center py-12">
             <Icon name="ph:medal-bold" class="w-16 h-16 text-slate-600 mx-auto" />
-            <p class="text-slate-500 mt-3">{{ $t("training.noCertifications") }}</p>
+            <p class="text-slate-500 mt-3">{{ $t('training.noCertifications') }}</p>
           </div>
         </div>
       </el-tab-pane>
@@ -237,8 +237,8 @@
         </div>
       </el-form>
       <template #footer>
-        <el-button @click="showCourseDialog = false">{{ $t("common.cancel") }}</el-button>
-        <el-button type="primary" @click="createCourse">{{ $t("common.create") }}</el-button>
+        <el-button @click="showCourseDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" @click="createCourse">{{ $t('common.create') }}</el-button>
       </template>
     </el-dialog>
   </div>

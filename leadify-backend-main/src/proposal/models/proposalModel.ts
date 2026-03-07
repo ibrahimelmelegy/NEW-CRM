@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, AllowNull, Default, HasMany, BelongsTo, ForeignKey, BelongsToMany, HasOne } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, AllowNull, Default, HasMany, BelongsTo, BelongsToMany, HasOne } from 'sequelize-typescript';
 import Opportunity from '../../opportunity/opportunityModel';
 import Deal from '../../deal/model/dealModel';
 import { ProposalModelEnum, ProposalStatusEnum, ProposalTypeEnum } from '../proposalEnum';

@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { ElNotification } from 'element-plus';
 
 // ── Types ──
@@ -260,7 +260,11 @@ export function useWorkflows() {
   async function fetchExecutions(ruleId: number, params?: Record<string, string>) {
     loading.value = true;
     try {
-      const query = new URLSearchParams({ page: String(executionPagination.value.page), limit: String(executionPagination.value.limit), ...params }).toString();
+      const query = new URLSearchParams({
+        page: String(executionPagination.value.page),
+        limit: String(executionPagination.value.limit),
+        ...params
+      }).toString();
       const res = await useApiFetch(`workflows/rules/${ruleId}/executions?${query}`);
       if (res.success && res.body) {
         const data = res.body as PaginatedResponse<WorkflowExecution>;
@@ -280,7 +284,11 @@ export function useWorkflows() {
   async function fetchAllExecutions(params?: Record<string, string>) {
     loading.value = true;
     try {
-      const query = new URLSearchParams({ page: String(executionPagination.value.page), limit: String(executionPagination.value.limit), ...params }).toString();
+      const query = new URLSearchParams({
+        page: String(executionPagination.value.page),
+        limit: String(executionPagination.value.limit),
+        ...params
+      }).toString();
       const res = await useApiFetch(`workflows/executions?${query}`);
       if (res.success && res.body) {
         const data = res.body as PaginatedResponse<WorkflowExecution>;

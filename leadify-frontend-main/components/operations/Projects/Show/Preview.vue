@@ -132,7 +132,7 @@ async function exportToPDF() {
     autoTable(doc, {
       startY: (doc as unknown).lastAutoTable.finalY + 25, // Position under title
       head: [['Description', 'Quantity', 'Unit Price (SAR)', 'Total Cost']],
-      body: props.project?.materials.map((item) => [item?.description, item?.quantity, item?.unitPrice, item?.totalMaterialCost]),
+      body: props.project?.materials.map(item => [item?.description, item?.quantity, item?.unitPrice, item?.totalMaterialCost]),
       headStyles: {
         fillColor: [248, 247, 250], // Background color as rgba(231, 230, 233, 1)
         textColor: [101, 101, 101], // Ensuring text is visible
@@ -160,7 +160,7 @@ async function exportToPDF() {
     autoTable(doc, {
       startY: (doc as unknown).lastAutoTable.finalY + 25, // Ensure it follows the previous table
       head: [['Name', 'Estimated Work Days', 'Duration Cost', 'Total Cost']],
-      body: props.project?.projectManpowerResources.map((worker) => [
+      body: props.project?.projectManpowerResources.map(worker => [
         worker?.manpower?.name,
         worker?.estimatedWorkDays,
         worker?.durationCost,
@@ -192,7 +192,7 @@ async function exportToPDF() {
     autoTable(doc, {
       startY: (doc as unknown).lastAutoTable.finalY + 25, // Ensures spacing between tables
       head: [['Name', 'Buy Price (SAR)', 'Rent Price (SAR)']],
-      body: props.project?.projectAssets.map((asset) => [asset?.asset?.name, asset?.buyPrice, asset?.rentPrice]),
+      body: props.project?.projectAssets.map(asset => [asset?.asset?.name, asset?.buyPrice, asset?.rentPrice]),
       headStyles: {
         fillColor: [248, 247, 250], // Background color as rgba(231, 230, 233, 1)
         textColor: [101, 101, 101], // Ensuring text is visible

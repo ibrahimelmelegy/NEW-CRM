@@ -8,6 +8,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref } from 'vue';
 
+import {
+  getDeals,
+  getDeal,
+  getDealActivity,
+  createDeal,
+  updateDeal,
+  convertToDeal,
+  deleteDeal,
+  DealStageEnums,
+  ContractTypeEnums,
+  dealStageOptions,
+  contractTypeOptions,
+  type DealValues
+} from '@/composables/useDeals';
+
 // ============================================
 // Global mocks required by the composable
 // ============================================
@@ -25,24 +40,6 @@ vi.mock('element-plus', () => ({
 (globalThis as any).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
 (globalThis as any).formatDate = mockFormatDate;
 (globalThis as any).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
-
-import {
-  getDeals,
-  getDeal,
-  getDealActivity,
-  createDeal,
-  updateDeal,
-  convertToDeal,
-  deleteDeal,
-  DealStageEnums,
-  ContractTypeEnums,
-  dealStageOptions,
-  contractTypeOptions,
-  type Deal,
-  type DealValues,
-  type Delivery,
-  type Invoice
-} from '@/composables/useDeals';
 
 describe('useDeals composable', () => {
   beforeEach(() => {
@@ -176,9 +173,7 @@ describe('useDeals composable', () => {
       });
 
       await getDeals();
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
 
     it('should handle API exception gracefully', async () => {
@@ -233,9 +228,7 @@ describe('useDeals composable', () => {
       mockUseApiFetch.mockRejectedValueOnce(new Error('500'));
 
       await getDeal('bad');
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
   });
 
@@ -263,9 +256,7 @@ describe('useDeals composable', () => {
       mockUseApiFetch.mockRejectedValueOnce(new Error('Error'));
 
       await getDealActivity('bad-id');
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
   });
 
@@ -297,9 +288,7 @@ describe('useDeals composable', () => {
 
       await createDeal(validDealValues);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'success', message: 'Deal created successfully' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success', message: 'Deal created successfully' }));
     });
 
     it('should show error notification when API returns success=false', async () => {
@@ -307,9 +296,7 @@ describe('useDeals composable', () => {
 
       await createDeal(validDealValues);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error', message: 'Validation error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Validation error' }));
     });
 
     it('should use fallback message when API message is empty', async () => {
@@ -317,9 +304,7 @@ describe('useDeals composable', () => {
 
       await createDeal(validDealValues);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error', message: 'Something went wrong' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Something went wrong' }));
     });
 
     it('should return error response on exception', async () => {
@@ -379,9 +364,7 @@ describe('useDeals composable', () => {
 
       await updateDeal(updateValues);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'success', message: 'Deal updated successfully' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success', message: 'Deal updated successfully' }));
     });
 
     it('should show error notification on failed update', async () => {
@@ -389,9 +372,7 @@ describe('useDeals composable', () => {
 
       await updateDeal(updateValues);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error', message: 'Permission denied' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Permission denied' }));
     });
 
     it('should return error response on exception', async () => {
@@ -427,9 +408,7 @@ describe('useDeals composable', () => {
 
       await convertToDeal(convertValues);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'success', message: 'Deal Added successfully' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success', message: 'Deal Added successfully' }));
     });
 
     it('should show error notification when conversion fails', async () => {
@@ -437,9 +416,7 @@ describe('useDeals composable', () => {
 
       await convertToDeal(convertValues);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error', message: 'Lead already converted' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Lead already converted' }));
     });
 
     it('should return error response on exception', async () => {
@@ -470,9 +447,7 @@ describe('useDeals composable', () => {
 
       await deleteDeal('deal-1');
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'success', message: 'Deal deleted successfully' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success', message: 'Deal deleted successfully' }));
     });
 
     it('should show error notification when deletion fails', async () => {
@@ -480,9 +455,7 @@ describe('useDeals composable', () => {
 
       await deleteDeal('deal-1');
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error', message: 'Cannot delete' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Cannot delete' }));
     });
 
     it('should use fallback message when API message is empty', async () => {
@@ -490,9 +463,7 @@ describe('useDeals composable', () => {
 
       await deleteDeal('deal-1');
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error', message: 'Failed to delete deal' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Failed to delete deal' }));
     });
 
     it('should return error response on exception', async () => {

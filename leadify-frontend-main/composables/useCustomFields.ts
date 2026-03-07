@@ -15,13 +15,7 @@ export type CustomFieldType =
   | 'URL'
   | 'CURRENCY';
 
-export type CustomFieldEntity =
-  | 'LEAD'
-  | 'DEAL'
-  | 'OPPORTUNITY'
-  | 'CLIENT'
-  | 'CONTACT'
-  | 'INVOICE';
+export type CustomFieldEntity = 'LEAD' | 'DEAL' | 'OPPORTUNITY' | 'CLIENT' | 'CONTACT' | 'INVOICE';
 
 export interface FieldOption {
   value: string;
@@ -74,14 +68,9 @@ export interface FieldValuePayload {
 /**
  * Fetch custom field definitions for an entity type
  */
-export async function fetchCustomFields(
-  entityType: string,
-  includeInactive = false
-): Promise<CustomField[]> {
+export async function fetchCustomFields(entityType: string, includeInactive = false): Promise<CustomField[]> {
   const query = includeInactive ? `?includeInactive=true` : '';
-  const { body, success } = await useApiFetch(
-    `custom-fields/fields/${entityType}${query}`
-  );
+  const { body, success } = await useApiFetch(`custom-fields/fields/${entityType}${query}`);
   if (success && Array.isArray(body)) return body;
   return [];
 }
@@ -90,25 +79,14 @@ export async function fetchCustomFields(
  * Create a new custom field definition
  */
 export async function createCustomField(data: Partial<CustomField>) {
-  return useApiFetch(
-    'custom-fields/fields',
-    'POST',
-    data as Record<string, unknown>
-  );
+  return useApiFetch('custom-fields/fields', 'POST', data as Record<string, unknown>);
 }
 
 /**
  * Update an existing custom field definition
  */
-export async function updateCustomField(
-  id: string,
-  data: Partial<CustomField>
-) {
-  return useApiFetch(
-    `custom-fields/fields/${id}`,
-    'PUT',
-    data as Record<string, unknown>
-  );
+export async function updateCustomField(id: string, data: Partial<CustomField>) {
+  return useApiFetch(`custom-fields/fields/${id}`, 'PUT', data as Record<string, unknown>);
 }
 
 /**
@@ -121,24 +99,17 @@ export async function deleteCustomField(id: string) {
 /**
  * Reorder custom fields
  */
-export async function reorderCustomFields(
-  fields: { id: string; sortOrder: number }[]
-) {
+export async function reorderCustomFields(fields: { id: string; sortOrder: number }[]) {
   return useApiFetch('custom-fields/fields/reorder', 'PUT', {
-    fields,
+    fields
   } as Record<string, unknown>);
 }
 
 /**
  * Fetch custom field values for a specific entity instance
  */
-export async function fetchFieldValues(
-  entityType: string,
-  entityId: string
-): Promise<CustomFieldValue[]> {
-  const { body, success } = await useApiFetch(
-    `custom-fields/values/${entityType}/${entityId}`
-  );
+export async function fetchFieldValues(entityType: string, entityId: string): Promise<CustomFieldValue[]> {
+  const { body, success } = await useApiFetch(`custom-fields/values/${entityType}/${entityId}`);
   if (success && Array.isArray(body)) return body;
   return [];
 }
@@ -146,29 +117,15 @@ export async function fetchFieldValues(
 /**
  * Save (bulk upsert) custom field values for an entity instance
  */
-export async function saveFieldValues(
-  entityType: string,
-  entityId: string,
-  values: FieldValuePayload[]
-) {
-  return useApiFetch(
-    `custom-fields/values/${entityType}/${entityId}`,
-    'PUT',
-    { values } as Record<string, unknown>
-  );
+export async function saveFieldValues(entityType: string, entityId: string, values: FieldValuePayload[]) {
+  return useApiFetch(`custom-fields/values/${entityType}/${entityId}`, 'PUT', { values } as Record<string, unknown>);
 }
 
 /**
  * Delete all custom field values for an entity instance
  */
-export async function deleteFieldValues(
-  entityType: string,
-  entityId: string
-) {
-  return useApiFetch(
-    `custom-fields/values/${entityType}/${entityId}`,
-    'DELETE'
-  );
+export async function deleteFieldValues(entityType: string, entityId: string) {
+  return useApiFetch(`custom-fields/values/${entityType}/${entityId}`, 'DELETE');
 }
 
 // ─── Composable (reactive) ──────────────────────────────────────────────────
@@ -177,10 +134,7 @@ export async function deleteFieldValues(
  * Reactive composable for managing custom fields within a component.
  * Provides fields, values, loading states, and helper methods.
  */
-export function useCustomFieldsForm(
-  entityType: Ref<string> | string,
-  entityId?: Ref<string | null> | string | null
-) {
+export function useCustomFieldsForm(entityType: Ref<string> | string, entityId?: Ref<string | null> | string | null) {
   const resolvedType = isRef(entityType) ? entityType : ref(entityType);
   const resolvedId = isRef(entityId) ? entityId : ref(entityId ?? null);
 
@@ -214,10 +168,7 @@ export function useCustomFieldsForm(
     if (!resolvedId.value) return;
     loading.value = true;
     try {
-      const fetched = await fetchFieldValues(
-        resolvedType.value,
-        resolvedId.value
-      );
+      const fetched = await fetchFieldValues(resolvedType.value, resolvedId.value);
       for (const fv of fetched) {
         values.value[fv.customFieldId] = fv.value;
       }
@@ -233,12 +184,10 @@ export function useCustomFieldsForm(
     if (!resolvedId.value) return;
     saving.value = true;
     try {
-      const payload: FieldValuePayload[] = Object.entries(values.value).map(
-        ([customFieldId, value]) => ({
-          customFieldId,
-          value: value ?? null,
-        })
-      );
+      const payload: FieldValuePayload[] = Object.entries(values.value).map(([customFieldId, value]) => ({
+        customFieldId,
+        value: value ?? null
+      }));
       await saveFieldValues(resolvedType.value, resolvedId.value, payload);
     } finally {
       saving.value = false;
@@ -251,7 +200,7 @@ export function useCustomFieldsForm(
   function getPayload(): FieldValuePayload[] {
     return Object.entries(values.value).map(([customFieldId, value]) => ({
       customFieldId,
-      value: value ?? null,
+      value: value ?? null
     }));
   }
 
@@ -274,6 +223,6 @@ export function useCustomFieldsForm(
     loadValues,
     save,
     getPayload,
-    resetValues,
+    resetValues
   };
 }

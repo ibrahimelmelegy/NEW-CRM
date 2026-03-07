@@ -2,6 +2,7 @@ import settingService from '../setting/settingService';
 import BaseError from './error/base-http-exception';
 import { ERRORS } from './error/errors';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const SibApiV3Sdk = require('sib-api-v3-sdk');
 
 const defaultClient = SibApiV3Sdk.ApiClient.instance;

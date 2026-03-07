@@ -252,18 +252,18 @@ export async function addPerformanceIndexes(sequelize: Sequelize): Promise<void>
     `CREATE INDEX IF NOT EXISTS idx_quality_checks_wo ON quality_checks ("workOrderId")`
   ];
 
-  let succeeded = 0;
-  let skipped = 0;
+  let _succeeded = 0;
+  let _skipped = 0;
 
   for (const sql of indexes) {
     try {
       await sequelize.query(sql);
-      succeeded++;
+      _succeeded++;
     } catch (e) {
       // Index creation may fail if the table/column doesn't exist yet,
       // or if the table name doesn't match (e.g., join tables with different names).
       // This is expected and safe to skip.
-      skipped++;
+      _skipped++;
       const msg = (e as Error).message?.substring(0, 100) || 'unknown error';
       console.warn(`[DB Index] Skipped: ${msg}`);
     }

@@ -13,13 +13,17 @@ function timeToMinutes(t: string): number {
 
 /** Convert total minutes back to "HH:MM" */
 function minutesToTime(mins: number): string {
-  const h = Math.floor(mins / 60).toString().padStart(2, '0');
+  const h = Math.floor(mins / 60)
+    .toString()
+    .padStart(2, '0');
   const m = (mins % 60).toString().padStart(2, '0');
   return `${h}:${m}`;
 }
 
 class BookingService {
-  async createSlot(data: any, tenantId?: string) { return BookingSlot.create({ ...data, tenantId }); }
+  async createSlot(data: any, tenantId?: string) {
+    return BookingSlot.create({ ...data, tenantId });
+  }
 
   async getSlots(query: any, tenantId?: string) {
     const where: Record<string, any> = {};
@@ -28,7 +32,10 @@ class BookingService {
     const slots = await BookingSlot.findAll({
       where,
       include: [{ model: User, as: 'staff', attributes: ['id', 'name'] }],
-      order: [['dayOfWeek', 'ASC'], ['startTime', 'ASC']]
+      order: [
+        ['dayOfWeek', 'ASC'],
+        ['startTime', 'ASC']
+      ]
     });
     return slots;
   }
@@ -42,7 +49,9 @@ class BookingService {
 
   async createBooking(data: any, tenantId?: string) {
     const booking = await Booking.create({ ...data, tenantId });
-    try { io.emit('booking:created', { id: booking.id, staffId: booking.staffId, date: booking.date, startTime: booking.startTime }); } catch {}
+    try {
+      io.emit('booking:created', { id: booking.id, staffId: booking.staffId, date: booking.date, startTime: booking.startTime });
+    } catch {}
     return booking;
   }
 
@@ -54,10 +63,7 @@ class BookingService {
     if (query.staffId) where.staffId = query.staffId;
     if (query.date) where.date = query.date;
     if (query.dateFrom && query.dateTo) where.date = { [Op.between]: [query.dateFrom, query.dateTo] };
-    if (query.search) where[Op.or] = [
-      { clientName: { [Op.iLike]: `%${query.search}%` } },
-      { clientEmail: { [Op.iLike]: `%${query.search}%` } }
-    ];
+    if (query.search) where[Op.or] = [{ clientName: { [Op.iLike]: `%${query.search}%` } }, { clientEmail: { [Op.iLike]: `%${query.search}%` } }];
 
     const { rows, count } = await Booking.findAndCountAll({
       where,
@@ -65,7 +71,13 @@ class BookingService {
         { model: User, as: 'staff', attributes: ['id', 'name', 'email'] },
         { model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] }
       ],
-      order: [['date', 'DESC'], ['startTime', 'ASC']], limit, offset, distinct: true
+      order: [
+        ['date', 'DESC'],
+        ['startTime', 'ASC']
+      ],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -139,7 +151,9 @@ class BookingService {
     }
 
     const booking = await Booking.create({ ...data, tenantId });
-    try { io.emit('booking:created', { id: booking.id, staffId: booking.staffId, date: booking.date, startTime: booking.startTime }); } catch {}
+    try {
+      io.emit('booking:created', { id: booking.id, staffId: booking.staffId, date: booking.date, startTime: booking.startTime });
+    } catch {}
     return booking;
   }
 
@@ -190,7 +204,9 @@ class BookingService {
     if (!booking) return null;
     if (booking.status === 'CANCELLED') return booking; // already cancelled
     await booking.update({ status: 'CANCELLED' });
-    try { io.emit('booking:cancelled', { id: booking.id, staffId: booking.staffId, date: booking.date }); } catch {}
+    try {
+      io.emit('booking:cancelled', { id: booking.id, staffId: booking.staffId, date: booking.date });
+    } catch {}
     return booking;
   }
 
@@ -212,7 +228,10 @@ class BookingService {
         { model: User, as: 'staff', attributes: ['id', 'name', 'email'] },
         { model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] }
       ],
-      order: [['date', 'ASC'], ['startTime', 'ASC']]
+      order: [
+        ['date', 'ASC'],
+        ['startTime', 'ASC']
+      ]
     });
     return bookings;
   }
@@ -235,31 +254,31 @@ class BookingService {
     const noShowRate = totalBookings > 0 ? Math.round((noShowBookings / totalBookings) * 10000) / 100 : 0;
 
     // Popular time slots
-    const popularSlots = await Booking.findAll({
+    const popularSlots = (await Booking.findAll({
       where,
       attributes: [
         ['startTime', 'slot'],
-        [fn('COUNT', col('id')), 'count'],
+        [fn('COUNT', col('id')), 'count']
       ],
       group: ['startTime'],
       order: [[fn('COUNT', col('id')), 'DESC']],
       limit: 10,
-      raw: true,
-    }) as unknown as Array<{ slot: string; count: string }>;
+      raw: true
+    })) as unknown as Array<{ slot: string; count: string }>;
 
     // Booking trends (daily counts)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const dailyTrend = await Booking.findAll({
+    const dailyTrend = (await Booking.findAll({
       where: { ...where, createdAt: { [Op.gte]: thirtyDaysAgo } },
       attributes: [
         [fn('DATE', col('createdAt')), 'date'],
-        [fn('COUNT', col('id')), 'count'],
+        [fn('COUNT', col('id')), 'count']
       ],
       group: [fn('DATE', col('createdAt'))],
       order: [[fn('DATE', col('createdAt')), 'ASC']],
-      raw: true,
-    }) as unknown as Array<{ date: string; count: string }>;
+      raw: true
+    })) as unknown as Array<{ date: string; count: string }>;
 
     return {
       totalBookings,
@@ -268,8 +287,8 @@ class BookingService {
       cancelledBookings,
       noShowBookings,
       noShowRate,
-      popularSlots: popularSlots.map((s) => ({ slot: s.slot, count: Number(s.count) })),
-      dailyTrend: dailyTrend.map((d) => ({ date: d.date, count: Number(d.count) })),
+      popularSlots: popularSlots.map(s => ({ slot: s.slot, count: Number(s.count) })),
+      dailyTrend: dailyTrend.map(d => ({ date: d.date, count: Number(d.count) }))
     };
   }
 
@@ -307,7 +326,14 @@ class BookingService {
   }
 
   private generateSlug(name: string): string {
-    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
+    return (
+      name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '') +
+      '-' +
+      Date.now().toString(36)
+    );
   }
 }
 export default new BookingService();

@@ -56,7 +56,6 @@ class VehicleController {
       next(error);
     }
   }
-
 }
 
 export default new VehicleController();

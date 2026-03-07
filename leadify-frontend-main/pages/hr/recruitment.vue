@@ -4,7 +4,9 @@
     <div class="glass-panel p-6 rounded-2xl">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-400">{{ $t('recruitment.title') }}</h1>
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-400">
+            {{ $t('recruitment.title') }}
+          </h1>
           <p class="text-slate-400 text-sm mt-1">{{ $t('recruitment.subtitle') }}</p>
         </div>
         <el-button type="primary" class="!rounded-xl" @click="showJobDialog = true">

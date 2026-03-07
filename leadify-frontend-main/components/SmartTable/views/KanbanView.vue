@@ -11,7 +11,7 @@
           .kanban-color-dot(:style="{ background: getGroupColor(group.key) }")
           span.kanban-group-name {{ group.label }}
           span.kanban-count {{ group.items.length }}
-        .kanban-column-aggregate(v-if="aggregateField && group.aggregate != null")
+        .kanban-column-aggregate(v-if="aggregateField && group.aggregate !== null")
           span {{ formatAggregate(group.aggregate) }}
 
       .kanban-column-body
@@ -195,7 +195,7 @@ const getStatusTagType = (status: string): string => {
 };
 
 const formatFieldValue = (col: SmartTableColumn, val: unknown) => {
-  if (val == null || val === '') return '-';
+  if (val === null || val === undefined || val === '') return '-';
   if (col.type === 'date') {
     try {
       return new Date(val).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });

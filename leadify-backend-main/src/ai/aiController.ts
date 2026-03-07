@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import aiService from './aiService';
 import summarizerService from './summarizerService';
 import churnService from './churnService';

@@ -1,4 +1,4 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import jwt from 'jsonwebtoken';
 import Notification from './notificationModel';
 import NotificationPreference, {
@@ -35,6 +35,7 @@ let ioInstance: any = null;
 function getIO() {
   if (!ioInstance) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       ioInstance = require('../server').io;
     } catch {
       // Socket.io not available (e.g. in tests)
@@ -166,11 +167,7 @@ class NotificationCenterService {
           let unsubscribeUrl: string | undefined;
           if (secret) {
             const prefKey = typeToPreferenceKey(data.type);
-            const unsubscribeToken = jwt.sign(
-              { userId: data.userId, notificationType: prefKey },
-              secret,
-              { expiresIn: '30d' }
-            );
+            const unsubscribeToken = jwt.sign({ userId: data.userId, notificationType: prefKey }, secret, { expiresIn: '30d' });
             unsubscribeUrl = `${process.env.BACKEND_URL || 'http://localhost:3000'}/api/notification/unsubscribe?token=${unsubscribeToken}`;
           } else {
             console.error('[NotificationCenter] SECRET_KEY not set — omitting unsubscribe link');
@@ -217,7 +214,9 @@ class NotificationCenterService {
    */
   private async sendWebPush(userId: number, title: string, message: string, actionUrl?: string): Promise<void> {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const webpush = require('web-push');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const PushSubscription = require('./pushSubscriptionModel').default;
 
       const vapidPublic = process.env.VAPID_PUBLIC_KEY;
@@ -429,22 +428,17 @@ class NotificationCenterService {
     oldestUnread: Date | null;
   }> {
     // Get counts grouped by type
-    const groupRows = await Notification.findAll({
+    const groupRows = (await Notification.findAll({
       where: {
         userId,
         read: NotificationReadEnums.UN_READ,
         createdAt: { [Op.gte]: since }
       },
-      attributes: [
-        'type',
-        'priority',
-        [fn('COUNT', col('id')), 'count'],
-        [fn('MAX', col('createdAt')), 'latestAt']
-      ],
+      attributes: ['type', 'priority', [fn('COUNT', col('id')), 'count'], [fn('MAX', col('createdAt')), 'latestAt']],
       group: ['type', 'priority'],
       raw: true,
       order: [[fn('MAX', col('createdAt')), 'DESC']]
-    }) as any[];
+    })) as any[];
 
     // Get the latest message per type for preview
     const groups: { type: string; count: number; priority: string; latestMessage: string; latestAt: Date }[] = [];
@@ -499,10 +493,7 @@ class NotificationCenterService {
    * @param notifications Array of notification data to send
    * @param collapseWindowMinutes Time window to check for existing pending notifications (default 30 min)
    */
-  async sendBatchNotifications(
-    notifications: SendNotificationData[],
-    collapseWindowMinutes: number = 30
-  ): Promise<(Notification | null)[]> {
+  async sendBatchNotifications(notifications: SendNotificationData[], collapseWindowMinutes: number = 30): Promise<(Notification | null)[]> {
     // Group notifications by userId + type
     const grouped = new Map<string, SendNotificationData[]>();
     for (const n of notifications) {
@@ -514,7 +505,7 @@ class NotificationCenterService {
     const results: (Notification | null)[] = [];
     const windowStart = new Date(Date.now() - collapseWindowMinutes * 60 * 1000);
 
-    for (const [key, group] of grouped) {
+    for (const [_key, group] of grouped) {
       const { userId, type } = group[0];
 
       // Check how many unread notifications of the same type exist within the window
@@ -560,11 +551,9 @@ class NotificationCenterService {
    * Register a push subscription for a user.
    * Stores the browser push subscription object for web push notifications.
    */
-  async registerPushSubscription(
-    userId: number,
-    subscription: { endpoint: string; keys: { p256dh: string; auth: string } }
-  ): Promise<any> {
+  async registerPushSubscription(userId: number, subscription: { endpoint: string; keys: { p256dh: string; auth: string } }): Promise<any> {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const PushSubscription = require('./pushSubscriptionModel').default;
 
       // Upsert: if same endpoint exists, update; otherwise create
@@ -593,6 +582,7 @@ class NotificationCenterService {
    */
   async unregisterPushSubscription(userId: number, endpoint: string): Promise<void> {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const PushSubscription = require('./pushSubscriptionModel').default;
       await PushSubscription.destroy({ where: { userId, endpoint } });
     } catch {

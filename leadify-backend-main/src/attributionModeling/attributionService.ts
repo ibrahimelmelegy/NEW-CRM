@@ -1,4 +1,4 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op } from 'sequelize';
 import Touchpoint from './touchpointModel';
 import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
@@ -10,7 +10,9 @@ class AttributionService {
 
   async create(data: any, tenantId?: string) {
     const tp = await Touchpoint.create({ ...data, tenantId });
-    try { io.emit('touchpoint:created', { id: tp.id, dealId: tp.dealId }); } catch {}
+    try {
+      io.emit('touchpoint:created', { id: tp.id, dealId: tp.dealId });
+    } catch {}
     return tp;
   }
 
@@ -23,7 +25,11 @@ class AttributionService {
     if (query.campaign) where.campaign = { [Op.iLike]: `%${query.campaign}%` };
 
     const { rows, count } = await Touchpoint.findAndCountAll({
-      where, order: [['touchpointDate', 'ASC']], limit, offset, distinct: true
+      where,
+      order: [['touchpointDate', 'ASC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -130,7 +136,9 @@ class AttributionService {
     // Re-fetch updated touchpoints
     const updated = await Touchpoint.findAll({ where, order: [['touchpointDate', 'ASC']] });
 
-    try { io.emit('attribution:calculated', { dealId, model }); } catch {}
+    try {
+      io.emit('attribution:calculated', { dealId, model });
+    } catch {}
 
     return { dealId, model, dealValue: totalValue, touchpoints: updated };
   }
@@ -156,12 +164,14 @@ class AttributionService {
     }
 
     // Compute average credit per touchpoint
-    const channels = Object.entries(byChannel).map(([channel, data]) => ({
-      channel,
-      touchpoints: data.touchpoints,
-      avgCredit: parseFloat((data.totalCredit / data.touchpoints).toFixed(2)),
-      totalAttributedValue: parseFloat(data.totalValue.toFixed(2))
-    })).sort((a, b) => b.totalAttributedValue - a.totalAttributedValue);
+    const channels = Object.entries(byChannel)
+      .map(([channel, data]) => ({
+        channel,
+        touchpoints: data.touchpoints,
+        avgCredit: parseFloat((data.totalCredit / data.touchpoints).toFixed(2)),
+        totalAttributedValue: parseFloat(data.totalValue.toFixed(2))
+      }))
+      .sort((a, b) => b.totalAttributedValue - a.totalAttributedValue);
 
     return { channels, totalTouchpoints: touchpoints.length };
   }
@@ -173,7 +183,7 @@ class AttributionService {
 
     for (const model of models) {
       const result = await this.calculateAttribution(dealId, model, dealValue, tenantId);
-      results[model] = result.touchpoints.map((tp) => ({
+      results[model] = result.touchpoints.map(tp => ({
         id: tp.id,
         channel: tp.channel,
         creditPercent: tp.creditPercent,

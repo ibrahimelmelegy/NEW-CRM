@@ -15,7 +15,7 @@ interface Recipient {
 class ESignatureService {
   async create(data: any, userId: number, tenantId?: string) {
     // Initialize recipients with PENDING status
-    const recipients = (data.recipients || []).map((r) => ({
+    const recipients = (data.recipients || []).map((r: any) => ({
       name: r.name,
       email: r.email,
       role: r.role || 'SIGNER',
@@ -31,7 +31,9 @@ class ESignatureService {
       createdBy: userId,
       tenantId
     });
-    try { io.emit('eSignature:created', { id: record.id, title: record.title }); } catch {}
+    try {
+      io.emit('eSignature:created', { id: record.id, title: record.title });
+    } catch {}
     return this.getById(record.id);
   }
 
@@ -46,9 +48,7 @@ class ESignatureService {
 
     const { rows, count } = await ESignature.findAndCountAll({
       where,
-      include: [
-        { model: User, as: 'creator', attributes: ['id', 'name', 'email', 'profilePicture'] }
-      ],
+      include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'email', 'profilePicture'] }],
       order: [['createdAt', 'DESC']],
       limit,
       offset,
@@ -59,9 +59,7 @@ class ESignatureService {
 
   async getById(id: string) {
     return ESignature.findByPk(id, {
-      include: [
-        { model: User, as: 'creator', attributes: ['id', 'name', 'email', 'profilePicture'] }
-      ]
+      include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'email', 'profilePicture'] }]
     });
   }
 
@@ -100,7 +98,9 @@ class ESignatureService {
     const newStatus = allSigned ? 'SIGNED' : 'PENDING';
 
     await item.update({ recipients, status: newStatus });
-    try { io.emit('eSignature:signed', { id: item.id, title: item.title, signer: email, allSigned }); } catch {}
+    try {
+      io.emit('eSignature:signed', { id: item.id, title: item.title, signer: email, allSigned });
+    } catch {}
     return this.getById(item.id);
   }
 
@@ -119,7 +119,9 @@ class ESignatureService {
     recipients[recipientIdx].status = 'DECLINED';
 
     await item.update({ recipients, status: 'DECLINED' });
-    try { io.emit('eSignature:declined', { id: item.id, title: item.title, decliner: email }); } catch {}
+    try {
+      io.emit('eSignature:declined', { id: item.id, title: item.title, decliner: email });
+    } catch {}
     return this.getById(item.id);
   }
 
@@ -133,7 +135,9 @@ class ESignatureService {
     if (item.status !== 'PENDING') return null;
 
     const pendingRecipients = (item.recipients || []).filter((r: Recipient) => r.status === 'PENDING');
-    try { io.emit('eSignature:reminder_sent', { id: item.id, title: item.title, pendingCount: pendingRecipients.length }); } catch {}
+    try {
+      io.emit('eSignature:reminder_sent', { id: item.id, title: item.title, pendingCount: pendingRecipients.length });
+    } catch {}
     return { sent: true, pendingRecipients: pendingRecipients.length };
   }
 }

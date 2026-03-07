@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from '../types';
 import { TenantPlan } from '../tenant/tenantModel';
 import redisClient from '../config/redis';
@@ -52,8 +52,7 @@ function resolveKey(req: AuthenticatedRequest): { key: string; isTenant: boolean
   const user = req.user;
 
   if (user) {
-    const isSuperAdmin =
-      user.role?.name === 'SUPER_ADMIN' || user.role?.name === 'Super Admin';
+    const isSuperAdmin = user.role?.name === 'SUPER_ADMIN' || user.role?.name === 'Super Admin';
     if (isSuperAdmin) {
       return null; // No rate limit for superadmin
     }
@@ -112,11 +111,7 @@ async function checkRateLimit(key: string, maxRequests: number, windowMs: number
  *
  * Superadmin users are exempt from rate limiting.
  */
-export const tenantRateLimit = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const tenantRateLimit = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   const resolved = resolveKey(req);
   if (!resolved) {
     return next();
@@ -157,10 +152,7 @@ export const tenantRateLimit = async (
 /**
  * Creates a tenant-aware rate limiter with custom limits.
  */
-export function createTenantRateLimit(
-  overrides: Partial<Record<TenantPlan, number>>,
-  windowMs = DEFAULT_WINDOW_MS
-) {
+export function createTenantRateLimit(overrides: Partial<Record<TenantPlan, number>>, windowMs = DEFAULT_WINDOW_MS) {
   const limits: Record<TenantPlan, number> = {
     free: overrides.free ?? PLAN_LIMITS.free,
     pro: overrides.pro ?? PLAN_LIMITS.pro,

@@ -62,12 +62,7 @@ router.get('/analytics', authenticateUser, HasPermission([SalesOrderPermissionsE
  *         description: Paginated client order history
  */
 // Get client orders (MUST be before /:id)
-router.get(
-  '/client/:clientId',
-  authenticateUser,
-  HasPermission([SalesOrderPermissionsEnum.VIEW_SALES_ORDERS]),
-  SalesOrderController.getClientOrders
-);
+router.get('/client/:clientId', authenticateUser, HasPermission([SalesOrderPermissionsEnum.VIEW_SALES_ORDERS]), SalesOrderController.getClientOrders);
 
 /**
  * @swagger
@@ -215,12 +210,7 @@ router.post(
  *         description: Sales order created from cart
  */
 // Convert cart to sales order
-router.post(
-  '/from-cart',
-  authenticateUser,
-  HasPermission([SalesOrderPermissionsEnum.CREATE_SALES_ORDERS]),
-  SalesOrderController.convertCartToOrder
-);
+router.post('/from-cart', authenticateUser, HasPermission([SalesOrderPermissionsEnum.CREATE_SALES_ORDERS]), SalesOrderController.convertCartToOrder);
 
 /**
  * @swagger
@@ -454,7 +444,12 @@ router.patch('/:id/status', authenticateUser, HasPermission([SalesOrderPermissio
  *         description: Server error
  */
 // Update payment status
-router.patch('/:id/payment-status', authenticateUser, HasPermission([SalesOrderPermissionsEnum.EDIT_SALES_ORDERS]), SalesOrderController.updatePaymentStatus);
+router.patch(
+  '/:id/payment-status',
+  authenticateUser,
+  HasPermission([SalesOrderPermissionsEnum.EDIT_SALES_ORDERS]),
+  SalesOrderController.updatePaymentStatus
+);
 
 /**
  * @swagger

@@ -473,38 +473,41 @@ export function setupCrmSocketHandlers(io: Server): void {
   // ─── Periodic Cleanup ─────────────────────────────────────────────
 
   // Clean up stale document locks every 5 minutes (locks older than 30 minutes)
-  const lockCleanupInterval = setInterval(() => {
-    const now = Date.now();
-    for (const [lockKey, lock] of documentLocks) {
-      if (now - lock.lockedAt.getTime() > 30 * 60 * 1000) {
-        documentLocks.delete(lockKey);
-        // Extract tenantId from lock key (format: tenantId:documentId)
-        const colonIdx = lockKey.indexOf(':');
-        const tenantId = colonIdx > -1 ? lockKey.substring(0, colonIdx) : null;
-        const documentId = colonIdx > -1 ? lockKey.substring(colonIdx + 1) : lockKey;
+  const lockCleanupInterval = setInterval(
+    () => {
+      const now = Date.now();
+      for (const [lockKey, lock] of documentLocks) {
+        if (now - lock.lockedAt.getTime() > 30 * 60 * 1000) {
+          documentLocks.delete(lockKey);
+          // Extract tenantId from lock key (format: tenantId:documentId)
+          const colonIdx = lockKey.indexOf(':');
+          const tenantId = colonIdx > -1 ? lockKey.substring(0, colonIdx) : null;
+          const documentId = colonIdx > -1 ? lockKey.substring(colonIdx + 1) : lockKey;
 
-        if (tenantId) {
-          io.to(getTenantRoom(tenantId)).emit('document:editing', {
-            documentId,
-            userId: lock.userId,
-            userName: lock.userName,
-            action: 'unlock',
-            reason: 'timeout',
-            timestamp: now
-          });
-        } else {
-          io.emit('document:editing', {
-            documentId,
-            userId: lock.userId,
-            userName: lock.userName,
-            action: 'unlock',
-            reason: 'timeout',
-            timestamp: now
-          });
+          if (tenantId) {
+            io.to(getTenantRoom(tenantId)).emit('document:editing', {
+              documentId,
+              userId: lock.userId,
+              userName: lock.userName,
+              action: 'unlock',
+              reason: 'timeout',
+              timestamp: now
+            });
+          } else {
+            io.emit('document:editing', {
+              documentId,
+              userId: lock.userId,
+              userName: lock.userName,
+              action: 'unlock',
+              reason: 'timeout',
+              timestamp: now
+            });
+          }
         }
       }
-    }
-  }, 5 * 60 * 1000);
+    },
+    5 * 60 * 1000
+  );
 
   process.on('SIGTERM', () => clearInterval(lockCleanupInterval));
   process.on('SIGINT', () => clearInterval(lockCleanupInterval));

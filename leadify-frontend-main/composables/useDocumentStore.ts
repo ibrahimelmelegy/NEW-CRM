@@ -84,7 +84,7 @@ export function useDocumentStore() {
       if (success && body) {
         const data = body as unknown;
         const docs = data.docs || data || [];
-        documents.value = docs.map((f) => ({
+        documents.value = docs.map(f => ({
           id: f.id,
           refNumber: f.name || '',
           title: f.originalName || f.name || '',

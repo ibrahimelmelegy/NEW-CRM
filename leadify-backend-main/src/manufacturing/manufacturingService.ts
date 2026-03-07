@@ -130,7 +130,7 @@ class ManufacturingService {
       code: `${original.code}-COPY`,
       version: 1,
       isActive: false,
-      items: original.items?.map((i) => ({
+      items: original.items?.map(i => ({
         name: i.name,
         type: i.type,
         quantity: i.quantity,
@@ -264,7 +264,9 @@ class ManufacturingService {
       throw new Error('Cannot delete an in-progress work order. Cancel it first.');
     }
     await wo.destroy();
-    try { io.emit('manufacturing:work_order_deleted', { id, woNumber: wo.woNumber }); } catch {}
+    try {
+      io.emit('manufacturing:work_order_deleted', { id, woNumber: wo.woNumber });
+    } catch {}
     return { deleted: true };
   }
 
@@ -293,16 +295,19 @@ class ManufacturingService {
       const passed = increment - Math.min(data.defects, increment);
       const passRate = increment > 0 ? passed / increment : 0;
       qualityCheck = await QualityCheck.create(
-        tenantCreate({
-          workOrderId: id,
-          woNumber: wo.woNumber,
-          product: wo.productName,
-          inspector: data.inspector || null,
-          inspected: increment,
-          passed,
-          defects: Math.min(data.defects, increment),
-          result: passRate >= 0.95 ? 'PASS' : 'FAIL'
-        }, user)
+        tenantCreate(
+          {
+            workOrderId: id,
+            woNumber: wo.woNumber,
+            product: wo.productName,
+            inspector: data.inspector || null,
+            inspected: increment,
+            passed,
+            defects: Math.min(data.defects, increment),
+            result: passRate >= 0.95 ? 'PASS' : 'FAIL'
+          },
+          user
+        )
       );
     }
 
@@ -360,14 +365,14 @@ class ManufacturingService {
     });
 
     // Top 5 products by total produced quantity
-    const topProducts = await WorkOrder.findAll({
+    const topProducts = (await WorkOrder.findAll({
       where: activeWhere,
       attributes: ['productName', [fn('SUM', col('produced')), 'totalProduced'], [fn('SUM', col('planned')), 'totalPlanned']],
       group: ['productName'],
       order: [[literal('"totalProduced"'), 'DESC']],
       limit: 5,
       raw: true
-    }) as unknown as Array<{ productName: string; totalProduced: string; totalPlanned: string }>;
+    })) as unknown as Array<{ productName: string; totalProduced: string; totalPlanned: string }>;
 
     return {
       statusCounts,
@@ -396,7 +401,7 @@ class ManufacturingService {
     const items = bom.items || [];
 
     const totalCost = Number(bom.totalCost) || 0;
-    const breakdown = items.map((item) => {
+    const breakdown = items.map(item => {
       const lineCost = Number(item.quantity) * Number(item.unitCost);
       return {
         name: item.name,

@@ -1,4 +1,4 @@
-import { Op, WhereOptions, fn, col, literal } from 'sequelize';
+import { Op } from 'sequelize';
 import EcReview, { ReviewStatusEnum } from './reviewModel';
 import CatalogProduct from '../../productCatalog/productModel';
 import Client from '../../client/clientModel';
@@ -22,10 +22,7 @@ class ReviewService {
     }
 
     if (searchKey) {
-      where[Op.or] = [
-        { title: { [Op.iLike]: `%${searchKey}%` } },
-        { comment: { [Op.iLike]: `%${searchKey}%` } }
-      ];
+      where[Op.or] = [{ title: { [Op.iLike]: `%${searchKey}%` } }, { comment: { [Op.iLike]: `%${searchKey}%` } }];
     }
 
     const { rows: docs, count: totalItems } = await EcReview.findAndCountAll({

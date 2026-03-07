@@ -5,7 +5,9 @@ import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 
 class WarrantyService {
-  async createWarranty(data: any, tenantId?: string) { return Warranty.create({ ...data, tenantId }); }
+  async createWarranty(data: any, tenantId?: string) {
+    return Warranty.create({ ...data, tenantId });
+  }
 
   async getWarranties(query: any, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
@@ -21,7 +23,10 @@ class WarrantyService {
           { model: Client, as: 'client', attributes: ['id', 'name', 'email'], required: false },
           { model: WarrantyClaim, as: 'claims', required: false }
         ],
-        order: [['createdAt', 'DESC']], limit, offset, distinct: true
+        order: [['createdAt', 'DESC']],
+        limit,
+        offset,
+        distinct: true
       });
       return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
     } catch {
@@ -46,7 +51,9 @@ class WarrantyService {
 
   async createClaim(data: any, tenantId?: string) {
     const claim = await WarrantyClaim.create({ ...data, tenantId });
-    try { io.emit('warranty:claim_created', { id: claim.id, warrantyId: claim.warrantyId, status: claim.status }); } catch {}
+    try {
+      io.emit('warranty:claim_created', { id: claim.id, warrantyId: claim.warrantyId, status: claim.status });
+    } catch {}
     return claim;
   }
 
@@ -59,7 +66,10 @@ class WarrantyService {
     const { rows, count } = await WarrantyClaim.findAndCountAll({
       where,
       include: [{ model: Warranty, as: 'warranty', attributes: ['id', 'productName', 'serialNumber'] }],
-      order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -126,13 +136,12 @@ class WarrantyService {
     const where: Record<string, any> = { status: 'ACTIVE', endDate: { [Op.lt]: today } };
     if (tenantId) where.tenantId = tenantId;
 
-    const [affectedCount] = await Warranty.update(
-      { status: 'EXPIRED' },
-      { where }
-    );
+    const [affectedCount] = await Warranty.update({ status: 'EXPIRED' }, { where });
 
     if (affectedCount > 0) {
-      try { io.emit('warranty:bulk_expired', { tenantId, count: affectedCount }); } catch {}
+      try {
+        io.emit('warranty:bulk_expired', { tenantId, count: affectedCount });
+      } catch {}
     }
 
     return { expiredCount: affectedCount };
@@ -152,9 +161,7 @@ class WarrantyService {
     const now = checkDate.getTime();
 
     const covered = warranty.status === 'ACTIVE' && now >= start.getTime() && now <= end.getTime();
-    const daysRemaining = covered
-      ? Math.ceil((end.getTime() - now) / (1000 * 60 * 60 * 24))
-      : 0;
+    const daysRemaining = covered ? Math.ceil((end.getTime() - now) / (1000 * 60 * 60 * 24)) : 0;
 
     // For LIFETIME warranties, set a large remaining value
     const isLifetime = warranty.type === 'LIFETIME';
@@ -197,7 +204,9 @@ class WarrantyService {
     }
 
     const claim = await WarrantyClaim.create({ ...data, tenantId });
-    try { io.emit('warranty:claim_created', { id: claim.id, warrantyId: claim.warrantyId, status: claim.status }); } catch {}
+    try {
+      io.emit('warranty:claim_created', { id: claim.id, warrantyId: claim.warrantyId, status: claim.status });
+    } catch {}
     return claim;
   }
 
@@ -218,16 +227,12 @@ class WarrantyService {
         status: 'ACTIVE',
         endDate: { [Op.between]: [todayStr, futureStr] }
       },
-      include: [
-        { model: Client, as: 'client', attributes: ['id', 'name', 'email'] }
-      ],
+      include: [{ model: Client, as: 'client', attributes: ['id', 'name', 'email'] }],
       order: [['endDate', 'ASC']]
     });
 
     const results = warranties.map(w => {
-      const daysLeft = Math.ceil(
-        (new Date(w.endDate).getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-      );
+      const daysLeft = Math.ceil((new Date(w.endDate).getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
       return {
         id: w.id,
         productName: w.productName,
@@ -240,7 +245,9 @@ class WarrantyService {
     });
 
     if (results.length > 0) {
-      try { io.emit('warranty:expiring', { tenantId, daysAhead, count: results.length, warranties: results.slice(0, 10) }); } catch {}
+      try {
+        io.emit('warranty:expiring', { tenantId, daysAhead, count: results.length, warranties: results.slice(0, 10) });
+      } catch {}
     }
     return results;
   }
@@ -253,12 +260,12 @@ class WarrantyService {
     const where: Record<string, any> = { tenantId };
 
     // Count by status
-    const statusCounts = await Warranty.findAll({
+    const statusCounts = (await Warranty.findAll({
       where,
       attributes: ['status', [fn('COUNT', col('id')), 'count']],
       group: ['status'],
       raw: true
-    }) as unknown as Array<{ status: string; count: string }>;
+    })) as unknown as Array<{ status: string; count: string }>;
 
     const byStatus: Record<string, number> = {};
     for (const row of statusCounts) byStatus[row.status] = Number(row.count);
@@ -268,12 +275,12 @@ class WarrantyService {
 
     // Claims
     const totalClaims = await WarrantyClaim.count({ where });
-    const claimStatusCounts = await WarrantyClaim.findAll({
+    const claimStatusCounts = (await WarrantyClaim.findAll({
       where,
       attributes: ['status', [fn('COUNT', col('id')), 'count']],
       group: ['status'],
       raw: true
-    }) as unknown as Array<{ status: string; count: string }>;
+    })) as unknown as Array<{ status: string; count: string }>;
 
     const claimsByStatus: Record<string, number> = {};
     for (const row of claimStatusCounts) claimsByStatus[row.status] = Number(row.count);
@@ -286,16 +293,12 @@ class WarrantyService {
     let totalResolutionDays = 0;
     for (const claim of resolvedClaims) {
       if (claim.resolvedAt && claim.createdAt) {
-        const days = Math.ceil(
-          (new Date(claim.resolvedAt).getTime() - new Date(claim.createdAt as any).getTime()) / (1000 * 60 * 60 * 24)
-        );
+        const days = Math.ceil((new Date(claim.resolvedAt).getTime() - new Date(claim.createdAt as any).getTime()) / (1000 * 60 * 60 * 24));
         totalResolutionDays += days;
       }
     }
 
-    const avgResolutionDays = resolvedClaims.length > 0
-      ? Number((totalResolutionDays / resolvedClaims.length).toFixed(1))
-      : null;
+    const avgResolutionDays = resolvedClaims.length > 0 ? Number((totalResolutionDays / resolvedClaims.length).toFixed(1)) : null;
 
     return {
       warranties: {

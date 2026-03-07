@@ -144,7 +144,9 @@
                 <div v-for="(insight, idx) in dailyInsights" :key="idx" class="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
                   <p class="text-sm" style="color: var(--text-secondary)">{{ insight.text || insight }}</p>
                 </div>
-                <div v-if="dailyInsights.length === 0" class="text-sm text-center py-4" style="color: var(--text-muted)">{{ $t('aiAssistant.noInsights') }}</div>
+                <div v-if="dailyInsights.length === 0" class="text-sm text-center py-4" style="color: var(--text-muted)">
+                  {{ $t('aiAssistant.noInsights') }}
+                </div>
               </div>
             </div>
 
@@ -206,18 +208,9 @@
             <div class="flex items-end gap-4 flex-wrap">
               <div class="flex-1" style="min-width: 200px">
                 <label class="text-xs font-medium mb-1 block" style="color: var(--text-muted)">{{ $t('aiAssistantExpanded.leadIdLabel') }}</label>
-                <el-input
-                  v-model="leadIdInput"
-                  :placeholder="$t('aiAssistantExpanded.leadIdPlaceholder')"
-                  size="large"
-                />
+                <el-input v-model="leadIdInput" :placeholder="$t('aiAssistantExpanded.leadIdPlaceholder')" size="large" />
               </div>
-              <el-button
-                type="primary"
-                size="large"
-                :loading="isLeadScoreLoading"
-                @click="runLeadScoring"
-              >
+              <el-button type="primary" size="large" :loading="isLeadScoreLoading" @click="runLeadScoring">
                 <Icon name="ph:sparkle-bold" size="16" class="mr-2" />
                 {{ $t('aiAssistantExpanded.analyzeLeadQuality') }}
               </el-button>
@@ -246,18 +239,9 @@
             <div class="flex items-end gap-4 flex-wrap">
               <div class="flex-1" style="min-width: 200px">
                 <label class="text-xs font-medium mb-1 block" style="color: var(--text-muted)">{{ $t('aiAssistantExpanded.dealIdLabel') }}</label>
-                <el-input
-                  v-model="dealIdInput"
-                  :placeholder="$t('aiAssistantExpanded.dealIdPlaceholder')"
-                  size="large"
-                />
+                <el-input v-model="dealIdInput" :placeholder="$t('aiAssistantExpanded.dealIdPlaceholder')" size="large" />
               </div>
-              <el-button
-                type="primary"
-                size="large"
-                :loading="isDealProbLoading"
-                @click="runDealProbability"
-              >
+              <el-button type="primary" size="large" :loading="isDealProbLoading" @click="runDealProbability">
                 <Icon name="ph:sparkle-bold" size="16" class="mr-2" />
                 {{ $t('aiAssistantExpanded.analyzeDeal') }}
               </el-button>
@@ -311,7 +295,9 @@
                 <el-input v-model="emailForm.recipientName" :placeholder="$t('aiAssistantExpanded.recipientNamePlaceholder')" size="large" />
               </div>
               <div>
-                <label class="text-xs font-medium mb-1 block" style="color: var(--text-muted)">{{ $t('aiAssistantExpanded.recipientCompany') }}</label>
+                <label class="text-xs font-medium mb-1 block" style="color: var(--text-muted)">
+                  {{ $t('aiAssistantExpanded.recipientCompany') }}
+                </label>
                 <el-input v-model="emailForm.recipientCompany" :placeholder="$t('aiAssistantExpanded.recipientCompanyPlaceholder')" size="large" />
               </div>
               <div>
@@ -333,12 +319,7 @@
                 size="large"
               />
             </div>
-            <el-button
-              type="primary"
-              size="large"
-              :loading="isEmailDraftLoading"
-              @click="runEmailGeneration"
-            >
+            <el-button type="primary" size="large" :loading="isEmailDraftLoading" @click="runEmailGeneration">
               <Icon name="ph:sparkle-bold" size="16" class="mr-2" />
               {{ $t('aiAssistantExpanded.generateEmail') }}
             </el-button>
@@ -366,7 +347,12 @@
                 <span class="email-label ml-4">{{ $t('aiAssistantExpanded.purposeLabel') }}:</span>
                 <el-tag size="small" effect="plain" round type="info">{{ emailDraft.purpose }}</el-tag>
               </div>
-              <div class="email-body-preview mt-4 p-4 rounded-lg" style="background: rgba(0,0,0,0.05); white-space: pre-wrap; font-size: 13px; line-height: 1.6; color: var(--text-secondary)">{{ emailDraft.body }}</div>
+              <div
+                class="email-body-preview mt-4 p-4 rounded-lg"
+                style="background: rgba(0, 0, 0, 0.05); white-space: pre-wrap; font-size: 13px; line-height: 1.6; color: var(--text-secondary)"
+              >
+                {{ emailDraft.body }}
+              </div>
             </div>
           </div>
         </div>
@@ -397,18 +383,9 @@
               </div>
               <div class="flex-1" style="min-width: 200px">
                 <label class="text-xs font-medium mb-1 block" style="color: var(--text-muted)">{{ $t('aiAssistantExpanded.entityIdLabel') }}</label>
-                <el-input
-                  v-model="suggestionsForm.entityId"
-                  :placeholder="$t('aiAssistantExpanded.entityIdPlaceholder')"
-                  size="large"
-                />
+                <el-input v-model="suggestionsForm.entityId" :placeholder="$t('aiAssistantExpanded.entityIdPlaceholder')" size="large" />
               </div>
-              <el-button
-                type="primary"
-                size="large"
-                :loading="isSuggestionsLoading"
-                @click="runSmartSuggestions"
-              >
+              <el-button type="primary" size="large" :loading="isSuggestionsLoading" @click="runSmartSuggestions">
                 <Icon name="ph:sparkle-bold" size="16" class="mr-2" />
                 {{ $t('aiAssistantExpanded.getSuggestions') }}
               </el-button>

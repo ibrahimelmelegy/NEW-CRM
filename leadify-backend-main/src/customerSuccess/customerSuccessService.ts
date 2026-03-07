@@ -57,9 +57,9 @@ class CustomerSuccessService {
       attributes: ['id', 'price', 'stage', 'createdAt']
     });
 
-    const activeDeals = deals.filter((d) => !['CLOSED_WON', 'CLOSED_LOST'].includes(d.stage)).length;
+    const activeDeals = deals.filter(d => !['CLOSED_WON', 'CLOSED_LOST'].includes(d.stage)).length;
 
-    const wonDeals = deals.filter((d) => (d.stage as string) === 'CLOSED_WON');
+    const wonDeals = deals.filter(d => (d.stage as string) === 'CLOSED_WON');
     const totalRevenue = wonDeals.reduce((sum: number, d: any) => sum + (d.price || 0), 0);
 
     // Get recent communication activities
@@ -141,7 +141,7 @@ class CustomerSuccessService {
     // Get assigned users
     const assignedUsers: Array<{ id: number; name: string }> = [];
     if (client.users && client.users.length > 0) {
-      client.users.forEach((u) => {
+      client.users.forEach((u: any) => {
         assignedUsers.push({ id: u.id, name: u.name });
       });
     }
@@ -248,7 +248,7 @@ class CustomerSuccessService {
         .filter(h => h.riskLevel !== 'HEALTHY')
         .sort((a, b) => a.overallScore - b.overallScore)
         .slice(0, 10),
-      recentActivity: recentActivity.map((a) => a.toJSON()),
+      recentActivity: recentActivity.map(a => a.toJSON()),
       revenueByMonth,
       engagementTrend
     };

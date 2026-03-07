@@ -10,7 +10,9 @@ class CompetitorService {
 
   async create(data: any, tenantId?: string, createdBy?: number) {
     const competitor = await Competitor.create({ ...data, tenantId, createdBy });
-    try { io.emit('competitor:created', { id: competitor.id, name: competitor.name }); } catch {}
+    try {
+      io.emit('competitor:created', { id: competitor.id, name: competitor.name });
+    } catch {}
     return competitor;
   }
 
@@ -25,7 +27,11 @@ class CompetitorService {
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
 
     const { rows, count } = await Competitor.findAndCountAll({
-      where, order: [['createdAt', 'DESC']], limit, offset, distinct: true
+      where,
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
     });
     return { rows, count, docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
@@ -38,7 +44,9 @@ class CompetitorService {
     const item = await Competitor.findByPk(id);
     if (!item) return null;
     await item.update(data);
-    try { io.emit('competitor:updated', { id: item.id, name: item.name }); } catch {}
+    try {
+      io.emit('competitor:updated', { id: item.id, name: item.name });
+    } catch {}
     return item;
   }
 
@@ -48,7 +56,9 @@ class CompetitorService {
     await item.destroy();
     // Also remove any deal associations
     await CompetitorDeal.destroy({ where: { competitorId: id } });
-    try { io.emit('competitor:deleted', { id }); } catch {}
+    try {
+      io.emit('competitor:deleted', { id });
+    } catch {}
     return true;
   }
 
@@ -140,18 +150,33 @@ class CompetitorService {
     const competitors = await Competitor.findAll({
       where,
       attributes: [
-        'id', 'name', 'website', 'industry', 'threatLevel', 'dealsWon', 'dealsLost', 'strengths', 'weaknesses',
-        'size', 'marketShare',
+        'id',
+        'name',
+        'website',
+        'industry',
+        'threatLevel',
+        'dealsWon',
+        'dealsLost',
+        'strengths',
+        'weaknesses',
+        'size',
+        'marketShare',
         // Computed total engagements
         [literal(`COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0)`), 'totalEngagements'],
         // Computed our win rate (we won / total * 100)
-        [literal(`CASE WHEN COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0) > 0
+        [
+          literal(`CASE WHEN COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0) > 0
           THEN ROUND(COALESCE("dealsWon", 0)::numeric / (COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0)) * 100, 1)
-          ELSE 0 END`), 'winRate'],
+          ELSE 0 END`),
+          'winRate'
+        ],
         // Computed our loss rate
-        [literal(`CASE WHEN COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0) > 0
+        [
+          literal(`CASE WHEN COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0) > 0
           THEN ROUND(COALESCE("dealsLost", 0)::numeric / (COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0)) * 100, 1)
-          ELSE 0 END`), 'lossRate']
+          ELSE 0 END`),
+          'lossRate'
+        ]
       ],
       order: [
         // Sort by threat severity: CRITICAL first, then HIGH, MEDIUM, LOW, NULLs last
@@ -229,11 +254,20 @@ class CompetitorService {
     return Competitor.findAll({
       where,
       attributes: [
-        'id', 'name', 'threatLevel', 'dealsWon', 'dealsLost', 'marketShare', 'industry',
+        'id',
+        'name',
+        'threatLevel',
+        'dealsWon',
+        'dealsLost',
+        'marketShare',
+        'industry',
         [literal(`COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0)`), 'totalEngagements'],
-        [literal(`CASE WHEN COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0) > 0
+        [
+          literal(`CASE WHEN COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0) > 0
           THEN ROUND(COALESCE("dealsLost", 0)::numeric / (COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0)) * 100, 1)
-          ELSE 0 END`), 'lossRate']
+          ELSE 0 END`),
+          'lossRate'
+        ]
       ],
       order: [
         [literal(`CASE "threatLevel" WHEN 'CRITICAL' THEN 0 WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 WHEN 'LOW' THEN 3 ELSE 4 END`), 'ASC'],
@@ -254,13 +288,17 @@ class CompetitorService {
     return Competitor.findAll({
       where,
       attributes: [
-        'id', 'name',
+        'id',
+        'name',
         [literal(`COALESCE("dealsWon", 0)`), 'dealsWon'],
         [literal(`COALESCE("dealsLost", 0)`), 'dealsLost'],
         [literal(`COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0)`), 'totalEngagements'],
-        [literal(`CASE WHEN COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0) > 0
+        [
+          literal(`CASE WHEN COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0) > 0
           THEN ROUND(COALESCE("dealsWon", 0)::numeric / (COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0)) * 100, 1)
-          ELSE 0 END`), 'winRate']
+          ELSE 0 END`),
+          'winRate'
+        ]
       ],
       order: [[literal(`COALESCE("dealsWon", 0) + COALESCE("dealsLost", 0)`), 'DESC']],
       raw: true

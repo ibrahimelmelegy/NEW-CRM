@@ -80,7 +80,7 @@ class CartService {
 
     if (!cart) {
       cart = await EcCart.create({ clientId, status: CartStatusEnum.ACTIVE });
-      cart = await EcCart.findByPk(cart.id, {
+      cart = (await EcCart.findByPk(cart.id, {
         include: [
           { model: Client, as: 'client' },
           {
@@ -89,7 +89,7 @@ class CartService {
             include: [{ model: CatalogProduct, as: 'product' }]
           }
         ]
-      }) as EcCart;
+      })) as EcCart;
     }
 
     return cart;

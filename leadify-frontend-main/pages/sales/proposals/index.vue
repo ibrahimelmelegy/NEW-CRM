@@ -506,7 +506,7 @@ function computeTotal(p: unknown): number {
 const archiveTree = computed(() => {
   const tree: Record<string, Record<string, string[]>> = {};
 
-  proposals.value.forEach((p) => {
+  proposals.value.forEach(p => {
     const dateStr = p.createdAt || p.date;
     if (!dateStr) return;
     const date = new Date(dateStr);
@@ -541,7 +541,7 @@ const archiveTree = computed(() => {
 
 // ─── Filtered Proposals ──────────────────────────────────────────────
 const filteredProposals = computed(() => {
-  return proposals.value.filter((p) => {
+  return proposals.value.filter(p => {
     // Search
     const term = searchTerm.value.toLowerCase();
     const title = (p.title || '').toLowerCase();
@@ -595,18 +595,18 @@ const stats = computed(() => {
     return sum;
   }, 0);
 
-  const approvedCount = all.filter((p) => mapStatus(p.status) === 'Approved').length;
-  const rejectedCount = all.filter((p) => mapStatus(p.status) === 'Rejected').length;
+  const approvedCount = all.filter(p => mapStatus(p.status) === 'Approved').length;
+  const rejectedCount = all.filter(p => mapStatus(p.status) === 'Rejected').length;
   const closedCount = approvedCount + rejectedCount;
   const winRate = closedCount > 0 ? (approvedCount / closedCount) * 100 : 0;
 
   const statusDist = [
-    { name: 'Draft', displayName: 'Draft', value: all.filter((p) => mapStatus(p.status) === 'Draft').length },
-    { name: 'Pending', displayName: 'Pending', value: all.filter((p) => mapStatus(p.status) === 'In Review').length },
-    { name: 'Sent', displayName: 'Sent', value: all.filter((p) => mapStatus(p.status) === 'Sent').length },
+    { name: 'Draft', displayName: 'Draft', value: all.filter(p => mapStatus(p.status) === 'Draft').length },
+    { name: 'Pending', displayName: 'Pending', value: all.filter(p => mapStatus(p.status) === 'In Review').length },
+    { name: 'Sent', displayName: 'Sent', value: all.filter(p => mapStatus(p.status) === 'Sent').length },
     { name: 'Approved', displayName: 'Approved', value: approvedCount },
     { name: 'Canceled', displayName: 'Canceled', value: rejectedCount },
-    { name: 'Archived', displayName: 'Archived', value: all.filter((p) => mapStatus(p.status) === 'Archived').length }
+    { name: 'Archived', displayName: 'Archived', value: all.filter(p => mapStatus(p.status) === 'Archived').length }
   ].filter(d => d.value > 0);
 
   return {
@@ -615,9 +615,9 @@ const stats = computed(() => {
     winRate,
     statusDist,
     counts: {
-      draft: all.filter((p) => mapStatus(p.status) === 'Draft').length,
-      sent: all.filter((p) => mapStatus(p.status) === 'Sent').length,
-      pending: all.filter((p) => mapStatus(p.status) === 'In Review').length,
+      draft: all.filter(p => mapStatus(p.status) === 'Draft').length,
+      sent: all.filter(p => mapStatus(p.status) === 'Sent').length,
+      pending: all.filter(p => mapStatus(p.status) === 'In Review').length,
       canceled: rejectedCount
     }
   };

@@ -1,4 +1,4 @@
-import { Op, fn, col, literal } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import CustomReport, { ReportFilter, ReportSchedule } from './customReportModel';
 import Lead from '../lead/leadModel';
 import Deal from '../deal/model/dealModel';
@@ -260,7 +260,7 @@ class ReportBuilderService {
     if (config.groupBy) {
       const aggAttributes = this.buildAggregationAttributes(config.aggregations || []);
       // Always include count when grouping
-      if (!aggAttributes.some((a) => a[1]?.startsWith('count_'))) {
+      if (!aggAttributes.some(a => a[1]?.startsWith('count_'))) {
         aggAttributes.push([fn('COUNT', col(config.groupBy)), 'count']);
       }
       queryOptions.attributes = [config.groupBy, ...aggAttributes];
@@ -285,7 +285,7 @@ class ReportBuilderService {
   /**
    * Execute a dynamic report query and return results with metadata
    */
-  async executeReport(config: ReportBuilderConfig, userId: number) {
+  async executeReport(config: ReportBuilderConfig, _userId: number) {
     const { Model, queryOptions } = this.buildDynamicQuery(config);
 
     const data = await Model.findAll(queryOptions);
@@ -320,7 +320,7 @@ class ReportBuilderService {
     const summary: Record<string, { sum: number; avg: number; min: number; max: number; count: number }> = {};
 
     for (const field of activeNumericFields) {
-      const values = data.map((row) => Number(row[field])).filter(v => !isNaN(v));
+      const values = data.map(row => Number(row[field])).filter(v => !isNaN(v));
 
       if (values.length > 0) {
         summary[field] = {
@@ -434,7 +434,7 @@ class ReportBuilderService {
     if (!data || !data.length) return '';
 
     const headers = fields && fields.length > 0 ? fields : Object.keys(data[0]);
-    const rows = data.map((row) =>
+    const rows = data.map(row =>
       headers
         .map(h => {
           const val = row[h];
@@ -458,7 +458,7 @@ class ReportBuilderService {
     if (!data || !data.length) return { headers: [], rows: [] };
 
     const headers = fields && fields.length > 0 ? fields : Object.keys(data[0]);
-    const rows = data.map((row) => headers.map(h => row[h] ?? ''));
+    const rows = data.map(row => headers.map(h => row[h] ?? ''));
 
     return { headers, rows };
   }

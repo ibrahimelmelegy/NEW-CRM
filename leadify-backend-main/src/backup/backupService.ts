@@ -10,8 +10,7 @@ import { sequelize } from '../config/db';
 const execAsync = promisify(exec);
 const statAsync = promisify(fs.stat);
 const unlinkAsync = promisify(fs.unlink);
-const existsAsync = (p: string): Promise<boolean> =>
-  new Promise((resolve) => fs.access(p, fs.constants.F_OK, (err) => resolve(!err)));
+const existsAsync = (p: string): Promise<boolean> => new Promise(resolve => fs.access(p, fs.constants.F_OK, err => resolve(!err)));
 
 // Backups are stored relative to the project root
 const BACKUPS_DIR = path.resolve(__dirname, '../../backups');
@@ -36,10 +35,7 @@ function getPgConnectionEnv(): Record<string, string> {
 
 // ─── Create Backup ────────────────────────────────────────────────────────────
 
-export async function createBackup(
-  type: BackupType = BackupType.MANUAL,
-  userId?: number
-): Promise<Backup> {
+export async function createBackup(type: BackupType = BackupType.MANUAL, userId?: number): Promise<Backup> {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const filename = `backup_${type}_${timestamp}.sql.gz`;
   const filePath = path.join(BACKUPS_DIR, filename);
@@ -72,13 +68,11 @@ export async function createBackup(
     }
 
     // Get table row counts for metadata
-    let rowCounts: Record<string, number> = {};
+    const rowCounts: Record<string, number> = {};
     let tables: string[] = [];
     try {
-      const [results] = await sequelize.query(
-        `SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename`
-      );
-      tables = (results as Array<{ tablename: string }>).map((r) => r.tablename);
+      const [results] = await sequelize.query(`SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename`);
+      tables = (results as Array<{ tablename: string }>).map(r => r.tablename);
 
       // Get row counts for top tables (limit to avoid timeout)
       // Whitelist: only allow alphanumeric + underscore table names to prevent SQL injection
@@ -89,13 +83,8 @@ export async function createBackup(
           continue;
         }
         try {
-          const [countResult] = await sequelize.query(
-            `SELECT COUNT(*) as count FROM "${table}"`
-          );
-          rowCounts[table] = parseInt(
-            String((countResult as Array<{ count: string }>)[0]?.count || '0'),
-            10
-          );
+          const [countResult] = await sequelize.query(`SELECT COUNT(*) as count FROM "${table}"`);
+          rowCounts[table] = parseInt(String((countResult as Array<{ count: string }>)[0]?.count || '0'), 10);
         } catch {
           rowCounts[table] = -1; // error reading count
         }
@@ -306,9 +295,7 @@ export async function getBackupStats(): Promise<{
 
   // Sum total file size of completed backups
   const sizeResult = await Backup.findOne({
-    attributes: [
-      [sequelize.fn('COALESCE', sequelize.fn('SUM', sequelize.col('fileSize')), 0), 'totalSize']
-    ],
+    attributes: [[sequelize.fn('COALESCE', sequelize.fn('SUM', sequelize.col('fileSize')), 0), 'totalSize']],
     where: { status: BackupStatus.COMPLETED },
     raw: true
   });
@@ -337,9 +324,7 @@ export async function getBackupStats(): Promise<{
 
 // ─── Cleanup Old Backups ──────────────────────────────────────────────────────
 
-export async function cleanupOldBackups(
-  retentionDays: number = 30
-): Promise<{ deleted: number; freedBytes: number }> {
+export async function cleanupOldBackups(retentionDays: number = 30): Promise<{ deleted: number; freedBytes: number }> {
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
