@@ -13,6 +13,7 @@ import { wrapResult } from '../utils/response/responseWrapper';
 import { setAuthCookie, clearAuthCookie, COOKIE_NAME } from '../utils/auth/cookieHelper';
 import Tenant from '../tenant/tenantModel';
 import Role from '../role/roleModel';
+import { getAllPermissions } from '../role/roleEnum';
 import { sequelize } from '../config/db';
 import { sendEmail } from '../utils/emailHelper';
 import logger from '../config/logger';
@@ -54,6 +55,7 @@ export const registerWorkspace = async (req: Request, res: Response, _next: Next
         name: 'Admin',
         description: 'Workspace Administrator with full access.',
         isAdmin: true,
+        permissions: getAllPermissions(),
         tenantId: tenant.id
       },
       { transaction }
