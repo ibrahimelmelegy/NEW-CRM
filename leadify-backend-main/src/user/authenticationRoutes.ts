@@ -45,6 +45,45 @@ const router = express.Router();
 // Authentication route for login (rate-limited to prevent brute force)
 router.post('/login', authLimiter, validateBody(LoginInput), loginUser);
 
+// Temporary debug endpoint to diagnose login 500 errors
+router.post('/debug-login', async (req, res) => {
+  const steps: string[] = [];
+  try {
+    const { email, password } = req.body;
+    steps.push(`1. Got email=${email}`);
+
+    const User = (await import('./userModel')).default;
+    const user = await User.findOne({ where: { email } });
+    steps.push(`2. User found: ${!!user}, id=${user?.id}, 2FA=${user?.twoFactorEnabled}`);
+    if (!user) return res.json({ steps, error: 'User not found' });
+
+    const bcrypt = await import('bcryptjs');
+    const isMatch = await bcrypt.compare(password, user.password);
+    steps.push(`3. Password match: ${isMatch}`);
+    if (!isMatch) return res.json({ steps, error: 'Wrong password' });
+
+    const jwt = await import('jsonwebtoken');
+    const SECRET_KEY = process.env.SECRET_KEY;
+    steps.push(`4. SECRET_KEY present: ${!!SECRET_KEY}, length=${SECRET_KEY?.length}`);
+
+    const token = jwt.default.sign({ id: user.id }, SECRET_KEY!, { expiresIn: '7d' });
+    steps.push(`5. JWT token created, length=${token.length}`);
+
+    const Session = (await import('./models/sessionModel')).default;
+    await Session.create({
+      userId: user.id,
+      token,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    });
+    steps.push(`6. Session created`);
+
+    res.json({ steps, success: true, tokenLength: token.length });
+  } catch (error: any) {
+    steps.push(`ERROR: ${error.message}`);
+    res.json({ steps, error: error.message, stack: error.stack?.split('\n').slice(0, 5) });
+  }
+});
+
 /**
  * @swagger
  * /api/auth/register:
