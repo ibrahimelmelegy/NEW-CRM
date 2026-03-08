@@ -73,8 +73,8 @@ const {
 });
 
 watchEffect(() => {
-  if (props.value && props.isForm) {
-    inputValue.value = props.value; // set value from parent
+  if (props.value) {
+    inputValue.value = props.value; // set value from parent (e.g. edit form data)
   }
 });
 
