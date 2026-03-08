@@ -167,7 +167,9 @@ export const loginUser = async (req: Request, res: Response, _next: NextFunction
     setAuthCookie(res, token);
     wrapResult(res, { token });
   } catch (error) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'Server error' });
+    const err = error as Error;
+    logger.error(`Login error for ${email}: ${err.message}`, { stack: err.stack });
+    res.status(500).json({ status: 500, success: false, message: err.message, body: {} });
   }
 };
 
