@@ -23,10 +23,12 @@ export default (error: Error, req: Request, res: Response, _next: NextFunction):
     body: {}
   };
 
-  if (statusCode === 500) {
-    console.error('🔥 Server Error:', error.message, error.stack);
-  } else if (process.env.NODE_ENV !== 'production') {
-    console.warn(`🛑 Client Error (${statusCode}):`, error.message);
+  if (process.env.NODE_ENV !== 'production') {
+    if (statusCode === 500) {
+      console.error('Server Error:', error);
+    } else {
+      console.warn(`Client Error (${statusCode}):`, error.message);
+    }
   }
 
   return res.status(statusCode).send(response);

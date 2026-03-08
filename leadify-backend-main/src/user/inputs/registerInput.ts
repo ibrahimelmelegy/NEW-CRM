@@ -13,4 +13,8 @@ export class RegisterInput {
 
   @IsString()
   workspaceName!: string;
+
+  @IsString()
+  @MinLength(2)
+  userName!: string;
 }
