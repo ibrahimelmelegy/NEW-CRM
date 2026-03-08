@@ -52,8 +52,28 @@ const errorMessage = ref('');
 const errorDetails = ref('');
 const isDev = process.dev;
 
+// Transient errors from Vue navigation/unmount that should not block rendering
+const isTransientError = (err: Error): boolean => {
+  const msg = err.message || '';
+  const stack = err.stack || '';
+  // Vue Suspense, KeepAlive, SortableJS cleanup, and DOM unmount errors
+  if (msg.includes("Cannot read properties of null") || msg.includes("Cannot set properties of null") || msg.includes("Cannot destructure property")) {
+    // Check if it's from Vue internals or SortableJS (minified function names in stack)
+    if (stack.includes('suspenseId') || stack.includes('Sortable') || stack.includes('parentNode') || stack.includes('deactivate') || msg.includes("'bum'")) {
+      return true;
+    }
+  }
+  return false;
+};
+
 // Capture errors from child components
 onErrorCaptured((err: Error, instance, info) => {
+  // Skip transient navigation/cleanup errors — they don't affect page rendering
+  if (isTransientError(err)) {
+    console.warn('[ErrorBoundary] Suppressed transient error:', err.message);
+    return false;
+  }
+
   error.value = err;
   errorMessage.value = err.message || props.fallback;
   errorDetails.value = `${err.stack}\n\nComponent: ${instance?.$options?.name || 'Unknown'}\nInfo: ${info}`;

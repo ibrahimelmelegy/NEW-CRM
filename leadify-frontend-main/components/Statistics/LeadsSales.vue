@@ -82,6 +82,14 @@ const leadStats = ref();
 
 const { socket } = useSocket();
 
+const onLeadCreated = async () => {
+  leadStats.value = await getLeadsStatics();
+  ElNotification.info(t('dashboard.newLead'));
+};
+const onLeadUpdated = async () => {
+  leadStats.value = await getLeadsStatics();
+};
+
 onMounted(async () => {
   try {
     leadStats.value = await getLeadsStatics();
@@ -89,16 +97,19 @@ onMounted(async () => {
 
     // WebSocket Listeners
     if (socket.value) {
-      socket.value.on('lead:created', async () => {
-        leadStats.value = await getLeadsStatics();
-        ElNotification.info(t('dashboard.newLead'));
-      });
-      socket.value.on('lead:updated', async () => {
-        leadStats.value = await getLeadsStatics();
-      });
+      socket.value.on('lead:created', onLeadCreated);
+      socket.value.on('lead:updated', onLeadUpdated);
     }
   } finally {
     loading.value = false;
+  }
+});
+
+onBeforeUnmount(() => {
+  // Clean up socket listeners to prevent updates after unmount
+  if (socket.value) {
+    socket.value.off('lead:created', onLeadCreated);
+    socket.value.off('lead:updated', onLeadUpdated);
   }
 });
 
