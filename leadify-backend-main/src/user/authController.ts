@@ -168,7 +168,7 @@ export const loginUser = async (req: Request, res: Response, _next: NextFunction
     wrapResult(res, { token });
   } catch (error) {
     const err = error as Error;
-    logger.error(`Login error for ${email}: ${err.message}`, { stack: err.stack });
+    logger.error(`Login error for ${email}: ${err.message} | ${err.stack}`);
     res.status(500).json({ status: 500, success: false, message: err.message, body: {} });
   }
 };
