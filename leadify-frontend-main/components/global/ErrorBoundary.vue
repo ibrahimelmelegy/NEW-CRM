@@ -58,10 +58,13 @@ const isTransientError = (err: Error): boolean => {
   const stack = err.stack || '';
   // Vue Suspense, KeepAlive, SortableJS cleanup, and DOM unmount errors
   if (msg.includes("Cannot read properties of null") || msg.includes("Cannot set properties of null") || msg.includes("Cannot destructure property")) {
-    // Check if it's from Vue internals or SortableJS (minified function names in stack)
     if (stack.includes('suspenseId') || stack.includes('Sortable') || stack.includes('parentNode') || stack.includes('deactivate') || msg.includes("'bum'")) {
       return true;
     }
+  }
+  // KeepAlive deactivate/activate lifecycle errors (e.g. "G.ctx.deactivate is not a function")
+  if (msg.includes('is not a function') && (msg.includes('deactivate') || msg.includes('activate') || stack.includes('deactivate') || stack.includes('activate'))) {
+    return true;
   }
   return false;
 };

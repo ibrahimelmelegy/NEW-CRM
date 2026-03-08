@@ -17,7 +17,7 @@ import elAr from 'element-plus/dist/locale/ar.mjs';
 // KeepAlive config - cache frequently visited pages for faster back-navigation
 const keepAliveProps = {
   max: 10,
-  include: ['index', 'sales-leads', 'sales-deals', 'sales-clients', 'sales-invoices', 'crm-contacts', 'operations-projects']
+  include: ['sales-leads', 'sales-deals', 'sales-clients', 'sales-invoices', 'crm-contacts', 'operations-projects']
 };
 
 // Global locale direction handler — ensures RTL/LTR is always in sync
