@@ -82,7 +82,7 @@ export async function downloadInvoicePdf(id: number, invoiceNumber?: string): Pr
     return true;
   } catch (error) {
     console.error('Failed to download invoice PDF:', error);
-    const { t } = useI18n();
+    const t = useNuxtApp().$i18n.t;
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.downloadFailed') });
     return false;
   }

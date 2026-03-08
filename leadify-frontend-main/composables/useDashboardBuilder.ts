@@ -251,11 +251,11 @@ export function useDashboardBuilder() {
           dashboardId.value = (body as unknown).id;
         }
       }
-      const { t } = useI18n();
+      const t = useNuxtApp().$i18n.t;
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     } catch (e) {
       console.error('Failed to save dashboard layout:', e);
-      const { t } = useI18n();
+      const t = useNuxtApp().$i18n.t;
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.saveFailed') });
     }
   }

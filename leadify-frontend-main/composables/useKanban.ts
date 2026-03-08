@@ -19,11 +19,11 @@ export async function fetchDealKanban(): Promise<Record<string, KanbanCard[]>> {
   try {
     const { body, success, message } = await useApiFetch('deal/kanban');
     if (success && body) return body;
-    const { t } = useI18n();
+    const t = useNuxtApp().$i18n.t;
     throw new Error(message || t('common.fetchError'));
   } catch (error) {
     console.error('Error fetching kanban deals:', error);
-    const { t } = useI18n();
+    const t = useNuxtApp().$i18n.t;
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
     return {};
   }
@@ -33,11 +33,11 @@ export async function fetchOpportunityKanban(): Promise<Record<string, KanbanCar
   try {
     const { body, success, message } = await useApiFetch('opportunity/kanban');
     if (success && body) return body;
-    const { t } = useI18n();
+    const t = useNuxtApp().$i18n.t;
     throw new Error(message || t('common.fetchError'));
   } catch (error) {
     console.error('Error fetching kanban opportunities:', error);
-    const { t } = useI18n();
+    const t = useNuxtApp().$i18n.t;
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
     return {};
   }
@@ -47,13 +47,13 @@ export async function updateDealStage(dealId: string, stage: string): Promise<bo
   try {
     const { success, message } = await useApiFetch('deal/stage', 'PATCH', { dealId, stage });
     if (!success) {
-      const { t } = useI18n();
+      const t = useNuxtApp().$i18n.t;
       ElNotification({ type: 'error', title: t('common.error'), message: message || t('common.saveFailed') });
       return false;
     }
     return true;
   } catch (error) {
-    const { t } = useI18n();
+    const t = useNuxtApp().$i18n.t;
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.saveFailed') });
     return false;
   }
@@ -63,13 +63,13 @@ export async function updateOpportunityStage(id: string, stage: string): Promise
   try {
     const { success, message } = await useApiFetch(`opportunity/${id}/stage`, 'PATCH', { stage });
     if (!success) {
-      const { t } = useI18n();
+      const t = useNuxtApp().$i18n.t;
       ElNotification({ type: 'error', title: t('common.error'), message: message || t('common.saveFailed') });
       return false;
     }
     return true;
   } catch (error) {
-    const { t } = useI18n();
+    const t = useNuxtApp().$i18n.t;
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.saveFailed') });
     return false;
   }

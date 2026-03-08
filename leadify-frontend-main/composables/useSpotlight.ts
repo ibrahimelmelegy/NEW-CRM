@@ -870,7 +870,7 @@ export function useSpotlight() {
         themeStore.toggleTheme();
       },
       'cmd-language': () => {
-        const { locale, setLocale } = useI18n();
+        const { locale, setLocale } = useNuxtApp().$i18n;
         const nextLocale = locale.value === 'en' ? 'ar' : 'en';
         setLocale(nextLocale);
         if (typeof document !== 'undefined') {

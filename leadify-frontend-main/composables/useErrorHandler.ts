@@ -6,7 +6,7 @@ interface ErrorHandlerResult {
 }
 
 export function useErrorHandler() {
-  const { t } = useI18n();
+  const t = useNuxtApp().$i18n.t;
 
   function handleApiError(error: unknown, context: string): ErrorHandlerResult {
     const message = error instanceof Error ? error.message : t('common.generic');

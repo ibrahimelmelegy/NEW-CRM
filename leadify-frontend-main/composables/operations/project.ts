@@ -22,7 +22,7 @@ enum projectCategory {
   Etimad = 'Etimad'
 }
 export const getProjectCategories = () => {
-  const { t } = useI18n();
+  const t = useNuxtApp().$i18n.t;
   return [
     { label: t('operations.projects.category.direct'), value: projectCategory.Direct },
     { label: t('operations.projects.category.etimad'), value: projectCategory.Etimad }
@@ -36,7 +36,7 @@ enum projectStatus {
   completed = 'COMPLETE'
 }
 export const getProjectStatuses = () => {
-  const { t } = useI18n();
+  const t = useNuxtApp().$i18n.t;
   return [
     { label: t('operations.projects.status.active'), value: projectStatus.active },
     { label: t('operations.projects.status.cancelled'), value: projectStatus.cancelled },
@@ -51,7 +51,7 @@ enum contractType {
   invitation = 'INVITATION'
 }
 export const getContractTypes = () => {
-  const { t } = useI18n();
+  const t = useNuxtApp().$i18n.t;
   return [
     { label: t('operations.projects.contractType.purchased'), value: contractType.purchased },
     { label: t('operations.projects.contractType.subContractor'), value: contractType.subContractor },
@@ -65,7 +65,7 @@ enum proposalStatus {
   cancelled = 'CANCELLED'
 }
 export const getProposalStatuses = () => {
-  const { t } = useI18n();
+  const t = useNuxtApp().$i18n.t;
   return [
     { label: t('operations.projects.proposalStatus.underDeveloping'), value: proposalStatus.underDeveloping },
     { label: t('operations.projects.proposalStatus.finished'), value: proposalStatus.finished },
@@ -79,7 +79,7 @@ enum applicationStatus {
   lost = 'LOST'
 }
 export const getApplicationStatuses = () => {
-  const { t } = useI18n();
+  const t = useNuxtApp().$i18n.t;
   return [
     { label: t('operations.projects.applicationStatus.underReview'), value: applicationStatus.underReview },
     { label: t('operations.projects.applicationStatus.won'), value: applicationStatus.won },
@@ -95,7 +95,7 @@ export enum MissionEnum {
 }
 
 export const getProjectMissions = () => {
-  const { t } = useI18n();
+  const t = useNuxtApp().$i18n.t;
   return [
     { label: t('operations.projects.missions.standard'), value: MissionEnum.Standard },
     { label: t('operations.projects.missions.helper'), value: MissionEnum.Helper },

@@ -28,11 +28,11 @@ export async function getChurnDashboardData(): Promise<ChurnDashboardData | null
     if (success && body) {
       return body as ChurnDashboardData;
     }
-    const { t } = useI18n();
+    const t = useNuxtApp().$i18n.t;
     throw new Error(message || t('common.fetchError'));
   } catch (error) {
     console.error('Error fetching churn dashboard:', error instanceof Error ? error.message : error);
-    const { t } = useI18n();
+    const t = useNuxtApp().$i18n.t;
     ElNotification({
       type: 'error',
       title: t('common.error'),

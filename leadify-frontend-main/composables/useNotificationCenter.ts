@@ -47,7 +47,7 @@ const loading = ref(false);
 const socketInitialized = ref(false);
 
 export function useNotificationCenter() {
-  const { locale } = useI18n();
+  const { locale } = useNuxtApp().$i18n;
 
   const open = () => {
     visible.value = true;
@@ -194,7 +194,7 @@ export function useNotificationCenter() {
       }
     }
 
-    const { t } = useI18n();
+    const t = useNuxtApp().$i18n.t;
     const result: NotificationGroup[] = [];
 
     if (groups.today.length) {

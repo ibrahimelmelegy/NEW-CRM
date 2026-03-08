@@ -30,7 +30,7 @@ export function useEmailComposer() {
       }
     } catch (err) {
       console.error('Failed to fetch email templates:', err);
-      const { t } = useI18n();
+      const t = useNuxtApp().$i18n.t;
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
     } finally {
       loading.value = false;

@@ -4,9 +4,15 @@ import { ElNotification } from 'element-plus';
 function normalizePhoneNumber(phone: string): string {
   return phone.replace(/\s+/g, '').replace(/^\+/, '').replace(/^2/, ''); // Assuming removing country code prefix '2', modify if needed
 }
+
+// Safe i18n accessor — useI18n() throws in vue-i18n v11 outside setup context
+function getT() {
+  return useNuxtApp().$i18n.t;
+}
+
 // Handle error during lead creation
 function handleError(message: string) {
-  const { t } = useI18n();
+  const t = getT();
   ElNotification({
     type: 'error',
     title: t('common.error'),
@@ -14,7 +20,7 @@ function handleError(message: string) {
   });
 }
 function handleSuccess(message: string) {
-  const { t } = useI18n();
+  const t = getT();
   ElNotification({
     type: 'success',
     title: t('common.success'),
@@ -123,14 +129,14 @@ export async function getLeads(): Promise<UseLeadsResult> {
       return { leads, pagination };
     } else {
       // If the API call is unsuccessful, throw an error with the message
-      const { t } = useI18n();
+      const t = getT();
       throw new Error(message || t('common.fetchError'));
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
     console.error('Error fetching leads:', error instanceof Error ? error.message : error);
 
-    const { t } = useI18n();
+    const t = getT();
     handleError(t('common.fetchError'));
 
     // Return an empty array as fallback
@@ -150,7 +156,7 @@ export async function getLead(id: string | string[]): Promise<Lead> {
     return lead;
   } catch (error) {
     console.error('Error fetching lead:', error instanceof Error ? error.message : error);
-    const { t } = useI18n();
+    const t = getT();
     handleError(t('common.fetchError'));
     return {} as Lead;
   }
@@ -162,7 +168,7 @@ export async function getActivity(id: string | string[]): Promise<ActivityRespon
     return activities;
   } catch (error) {
     console.error('Error fetching activity:', error instanceof Error ? error.message : error);
-    const { t } = useI18n();
+    const t = getT();
     handleError(t('common.fetchError'));
     return { docs: [], pagination: { page: 1, totalPages: 1, totalItems: 0, limit: 10 } } as ActivityResponse;
   }
@@ -209,7 +215,7 @@ export async function createLead(values: LeadValues) {
     // Call API to create the lead
     const response = await useApiFetch('lead', 'POST', cleanObject(leadData));
 
-    const { t } = useI18n();
+    const t = getT();
     // Handle the API response
     if (response?.success) {
       handleSuccess(t('leads.createSuccess'));
@@ -218,7 +224,7 @@ export async function createLead(values: LeadValues) {
     }
     return response;
   } catch (error) {
-    const { t } = useI18n();
+    const t = getT();
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : t('errors.generic'));
     return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
@@ -251,7 +257,7 @@ export async function updateLead(values: LeadValues) {
     // Call API to create the lead
     const response = await useApiFetch(`lead/${values.id}`, 'PUT', leadData);
 
-    const { t } = useI18n();
+    const t = getT();
     // Handle the API response
     if (response?.success) {
       handleSuccess(t('leads.updateSuccess'));
@@ -260,7 +266,7 @@ export async function updateLead(values: LeadValues) {
     }
     return response;
   } catch (error) {
-    const { t } = useI18n();
+    const t = getT();
     // Catch any unexpected errors and handle them
     handleError(error instanceof Error ? error.message : t('errors.generic'));
     return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
@@ -270,7 +276,7 @@ export async function updateLead(values: LeadValues) {
 export async function deleteLead(id: string) {
   try {
     const response = await useApiFetch(`lead/${id}`, 'DELETE');
-    const { t } = useI18n();
+    const t = getT();
     if (response?.success) {
       handleSuccess(t('leads.deleteSuccess'));
     } else {
@@ -278,7 +284,7 @@ export async function deleteLead(id: string) {
     }
     return response;
   } catch (error) {
-    const { t } = useI18n();
+    const t = getT();
     handleError(error instanceof Error ? error.message : t('errors.generic'));
     return { success: false, body: null, message: error instanceof Error ? error.message : 'Unknown error', code: 500 };
   }

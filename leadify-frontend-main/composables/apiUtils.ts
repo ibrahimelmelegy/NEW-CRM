@@ -45,7 +45,7 @@ export async function downloadFile(file: string) {
     })
     .catch((error: unknown) => {
       console.error('File download failed:', error);
-      const { t } = useI18n();
+      const t = useNuxtApp().$i18n.t;
       ElNotification({
         title: t('common.error'),
         type: 'error',

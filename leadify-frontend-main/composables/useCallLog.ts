@@ -123,7 +123,7 @@ export function useCallLog() {
       }
     } catch (error) {
       console.error('Failed to fetch call analytics:', error);
-      const { t } = useI18n();
+      const t = useNuxtApp().$i18n.t;
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
     }
   }
