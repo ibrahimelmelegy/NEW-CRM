@@ -29,6 +29,9 @@ jest.mock('../../src/project/projectService');
 jest.mock('../../src/user/userService');
 jest.mock('../../src/notification/notificationService');
 jest.mock('../../src/activity-logs/activityService');
+jest.mock('../../src/activity-logs/model/dealActivities', () => ({
+    DealActivity: { destroy: jest.fn().mockImplementation(() => Promise.resolve(0)) }
+}));
 jest.mock('../../src/utils/emailHelper');
 jest.mock('../../src/server', () => ({
     io: { emit: jest.fn() }
@@ -462,8 +465,6 @@ describe('DealService', () => {
 
             await dealService.deleteDeal('deal-123', mockAdminUser);
 
-            const { createActivityLog } = require('../../src/activity-logs/activityService');
-            expect(createActivityLog).toHaveBeenCalledWith('deal', 'delete', 'deal-123', mockAdminUser.id, null, 'Deal deleted');
             expect(mockDealData.destroy).toHaveBeenCalled();
         });
 

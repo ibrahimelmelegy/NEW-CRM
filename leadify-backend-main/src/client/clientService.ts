@@ -13,6 +13,8 @@ import { createActivityLog } from '../activity-logs/activityService';
 import leadService from '../lead/leadService';
 import { ClientPermissionsEnum } from '../role/roleEnum';
 import ClientUsers from './client_UsersModel';
+import { ClientActivity } from '../activity-logs/model/clientActivities';
+import CompanyNote from './companyNoteModel';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import notificationService from '../notification/notificationService';
@@ -227,7 +229,21 @@ class ClientService {
   public async deleteClient(id: string, user: User): Promise<void> {
     await this.validateClientAccess(id, user);
     const client = await this.clientOrError({ id });
-    await createActivityLog('client', 'delete', client.id, user.id, null, 'Client deleted');
+
+    // Clean up dependent records that have non-nullable foreign keys
+    await ClientActivity.destroy({ where: { clientId: id } });
+    await CompanyNote.destroy({ where: { companyId: id } });
+    await ClientUsers.destroy({ where: { clientId: id } });
+
+    // Nullify optional foreign keys in related records
+    const { sequelize: db } = Client;
+    if (db) {
+      await db.query(`UPDATE opportunities SET "clientId" = NULL WHERE "clientId" = :id`, { replacements: { id } });
+      await db.query(`UPDATE deals SET "clientId" = NULL WHERE "clientId" = :id`, { replacements: { id } });
+      await db.query(`UPDATE projects SET "clientId" = NULL WHERE "clientId" = :id`, { replacements: { id } });
+      await db.query(`UPDATE clients SET "parentCompanyId" = NULL WHERE "parentCompanyId" = :id`, { replacements: { id } });
+    }
+
     await client.destroy();
   }
 

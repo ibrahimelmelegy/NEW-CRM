@@ -39,6 +39,7 @@ import { DealStageEnums } from '../deal/dealEnum';
 import notificationService from '../notification/notificationService';
 import { Material } from '../material/material.model';
 import { tenantWhere } from '../utils/tenantScope';
+import { ProjectActivity } from '../activity-logs/model/projectActivities';
 
 const RelationArray = [
   Vehicle,
@@ -609,6 +610,15 @@ class ProjectService {
     await this.validateProjectAccess(id, user);
     const project = await this.projectOrError({ id });
     if (project.isCompleted) throw new BaseError(ERRORS.INVALID_DELETE_COMPLETED_PROJECT);
+
+    // Clean up dependent records
+    await ProjectActivity.destroy({ where: { projectId: id } });
+    await UserProjects.destroy({ where: { projectId: id } });
+    await ProjectManpower.destroy({ where: { projectId: id } });
+    await ProjectAsset.destroy({ where: { projectId: id } });
+    await ProjectMaterial.destroy({ where: { projectId: id } });
+    await ProjectAdditionalMaterialItem.destroy({ where: { projectId: id } });
+
     await project.destroy();
   }
 

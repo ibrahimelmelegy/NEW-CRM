@@ -21,6 +21,9 @@ jest.mock('../../src/user/userModel');
 jest.mock('../../src/lead/model/lead_UsersModel');
 jest.mock('../../src/notification/notificationService');
 jest.mock('../../src/activity-logs/activityService');
+jest.mock('../../src/activity-logs/model/leadActivities', () => ({
+    LeadActivity: { destroy: jest.fn().mockImplementation(() => Promise.resolve(0)) }
+}));
 jest.mock('../../src/utils/emailHelper');
 jest.mock('../../src/server', () => ({
     io: {
@@ -425,10 +428,10 @@ describe('LeadService', () => {
                 destroy: jest.fn(),
             };
             (Lead.findByPk as jest.Mock<any>).mockResolvedValue(mockLead);
+            (Lead as any).sequelize = { query: jest.fn().mockImplementation(() => Promise.resolve([[], 0])) };
 
             await leadService.deleteLead('lead-123', mockAdminUser);
 
-            expect(createActivityLog).toHaveBeenCalledWith('lead', 'delete', 'lead-123', mockAdminUser.id, null, 'Lead deleted');
             expect(mockLead.destroy).toHaveBeenCalled();
         });
 
@@ -450,6 +453,7 @@ describe('LeadService', () => {
             (LeadUsers.findOne as jest.Mock<any>).mockResolvedValue({ userId: mockStandardUser.id });
             const mockLead: any = { id: 'lead-123', destroy: jest.fn() };
             (Lead.findByPk as jest.Mock<any>).mockResolvedValue(mockLead);
+            (Lead as any).sequelize = { query: jest.fn().mockImplementation(() => Promise.resolve([[], 0])) };
 
             await leadService.deleteLead('lead-123', mockStandardUser);
 

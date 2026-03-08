@@ -24,6 +24,7 @@ import { createActivityLog } from '../activity-logs/activityService';
 import notificationService from '../notification/notificationService';
 import { DealPermissionsEnum } from '../role/roleEnum';
 import DealUsers from './model/deal_UsersModel';
+import { DealActivity } from '../activity-logs/model/dealActivities';
 import userService from '../user/userService';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
@@ -624,7 +625,13 @@ class DealService {
   public async deleteDeal(id: string, user: User): Promise<void> {
     await this.validateDealAccess(id, user);
     const deal = await this.dealOrError({ id });
-    await createActivityLog('deal', 'delete', deal.id, user.id, null, 'Deal deleted');
+
+    // Clean up dependent records that have non-nullable foreign keys
+    await DealActivity.destroy({ where: { dealId: id } });
+    await DealUsers.destroy({ where: { dealId: id } });
+    await Invoice.destroy({ where: { dealId: id } });
+    await DealDelivery.destroy({ where: { dealId: id } });
+
     await deal.destroy();
   }
 

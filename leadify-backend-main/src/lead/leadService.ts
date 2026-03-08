@@ -9,6 +9,7 @@ import { createActivityLog } from '../activity-logs/activityService';
 import xlsx from 'xlsx';
 import { LeadPermissionsEnum } from '../role/roleEnum';
 import LeadUsers from './model/lead_UsersModel';
+import { LeadActivity } from '../activity-logs/model/leadActivities';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import { io } from '../server';
@@ -397,7 +398,19 @@ class LeadService {
     await this.validateLeadAccess(id, user);
     const lead = await Lead.findByPk(id);
     if (!lead) throw new BaseError(ERRORS.LEAD_NOT_FOUND);
-    await createActivityLog('lead', 'delete', lead.id, user.id, null, 'Lead deleted');
+
+    // Clean up dependent records that have non-nullable foreign keys
+    await LeadActivity.destroy({ where: { leadId: id } });
+    await LeadUsers.destroy({ where: { leadId: id } });
+
+    // Nullify optional foreign keys in related records
+    const { sequelize: db } = Lead;
+    if (db) {
+      await db.query(`UPDATE opportunities SET "leadId" = NULL WHERE "leadId" = :id`, { replacements: { id } });
+      await db.query(`UPDATE deals SET "leadId" = NULL WHERE "leadId" = :id`, { replacements: { id } });
+      await db.query(`UPDATE clients SET "leadId" = NULL WHERE "leadId" = :id`, { replacements: { id } });
+    }
+
     await lead.destroy();
   }
 

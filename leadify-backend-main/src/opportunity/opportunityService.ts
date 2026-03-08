@@ -13,6 +13,7 @@ import { sequelize } from '../config/db';
 import { createActivityLog } from '../activity-logs/activityService';
 import { OpportunityPermissionsEnum } from '../role/roleEnum';
 import OpportunityUsers from './model/opportunity_UsersModel';
+import { OpportunityActivity } from '../activity-logs/model/opportunityActivities';
 import * as ExcelJS from 'exceljs';
 import { sendEmail } from '../utils/emailHelper';
 import { tenantWhere } from '../utils/tenantScope';
@@ -363,7 +364,14 @@ class OpportunityService {
   public async deleteOpportunity(id: string, user: User): Promise<void> {
     await this.validateOpportunityAccess(id, user);
     const opportunity = await this.opportunityOrError({ id });
-    await createActivityLog('opportunity', 'delete', opportunity.id, user.id, undefined, 'Opportunity deleted');
+
+    // Clean up dependent records that have non-nullable foreign keys
+    await OpportunityActivity.destroy({ where: { opportunityId: id } });
+    await OpportunityUsers.destroy({ where: { opportunityId: id } });
+
+    // Nullify optional foreign keys in related records
+    await sequelize.query(`UPDATE deals SET "opportunityId" = NULL WHERE "opportunityId" = :id`, { replacements: { id } });
+
     await opportunity.destroy();
   }
 

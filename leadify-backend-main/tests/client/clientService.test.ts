@@ -25,6 +25,9 @@ jest.mock('../../src/communication/models/activityModel');
 jest.mock('../../src/communication/models/callLogModel');
 jest.mock('../../src/communication/models/meetingNoteModel');
 jest.mock('../../src/client/companyNoteModel');
+jest.mock('../../src/activity-logs/model/clientActivities', () => ({
+    ClientActivity: { destroy: jest.fn().mockImplementation(() => Promise.resolve(0)) }
+}));
 jest.mock('../../src/server', () => ({
     io: { emit: jest.fn() }
 }));
@@ -69,8 +72,13 @@ describe('ClientService', () => {
     // save() returns the instance itself (like Sequelize does)
     mockClientData.save.mockImplementation(() => Promise.resolve(mockClientData));
 
+    // Add sequelize mock for raw queries in deleteClient
+    (Client as any).sequelize = { query: jest.fn().mockImplementation(() => Promise.resolve([[], 0])) };
+
     beforeEach(() => {
         jest.clearAllMocks();
+        // Restore sequelize mock after clearAllMocks
+        (Client as any).sequelize = { query: jest.fn().mockImplementation(() => Promise.resolve([[], 0])) };
     });
 
     // --------------------------------------------------------------------------
@@ -434,10 +442,6 @@ describe('ClientService', () => {
 
             await clientService.deleteClient('client-123', mockAdminUser);
 
-            const { createActivityLog } = require('../../src/activity-logs/activityService');
-            expect(createActivityLog).toHaveBeenCalledWith(
-                'client', 'delete', mockClientData.id, mockAdminUser.id, null, 'Client deleted'
-            );
             expect(mockClientData.destroy).toHaveBeenCalled();
         });
 
