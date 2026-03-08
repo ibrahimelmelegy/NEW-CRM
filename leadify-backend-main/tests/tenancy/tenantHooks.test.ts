@@ -8,25 +8,40 @@ import { registerTenantHooks } from '../../src/config/tenantHooks';
 
 type HookFn = (...args: any[]) => any;
 
+interface FakeModel {
+    rawAttributes: Record<string, any>;
+    name: string;
+    addHook: jest.Mock;
+    hooks: Record<string, HookFn>;
+}
+
 interface FakeSequelize {
-    models: Record<string, { rawAttributes: Record<string, any>; name: string }>;
+    models: Record<string, FakeModel>;
     addHook: jest.Mock;
     hooks: Record<string, HookFn>;
 }
 
 function createFakeSequelize(models: Record<string, { rawAttributes: Record<string, any> }>): FakeSequelize {
-    const hooks: Record<string, HookFn> = {};
-    const modelsWithName: Record<string, any> = {};
+    const globalHooks: Record<string, HookFn> = {};
+    const modelsWithName: Record<string, FakeModel> = {};
 
     for (const [name, model] of Object.entries(models)) {
-        modelsWithName[name] = { ...model, name };
+        const modelHooks: Record<string, HookFn> = {};
+        modelsWithName[name] = {
+            ...model,
+            name,
+            addHook: jest.fn((hookName: string, _label: string, fn: HookFn) => {
+                modelHooks[hookName] = fn;
+            }),
+            hooks: modelHooks
+        };
     }
 
     const addHook = jest.fn((hookName: string, _label: string, fn: HookFn) => {
-        hooks[hookName] = fn;
+        globalHooks[hookName] = fn;
     });
 
-    return { models: modelsWithName, addHook, hooks } as FakeSequelize;
+    return { models: modelsWithName, addHook, hooks: globalHooks } as FakeSequelize;
 }
 
 /** Creates a fake model instance (like what Sequelize passes to instance hooks). */
@@ -71,16 +86,24 @@ describe('TenantHooks (Sequelize global hooks)', () => {
     // Hook registration
     // -----------------------------------------------------------------------
     describe('registerTenantHooks', () => {
-        it('should register all 7 hooks', () => {
+        it('should register 4 global instance-based hooks', () => {
             const hookNames = seq.addHook.mock.calls.map((c: any) => c[0]);
-            expect(hookNames).toContain('beforeFind');
             expect(hookNames).toContain('beforeCreate');
             expect(hookNames).toContain('beforeBulkCreate');
             expect(hookNames).toContain('beforeUpdate');
-            expect(hookNames).toContain('beforeBulkUpdate');
             expect(hookNames).toContain('beforeDestroy');
-            expect(hookNames).toContain('beforeBulkDestroy');
-            expect(hookNames).toHaveLength(7);
+            expect(hookNames).toHaveLength(4);
+        });
+
+        it('should register 3 per-model hooks on tenant-scoped models only', () => {
+            const leadHookNames = seq.models.Lead.addHook.mock.calls.map((c: any) => c[0]);
+            expect(leadHookNames).toContain('beforeFind');
+            expect(leadHookNames).toContain('beforeBulkUpdate');
+            expect(leadHookNames).toContain('beforeBulkDestroy');
+            expect(leadHookNames).toHaveLength(3);
+
+            // Role (non-tenant) should NOT have any per-model hooks
+            expect(seq.models.Role.addHook).not.toHaveBeenCalled();
         });
 
         it('should log the count of tenant-scoped models', () => {
@@ -98,56 +121,55 @@ describe('TenantHooks (Sequelize global hooks)', () => {
     });
 
     // -----------------------------------------------------------------------
-    // beforeFind
+    // beforeFind (per-model hook on Lead)
     // -----------------------------------------------------------------------
     describe('beforeFind', () => {
         it('should inject tenantId into empty where', () => {
-            const options: any = { model: seq.models.Lead, where: undefined };
-            withContext(TENANT_A, () => seq.hooks.beforeFind(options));
+            const options: any = { where: undefined };
+            withContext(TENANT_A, () => seq.models.Lead.hooks.beforeFind(options));
             expect(options.where).toEqual({ tenantId: 'tenant-A' });
         });
 
         it('should add tenantId to existing where object', () => {
-            const options: any = { model: seq.models.Lead, where: { status: 'NEW' } };
-            withContext(TENANT_A, () => seq.hooks.beforeFind(options));
+            const options: any = { where: { status: 'NEW' } };
+            withContext(TENANT_A, () => seq.models.Lead.hooks.beforeFind(options));
             expect(options.where).toEqual({ status: 'NEW', tenantId: 'tenant-A' });
         });
 
-        it('should NOT modify where for non-tenant model', () => {
-            const options: any = { model: seq.models.Role, where: { name: 'admin' } };
-            withContext(TENANT_A, () => seq.hooks.beforeFind(options));
-            expect(options.where).toEqual({ name: 'admin' });
+        it('should NOT have a beforeFind hook on non-tenant model', () => {
+            // Role has no per-model hooks at all
+            expect(seq.models.Role.hooks.beforeFind).toBeUndefined();
         });
 
         it('should skip when no ALS context exists', () => {
-            const options: any = { model: seq.models.Lead, where: {} };
-            seq.hooks.beforeFind(options);
+            const options: any = { where: {} };
+            seq.models.Lead.hooks.beforeFind(options);
             expect(options.where).toEqual({});
         });
 
         it('should skip for super admin', () => {
-            const options: any = { model: seq.models.Lead, where: {} };
-            withContext(SUPER_ADMIN, () => seq.hooks.beforeFind(options));
+            const options: any = { where: {} };
+            withContext(SUPER_ADMIN, () => seq.models.Lead.hooks.beforeFind(options));
             expect(options.where).toEqual({});
         });
 
         it('should skip when tenantId is null (single-tenant)', () => {
-            const options: any = { model: seq.models.Lead, where: {} };
-            withContext(NULL_TENANT, () => seq.hooks.beforeFind(options));
+            const options: any = { where: {} };
+            withContext(NULL_TENANT, () => seq.models.Lead.hooks.beforeFind(options));
             expect(options.where).toEqual({});
         });
 
         it('should skip when TENANT_BYPASS symbol is set', () => {
-            const options: any = { model: seq.models.Lead, where: {}, [TENANT_BYPASS]: true };
-            withContext(TENANT_A, () => seq.hooks.beforeFind(options));
+            const options: any = { where: {}, [TENANT_BYPASS]: true };
+            withContext(TENANT_A, () => seq.models.Lead.hooks.beforeFind(options));
             expect(options.where).toEqual({});
         });
 
         it('should use the correct tenant for different tenants', () => {
-            const optionsA: any = { model: seq.models.Lead, where: {} };
-            const optionsB: any = { model: seq.models.Lead, where: {} };
-            withContext(TENANT_A, () => seq.hooks.beforeFind(optionsA));
-            withContext(TENANT_B, () => seq.hooks.beforeFind(optionsB));
+            const optionsA: any = { where: {} };
+            const optionsB: any = { where: {} };
+            withContext(TENANT_A, () => seq.models.Lead.hooks.beforeFind(optionsA));
+            withContext(TENANT_B, () => seq.models.Lead.hooks.beforeFind(optionsB));
             expect(optionsA.where.tenantId).toBe('tenant-A');
             expect(optionsB.where.tenantId).toBe('tenant-B');
         });
@@ -273,25 +295,23 @@ describe('TenantHooks (Sequelize global hooks)', () => {
     });
 
     // -----------------------------------------------------------------------
-    // beforeBulkUpdate
+    // beforeBulkUpdate (per-model hook on Lead)
     // -----------------------------------------------------------------------
     describe('beforeBulkUpdate', () => {
         it('should inject tenantId into where clause', () => {
-            const options: any = { model: seq.models.Lead, where: { status: 'ACTIVE' } };
-            withContext(TENANT_A, () => seq.hooks.beforeBulkUpdate(options));
+            const options: any = { where: { status: 'ACTIVE' } };
+            withContext(TENANT_A, () => seq.models.Lead.hooks.beforeBulkUpdate(options));
             expect(options.where).toEqual({ status: 'ACTIVE', tenantId: 'tenant-A' });
         });
 
         it('should create where clause if empty', () => {
-            const options: any = { model: seq.models.Lead };
-            withContext(TENANT_A, () => seq.hooks.beforeBulkUpdate(options));
+            const options: any = {};
+            withContext(TENANT_A, () => seq.models.Lead.hooks.beforeBulkUpdate(options));
             expect(options.where).toEqual({ tenantId: 'tenant-A' });
         });
 
-        it('should skip for non-tenant model', () => {
-            const options: any = { model: seq.models.Role, where: { name: 'admin' } };
-            withContext(TENANT_A, () => seq.hooks.beforeBulkUpdate(options));
-            expect(options.where).toEqual({ name: 'admin' });
+        it('should NOT have a beforeBulkUpdate hook on non-tenant model', () => {
+            expect(seq.models.Role.hooks.beforeBulkUpdate).toBeUndefined();
         });
     });
 
@@ -336,25 +356,23 @@ describe('TenantHooks (Sequelize global hooks)', () => {
     });
 
     // -----------------------------------------------------------------------
-    // beforeBulkDestroy
+    // beforeBulkDestroy (per-model hook on Lead)
     // -----------------------------------------------------------------------
     describe('beforeBulkDestroy', () => {
         it('should inject tenantId into where clause', () => {
-            const options: any = { model: seq.models.Lead, where: { status: 'OLD' } };
-            withContext(TENANT_A, () => seq.hooks.beforeBulkDestroy(options));
+            const options: any = { where: { status: 'OLD' } };
+            withContext(TENANT_A, () => seq.models.Lead.hooks.beforeBulkDestroy(options));
             expect(options.where).toEqual({ status: 'OLD', tenantId: 'tenant-A' });
         });
 
         it('should create where clause if missing', () => {
-            const options: any = { model: seq.models.Lead };
-            withContext(TENANT_A, () => seq.hooks.beforeBulkDestroy(options));
+            const options: any = {};
+            withContext(TENANT_A, () => seq.models.Lead.hooks.beforeBulkDestroy(options));
             expect(options.where).toEqual({ tenantId: 'tenant-A' });
         });
 
-        it('should skip for non-tenant model', () => {
-            const options: any = { model: seq.models.Role, where: {} };
-            withContext(TENANT_A, () => seq.hooks.beforeBulkDestroy(options));
-            expect(options.where).toEqual({});
+        it('should NOT have a beforeBulkDestroy hook on non-tenant model', () => {
+            expect(seq.models.Role.hooks.beforeBulkDestroy).toBeUndefined();
         });
     });
 
@@ -363,8 +381,8 @@ describe('TenantHooks (Sequelize global hooks)', () => {
     // -----------------------------------------------------------------------
     describe('TENANT_BYPASS symbol (per-query opt-out)', () => {
         it('should bypass beforeFind', () => {
-            const options: any = { model: seq.models.Lead, where: {}, [TENANT_BYPASS]: true };
-            withContext(TENANT_A, () => seq.hooks.beforeFind(options));
+            const options: any = { where: {}, [TENANT_BYPASS]: true };
+            withContext(TENANT_A, () => seq.models.Lead.hooks.beforeFind(options));
             expect(options.where).toEqual({});
         });
 
@@ -375,8 +393,8 @@ describe('TenantHooks (Sequelize global hooks)', () => {
         });
 
         it('should bypass beforeBulkUpdate', () => {
-            const options: any = { model: seq.models.Lead, where: {}, [TENANT_BYPASS]: true };
-            withContext(TENANT_A, () => seq.hooks.beforeBulkUpdate(options));
+            const options: any = { where: {}, [TENANT_BYPASS]: true };
+            withContext(TENANT_A, () => seq.models.Lead.hooks.beforeBulkUpdate(options));
             expect(options.where).toEqual({});
         });
 
@@ -388,8 +406,8 @@ describe('TenantHooks (Sequelize global hooks)', () => {
         });
 
         it('should bypass beforeBulkDestroy', () => {
-            const options: any = { model: seq.models.Lead, where: {}, [TENANT_BYPASS]: true };
-            withContext(TENANT_A, () => seq.hooks.beforeBulkDestroy(options));
+            const options: any = { where: {}, [TENANT_BYPASS]: true };
+            withContext(TENANT_A, () => seq.models.Lead.hooks.beforeBulkDestroy(options));
             expect(options.where).toEqual({});
         });
     });
@@ -400,12 +418,12 @@ describe('TenantHooks (Sequelize global hooks)', () => {
     describe('end-to-end scoping scenarios', () => {
         it('should scope find + create in same request context', () => {
             withContext(TENANT_A, () => {
-                // Simulate find
-                const findOpts: any = { model: seq.models.Lead, where: { status: 'NEW' } };
-                seq.hooks.beforeFind(findOpts);
+                // Simulate find (per-model hook)
+                const findOpts: any = { where: { status: 'NEW' } };
+                seq.models.Lead.hooks.beforeFind(findOpts);
                 expect(findOpts.where.tenantId).toBe('tenant-A');
 
-                // Simulate create
+                // Simulate create (global hook)
                 const instance = fakeInstance('Lead', { name: 'Test' }, TENANT_MODEL_ATTRS);
                 seq.hooks.beforeCreate(instance, {});
                 expect(instance.tenantId).toBe('tenant-A');
@@ -426,12 +444,12 @@ describe('TenantHooks (Sequelize global hooks)', () => {
 
         it('should allow super admin to operate on any tenant data', () => {
             withContext(SUPER_ADMIN, () => {
-                // Find without tenant filter
-                const findOpts: any = { model: seq.models.Lead, where: {} };
-                seq.hooks.beforeFind(findOpts);
+                // Find without tenant filter (per-model hook)
+                const findOpts: any = { where: {} };
+                seq.models.Lead.hooks.beforeFind(findOpts);
                 expect(findOpts.where.tenantId).toBeUndefined();
 
-                // Create without auto-setting tenantId
+                // Create without auto-setting tenantId (global hook)
                 const instance = fakeInstance('Lead', { tenantId: 'tenant-B' }, TENANT_MODEL_ATTRS);
                 seq.hooks.beforeCreate(instance, {});
                 expect(instance.tenantId).toBe('tenant-B'); // preserved, not overridden
@@ -444,23 +462,6 @@ describe('TenantHooks (Sequelize global hooks)', () => {
                 const deleteInstance = fakeInstance('Lead', { tenantId: 'tenant-B' }, TENANT_MODEL_ATTRS);
                 expect(() => seq.hooks.beforeDestroy(deleteInstance, {})).not.toThrow();
             });
-        });
-    });
-
-    // -----------------------------------------------------------------------
-    // Model with alternative option shape (Model vs model key)
-    // -----------------------------------------------------------------------
-    describe('Model key resolution', () => {
-        it('should resolve model from options.Model (capital M)', () => {
-            const options: any = { Model: seq.models.Lead, where: {} };
-            withContext(TENANT_A, () => seq.hooks.beforeFind(options));
-            expect(options.where.tenantId).toBe('tenant-A');
-        });
-
-        it('should resolve model from options.model (lowercase)', () => {
-            const options: any = { model: seq.models.Lead, where: {} };
-            withContext(TENANT_A, () => seq.hooks.beforeFind(options));
-            expect(options.where.tenantId).toBe('tenant-A');
         });
     });
 });
