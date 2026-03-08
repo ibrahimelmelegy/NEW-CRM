@@ -47,6 +47,13 @@ _global.useRouter = () => ({
 
 _global.navigateTo = vi.fn();
 
+// Mock useI18n and useNuxtApp
+const mockT = (key: string) => key;
+_global.useI18n = () => ({ t: mockT, locale: ref('en'), setLocale: vi.fn() });
+_global.useNuxtApp = () => ({
+  $i18n: { t: mockT, locale: ref('en'), setLocale: vi.fn() }
+});
+
 // Mock $fetch
 _global.$fetch = vi.fn().mockResolvedValue({
   success: true,
