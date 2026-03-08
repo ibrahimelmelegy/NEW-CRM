@@ -46,21 +46,21 @@ const router = express.Router();
 router.post('/login', authLimiter, validateBody(LoginInput), loginUser);
 
 // Temporary debug endpoint to diagnose login 500 errors
-router.post('/debug-login', async (req, res) => {
+router.post('/debug-login', (req: any, res: any, next: any) => {
   const steps: string[] = [];
-  try {
+  (async () => {
     const { email, password } = req.body;
     steps.push(`1. Got email=${email}`);
 
     const User = (await import('./userModel')).default;
     const user = await User.findOne({ where: { email } });
     steps.push(`2. User found: ${!!user}, id=${user?.id}, 2FA=${user?.twoFactorEnabled}`);
-    if (!user) return res.json({ steps, error: 'User not found' });
+    if (!user) { res.json({ steps, error: 'User not found' }); return; }
 
     const bcrypt = await import('bcryptjs');
     const isMatch = await bcrypt.compare(password, user.password);
     steps.push(`3. Password match: ${isMatch}`);
-    if (!isMatch) return res.json({ steps, error: 'Wrong password' });
+    if (!isMatch) { res.json({ steps, error: 'Wrong password' }); return; }
 
     const jwt = await import('jsonwebtoken');
     const SECRET_KEY = process.env.SECRET_KEY;
@@ -78,10 +78,10 @@ router.post('/debug-login', async (req, res) => {
     steps.push(`6. Session created`);
 
     res.json({ steps, success: true, tokenLength: token.length });
-  } catch (error: any) {
+  })().catch((error: any) => {
     steps.push(`ERROR: ${error.message}`);
     res.json({ steps, error: error.message, stack: error.stack?.split('\n').slice(0, 5) });
-  }
+  });
 });
 
 /**
