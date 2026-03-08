@@ -46,7 +46,8 @@ const router = express.Router();
 router.post('/login', authLimiter, validateBody(LoginInput), loginUser);
 
 // Temporary debug endpoint to diagnose login 500 errors
-router.post('/debug-login', (req: any, res: any, next: any) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+router.post('/debug-login', (req: any, res: any, _next: any) => {
   const steps: string[] = [];
   (async () => {
     const { email, password } = req.body;
@@ -55,12 +56,18 @@ router.post('/debug-login', (req: any, res: any, next: any) => {
     const User = (await import('./userModel')).default;
     const user = await User.findOne({ where: { email } });
     steps.push(`2. User found: ${!!user}, id=${user?.id}, 2FA=${user?.twoFactorEnabled}`);
-    if (!user) { res.json({ steps, error: 'User not found' }); return; }
+    if (!user) {
+      res.json({ steps, error: 'User not found' });
+      return;
+    }
 
     const bcrypt = await import('bcryptjs');
     const isMatch = await bcrypt.compare(password, user.password);
     steps.push(`3. Password match: ${isMatch}`);
-    if (!isMatch) { res.json({ steps, error: 'Wrong password' }); return; }
+    if (!isMatch) {
+      res.json({ steps, error: 'Wrong password' });
+      return;
+    }
 
     const jwt = await import('jsonwebtoken');
     const SECRET_KEY = process.env.SECRET_KEY;
@@ -73,7 +80,7 @@ router.post('/debug-login', (req: any, res: any, next: any) => {
     await Session.create({
       userId: user.id,
       token,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
     steps.push(`6. Session created`);
 
