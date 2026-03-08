@@ -12,7 +12,12 @@ class LeadController {
       io.emit('lead:created', { id: responseFromService?.id });
       wrapResult(res, responseFromService, 201);
     } catch (error) {
-      next(error);
+      // Temporary debug
+      res.status(500).json({
+        debug: true,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack?.split('\n').slice(0, 8) : undefined
+      });
     }
   }
 
