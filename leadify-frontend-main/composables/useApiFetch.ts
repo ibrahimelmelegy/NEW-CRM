@@ -1,4 +1,5 @@
 import { user } from './useUser';
+import { csrfToken, refreshCsrfToken } from './useCsrf';
 
 // ✅ FIX: Proper TypeScript interface for API responses
 export interface ApiResponse<T = unknown> {
@@ -60,13 +61,38 @@ export const useApiFetch = async <T = unknown>(
       ...(!isFd && { Accept: 'application/json' }),
       // Multi-tenant header
       ...(user.value?.tenantId && { 'X-Tenant-ID': user.value.tenantId }),
+      // CSRF token for state-changing requests
+      ...(method !== 'GET' && csrfToken.value && { 'X-CSRF-Token': csrfToken.value }),
       // Forward cookies during SSR
       ...ssrHeaders
     }
   };
 
+  const doFetch = async () =>
+    $fetch<Record<string, unknown>>(config.public.API_BASE_URL + url, {
+      ...defaultOptions,
+      headers: {
+        ...defaultOptions.headers,
+        // Re-read CSRF token at call time (may have been refreshed)
+        ...(method !== 'GET' && csrfToken.value && { 'X-CSRF-Token': csrfToken.value })
+      }
+    });
+
   try {
-    const rawResponse = await $fetch<Record<string, unknown>>(config.public.API_BASE_URL + url, defaultOptions);
+    let rawResponse: Record<string, unknown>;
+    try {
+      rawResponse = await doFetch();
+    } catch (firstError: any) {
+      // If CSRF token expired, refresh and retry once
+      const status = firstError?.response?.status || firstError?.statusCode;
+      const msg = (firstError?.response?._data?.message || firstError?.message || '').toLowerCase();
+      if (status === 403 && msg.includes('csrf')) {
+        await refreshCsrfToken();
+        rawResponse = await doFetch();
+      } else {
+        throw firstError;
+      }
+    }
 
     // ✅ ROBUST NORMALIZATION: Handle both standardized and legacy responses
     const normalizedResponse: ApiResponse<T> = {

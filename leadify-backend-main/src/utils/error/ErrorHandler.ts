@@ -23,14 +23,6 @@ export default (error: Error, req: Request, res: Response, _next: NextFunction):
     body: {}
   };
 
-  // Temporary: include error details for 500s to aid debugging
-  if (statusCode === 500) {
-    response.body = {
-      _debug: error.message,
-      _stack: error.stack?.split('\n').slice(0, 5)
-    };
-  }
-
   if (process.env.NODE_ENV !== 'production') {
     if (statusCode === 500) {
       console.error('Server Error:', error);
