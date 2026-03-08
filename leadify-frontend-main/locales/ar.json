@@ -596,7 +596,8 @@
     "percentage": "نسبة مئوية",
     "fixedAmount": "مبلغ ثابت",
     "ascending": "تصاعدي",
-    "descending": "تنازلي"
+    "descending": "تنازلي",
+    "companyName": "اسم الشركة"
   },
   "export": {
     "title": "تصدير",
@@ -3131,7 +3132,7 @@
     "fieldNamePlaceholder": "اسم الحقل",
     "newValuePlaceholder": "القيمة الجديدة",
     "userIdPlaceholder": "معرف المستخدم",
-    "recipientEmail": "بريد المستلم أو {email}",
+    "recipientEmail": "بريد المستلم",
     "emailSubject": "موضوع البريد",
     "notificationMessage": "رسالة الإشعار",
     "fieldName": "اسم الحقل",
@@ -7537,7 +7538,7 @@
     "fromNamePlaceholder": "شركتك",
     "fromEmailPlaceholder": "noreply{'@'}yourcompany.com",
     "signaturePlaceholder": "مع التحية، فريق شركتك",
-    "footerPlaceholder": "عنوان الشركة | رابط إلغاء الاشتراك",
+    "footerPlaceholder": "عنوان الشركة - رابط إلغاء الاشتراك",
     "welcomeTextPlaceholder": "مرحباً بك في نظام CRM",
     "termsUrlPlaceholder": "https://yourcompany.com/terms",
     "portalNamePlaceholder": "بوابة العملاء"
@@ -8005,7 +8006,7 @@
     "templateName": "اسم القالب",
     "category": "الفئة",
     "subjectLine": "سطر الموضوع",
-    "placeholderHint": "استخدم {name} و{company} و{product} كعناصر نائبة ديناميكية.",
+    "placeholderHint": "استخدم [name] و[company] و[product] كعناصر نائبة ديناميكية.",
     "saveTemplate": "حفظ القالب",
     "templateCreated": "تم إنشاء القالب بنجاح!",
     "templateUpdated": "تم تحديث القالب بنجاح!",
@@ -8704,7 +8705,7 @@
       "marketing": "تسويق",
       "utility": "خدمي",
       "authentication": "مصادقة",
-      "placeholderHelp": "استخدم {1}، {2} للعناصر النائبة"
+      "placeholderHelp": "استخدم [1]، [2] للعناصر النائبة"
     },
     "common": {
       "search": "بحث...",
@@ -8754,7 +8755,7 @@
     "emailSubject": "موضوع البريد الإلكتروني",
     "emailSubjectPlaceholder": "شكرًا لتواصلك معنا",
     "emailBody": "محتوى البريد الإلكتروني",
-    "emailBodyPlaceholder": "مرحبًا {name}، شكرًا لتواصلك...",
+    "emailBodyPlaceholder": "مرحبًا [name]، شكرًا لتواصلك...",
     "styling": "التنسيق والمظهر",
     "primaryColor": "اللون الأساسي",
     "buttonText": "نص الزر",

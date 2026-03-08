@@ -596,7 +596,8 @@
     "percentage": "Percentage",
     "fixedAmount": "Fixed Amount",
     "ascending": "Ascending",
-    "descending": "Descending"
+    "descending": "Descending",
+    "companyName": "Company Name"
   },
   "export": {
     "title": "Export",
@@ -3099,7 +3100,7 @@
     "fieldNamePlaceholder": "Field name",
     "newValuePlaceholder": "New value",
     "userIdPlaceholder": "User ID",
-    "recipientEmail": "Recipient email or {email}",
+    "recipientEmail": "Recipient email",
     "emailSubject": "Email subject",
     "notificationMessage": "Notification message",
     "fieldName": "Field name",
@@ -7505,7 +7506,7 @@
     "fromNamePlaceholder": "Your Company",
     "fromEmailPlaceholder": "noreply{'@'}yourcompany.com",
     "signaturePlaceholder": "Best regards, Your Company Team",
-    "footerPlaceholder": "Company Address | Unsubscribe Link",
+    "footerPlaceholder": "Company Address - Unsubscribe Link",
     "welcomeTextPlaceholder": "Welcome to your CRM",
     "termsUrlPlaceholder": "https://yourcompany.com/terms",
     "portalNamePlaceholder": "Client Portal"
@@ -8001,7 +8002,7 @@
     "templateName": "Template Name",
     "category": "Category",
     "subjectLine": "Subject Line",
-    "placeholderHint": "Use {name}, {company}, {product} as dynamic placeholders.",
+    "placeholderHint": "Use [name], [company], [product] as dynamic placeholders.",
     "saveTemplate": "Save Template",
     "templateCreated": "Template created successfully!",
     "templateUpdated": "Template updated successfully!",
@@ -8700,7 +8701,7 @@
       "marketing": "Marketing",
       "utility": "Utility",
       "authentication": "Authentication",
-      "placeholderHelp": "Use {1}, {2} for placeholders"
+      "placeholderHelp": "Use [1], [2] for placeholders"
     },
     "common": {
       "search": "Search...",
@@ -8750,7 +8751,7 @@
     "emailSubject": "Email Subject",
     "emailSubjectPlaceholder": "Thank you for contacting us",
     "emailBody": "Email Body",
-    "emailBodyPlaceholder": "Hi {name}, thank you for reaching out...",
+    "emailBodyPlaceholder": "Hi [name], thank you for reaching out...",
     "styling": "Styling & Appearance",
     "primaryColor": "Primary Color",
     "buttonText": "Button Text",
