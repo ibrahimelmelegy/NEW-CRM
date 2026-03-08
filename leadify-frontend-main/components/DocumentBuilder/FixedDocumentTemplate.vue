@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-v-html -->
   <div class="fixed-doc-template print:block">
     <!-- Single A4 Page -->
     <div

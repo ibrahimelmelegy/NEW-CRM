@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-v-html -->
   <!-- Toolbar -->
   <div class="glass-panel shadow-md rounded-md py-2 px-6 flex flex-wrap gap-2 items-center" style="width: 100vw; position: fixed; z-index: 2">
     <button :class="buttonClass(isBold)" @click="toggleBold">

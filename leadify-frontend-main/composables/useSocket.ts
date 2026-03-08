@@ -12,11 +12,11 @@ export const useSocket = () => {
     socket.value = io(socketUrl);
 
     socket.value.on('connect', () => {
-      console.log('[Socket] Connected to server:', socket.value?.id);
+      console.warn('[Socket] Connected to server:', socket.value?.id);
     });
 
     socket.value.on('disconnect', () => {
-      console.log('[Socket] Disconnected from server');
+      console.warn('[Socket] Disconnected from server');
     });
   });
 

@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-v-html -->
   <div ref="editor" class="editor">
     <!-- Add loading overlay -->
     <div v-if="isLoading" class="loading-overlay">

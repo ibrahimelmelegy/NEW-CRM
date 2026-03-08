@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-v-html -->
   <div class="ai-assistant-page p-6 md:p-8">
     <!-- Page Header -->
     <div class="header mb-8">

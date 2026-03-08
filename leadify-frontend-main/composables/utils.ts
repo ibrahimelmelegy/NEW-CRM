@@ -92,7 +92,8 @@ export const handleUploadRequestApi = async (params: UploadRequestParams, payloa
   const result = ref<unknown>();
   const errorData = ref<unknown>();
 
-  let { file, filename, data } = params;
+  const { file, filename: initialFilename, data } = params;
+  let filename = initialFilename;
   try {
     data.model = model || '';
     if (payloadName) {

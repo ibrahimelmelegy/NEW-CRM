@@ -12,12 +12,15 @@ div(class="animate-fade-in")
       NuxtLink(to="/sales/clients/add-client")
         el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_CLIENTS')" native-type="submit" type="primary" :icon="Plus" class="!rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform") {{ $t('clients.newClient') }}
 
+  //- Skeleton Loading State
+  SkeletonTable(v-if="loadingAction" :rows="8" :cols="5")
+
   //- KPI Metrics
-  .clients-kpi-grid
-    PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
+  .clients-kpi-grid(v-if="!loadingAction")
+    PremiumKPICards(:metrics="kpiMetrics")
 
   //- Client Segments Analysis
-  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4" v-if="!loadingDeals")
+  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4" v-if="!loadingDeals && !loadingAction")
     .glass-card.p-5.rounded-2xl
       .flex.items-center.justify-between
         div
@@ -47,12 +50,12 @@ div(class="animate-fade-in")
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: #ef444420")
           Icon(name="ph:sign-out-bold" size="20" style="color: #ef4444")
 
-  BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
-  SavedViews(:entityType="'client'" :currentFilters="{}" @apply-view="handleApplyView")
-  AdvancedSearch(:entityType="'client'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
+  BulkActions(v-if="!loadingAction" :count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
+  SavedViews(v-if="!loadingAction" :entityType="'client'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(v-if="!loadingAction" :entityType="'client'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
   //- Desktop Table
-  .clients-desktop-view
+  .clients-desktop-view(v-if="!loadingAction")
     AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="client" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" searchPlaceholder="clients" emptyIcon="ph:buildings-bold" :emptyMessage="$t('clients.noClientsYet')" :emptyDescription="$t('clients.noClientsDesc')" emptyActionHref="/sales/clients/create" :emptyActionLabel="$t('clients.addClient')" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")

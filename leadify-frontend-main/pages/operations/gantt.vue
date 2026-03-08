@@ -282,7 +282,7 @@
         <div class="grid grid-cols-2 gap-4">
           <el-form-item :label="$t('gantt.dependency')">
             <el-select v-model="taskForm.parentTaskId" class="w-full" clearable :placeholder="$t('gantt.none')">
-              <el-option v-for="t in availableDependencies" :key="t.id" :label="t.name" :value="t.id" />
+              <el-option v-for="dep in availableDependencies" :key="dep.id" :label="dep.name" :value="dep.id" />
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('gantt.milestone')">

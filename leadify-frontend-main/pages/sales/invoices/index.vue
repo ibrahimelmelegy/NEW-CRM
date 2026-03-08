@@ -7,10 +7,13 @@ div
     template(#actions)
       ExportButton(:data="exportData" :columns="exportColumns" :filename="'invoices-export'" :title="$t('invoices.title')")
 
-  StatCards(:stats="summaryStats")
+  //- Skeleton Loading State
+  SkeletonTable(v-if="loading" :rows="6" :cols="6")
+
+  StatCards(v-if="!loading" :stats="summaryStats")
 
   //- Analytics Section
-  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4")
+  .grid.gap-4.mb-6(v-if="!loading" class="grid-cols-2 md:grid-cols-4")
     .glass-card.p-5.rounded-2xl(v-for="stat in analyticsStats" :key="stat.label")
       .flex.items-center.justify-between
         div
@@ -20,7 +23,7 @@ div
           Icon(:name="stat.icon" size="20" :style="{ color: stat.color }")
 
   //- Aging Report Card
-  .glass-card.p-6.rounded-2xl.mb-6(v-if="agingReport")
+  .glass-card.p-6.rounded-2xl.mb-6(v-if="agingReport && !loading")
     .flex.items-center.gap-2.mb-4
       .w-8.h-8.rounded-xl.flex.items-center.justify-center(style="background: rgba(120,73,255,0.15)")
         Icon(name="ph:clock-countdown-bold" size="16" style="color: #7849ff")
@@ -34,11 +37,11 @@ div
         p.text-lg.font-bold(:style="{ color: bucket.color }") {{ formatCurrency(bucket.amount) }}
         p.text-xs.mt-1(style="color: var(--text-muted)") {{ bucket.count }} {{ $t('invoices.title').toLowerCase() }}
 
-  SavedViews(:entityType="'invoice'" :currentFilters="{}" @apply-view="handleApplyView")
-  AdvancedSearch(:entityType="'invoice'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
+  SavedViews(v-if="!loading" :entityType="'invoice'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(v-if="!loading" :entityType="'invoice'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
   //- Desktop Table
-  .inv-desktop-view
+  .inv-desktop-view(v-if="!loading")
     AppTable(
       v-slot="{data}"
       :externalLoading="loading"
@@ -77,7 +80,7 @@ div
                   p.text-sm PDF
 
   //- Mobile Card View
-  .inv-mobile-view
+  .inv-mobile-view(v-if="!loading")
     PullToRefresh(:loading="mobileRefreshing" @refresh="handleMobileRefresh")
       .mb-3
         el-input(v-model="mobileSearch" size="large" :placeholder="`${$t('common.search')} ${$t('invoices.title')}`" clearable class="!rounded-xl")

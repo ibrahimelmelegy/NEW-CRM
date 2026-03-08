@@ -13,11 +13,18 @@ div
         Icon(name="ph:arrows-clockwise-bold" size="16")
         span.ml-1 {{ $t('executiveDashboard.refresh') }}
 
+  //- Skeleton Loading State
+  .dashboard-skeleton(v-if="loading")
+    SkeletonStats
+    .grid.grid-cols-1.gap-6.mt-6(class="lg:grid-cols-2")
+      SkeletonChart
+      SkeletonChart
+
   //- KPI Stat Cards
-  StatCards(:stats="kpiCards" :columns="4")
+  StatCards(v-if="!loading" :stats="kpiCards" :columns="4")
 
   //- Main Grid: Left (wider) + Right sidebar
-  .grid.grid-cols-1.gap-6.mt-2(class="lg:grid-cols-3")
+  .grid.grid-cols-1.gap-6.mt-2(v-if="!loading" class="lg:grid-cols-3")
     //- Left Column
     .space-y-6(class="lg:col-span-2")
       //- Revenue Chart
@@ -135,6 +142,7 @@ const { $i18n } = useNuxtApp();
 const t = $i18n.t;
 
 const refreshing = ref(false);
+const loading = ref(true);
 const loadingSummary = ref(false);
 const loadingRevenue = ref(false);
 const loadingPipeline = ref(false);
@@ -328,12 +336,12 @@ function getPriorityTagType(priority: string): string {
 }
 
 // Init
-onMounted(() => {
-  loadExecutiveSummary();
-  loadRevenueChart();
-  loadPipeline();
-  loadActivities();
-  loadPendingTasks();
+onMounted(async () => {
+  try {
+    await Promise.all([loadExecutiveSummary(), loadRevenueChart(), loadPipeline(), loadActivities(), loadPendingTasks()]);
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
 

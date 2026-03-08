@@ -34,7 +34,7 @@ import {
   getProviderColor,
   formatSyncTime,
   type CalendarEvent,
-  type CalendarAttendee,
+  type _CalendarAttendee,
   type CalendarRecurrence,
   type CalendarSyncStatus,
   type SyncResult

@@ -23,20 +23,21 @@ div(class="animate-fade-in")
                 Icon.text-md.mr-2(size="20" name="ph:upload-simple-bold" )
                 p.text-sm {{ $t('leads.import') }}
 
+  //- Skeleton Loading State
+  SkeletonTable(v-if="loadingAction" :rows="8" :cols="6")
+
   //- KPI Metrics
-  .leads-kpi-grid
-    PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
+  .leads-kpi-grid(v-if="!loadingAction")
+    PremiumKPICards(:metrics="kpiMetrics")
 
   input(type="file", ref="fileInput", style="display: none", accept=".xls,.xlsx", @change="handleFileChange")
-  // Spinner
-  el-icon.is-loading(:size="32" v-if="loadingAction" style="color: var(--accent-color, #7849ff)")
-  BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
-  SavedViews(:entityType="'lead'" :currentFilters="currentFilters" @apply-view="handleApplyView")
-  AdvancedSearch(:entityType="'lead'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
+  BulkActions(v-if="!loadingAction" :count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
+  SavedViews(v-if="!loadingAction" :entityType="'lead'" :currentFilters="currentFilters" @apply-view="handleApplyView")
+  AdvancedSearch(v-if="!loadingAction" :entityType="'lead'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
   //- Desktop Table View
-  .leads-desktop-view
-    AppTable(v-slot="{data}"  v-if="!loadingAction" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" emptyIcon="ph:user-focus-bold" :emptyMessage="$t('leads.noLeadsYet')" emptyDescription="Create your first lead to start building your sales pipeline" emptyActionHref="/sales/leads/create" emptyActionLabel="Create Lead" )
+  .leads-desktop-view(v-if="!loadingAction")
+    AppTable(v-slot="{data}" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" emptyIcon="ph:user-focus-bold" :emptyMessage="$t('leads.noLeadsYet')" emptyDescription="Create your first lead to start building your sales pipeline" emptyActionHref="/sales/leads/create" emptyActionLabel="Create Lead" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")
               span(class="el-dropdown-link")
@@ -229,7 +230,8 @@ async function editPresent() {
 }
 
 // Call API to Get the lead and users in parallel
-let [response, usersResponse] = await Promise.all([useTableFilter('lead'), useApiFetch('users')]);
+const [initialResponse, usersResponse] = await Promise.all([useTableFilter('lead'), useApiFetch('users')]);
+let response = initialResponse;
 
 const table = ref({
   columns: [] as unknown[], // Initialize as empty array

@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-v-html -->
   <div class="proposal-print-template print:block force-light-mode">
     <!-- Cover Page (Proposals Only) -->
     <ProposalPrintCover v-if="data.coverStyle && isFullDoc" :data="data" :color="color" :type-info="typeInfo" />

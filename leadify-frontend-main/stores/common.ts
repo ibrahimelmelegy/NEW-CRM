@@ -1,4 +1,3 @@
-/* eslint-disable require-await */
 import { defineStore } from 'pinia';
 // ImageUploader import moved to action to prevent SSR crash
 import { ElNotification } from 'element-plus';
@@ -86,6 +85,7 @@ export const useMain = defineStore('Main', {
 
       let ImageUploaderModule;
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         ImageUploaderModule = require('quill-image-uploader');
       } catch (e) {
         console.warn('Quill Image Uploader not loaded');
@@ -115,7 +115,7 @@ export const useMain = defineStore('Main', {
 });
 
 // تحويل الدالة لـ Typed Function
-function fileToDataUrl(file: File): Promise<string | ArrayBuffer | null> {
+export function fileToDataUrl(file: File): Promise<string | ArrayBuffer | null> {
   return new Promise((resolve, reject) => {
     if (!file) {
       reject(new Error('No file provided.'));

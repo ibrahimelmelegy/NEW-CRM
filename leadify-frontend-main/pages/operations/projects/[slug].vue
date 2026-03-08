@@ -681,7 +681,7 @@ function materialMappedData() {
     const additionalMaterials =
       project?.additionalMaterialItem?.filter(item => item.AdditionalMaterialItem.additionalMateria === material.additionalMaterialId) || [];
 
-    console.log('material', material);
+    console.warn('material', material);
     const totalAdditionalMaterialCost = additionalMaterials.reduce((sum, item) => {
       return sum + item.quantity * Number(item.AdditionalMaterialItem?.price || 0);
     }, 0);

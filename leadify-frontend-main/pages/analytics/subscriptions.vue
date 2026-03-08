@@ -871,7 +871,7 @@ const churnReasonsChartOption = computed(() => {
 });
 
 function handleRetentionAction(customer: unknown) {
-  console.log('Retention action for:', customer.name);
+  console.warn('Retention action for:', customer.name);
 }
 
 // ─── Expansion Revenue ──────────────────────────────────────

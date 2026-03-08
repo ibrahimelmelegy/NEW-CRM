@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-v-html -->
   <div class="min-h-screen bg-slate-50">
     <!-- Loading State -->
     <div v-if="loading" class="min-h-screen flex items-center justify-center">

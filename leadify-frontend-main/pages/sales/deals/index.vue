@@ -19,12 +19,15 @@ div(class="animate-fade-in")
       NuxtLink(to="/sales/deals/add-deal")
         el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_DEALS')" native-type="submit" type="primary" :icon="Plus" class="!rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform") {{ $t('deals.newDeal') }}
 
+  //- Skeleton Loading State
+  SkeletonTable(v-if="loadingAction" :rows="8" :cols="5")
+
   //- KPI Metrics
-  .deals-kpi-grid
-    PremiumKPICards(:metrics="kpiMetrics" v-if="!loadingAction")
+  .deals-kpi-grid(v-if="!loadingAction")
+    PremiumKPICards(:metrics="kpiMetrics")
 
   //- Pipeline Analytics
-  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4" v-if="pipelineAnalytics")
+  .grid.gap-4.mb-6(class="grid-cols-2 md:grid-cols-4" v-if="pipelineAnalytics && !loadingAction")
     .glass-card.p-5.rounded-2xl.animate-entrance(v-for="stat in pipelineStats" :key="stat.label")
       .flex.items-center.justify-between
         div
@@ -33,12 +36,12 @@ div(class="animate-fade-in")
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(:style="{ background: stat.color + '20' }")
           Icon(:name="stat.icon" size="20" :style="{ color: stat.color }")
 
-  BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
-  SavedViews(:entityType="'deal'" :currentFilters="{}" @apply-view="handleApplyView")
-  AdvancedSearch(:entityType="'deal'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
+  BulkActions(v-if="!loadingAction" :count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
+  SavedViews(v-if="!loadingAction" :entityType="'deal'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(v-if="!loadingAction" :entityType="'deal'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
   //- Desktop Table View
-  .deals-desktop-view
+  .deals-desktop-view(v-if="!loadingAction")
     AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="deal" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('deals.title')" emptyIcon="ph:handshake-bold" :emptyMessage="$t('deals.noDealsYet')" :emptyDescription="$t('deals.noDealsDesc')" emptyActionHref="/sales/deals/create" :emptyActionLabel="$t('deals.createDeal')" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")

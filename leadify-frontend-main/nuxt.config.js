@@ -1,5 +1,4 @@
 // High Point Technology CRM Frontend Configuration
-import { fileURLToPath } from 'node:url'; // استيراد لضمان دقة المسارات
 import { defineNuxtConfig } from 'nuxt/config';
 import { visualizer } from 'rollup-plugin-visualizer';
 
@@ -239,6 +238,14 @@ export default defineNuxtConfig({
 
   imports: {
     dirs: ['composables/**']
+  },
+
+  // Experimental performance features
+  experimental: {
+    // Payload optimization for smaller client-side payloads
+    payloadExtraction: true,
+    // Enable async entry for better code splitting
+    asyncEntry: true
   },
 
   devtools: {

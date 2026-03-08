@@ -32,13 +32,16 @@ div
       //-               NuxtLink.flex.items-center(:to="`/opportunity/1`")
       //-                 Icon.text-md.mr-2(size="20" name="IconArchived" )
       //-                 p.text-sm Archived
-  BulkActions(:count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
-  SavedViews(:entityType="'opportunity'" :currentFilters="{}" @apply-view="handleApplyView")
-  AdvancedSearch(:entityType="'opportunity'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
+  //- Skeleton Loading State
+  SkeletonTable(v-if="loadingAction" :rows="6" :cols="5")
+
+  BulkActions(v-if="!loadingAction" :count="selectedRows.length" :actions="['delete', 'export']" @bulk-delete="handleBulkDelete" @bulk-export="handleBulkExport" @clear-selection="selectedRows = []")
+  SavedViews(v-if="!loadingAction" :entityType="'opportunity'" :currentFilters="{}" @apply-view="handleApplyView")
+  AdvancedSearch(v-if="!loadingAction" :entityType="'opportunity'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
   //- Desktop Table
-  .opp-desktop-view
-    AppTable(v-slot="{data}" v-if="!loadingAction" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('opportunities.title')" emptyIcon="ph:target-bold" :emptyMessage="$t('opportunities.emptyMessage')" :emptyDescription="$t('opportunities.emptyDescription')" emptyActionHref="/sales/opportunity/create" :emptyActionLabel="$t('opportunities.newOpp')" )
+  .opp-desktop-view(v-if="!loadingAction")
+    AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="opportunity" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('opportunities.title')" emptyIcon="ph:target-bold" :emptyMessage="$t('opportunities.emptyMessage')" :emptyDescription="$t('opportunities.emptyDescription')" emptyActionHref="/sales/opportunity/create" :emptyActionLabel="$t('opportunities.newOpp')" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")
               span(class="el-dropdown-link")

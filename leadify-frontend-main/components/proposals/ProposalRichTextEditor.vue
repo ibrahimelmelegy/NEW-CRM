@@ -400,12 +400,16 @@ const buildExtensions = () => {
 
   // Dynamically add Mention extension if available
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const MentionModule = require('@tiptap/extension-mention');
     const Mention = MentionModule.default || MentionModule;
 
     // Build suggestion configuration using VueRenderer + tippy
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { VueRenderer } = require('@tiptap/vue-3');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const tippy = require('tippy.js').default;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const ProposalMentionList = require('./ProposalMentionList.vue').default;
 
     const defaultMentionVariables = [
@@ -484,6 +488,7 @@ const buildExtensions = () => {
 
   // Dynamically add Markdown extension if available
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const MarkdownModule = require('tiptap-markdown');
     const Markdown = MarkdownModule.Markdown || MarkdownModule.default || MarkdownModule;
     extensions.push(Markdown);

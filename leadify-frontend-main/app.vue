@@ -1,8 +1,11 @@
 <template lang="pug">
   ElConfigProvider(:locale="elLocale")
     div#global-background
+    //- Global route-change loading indicator
+    NuxtLoadingIndicator(:color="'#409EFF'" :height="3")
     NuxtLayout
-      NuxtPage
+      NuxtPage(:keepalive="keepAliveProps" :pageKey="$route.fullPath")
+
 </template>
 
 <script setup lang="ts">
@@ -11,8 +14,11 @@ import elEn from 'element-plus/dist/locale/en.mjs';
 // @ts-ignore
 import elAr from 'element-plus/dist/locale/ar.mjs';
 
-// Theme initialization is handled by ColorModeToggle.vue component
-// Removing duplicate logic here to prevent race conditions on refresh
+// KeepAlive config - cache frequently visited pages for faster back-navigation
+const keepAliveProps = {
+  max: 10,
+  include: ['index', 'sales-leads', 'sales-deals', 'sales-clients', 'sales-invoices', 'crm-contacts', 'operations-projects']
+};
 
 // Global locale direction handler — ensures RTL/LTR is always in sync
 const { locale } = useI18n();

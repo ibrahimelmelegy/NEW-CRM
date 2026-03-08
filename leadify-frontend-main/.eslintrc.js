@@ -23,7 +23,7 @@ module.exports = {
     'vue/multi-word-component-names': 'off',
     'vue/no-v-html': 'warn',
     'vue/require-default-prop': 'off',
-    'vue/require-explicit-emits': 'warn',
+    // 'vue/require-explicit-emits': 'warn', // Disabled below
     'vue/no-multiple-template-root': 'off', // Vue 3 supports multiple roots
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
     // TypeScript
@@ -36,12 +36,18 @@ module.exports = {
       }
     ],
     '@typescript-eslint/no-require-imports': 'warn',
+    // Import rules
+    'import/no-named-as-default': 'off',
     // General rules
     'prefer-const': 'warn',
     'no-var': 'warn',
     camelcase: 'off',
     eqeqeq: ['warn', 'always'],
-    'no-console': ['warn', { allow: ['warn', 'error'] }]
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
+    // Vue rules - disabled due to third-party library patterns
+    'vue/require-prop-types': 'off',
+    'vue/require-explicit-emits': 'off',
+    'vue/prop-name-casing': 'off'
   },
   overrides: [
     {

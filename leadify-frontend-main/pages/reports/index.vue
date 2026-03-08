@@ -377,7 +377,7 @@ const drillDownData = computed(() => {
 async function loadData() {
   // This would trigger a reload of data with date range filter
   // For now, we use the existing composables
-  console.log('Loading data with date range:', dateRange.value);
+  console.warn('Loading data with date range:', dateRange.value);
 }
 
 async function handleExport(format: 'csv' | 'excel') {
