@@ -26,7 +26,6 @@ import Deal from '../deal/model/dealModel';
 import { DealStageEnums } from '../deal/dealEnum';
 import Invoice from '../deal/model/invoiceMode';
 import CommActivity from '../communication/models/activityModel';
-import CompanyNote from './companyNoteModel';
 import CallLog from '../communication/models/callLogModel';
 import MeetingNote from '../communication/models/meetingNoteModel';
 
