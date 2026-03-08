@@ -15,13 +15,21 @@ export default (error: Error, req: Request, res: Response, _next: NextFunction):
     message = req.t('SOMETHING_WENT_WRONG');
   }
 
-  const response = {
+  const response: any = {
     status: statusCode,
     code: internalCode,
     success: false,
     message: message || error.message,
     body: {}
   };
+
+  // Temporary: include error details for 500s to aid debugging
+  if (statusCode === 500) {
+    response.body = {
+      _debug: error.message,
+      _stack: error.stack?.split('\n').slice(0, 5)
+    };
+  }
 
   if (process.env.NODE_ENV !== 'production') {
     if (statusCode === 500) {
