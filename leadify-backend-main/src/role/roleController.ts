@@ -45,12 +45,7 @@ class RoleController {
       const responseFromService = await roleService.getRoles(req.query);
       wrapResult(res, responseFromService);
     } catch (error) {
-      // Temporary debug: expose actual error to diagnose 500
-      res.status(500).json({
-        debug: true,
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack?.split('\n').slice(0, 5) : undefined
-      });
+      next(error);
     }
   }
 
@@ -64,12 +59,7 @@ class RoleController {
       const responseFromService = await roleService.getRoleById(req.params.id as string);
       wrapResult(res, responseFromService);
     } catch (error) {
-      // Temporary debug: expose actual error to diagnose 500
-      res.status(500).json({
-        debug: true,
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack?.split('\n').slice(0, 5) : undefined
-      });
+      next(error);
     }
   }
 

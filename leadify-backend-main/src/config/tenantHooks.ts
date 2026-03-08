@@ -63,8 +63,24 @@ function shouldSkip(options: any, modelOrName?: any): string | null {
 }
 
 /**
- * Registers global Sequelize hooks that automatically inject tenantId
+ * Injects tenantId into a where clause.
+ */
+function injectTenantWhere(options: any, tenantId: string): void {
+  if (!options.where) {
+    options.where = { tenantId };
+  } else if (typeof options.where === 'object' && !Array.isArray(options.where)) {
+    (options.where as any).tenantId = tenantId;
+  }
+}
+
+/**
+ * Registers Sequelize hooks that automatically inject tenantId
  * into all queries on tenant-scoped models.
+ *
+ * Options-based hooks (beforeFind, beforeBulkUpdate, beforeBulkDestroy) are
+ * registered per-model because Sequelize v6 does NOT set options.model before
+ * the beforeFind hook fires. Instance-based hooks remain global since they
+ * can read the model from instance.constructor.
  *
  * Must be called after all models are registered with Sequelize.
  */
@@ -74,19 +90,40 @@ export function registerTenantHooks(sequelize: Sequelize): void {
   const count = getTenantScopedModelCount();
   logger.debug({ count }, 'Tenant hooks registered: tenant-scoped models detected');
 
-  // ─── beforeFind ────────────────────────────────────────────────────────
-  sequelize.addHook('beforeFind', 'tenantScopeFind', (options: FindOptions) => {
-    const model = getModelFromOptions(options);
-    const skip = shouldSkip(options, model);
-    if (skip) return;
+  // ─── Per-model hooks for options-based operations ────────────────────
+  // These hooks are only registered on models that have a tenantId column,
+  // avoiding the need to detect the model from options at runtime.
+  for (const [modelName, modelClass] of Object.entries(sequelize.models)) {
+    if (!isTenantScopedModel(modelName)) continue;
 
-    const ctx = getTenantContext()!;
-    if (!options.where) {
-      options.where = { tenantId: ctx.tenantId };
-    } else if (typeof options.where === 'object' && !Array.isArray(options.where)) {
-      (options.where as any).tenantId = ctx.tenantId;
-    }
-  });
+    const ModelCtor = modelClass as any;
+
+    // ─── beforeFind (per-model) ──────────────────────────────────────
+    ModelCtor.addHook('beforeFind', 'tenantScopeFind', (options: FindOptions) => {
+      const skip = shouldSkip(options, ModelCtor);
+      if (skip) return;
+      const ctx = getTenantContext()!;
+      injectTenantWhere(options, ctx.tenantId!);
+    });
+
+    // ─── beforeBulkUpdate (per-model) ────────────────────────────────
+    ModelCtor.addHook('beforeBulkUpdate', 'tenantScopeBulkUpdate', (options: any) => {
+      const skip = shouldSkip(options, ModelCtor);
+      if (skip) return;
+      const ctx = getTenantContext()!;
+      injectTenantWhere(options, ctx.tenantId!);
+    });
+
+    // ─── beforeBulkDestroy (per-model) ───────────────────────────────
+    ModelCtor.addHook('beforeBulkDestroy', 'tenantScopeBulkDestroy', (options: any) => {
+      const skip = shouldSkip(options, ModelCtor);
+      if (skip) return;
+      const ctx = getTenantContext()!;
+      injectTenantWhere(options, ctx.tenantId!);
+    });
+  }
+
+  // ─── Global instance-based hooks (model available via instance.constructor) ──
 
   // ─── beforeCreate ──────────────────────────────────────────────────────
   sequelize.addHook('beforeCreate', 'tenantScopeCreate', (instance: Model, options: any) => {
@@ -99,10 +136,8 @@ export function registerTenantHooks(sequelize: Sequelize): void {
     const current = (instance as any).tenantId;
 
     if (!current) {
-      // Set tenantId if not already set
       (instance as any).tenantId = ctx.tenantId;
     } else if (current !== ctx.tenantId) {
-      // Prevent cross-tenant creation — override with correct tenantId
       logger.error(
         { model: model.name, attemptedTenantId: current, correctedTenantId: ctx.tenantId },
         'SECURITY: Cross-tenant create attempt blocked'
@@ -135,26 +170,10 @@ export function registerTenantHooks(sequelize: Sequelize): void {
     const ctx = getTenantContext()!;
     const current = (instance as any).tenantId;
 
-    // Prevent changing tenantId to a different tenant
     if (current && current !== ctx.tenantId) {
       throw new Error(
         `[TenantScope] SECURITY: Cannot update record belonging to tenant ${current}. ` + `Current tenant: ${ctx.tenantId}. Model: ${model.name}`
       );
-    }
-  });
-
-  // ─── beforeBulkUpdate ─────────────────────────────────────────────────
-  sequelize.addHook('beforeBulkUpdate', 'tenantScopeBulkUpdate', (options: any) => {
-    const model = getModelFromOptions(options);
-    if (model && !modelHasTenantId(model)) return;
-    const skip = shouldSkip(options, model);
-    if (skip) return;
-
-    const ctx = getTenantContext()!;
-    if (!options.where) {
-      options.where = { tenantId: ctx.tenantId };
-    } else if (typeof options.where === 'object' && !Array.isArray(options.where)) {
-      options.where.tenantId = ctx.tenantId;
     }
   });
 
@@ -173,21 +192,6 @@ export function registerTenantHooks(sequelize: Sequelize): void {
         `[TenantScope] SECURITY: Cannot delete record belonging to tenant ${instanceTenantId}. ` +
           `Current tenant: ${ctx.tenantId}. Model: ${model.name}`
       );
-    }
-  });
-
-  // ─── beforeBulkDestroy ────────────────────────────────────────────────
-  sequelize.addHook('beforeBulkDestroy', 'tenantScopeBulkDestroy', (options: any) => {
-    const model = getModelFromOptions(options);
-    if (model && !modelHasTenantId(model)) return;
-    const skip = shouldSkip(options, model);
-    if (skip) return;
-
-    const ctx = getTenantContext()!;
-    if (!options.where) {
-      options.where = { tenantId: ctx.tenantId };
-    } else if (typeof options.where === 'object' && !Array.isArray(options.where)) {
-      options.where.tenantId = ctx.tenantId;
     }
   });
 }
