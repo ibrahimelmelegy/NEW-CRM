@@ -421,9 +421,9 @@ class DealService {
       input.probability = DEAL_STAGE_PROBABILITY[input.stage] ?? 0;
     }
 
-    deal.set({
-      ...input
-    });
+    // Exclude non-column fields before setting on the model
+    const { dealId: _dealId, users: _userIds, ...dealUpdateData } = input;
+    deal.set(dealUpdateData);
     if (users?.length) {
       await Promise.all(users.map((item: number) => notificationService.sendAssignDealNotification({ userId: item, target: deal.id }, deal, user)));
     }

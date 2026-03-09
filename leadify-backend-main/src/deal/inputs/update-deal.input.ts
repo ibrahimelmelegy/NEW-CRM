@@ -39,7 +39,7 @@ export class UpdateDealInput extends FindDealInput {
   @IsOptional()
   @IsNotEmpty({ message: 'Price is required' })
   @IsNumber()
-  price!: string;
+  price?: number;
 
   @Expose()
   @IsOptional()
@@ -47,7 +47,7 @@ export class UpdateDealInput extends FindDealInput {
   @IsIn(Object.values(ContractTypeEnums), {
     message: `Contract Type must be one of: ${Object.values(ContractTypeEnums).join(', ')}`
   })
-  contractType!: ContractTypeEnums;
+  contractType?: ContractTypeEnums;
 
   @Expose()
   @IsOptional()
@@ -62,7 +62,7 @@ export class UpdateDealInput extends FindDealInput {
   @Expose()
   @IsOptional()
   @IsDateString()
-  signatureDate!: Date;
+  signatureDate?: string;
 
   @Expose()
   @IsOptional()
