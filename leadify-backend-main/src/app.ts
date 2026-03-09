@@ -519,7 +519,12 @@ app.get('/api-docs', (_req, res) => res.redirect('/api/docs'));
 
 // ─── Temporary Admin Data Cleanup Endpoint ─────────────────────────────────
 // DELETE after use — clears all CRM business data, keeps users/roles/settings
-app.post('/api/admin/clean-data', authenticateUser, HasPermission(['MANAGE_SETTINGS']), async (_req: Request, res: Response) => {
+app.post('/api/admin/clean-data', authenticateUser, async (req: Request, res: Response) => {
+  // Only allow super admin or role with admin access
+  const user = (req as unknown as { user: { role?: { name?: string } } }).user;
+  if (!user?.role?.name?.includes('Admin') && !user?.role?.name?.includes('SUPER_ADMIN')) {
+    return res.status(403).json({ status: 403, success: false, message: 'Admin only' });
+  }
   const { sequelize: db } = await import('./config/db');
   const tables = [
     'lead_users', 'opportunity_users', 'deal_users', 'client_users',
