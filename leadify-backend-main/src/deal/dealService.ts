@@ -376,7 +376,14 @@ class DealService {
   public async updateDeal(input: UpdateDealInput, user: User): Promise<Deal> {
     await this.validateDealAccess(input.dealId, user);
 
-    const deal = await this.dealOrError({ id: input.dealId });
+    const deal = await this.dealOrError({ id: input.dealId }, [
+      {
+        model: User,
+        as: 'users',
+        attributes: ['id', 'name', 'email'],
+        through: { attributes: [] }
+      }
+    ]);
     // Capture old data for workflow field-change detection
     const oldDealData = deal.toJSON();
 
