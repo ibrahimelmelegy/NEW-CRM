@@ -315,7 +315,7 @@ function formatDealData(values: unknown) {
     price: Number(values.dealPrice),
     contractType: values.contractType,
     stage: values.dealStage,
-    signatureDate: getYear(values.signatureDate),
+    signatureDate: values.signatureDate || undefined,
     cancelledReason: values.cancellationReason,
     companyName: values.companyName,
     users: values.assignUser

@@ -197,15 +197,15 @@ const onSubmit = handleSubmit((values: unknown, actions: unknown) => {
     opportunity: {
       name: values.opportunityName,
       stage: values.opportunityStage,
-      estimatedValue: Number(values.estimatedValue),
-      profit: Number(values.profit),
-      expectedCloseDate: getYear(values.expectedCloseDate),
-      priority: values.priority,
-      interestedIn: values.interestedIn,
-      nextSteps: values.nextSteps,
-      reasonOfLose: values.reasons,
+      ...(values.estimatedValue && { estimatedValue: Number(values.estimatedValue) }),
+      ...(values.profit && { profit: Number(values.profit) }),
+      ...(values.expectedCloseDate && { expectedCloseDate: values.expectedCloseDate }),
+      ...(values.priority && { priority: values.priority }),
+      ...(values.interestedIn && { interestedIn: values.interestedIn }),
+      ...(values.nextSteps?.length && { nextSteps: values.nextSteps }),
+      ...(values.reasons && { reasonOfLose: values.reasons }),
       users: values.assignUser,
-      notes: values.notes,
+      ...(values.notes && { notes: values.notes }),
       ...(route.path.includes('edit') && values.clientId && !switchType.value && { clientId: values.clientId })
     },
     ...(!route.path.includes('edit') && values.clientId && { clientId: values.clientId })
