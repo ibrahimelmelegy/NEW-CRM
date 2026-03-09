@@ -192,8 +192,8 @@ async function onSubmitInvoices() {
   // Prepare and log final data for API
   const cleanedInvoices = invoicesList.value.map(({ id, ...data }: Invoice) => ({
     ...data,
-    invoiceDate: getYear(data.invoiceDate),
-    collectedDate: getYear(data.collectedDate),
+    invoiceDate: data.invoiceDate || undefined,
+    collectedDate: data.collectedDate || undefined,
     amount: Number(data.amount)
   }));
   emit('isValid', true);

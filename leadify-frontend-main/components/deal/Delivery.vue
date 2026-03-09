@@ -183,7 +183,7 @@ async function onSubmitDeliveries() {
   // Prepare and log final data for API
   const cleanedDeliveries = deliveriesList.value.map(({ id, ...data }: Delivery) => ({
     ...data,
-    deliveryDate: getYear(data.deliveryDate)
+    deliveryDate: data.deliveryDate || undefined
   }));
   emit('isValid', true);
   if (route.path.includes('edit')) {
