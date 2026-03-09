@@ -517,6 +517,39 @@ if (process.env.STORAGE_PROVIDER === 'spaces' && process.env.DO_SPACES_CDN_URL) 
 // Legacy Swagger docs route (redirects to new location)
 app.get('/api-docs', (_req, res) => res.redirect('/api/docs'));
 
+// ─── Temporary Admin Data Cleanup Endpoint ─────────────────────────────────
+// DELETE after use — clears all CRM business data, keeps users/roles/settings
+app.post('/api/admin/clean-data', authenticateUser, HasPermission(['MANAGE_SETTINGS']), async (_req: Request, res: Response) => {
+  const { sequelize: db } = await import('./config/db');
+  const tables = [
+    'lead_users', 'opportunity_users', 'deal_users', 'client_users',
+    'proposal_users', 'user_projects', 'invoices', 'purchase_order_items',
+    'sales_order_items', 'approval_requests', 'leads', 'clients', 'deals',
+    'opportunities', 'proposals', 'projects', 'tasks', 'vendors',
+    'purchase_orders', 'sales_orders', 'expenses', 'expense_categories',
+    'tickets', 'ticket_categories', 'kb_articles', 'campaigns',
+    'calendar_events', 'approval_workflows', 'workflow_rules',
+    'forecast_periods', 'achievements', 'user_points', 'notifications',
+    'activity_logs', 'lead_activities', 'client_activities',
+    'deal_activities', 'opportunity_activities', 'vendor_activities',
+    'proposal_activities', 'project_activities', 'employees', 'departments',
+    'materials', 'assets', 'manpower', 'catalog_products', 'services',
+    'delivery_notes', 'delivery_note_items', 'quotes', 'quote_items',
+    'proforma_invoices', 'proforma_invoice_items', 'contracts',
+    'subscriptions', 'vendor_scorecards', 'rfq_vendors', 'rfqs',
+  ];
+  const results: string[] = [];
+  for (const table of tables) {
+    try {
+      await db.query(`TRUNCATE TABLE "${table}" CASCADE`, { logging: false });
+      results.push(`${table}: OK`);
+    } catch {
+      results.push(`${table}: skipped`);
+    }
+  }
+  res.json({ status: 200, success: true, message: 'Data cleaned', body: results });
+});
+
 // Error Tracking Middleware (logs errors to Redis before passing to handler)
 app.use(errorTracker);
 

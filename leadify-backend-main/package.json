@@ -92,6 +92,7 @@
     "audit-auth": "ts-node src/auditAuth.ts",
     "seed-radical": "ts-node src/seedRadical.ts",
     "seed-demo": "ts-node src/seedDemo.ts",
+    "clean-data": "ts-node src/cleanData.ts",
     "seed-templates": "ts-node src/docBuilder/seedTemplates.ts",
     "migrate-search": "ts-node src/search/migrations/addSearchVectors.ts",
     "test": "jest --forceExit --detectOpenHandles",
