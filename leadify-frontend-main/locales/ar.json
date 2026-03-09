@@ -425,6 +425,7 @@
     "next": "التالي",
     "submit": "إرسال",
     "reset": "إعادة تعيين",
+    "ok": "موافق",
     "close": "إغلاق",
     "active": "نشط",
     "inactive": "غير نشط",
@@ -1708,6 +1709,12 @@
       "comments": "التعليقات",
       "tasksDone": "المهام المنجزة"
     },
+    "pipeline": {
+      "totalValue": "إجمالي قيمة الخط",
+      "weightedValue": "القيمة المرجحة",
+      "dealCount": "عدد الصفقات",
+      "winRate": "معدل الفوز"
+    },
     "noDealsYet": "لا توجد صفقات بعد",
     "noDealsDesc": "أنشئ أول صفقة لبدء التتبع",
     "createDeal": "إنشاء صفقة",
@@ -2073,7 +2080,9 @@
       "relatedTo": "مرتبط بـ",
       "type": "النوع",
       "clientName": "اسم العميل",
-      "reference": "المرجع"
+      "reference": "المرجع",
+      "winProbability": "احتمالية الفوز",
+      "weightedValue": "القيمة المرجحة"
     },
     "info": {
       "leadName": "اسم العميل",
@@ -8909,6 +8918,7 @@
     "outcomes": {
       "answered": "تم الرد",
       "noAnswer": "لا إجابة",
+      "no_answer": "لا إجابة",
       "voicemail": "بريد صوتي",
       "busy": "مشغول",
       "callback": "معاودة الاتصال"
@@ -12395,6 +12405,7 @@
     "older": "أقدم",
     "noConversations": "لم يتم العثور على محادثات",
     "selectConversation": "اختر محادثة لعرض الرسائل",
+    "selectConversationHint": "اختر محادثة من القائمة لبدء المراسلة",
     "reply": "رد",
     "send": "إرسال",
     "attach": "إرفاق",

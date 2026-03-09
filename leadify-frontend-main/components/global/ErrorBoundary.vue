@@ -52,18 +52,37 @@ const errorMessage = ref('');
 const errorDetails = ref('');
 const isDev = process.dev;
 
-// Transient errors from Vue navigation/unmount that should not block rendering
+// Track route navigation — errors during transitions are always from old-page cleanup
+const isNavigating = ref(false);
+const router = useRouter();
+router.beforeEach(() => {
+  isNavigating.value = true;
+});
+router.afterEach(() => {
+  nextTick(() => {
+    isNavigating.value = false;
+    // Clear any error state from a previous page after successful navigation
+    if (error.value) {
+      error.value = null;
+      errorMessage.value = '';
+      errorDetails.value = '';
+    }
+  });
+});
+
+// Transient errors from Vue cleanup that should not block rendering
 const isTransientError = (err: Error): boolean => {
   const msg = err.message || '';
-  const stack = err.stack || '';
-  // Vue Suspense, KeepAlive, SortableJS cleanup, and DOM unmount errors
-  if (msg.includes("Cannot read properties of null") || msg.includes("Cannot set properties of null") || msg.includes("Cannot destructure property")) {
-    if (stack.includes('suspenseId') || stack.includes('Sortable') || stack.includes('parentNode') || stack.includes('deactivate') || msg.includes("'bum'")) {
-      return true;
-    }
+  // Null-reference errors are virtually always cleanup/unmount related
+  if (
+    msg.includes('Cannot read properties of null') ||
+    msg.includes('Cannot set properties of null') ||
+    msg.includes('Cannot destructure property')
+  ) {
+    return true;
   }
-  // KeepAlive deactivate/activate lifecycle errors (e.g. "G.ctx.deactivate is not a function")
-  if (msg.includes('is not a function') && (msg.includes('deactivate') || msg.includes('activate') || stack.includes('deactivate') || stack.includes('activate'))) {
+  // Lifecycle method errors (e.g. "G.ctx.deactivate is not a function")
+  if (msg.includes('is not a function')) {
     return true;
   }
   return false;
@@ -71,7 +90,13 @@ const isTransientError = (err: Error): boolean => {
 
 // Capture errors from child components
 onErrorCaptured((err: Error, instance, info) => {
-  // Skip transient navigation/cleanup errors — they don't affect page rendering
+  // During route transitions, suppress ALL errors (old-page cleanup)
+  if (isNavigating.value) {
+    console.warn('[ErrorBoundary] Suppressed navigation error:', err.message);
+    return false;
+  }
+
+  // Skip transient cleanup errors even outside navigation
   if (isTransientError(err)) {
     console.warn('[ErrorBoundary] Suppressed transient error:', err.message);
     return false;

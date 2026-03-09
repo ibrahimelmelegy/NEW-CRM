@@ -68,7 +68,7 @@ export const useApiFetch = async <T = unknown>(
     }
   };
 
-  const doFetch = async () =>
+  const doFetch = () =>
     $fetch<Record<string, unknown>>(config.public.API_BASE_URL + url, {
       ...defaultOptions,
       headers: {

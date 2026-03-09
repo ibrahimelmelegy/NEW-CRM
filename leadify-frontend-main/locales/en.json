@@ -425,6 +425,7 @@
     "next": "Next",
     "submit": "Submit",
     "reset": "Reset",
+    "ok": "OK",
     "close": "Close",
     "active": "Active",
     "inactive": "Inactive",
@@ -1769,6 +1770,12 @@
       "comments": "Comments",
       "tasksDone": "Tasks Done"
     },
+    "pipeline": {
+      "totalValue": "Total Pipeline Value",
+      "weightedValue": "Weighted Value",
+      "dealCount": "Deal Count",
+      "winRate": "Win Rate"
+    },
     "noDealsYet": "No deals yet",
     "noDealsDesc": "Create your first deal to start tracking",
     "createDeal": "Create Deal",
@@ -2047,7 +2054,9 @@
       "relatedTo": "Related to",
       "type": "Type",
       "clientName": "Client Name",
-      "reference": "Reference"
+      "reference": "Reference",
+      "winProbability": "Win Probability",
+      "weightedValue": "Weighted Value"
     },
     "info": {
       "leadName": "Lead Name",
@@ -8905,6 +8914,7 @@
     "outcomes": {
       "answered": "Answered",
       "noAnswer": "No Answer",
+      "no_answer": "No Answer",
       "voicemail": "Voicemail",
       "busy": "Busy",
       "callback": "Callback"
@@ -12391,6 +12401,7 @@
     "older": "Older",
     "noConversations": "No conversations found",
     "selectConversation": "Select a conversation to view messages",
+    "selectConversationHint": "Choose a thread from the left to start messaging",
     "reply": "Reply",
     "send": "Send",
     "attach": "Attach",

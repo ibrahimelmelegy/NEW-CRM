@@ -10,7 +10,7 @@
  * - State-changing requests must include the token in X-CSRF-Token header
  */
 
-import { csrfToken, refreshCsrfToken } from '../composables/useCsrf';
+import { refreshCsrfToken } from '../composables/useCsrf';
 
 export default defineNuxtPlugin(async () => {
   // Fetch the initial CSRF token
