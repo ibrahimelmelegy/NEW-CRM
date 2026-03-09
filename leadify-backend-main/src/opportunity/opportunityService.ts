@@ -141,7 +141,14 @@ class OpportunityService {
   async updateOpportunity(id: string, input: any, user: User): Promise<Opportunity> {
     await this.validateOpportunityAccess(id, user);
 
-    const opportunity = await this.opportunityOrError({ id });
+    const opportunity = await this.opportunityOrError({ id }, [
+      {
+        model: User,
+        as: 'users',
+        attributes: ['id', 'name', 'email'],
+        through: { attributes: [] }
+      }
+    ]);
 
     const users = input.users?.filter((item: number) => !opportunity.users?.map(e => e.id).includes(item));
 
@@ -160,7 +167,9 @@ class OpportunityService {
       input.probability = OPP_STAGE_PROBABILITY[input.stage] ?? 0;
     }
 
-    opportunity.set(input);
+    // Exclude non-column fields before setting on the model
+    const { users: _userIds, opportunityId: _oppId, ...updateData } = input;
+    opportunity.set(updateData);
     await createActivityLog('opportunity', 'update', opportunity.id, user.id, null, `New updates added suucesfully`);
     if (input.users && Array.isArray(input.users)) await opportunity.$set('users', input.users);
 
