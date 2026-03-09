@@ -584,11 +584,11 @@ function stopAutoRefresh() {
 async function loadData() {
   try {
     const [execRes, historyRes, errorRes, kpiRes, perfRes] = await Promise.all([
-      useApiFetch('workflow/executions/live').catch(() => null),
-      useApiFetch('workflow/executions/history').catch(() => null),
-      useApiFetch('workflow/executions/errors').catch(() => null),
-      useApiFetch('workflow/executions/kpi').catch(() => null),
-      useApiFetch('workflow/executions/performance').catch(() => null)
+      useApiFetch('workflow/executions/live', 'GET', {}, true),
+      useApiFetch('workflow/executions/history', 'GET', {}, true),
+      useApiFetch('workflow/executions/errors', 'GET', {}, true),
+      useApiFetch('workflow/executions/kpi', 'GET', {}, true),
+      useApiFetch('workflow/executions/performance', 'GET', {}, true)
     ]);
     if (execRes?.success && Array.isArray(execRes.body)) liveExecutions.value = execRes.body;
     if (historyRes?.success && Array.isArray(historyRes.body)) historyData.value = historyRes.body;

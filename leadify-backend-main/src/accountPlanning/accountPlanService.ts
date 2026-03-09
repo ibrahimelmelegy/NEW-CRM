@@ -30,7 +30,7 @@ class AccountPlanService {
       const { rows, count } = await AccountPlan.findAndCountAll({
         where,
         include: [
-          { model: Client, as: 'account', attributes: ['id', 'name', 'email'], required: false },
+          { model: Client, as: 'account', attributes: ['id', 'clientName', 'email'], required: false },
           { model: User, as: 'owner', attributes: ['id', 'name'], required: false }
         ],
         order: [['createdAt', 'DESC']],
@@ -47,7 +47,7 @@ class AccountPlanService {
   async getById(id: number) {
     return AccountPlan.findByPk(id, {
       include: [
-        { model: Client, as: 'account', attributes: ['id', 'name', 'email'] },
+        { model: Client, as: 'account', attributes: ['id', 'clientName', 'email'] },
         { model: User, as: 'owner', attributes: ['id', 'name'] }
       ]
     });
@@ -118,7 +118,7 @@ class AccountPlanService {
 
     const plans = await AccountPlan.findAll({
       where,
-      include: [{ model: Client, as: 'account', attributes: ['id', 'name'] }],
+      include: [{ model: Client, as: 'account', attributes: ['id', 'clientName'] }],
       order: [['expansionPotential', 'DESC']],
       raw: true,
       nest: true
@@ -129,7 +129,7 @@ class AccountPlanService {
       const totalGoals = (p.goals || []).length;
       return {
         accountPlanId: p.id,
-        accountName: (p.account as any)?.name || 'Unknown',
+        accountName: (p.account as any)?.clientName || 'Unknown',
         tier: p.tier,
         annualRevenue: Number(p.annualRevenue) || 0,
         expansionPotential: Number(p.expansionPotential) || 0,
@@ -179,7 +179,7 @@ class AccountPlanService {
         ...where,
         renewalDate: { [Op.gte]: new Date(), [Op.lte]: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) }
       },
-      include: [{ model: Client, as: 'account', attributes: ['id', 'name'] }],
+      include: [{ model: Client, as: 'account', attributes: ['id', 'clientName'] }],
       order: [['renewalDate', 'ASC']],
       limit: 10
     });

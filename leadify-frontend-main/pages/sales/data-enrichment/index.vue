@@ -694,7 +694,7 @@ function rebalanceWeights(changed: keyof typeof scoringWeights) {
 async function loadDashboard() {
   loading.value = true;
   try {
-    const [kpiRes, contactsRes] = await Promise.all([useApiFetch('data-enrichment/kpi'), useApiFetch('data-enrichment/contacts?page=1&limit=20')]);
+    const [kpiRes, contactsRes] = await Promise.all([useApiFetch('data-enrichment/kpi', 'GET', {}, true), useApiFetch('data-enrichment/contacts?page=1&limit=20', 'GET', {}, true)]);
 
     if (kpiRes?.body) {
       Object.assign(kpi, kpiRes.body);
@@ -836,7 +836,7 @@ async function runFullEnrichment() {
 async function loadEnrichmentLog() {
   loadingLog.value = true;
   try {
-    const res = await useApiFetch('data-enrichment/log');
+    const res = await useApiFetch('data-enrichment/log', 'GET', {}, true);
     if (res?.body?.data) {
       enrichmentLog.value = res.body.data;
     } else {

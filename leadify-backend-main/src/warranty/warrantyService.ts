@@ -20,7 +20,7 @@ class WarrantyService {
       const { rows, count } = await Warranty.findAndCountAll({
         where,
         include: [
-          { model: Client, as: 'client', attributes: ['id', 'name', 'email'], required: false },
+          { model: Client, as: 'client', attributes: ['id', 'clientName', 'email'], required: false },
           { model: WarrantyClaim, as: 'claims', required: false }
         ],
         order: [['createdAt', 'DESC']],
@@ -227,7 +227,7 @@ class WarrantyService {
         status: 'ACTIVE',
         endDate: { [Op.between]: [todayStr, futureStr] }
       },
-      include: [{ model: Client, as: 'client', attributes: ['id', 'name', 'email'] }],
+      include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] }],
       order: [['endDate', 'ASC']]
     });
 

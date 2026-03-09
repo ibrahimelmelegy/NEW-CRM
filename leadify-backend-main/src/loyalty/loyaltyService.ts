@@ -58,7 +58,7 @@ class LoyaltyService {
     if (query.programId) where.programId = query.programId;
     const { rows, count } = await LoyaltyPoints.findAndCountAll({
       where,
-      include: [{ model: Client, as: 'client', attributes: ['id', 'name', 'email'] }],
+      include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] }],
       order: [['createdAt', 'DESC']],
       limit,
       offset,

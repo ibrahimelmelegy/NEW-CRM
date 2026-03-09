@@ -37,7 +37,7 @@ class CartRecoveryService {
     try {
       const { rows, count } = await AbandonedCart.findAndCountAll({
         where,
-        include: [{ model: Client, as: 'customer', attributes: ['id', 'name', 'email'], required: false }],
+        include: [{ model: Client, as: 'customer', attributes: ['id', 'clientName', 'email'], required: false }],
         order: [['abandonedAt', 'DESC']],
         limit,
         offset,
@@ -51,7 +51,7 @@ class CartRecoveryService {
 
   async getById(id: number) {
     return AbandonedCart.findByPk(id, {
-      include: [{ model: Client, as: 'customer', attributes: ['id', 'name', 'email'] }]
+      include: [{ model: Client, as: 'customer', attributes: ['id', 'clientName', 'email'] }]
     });
   }
 

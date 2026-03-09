@@ -18,7 +18,7 @@ class SocialCrmService {
     try {
       const { rows, count } = await SocialProfile.findAndCountAll({
         where,
-        include: [{ model: Client, as: 'client', attributes: ['id', 'name', 'email'], required: false }],
+        include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email'], required: false }],
         order: [['createdAt', 'DESC']],
         limit,
         offset,

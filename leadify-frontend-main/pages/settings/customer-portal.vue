@@ -998,7 +998,7 @@ function processLogo(file: File) {
 async function loadPortalConfig() {
   loading.value = true;
   try {
-    const res = await useApiFetch('customer-portal/config', 'GET');
+    const res = await useApiFetch('customer-portal/config', 'GET', {}, true);
     if (res.success && res.body) {
       const data = res.body;
       Object.keys(config).forEach(key => {
@@ -1020,8 +1020,8 @@ async function loadPortalConfig() {
         Object.assign(analyticsData, data.analytics);
       }
     }
-  } catch (e) {
-    console.error('Failed to load portal config', e);
+  } catch {
+    // Silently handle - portal config may not exist yet (404)
   } finally {
     loading.value = false;
   }

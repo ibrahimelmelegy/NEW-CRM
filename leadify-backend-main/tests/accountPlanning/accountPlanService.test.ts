@@ -275,13 +275,13 @@ describe('AccountPlanService', () => {
             { title: 'Upsell', status: 'COMPLETED' },
             { title: 'Onboard', status: 'IN_PROGRESS' }
           ],
-          account: { name: 'Acme Corp' }
+          account: { clientName: 'Acme Corp' }
         },
         {
           id: 2, tier: 'STANDARD', annualRevenue: 50000, expansionPotential: 20000,
           renewalDate: '2026-06-30', healthScore: 60,
           goals: [],
-          account: { name: 'Small Co' }
+          account: { clientName: 'Small Co' }
         }
       ]);
 

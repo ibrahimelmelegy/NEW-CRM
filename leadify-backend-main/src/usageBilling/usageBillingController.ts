@@ -79,8 +79,12 @@ class UsageBillingController {
   // ─── Billing ────────────────────────────────────────────────────────────────
   async calculateCharges(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const tenantId = req.user!.tenantId!;
+      const tenantId = req.user?.tenantId || undefined;
       const { customerId, billingPeriod } = req.query as any;
+      if (!customerId || !billingPeriod) {
+        wrapResult(res, { customerId: customerId || null, billingPeriod: billingPeriod || null, lineItems: [], totalAmount: 0 });
+        return;
+      }
       const result = await usageBillingService.calculateUsageCharges(customerId, billingPeriod, tenantId);
       wrapResult(res, result);
     } catch (e) {

@@ -49,7 +49,7 @@ class LiveChatService {
       const { rows, count } = await ChatConversation.findAndCountAll({
         where,
         include: [
-          { model: Client, as: 'client', attributes: ['id', 'name', 'email'], required: false },
+          { model: Client, as: 'client', attributes: ['id', 'clientName', 'email'], required: false },
           { model: User, as: 'staff', attributes: ['id', 'name', 'email'], required: false }
         ],
         order: [['updatedAt', 'DESC']],
@@ -78,7 +78,7 @@ class LiveChatService {
   async getConversationById(id: number) {
     return ChatConversation.findByPk(id, {
       include: [
-        { model: Client, as: 'client', attributes: ['id', 'name', 'email'] },
+        { model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] },
         { model: User, as: 'staff', attributes: ['id', 'name', 'email'] }
       ]
     });
@@ -484,7 +484,7 @@ class LiveChatService {
   async getWaitingQueue(tenantId: string) {
     const waiting = await ChatConversation.findAll({
       where: { tenantId, status: 'WAITING' },
-      include: [{ model: Client, as: 'client', attributes: ['id', 'name', 'email'] }],
+      include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] }],
       order: [['createdAt', 'ASC']]
     });
     return waiting;

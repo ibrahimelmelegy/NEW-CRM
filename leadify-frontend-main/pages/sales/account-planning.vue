@@ -485,7 +485,7 @@ const forecastData = ref<Record<string, unknown>[]>([]);
 // ---- API Data Loading ----
 async function loadAccountPlans() {
   try {
-    const res = await useApiFetch('account-plans');
+    const res = await useApiFetch('account-plans', 'GET', {}, true);
     if (res.success && res.body) {
       const data = res.body as unknown;
       // API returns { docs, pagination } for paginated results
@@ -505,7 +505,7 @@ async function loadStakeholders() {
     const allStakeholders: Record<string, unknown>[] = [];
     for (const plan of accountPlans.value) {
       try {
-        const res = await useApiFetch(`account-plans/${plan.id}/stakeholders`);
+        const res = await useApiFetch(`account-plans/${plan.id}/stakeholders`, 'GET', {}, true);
         if (res.success && res.body) {
           const data = Array.isArray(res.body) ? res.body : (res.body as unknown).docs || [];
           allStakeholders.push(...data);
@@ -526,7 +526,7 @@ async function loadStakeholders() {
 
 async function loadForecastData() {
   try {
-    const res = await useApiFetch('account-plans/forecast');
+    const res = await useApiFetch('account-plans/forecast', 'GET', {}, true);
     if (res.success && res.body) {
       const data = res.body as unknown;
       forecastData.value = Array.isArray(data) ? data : data.docs || [];

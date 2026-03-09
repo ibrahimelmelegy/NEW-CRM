@@ -27,7 +27,7 @@ class ClvService {
     try {
       const { rows, count } = await ClvRecord.findAndCountAll({
         where,
-        include: [{ model: Client, as: 'customer', attributes: ['id', 'name', 'email'], required: false }],
+        include: [{ model: Client, as: 'customer', attributes: ['id', 'clientName', 'email'], required: false }],
         order: [['predictedRevenue', 'DESC']],
         limit,
         offset,
@@ -41,7 +41,7 @@ class ClvService {
 
   async getById(id: number) {
     return ClvRecord.findByPk(id, {
-      include: [{ model: Client, as: 'customer', attributes: ['id', 'name', 'email'] }]
+      include: [{ model: Client, as: 'customer', attributes: ['id', 'clientName', 'email'] }]
     });
   }
 
@@ -183,7 +183,7 @@ class ClvService {
 
     const atRisk = await ClvRecord.findAll({
       where,
-      include: [{ model: Client, as: 'customer', attributes: ['id', 'name', 'email'] }],
+      include: [{ model: Client, as: 'customer', attributes: ['id', 'clientName', 'email'] }],
       order: [['churnRisk', 'DESC']],
       limit
     });
