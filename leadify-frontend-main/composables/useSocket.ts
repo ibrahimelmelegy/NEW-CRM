@@ -9,7 +9,7 @@ export const useSocket = () => {
     const apiBase = config.public.API_BASE_URL?.replace(/\/api\/?$/, '') || '';
     const socketUrl = apiBase && !apiBase.startsWith('/') ? apiBase : window.location.origin;
 
-    socket.value = io(socketUrl);
+    socket.value = io(socketUrl, { withCredentials: true });
 
     socket.value.on('connect', () => {
       console.warn('[Socket] Connected to server:', socket.value?.id);

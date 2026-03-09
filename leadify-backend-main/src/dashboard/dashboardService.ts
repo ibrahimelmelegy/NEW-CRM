@@ -444,41 +444,45 @@ class DashboardService {
   }
 
   // ─── PREDEFINED ANALYTICS ENDPOINTS ───────────────────
-  async getExecutiveSummary() {
+  async getExecutiveSummary(tenantId?: string | null) {
+    const cacheKey = `dashboard:executive_summary:${tenantId || 'global'}`;
     return cacheService.getOrSet(
-      'dashboard:executive_summary',
+      cacheKey,
       async () => {
-        return this._computeExecutiveSummary();
+        return this._computeExecutiveSummary(tenantId);
       },
       DASHBOARD_CACHE_TTL
     );
   }
 
-  private async _computeExecutiveSummary() {
+  private async _computeExecutiveSummary(tenantId?: string | null) {
+    const tenantFilter = tenantId ? { tenantId } : {};
     const [totalRevenueResult, activeDealsCount, totalLeads, convertedLeads, pendingTasks, overdueProjects] = await Promise.all([
       Deal.findOne({
-        where: { stage: DealStageEnums.CLOSED },
+        where: { stage: DealStageEnums.CLOSED, ...tenantFilter },
         attributes: [[fn('SUM', col('price')), 'totalRevenue']],
         raw: true
       }),
       Deal.count({
-        where: { stage: DealStageEnums.PROGRESS }
+        where: { stage: DealStageEnums.PROGRESS, ...tenantFilter }
       }),
-      Lead.count(),
+      Lead.count({ where: { ...tenantFilter } }),
       Lead.count({
-        where: { status: LeadStatusEnums.CONVERTED }
+        where: { status: LeadStatusEnums.CONVERTED, ...tenantFilter }
       }),
       DailyTask.count({
         where: {
           status: {
             [Op.notIn]: [DailyTaskStatusEnum.COMPLETED]
-          }
+          },
+          ...tenantFilter
         }
       }),
       Project.count({
         where: {
           status: ProjectStatusEnum.ACTIVE,
-          endDate: { [Op.lt]: new Date() }
+          endDate: { [Op.lt]: new Date() },
+          ...tenantFilter
         }
       })
     ]);

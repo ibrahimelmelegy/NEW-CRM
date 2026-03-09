@@ -63,7 +63,7 @@ io.use((socket, next) => {
     socket.handshake.auth?.token ||
     socket.handshake.headers?.cookie
       ?.split(';')
-      .find((c: string) => c.trim().startsWith('token='))
+      .find((c: string) => c.trim().startsWith('__session='))
       ?.split('=')[1];
 
   if (!token) {

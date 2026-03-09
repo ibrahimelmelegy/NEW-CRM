@@ -80,6 +80,8 @@ const {
 watchEffect(() => {
   if (props.value && props.isMultiple && props.value?.length) {
     inputValue.value = props.value;
+  } else if (props.value && !props.isMultiple) {
+    inputValue.value = props.value;
   }
 });
 

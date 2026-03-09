@@ -71,7 +71,7 @@ export class CreateDeliveryDetailsInput {
 export class CreateDealInput {
   @Expose()
   @IsOptional()
-  @IsNotEmpty()
+  @IsArray()
   @IsInt({ message: 'Assigned user must be an integer', each: true })
   users?: number[];
 
@@ -91,7 +91,7 @@ export class CreateDealInput {
   @Expose()
   @IsNotEmpty({ message: 'Price is required' })
   @IsNumber()
-  price!: string;
+  price!: number;
 
   @Expose()
   @IsNotEmpty({ message: 'Contract Type is required' })

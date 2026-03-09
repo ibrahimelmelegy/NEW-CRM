@@ -70,7 +70,8 @@ class DashboardController {
 
   async getExecutiveSummary(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const data = await dashboardService.getExecutiveSummary();
+      const tenantId = req.user?.tenantId || null;
+      const data = await dashboardService.getExecutiveSummary(tenantId);
       wrapResult(res, data);
     } catch (error) {
       next(error);

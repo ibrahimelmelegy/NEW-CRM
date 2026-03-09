@@ -152,6 +152,8 @@ class DealService {
       return deal;
     } catch (error) {
       await transaction.rollback();
+      console.error('Lead-to-deal conversion error:', error);
+      if (error instanceof BaseError) throw error;
       throw new BaseError(ERRORS[(error as any)?.message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
   }
@@ -243,6 +245,8 @@ class DealService {
       return deal;
     } catch (error: Error | unknown) {
       await t.rollback();
+      console.error('Deal creation error:', error);
+      if (error instanceof BaseError) throw error;
       throw new BaseError(ERRORS[(error as any)?.message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
   }

@@ -130,11 +130,10 @@ const formSchema = yup.object({
     .label(t('deals.info.price')),
   signatureDate: yup
     .mixed()
+    .required(t('validation.required', { field: t('deals.info.signatureDate') }))
     .test('is-valid-date', 'Signature Date must be a valid date', (value: unknown) => {
-      // Check if the value is valid
       return value && !isNaN(new Date(value).getTime());
     })
-    .required(t('validation.required', { field: t('deals.info.signatureDate') }))
     .label(t('deals.info.signatureDate')),
   cancellationReason: yup.string().when([], {
     is: () => isCancelled.value,
