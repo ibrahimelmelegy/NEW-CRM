@@ -229,7 +229,7 @@ onMounted(() => {
 <style scoped>
 /* Scoped overrides if needed */
 .dark-message-box {
-  background: #1e293b !important;
-  border-color: #334155 !important;
+  background: var(--bg-card) !important;
+  border-color: var(--border-default) !important;
 }
 </style>
