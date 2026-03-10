@@ -411,17 +411,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue';
-import DOMPurify from 'dompurify';
 import { ElMessage } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 import { useAiAssistant } from '~/composables/useAiAssistant';
-
-const sanitizeHtml = (html: string) => {
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'code', 'pre', 'blockquote'],
-    ALLOWED_ATTR: []
-  });
-};
 
 definePageMeta({
   layout: 'default',

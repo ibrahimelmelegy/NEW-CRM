@@ -41,7 +41,7 @@
             class="text-sm shadow-sm max-w-[80%]"
             :class="msg.role === 'assistant' ? 'bg-white border text-gray-800' : 'bg-indigo-600 text-white'"
             style="white-space: pre-wrap;"
-            v-html="formatMarkdown(msg.content)"
+            v-html="sanitizeHtml(formatMarkdown(msg.content))"
           )
           
         .flex.items-start.gap-3(v-if="isChatLoading")

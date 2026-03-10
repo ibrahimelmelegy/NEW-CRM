@@ -24,7 +24,7 @@
 
     //- Email body
     .preview-body(v-if="body")
-      div(v-html="sanitizedBody")
+      div(v-html="sanitizeHtml(sanitizedBody)")
 
     //- Empty state
     .preview-empty(v-else)

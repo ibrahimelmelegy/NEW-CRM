@@ -14,14 +14,14 @@
               <span class="text-gray-200 font-mono">0{{ index + 1 }}</span>
               {{ labels.executive || 'Executive Summary' }}
             </h2>
-            <div class="proposal-rich-text mb-8" v-html="data.introduction"></div>
+            <div class="proposal-rich-text mb-8" v-html="sanitizeHtml(data.introduction)"></div>
 
             <div v-if="data.objectives" class="bg-gray-50 p-8 rounded-xl border-l-4" :style="{ borderColor: color }">
               <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <CheckCircle size="18" :style="{ color: color }" class="mr-2" />
                 Objectives
               </h3>
-              <div class="proposal-rich-text" v-html="data.objectives"></div>
+              <div class="proposal-rich-text" v-html="sanitizeHtml(data.objectives)"></div>
             </div>
           </div>
         </div>
@@ -38,12 +38,12 @@
 
             <div v-if="data.scopeOfWork" class="mb-8">
               <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Scope of Work</h3>
-              <div class="proposal-rich-text" v-html="data.scopeOfWork"></div>
+              <div class="proposal-rich-text" v-html="sanitizeHtml(data.scopeOfWork)"></div>
             </div>
 
             <div v-if="data.methodology" class="mb-8">
               <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Methodology</h3>
-              <div class="proposal-rich-text" v-html="data.methodology"></div>
+              <div class="proposal-rich-text" v-html="sanitizeHtml(data.methodology)"></div>
             </div>
 
             <div v-if="data.phases && data.phases.length > 0">
@@ -165,7 +165,7 @@
                 <FileText size="18" class="text-gray-400 mr-2" />
                 Terms & Conditions
               </h3>
-              <div class="proposal-rich-text text-sm text-gray-600" v-html="data.termsAndConditions"></div>
+              <div class="proposal-rich-text text-sm text-gray-600" v-html="sanitizeHtml(data.termsAndConditions)"></div>
             </div>
 
             <div v-if="data.paymentTerms">
@@ -173,7 +173,7 @@
                 <Clock size="18" class="text-gray-400 mr-2" />
                 Payment Schedule
               </h3>
-              <div class="proposal-rich-text text-sm text-gray-600" v-html="data.paymentTerms"></div>
+              <div class="proposal-rich-text text-sm text-gray-600" v-html="sanitizeHtml(data.paymentTerms)"></div>
             </div>
           </div>
         </div>
@@ -186,7 +186,7 @@
             <span class="text-gray-200 font-mono">0{{ index + 1 }}</span>
             {{ getCustomSectionTitle(sectionId) }}
           </h2>
-          <div class="proposal-rich-text" v-html="getCustomSectionContent(sectionId)"></div>
+          <div class="proposal-rich-text" v-html="sanitizeHtml(getCustomSectionContent(sectionId))"></div>
         </div>
       </ProposalPrintPage>
     </template>

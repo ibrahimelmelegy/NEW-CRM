@@ -336,7 +336,7 @@ div(
                 h2.text-3xl.font-bold.text-gray-900.mb-8.flex.items-center.gap-3
                   span.text-gray-200.font-mono 0{{ idx + 3 }}
                   | {{ labels.executive }}
-                .proposal-rich-text.mb-8(v-html="formData.introduction")
+                .proposal-rich-text.mb-8(v-html="sanitizeHtml(formData.introduction)")
                 div(
                   v-if="formData.objectives"
                   class="bg-gray-50 p-8 rounded-xl border-l-4"
@@ -345,7 +345,7 @@ div(
                   h3.font-bold.text-gray-900.mb-4.flex.items-center.gap-2
                     CheckCircle(:size="18" :style="{ color: color }")
                     | Objectives
-                  .proposal-rich-text(v-html="formData.objectives")
+                  .proposal-rich-text(v-html="sanitizeHtml(formData.objectives)")
 
     //- ── SOLUTION & SCOPE ──
     template(v-else-if="id === 'solution'")
@@ -396,12 +396,12 @@ div(
                 //- Scope of Work
                 div(v-if="formData.scopeOfWork" class="mb-8")
                   h3.text-sm.font-bold.text-gray-400.uppercase.tracking-widest.mb-4 Scope of Work
-                  .proposal-rich-text(v-html="formData.scopeOfWork")
+                  .proposal-rich-text(v-html="sanitizeHtml(formData.scopeOfWork)")
 
                 //- Methodology
                 div(v-if="formData.methodology" class="mb-8")
                   h3.text-sm.font-bold.text-gray-400.uppercase.tracking-widest.mb-4 Methodology
-                  .proposal-rich-text(v-html="formData.methodology")
+                  .proposal-rich-text(v-html="sanitizeHtml(formData.methodology)")
 
                 //- Phases Timeline
                 div(v-if="formData.phases && formData.phases.length > 0")
@@ -546,13 +546,13 @@ div(
                   h3.font-bold.text-gray-900.mb-4.flex.items-center.gap-2
                     FileText(:size="18" class="text-gray-400")
                     | Terms &amp; Conditions
-                  .proposal-rich-text.text-sm.text-gray-600(v-html="formData.termsAndConditions")
+                  .proposal-rich-text.text-sm.text-gray-600(v-html="sanitizeHtml(formData.termsAndConditions)")
                 //- Payment Schedule
                 div(v-if="formData.paymentTerms")
                   h3.font-bold.text-gray-900.mb-4.flex.items-center.gap-2
                     Clock(:size="18" class="text-gray-400")
                     | Payment Schedule
-                  .proposal-rich-text.text-sm.text-gray-600(v-html="formData.paymentTerms")
+                  .proposal-rich-text.text-sm.text-gray-600(v-html="sanitizeHtml(formData.paymentTerms)")
 
     //- ── CUSTOM SECTIONS ──
     template(v-else)
@@ -599,5 +599,5 @@ div(
                 h2.text-3xl.font-bold.text-gray-900.mb-8.flex.items-center.gap-3
                   span.text-gray-200.font-mono 0{{ idx + 3 }}
                   | {{ getCustomSection(id)!.title }}
-                .proposal-rich-text(v-html="getCustomSection(id)!.content")
+                .proposal-rich-text(v-html="sanitizeHtml(getCustomSection(id)!.content)")
 </template>

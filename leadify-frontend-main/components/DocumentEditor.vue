@@ -212,7 +212,7 @@
         :ref="elt => (pages_overlay_refs[page.uuid] = elt)"
         class="overlay"
         :style="page_style(page_idx, false)"
-        v-html="overlay(page_idx + 1, pages.length)"
+        v-html="sanitizeHtml(overlay(page_idx + 1, pages.length))"
       ></div>
     </div>
 

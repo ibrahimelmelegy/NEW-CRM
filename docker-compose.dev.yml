@@ -3,9 +3,9 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: leadify
-      POSTGRES_PASSWORD: x8tjNImGW7A4Dr
-      POSTGRES_DB: leadify
+      POSTGRES_USER: ${POSTGRES_USER:-leadify}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-leadify}
     ports:
       - "5433:5432"
     volumes:

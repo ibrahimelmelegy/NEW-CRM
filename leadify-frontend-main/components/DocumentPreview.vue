@@ -9,7 +9,7 @@
     <div ref="content" class="content" :contenteditable="false" :style="page_style(-1)" @input="input" @keyup="process_current_text_style">
       <!-- This is a Vue "hoisted" static <div> which contains every page of the document and can be modified by the DOM -->
     </div>
-    <div :style="page_style(-1)" v-html="financeTable?.content"></div>
+    <div :style="page_style(-1)" v-html="sanitizeHtml(financeTable?.content)"></div>
 
     <!-- Items related to the document editor (widgets, ...) can be inserted here -->
   </div>

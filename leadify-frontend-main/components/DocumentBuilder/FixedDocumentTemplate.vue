@@ -198,11 +198,11 @@
           </div>
           <div v-if="data.termsAndConditions">
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Terms & Conditions</p>
-            <div class="text-xs text-gray-600 leading-relaxed" v-html="data.termsAndConditions"></div>
+            <div class="text-xs text-gray-600 leading-relaxed" v-html="sanitizeHtml(data.termsAndConditions)"></div>
           </div>
           <div v-if="data.paymentTerms">
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Payment Terms</p>
-            <div class="text-xs text-gray-600 leading-relaxed" v-html="data.paymentTerms"></div>
+            <div class="text-xs text-gray-600 leading-relaxed" v-html="sanitizeHtml(data.paymentTerms)"></div>
           </div>
         </div>
       </div>

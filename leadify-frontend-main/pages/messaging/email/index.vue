@@ -68,7 +68,7 @@
               p.text-sm.font-semibold(style="color: var(--text-primary)") {{ selectedMessage.from }}
               p.text-xs(style="color: var(--text-muted)") To: {{ selectedMessage.to?.join(', ') }}
           span.text-xs(style="color: var(--text-muted)") {{ formatDate(selectedMessage.sentAt) }}
-        .p-4.rounded-xl(style="background: var(--card-bg, rgba(255,255,255,0.03)); border: 1px solid var(--border-glass, rgba(255,255,255,0.08))" v-html="selectedMessage.body")
+        .p-4.rounded-xl(style="background: var(--card-bg, rgba(255,255,255,0.03)); border: 1px solid var(--border-glass, rgba(255,255,255,0.08))" v-html="sanitizeHtml(selectedMessage.body)")
 
   //- Compose Dialog
   el-dialog(v-model="composeVisible" :title="$t('emailPage.composeTitle')" width="600px")

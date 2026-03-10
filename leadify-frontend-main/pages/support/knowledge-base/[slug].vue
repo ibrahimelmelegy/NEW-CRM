@@ -14,7 +14,7 @@
       h1.text-3xl.font-bold.mb-2(style="color: var(--text-primary)") {{ article.title }}
       p.text-sm(v-if="article.author" style="color: var(--text-muted)") {{ $t('knowledgeBase.by') }} {{ article.author.name }}
 
-    .article-content.prose(style="color: var(--text-primary)" v-html="renderedContent")
+    .article-content.prose(style="color: var(--text-primary)" v-html="sanitizeHtml(renderedContent)")
 
     .mt-8.pt-6(style="border-top: 1px solid var(--border-default)")
       .flex.items-center.gap-4

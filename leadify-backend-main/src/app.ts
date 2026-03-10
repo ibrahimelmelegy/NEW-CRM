@@ -594,6 +594,15 @@ app.post('/api/admin/clean-data', authenticateUser, HasPermission(['EDIT_SETTING
   res.json({ status: 200, success: true, message: 'Data cleaned', body: results });
 });
 
+// 404 Handler — return JSON for undefined routes
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.status(404).json({
+    success: false,
+    message: `Route ${req.method} ${req.originalUrl} not found`,
+    code: 404
+  });
+});
+
 // Error Tracking Middleware (logs errors to Redis before passing to handler)
 app.use(errorTracker);
 

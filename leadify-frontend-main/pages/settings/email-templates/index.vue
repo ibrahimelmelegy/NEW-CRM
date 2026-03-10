@@ -107,7 +107,7 @@
             div(class="border rounded-lg p-4 min-h-[300px]"
               v-if="editorMode === 'preview'"
               style="border-color: var(--border-default); background: white;"
-              v-html="form.body"
+              v-html="sanitizeHtml(form.body)"
             )
 
           p.text-xs.mt-1(style="color: var(--text-muted);") {{ $t('emailTemplates.placeholderHint') }}
@@ -138,7 +138,7 @@
     .mb-4(v-if="previewTemplate")
       p.text-sm.font-semibold.mb-1(style="color: var(--text-muted);") {{ $t('emailTemplates.subject') }}:
       p.text-base.font-bold.mb-4(style="color: var(--text-primary);") {{ previewTemplate.subject }}
-      .border.rounded-lg.p-6(style="border-color: var(--border-default); background: white;" v-html="previewTemplate.body")
+      .border.rounded-lg.p-6(style="border-color: var(--border-default); background: white;" v-html="sanitizeHtml(previewTemplate.body)")
     template(#footer)
       el-button(@click="showPreviewDialog = false") {{ $t('common.close') }}
 

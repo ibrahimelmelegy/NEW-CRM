@@ -86,25 +86,25 @@
               class="bg-white rounded-2xl p-6 border border-gray-100"
             >
               <h3 class="text-lg font-bold text-gray-900 mb-4">Executive Summary</h3>
-              <div class="prose prose-sm max-w-none" v-html="content.sections.introduction || content.sections.executiveSummary" />
+              <div class="prose prose-sm max-w-none" v-html="sanitizeHtml(content.sections.introduction || content.sections.executiveSummary)" />
             </div>
 
             <!-- Solution & Scope -->
             <div v-if="content?.sections?.scopeOfWork || content?.sections?.solutionScope" class="bg-white rounded-2xl p-6 border border-gray-100">
               <h3 class="text-lg font-bold text-gray-900 mb-4">Solution & Scope</h3>
-              <div class="prose prose-sm max-w-none" v-html="content.sections.scopeOfWork || content.sections.solutionScope" />
+              <div class="prose prose-sm max-w-none" v-html="sanitizeHtml(content.sections.scopeOfWork || content.sections.solutionScope)" />
             </div>
 
             <!-- Methodology -->
             <div v-if="content?.sections?.methodology" class="bg-white rounded-2xl p-6 border border-gray-100">
               <h3 class="text-lg font-bold text-gray-900 mb-4">Methodology</h3>
-              <div class="prose prose-sm max-w-none" v-html="content.sections.methodology" />
+              <div class="prose prose-sm max-w-none" v-html="sanitizeHtml(content.sections.methodology)" />
             </div>
 
             <!-- Custom Sections -->
             <div v-for="(section, idx) in content?.sections?.customSections || []" :key="idx" class="bg-white rounded-2xl p-6 border border-gray-100">
               <h3 class="text-lg font-bold text-gray-900 mb-4">{{ section.title || `Section ${Number(idx) + 1}` }}</h3>
-              <div class="prose prose-sm max-w-none" v-html="section.content" />
+              <div class="prose prose-sm max-w-none" v-html="sanitizeHtml(section.content)" />
             </div>
 
             <!-- Financial Summary -->

@@ -27,7 +27,7 @@
     .preview-page.mx-auto(
       :style="pageStyle"
     )
-      .preview-page-content(ref="pageContentRef" v-html="renderedHtml")
+      .preview-page-content(ref="pageContentRef" v-html="sanitizeHtml(renderedHtml)")
 </template>
 
 <script setup lang="ts">

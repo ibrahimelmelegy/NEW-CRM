@@ -628,7 +628,7 @@
           p.text-sm.font-bold(style="color: #212529") {{ resolveTokens(campaign.subject) }}
           p.text-xs(style="color: #6c757d") {{ resolveTokens(campaign.previewText) }}
         //- Email Body Preview
-        .p-6(v-html="resolveTokens(campaign.htmlContent || '')" style="color: #212529; line-height: 1.6; font-size: 14px")
+        .p-6(v-html="sanitizeHtml(resolveTokens(campaign.htmlContent || ''))" style="color: #212529; line-height: 1.6; font-size: 14px")
 
   //- ═══════════════════════════════════════════════════════════
   //- Template Selector Dialog
