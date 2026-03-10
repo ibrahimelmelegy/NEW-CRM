@@ -774,7 +774,11 @@
       "leads": "Leads",
       "opportunities": "Opportunities",
       "deals": "Deals"
-    }
+    },
+    "dragDrop": "Drag and drop your file here or",
+    "fileTypes": "JPG, JPEG, PNG, PDF, DOCX, EXCEL, PPTX, TXT, CSV",
+    "maxFileSize": "Maximum file size: {size} MB",
+    "optional": "Optional"
   },
   "staff": {
     "title": "Staff",

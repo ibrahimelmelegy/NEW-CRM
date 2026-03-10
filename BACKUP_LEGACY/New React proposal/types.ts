@@ -1,1 +1,0 @@
-// File removed: Types migrated to root types.ts.
