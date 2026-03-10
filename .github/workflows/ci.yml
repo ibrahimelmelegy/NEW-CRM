@@ -249,8 +249,8 @@ jobs:
 
       - name: Verify deployment
         run: |
-          MAX_RETRIES=6
-          RETRY_DELAY=15
+          MAX_RETRIES=10
+          RETRY_DELAY=20
           for i in $(seq 1 $MAX_RETRIES); do
             sleep $RETRY_DELAY
             STATUS=$(curl -sk -o /dev/null -w "%{http_code}" https://crm.hp-tech.com/api/health/ready)
