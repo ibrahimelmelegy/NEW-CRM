@@ -74,7 +74,11 @@
                     <Icon name="ph:brain-bold" class="w-4 h-4 text-white" />
                   </div>
                   <div class="glass-panel p-4 rounded-xl rounded-tl-sm max-w-[70%]">
-                    <div class="text-sm whitespace-pre-wrap" style="color: var(--text-secondary)" v-html="sanitizeHtml(formatMessage(msg.content))"></div>
+                    <div
+                      class="text-sm whitespace-pre-wrap"
+                      style="color: var(--text-secondary)"
+                      v-html="sanitizeHtml(formatMessage(msg.content))"
+                    ></div>
                   </div>
                 </template>
 

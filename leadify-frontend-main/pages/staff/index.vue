@@ -465,8 +465,7 @@ function getSwipeRightActions(staff: unknown) {
 
 function getSwipeLeftActions(staff: unknown) {
   const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#7849ff' }];
-  if (hasPermission('EDIT_STAFF'))
-    actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
+  if (hasPermission('EDIT_STAFF')) actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
   return actions;
 }
 

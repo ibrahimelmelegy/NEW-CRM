@@ -27,11 +27,9 @@ const router = useRouter();
 
 // Validate route query status parameter
 const VALID_STATUSES = ['Active', 'Completed', 'Granted', 'Pending'] as const;
-type TaskStatus = typeof VALID_STATUSES[number];
+type TaskStatus = (typeof VALID_STATUSES)[number];
 const rawStatus = (route.query.status as string) || '';
-const validatedStatus: TaskStatus | '' = VALID_STATUSES.includes(rawStatus as TaskStatus)
-  ? (rawStatus as TaskStatus)
-  : '';
+const validatedStatus: TaskStatus | '' = VALID_STATUSES.includes(rawStatus as TaskStatus) ? (rawStatus as TaskStatus) : '';
 const switchValue = ref(true);
 const validPhone = ref(true);
 const isEmail = ref(false);
