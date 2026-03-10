@@ -191,7 +191,7 @@ describe('useSocket', () => {
       mountedCallback!();
 
       // When apiBase starts with '/', socketUrl = window.location.origin
-      expect(mockIo).toHaveBeenCalledWith('http://localhost:3000');
+      expect(mockIo).toHaveBeenCalledWith('http://localhost:3000', { withCredentials: true });
     });
 
     it('should use window.location.origin when API_BASE_URL is empty', () => {
@@ -211,7 +211,7 @@ describe('useSocket', () => {
       mountedCallback!();
 
       // Empty string is falsy, so socketUrl = window.location.origin
-      expect(mockIo).toHaveBeenCalledWith('http://localhost:3000');
+      expect(mockIo).toHaveBeenCalledWith('http://localhost:3000', { withCredentials: true });
     });
   });
 });
