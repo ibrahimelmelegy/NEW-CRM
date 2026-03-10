@@ -24,10 +24,6 @@ COPY --from=builder /usr/src/app/dist ./dist
 # Create uploads directory
 RUN mkdir -p public/uploads
 
-# Run as non-root user for security
-RUN chown -R node:node /usr/src/app
-USER node
-
 EXPOSE 5000
 
 CMD ["node", "dist/src/server.js"]
