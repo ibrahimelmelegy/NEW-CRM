@@ -28,6 +28,11 @@ class UserController {
    */
   public async updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      // Protect super admin account from modification by non-super-admins
+      if (req.params.id === '1' && !(req as any).user?.isSuperAdmin) {
+        res.status(403).json({ success: false, message: 'Cannot modify super admin account' });
+        return;
+      }
       const responseFromService = await userService.updateUser(req.params.id as string, req.body);
       wrapResult(res, responseFromService);
     } catch (error) {
@@ -65,6 +70,11 @@ class UserController {
 
   public async deleteUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      // Protect super admin account from deletion
+      if (req.params.id === '1') {
+        res.status(403).json({ success: false, message: 'Cannot delete super admin account' });
+        return;
+      }
       await userService.deleteUser(req.params.id as string);
       wrapResult(res);
     } catch (error) {

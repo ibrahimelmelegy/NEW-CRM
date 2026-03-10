@@ -70,11 +70,13 @@ div
           div
             .text-sm(style="color: var(--text-primary)") {{ formatDate(row.createdAt) }}
             .text-xs(style="color: var(--text-muted)") {{ formatTime(row.createdAt) }}
-      el-table-column(:label="$t('common.action')" width="80" fixed="right")
+      el-table-column(:label="$t('common.action')" width="120" fixed="right")
         template(#default="{ row }")
-          .flex.items-center(@click.stop)
+          .flex.items-center.gap-1(@click.stop)
             el-button(text circle size="small" @click="handleRowClick(row)")
               Icon(name="ph:eye-bold" size="16" style="color: var(--text-muted)")
+            el-button(text circle size="small" @click="deleteId = row?.id; deleteDialog = true")
+              Icon(name="ph:trash-bold" size="16" style="color: #ef4444")
       template(#empty)
         el-empty(:description="$t('common.noData')" image="/images/empty.png")
 
@@ -96,6 +98,8 @@ div
     template(#footer)
       el-button(@click="showCheckInDialog = false") {{ $t('common.cancel') }}
       el-button(type="primary" :loading="saving" @click="handleSaveCheckIn" class="!rounded-2xl") {{ $t('common.save') }}
+
+  ActionModel(v-model="deleteDialog" :loading="deleting" :description="$t('common.deleteConfirmMessage')" @confirm="handleDelete")
 
   //- Detail Dialog
   el-dialog(v-model="showDetailDialog" :title="$t('fieldOps.checkInDetails')" width="600px")
@@ -131,7 +135,7 @@ div
 
 <script setup lang="ts">
 /* eslint-disable require-await */
-import { ElNotification } from 'element-plus';
+import { ElNotification, ElMessage } from 'element-plus';
 import type { FieldCheckIn } from '~/composables/useFieldOps';
 import { fetchCheckIns, createCheckIn } from '~/composables/useFieldOps';
 
@@ -161,6 +165,10 @@ const showDetailDialog = ref(false);
 const selectedCheckIn = ref<FieldCheckIn | null>(null);
 const dateRange = ref<[string, string] | null>(null);
 const checkInType = ref<'CHECK_IN' | 'CHECK_OUT'>('CHECK_IN');
+
+const deleteDialog = ref(false);
+const deleteId = ref<number | null>(null);
+const deleting = ref(false);
 
 const filters = ref({ type: '', startDate: '', endDate: '' });
 
@@ -293,6 +301,26 @@ async function handleSaveCheckIn() {
     }
   } finally {
     saving.value = false;
+  }
+}
+
+async function handleDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const res = await useApiFetch('field-ops/' + deleteId.value, 'DELETE');
+    if (res?.success) {
+      ElMessage.success(t('common.deletedSuccess'));
+      await loadCheckIns();
+    } else {
+      ElMessage.error(t('common.deleteError'));
+    }
+  } catch {
+    ElMessage.error(t('common.deleteError'));
+  } finally {
+    deleting.value = false;
+    deleteDialog.value = false;
+    deleteId.value = null;
   }
 }
 

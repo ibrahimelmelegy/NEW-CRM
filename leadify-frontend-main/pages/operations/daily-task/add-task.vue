@@ -1,7 +1,7 @@
 <template lang="pug">
     OperationsDailyTasksForm( :loading="loading" @fetchClient = "fetchClient" @submit="submitForm")
       .flex.items-center.justify-between.mb-8
-        .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.dailyTasks.form.createTitle', { status: route.query.status || '' }) }} 
+        .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.dailyTasks.form.createTitle', { status: validatedStatus }) }}
         .flex.items-center.gap-x-2
           el-button(   size='large' plain type="primary" class="w-full !rounded-2xl" @click="router.back()") {{ $t('common.cancel') }}
           el-button(   size='large' type="primary" native-type="submit" :loading="loading"  :disabled="loading" class="w-full !px-5 !rounded-2xl") {{ $t('common.save') }}
@@ -24,6 +24,14 @@ useHead({
 });
 const route = useRoute();
 const router = useRouter();
+
+// Validate route query status parameter
+const VALID_STATUSES = ['Active', 'Completed', 'Granted', 'Pending'] as const;
+type TaskStatus = typeof VALID_STATUSES[number];
+const rawStatus = (route.query.status as string) || '';
+const validatedStatus: TaskStatus | '' = VALID_STATUSES.includes(rawStatus as TaskStatus)
+  ? (rawStatus as TaskStatus)
+  : '';
 const switchValue = ref(true);
 const validPhone = ref(true);
 const isEmail = ref(false);

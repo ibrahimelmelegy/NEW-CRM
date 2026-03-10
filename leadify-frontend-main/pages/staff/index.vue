@@ -74,7 +74,7 @@
                           NuxtLink.flex.items-center(:to="`/staff/${data?.id}`")
                             Icon.text-md.mr-2(name="IconEye" )
                             p.text-sm {{ $t('common.view') }}
-                        el-dropdown-item(v-if="hasPermission('EDIT_STAFF') && data?.id !== 1" )
+                        el-dropdown-item(v-if="hasPermission('EDIT_STAFF')" )
                           NuxtLink.flex.items-center(:to="`/staff/edit/${data?.id}`")
                             Icon.text-md.mr-2(name="IconEdit" )
                             p.text-sm {{ $t('common.edit') }}
@@ -465,7 +465,7 @@ function getSwipeRightActions(staff: unknown) {
 
 function getSwipeLeftActions(staff: unknown) {
   const actions = [{ name: 'view', label: t('common.view'), icon: 'ph:eye-bold', color: '#7849ff' }];
-  if (hasPermission('EDIT_STAFF') && staff.id !== 1)
+  if (hasPermission('EDIT_STAFF'))
     actions.push({ name: 'edit', label: t('common.edit'), icon: 'ph:pencil-simple-bold', color: '#F59E0B' });
   return actions;
 }

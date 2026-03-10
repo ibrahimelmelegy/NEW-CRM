@@ -472,6 +472,9 @@
     "create": "Create",
     "created": "Created successfully",
     "deleted": "Deleted successfully",
+    "deletedSuccess": "Deleted successfully",
+    "deleteError": "Failed to delete",
+    "deleteConfirmMessage": "Are you sure you want to delete this item? This action cannot be undone.",
     "fillRequired": "Please fill in all required fields",
     "confirmDelete": "Are you sure you want to delete this?",
     "saved": "Saved successfully",
@@ -1325,7 +1328,8 @@
     "read": "Read",
     "failed": "Failed",
     "yesterday": "Yesterday",
-    "sendFailed": "Failed to send message"
+    "sendFailed": "Failed to send message",
+    "noActivities": "No Activities Yet"
   },
   "customFields": {
     "title": "Custom Fields",
@@ -1590,7 +1594,8 @@
     "item": "Item",
     "qty": "Qty",
     "taxPercent": "Tax %",
-    "discountPercent": "Discount %"
+    "discountPercent": "Discount %",
+    "noInvoices": "No invoices yet"
   },
   "forms": {
     "dragDrop": "Drag and drop file here or",
@@ -1776,6 +1781,7 @@
       "dealCount": "Deal Count",
       "winRate": "Win Rate"
     },
+    "noDeals": "No deals yet",
     "noDealsYet": "No deals yet",
     "noDealsDesc": "Create your first deal to start tracking",
     "createDeal": "Create Deal",
@@ -1928,6 +1934,7 @@
     "errors": {
       "createFailed": "Failed to create client"
     },
+    "noClients": "No clients yet",
     "noClientsYet": "No clients yet",
     "noClientsDesc": "Add your first client to get started",
     "addClient": "Add Client"
@@ -2151,6 +2158,7 @@
         "success": "Send file to email successfully"
       }
     },
+    "noOpportunities": "No opportunities yet",
     "emptyMessage": "No opportunities yet",
     "emptyDescription": "Create an opportunity to track your sales pipeline",
     "confirmBulkDelete": "Are you sure you want to delete {count} opportunity(ies)?",
@@ -3786,7 +3794,18 @@
     "reference": "Reference",
     "memo": "Memo",
     "entryLines": "Entry Lines",
-    "addLine": "Add Line"
+    "addLine": "Add Line",
+    "payments": {
+      "title": "Payments",
+      "record": "Record Payment",
+      "number": "Payment #",
+      "client": "Client"
+    },
+    "accounting": {
+      "journalEntries": "Journal Entries",
+      "filter": "Filter",
+      "reset": "Reset"
+    }
   },
   "fieldOps": {
     "title": "Field Operations",
@@ -6042,6 +6061,8 @@
     "sourceTypePayment": "Payment",
     "sourceTypeExpense": "Expense",
     "sourceTypePayroll": "Payroll",
+    "filter": "Filter",
+    "reset": "Reset",
     "creditNotes": {
       "title": "Credit Notes",
       "subtitle": "Manage financial refunds and adjustments",
@@ -6628,7 +6649,9 @@
     "fixedAmount": "Fixed Amount",
     "minQuantity": "Min Quantity",
     "campaign": "Campaign",
-    "durationLabel": "Duration"
+    "durationLabel": "Duration",
+    "noDiscountRules": "No discount rules",
+    "noPriceBooks": "No Price Books"
   },
   "performanceReviews": {
     "title": "Performance Reviews",
@@ -13785,5 +13808,27 @@
     "noTenant": "Your account is not associated with an organization.",
     "suspended": "Your organization has been suspended. Please contact support.",
     "inactive": "Your organization is currently inactive."
+  },
+  "sales": {
+    "leads": {
+      "description": "Manage and track all prospective clients"
+    },
+    "deals": {
+      "description": "Track your entire sales pipeline",
+      "noDeals": "No deals yet"
+    },
+    "invoices": {
+      "noInvoices": "No invoices yet"
+    },
+    "clients": {
+      "noClients": "No clients yet"
+    },
+    "opportunities": {
+      "noOpportunities": "No opportunities yet"
+    },
+    "cpq": {
+      "noDiscountRules": "No discount rules",
+      "noPriceBooks": "No Price Books"
+    }
   }
 }

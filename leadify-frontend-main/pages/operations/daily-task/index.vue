@@ -45,6 +45,10 @@
                         NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('common.edit') }}
+                      el-dropdown-item(@click="deleteId = data?.id; deleteDialog = true")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="IconDelete")
+                          p.text-sm.text-red-500 {{ $t('common.delete') }}
         //- Mobile card view for active tab
         .dtask-mobile-view(v-if="!loading")
           .space-y-3(v-if="activeProjects.length")
@@ -110,6 +114,10 @@
                         NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('common.edit') }}
+                      el-dropdown-item(@click="deleteId = data?.id; deleteDialog = true")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="IconDelete")
+                          p.text-sm.text-red-500 {{ $t('common.delete') }}
         //- Mobile card view for completed tab
         .dtask-mobile-view(v-if="!loading")
           .space-y-3(v-if="completedProjects.length")
@@ -174,6 +182,10 @@
                         NuxtLink.flex.items-center(:to="`/operations/daily-task/edits/${data?.id}`")
                           Icon.text-md.mr-2(name="IconEdit" )
                           p.text-sm {{ $t('common.edit') }}
+                      el-dropdown-item(@click="deleteId = data?.id; deleteDialog = true")
+                        .flex.items-center
+                          Icon.text-md.mr-2(name="IconDelete")
+                          p.text-sm.text-red-500 {{ $t('common.delete') }}
         //- Mobile card view for granted tab
         .dtask-mobile-view(v-if="!loading")
           .space-y-3(v-if="grantedProjects.length")
@@ -195,6 +207,8 @@
           .text-center.py-12(v-if="!grantedProjects.length")
             Icon(name="ph:clipboard-text" size="48" style="color: var(--text-muted)")
             p.text-sm.mt-2(style="color: var(--text-muted)") {{ $t('common.noData') }}
+
+  ActionModel(v-model="deleteDialog" :loading="deleting" :description="$t('common.deleteConfirmMessage')" @confirm="handleDelete")
   </template>
 
 <script setup>
@@ -206,6 +220,9 @@ const { t } = useI18n();
 const activeName = ref('info');
 const loading = ref(false);
 const router = useRouter();
+const deleteDialog = ref(false);
+const deleteId = ref(null);
+const deleting = ref(false);
 
 onMounted(async () => {
   await handleClick({ props: { name: activeName.value } });
@@ -608,6 +625,28 @@ const formatDate = date => {
   if (!date) return '';
   return new Date(date).toLocaleDateString();
 };
+
+// Handle delete
+async function handleDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const res = await useApiFetch('daily-task/' + deleteId.value, 'DELETE');
+    if (res?.success) {
+      ElMessage.success(t('common.deletedSuccess'));
+      // Refresh current tab data
+      await handleClick({ props: { name: activeName.value } });
+    } else {
+      ElMessage.error(t('common.deleteError'));
+    }
+  } catch {
+    ElMessage.error(t('common.deleteError'));
+  } finally {
+    deleting.value = false;
+    deleteDialog.value = false;
+    deleteId.value = null;
+  }
+}
 
 // Handle view action
 const handleView = row => {

@@ -209,6 +209,9 @@ div.animate-fade-in
                 el-tooltip(:content="$t('common.edit')")
                   el-button(size="small" @click.stop="openEditDialog(row)" class="!rounded-lg")
                     Icon(name="ph:pencil-bold" size="14")
+                el-tooltip(:content="$t('common.delete')")
+                  el-button(size="small" type="danger" @click.stop="deleteId = row?.id; deleteDialog = true" class="!rounded-lg")
+                    Icon(name="ph:trash-bold" size="14")
 
         //- Empty state
         .text-center.py-12(v-if="!filteredTerritories.length && !loading")
@@ -489,6 +492,8 @@ div.animate-fade-in
           el-button(@click="openAssignDialog(detailTerritory); detailDrawerVisible = false" class="!rounded-xl")
             Icon(name="ph:user-switch-bold" size="16" class="mr-1")
             | {{ $t('territoryManagement.assignTerritory') }}
+
+  ActionModel(v-model="deleteDialog" :loading="deleting" :description="$t('common.deleteConfirmMessage')" @confirm="handleDelete")
 </template>
 
 <script setup lang="ts">
@@ -515,6 +520,11 @@ const activeView = ref<'map' | 'table' | 'compare'>('map');
 const searchQuery = ref('');
 const regionFilter = ref('');
 const selectedRows = ref<Record<string, unknown>[]>([]);
+
+// Delete state
+const deleteDialog = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 
 // Data
 const territories = ref<Territory[]>([]);
@@ -813,6 +823,27 @@ async function loadData() {
     ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
+  }
+}
+
+// ──────────── Delete ────────────
+async function handleDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const res = await useApiFetch('territories/' + deleteId.value, 'DELETE');
+    if (res?.success) {
+      ElMessage.success(t('common.deletedSuccess'));
+      await loadData();
+    } else {
+      ElMessage.error(t('common.deleteError'));
+    }
+  } catch {
+    ElMessage.error(t('common.deleteError'));
+  } finally {
+    deleting.value = false;
+    deleteDialog.value = false;
+    deleteId.value = null;
   }
 }
 

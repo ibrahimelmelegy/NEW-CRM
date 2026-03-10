@@ -100,6 +100,10 @@ div
                   .flex.items-center.gap-2
                     Icon(name="ph:prohibit-bold" size="16")
                     span {{ $t('payments.voidPayment') }}
+                el-dropdown-item(@click="deleteId = row?.id; deleteDialog = true")
+                  .flex.items-center.gap-2
+                    Icon(name="ph:trash-bold" size="16" style="color: #ef4444")
+                    span.text-red-500 {{ $t('common.delete') }}
 
     //- Pagination
     .flex.items-center.justify-between.p-4(v-if="pagination.totalPages > 1")
@@ -113,10 +117,11 @@ div
       )
 
   ActionModel(v-model="voidPopup" :loading="voiding" :description="$t('payments.confirmVoidMessage')" @confirm="confirmVoid")
+  ActionModel(v-model="deleteDialog" :loading="deleting" :description="$t('common.deleteConfirmMessage')" @confirm="handleDelete")
 </template>
 
 <script setup lang="ts">
-import { ElNotification } from 'element-plus';
+import { ElNotification, ElMessage } from 'element-plus';
 import {
   getPayments,
   voidPayment,
@@ -141,6 +146,9 @@ const dateRange = ref<[string, string] | null>(null);
 const voidPopup = ref(false);
 const voiding = ref(false);
 const voidTargetId = ref<string | null>(null);
+const deleteDialog = ref(false);
+const deleteId = ref<string | null>(null);
+const deleting = ref(false);
 
 const statusCounts = ref({ completed: 0, pending: 0, voided: 0 });
 
@@ -181,6 +189,26 @@ function handlePageChange(page: number) {
 
 function handleRowClick(row: PaymentItem) {
   router.push(`/finance/payments/${row.id}`);
+}
+
+async function handleDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const res = await useApiFetch('payments/' + deleteId.value, 'DELETE');
+    if (res?.success) {
+      ElMessage.success(t('common.deletedSuccess'));
+      await fetchData();
+    } else {
+      ElMessage.error(t('common.deleteError'));
+    }
+  } catch {
+    ElMessage.error(t('common.deleteError'));
+  } finally {
+    deleting.value = false;
+    deleteDialog.value = false;
+    deleteId.value = null;
+  }
 }
 
 function handleVoid(id: string) {

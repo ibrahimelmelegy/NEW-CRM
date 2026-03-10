@@ -472,6 +472,9 @@
     "create": "إنشاء",
     "created": "تم الإنشاء بنجاح",
     "deleted": "تم الحذف بنجاح",
+    "deletedSuccess": "تم الحذف بنجاح",
+    "deleteError": "فشل الحذف",
+    "deleteConfirmMessage": "هل أنت متأكد من حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.",
     "fillRequired": "يرجى ملء جميع الحقول المطلوبة",
     "confirmDelete": "هل أنت متأكد من حذف هذا؟",
     "saved": "تم الحفظ بنجاح",
@@ -1357,7 +1360,8 @@
     "read": "مقروء",
     "failed": "فشل",
     "yesterday": "أمس",
-    "sendFailed": "فشل في إرسال الرسالة"
+    "sendFailed": "فشل في إرسال الرسالة",
+    "noActivities": "لا توجد أنشطة بعد"
   },
   "customFields": {
     "title": "الحقول المخصصة",
@@ -1622,7 +1626,8 @@
     "item": "العنصر",
     "qty": "الكمية",
     "taxPercent": "الضريبة %",
-    "discountPercent": "الخصم %"
+    "discountPercent": "الخصم %",
+    "noInvoices": "لا توجد فواتير بعد"
   },
   "deals": {
     "title": "الصفقات",
@@ -1715,6 +1720,7 @@
       "dealCount": "عدد الصفقات",
       "winRate": "معدل الفوز"
     },
+    "noDeals": "لا توجد صفقات بعد",
     "noDealsYet": "لا توجد صفقات بعد",
     "noDealsDesc": "أنشئ أول صفقة لبدء التتبع",
     "createDeal": "إنشاء صفقة",
@@ -1890,6 +1896,7 @@
     "errors": {
       "createFailed": "فشل إنشاء العميل"
     },
+    "noClients": "لا توجد عملاء بعد",
     "noClientsYet": "لا يوجد عملاء بعد",
     "noClientsDesc": "أضف أول عميل للبدء",
     "addClient": "إضافة عميل"
@@ -2177,6 +2184,7 @@
         "success": "تم إرسال الملف إلى البريد الإلكتروني بنجاح"
       }
     },
+    "noOpportunities": "لا توجد فرص بعد",
     "emptyMessage": "لا توجد فرص بعد",
     "emptyDescription": "أنشئ فرصة لتتبع خط مبيعاتك",
     "confirmBulkDelete": "هل أنت متأكد من حذف {count} فرصة؟",
@@ -3818,7 +3826,18 @@
     "reference": "المرجع",
     "memo": "ملاحظة",
     "entryLines": "سطور القيد",
-    "addLine": "إضافة سطر"
+    "addLine": "إضافة سطر",
+    "payments": {
+      "title": "المدفوعات",
+      "record": "تسجيل دفعة",
+      "number": "رقم الدفعة",
+      "client": "العميل"
+    },
+    "accounting": {
+      "journalEntries": "قيود اليومية",
+      "filter": "تصفية",
+      "reset": "إعادة تعيين"
+    }
   },
   "fieldOps": {
     "title": "العمليات الميدانية",
@@ -6074,6 +6093,8 @@
     "sourceTypePayment": "دفعة",
     "sourceTypeExpense": "مصروف",
     "sourceTypePayroll": "مرتبات",
+    "filter": "تصفية",
+    "reset": "إعادة تعيين",
     "creditNotes": {
       "title": "إشعارات الدائن",
       "subtitle": "إدارة المبالغ المستردة والتعديلات المالية",
@@ -6660,7 +6681,9 @@
     "fixedAmount": "مبلغ ثابت",
     "minQuantity": "الحد الأدنى للكمية",
     "campaign": "الحملة",
-    "durationLabel": "المدة"
+    "durationLabel": "المدة",
+    "noDiscountRules": "لا توجد قواعد خصم",
+    "noPriceBooks": "لا توجد قوائم أسعار"
   },
   "performanceReviews": {
     "title": "تقييم الأداء",
@@ -13789,5 +13812,27 @@
     "noTenant": "حسابك غير مرتبط بأي مؤسسة.",
     "suspended": "تم تعليق حساب مؤسستك. يرجى التواصل مع الدعم.",
     "inactive": "حساب مؤسستك غير نشط حاليًا."
+  },
+  "sales": {
+    "leads": {
+      "description": "إدارة وتتبع جميع العملاء المحتملين"
+    },
+    "deals": {
+      "description": "تتبع خط مبيعاتك بالكامل",
+      "noDeals": "لا توجد صفقات بعد"
+    },
+    "invoices": {
+      "noInvoices": "لا توجد فواتير بعد"
+    },
+    "clients": {
+      "noClients": "لا توجد عملاء بعد"
+    },
+    "opportunities": {
+      "noOpportunities": "لا توجد فرص بعد"
+    },
+    "cpq": {
+      "noDiscountRules": "لا توجد قواعد خصم",
+      "noPriceBooks": "لا توجد قوائم أسعار"
+    }
   }
 }
