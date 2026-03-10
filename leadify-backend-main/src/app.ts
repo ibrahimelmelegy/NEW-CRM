@@ -580,7 +580,7 @@ app.post('/api/admin/clean-data', authenticateUser, HasPermission(['EDIT_SETTING
     'subscriptions',
     'vendor_scorecards',
     'rfq_vendors',
-    'rfqs',
+    'rfqs'
   ];
   const results: string[] = [];
   for (const table of tables) {

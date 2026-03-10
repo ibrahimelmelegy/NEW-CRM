@@ -93,7 +93,7 @@ const TABLES_TO_TRUNCATE = [
   'proforma_invoices',
   'proforma_invoice_items',
   'contracts',
-  'subscriptions',
+  'subscriptions'
 ];
 
 async function cleanData() {

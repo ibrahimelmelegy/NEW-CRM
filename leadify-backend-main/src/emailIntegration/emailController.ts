@@ -4,7 +4,7 @@ import { wrapResult } from '../utils/response/responseWrapper';
 import emailIntegrationService from './emailIntegrationService';
 
 class EmailController {
-  public async getAccounts(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async getAccounts(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
     try {
       const accounts = await emailIntegrationService.getAccounts(String(req.user!.id));
       wrapResult(res, accounts);
@@ -36,7 +36,7 @@ class EmailController {
     }
   }
 
-  public async getMessages(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async getMessages(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
     try {
       // If no accountId provided, get messages from all user accounts
       const accountId = req.query.accountId as string;
@@ -69,7 +69,7 @@ class EmailController {
     }
   }
 
-  public async getTracking(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async getTracking(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
     try {
       const tracking = await emailIntegrationService.getTracking(req.params.messageId as string);
       wrapResult(res, tracking);
