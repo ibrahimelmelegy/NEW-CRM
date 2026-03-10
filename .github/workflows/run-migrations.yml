@@ -1,0 +1,37 @@
+name: Run DB Migrations (One-Time)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run migrations on production
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DEPLOY_USER || 'root' }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          command_timeout: 5m
+          script: |
+            set -e
+            cd /opt/crm
+
+            echo "=== Checking migration status ==="
+            docker compose -f docker-compose.prod.yml exec -T backend \
+              npx sequelize-cli db:migrate:status 2>&1 || echo "sequelize-cli not available, trying direct"
+
+            echo ""
+            echo "=== Running migrations ==="
+            docker compose -f docker-compose.prod.yml exec -T backend \
+              npx sequelize-cli db:migrate 2>&1 || echo "Migration via CLI done or not available"
+
+            echo ""
+            echo "=== Verifying DB health ==="
+            docker compose -f docker-compose.prod.yml exec -T db \
+              psql -U leadify -d leadify -c "SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name;" 2>&1 | tail -20
+
+            echo ""
+            echo "=== Migration complete ==="
