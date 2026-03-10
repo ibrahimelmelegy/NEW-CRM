@@ -595,7 +595,7 @@ app.post('/api/admin/clean-data', authenticateUser, HasPermission(['EDIT_SETTING
 });
 
 // 404 Handler — return JSON for undefined routes
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: Request, res: Response, _next: NextFunction) => {
   res.status(404).json({
     success: false,
     message: `Route ${req.method} ${req.originalUrl} not found`,
