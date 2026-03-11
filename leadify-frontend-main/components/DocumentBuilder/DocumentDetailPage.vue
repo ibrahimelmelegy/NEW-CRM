@@ -115,6 +115,10 @@ import { ArrowDown } from '@element-plus/icons-vue';
 import { useDocBuilder } from '~/composables/useDocBuilder';
 import { getAvailableConversions } from '~/composables/useDocumentConversion';
 import type { DocBuilderVersion } from '~/composables/useDocBuilder';
+import ProDocBuilder from '~/components/DocumentBuilder/ProDocBuilder.vue';
+import DocumentVersionHistory from '~/components/DocumentBuilder/DocumentVersionHistory.vue';
+import LinkedDocuments from '~/components/DocumentBuilder/LinkedDocuments.vue';
+import SendDocumentDialog from '~/components/DocumentBuilder/SendDocumentDialog.vue';
 
 const props = defineProps<{
   documentType: string;

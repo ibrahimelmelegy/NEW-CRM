@@ -11,6 +11,6 @@
 definePageMeta({
   layout: 'default',
   middleware: ['permissions'],
-  permission: 'CREATE_PURCHASE_ORDER'
+  permission: 'CREATE_PROCUREMENT'
 });
 </script>
