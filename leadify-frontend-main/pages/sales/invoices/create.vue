@@ -13,6 +13,6 @@ import DocumentHubWrapper from '~/components/DocumentBuilder/DocumentHubWrapper.
 definePageMeta({
   layout: 'default',
   middleware: ['permissions'],
-  permission: 'CREATE_INVOICE'
+  permission: 'CREATE_INVOICES'
 });
 </script>
