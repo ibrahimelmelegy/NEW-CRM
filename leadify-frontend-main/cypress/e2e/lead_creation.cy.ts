@@ -4,7 +4,7 @@ describe('Lead Management Flow', () => {
   beforeEach(() => {
     // Login before each test
     cy.visit('/login');
-    cy.get('input[name="email"]').type(Cypress.env('TEST_EMAIL') || 'admin@hp-tech.com');
+    cy.get('input[name="email"]').type(Cypress.env('TEST_EMAIL') || 'test@example.com');
     cy.get('input[name="password"]').type(Cypress.env('TEST_PASSWORD'));
     cy.get('button[type="submit"]').click();
     cy.url().should('not.include', '/login');

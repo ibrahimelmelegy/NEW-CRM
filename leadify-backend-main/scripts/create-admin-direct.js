@@ -130,7 +130,7 @@ async function createAdmin() {
 
         if (!superAdmin) {
             console.log(`User "${adminEmail}" not found. Creating it...`);
-            const defaultPassword = process.env.ADMIN_PASSWORD || 'HPTech@Admin2026!';
+            const defaultPassword = process.env.ADMIN_PASSWORD || (() => { throw new Error('ADMIN_PASSWORD env var is required'); })();
             const hashedPassword = await bcrypt.hash(defaultPassword, 12);
 
             superAdmin = await User.create({

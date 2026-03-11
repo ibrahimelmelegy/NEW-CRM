@@ -18,8 +18,8 @@ import { test, expect } from '@playwright/test';
 // Opt out of shared auth - this suite tests unauthenticated flows
 test.use({ storageState: { cookies: [], origins: [] } });
 
-const TEST_EMAIL = process.env.TEST_USER_EMAIL || 'admin@hp-tech.com';
-const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || 'HPTech@Admin2026!';
+const TEST_EMAIL = process.env.TEST_USER_EMAIL || 'test@example.com';
+const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || 'TestPassword123!';
 
 test.describe('Authentication', () => {
 

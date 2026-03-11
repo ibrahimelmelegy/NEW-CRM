@@ -116,12 +116,12 @@ NODE_ENV=development
 DB_HOST=localhost
 DB_PORT=5433
 DB_USER=leadify
-DB_PASSWORD=x8tjNImGW7A4Dr
+DB_PASSWORD=YourSecurePassword123!
 DB_NAME=leadify
 
 # Docker PostgreSQL
 POSTGRES_USER=leadify
-POSTGRES_PASSWORD=x8tjNImGW7A4Dr
+POSTGRES_PASSWORD=YourSecurePassword123!
 POSTGRES_DB=leadify
 
 # Generate with: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"

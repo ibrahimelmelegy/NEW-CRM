@@ -1,6 +1,6 @@
 
 const API_URL = process.env.API_URL || 'http://localhost:5000/api';
-const EMAIL = process.env.TEST_USER_EMAIL || 'admin@hp-tech.com';
+const EMAIL = process.env.TEST_USER_EMAIL || 'test@example.com';
 const PASSWORD = process.env.TEST_USER_PASSWORD;
 if (!PASSWORD) {
     console.error('ERROR: Set TEST_USER_PASSWORD environment variable to run verification.');

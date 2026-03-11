@@ -10,8 +10,8 @@
 import { test, expect } from '@playwright/test';
 
 const API_URL = process.env.API_URL || 'http://localhost:5000/api';
-const TEST_EMAIL = process.env.TEST_USER_EMAIL || 'admin@hp-tech.com';
-const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || 'HPTech@Admin2026!';
+const TEST_EMAIL = process.env.TEST_USER_EMAIL || 'test@example.com';
+const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || 'TestPassword123!';
 
 test.describe('API Health Checks', () => {
 

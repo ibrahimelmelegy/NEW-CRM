@@ -8,8 +8,8 @@
 import { Page, expect } from '@playwright/test';
 
 // Test credentials - use environment variables with fallbacks
-export const TEST_EMAIL = process.env.TEST_USER_EMAIL || 'admin@hp-tech.com';
-export const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || 'HPTech@Admin2026!';
+export const TEST_EMAIL = process.env.TEST_USER_EMAIL || 'test@example.com';
+export const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || 'TestPassword123!';
 export const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 export const API_URL = process.env.API_URL || 'http://localhost:5000/api';
 

@@ -99,7 +99,7 @@
       "Bash(npx eslint:*)",
       "Bash(start:*)",
       "Bash(npx playwright:*)",
-      "Bash(PGPASSWORD=x8tjNImGW7A4Dr psql:*)",
+      "Bash(PGPASSWORD=$POSTGRES_PASSWORD psql:*)",
       "Bash(npx kill-port:*)",
       "Bash(while read f)",
       "Bash(do sed -i \"s/definePageMeta\\({ layout: ''main'', middleware: ''auth'' }\\);/definePageMeta\\({}\\);/\" \"$f\")",
@@ -194,10 +194,14 @@
       "Bash(for:*)",
       "Bash(do wc -l \"$f\")",
       "Bash(/e/NEW-CRM/leadify-frontend-main/composables/operations/service.ts:*)",
-      "Bash(/e/NEW-CRM/leadify-frontend-main/composables/operations/assets.ts:*)"
+      "Bash(/e/NEW-CRM/leadify-frontend-main/composables/operations/assets.ts:*)",
+      "Bash(git:*)",
+      "Bash(npx prettier:*)",
+      "Read(//c/Users/ielme/.ssh/**)",
+      "Bash(do echo:*)",
+      "Read(//d/Crm-Dev/NEW-CRM/**)",
+      "Bash(for f:*)"
     ],
-    "additionalDirectories": [
-      "\\tmp"
-    ]
+    "additionalDirectories": ["\\tmp"]
   }
 }

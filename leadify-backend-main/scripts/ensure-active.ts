@@ -7,7 +7,7 @@ async function activateUser() {
         await sequelize.authenticate();
         console.log('Connected to database.');
 
-        const email = process.env.ADMIN_EMAIL || 'admin@hp-tech.com';
+        const email = process.env.ADMIN_EMAIL || 'test@example.com';
         const userModel = User as any;
 
         const user = await userModel.findOne({ where: { email } });

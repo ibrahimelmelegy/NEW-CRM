@@ -23,8 +23,8 @@
 
 import { test, expect, Page } from '@playwright/test';
 
-const TEST_EMAIL = process.env.TEST_USER_EMAIL || 'admin@hp-tech.com';
-const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || 'HPTech@Admin2026!';
+const TEST_EMAIL = process.env.TEST_USER_EMAIL || 'test@example.com';
+const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || 'TestPassword123!';
 
 // Unique suffix to avoid collisions between test runs
 const UNIQUE_SUFFIX = Date.now().toString().slice(-6);
