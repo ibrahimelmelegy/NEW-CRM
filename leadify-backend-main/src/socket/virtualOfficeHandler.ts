@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+import logger from '../config/logger';
 
 interface RoomOccupant {
   socketId: string;
@@ -179,7 +180,7 @@ export function setupVirtualOfficeHandlers(io: Server) {
         userPresence.delete(socket.id);
         io.emit('vo:presence-update', getAllPresence());
       } catch (err) {
-        console.error('Socket event disconnect error:', err);
+        logger.error({ err }, 'Socket event disconnect error:');
       }
     });
   });

@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+import logger from '../config/logger';
 
 interface PresenceUser {
   socketId: string;
@@ -69,7 +70,7 @@ export function setupPresenceHandlers(io: Server) {
         activeUsers.delete(socket.id);
         if (tenantId) broadcastPresence(io, tenantId);
       } catch (err) {
-        console.error('Socket event disconnect error:', err);
+        logger.error({ err }, 'Socket event disconnect error:');
       }
     });
 

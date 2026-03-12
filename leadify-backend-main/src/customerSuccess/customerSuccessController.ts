@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import logger from '../config/logger';
 import customerSuccessService from './customerSuccessService';
 import { wrapResult } from '../utils/response/responseWrapper';
 
@@ -11,7 +12,7 @@ class CustomerSuccessController {
       const dashboard = await customerSuccessService.getDashboard(tenantId);
       wrapResult(res, dashboard, 200);
     } catch (error) {
-      console.error('[CustomerSuccess] Dashboard error:', error instanceof Error ? error.message : String(error));
+      logger.error({ err: error instanceof Error ? error.message : String(error) }, '[CustomerSuccess] Dashboard error:');
       // Return empty dashboard matching frontend shape instead of 500
       wrapResult(
         res,
@@ -41,7 +42,7 @@ class CustomerSuccessController {
 
       wrapResult(res, health, 200);
     } catch (error) {
-      console.error('[CustomerSuccess] Client health error:', error instanceof Error ? error.message : String(error));
+      logger.error({ err: error instanceof Error ? error.message : String(error) }, '[CustomerSuccess] Client health error:');
       wrapResult(res, null, 500);
     }
   }

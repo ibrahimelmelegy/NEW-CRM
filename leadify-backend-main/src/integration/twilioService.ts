@@ -1,4 +1,5 @@
 import twilio from 'twilio';
+import logger from '../config/logger';
 
 class TwilioService {
   private client: twilio.Twilio | null = null;
@@ -16,7 +17,7 @@ class TwilioService {
     if (accountSid && authToken && this.twilioPhoneNumber) {
       this.client = twilio(accountSid, authToken);
     } else {
-      console.warn('[TwilioService] Twilio credentials are not fully configured in environment variables.');
+      logger.warn('[TwilioService] Twilio credentials are not fully configured in environment variables.');
     }
   }
 
@@ -42,7 +43,7 @@ class TwilioService {
       });
       return call;
     } catch (error) {
-      console.error('[TwilioService] Failed to make call:', error);
+      logger.error({ error }, '[TwilioService] Failed to make call');
       throw error;
     }
   }

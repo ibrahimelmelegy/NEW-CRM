@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+import logger from '../config/logger';
 
 /**
  * Live Chat Socket.io Handler
@@ -135,7 +136,7 @@ export function setupLiveChatHandlers(io: Server) {
           }
         }
       } catch (err) {
-        console.error('Socket event disconnect error:', err);
+        logger.error({ err }, 'Socket event disconnect error:');
       }
     });
   });
