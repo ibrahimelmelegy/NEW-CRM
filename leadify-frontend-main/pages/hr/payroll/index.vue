@@ -103,20 +103,21 @@ const newRun = ref({
   year: new Date().getFullYear()
 });
 
-const months = [
-  { value: 1, label: 'January' },
-  { value: 2, label: 'February' },
-  { value: 3, label: 'March' },
-  { value: 4, label: 'April' },
-  { value: 5, label: 'May' },
-  { value: 6, label: 'June' },
-  { value: 7, label: 'July' },
-  { value: 8, label: 'August' },
-  { value: 9, label: 'September' },
-  { value: 10, label: 'October' },
-  { value: 11, label: 'November' },
-  { value: 12, label: 'December' }
-];
+const { t } = useI18n();
+const months = computed(() => [
+  { value: 1, label: t('payroll.months.january') },
+  { value: 2, label: t('payroll.months.february') },
+  { value: 3, label: t('payroll.months.march') },
+  { value: 4, label: t('payroll.months.april') },
+  { value: 5, label: t('payroll.months.may') },
+  { value: 6, label: t('payroll.months.june') },
+  { value: 7, label: t('payroll.months.july') },
+  { value: 8, label: t('payroll.months.august') },
+  { value: 9, label: t('payroll.months.september') },
+  { value: 10, label: t('payroll.months.october') },
+  { value: 11, label: t('payroll.months.november') },
+  { value: 12, label: t('payroll.months.december') }
+]);
 
 const result = ref(await fetchPayrollRuns());
 const runs = computed(() => result.value.docs || []);

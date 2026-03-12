@@ -2,16 +2,18 @@ import { ElNotification } from 'element-plus';
 
 // Handle error during manpower creation
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 function handleSuccess(message: string, id?: string, redirect: boolean = true) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
   if (!redirect) {
@@ -329,6 +331,7 @@ export async function getManpower(id: string | string[]): Promise<ManpowerValues
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
 export async function createManpower(values: ManpowerValues, redirect: boolean = true): Promise<boolean> {
+  const t = useNuxtApp().$i18n.t;
   // Normalize the phone number before sending
   try {
     const normalizedPhone = normalizePhoneNumber(values.phone);
@@ -339,7 +342,7 @@ export async function createManpower(values: ManpowerValues, redirect: boolean =
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Manpower created successfully', '', redirect);
+      handleSuccess(t('common.created'), '', redirect);
       return true;
     } else {
       handleError(response?.message || 'Something went wrong');
@@ -359,6 +362,7 @@ export async function createManpower(values: ManpowerValues, redirect: boolean =
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
 export async function updateManpower(values: ManpowerValues, redirect: boolean = true): Promise<boolean> {
+  const t = useNuxtApp().$i18n.t;
   try {
     const normalizedPhone = normalizePhoneNumber(values.phone);
     const mappedManpower = mapToNumbers(values);
@@ -369,7 +373,7 @@ export async function updateManpower(values: ManpowerValues, redirect: boolean =
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Manpower updated successfully', values.id, redirect);
+      handleSuccess(t('common.saved'), values.id, redirect);
       return true;
     } else {
       handleError(response?.message || 'Something went wrong');
@@ -388,10 +392,11 @@ export async function updateManpower(values: ManpowerValues, redirect: boolean =
  * @returns The API response object.
  */
 export async function deleteManpowerById(id: string) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`manpower/${id}`, 'DELETE');
     if (response?.success) {
-      handleSuccess('Manpower deleted successfully', '', false);
+      handleSuccess(t('common.deleted'), '', false);
     } else {
       handleError(response?.message || 'Failed to delete manpower');
     }

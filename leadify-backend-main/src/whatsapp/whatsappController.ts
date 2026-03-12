@@ -4,6 +4,7 @@ import { wrapResult } from '../utils/response/responseWrapper';
 import whatsappService from './whatsappService';
 import { io } from '../server';
 import { WhatsAppMessage } from './whatsappModel';
+import logger from '../config/logger';
 
 class WhatsAppController {
   // ═══════════════════════════════════════════════════════════════════════════
@@ -376,7 +377,7 @@ class WhatsAppController {
       res.sendStatus(200);
     } catch (error) {
       // Still respond 200 to prevent webhook retries
-      console.error('[WhatsApp Webhook Error]', error);
+      logger.error({ error }, '[WhatsApp Webhook Error]');
       res.sendStatus(200);
     }
   }

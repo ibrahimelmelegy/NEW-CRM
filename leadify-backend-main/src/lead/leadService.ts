@@ -6,11 +6,11 @@ import { ERRORS } from '../utils/error/errors';
 import { LeadStatusEnums, SortByEnum, SortEnum } from './leadEnum';
 import Lead from './leadModel';
 import { createActivityLog } from '../activity-logs/activityService';
-import xlsx from 'xlsx';
 import { LeadPermissionsEnum } from '../role/roleEnum';
 import LeadUsers from './model/lead_UsersModel';
 import { LeadActivity } from '../activity-logs/model/leadActivities';
 import * as ExcelJS from 'exceljs';
+import logger from '../config/logger';
 import { sendEmail } from '../utils/emailHelper';
 import { io } from '../server';
 import { tenantWhere } from '../utils/tenantScope';
@@ -154,7 +154,7 @@ class LeadService {
 
     // Trigger workflow automation for lead creation
     workflowService.processEntityEvent('lead', String(lead.id), TriggerType.ON_CREATE, null, lead.toJSON(), adminId).catch((err: Error) => {
-      console.error('Workflow processEntityEvent (lead.create) error:', err.message);
+      logger.error({ err }, 'Workflow processEntityEvent (lead.create) error');
     });
 
     return lead;
@@ -203,7 +203,7 @@ class LeadService {
     // Trigger workflow automation for lead update (including field change detection)
     const newData = updatedLead.toJSON();
     workflowService.processEntityEvent('lead', String(lead.id), TriggerType.ON_UPDATE, oldData, newData, user.id).catch((err: Error) => {
-      console.error('Workflow processEntityEvent (lead.update) error:', err.message);
+      logger.error({ err }, 'Workflow processEntityEvent (lead.update) error');
     });
 
     return updatedLead;
@@ -326,14 +326,19 @@ class LeadService {
   }
 
   public async importFile(file: any): Promise<string> {
-    const workbook = xlsx.read(file.data);
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(file.data);
+    const worksheet = workbook.worksheets[0];
 
-    const data: Omit<Lead, 'id'>[] = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+    const data: any[][] = [];
+    worksheet.eachRow((row) => {
+      data.push(row.values as any[]);
+    });
     const leadArray = [];
 
     for (let index = 1; index < data.length; index++) {
-      const [name, companyName, email, phone, otherSource, leadSource, status, userId, notes, lastContactDate] = data[index] as any;
+      // ExcelJS row.values is 1-based (index 0 is null), so skip the first element
+      const [, name, companyName, email, phone, otherSource, leadSource, status, userId, notes, lastContactDate] = data[index] as any;
       if (!email && !phone) {
         throw new BaseError(ERRORS.LEAD_ALREADY_FOUND, 400, `Lead must have at least Phone or email in row ${index}`);
       }

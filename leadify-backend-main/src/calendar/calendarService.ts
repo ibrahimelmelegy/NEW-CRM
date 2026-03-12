@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 import CalendarEvent from './calendarEventModel';
 import User from '../user/userModel';
+import logger from '../config/logger';
 
 class CalendarService {
   // ─── Get Events with Date Range & Filters ─────────────────────────────────
@@ -34,7 +35,7 @@ class CalendarService {
 
       return events;
     } catch (error) {
-      console.error('CalendarService.getEvents error:', error);
+      logger.error({ error }, 'CalendarService.getEvents error');
       return [];
     }
   }

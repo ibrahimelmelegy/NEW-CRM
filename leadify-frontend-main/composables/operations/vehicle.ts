@@ -2,16 +2,18 @@ import { ElNotification } from 'element-plus';
 
 // Handle error during vehicle creation
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 function handleSuccess(message: string, id?: string, redirect: boolean = true) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
   if (!redirect) {
@@ -112,6 +114,7 @@ export async function getVehicle(id: string | string[]): Promise<Vehicle> {
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
 export async function createVehicle(values: Vehicle, redirect: boolean = true) {
+  const t = useNuxtApp().$i18n.t;
   // Normalize the phone number before sending
   try {
     const mappedVehicle = mapToNumbers(values);
@@ -120,7 +123,7 @@ export async function createVehicle(values: Vehicle, redirect: boolean = true) {
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('vehicle created successfully', '', redirect);
+      handleSuccess(t('common.created'), '', redirect);
       return response?.body;
     } else {
       handleError(response?.message || 'Something went wrong');
@@ -140,6 +143,7 @@ export async function createVehicle(values: Vehicle, redirect: boolean = true) {
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
 export async function updateVehicle(values: Vehicle, redirect: boolean = true) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const mappedVehicle = mapToNumbers(values);
     // Call API to create the Vehicle
@@ -147,7 +151,7 @@ export async function updateVehicle(values: Vehicle, redirect: boolean = true) {
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Vehicle updated successfully', values.id, redirect);
+      handleSuccess(t('common.saved'), values.id, redirect);
       return response?.body;
     } else {
       handleError(response?.message || 'Something went wrong');
@@ -166,10 +170,11 @@ export async function updateVehicle(values: Vehicle, redirect: boolean = true) {
  * @returns The API response object.
  */
 export async function deleteVehicleById(id: string) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`vehicle/${id}`, 'DELETE');
     if (response?.success) {
-      handleSuccess('Vehicle deleted successfully', '', false);
+      handleSuccess(t('common.deleted'), '', false);
     } else {
       handleError(response?.message || 'Failed to delete vehicle');
     }

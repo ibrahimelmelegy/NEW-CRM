@@ -1,5 +1,6 @@
 import { Op, fn, col } from 'sequelize';
 import jwt from 'jsonwebtoken';
+import logger from '../config/logger';
 import Notification from './notificationModel';
 import NotificationPreference, {
   DEFAULT_NOTIFICATION_PREFERENCES,
@@ -170,7 +171,7 @@ class NotificationCenterService {
             const unsubscribeToken = jwt.sign({ userId: data.userId, notificationType: prefKey }, secret, { expiresIn: '30d' });
             unsubscribeUrl = `${process.env.BACKEND_URL || 'http://localhost:3000'}/api/notification/unsubscribe?token=${unsubscribeToken}`;
           } else {
-            console.error('[NotificationCenter] SECRET_KEY not set — omitting unsubscribe link');
+            logger.error('[NotificationCenter] SECRET_KEY not set — omitting unsubscribe link');
           }
 
           const priorityPrefix = isCritical ? '[CRITICAL] ' : priority === NotificationPriorityEnum.HIGH ? '[HIGH] ' : '';
@@ -190,7 +191,7 @@ class NotificationCenterService {
           });
         }
       } catch (emailError) {
-        console.error('Failed to send notification email:', emailError);
+        logger.error({ err: emailError }, 'Failed to send notification email');
       }
     }
 
@@ -200,7 +201,7 @@ class NotificationCenterService {
         await this.sendWebPush(data.userId, data.title, data.message, data.actionUrl);
       } catch (pushError) {
         // Silent failure — push is best-effort
-        console.error('Failed to send push notification:', pushError);
+        logger.error({ err: pushError }, 'Failed to send push notification');
       }
     }
 

@@ -5,6 +5,7 @@ import Client from '../client/clientModel';
 import Invoice from '../deal/model/invoiceMode';
 import Opportunity from '../opportunity/opportunityModel';
 import { DealActivity } from '../activity-logs/model/dealActivities';
+import logger from '../config/logger';
 
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -83,7 +84,7 @@ class AIChatService {
         data: queryResult
       };
     } catch (error) {
-      console.error('AIChatService error:', error);
+      logger.error({ error }, 'AIChatService error');
       // Fallback: try basic keyword matching
       try {
         const fallbackResult = await this.fallbackQuery(question);
@@ -150,7 +151,7 @@ class AIChatService {
         return { intent: 'general', module: 'none', answer: response };
       }
     } catch (error) {
-      console.error('OpenAI analysis error:', error);
+      logger.error({ error }, 'OpenAI analysis error');
       return this.analyzeQuestionFallback(question);
     }
   }

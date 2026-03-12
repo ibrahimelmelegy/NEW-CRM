@@ -11,6 +11,7 @@
  */
 
 import redisClient from '../config/redis';
+import logger from '../config/logger';
 
 class CacheService {
   private defaultTTL = 300; // 5 minutes
@@ -145,7 +146,7 @@ class CacheService {
         // Cache keys invalidated
       }
     } catch (error) {
-      console.warn(`[Cache] Failed to invalidate pattern "${pattern}":`, (error as Error).message);
+      logger.warn({ err: (error as Error).message }, `[Cache] Failed to invalidate pattern "${pattern}"`);
     }
   }
 

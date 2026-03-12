@@ -1,6 +1,7 @@
 import CalendarSync from './calendarSyncModel';
 import CalendarEvent from './calendarEventModel';
 import { encrypt, decrypt } from '../utils/encryption';
+import logger from '../config/logger';
 
 // ─── Configuration ──────────────────────────────────────────────────────────
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CALENDAR_CLIENT_ID || '';
@@ -669,7 +670,7 @@ class CalendarSyncService {
         }
       } catch (error) {
         // Individual sync errors shouldn't block others
-        console.error(`Sync error for ${sync.provider}:`, (error as Error).message);
+        logger.error({ err: (error as Error).message }, `Sync error for ${sync.provider}`);
       }
     }
 

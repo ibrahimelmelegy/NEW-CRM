@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../types';
 import { AuditAction } from './auditModel';
 import { diffObjects, logChange } from './auditService';
+import logger from '../config/logger';
 
 /** Any Sequelize model class that has findByPk and toJSON on its instances */
 interface AuditableModel {
@@ -68,7 +69,7 @@ export function auditUpdate(
         if (_res.statusCode >= 200 && _res.statusCode < 300) {
           // Fire-and-forget: do not block the response
           captureAuditAfterUpdate(req).catch(err => {
-            console.error('[AuditMiddleware] Failed to write audit log:', err);
+            logger.error({ err }, '[AuditMiddleware] Failed to write audit log');
           });
         }
         return originalJson(body);
@@ -78,7 +79,7 @@ export function auditUpdate(
       _res.send = function auditedSend(body: any) {
         if (_res.statusCode >= 200 && _res.statusCode < 300) {
           captureAuditAfterUpdate(req).catch(err => {
-            console.error('[AuditMiddleware] Failed to write audit log:', err);
+            logger.error({ err }, '[AuditMiddleware] Failed to write audit log');
           });
         }
         return originalSend(body);
@@ -87,7 +88,7 @@ export function auditUpdate(
       next();
     } catch (error) {
       // Don't let audit middleware break the request
-      console.error('[AuditMiddleware] Error in pre-handler:', error);
+      logger.error({ error }, '[AuditMiddleware] Error in pre-handler');
       next();
     }
   };

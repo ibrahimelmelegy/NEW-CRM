@@ -2,16 +2,18 @@
 import { ElNotification } from 'element-plus';
 // Handle error during Opportunity creation
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 function handleSuccess(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
 }
@@ -189,13 +191,14 @@ interface ActivityResponse {
  */
 
 export async function createOpportunity(values: FormattedValues) {
+  const t = useNuxtApp().$i18n.t;
   try {
     // Call API to create the opportunity
     const response = await useApiFetch('opportunity', 'POST', values);
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Opportunity created successfully');
+      handleSuccess(t('common.created'));
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -212,13 +215,14 @@ export async function createOpportunity(values: FormattedValues) {
  * @param values - The values to update the opportunity with
  */
 export async function updateOpportunity(values: FormattedValues, id: string | string[]) {
+  const t = useNuxtApp().$i18n.t;
   try {
     // Call API to create the opportunity
     const response = await useApiFetch(`opportunity/${id}`, 'PUT', values);
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Opportunity updated successfully');
+      handleSuccess(t('common.saved'));
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -235,13 +239,14 @@ export async function updateOpportunity(values: FormattedValues, id: string | st
  * @param values - The values to create the opportunity with
  */
 export async function convertLeadToOpportunity(values: Opportunities) {
+  const t = useNuxtApp().$i18n.t;
   try {
     // Call API to create the opportunity
     const response = await useApiFetch(`opportunity/convert-lead`, 'POST', values);
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Opportunity Added successfully');
+      handleSuccess(t('common.created'));
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -254,10 +259,11 @@ export async function convertLeadToOpportunity(values: Opportunities) {
 }
 
 export async function deleteOpportunity(id: string) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`opportunity/${id}`, 'DELETE');
     if (response?.success) {
-      handleSuccess('Opportunity deleted successfully');
+      handleSuccess(t('common.deleted'));
     } else {
       handleError(response?.message || 'Failed to delete opportunity');
     }

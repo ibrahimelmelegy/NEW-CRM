@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import BaseError from './base-http-exception';
+import logger from '../../config/logger';
 
 export default (error: Error, req: Request, res: Response, _next: NextFunction): Response => {
   const isBaseError = error instanceof BaseError;
@@ -25,10 +26,10 @@ export default (error: Error, req: Request, res: Response, _next: NextFunction):
 
   // Always log 500 errors (even in production)
   if (statusCode === 500) {
-    console.error('Server Error:', error);
+    logger.error({ err: error }, 'Server Error');
   }
   if (process.env.NODE_ENV !== 'production' && statusCode !== 500) {
-    console.warn(`Client Error (${statusCode}):`, error.message);
+    logger.warn({ statusCode, message: error.message }, `Client Error (${statusCode})`);
   }
 
   return res.status(statusCode).send(response);

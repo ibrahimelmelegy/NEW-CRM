@@ -601,7 +601,9 @@
     "fixedAmount": "مبلغ ثابت",
     "ascending": "تصاعدي",
     "descending": "تنازلي",
-    "companyName": "اسم الشركة"
+    "companyName": "اسم الشركة",
+    "invalidDateRange": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية",
+    "percentagesSumError": "يجب أن يكون مجموع نسب المتغيرات 100"
   },
   "export": {
     "title": "تصدير",

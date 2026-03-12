@@ -3,6 +3,7 @@ import { AuthenticatedRequest } from '../types';
 import { wrapResult } from '../utils/response/responseWrapper';
 import VendorService from './vendorService';
 import User from '../user/userModel';
+import logger from '../config/logger';
 
 class VendorController {
   public async createVendor(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
@@ -55,7 +56,7 @@ class VendorController {
       const vendors = await VendorService.getAllVendors();
       wrapResult(res, vendors);
     } catch (error) {
-      console.error('[Vendor] getAllVendors error:', (error as Error).message);
+      logger.error({ err: (error as Error).message }, '[Vendor] getAllVendors error');
       wrapResult(res, []);
     }
   }

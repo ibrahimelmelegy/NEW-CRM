@@ -157,6 +157,7 @@ div
 </template>
 
 <script setup lang="ts">
+import { ElMessage } from 'element-plus';
 import {
   fetchCampaigns,
   createCampaign,
@@ -291,6 +292,10 @@ function openForm(campaign?: Campaign) {
 }
 
 async function saveCampaign() {
+  if (!form.value.name.trim() || !form.value.subject.trim()) {
+    ElMessage.warning(t('common.fillRequired'));
+    return;
+  }
   saving.value = true;
   let response;
   if (editingId.value) {

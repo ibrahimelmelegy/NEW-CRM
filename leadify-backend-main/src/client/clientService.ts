@@ -22,6 +22,7 @@ import { tenantWhere } from '../utils/tenantScope';
 import { io } from '../server';
 import { TriggerType } from '../workflow/workflowModel';
 import workflowService from '../workflow/workflowService';
+import logger from '../config/logger';
 import Deal from '../deal/model/dealModel';
 import { DealStageEnums } from '../deal/dealEnum';
 import Invoice from '../deal/model/invoiceMode';
@@ -73,7 +74,7 @@ class ClientService {
 
     // Trigger workflow automation for client creation
     workflowService.processEntityEvent('client', String(client.id), TriggerType.ON_CREATE, null, client.toJSON(), admin.id).catch((err: Error) => {
-      console.error('Workflow processEntityEvent (client.create) error:', err.message);
+      logger.error({ err: err.message }, 'Workflow processEntityEvent (client.create) error');
     });
 
     return client;
@@ -117,7 +118,7 @@ class ClientService {
     workflowService
       .processEntityEvent('client', String(client.id), TriggerType.ON_UPDATE, oldClientData, newClientData, user.id)
       .catch((err: Error) => {
-        console.error('Workflow processEntityEvent (client.update) error:', err.message);
+        logger.error({ err: err.message }, 'Workflow processEntityEvent (client.update) error');
       });
 
     return updatedClient;

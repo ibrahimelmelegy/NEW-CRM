@@ -6,6 +6,7 @@ import cron, { ScheduledTask } from 'node-cron';
 import { Op } from 'sequelize';
 import Backup, { BackupType, BackupStatus, BackupMetadata } from './backupModel';
 import { sequelize } from '../config/db';
+import logger from '../config/logger';
 
 const execAsync = promisify(exec);
 const statAsync = promisify(fs.stat);
@@ -368,7 +369,7 @@ export function scheduleAutoBackup(cronExpression: string = '0 2 * * *'): void {
 
   // Validate cron expression
   if (!cron.validate(cronExpression)) {
-    console.warn('[Backup] Invalid cron expression:', cronExpression);
+    logger.warn({ cronExpression }, '[Backup] Invalid cron expression');
     return;
   }
 
@@ -380,7 +381,7 @@ export function scheduleAutoBackup(cronExpression: string = '0 2 * * *'): void {
       const retentionDays = parseInt(process.env.BACKUP_RETENTION_DAYS || '30', 10);
       await cleanupOldBackups(retentionDays);
     } catch (error) {
-      console.error('[Backup] Automated backup failed:', error);
+      logger.error({ error }, '[Backup] Automated backup failed');
     }
   });
 

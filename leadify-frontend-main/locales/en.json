@@ -601,7 +601,9 @@
     "fixedAmount": "Fixed Amount",
     "ascending": "Ascending",
     "descending": "Descending",
-    "companyName": "Company Name"
+    "companyName": "Company Name",
+    "invalidDateRange": "End date must be after start date",
+    "percentagesSumError": "Variant percentages must sum to 100"
   },
   "export": {
     "title": "Export",

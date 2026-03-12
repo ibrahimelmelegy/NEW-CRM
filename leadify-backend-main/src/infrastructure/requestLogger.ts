@@ -13,6 +13,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
+import logger from '../config/logger';
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -255,7 +256,7 @@ export function requestLoggerMiddleware(req: Request, res: Response, next: NextF
 
     // Immediately log slow requests to stderr for operational visibility
     if (slow && SLOW_LOG_IMMEDIATE) {
-      console.warn(
+      logger.warn(
         `[SLOW REQUEST] ${entry.method} ${entry.path} - ${entry.durationMs.toFixed(0)}ms ` +
           `(status: ${entry.statusCode}, user: ${userId || 'anonymous'}, ip: ${entry.ip})`
       );

@@ -2,17 +2,19 @@ import { ElNotification } from 'element-plus';
 
 // Handle error during task operations
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 
 function handleSuccess(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
   navigateTo('/operations/daily-task');
@@ -126,6 +128,7 @@ export async function getDailyTask(id: string | string[]): Promise<DailyTask> {
  * @param values - The values to create the task with
  */
 export async function createDailyTask(values: DailyTask) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const dataSend = {
       ...values,
@@ -134,7 +137,7 @@ export async function createDailyTask(values: DailyTask) {
     const response = await useApiFetch('daily-task', 'POST', dataSend);
 
     if (response?.success) {
-      handleSuccess('Daily task created successfully');
+      handleSuccess(t('common.created'));
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -148,6 +151,7 @@ export async function createDailyTask(values: DailyTask) {
  * @param values - The values to update the task with
  */
 export async function updateDailyTask(values: DailyTask, id: string) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const dataSend = {
       ...values,
@@ -156,7 +160,7 @@ export async function updateDailyTask(values: DailyTask, id: string) {
     const response = await useApiFetch(`daily-task/${id}`, 'PUT', dataSend);
 
     if (response?.success) {
-      handleSuccess('Daily task updated successfully');
+      handleSuccess(t('common.saved'));
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -170,11 +174,12 @@ export async function updateDailyTask(values: DailyTask, id: string) {
  * @param id - The ID of the task to delete
  */
 export async function deleteDailyTask(id: string) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`daily-task/${id}`, 'DELETE');
 
     if (response?.success) {
-      handleSuccess('Daily task deleted successfully');
+      handleSuccess(t('common.deleted'));
     } else {
       handleError(response?.message || 'Something went wrong');
     }

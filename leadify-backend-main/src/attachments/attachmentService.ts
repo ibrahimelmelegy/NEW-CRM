@@ -1,5 +1,6 @@
 import Attachment from './attachmentModel';
 import User from '../user/userModel';
+import logger from '../config/logger';
 
 class AttachmentService {
   async getAttachments(entityType: string, entityId: number) {
@@ -16,7 +17,7 @@ class AttachmentService {
       });
       return { docs: attachments };
     } catch (error) {
-      console.error('getAttachments error:', error);
+      logger.error({ error }, 'getAttachments error');
       return { docs: [] };
     }
   }

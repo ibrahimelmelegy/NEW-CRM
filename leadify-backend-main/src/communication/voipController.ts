@@ -3,6 +3,7 @@ import { wrapResult } from '../utils/response/responseWrapper';
 import twilioService from '../integration/twilioService';
 import communicationService from './communicationService';
 import { AuthenticatedRequest } from '../types';
+import logger from '../config/logger';
 
 class VoipController {
   /**
@@ -80,7 +81,7 @@ class VoipController {
 
       res.status(200).send('OK');
     } catch (error) {
-      console.error('[VoIP] Error in status callback:', error);
+      logger.error({ error }, '[VoIP] Error in status callback');
       res.status(500).send('Error');
     }
   }

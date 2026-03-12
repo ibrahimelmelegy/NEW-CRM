@@ -1,17 +1,19 @@
 import { ElNotification } from 'element-plus';
 
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 
 function handleSuccess(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
 }
@@ -149,11 +151,12 @@ export async function getSalesOrderById(id: string): Promise<SalesOrder> {
  * Create a new sales order
  */
 export async function createSalesOrder(data: unknown): Promise<SalesOrder | null> {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch('sales-orders', 'POST', data);
 
     if (response?.success) {
-      handleSuccess('Sales order created successfully');
+      handleSuccess(t('common.created'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to create sales order');
@@ -169,11 +172,12 @@ export async function createSalesOrder(data: unknown): Promise<SalesOrder | null
  * Update an existing sales order
  */
 export async function updateSalesOrder(id: string, data: unknown): Promise<SalesOrder | null> {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`sales-orders/${id}`, 'PUT', data);
 
     if (response?.success) {
-      handleSuccess('Sales order updated successfully');
+      handleSuccess(t('common.saved'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to update sales order');
@@ -189,11 +193,12 @@ export async function updateSalesOrder(id: string, data: unknown): Promise<Sales
  * Update the status of a sales order
  */
 export async function updateSalesOrderStatus(id: string, status: string): Promise<SalesOrder | null> {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`sales-orders/${id}/status`, 'PATCH', { status });
 
     if (response?.success) {
-      handleSuccess(`Order status updated to ${status}`);
+      handleSuccess(t('common.saved'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to update order status');
@@ -209,11 +214,12 @@ export async function updateSalesOrderStatus(id: string, status: string): Promis
  * Update the payment status of a sales order
  */
 export async function updatePaymentStatus(id: string, paymentStatus: string): Promise<SalesOrder | null> {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`sales-orders/${id}/payment-status`, 'PATCH', { paymentStatus });
 
     if (response?.success) {
-      handleSuccess(`Payment status updated to ${paymentStatus}`);
+      handleSuccess(t('common.saved'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to update payment status');
@@ -229,11 +235,12 @@ export async function updatePaymentStatus(id: string, paymentStatus: string): Pr
  * Convert a deal to a sales order
  */
 export async function convertDealToOrder(dealId: string): Promise<SalesOrder | null> {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`sales-orders/from-deal/${dealId}`, 'POST', {});
 
     if (response?.success) {
-      handleSuccess('Deal converted to sales order successfully');
+      handleSuccess(t('common.created'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to convert deal to order');
@@ -249,11 +256,12 @@ export async function convertDealToOrder(dealId: string): Promise<SalesOrder | n
  * Add fulfillment to a sales order
  */
 export async function addFulfillment(orderId: string, data: unknown): Promise<Fulfillment | null> {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`sales-orders/${orderId}/fulfillment`, 'POST', data);
 
     if (response?.success) {
-      handleSuccess('Fulfillment added successfully');
+      handleSuccess(t('common.created'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to add fulfillment');
@@ -269,11 +277,12 @@ export async function addFulfillment(orderId: string, data: unknown): Promise<Fu
  * Update a fulfillment record
  */
 export async function updateFulfillment(orderId: string, fid: string, data: unknown): Promise<Fulfillment | null> {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`sales-orders/${orderId}/fulfillment/${fid}`, 'PATCH', data);
 
     if (response?.success) {
-      handleSuccess('Fulfillment updated successfully');
+      handleSuccess(t('common.saved'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to update fulfillment');
@@ -289,11 +298,12 @@ export async function updateFulfillment(orderId: string, fid: string, data: unkn
  * Delete a sales order
  */
 export async function deleteSalesOrder(id: string): Promise<boolean> {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`sales-orders/${id}`, 'DELETE');
 
     if (response?.success) {
-      handleSuccess('Sales order deleted successfully');
+      handleSuccess(t('common.deleted'));
       return true;
     } else {
       handleError(response?.message || 'Failed to delete sales order');

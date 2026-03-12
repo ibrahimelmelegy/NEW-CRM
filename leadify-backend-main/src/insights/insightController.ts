@@ -4,6 +4,7 @@ import { wrapResult } from '../utils/response/responseWrapper';
 import { NextFunction, Response } from 'express';
 import User from '../user/userModel';
 import cacheService from '../infrastructure/cacheService';
+import logger from '../config/logger';
 
 class InsightController {
   async getLeadsSalesInsights(req: AuthenticatedRequest, res: Response, _next: NextFunction) {
@@ -21,7 +22,7 @@ class InsightController {
       await cacheService.set(cacheKey, responseFromService);
       wrapResult(res, responseFromService);
     } catch (error) {
-      console.error('[Insights] getLeadsSalesInsights error:', (error as Error).message);
+      logger.error({ err: (error as Error).message }, '[Insights] getLeadsSalesInsights error');
       wrapResult(res, {});
     }
   }

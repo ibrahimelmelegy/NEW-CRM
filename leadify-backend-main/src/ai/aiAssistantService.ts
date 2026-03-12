@@ -6,6 +6,7 @@ import Invoice from '../deal/model/invoiceMode';
 import { DealActivity } from '../activity-logs/model/dealActivities';
 import { DealStageEnums } from '../deal/dealEnum';
 import User from '../user/userModel';
+import logger from '../config/logger';
 
 // ─── Interfaces ─────────────────────────────────────────────────────────────
 
@@ -351,7 +352,7 @@ class AIAssistantService {
           }
         }
       } catch (error) {
-        console.error('AI email generation error:', error);
+        logger.error({ error }, 'AI email generation error');
       }
     }
 

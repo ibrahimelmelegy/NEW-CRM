@@ -8,6 +8,7 @@ import { sendEmail } from '../utils/emailHelper';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import { io } from '../server';
+import logger from '../config/logger';
 
 // ── Model registry for dynamic entity operations ──
 // Lazy-loaded to avoid circular dependency issues at import time.
@@ -766,7 +767,7 @@ async function processEntityEvent(
         executions.push(execution);
       } catch (error: unknown) {
         // Log failed execution but continue with other rules
-        console.error(`Workflow rule ${rule.id} (${rule.name}) failed:`, (error as Error).message);
+        logger.error({ err: error, ruleId: rule.id, ruleName: rule.name }, `Workflow rule ${rule.id} (${rule.name}) failed`);
 
         const failedExec = await WorkflowExecution.create({
           workflowRuleId: rule.id,
@@ -785,7 +786,7 @@ async function processEntityEvent(
 
     return executions;
   } catch (error: unknown) {
-    console.error('Workflow engine processEntityEvent error:', (error as Error).message);
+    logger.error({ err: (error as Error).message }, 'Workflow engine processEntityEvent error');
     return [];
   }
 }

@@ -12,6 +12,7 @@
  */
 
 import { Sequelize } from 'sequelize-typescript';
+import logger from '../config/logger';
 
 export async function addPerformanceIndexes(sequelize: Sequelize): Promise<void> {
   const indexes: string[] = [
@@ -265,7 +266,7 @@ export async function addPerformanceIndexes(sequelize: Sequelize): Promise<void>
       // This is expected and safe to skip.
       _skipped++;
       const msg = (e as Error).message?.substring(0, 100) || 'unknown error';
-      console.warn(`[DB Index] Skipped: ${msg}`);
+      logger.warn(`[DB Index] Skipped: ${msg}`);
     }
   }
 
