@@ -42,9 +42,9 @@ class InvoiceService {
   // Existing CRUD methods (unchanged)
   // -------------------------------------------------------------------------
 
-  async getInvoices(query: { page?: number; limit?: number; status?: string; search?: string }, user?: Record<string, any>) {
+  async getInvoices(query: { page?: number; limit?: number; status?: string; search?: string }, user?: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
-    const where: Record<string, any> = { ...(user ? tenantWhere(user) : {}) };
+    const where: Record<string, unknown> = { ...(user ? tenantWhere(user) : {}) };
 
     if (query.status === 'collected') where.collected = true;
     else if (query.status === 'pending') where.collected = { [Op.or]: [false, null] };
@@ -95,7 +95,15 @@ class InvoiceService {
     return invoice.update({ collected: false, collectedDate: null });
   }
 
-  async getSummary(user?: Record<string, any>) {
+  async getSummary(user?: Record<string, unknown>) {
+    interface InvoiceSummaryRaw {
+      totalInvoices: string;
+      totalAmount: string;
+      collectedAmount: string;
+      pendingAmount: string;
+      collectedCount: string;
+      pendingCount: string;
+    }
     const result = (await Invoice.findOne({
       where: { ...(user ? tenantWhere(user) : {}) },
       attributes: [
@@ -107,7 +115,7 @@ class InvoiceService {
         [fn('COUNT', literal('CASE WHEN "collected" IS NOT TRUE THEN 1 END')), 'pendingCount']
       ],
       raw: true
-    })) as any;
+    })) as InvoiceSummaryRaw | null;
 
     return {
       totalInvoices: Number(result?.totalInvoices) || 0,
@@ -217,10 +225,10 @@ class InvoiceService {
         END
     `;
 
-    const replacements: Record<string, any> = {};
+    const replacements: Record<string, unknown> = {};
     if (tenantId) replacements.tenantId = tenantId;
 
-    const rows: Record<string, any>[] = await sequelize.query(query, {
+    const rows: Record<string, unknown>[] = await sequelize.query(query, {
       replacements,
       type: QueryTypes.SELECT
     });
@@ -276,10 +284,10 @@ class InvoiceService {
       ORDER BY DATE_TRUNC('month', "invoiceDate") ASC
     `;
 
-    const replacements: Record<string, any> = {};
+    const replacements: Record<string, unknown> = {};
     if (tenantId) replacements.tenantId = tenantId;
 
-    const rows: Record<string, any>[] = await sequelize.query(query, {
+    const rows: Record<string, unknown>[] = await sequelize.query(query, {
       replacements,
       type: QueryTypes.SELECT
     });
@@ -302,8 +310,8 @@ class InvoiceService {
    *
    * Falls back to `invoiceDate` if `dueDate` is NULL.
    */
-  async getOverdueInvoices(tenantId?: string): Promise<any[]> {
-    const where: Record<string, any> = {
+  async getOverdueInvoices(tenantId?: string): Promise<Record<string, unknown>[]> {
+    const where: Record<string, unknown> = {
       collected: { [Op.or]: [false, null] },
       [Op.and]: [literal(`COALESCE("Invoice"."dueDate", "Invoice"."invoiceDate") < NOW()`)]
     };
@@ -323,7 +331,7 @@ class InvoiceService {
     });
 
     return invoices.map(inv => {
-      const json = inv.toJSON() as any;
+      const json = inv.toJSON() as Record<string, unknown>;
       return {
         ...json,
         daysOverdue: Number(json.daysOverdue) || 0

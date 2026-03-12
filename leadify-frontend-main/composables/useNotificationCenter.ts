@@ -106,7 +106,7 @@ export function useNotificationCenter() {
         socketStore.connect();
       }
 
-      socketStore.on('notification:new', (data: any) => {
+      socketStore.on('notification:new', (data: Record<string, unknown>) => {
         if (!data) return;
 
         const notif = data.notification || data;
@@ -132,7 +132,7 @@ export function useNotificationCenter() {
         }
       });
 
-      socketStore.on('notification:read', (data: any) => {
+      socketStore.on('notification:read', (data: Record<string, unknown>) => {
         if (!data) return;
         if (data.readAll) {
           notifications.value = notifications.value.map(n => ({
