@@ -63,7 +63,7 @@ class AccountingService {
   }
 
   async getChartOfAccounts(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const allAccounts = await ChartOfAccounts.findAll({
@@ -73,7 +73,7 @@ class AccountingService {
     });
 
     // Build tree structure
-    const accountMap: Record<string, any> = {};
+    const accountMap: Record<string, unknown> = {};
     const tree: unknown[] = [];
 
     for (const account of allAccounts) {
@@ -200,7 +200,7 @@ class AccountingService {
   async getJournalEntries(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { status, sourceType, startDate, endDate, search } = query;
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
 
     if (status) where.status = status;
     if (sourceType) where.sourceType = sourceType;
@@ -339,7 +339,7 @@ class AccountingService {
   // ─── Financial Reports ────────────────────────────────────────────
 
   async getTrialBalance(date?: string) {
-    const whereEntry: Record<string, any> = { status: JournalEntryStatus.POSTED };
+    const whereEntry: Record<string, unknown> = { status: JournalEntryStatus.POSTED };
     if (date) {
       whereEntry.date = { [Op.lte]: new Date(date) };
     }
@@ -394,7 +394,7 @@ class AccountingService {
   }
 
   async getProfitAndLoss(from: string, to: string) {
-    const whereEntry: Record<string, any> = {
+    const whereEntry: Record<string, unknown> = {
       status: JournalEntryStatus.POSTED,
       date: { [Op.between]: [new Date(from), new Date(to)] }
     };
@@ -451,7 +451,7 @@ class AccountingService {
   }
 
   async getBalanceSheet(date: string) {
-    const whereEntry: Record<string, any> = {
+    const whereEntry: Record<string, unknown> = {
       status: JournalEntryStatus.POSTED,
       date: { [Op.lte]: new Date(date) }
     };
@@ -519,7 +519,7 @@ class AccountingService {
     const account = await ChartOfAccounts.findByPk(accountId);
     if (!account) throw new Error('Account not found');
 
-    const whereEntry: Record<string, any> = { status: JournalEntryStatus.POSTED };
+    const whereEntry: Record<string, unknown> = { status: JournalEntryStatus.POSTED };
     if (from && to) {
       whereEntry.date = { [Op.between]: [new Date(from), new Date(to)] };
     } else if (from) {

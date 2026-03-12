@@ -10,7 +10,7 @@ class SocialCrmService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.platform) where.platform = query.platform;
     if (query.clientId) where.clientId = query.clientId;
@@ -123,7 +123,7 @@ class SocialCrmService {
     const total = tally.positive + tally.neutral + tally.negative;
 
     // Store the tally back in notes and update the sentiment field
-    let existingNotes: Record<string, any> = {};
+    let existingNotes: Record<string, unknown> = {};
     try {
       if (profile.notes) existingNotes = JSON.parse(profile.notes);
     } catch {
@@ -209,7 +209,7 @@ class SocialCrmService {
 
   async getPosts(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     const { rows, count } = await SocialPost.findAndCountAll({

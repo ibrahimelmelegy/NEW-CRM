@@ -16,7 +16,7 @@ import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 
 // ─── Entity Type to Model Mapping ────────────────────────
-const entityModelMap: Record<string, any> = {
+const entityModelMap: Record<string, unknown> = {
   lead: Lead,
   leads: Lead,
   deal: Deal,
@@ -70,7 +70,7 @@ function getEntityTypeModels(): Record<string, string> {
 function buildFilterWhere(filters: ReportFilter[]): any {
   if (!filters || !filters.length) return {};
 
-  const where: Record<string, any> = {};
+  const where: Record<string, unknown> = {};
   for (const filter of filters) {
     const { field, operator, value } = filter;
     switch (operator) {
@@ -158,7 +158,7 @@ class CustomReportService {
   }
 
   async getReports(userId: number, entityType?: string) {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       [Op.or]: [{ userId }, { isShared: true }]
     };
     if (entityType) {
@@ -214,7 +214,7 @@ class CustomReportService {
     const attributes: any = fields && fields.length > 0 ? fields : undefined;
 
     // Build query options
-    const queryOptions: Record<string, any> = {
+    const queryOptions: Record<string, unknown> = {
       where,
       raw: true,
       limit: 5000
@@ -258,7 +258,7 @@ class CustomReportService {
     const Model = getModelByEntityType(report.entityType);
     const where = buildFilterWhere(report.filters);
 
-    const queryOptions: Record<string, any> = {
+    const queryOptions: Record<string, unknown> = {
       where,
       raw: true
     };
@@ -326,7 +326,7 @@ class CustomReportService {
     throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
   }
 
-  private generateCSV(data: Record<string, any>[]): string {
+  private generateCSV(data: Record<string, unknown>[]): string {
     if (!data || !data.length) return '';
 
     const headers = Object.keys(data[0]);

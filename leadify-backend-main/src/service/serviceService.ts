@@ -66,7 +66,7 @@ class ServiceService {
   }
 
   public async sendServicesExcelByEmail(query: Record<string, unknown>, email: string): Promise<void> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       ...(query.searchKey && {
         [Op.or]: [{ type: { [Op.iLike]: `%${query.searchKey}%` } }]
       }),

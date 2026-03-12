@@ -294,7 +294,7 @@ class NotificationCenterService {
     const limit = query.limit || 10;
     const offset = (page - 1) * limit;
 
-    const where: Record<string, any> = { userId };
+    const where: Record<string, unknown> = { userId };
 
     // Filter by read status
     if (query.read === 'unread') {

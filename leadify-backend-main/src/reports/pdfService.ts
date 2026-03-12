@@ -8,7 +8,7 @@
 interface PdfReportOptions {
   title: string;
   subtitle?: string;
-  data: Record<string, any>[];
+  data: Record<string, unknown>[];
   columns: string[];
   columnLabels?: Record<string, string>;
   summary?: Record<string, { sum: number; avg: number; min: number; max: number; count: number }>;

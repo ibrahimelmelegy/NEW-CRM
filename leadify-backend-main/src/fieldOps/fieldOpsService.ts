@@ -8,7 +8,7 @@ class FieldOpsService {
   async getCheckIns(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { userId, type, startDate, endDate } = query;
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
 
     if (userId) where.userId = userId;
     if (type) where.type = type;

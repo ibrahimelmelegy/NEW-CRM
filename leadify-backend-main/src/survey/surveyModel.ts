@@ -64,7 +64,7 @@ export class SurveyResponse extends Model {
   public respondentName?: string;
 
   @Column({ type: DataType.JSONB, allowNull: false })
-  public answers!: Record<string, any>;
+  public answers!: Record<string, unknown>;
 
   @Column({ type: DataType.DATE, allowNull: true })
   public completedAt?: Date;

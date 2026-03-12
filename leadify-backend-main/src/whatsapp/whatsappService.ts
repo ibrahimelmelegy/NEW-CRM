@@ -117,7 +117,7 @@ class WhatsAppService {
     const contact = await WhatsAppContact.findByPk(id);
     if (!contact) throw new BaseError(ERRORS.NOT_FOUND);
 
-    const updateData: Record<string, any> = {};
+    const updateData: Record<string, unknown> = {};
     if (data.name !== undefined) updateData.name = data.name;
     if (data.profilePicUrl !== undefined) updateData.profilePicUrl = data.profilePicUrl;
     if (data.clientId !== undefined) updateData.clientId = data.clientId;
@@ -137,7 +137,7 @@ class WhatsAppService {
   }
 
   public async importFromClients(tenantId: string | null): Promise<{ imported: number; skipped: number }> {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     // Find clients with phone numbers
     const clients = await Client.findAll({
@@ -320,7 +320,7 @@ class WhatsAppService {
     content: string,
     externalId: string,
     type: string = WAMessageType.TEXT,
-    metadata: Record<string, any> = {},
+    metadata: Record<string, unknown> = {},
     tenantId?: string
   ): Promise<WhatsAppMessage | null> {
     // Find the contact by phone number
@@ -441,7 +441,7 @@ class WhatsAppService {
       headerType?: string;
       headerContent?: string;
       footerText?: string;
-      buttons?: Record<string, any>[];
+      buttons?: Record<string, unknown>[];
     },
     tenantId: string | null
   ): Promise<WhatsAppTemplate> {
@@ -471,14 +471,14 @@ class WhatsAppService {
       headerType?: string;
       headerContent?: string;
       footerText?: string;
-      buttons?: Record<string, any>[];
+      buttons?: Record<string, unknown>[];
       status?: string;
     }
   ): Promise<WhatsAppTemplate> {
     const template = await WhatsAppTemplate.findByPk(id);
     if (!template) throw new BaseError(ERRORS.NOT_FOUND);
 
-    const updateData: Record<string, any> = {};
+    const updateData: Record<string, unknown> = {};
     if (data.name !== undefined) updateData.name = data.name;
     if (data.language !== undefined) updateData.language = data.language;
     if (data.category !== undefined) updateData.category = data.category;
@@ -504,7 +504,7 @@ class WhatsAppService {
   // ═══════════════════════════════════════════════════════════════════════════
 
   public async getAnalytics(tenantId: string | null, dateRange?: { start: string; end: string }): Promise<unknown> {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     if (dateRange?.start && dateRange?.end) {
@@ -519,7 +519,7 @@ class WhatsAppService {
     weekStart.setDate(weekStart.getDate() - 7);
 
     // Total contacts
-    const contactWhere: Record<string, any> = {};
+    const contactWhere: Record<string, unknown> = {};
     if (tenantId) contactWhere.tenantId = tenantId;
     const totalContacts = await WhatsAppContact.count({ where: contactWhere });
     const activeContacts = await WhatsAppContact.count({
@@ -527,43 +527,43 @@ class WhatsAppService {
     });
 
     // Messages today
-    const todayWhere: Record<string, any> = { ...where };
+    const todayWhere: Record<string, unknown> = { ...where };
     delete todayWhere.createdAt;
     todayWhere.createdAt = { [Op.gte]: todayStart };
     const messagesToday = await WhatsAppMessage.count({ where: todayWhere });
 
     // Messages this week
-    const weekWhere: Record<string, any> = { ...where };
+    const weekWhere: Record<string, unknown> = { ...where };
     delete weekWhere.createdAt;
     weekWhere.createdAt = { [Op.gte]: weekStart };
     const messagesThisWeek = await WhatsAppMessage.count({ where: weekWhere });
 
     // Sent vs received
-    const sentWhere: Record<string, any> = { ...where };
+    const sentWhere: Record<string, unknown> = { ...where };
     sentWhere.direction = WAMessageDirection.OUTBOUND;
     const totalSent = await WhatsAppMessage.count({ where: sentWhere });
 
-    const receivedWhere: Record<string, any> = { ...where };
+    const receivedWhere: Record<string, unknown> = { ...where };
     receivedWhere.direction = WAMessageDirection.INBOUND;
     const totalReceived = await WhatsAppMessage.count({ where: receivedWhere });
 
     // Failed messages
-    const failedWhere: Record<string, any> = { ...where };
+    const failedWhere: Record<string, unknown> = { ...where };
     failedWhere.status = WAMessageStatus.FAILED;
     const totalFailed = await WhatsAppMessage.count({ where: failedWhere });
 
     // Template usage
-    const templateWhere: Record<string, any> = { ...where };
+    const templateWhere: Record<string, unknown> = { ...where };
     templateWhere.type = WAMessageType.TEMPLATE;
     const templateMessages = await WhatsAppMessage.count({ where: templateWhere });
 
     // Total templates
-    const templateCountWhere: Record<string, any> = {};
+    const templateCountWhere: Record<string, unknown> = {};
     if (tenantId) templateCountWhere.tenantId = tenantId;
     const totalTemplates = await WhatsAppTemplate.count({ where: templateCountWhere });
 
     // Unread messages
-    const unreadWhere: Record<string, any> = { ...where };
+    const unreadWhere: Record<string, unknown> = { ...where };
     unreadWhere.direction = WAMessageDirection.INBOUND;
     unreadWhere.status = { [Op.ne]: WAMessageStatus.READ };
     const unreadMessages = await WhatsAppMessage.count({ where: unreadWhere });

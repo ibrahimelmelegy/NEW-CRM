@@ -16,7 +16,7 @@ class DemandForecastService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.product) where.product = { [Op.iLike]: `%${query.product}%` };
     if (query.status) where.status = query.status;
@@ -154,7 +154,7 @@ class DemandForecastService {
 
   /** Compare predicted vs actual for confirmed forecasts to compute accuracy metrics */
   async getAccuracyReport(tenantId?: string) {
-    const where: Record<string, any> = { status: 'CONFIRMED', actualDemand: { [Op.ne]: null } };
+    const where: Record<string, unknown> = { status: 'CONFIRMED', actualDemand: { [Op.ne]: null } };
     if (tenantId) where.tenantId = tenantId;
 
     const forecasts = await DemandForecast.findAll({ where, raw: true });

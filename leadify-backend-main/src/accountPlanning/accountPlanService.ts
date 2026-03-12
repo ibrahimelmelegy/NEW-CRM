@@ -19,7 +19,7 @@ class AccountPlanService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.tier) where.tier = query.tier;
     if (query.status) where.status = query.status;
@@ -113,7 +113,7 @@ class AccountPlanService {
    * Returns accounts with highest expansion potential and nearest renewal dates.
    */
   async getWhitespaceAnalysis(tenantId?: string) {
-    const where: Record<string, any> = { status: 'ACTIVE' };
+    const where: Record<string, unknown> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     const plans = await AccountPlan.findAll({
@@ -150,7 +150,7 @@ class AccountPlanService {
 
   /** Forecast revenue across all active account plans grouped by tier */
   async getForecast(tenantId?: string) {
-    const where: Record<string, any> = { status: 'ACTIVE' };
+    const where: Record<string, unknown> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     const plans = await AccountPlan.findAll({ where, raw: true });

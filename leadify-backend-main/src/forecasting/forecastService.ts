@@ -15,7 +15,7 @@ class ForecastService {
   async getForecasts(query: ForecastQuery) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { userId, period } = query;
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
 
     if (userId) where.userId = userId;
     if (period) where.period = period;
@@ -225,7 +225,7 @@ class ForecastService {
     });
 
     // Group by user
-    const byUser: Record<string, any> = {};
+    const byUser: Record<string, unknown> = {};
     for (const f of forecasts) {
       const uid = f.userId;
       if (!byUser[uid]) {

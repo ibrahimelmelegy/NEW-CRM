@@ -111,7 +111,7 @@ class PerformanceService {
    * Buckets: 1-2 = Needs Improvement, 2-3 = Meets Expectations, 3-4 = Exceeds, 4-5 = Outstanding.
    */
   async getPerformanceDistribution(tenantId: string, period: string) {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       tenantId,
       period,
       overallRating: { [Op.ne]: null }

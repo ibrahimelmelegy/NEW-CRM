@@ -58,7 +58,7 @@ class IntegrationConfig extends Model {
     type: DataType.JSONB,
     allowNull: true
   })
-  public config?: Record<string, any>;
+  public config?: Record<string, unknown>;
 
   @Default(IntegrationStatus.INACTIVE)
   @Column({

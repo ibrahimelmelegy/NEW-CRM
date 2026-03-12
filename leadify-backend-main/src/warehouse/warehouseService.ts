@@ -11,7 +11,7 @@ class WarehouseService {
 
   async getWarehouses(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
@@ -47,7 +47,7 @@ class WarehouseService {
 
   async getZones(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     const { rows, count } = await WarehouseZone.findAndCountAll({ where, limit, offset, order: [['createdAt', 'DESC']] });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
@@ -58,7 +58,7 @@ class WarehouseService {
   }
 
   async getStockCount(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     const count = await StockTransfer.count({ where });
     return { count, total: count };
@@ -78,7 +78,7 @@ class WarehouseService {
 
   async getTransfers(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     const { rows, count } = await StockTransfer.findAndCountAll({

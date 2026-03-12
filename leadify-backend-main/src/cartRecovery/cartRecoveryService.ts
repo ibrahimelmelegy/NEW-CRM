@@ -22,7 +22,7 @@ class CartRecoveryService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.recoveryStatus) where.recoveryStatus = query.recoveryStatus;
     if (query.customerId) where.customerId = query.customerId;
@@ -126,7 +126,7 @@ class CartRecoveryService {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - days);
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       recoveryStatus: { [Op.in]: ['ABANDONED', 'REMINDED'] },
       abandonedAt: { [Op.lt]: cutoff }
     };
@@ -141,7 +141,7 @@ class CartRecoveryService {
 
   /** Get recovery funnel statistics */
   async getRecoveryStats(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const all = await AbandonedCart.findAll({ where, raw: true });

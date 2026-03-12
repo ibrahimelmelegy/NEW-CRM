@@ -6,7 +6,7 @@ import logger from '../config/logger';
 
 /** Any Sequelize model class that has findByPk and toJSON on its instances */
 interface AuditableModel {
-  findByPk(id: string | number): Promise<{ toJSON(): Record<string, any> } | null>;
+  findByPk(id: string | number): Promise<{ toJSON(): Record<string, unknown> } | null>;
 }
 
 /**
@@ -31,7 +31,7 @@ export function auditUpdate(
     /** Human-readable labels for field names, e.g. { firstName: 'First Name' } */
     fieldLabels?: Record<string, string>;
     /** Override how the action is determined. Default: 'UPDATE' */
-    actionResolver?: (req: AuthenticatedRequest, oldRecord: Record<string, any>) => AuditAction;
+    actionResolver?: (req: AuthenticatedRequest, oldRecord: Record<string, unknown>) => AuditAction;
   }
 ) {
   const idParam = options?.idParam || 'id';
@@ -52,7 +52,7 @@ export function auditUpdate(
         return next();
       }
 
-      const oldValues = currentRecord.toJSON() as Record<string, any>;
+      const oldValues = currentRecord.toJSON() as Record<string, unknown>;
 
       // Store old values on the request so the handler can proceed normally
       (req as any)._auditOldValues = oldValues;
@@ -99,11 +99,11 @@ export function auditUpdate(
  * and diff it against the snapshot we took before the update.
  */
 async function captureAuditAfterUpdate(req: AuthenticatedRequest): Promise<void> {
-  const oldValues = (req as any)._auditOldValues as Record<string, any> | undefined;
+  const oldValues = (req as any)._auditOldValues as Record<string, unknown> | undefined;
   const entityType = (req as any)._auditEntityType as string | undefined;
   const entityId = (req as any)._auditEntityId as string | undefined;
   const fieldLabels = (req as any)._auditFieldLabels as Record<string, string> | undefined;
-  const actionResolver = (req as any)._auditActionResolver as ((req: AuthenticatedRequest, old: Record<string, any>) => AuditAction) | undefined;
+  const actionResolver = (req as any)._auditActionResolver as ((req: AuthenticatedRequest, old: Record<string, unknown>) => AuditAction) | undefined;
   const modelClass = (req as any)._auditModelClass as AuditableModel | undefined;
 
   if (!oldValues || !entityType || !entityId || !modelClass) return;
@@ -116,7 +116,7 @@ async function captureAuditAfterUpdate(req: AuthenticatedRequest): Promise<void>
   const updatedRecord = await modelClass.findByPk(entityId);
   if (!updatedRecord) return;
 
-  const newValues = updatedRecord.toJSON() as Record<string, any>;
+  const newValues = updatedRecord.toJSON() as Record<string, unknown>;
   const changes = diffObjects(oldValues, newValues, fieldLabels);
 
   // If nothing actually changed, skip the audit entry
@@ -190,7 +190,7 @@ export async function auditDelete(
   entityType: string,
   entityId: string | number,
   req: AuthenticatedRequest,
-  deletedData?: Record<string, any>
+  deletedData?: Record<string, unknown>
 ): Promise<void> {
   const changes: { field: string; oldValue: any; newValue: null }[] = [];
 

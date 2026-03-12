@@ -111,7 +111,7 @@ class DailyTaskService {
   }
 
   public async sendTasksExcelByEmail(query: Record<string, unknown>, email: string): Promise<void> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       ...(query.search && {
         name: { [Op.iLike]: `%${query.search}%` }
       })

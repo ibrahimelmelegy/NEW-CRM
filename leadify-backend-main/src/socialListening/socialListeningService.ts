@@ -41,7 +41,7 @@ class SocialListeningService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.platform) where.platform = query.platform;
     if (query.sentiment) where.sentiment = query.sentiment;
@@ -95,7 +95,7 @@ class SocialListeningService {
     const since = new Date();
     since.setDate(since.getDate() - days);
 
-    const where: Record<string, any> = { mentionDate: { [Op.gte]: since } };
+    const where: Record<string, unknown> = { mentionDate: { [Op.gte]: since } };
     if (tenantId) where.tenantId = tenantId;
 
     const mentions = await SocialMention.findAll({ where, raw: true });
@@ -151,7 +151,7 @@ class SocialListeningService {
     const since = new Date();
     since.setDate(since.getDate() - 7);
 
-    const where: Record<string, any> = { mentionDate: { [Op.gte]: since }, keyword: { [Op.ne]: null } };
+    const where: Record<string, unknown> = { mentionDate: { [Op.gte]: since }, keyword: { [Op.ne]: null } };
     if (tenantId) where.tenantId = tenantId;
 
     const results = await SocialMention.findAll({

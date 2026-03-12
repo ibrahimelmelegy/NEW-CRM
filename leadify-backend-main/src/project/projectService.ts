@@ -623,7 +623,7 @@ class ProjectService {
   }
 
   public async sendProjectsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       ...tenantWhere(user),
       isCompleted: true,
       ...(query.searchKey && {

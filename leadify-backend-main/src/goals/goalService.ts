@@ -60,7 +60,7 @@ class GoalService {
     if (!goal) throw new Error('Goal not found');
 
     const clampedProgress = Math.max(0, Math.min(100, progress));
-    const updateData: Record<string, any> = { progress: clampedProgress };
+    const updateData: Record<string, unknown> = { progress: clampedProgress };
 
     if (clampedProgress >= 100 && goal.status !== 'COMPLETED') {
       updateData.status = 'COMPLETED';
@@ -106,7 +106,7 @@ class GoalService {
 
     const avgProgress = Math.round(children.reduce((sum, child) => sum + (child.progress || 0), 0) / children.length);
 
-    const updateData: Record<string, any> = { progress: avgProgress };
+    const updateData: Record<string, unknown> = { progress: avgProgress };
     if (avgProgress >= 100 && parent.status !== 'COMPLETED') {
       updateData.status = 'COMPLETED';
     } else if (avgProgress > 0 && parent.status === 'NOT_STARTED') {
@@ -126,7 +126,7 @@ class GoalService {
    * Returns total, completed, in-progress, overdue counts, avg progress, completion rate.
    */
   async getGoalStats(tenantId: string, owner?: string) {
-    const where: Record<string, any> = { tenantId };
+    const where: Record<string, unknown> = { tenantId };
     if (owner) where.owner = owner;
 
     const today = new Date().toISOString().split('T')[0];

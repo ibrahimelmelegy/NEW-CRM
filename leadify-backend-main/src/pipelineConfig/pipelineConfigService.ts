@@ -24,7 +24,7 @@ class PipelineConfigService {
     return cacheService.getOrSet<PipelineStage[]>(
       cacheKey,
       async () => {
-        const where: Record<string, any> = {};
+        const where: Record<string, unknown> = {};
         if (entityType) where.entityType = entityType;
         return PipelineStage.findAll({ where, order: [['order', 'ASC']] });
       },

@@ -20,7 +20,7 @@ const DASHBOARD_CACHE_TTL = 120; // 2 minutes
 
 // Maps entity type strings to Sequelize model classes
 function getModelByEntityType(entityType: string): any {
-  const map: Record<string, any> = {
+  const map: Record<string, unknown> = {
     lead: Lead,
     leads: Lead,
     deal: Deal,
@@ -98,7 +98,7 @@ function buildDateRangeWhere(dateRange?: string, customFrom?: string, customTo?:
 function buildFilterWhere(filters?: Array<{ field: string; operator: string; value: unknown }>): any {
   if (!filters || !filters.length) return {};
 
-  const where: Record<string, any> = {};
+  const where: Record<string, unknown> = {};
   for (const filter of filters) {
     const { field, operator, value } = filter;
     switch (operator) {
@@ -702,7 +702,7 @@ class DashboardService {
   // ─── ANALYTICS PAGE ENDPOINTS ──────────────────────────
 
   async getAnalyticsSummary(startDate?: string, endDate?: string) {
-    const dateWhere: Record<string, any> = {};
+    const dateWhere: Record<string, unknown> = {};
     if (startDate && endDate) {
       dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }
@@ -733,7 +733,7 @@ class DashboardService {
   }
 
   async getLeadSources(startDate?: string, endDate?: string) {
-    const dateWhere: Record<string, any> = {};
+    const dateWhere: Record<string, unknown> = {};
     if (startDate && endDate) {
       dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }
@@ -752,7 +752,7 @@ class DashboardService {
   }
 
   async getWinLoss(startDate?: string, endDate?: string) {
-    const dateWhere: Record<string, any> = {};
+    const dateWhere: Record<string, unknown> = {};
     if (startDate && endDate) {
       dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }
@@ -766,7 +766,7 @@ class DashboardService {
   }
 
   async getAvgDealSize(startDate?: string, endDate?: string) {
-    const dateWhere: Record<string, any> = {};
+    const dateWhere: Record<string, unknown> = {};
     if (startDate && endDate) {
       dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }
@@ -791,7 +791,7 @@ class DashboardService {
   }
 
   async getConversionFunnel(startDate?: string, endDate?: string) {
-    const dateWhere: Record<string, any> = {};
+    const dateWhere: Record<string, unknown> = {};
     if (startDate && endDate) {
       dateWhere.createdAt = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }

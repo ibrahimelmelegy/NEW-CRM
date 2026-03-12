@@ -17,7 +17,7 @@ class UsageBillingService {
 
   async getAllMeters(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
@@ -70,7 +70,7 @@ class UsageBillingService {
 
   async getUsageRecords(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.meterId) where.meterId = Number(query.meterId);
     if (query.customerId) where.customerId = query.customerId;
@@ -94,7 +94,7 @@ class UsageBillingService {
    * Supports billing models: PER_UNIT, TIERED, VOLUME.
    */
   async calculateUsageCharges(customerId: string, billingPeriod: string, tenantId?: string) {
-    const recordWhere: Record<string, any> = { customerId, billingPeriod };
+    const recordWhere: Record<string, unknown> = { customerId, billingPeriod };
     if (tenantId) recordWhere.tenantId = tenantId;
 
     const records = await UsageRecord.findAll({

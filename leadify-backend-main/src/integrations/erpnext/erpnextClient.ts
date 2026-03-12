@@ -9,7 +9,7 @@ import logger from '../config/logger';
 // ---------------------------------------------------------------------------
 
 export interface ERPNextListParams {
-  filters?: Record<string, any> | Array<[string, string, any]>;
+  filters?: Record<string, unknown> | Array<[string, string, any]>;
   fields?: string[];
   orderBy?: string;
   limit?: number;
@@ -204,7 +204,7 @@ export class ERPNextClient {
    * Get a single document by doctype and name.
    * GET /api/resource/{doctype}/{name}
    */
-  async get(doctype: string, name?: string, filters?: Record<string, any>, fields?: string[], limit?: number): Promise<unknown> {
+  async get(doctype: string, name?: string, filters?: Record<string, unknown>, fields?: string[], limit?: number): Promise<unknown> {
     if (name) {
       const res = await this.request('GET', `/api/resource/${encodeURIComponent(doctype)}/${encodeURIComponent(name)}`);
       return res.data;
@@ -219,7 +219,7 @@ export class ERPNextClient {
    */
   async getList(
     doctype: string,
-    filters?: Record<string, any> | Array<[string, string, any]>,
+    filters?: Record<string, unknown> | Array<[string, string, any]>,
     fields?: string[],
     orderBy?: string,
     limit?: number,
@@ -251,7 +251,7 @@ export class ERPNextClient {
    * Create a new document.
    * POST /api/resource/{doctype}
    */
-  async create(doctype: string, data: Record<string, any>): Promise<unknown> {
+  async create(doctype: string, data: Record<string, unknown>): Promise<unknown> {
     const res = await this.request('POST', `/api/resource/${encodeURIComponent(doctype)}`, data);
     return res.data;
   }
@@ -260,7 +260,7 @@ export class ERPNextClient {
    * Update an existing document.
    * PUT /api/resource/{doctype}/{name}
    */
-  async update(doctype: string, name: string, data: Record<string, any>): Promise<unknown> {
+  async update(doctype: string, name: string, data: Record<string, unknown>): Promise<unknown> {
     const res = await this.request('PUT', `/api/resource/${encodeURIComponent(doctype)}/${encodeURIComponent(name)}`, data);
     return res.data;
   }
@@ -278,7 +278,7 @@ export class ERPNextClient {
    * Call a server-side whitelisted method.
    * POST /api/method/{method}
    */
-  async runMethod(method: string, params?: Record<string, any>): Promise<unknown> {
+  async runMethod(method: string, params?: Record<string, unknown>): Promise<unknown> {
     const res = await this.request('POST', `/api/method/${method}`, params);
     return res;
   }

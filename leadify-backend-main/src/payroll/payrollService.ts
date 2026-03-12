@@ -19,10 +19,10 @@ class PayrollService {
     });
   }
 
-  async getPayrollRuns(query: Record<string, unknown>, user?: Record<string, any>) {
+  async getPayrollRuns(query: Record<string, unknown>, user?: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { month, year, status } = query;
-    const where: Record<string, any> = { ...(user ? tenantWhere(user) : {}) };
+    const where: Record<string, unknown> = { ...(user ? tenantWhere(user) : {}) };
     if (month) where.month = month;
     if (year) where.year = year;
     if (status) where.status = status;
@@ -179,7 +179,7 @@ class PayrollService {
 
   // ─── Payslips ────────────────────────────────────────────────────────
 
-  async getEmployeePayslips(employeeId: string, query: Record<string, any> = {}) {
+  async getEmployeePayslips(employeeId: string, query: Record<string, unknown> = {}) {
     const { page, limit, offset } = clampPagination(query, 20);
 
     const { rows, count } = await Payslip.findAndCountAll({
@@ -212,7 +212,7 @@ class PayrollService {
   async getSalaryStructures(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { employeeId } = query;
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (employeeId) where.employeeId = employeeId;
 
     const { rows, count } = await SalaryStructure.findAndCountAll({

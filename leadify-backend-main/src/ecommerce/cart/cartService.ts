@@ -9,7 +9,7 @@ class CartService {
     const { page, limit, offset } = clampPagination(query);
     const { clientId, status } = query;
 
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (clientId) where.clientId = clientId;
     if (status) where.status = status;
 
@@ -204,7 +204,7 @@ class CartService {
     const twentyFourHoursAgo = new Date();
     twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       status: CartStatusEnum.ABANDONED,
       updatedAt: { [Op.lt]: twentyFourHoursAgo }
     };

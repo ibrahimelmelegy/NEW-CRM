@@ -48,7 +48,7 @@ class PdfService {
     const document = await DocBuilderDocument.findByPk(documentId);
     if (!document) throw new BaseError(ERRORS.NOT_FOUND);
 
-    let content: Record<string, any> = {};
+    let content: Record<string, unknown> = {};
     try {
       content = document.content ? JSON.parse(document.content) : {};
     } catch {

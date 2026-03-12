@@ -9,7 +9,7 @@ const IGNORED_FIELDS = new Set(['updatedAt', 'createdAt', 'deletedAt', 'password
  * Compare two objects and produce an array of field-level changes.
  * Handles null/undefined, date normalization, and nested JSON.
  */
-export function diffObjects(oldObj: Record<string, any>, newObj: Record<string, any>, fieldLabels?: Record<string, string>): AuditFieldChange[] {
+export function diffObjects(oldObj: Record<string, unknown>, newObj: Record<string, unknown>, fieldLabels?: Record<string, string>): AuditFieldChange[] {
   const changes: AuditFieldChange[] = [];
 
   for (const key of Object.keys(newObj)) {

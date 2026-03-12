@@ -448,7 +448,7 @@ class InvoiceBillingService {
       throw new BaseError(ERRORS.SOMETHING_WENT_WRONG, 400, 'Cannot update a collected invoice');
     }
 
-    const updateData: Record<string, any> = {};
+    const updateData: Record<string, unknown> = {};
     if (data.invoiceDate) updateData.invoiceDate = new Date(data.invoiceDate);
     if (data.dealId) updateData.dealId = data.dealId;
 

@@ -1132,7 +1132,7 @@ class DocumentTemplateService {
     const { page, limit, offset } = clampPagination(query);
     const { type, searchKey } = query;
 
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (type) where.type = type;
     if (searchKey) {
       where.name = { [Op.iLike]: `%${searchKey}%` };

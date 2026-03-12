@@ -18,7 +18,7 @@ class AttributionService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.dealId) where.dealId = query.dealId;
     if (query.channel) where.channel = query.channel;
@@ -64,7 +64,7 @@ class AttributionService {
    * - TIME_DECAY: More credit to touchpoints closer to conversion (half-life decay)
    */
   async calculateAttribution(dealId: string, model: AttributionModel = 'LINEAR', dealValue?: number, tenantId?: string) {
-    const where: Record<string, any> = { dealId };
+    const where: Record<string, unknown> = { dealId };
     if (tenantId) where.tenantId = tenantId;
 
     const touchpoints = await Touchpoint.findAll({
@@ -147,7 +147,7 @@ class AttributionService {
 
   /** Aggregate channel performance across all attributed touchpoints */
   async getChannelPerformance(tenantId?: string) {
-    const where: Record<string, any> = { creditPercent: { [Op.gt]: 0 } };
+    const where: Record<string, unknown> = { creditPercent: { [Op.gt]: 0 } };
     if (tenantId) where.tenantId = tenantId;
 
     const touchpoints = await Touchpoint.findAll({ where, raw: true });
@@ -179,7 +179,7 @@ class AttributionService {
   /** Compare different attribution models side-by-side for a deal */
   async compareModels(dealId: string, dealValue: number, tenantId?: string) {
     const models: AttributionModel[] = ['FIRST_TOUCH', 'LAST_TOUCH', 'LINEAR', 'TIME_DECAY'];
-    const results: Record<string, any> = {};
+    const results: Record<string, unknown> = {};
 
     for (const model of models) {
       const result = await this.calculateAttribution(dealId, model, dealValue, tenantId);

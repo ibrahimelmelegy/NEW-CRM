@@ -11,11 +11,11 @@ export interface WorkflowCondition {
 // ── Action object types stored in the actions JSONB column ──
 export type WorkflowAction =
   | { type: 'UPDATE_FIELD'; field: string; value: string }
-  | { type: 'CREATE_RECORD'; entityType: string; data: Record<string, any> }
+  | { type: 'CREATE_RECORD'; entityType: string; data: Record<string, unknown> }
   | { type: 'SEND_EMAIL'; templateId?: string; to: string; subject: string; body: string }
   | { type: 'SEND_NOTIFICATION'; userId?: string; role?: string; title: string; message: string }
   | { type: 'CREATE_TASK'; title: string; assignedTo: string; dueInDays: number }
-  | { type: 'WEBHOOK'; url: string; method: string; headers: Record<string, string>; body: Record<string, any> }
+  | { type: 'WEBHOOK'; url: string; method: string; headers: Record<string, string>; body: Record<string, unknown> }
   | { type: 'ASSIGN_TO'; userId?: string; method?: 'round_robin' | 'least_loaded' }
   | { type: 'DELAY'; days?: number; hours?: number };
 
@@ -115,7 +115,7 @@ class WorkflowRule extends Model {
 
   @AllowNull(true)
   @Column({ type: DataType.JSONB })
-  public graphData?: Record<string, any>;
+  public graphData?: Record<string, unknown>;
 
   // Virtual association – defined in execution model
   public executions?: any[];

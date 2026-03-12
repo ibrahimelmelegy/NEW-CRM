@@ -164,7 +164,7 @@ class NotificationService {
   }
 
   // Generic Notification Creator for System Events
-  async createNotification(userId: number, title: string, body: string, metadata: Record<string, any> = {}): Promise<unknown> {
+  async createNotification(userId: number, title: string, body: string, metadata: Record<string, unknown> = {}): Promise<unknown> {
     return await Notification.create({
       userId,
       title: title, // Make sure Model has title or use body

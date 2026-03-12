@@ -19,7 +19,7 @@ class ComplianceService {
 
   async getAllConsents(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.contactId) where.contactId = query.contactId;
@@ -79,7 +79,7 @@ class ComplianceService {
 
   async getAllDataRequests(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -106,7 +106,7 @@ class ComplianceService {
     const request = await DataRequest.findByPk(id);
     if (!request) return null;
 
-    const updateData: Record<string, any> = { status: data.status };
+    const updateData: Record<string, unknown> = { status: data.status };
     if (data.resolution) updateData.resolution = data.resolution;
     if (data.assignedTo) updateData.assignedTo = data.assignedTo;
     if (data.status === 'COMPLETED') updateData.completedAt = new Date();
@@ -125,7 +125,7 @@ class ComplianceService {
    * Checks for expired consents, overdue data requests, and missing consent coverage.
    */
   async runAudit(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const now = new Date();
@@ -190,7 +190,7 @@ class ComplianceService {
 
   /** Calculate an overall compliance score based on consent coverage and request resolution */
   async getComplianceScore(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const totalConsents = await ConsentRecord.count({ where });

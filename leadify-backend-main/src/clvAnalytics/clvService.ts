@@ -17,7 +17,7 @@ class ClvService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.segment) where.segment = query.segment;
     if (query.customerId) where.customerId = query.customerId;
@@ -135,7 +135,7 @@ class ClvService {
 
   /** Group customers by segment and compute aggregated metrics */
   async getCohortAnalysis(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const records = await ClvRecord.findAll({ where, raw: true });
@@ -178,7 +178,7 @@ class ClvService {
 
   /** Get customers at highest risk of churn, sorted by risk descending */
   async getChurnPredictions(tenantId?: string, limit = 20) {
-    const where: Record<string, any> = { churnRisk: { [Op.gt]: 0.3 } };
+    const where: Record<string, unknown> = { churnRisk: { [Op.gt]: 0.3 } };
     if (tenantId) where.tenantId = tenantId;
 
     const atRisk = await ClvRecord.findAll({

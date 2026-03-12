@@ -289,7 +289,7 @@ class ProductService {
   /**
    * Bulk import products
    */
-  async bulkImport(products: Record<string, any>[]): Promise<{ created: number; errors: string[] }> {
+  async bulkImport(products: Record<string, unknown>[]): Promise<{ created: number; errors: string[] }> {
     let created = 0;
     const errors: string[] = [];
 
@@ -337,7 +337,7 @@ class ProductService {
     });
 
     // Category distribution
-    const categoryDist: Record<string, any>[] = await CatalogProduct.findAll({
+    const categoryDist: Record<string, unknown>[] = await CatalogProduct.findAll({
       attributes: ['category', [fn('COUNT', col('id')), 'count']],
       group: ['category'],
       raw: true,

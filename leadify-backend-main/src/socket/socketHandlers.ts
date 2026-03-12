@@ -526,7 +526,7 @@ export function setupCrmSocketHandlers(io: Server): void {
  *   import { emitCrmEvent } from '../socket/socketHandlers';
  *   emitCrmEvent(io, 'lead:created', { id: lead.id, tenantId: lead.tenantId });
  */
-export function emitCrmEvent(io: Server, event: string, payload: Record<string, any>): void {
+export function emitCrmEvent(io: Server, event: string, payload: Record<string, unknown>): void {
   try {
     if (payload.tenantId) {
       io.to(getTenantRoom(payload.tenantId)).emit(event, payload);

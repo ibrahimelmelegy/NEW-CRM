@@ -26,7 +26,7 @@ class BookingService {
   }
 
   async getSlots(query: Record<string, unknown>, tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.staffId) where.staffId = query.staffId;
     const slots = await BookingSlot.findAll({
@@ -144,7 +144,7 @@ class BookingService {
         endTime: c.endTime,
         clientName: c.clientName
       }));
-      const err: Record<string, any> = new Error('Time slot is not available — conflicts with existing bookings');
+      const err: Record<string, unknown> = new Error('Time slot is not available — conflicts with existing bookings');
       err.statusCode = 409;
       err.conflicts = conflictDetails;
       throw err;
@@ -215,7 +215,7 @@ class BookingService {
    */
   async getUpcomingBookings(staffId: number, tenantId?: string) {
     const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       staffId,
       date: { [Op.gte]: today },
       status: { [Op.notIn]: ['CANCELLED'] }
@@ -240,7 +240,7 @@ class BookingService {
    * Get booking analytics: total bookings, confirmed, pending, cancelled, no-show rate, popular time slots.
    */
   async getBookingAnalytics(staffId?: number, tenantId?: string, dateFrom?: string, dateTo?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (staffId) where.staffId = staffId;
     if (tenantId) where.tenantId = tenantId;
     if (dateFrom && dateTo) where.date = { [Op.between]: [dateFrom, dateTo] };
@@ -300,7 +300,7 @@ class BookingService {
   }
 
   async getBookingPages(query: Record<string, unknown>, tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.isActive !== undefined) where.isActive = query.isActive;
     const pages = await BookingPage.findAll({ where, order: [['createdAt', 'DESC']] });

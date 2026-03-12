@@ -140,7 +140,7 @@ export class WhatsAppMessage extends Model {
 
   @Default({})
   @Column({ type: DataType.JSONB, allowNull: false })
-  public metadata!: Record<string, any>;
+  public metadata!: Record<string, unknown>;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;

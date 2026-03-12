@@ -55,7 +55,7 @@ class ShippingService {
   }
 
   async getRates(query: Record<string, unknown>, tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.carrier) where.carrier = query.carrier;
     if (query.isActive !== undefined) where.isActive = query.isActive === 'true';
@@ -93,7 +93,7 @@ class ShippingService {
   async calculateShippingRate(weight: number, zone?: string, tenantId?: string) {
     if (!weight || weight <= 0) throw new Error('Weight must be a positive number');
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       isActive: true,
       weightMin: { [Op.lte]: weight },
       weightMax: { [Op.gte]: weight }
@@ -146,7 +146,7 @@ class ShippingService {
       throw new Error(`Invalid status transition: ${currentStatus} -> ${newStatus}. Allowed: ${allowedNext.join(', ') || 'none (terminal state)'}`);
     }
 
-    const updateData: Record<string, any> = { status: newStatus };
+    const updateData: Record<string, unknown> = { status: newStatus };
 
     // Auto-set timestamps based on the new status
     if (newStatus === 'SHIPPED') {
@@ -215,7 +215,7 @@ class ShippingService {
   async getCarrierRates(weight: number, zone?: string, tenantId?: string) {
     if (!weight || weight <= 0) throw new Error('Weight must be a positive number');
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       isActive: true,
       weightMin: { [Op.lte]: weight },
       weightMax: { [Op.gte]: weight }
@@ -285,7 +285,7 @@ class ShippingService {
    * total shipments, breakdown by status, on-time rate, average delivery time.
    */
   async getShippingAnalytics(tenantId: string) {
-    const where: Record<string, any> = { tenantId };
+    const where: Record<string, unknown> = { tenantId };
 
     // Total count
     const totalShipments = await Shipment.count({ where });

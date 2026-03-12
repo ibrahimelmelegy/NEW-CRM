@@ -443,7 +443,7 @@ class LeadService {
    */
   calculateScore(lead: any, rules?: ScoringRule[]): number {
     // Normalise lead fields to the canonical names used by the scoring rules
-    const normalised: Record<string, any> = {
+    const normalised: Record<string, unknown> = {
       ...lead,
       // Alias mappings for backward compatibility
       company: lead.company || lead.companyName,
@@ -455,7 +455,7 @@ class LeadService {
   }
 
   async sendLeadsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       status: { [Op.ne]: LeadStatusEnums.CONVERTED },
       ...(query.searchKey && {
         [Op.or]: [

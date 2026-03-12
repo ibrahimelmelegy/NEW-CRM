@@ -6,7 +6,7 @@ import Deal from '../deal/model/dealModel';
 import Opportunity from '../opportunity/opportunityModel';
 import Client from '../client/clientModel';
 
-const modelMap: Record<string, any> = {
+const modelMap: Record<string, unknown> = {
   LEAD: Lead,
   DEAL: Deal,
   OPPORTUNITY: Opportunity,
@@ -41,7 +41,7 @@ class ReportService {
     const Model = modelMap[config.entityType];
     if (!Model) throw new Error('Invalid entity type');
 
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
 
     // Handle date range filters
     if (config.startDate || config.endDate) {
@@ -76,7 +76,7 @@ class ReportService {
       }
     }
 
-    const queryOptions: Record<string, any> = {
+    const queryOptions: Record<string, unknown> = {
       where,
       attributes: config.columns || undefined,
       order: config.sortBy ? [[config.sortBy, config.sortOrder || 'ASC']] : [['createdAt', 'DESC']],
@@ -98,7 +98,7 @@ class ReportService {
     const Model = modelMap[entityType];
     if (!Model) throw new Error('Invalid entity type');
 
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (startDate || endDate) {
       where.createdAt = {};
       if (startDate) where.createdAt[Op.gte] = new Date(startDate);

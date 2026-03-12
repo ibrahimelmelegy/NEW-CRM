@@ -133,7 +133,7 @@ class ERPNextController {
 
   async getPayments(req: Request, res: Response, next: NextFunction) {
     try {
-      const filters: Record<string, any> = {};
+      const filters: Record<string, unknown> = {};
       if (req.query.party_type) filters.party_type = req.query.party_type;
       if (req.query.party) filters.party = req.query.party;
       if (req.query.payment_type) filters.payment_type = req.query.payment_type;

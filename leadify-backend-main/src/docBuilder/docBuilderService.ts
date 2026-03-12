@@ -241,7 +241,7 @@ class DocBuilderService {
   public async changeStatus(id: string, status: DocStatusEnum, reason: string | undefined, user: User): Promise<DocBuilderDocument> {
     const document = await this.documentOrError({ id, ...tenantWhere(user) });
 
-    const updateData: Record<string, any> = { status };
+    const updateData: Record<string, unknown> = { status };
     if (reason) updateData.rejectionReason = reason;
     if (status === DocStatusEnum.SENT) updateData.sentAt = new Date();
 
@@ -485,7 +485,7 @@ class DocBuilderService {
    * an explicit watermark string is provided.
    */
   public async renderDocument(document: DocBuilderDocument, watermark?: string): Promise<string> {
-    let content: Record<string, any> = {};
+    let content: Record<string, unknown> = {};
     try {
       content = document.content ? JSON.parse(document.content) : {};
     } catch {

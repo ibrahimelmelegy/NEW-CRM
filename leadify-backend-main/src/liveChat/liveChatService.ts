@@ -228,7 +228,7 @@ class LiveChatService {
     if (!conv) return null;
 
     const previousAgent = conv.staffId;
-    const updateData: Record<string, any> = { staffId: agentId };
+    const updateData: Record<string, unknown> = { staffId: agentId };
     if (conv.status === 'WAITING' || conv.status === 'OPEN') {
       updateData.status = 'ACTIVE';
     }

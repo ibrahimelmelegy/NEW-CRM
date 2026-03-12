@@ -17,7 +17,7 @@ class AiLeadScoringService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -73,7 +73,7 @@ class AiLeadScoringService {
     if (parameters.length === 0) return { modelId, scored: 0, results: [], error: 'No scoring parameters defined' };
 
     // Fetch leads to score
-    const leadWhere: Record<string, any> = {};
+    const leadWhere: Record<string, unknown> = {};
     if (leadIds && leadIds.length > 0) leadWhere.id = { [Op.in]: leadIds };
     if (tenantId) leadWhere.tenantId = tenantId;
 
@@ -172,7 +172,7 @@ class AiLeadScoringService {
     if (parameters.length === 0) return { modelId, features: [] };
 
     // Fetch sample leads to test rules against
-    const leadWhere: Record<string, any> = {};
+    const leadWhere: Record<string, unknown> = {};
     if (tenantId) leadWhere.tenantId = tenantId;
 
     const leads = await Lead.findAll({ where: leadWhere, limit: 100, raw: true });

@@ -11,7 +11,7 @@ class WarrantyService {
 
   async getWarranties(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -59,7 +59,7 @@ class WarrantyService {
 
   async getClaims(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.warrantyId) where.warrantyId = query.warrantyId;
     if (query.status) where.status = query.status;
@@ -103,7 +103,7 @@ class WarrantyService {
     currentEnd.setDate(currentEnd.getDate() + data.extensionDays);
     const newEndDate = currentEnd.toISOString().slice(0, 10);
 
-    const updateData: Record<string, any> = { endDate: newEndDate };
+    const updateData: Record<string, unknown> = { endDate: newEndDate };
     if (data.upgradeType) {
       updateData.type = 'EXTENDED';
     }
@@ -133,7 +133,7 @@ class WarrantyService {
    */
   async expireOverdueWarranties(tenantId?: string) {
     const today = new Date().toISOString().slice(0, 10);
-    const where: Record<string, any> = { status: 'ACTIVE', endDate: { [Op.lt]: today } };
+    const where: Record<string, unknown> = { status: 'ACTIVE', endDate: { [Op.lt]: today } };
     if (tenantId) where.tenantId = tenantId;
 
     const [affectedCount] = await Warranty.update({ status: 'EXPIRED' }, { where });
@@ -197,7 +197,7 @@ class WarrantyService {
 
     const coverage = await this.checkWarrantyCoverage(warrantyId);
     if (!coverage.covered) {
-      const err: Record<string, any> = new Error(`Warranty does not cover this claim: ${coverage.reason}`);
+      const err: Record<string, unknown> = new Error(`Warranty does not cover this claim: ${coverage.reason}`);
       err.statusCode = 400;
       err.coverage = coverage;
       throw err;
@@ -257,7 +257,7 @@ class WarrantyService {
    * total active, total expired, claims filed / resolved, average resolution time.
    */
   async getWarrantyAnalytics(tenantId: string) {
-    const where: Record<string, any> = { tenantId };
+    const where: Record<string, unknown> = { tenantId };
 
     // Count by status
     const statusCounts = (await Warranty.findAll({

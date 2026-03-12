@@ -192,7 +192,7 @@ export async function listBackups(
   docs: Backup[];
   pagination: { page: number; limit: number; totalItems: number; totalPages: number };
 }> {
-  const where: Record<string, any> = {};
+  const where: Record<string, unknown> = {};
 
   if (status) {
     where.status = status;

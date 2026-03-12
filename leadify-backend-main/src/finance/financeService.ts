@@ -30,10 +30,10 @@ class FinanceService {
   }
 
   // Expenses
-  async getExpenses(query: Record<string, unknown>, user?: Record<string, any>) {
+  async getExpenses(query: Record<string, unknown>, user?: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { categoryId, status, startDate, endDate, search, searchKey, sortBy = 'date', sort = 'DESC', submittedBy } = query;
-    const where: Record<string, any> = { ...(user ? tenantWhere(user) : {}) };
+    const where: Record<string, unknown> = { ...(user ? tenantWhere(user) : {}) };
     if (categoryId) where.categoryId = categoryId;
     if (status) where.status = status;
     if (submittedBy) where.submittedBy = submittedBy;
@@ -98,7 +98,7 @@ class FinanceService {
     return expense.update({ status: 'REJECTED' });
   }
 
-  async getExpenseSummary(user?: Record<string, any>) {
+  async getExpenseSummary(user?: Record<string, unknown>) {
     const tenantFilter = user ? tenantWhere(user) : {};
     const [total, approved, pending] = await Promise.all([
       Expense.sum('amount', { where: { ...tenantFilter } }),
@@ -112,7 +112,7 @@ class FinanceService {
   async getBudgets(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { search, sortBy = 'startDate', sort = 'DESC' } = query;
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (search) where.name = { [Op.iLike]: `%${search}%` };
 
     const { rows, count } = await Budget.findAndCountAll({

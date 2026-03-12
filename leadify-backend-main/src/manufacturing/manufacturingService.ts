@@ -144,7 +144,7 @@ class ManufacturingService {
   // ─── Work Orders ──────────────────────────────────────────────────
 
   async generateWONumber(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const last = await WorkOrder.findOne({
@@ -155,8 +155,8 @@ class ManufacturingService {
     return `WO-${String(num).padStart(3, '0')}`;
   }
 
-  async getWorkOrders(user: any, query?: Record<string, any>) {
-    const where: Record<string, any> = { ...tenantWhere(user) };
+  async getWorkOrders(user: any, query?: Record<string, unknown>) {
+    const where: Record<string, unknown> = { ...tenantWhere(user) };
     if (query?.status) where.status = query.status;
     if (query?.priority) where.priority = query.priority;
 

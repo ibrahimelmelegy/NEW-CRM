@@ -154,7 +154,7 @@ class SupportService {
     const user = await User.findByPk(userId);
     if (!user) throw new BaseError(ERRORS.USER_NOT_FOUND);
 
-    const updateData: Record<string, any> = { assignedTo: userId };
+    const updateData: Record<string, unknown> = { assignedTo: userId };
 
     // Set firstResponseAt on first assignment
     if (!ticket.firstResponseAt) {
@@ -224,7 +224,7 @@ class SupportService {
     const currentIndex = priorityLadder.indexOf(ticket.priority as TicketPriority);
     const newPriority = currentIndex < priorityLadder.length - 1 ? priorityLadder[currentIndex + 1] : TicketPriority.URGENT;
 
-    const updateData: Record<string, any> = { priority: newPriority };
+    const updateData: Record<string, unknown> = { priority: newPriority };
 
     // Recalculate SLA deadline based on new priority
     const newSlaDeadline = await this.calculateSLADeadline(newPriority);

@@ -75,7 +75,7 @@ class ProjectManpowerService {
   public async getProjectManpowers(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       ...(query.projectId && { projectId: query.projectId }),
       ...(query.manpowerId && { manpowerId: query.manpowerId }),
       ...(query.searchKey && {

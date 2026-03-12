@@ -5,7 +5,7 @@ import logger from '../config/logger';
 class AttachmentService {
   async getAttachments(entityType: string, entityId: number) {
     try {
-      const where: Record<string, any> = {};
+      const where: Record<string, unknown> = {};
       if (entityType) where.entityType = entityType;
       if (entityId && !isNaN(entityId)) where.entityId = entityId;
 

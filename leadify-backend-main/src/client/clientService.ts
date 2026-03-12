@@ -368,7 +368,7 @@ class ClientService {
     segments: Record<string, { count: number; clients: Array<{ id: string; clientName: string; score: number }> }>;
     totalClients: number;
   }> {
-    const where: Record<string, any> = tenantId ? { tenantId } : {};
+    const where: Record<string, unknown> = tenantId ? { tenantId } : {};
     const clients = await Client.findAll({
       where,
       attributes: ['id', 'clientName']
@@ -417,7 +417,7 @@ class ClientService {
     segmentDistribution: Record<string, number>;
     topByDealValue: Array<{ id: string; clientName: string; totalDealValue: number }>;
   }> {
-    const where: Record<string, any> = tenantId ? { tenantId } : {};
+    const where: Record<string, unknown> = tenantId ? { tenantId } : {};
 
     // Total clients
     const totalClients = await Client.count({ where });
@@ -514,7 +514,7 @@ class ClientService {
   }
 
   public async sendClientsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       ...(query.searchKey && {
         [Op.or]: [
           { clientName: { [Op.iLike]: `%${query.searchKey}%` } },

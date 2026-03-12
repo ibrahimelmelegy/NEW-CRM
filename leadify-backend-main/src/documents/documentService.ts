@@ -8,7 +8,7 @@ class DocumentService {
   // ==================== FOLDERS ====================
 
   async getFolders(parentId?: number) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (parentId) {
       where.parentId = parentId;
     } else {

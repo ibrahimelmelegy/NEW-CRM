@@ -9,7 +9,7 @@ interface JourneyEvent {
   title: string;
   description: string;
   sentiment: 'positive' | 'neutral' | 'negative';
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface JourneyResult {

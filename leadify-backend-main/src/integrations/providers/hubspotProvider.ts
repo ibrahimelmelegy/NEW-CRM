@@ -12,7 +12,7 @@ export interface HubSpotSyncResult<T> {
 
 export interface HubSpotRecord {
   id: string;
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -110,7 +110,7 @@ export class HubSpotProvider {
     try {
       const client = this.getClient();
       if (client) {
-        const apiMap: Record<string, any> = {
+        const apiMap: Record<string, unknown> = {
           contacts: client.crm.contacts,
           deals: client.crm.deals,
           companies: client.crm.companies
@@ -138,13 +138,13 @@ export class HubSpotProvider {
 
   async exportToHubspot(
     objectType: 'contacts' | 'deals' | 'companies',
-    records: Array<Record<string, any>>
+    records: Array<Record<string, unknown>>
   ): Promise<HubSpotSyncResult<{ exported: number; failed: number }>> {
     try {
       const client = this.getClient();
       if (client) {
         const inputs = records.map(r => ({ properties: r }));
-        const apiMap: Record<string, any> = {
+        const apiMap: Record<string, unknown> = {
           contacts: client.crm.contacts,
           deals: client.crm.deals,
           companies: client.crm.companies

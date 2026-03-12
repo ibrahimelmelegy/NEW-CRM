@@ -21,7 +21,7 @@ class SalesOrderService {
   /**
    * Calculate totals from line items
    */
-  calculateTotals(items: Record<string, any>[]): { subtotal: number; taxAmount: number; discountAmount: number; total: number } {
+  calculateTotals(items: Record<string, unknown>[]): { subtotal: number; taxAmount: number; discountAmount: number; total: number } {
     let subtotal = 0;
     let taxAmount = 0;
     let discountAmount = 0;
@@ -402,7 +402,7 @@ class SalesOrderService {
       discountRate: item.discountRate || 0
     }));
 
-    const orderData: Record<string, any> = {
+    const orderData: Record<string, unknown> = {
       clientId,
       currency: currency || 'SAR',
       notes: notes || 'Converted from cart',
@@ -421,7 +421,7 @@ class SalesOrderService {
   /**
    * Order analytics: revenue, counts, averages, status distribution
    */
-  async getOrderAnalytics(query?: Record<string, any>): Promise<unknown> {
+  async getOrderAnalytics(query?: Record<string, unknown>): Promise<unknown> {
     const where: WhereOptions = {};
 
     // Optional date range

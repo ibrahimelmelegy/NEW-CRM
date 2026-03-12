@@ -124,7 +124,7 @@ class AIChatService {
         return this.analyzeQuestionFallback(question);
       }
 
-      const messages: Record<string, any>[] = [
+      const messages: Record<string, unknown>[] = [
         { role: 'system', content: CRM_SYSTEM_PROMPT },
         ...history.slice(-6), // Include last 3 exchanges for context
         { role: 'user', content: question }
@@ -228,7 +228,7 @@ class AIChatService {
   }
 
   private async executeQuery(plan: any): Promise<unknown> {
-    const modelMap: Record<string, any> = {
+    const modelMap: Record<string, unknown> = {
       leads: Lead,
       deals: Deal,
       clients: Client,
@@ -240,7 +240,7 @@ class AIChatService {
     const model = modelMap[plan.module];
     if (!model) return null;
 
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
 
     // Apply filters
     if (plan.filters) {
@@ -266,7 +266,7 @@ class AIChatService {
       if (to) where[dateField][Op.lte] = new Date(to);
     }
 
-    const queryOptions: Record<string, any> = { where };
+    const queryOptions: Record<string, unknown> = { where };
 
     // Execute based on intent
     switch (plan.intent) {

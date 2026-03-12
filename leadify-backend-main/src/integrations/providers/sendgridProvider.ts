@@ -22,7 +22,7 @@ export interface TemplateEmailInput {
   to: string;
   from?: string;
   templateId: string;
-  dynamicData?: Record<string, any>;
+  dynamicData?: Record<string, unknown>;
 }
 
 export interface EmailResult<T> {

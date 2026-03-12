@@ -37,7 +37,7 @@ export async function safeSchemaSync(sequelize: Sequelize): Promise<SyncResult> 
 
     try {
       // Check if table exists
-      let existingColumns: Record<string, any>;
+      let existingColumns: Record<string, unknown>;
       try {
         existingColumns = await queryInterface.describeTable(tableNameStr);
       } catch {
@@ -108,8 +108,8 @@ function buildColumnDefinition(attrDef: ModelAttributeColumnOptions): ModelAttri
   // Carry over references (foreign keys)
   if (attrDef.references) {
     colDef.references = attrDef.references;
-    if (attrDef.onDelete) (colDef as unknown as Record<string, any>).onDelete = attrDef.onDelete;
-    if (attrDef.onUpdate) (colDef as unknown as Record<string, any>).onUpdate = attrDef.onUpdate;
+    if (attrDef.onDelete) (colDef as unknown as Record<string, unknown>).onDelete = attrDef.onDelete;
+    if (attrDef.onUpdate) (colDef as unknown as Record<string, unknown>).onUpdate = attrDef.onUpdate;
   }
 
   return colDef;

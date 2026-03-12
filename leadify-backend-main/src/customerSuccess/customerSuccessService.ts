@@ -167,7 +167,7 @@ class CustomerSuccessService {
 
   // ─── Get Full Customer Success Dashboard ────────────────────────────────────
   public async getDashboard(tenantId?: string): Promise<CustomerSuccessDashboard> {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     // Get all active clients
@@ -281,7 +281,7 @@ class CustomerSuccessService {
       const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
       const monthName = date.toLocaleString('en', { month: 'short', year: '2-digit' });
 
-      const where: Record<string, any> = {
+      const where: Record<string, unknown> = {
         stage: 'CLOSED_WON',
         updatedAt: { [Op.gte]: date, [Op.lt]: nextMonth }
       };
@@ -304,7 +304,7 @@ class CustomerSuccessService {
       const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
       const monthName = date.toLocaleString('en', { month: 'short', year: '2-digit' });
 
-      const where: Record<string, any> = {
+      const where: Record<string, unknown> = {
         contactType: 'CLIENT',
         createdAt: { [Op.gte]: date, [Op.lt]: nextMonth }
       };

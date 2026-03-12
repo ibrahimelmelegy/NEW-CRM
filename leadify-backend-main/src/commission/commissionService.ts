@@ -149,7 +149,7 @@ class CommissionService {
    * Returns total earned, total paid, total pending, plus monthly breakdown.
    */
   async getCommissionSummary(userId: number, tenantId?: string) {
-    const where: Record<string, any> = { staffId: userId };
+    const where: Record<string, unknown> = { staffId: userId };
     if (tenantId) where.tenantId = tenantId;
 
     // Overall totals via SQL aggregation
@@ -203,7 +203,7 @@ class CommissionService {
    * Optionally filtered by period (startDate/endDate).
    */
   async getTeamCommissions(tenantId: string, period?: { startDate?: string; endDate?: string }) {
-    const where: Record<string, any> = { tenantId };
+    const where: Record<string, unknown> = { tenantId };
     if (period?.startDate || period?.endDate) {
       where.createdAt = {};
       if (period.startDate) where.createdAt[Op.gte] = new Date(period.startDate);
@@ -331,7 +331,7 @@ class CommissionService {
       period?: 'monthly' | 'quarterly';
     }
   ) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query?.staffId) where.staffId = query.staffId;
     if (query?.startDate || query?.endDate) {
@@ -406,7 +406,7 @@ class CommissionService {
    * Works without a userId — returns totals for the entire tenant.
    */
   async getDashboardKPIs(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const result = await Commission.findOne({

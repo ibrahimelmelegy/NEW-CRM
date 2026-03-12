@@ -13,7 +13,7 @@ class VendorScorecardService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.vendorId) where.vendorId = query.vendorId;
     if (query.period) where.period = query.period;

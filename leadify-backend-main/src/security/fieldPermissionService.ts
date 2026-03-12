@@ -62,7 +62,7 @@ export async function bulkSetPermissions(
  * Filter entity data by removing hidden fields and marking non-editable fields.
  * Returns a new object with only the fields the role can see.
  */
-export async function filterEntityFields<T extends Record<string, any>>(entity: T, roleId: string, entityType: string): Promise<Partial<T>> {
+export async function filterEntityFields<T extends Record<string, unknown>>(entity: T, roleId: string, entityType: string): Promise<Partial<T>> {
   const permissions = await FieldPermission.findAll({
     where: { roleId, entityType }
   });
@@ -76,7 +76,7 @@ export async function filterEntityFields<T extends Record<string, any>>(entity: 
     permissionMap.set(p.fieldName, p.access);
   }
 
-  const filtered: Record<string, any> = {};
+  const filtered: Record<string, unknown> = {};
   for (const key of Object.keys(entity)) {
     const access = permissionMap.get(key);
     // If no explicit permission set for this field, default to VISIBLE

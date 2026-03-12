@@ -44,7 +44,7 @@ class TimeTrackingService {
 
   async getEntries(userId: number, query: { startDate?: string; endDate?: string; entityType?: string; page?: number; limit?: number }) {
     const { page, limit, offset } = clampPagination(query, 50);
-    const where: Record<string, any> = { userId };
+    const where: Record<string, unknown> = { userId };
 
     if (query.startDate) where.startTime = { [Op.gte]: new Date(query.startDate) };
     if (query.endDate) {

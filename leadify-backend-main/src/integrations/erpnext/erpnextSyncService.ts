@@ -101,7 +101,7 @@ class ERPNextSyncService {
     // Map CRM invoice -> ERPNext Sales Invoice
     const customerName = crmClient?.clientName || crmClient?.companyName || deal?.companyName || 'Walk-in Customer';
 
-    const erpnextData: Record<string, any> = {
+    const erpnextData: Record<string, unknown> = {
       doctype: 'Sales Invoice',
       naming_series: 'SINV-.YYYY.-',
       customer: customerName,
@@ -185,7 +185,7 @@ class ERPNextSyncService {
       throw new Error(`Client ${clientId} not found`);
     }
 
-    const erpnextData: Record<string, any> = {
+    const erpnextData: Record<string, unknown> = {
       doctype: 'Customer',
       customer_name: crmClient.clientName,
       customer_type: crmClient.clientType === 'Individual' ? 'Individual' : 'Company',
@@ -240,7 +240,7 @@ class ERPNextSyncService {
       throw new Error(`Vendor #${vendorId} not found`);
     }
 
-    const erpnextData: Record<string, any> = {
+    const erpnextData: Record<string, unknown> = {
       doctype: 'Supplier',
       supplier_name: vendor.name,
       supplier_group: 'All Supplier Groups',
@@ -314,7 +314,7 @@ class ERPNextSyncService {
       amount: Number(item.unitPrice) * item.quantity
     }));
 
-    const erpnextData: Record<string, any> = {
+    const erpnextData: Record<string, unknown> = {
       doctype: 'Purchase Order',
       naming_series: 'PO-.YYYY.-',
       supplier: vendor?.name || 'Unknown Supplier',
@@ -449,12 +449,12 @@ class ERPNextSyncService {
 
   // ---- Pull Payment Entries ----
 
-  async pullPaymentEntries(filters?: Record<string, any>): Promise<any[]> {
+  async pullPaymentEntries(filters?: Record<string, unknown>): Promise<any[]> {
     const client = this.getClient();
     const config = this.getConfig();
 
     try {
-      const defaultFilters: Record<string, any> = {
+      const defaultFilters: Record<string, unknown> = {
         company: config.company,
         docstatus: 1 // submitted entries only
       };
@@ -544,7 +544,7 @@ class ERPNextSyncService {
     limit?: number;
     offset?: number;
   }): Promise<{ logs: SyncLog[]; total: number }> {
-    const where: Record<string, any> = { integration: 'erpnext' };
+    const where: Record<string, unknown> = { integration: 'erpnext' };
     if (filters?.entityType) where.entityType = filters.entityType;
     if (filters?.status) where.status = filters.status;
     if (filters?.direction) where.direction = filters.direction;

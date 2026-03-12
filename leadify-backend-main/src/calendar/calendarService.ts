@@ -5,10 +5,10 @@ import logger from '../config/logger';
 
 class CalendarService {
   // ─── Get Events with Date Range & Filters ─────────────────────────────────
-  async getEvents(query: Record<string, any>) {
+  async getEvents(query: Record<string, unknown>) {
     try {
       const { start, end, userId, eventType, status, priority, search } = query;
-      const where: Record<string, any> = {};
+      const where: Record<string, unknown> = {};
 
       if (start && end) {
         where[Op.or as unknown as string] = [
@@ -41,12 +41,12 @@ class CalendarService {
   }
 
   // ─── Create Event ─────────────────────────────────────────────────────────
-  async createEvent(data: Record<string, any>, userId: number) {
+  async createEvent(data: Record<string, unknown>, userId: number) {
     return CalendarEvent.create({ ...data, userId });
   }
 
   // ─── Update Event ─────────────────────────────────────────────────────────
-  async updateEvent(id: number, data: Record<string, any>, _userId: number) {
+  async updateEvent(id: number, data: Record<string, unknown>, _userId: number) {
     const event = await CalendarEvent.findByPk(id);
     if (!event) throw new Error('Event not found');
     return event.update(data);
@@ -142,7 +142,7 @@ class CalendarService {
 
   // ─── Conflict Detection ──────────────────────────────────────────────────
   async checkConflicts(userId: number, startDate: string, endDate: string, excludeId?: number) {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       userId,
       status: 'SCHEDULED',
       allDay: false,
@@ -182,7 +182,7 @@ class CalendarService {
 
   // ─── Analytics ────────────────────────────────────────────────────────────
   async getAnalytics(userId: number, startDate?: string, endDate?: string) {
-    const where: Record<string, any> = { userId };
+    const where: Record<string, unknown> = { userId };
     if (startDate && endDate) {
       where.startDate = { [Op.between]: [new Date(startDate), new Date(endDate)] };
     }

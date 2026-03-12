@@ -138,7 +138,7 @@ export class SalesforceProvider {
 
   async exportToSalesforce(
     objectType: 'Lead' | 'Contact' | 'Opportunity',
-    records: Record<string, any>[]
+    records: Record<string, unknown>[]
   ): Promise<SyncResult<{ exported: number; failed: number }>> {
     try {
       const conn = await this.getConnection();

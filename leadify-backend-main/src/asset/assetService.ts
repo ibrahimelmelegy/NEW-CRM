@@ -79,7 +79,7 @@ class AssetService {
   }
 
   public async sendAssetsExcelByEmail(query: Record<string, unknown>, email: string): Promise<void> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       ...(query.searchKey && {
         [Op.or]: [{ name: { [Op.iLike]: `%${query.searchKey}%` } }]
       }),

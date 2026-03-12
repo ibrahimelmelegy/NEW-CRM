@@ -18,7 +18,7 @@ class SurveyService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.title = { [Op.iLike]: `%${query.search}%` };
@@ -59,7 +59,7 @@ class SurveyService {
 
   async getResponses(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.surveyId) where.surveyId = query.surveyId;
     const { rows, count } = await SurveyResponse.findAndCountAll({ where, order: [['createdAt', 'DESC']], limit, offset });
@@ -95,7 +95,7 @@ class SurveyService {
     let validResponses = 0;
 
     for (const resp of responses) {
-      const answers = resp.answers as Record<string, any>;
+      const answers = resp.answers as Record<string, unknown>;
       const score = Number(answers[npsQuestion.id]);
       if (isNaN(score) || score < 0 || score > 10) continue;
 
@@ -135,14 +135,14 @@ class SurveyService {
     const questions: SurveyQuestion[] = survey.questions || [];
     const responses = await SurveyResponse.findAll({ where: { surveyId } });
 
-    const analytics: Record<string, any> = {};
+    const analytics: Record<string, unknown> = {};
 
     for (const question of questions) {
       const qId = question.id;
       const values: unknown[] = [];
 
       for (const resp of responses) {
-        const answers = resp.answers as Record<string, any>;
+        const answers = resp.answers as Record<string, unknown>;
         if (answers[qId] !== undefined && answers[qId] !== null && answers[qId] !== '') {
           values.push(answers[qId]);
         }
@@ -295,7 +295,7 @@ class SurveyService {
     const rows: string[] = [headers.map(h => `"${h}"`).join(',')];
 
     for (const resp of responses) {
-      const answers = resp.answers as Record<string, any>;
+      const answers = resp.answers as Record<string, unknown>;
       const row: string[] = [
         String(resp.id),
         `"${(resp.respondentName || '').replace(/"/g, '""')}"`,

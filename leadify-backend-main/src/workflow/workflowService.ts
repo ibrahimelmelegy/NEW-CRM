@@ -12,9 +12,9 @@ import logger from '../config/logger';
 
 // ── Model registry for dynamic entity operations ──
 // Lazy-loaded to avoid circular dependency issues at import time.
-let modelRegistry: Record<string, any> | null = null;
+let modelRegistry: Record<string, unknown> | null = null;
 
-function getModelRegistry(): Record<string, any> {
+function getModelRegistry(): Record<string, unknown> {
   if (modelRegistry) return modelRegistry;
 
   // Require inline to break circular deps
@@ -162,7 +162,7 @@ async function getExecutions(query: ExecutionQuery) {
   const limit = Math.min(100, Math.max(1, parseInt(query.limit || '20', 10)));
   const offset = (page - 1) * limit;
 
-  const where: Record<string, any> = {};
+  const where: Record<string, unknown> = {};
   if (query.workflowRuleId) where.workflowRuleId = parseInt(query.workflowRuleId, 10);
   if (query.entityType) where.entityType = query.entityType;
   if (query.entityId) where.entityId = query.entityId;
@@ -215,7 +215,7 @@ async function getExecutionsForRule(ruleId: number, query: { page?: string; limi
 // ─────────────────────────────────────────────────────────
 
 function evaluateConditions(
-  entity: Record<string, any>,
+  entity: Record<string, unknown>,
   conditions: WorkflowCondition[] | undefined | null,
   conditionLogic: ConditionLogic = ConditionLogic.AND
 ): boolean {
@@ -226,7 +226,7 @@ function evaluateConditions(
   return conditionLogic === ConditionLogic.AND ? results.every(Boolean) : results.some(Boolean);
 }
 
-function evaluateSingleCondition(entity: Record<string, any>, cond: WorkflowCondition): boolean {
+function evaluateSingleCondition(entity: Record<string, unknown>, cond: WorkflowCondition): boolean {
   const fieldValue = getNestedValue(entity, cond.field);
 
   switch (cond.operator) {
@@ -268,7 +268,7 @@ function evaluateSingleCondition(entity: Record<string, any>, cond: WorkflowCond
 }
 
 /** Retrieve a potentially nested value like "client.name" from an object */
-function getNestedValue(obj: Record<string, any>, path: string): unknown {
+function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
   return path.split('.').reduce((current, key) => {
     if (current === null || current === undefined) return undefined;
     return current[key];
@@ -279,7 +279,7 @@ function getNestedValue(obj: Record<string, any>, path: string): unknown {
 // Template resolver: replaces {{field}} with entity values
 // ─────────────────────────────────────────────────────────
 
-function resolveTemplate(template: string, entity: Record<string, any>): string {
+function resolveTemplate(template: string, entity: Record<string, unknown>): string {
   return template.replace(/\{\{([\w.]+)\}\}/g, (_match, path) => {
     const value = getNestedValue(entity, path);
     return value !== null && value !== undefined ? String(value) : '';
@@ -294,7 +294,7 @@ async function executeUpdateField(
   action: Extract<WorkflowAction, { type: 'UPDATE_FIELD' }>,
   entityType: string,
   entityId: string,
-  entity: Record<string, any>
+  entity: Record<string, unknown>
 ): Promise<unknown> {
   const registry = getModelRegistry();
   const Model = registry[entityType];
@@ -306,13 +306,13 @@ async function executeUpdateField(
   return { field: action.field, newValue: resolvedValue };
 }
 
-async function executeCreateRecord(action: Extract<WorkflowAction, { type: 'CREATE_RECORD' }>, entity: Record<string, any>): Promise<unknown> {
+async function executeCreateRecord(action: Extract<WorkflowAction, { type: 'CREATE_RECORD' }>, entity: Record<string, unknown>): Promise<unknown> {
   const registry = getModelRegistry();
   const Model = registry[action.entityType];
   if (!Model) throw new Error(`Unknown entity type for record creation: ${action.entityType}`);
 
   // Resolve template values in each data field
-  const resolvedData: Record<string, any> = {};
+  const resolvedData: Record<string, unknown> = {};
   for (const [key, val] of Object.entries(action.data)) {
     resolvedData[key] = typeof val === 'string' ? resolveTemplate(val, entity) : val;
   }
@@ -321,7 +321,7 @@ async function executeCreateRecord(action: Extract<WorkflowAction, { type: 'CREA
   return { entityType: action.entityType, id: created.id };
 }
 
-async function executeSendEmail(action: Extract<WorkflowAction, { type: 'SEND_EMAIL' }>, entity: Record<string, any>): Promise<unknown> {
+async function executeSendEmail(action: Extract<WorkflowAction, { type: 'SEND_EMAIL' }>, entity: Record<string, unknown>): Promise<unknown> {
   const to = resolveTemplate(action.to, entity);
   const subject = resolveTemplate(action.subject, entity);
   const body = resolveTemplate(action.body, entity);
@@ -338,7 +338,7 @@ async function executeSendEmail(action: Extract<WorkflowAction, { type: 'SEND_EM
 
 async function executeSendNotification(
   action: Extract<WorkflowAction, { type: 'SEND_NOTIFICATION' }>,
-  entity: Record<string, any>,
+  entity: Record<string, unknown>,
   triggerUserId?: number
 ): Promise<unknown> {
   const title = resolveTemplate(action.title, entity);
@@ -377,7 +377,7 @@ async function executeSendNotification(
 
 async function executeCreateTask(
   action: Extract<WorkflowAction, { type: 'CREATE_TASK' }>,
-  entity: Record<string, any>,
+  entity: Record<string, unknown>,
   triggerUserId?: number
 ): Promise<unknown> {
   const title = resolveTemplate(action.title, entity);
@@ -404,12 +404,12 @@ async function executeCreateTask(
   return { taskId: task.id, title, assignedTo, dueDate };
 }
 
-async function executeWebhook(action: Extract<WorkflowAction, { type: 'WEBHOOK' }>, entity: Record<string, any>): Promise<unknown> {
+async function executeWebhook(action: Extract<WorkflowAction, { type: 'WEBHOOK' }>, entity: Record<string, unknown>): Promise<unknown> {
   const url = resolveTemplate(action.url, entity);
   const method = (action.method || 'POST').toUpperCase();
 
   // Resolve template values in body
-  const resolvedBody: Record<string, any> = {};
+  const resolvedBody: Record<string, unknown> = {};
   if (action.body) {
     for (const [key, val] of Object.entries(action.body)) {
       resolvedBody[key] = typeof val === 'string' ? resolveTemplate(val, entity) : val;
@@ -551,7 +551,7 @@ async function getLeastLoadedUser(): Promise<number | null> {
 
 async function executeAction(
   action: WorkflowAction,
-  entity: Record<string, any>,
+  entity: Record<string, unknown>,
   context: { entityType: string; entityId: string; userId?: number }
 ): Promise<unknown> {
   switch (action.type) {
@@ -580,7 +580,7 @@ async function executeAction(
 
 async function executeWorkflow(
   rule: WorkflowRule,
-  entity: Record<string, any>,
+  entity: Record<string, unknown>,
   trigger: { type: string; entityType: string; entityId: string },
   userId?: number
 ): Promise<WorkflowExecution> {
@@ -703,13 +703,13 @@ async function processEntityEvent(
   entityType: string,
   entityId: string,
   triggerType: TriggerType,
-  oldData?: Record<string, any> | null,
-  newData?: Record<string, any> | null,
+  oldData?: Record<string, unknown> | null,
+  newData?: Record<string, unknown> | null,
   userId?: number
 ): Promise<WorkflowExecution[]> {
   try {
     // Build query for matching rules
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       entityType,
       isActive: true,
       [Op.or]: [
@@ -792,7 +792,7 @@ async function processEntityEvent(
 }
 
 /** Fetch an entity by type and id from the model registry */
-async function fetchEntity(entityType: string, entityId: string): Promise<Record<string, any> | null> {
+async function fetchEntity(entityType: string, entityId: string): Promise<Record<string, unknown> | null> {
   const registry = getModelRegistry();
   const Model = registry[entityType];
   if (!Model) return null;
@@ -807,10 +807,10 @@ async function fetchEntity(entityType: string, entityId: string): Promise<Record
 
 async function testRule(
   ruleId: number,
-  sampleData: Record<string, any>
+  sampleData: Record<string, unknown>
 ): Promise<{
   conditionsMatch: boolean;
-  resolvedActions: Array<{ type: string; resolved: Record<string, any> }>;
+  resolvedActions: Array<{ type: string; resolved: Record<string, unknown> }>;
 }> {
   const rule = await WorkflowRule.findByPk(ruleId);
   if (!rule) throw new BaseError(ERRORS.WORKFLOW_RULE_NOT_FOUND);
@@ -818,7 +818,7 @@ async function testRule(
   const conditionsMatch = evaluateConditions(sampleData, rule.conditions, rule.conditionLogic);
 
   const resolvedActions = rule.actions.map(action => {
-    const resolved: Record<string, any> = { type: action.type };
+    const resolved: Record<string, unknown> = { type: action.type };
 
     for (const [key, val] of Object.entries(action)) {
       if (key === 'type') continue;
@@ -838,7 +838,7 @@ async function testRule(
 async function executeDelayedActions(
   executionId: number,
   ruleId: number,
-  entity: Record<string, any>,
+  entity: Record<string, unknown>,
   actions: any[],
   userId?: number
 ): Promise<void> {
@@ -895,7 +895,7 @@ async function manualExecute(ruleId: number, userId: number): Promise<WorkflowEx
   if (!rule) throw new BaseError(ERRORS.WORKFLOW_RULE_NOT_FOUND);
 
   // For manual triggers, we build a minimal entity context from the rule's entityType
-  const entity: Record<string, any> = {
+  const entity: Record<string, unknown> = {
     id: 'manual-trigger',
     _manualExecution: true,
     _triggeredBy: userId,

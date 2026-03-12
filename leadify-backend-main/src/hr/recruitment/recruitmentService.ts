@@ -15,7 +15,7 @@ class RecruitmentService {
 
   async getPostings(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.title = { [Op.iLike]: `%${query.search}%` };
@@ -52,7 +52,7 @@ class RecruitmentService {
 
   async getApplicants(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.jobPostingId) where.jobPostingId = query.jobPostingId;
     if (query.stage) where.stage = query.stage;

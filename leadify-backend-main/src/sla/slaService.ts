@@ -91,7 +91,7 @@ class SLAService {
     const limit = query.limit || 20;
     const offset = (page - 1) * limit;
 
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (query.entityType) where.entityType = query.entityType;
     if (query.isActive !== undefined) where.isActive = query.isActive;
 
@@ -128,7 +128,7 @@ class SLAService {
    * Start an SLA for a given entity. Finds the best matching active SLA policy
    * and creates an SLA instance with computed deadlines.
    */
-  async startSLA(entityType: string, entityId: string, entityData: Record<string, any> = {}): Promise<SLAInstance | null> {
+  async startSLA(entityType: string, entityId: string, entityData: Record<string, unknown> = {}): Promise<SLAInstance | null> {
     // Find all active policies for this entity type
     const policies = await SLAPolicy.findAll({
       where: { entityType, isActive: true },
@@ -203,7 +203,7 @@ class SLAService {
     const resolutionBreached = now > instance.resolutionDeadline;
 
     // Also check response if not yet responded
-    const updates: Record<string, any> = {
+    const updates: Record<string, unknown> = {
       resolvedAt: now,
       resolutionBreached,
       status: resolutionBreached ? SLAInstanceStatus.BREACHED : SLAInstanceStatus.COMPLETED
@@ -450,7 +450,7 @@ class SLAService {
    * Get aggregate SLA metrics for a given entity type within a date range.
    */
   async getSLAMetrics(entityType: string, dateRange?: { from?: string; to?: string }): Promise<SLAMetrics> {
-    const where: Record<string, any> = { entityType };
+    const where: Record<string, unknown> = { entityType };
 
     if (dateRange?.from || dateRange?.to) {
       where.startedAt = {};
@@ -529,7 +529,7 @@ class SLAService {
    * A policy matches if all its conditions are satisfied by entityData.
    * More specific policies (more conditions) are preferred.
    */
-  private findMatchingPolicy(policies: SLAPolicy[], entityData: Record<string, any>): SLAPolicy | null {
+  private findMatchingPolicy(policies: SLAPolicy[], entityData: Record<string, unknown>): SLAPolicy | null {
     let bestMatch: SLAPolicy | null = null;
     let bestScore = -1;
 

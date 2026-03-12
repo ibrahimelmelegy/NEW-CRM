@@ -155,7 +155,7 @@ class UserService {
   }
 
   public async sendUsersExcelByEmail(query: Record<string, unknown>, email: string): Promise<void> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       ...(query.status && { status: query.status }),
       ...(query.roleId && { roleId: query.roleId }),
       ...(query.searchKey && {

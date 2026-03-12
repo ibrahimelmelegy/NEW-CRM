@@ -24,7 +24,7 @@ interface TerritoryNode {
 
 class TerritoryService {
   async getTerritories(query: TerritoryQuery): Promise<Territory[]> {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
 
     if (query.parentId !== undefined) {
       where.parentId = query.parentId;

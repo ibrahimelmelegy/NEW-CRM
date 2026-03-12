@@ -15,7 +15,7 @@ import { sequelize } from '../config/db';
  */
 
 // Helper to create bypass options (avoids repeated `as any` casts)
-function bypass(extra: Record<string, any> = {}): any {
+function bypass(extra: Record<string, unknown> = {}): any {
   return { [TENANT_BYPASS]: true, ...extra };
 }
 
@@ -44,7 +44,7 @@ export async function getAllTenants(
   const limit = Math.min(100, Math.max(1, options.limit || 20));
   const offset = (page - 1) * limit;
 
-  const where: Record<string, any> = {};
+  const where: Record<string, unknown> = {};
 
   if (options.status) {
     where.status = options.status;
@@ -235,7 +235,7 @@ export async function canAddUser(tenantId: string): Promise<boolean> {
  * Get the tenant associated with the current user (for non-admin use).
  * Returns a safe subset of tenant info (no internal settings).
  */
-export async function getMyTenant(tenantId: string): Promise<Record<string, any> | null> {
+export async function getMyTenant(tenantId: string): Promise<Record<string, unknown> | null> {
   const tenant = await getTenantById(tenantId);
   if (!tenant) return null;
 

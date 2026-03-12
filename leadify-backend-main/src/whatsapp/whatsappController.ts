@@ -318,7 +318,7 @@ class WhatsAppController {
                 const phoneNumber = msg.from;
                 const content = msg.text?.body || msg.caption || '';
                 const type = (msg.type || 'text').toUpperCase();
-                const metadata: Record<string, any> = {};
+                const metadata: Record<string, unknown> = {};
 
                 // Extract media URLs based on type
                 if (msg.image) metadata.imageId = msg.image.id;

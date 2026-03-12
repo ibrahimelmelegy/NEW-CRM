@@ -93,7 +93,7 @@ export class WhatsAppProvider {
     try {
       const config = this.getConfig();
       if (config) {
-        const templatePayload: Record<string, any> = {
+        const templatePayload: Record<string, unknown> = {
           messaging_product: 'whatsapp',
           recipient_type: 'individual',
           to: input.to,
@@ -130,7 +130,7 @@ export class WhatsAppProvider {
     try {
       const config = this.getConfig();
       if (config) {
-        const mediaPayload: Record<string, any> = {
+        const mediaPayload: Record<string, unknown> = {
           messaging_product: 'whatsapp',
           recipient_type: 'individual',
           to: input.to,
@@ -138,7 +138,7 @@ export class WhatsAppProvider {
         };
 
         // Build the media object based on type
-        const mediaObj: Record<string, any> = { link: input.mediaUrl };
+        const mediaObj: Record<string, unknown> = { link: input.mediaUrl };
         if (input.caption) mediaObj.caption = input.caption;
         if (input.filename && input.type === 'document') mediaObj.filename = input.filename;
         mediaPayload[input.type] = mediaObj;
@@ -212,10 +212,10 @@ export class WhatsAppProvider {
   /**
    * Parse incoming webhook payload from Meta WhatsApp Business API.
    */
-  parseWebhookPayload(body: Record<string, any>): WhatsAppWebhookEvent[] {
+  parseWebhookPayload(body: Record<string, unknown>): WhatsAppWebhookEvent[] {
     const events: WhatsAppWebhookEvent[] = [];
     try {
-      const entry = body.entry as Array<{ changes: Array<{ value: Record<string, any> }> }>;
+      const entry = body.entry as Array<{ changes: Array<{ value: Record<string, unknown> }> }>;
       if (!entry) return events;
 
       for (const e of entry) {

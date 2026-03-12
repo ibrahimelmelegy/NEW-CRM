@@ -39,7 +39,7 @@ class CpqService {
 
   async getPriceBooks(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
 
@@ -79,7 +79,7 @@ class CpqService {
 
   async getEntries(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.search) {
       where[Op.or as any] = [{ productName: { [Op.iLike]: `%${query.search}%` } }, { sku: { [Op.iLike]: `%${query.search}%` } }];
@@ -123,7 +123,7 @@ class CpqService {
 
   async getPricingRules(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
     if (query.type) where.type = query.type;
@@ -158,7 +158,7 @@ class CpqService {
   // ─── CPQ Quote CRUD ──────────────────────────────────────────────────────────
 
   private async generateQuoteNumber(tenantId?: string): Promise<string> {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const lastQuote = await CpqQuote.findOne({
@@ -192,7 +192,7 @@ class CpqService {
 
   async getQuotes(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.search) {
       where[Op.or as any] = [{ title: { [Op.iLike]: `%${query.search}%` } }, { quoteNumber: { [Op.iLike]: `%${query.search}%` } }];
@@ -275,7 +275,7 @@ class CpqService {
   // ─── Quote Expiry Handling ───────────────────────────────────────────────────
 
   async expireOverdueQuotes(tenantId?: string) {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       status: { [Op.in]: ['DRAFT', 'SENT'] },
       validUntil: { [Op.lt]: new Date().toISOString().slice(0, 10) }
     };
@@ -312,7 +312,7 @@ class CpqService {
   // ─── Analytics ───────────────────────────────────────────────────────────────
 
   async getAnalytics(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const allQuotes = await CpqQuote.findAll({ where, attributes: ['id', 'status', 'total', 'discountTotal', 'subtotal'] });
@@ -441,7 +441,7 @@ class CpqService {
   // ─── Auto-apply Pricing Rules from DB ────────────────────────────────────────
 
   async getApplicablePricingRules(tenantId?: string, totalQty?: number, _distinctItems?: number): Promise<DiscountRule[]> {
-    const where: Record<string, any> = { isActive: true };
+    const where: Record<string, unknown> = { isActive: true };
     if (tenantId) where.tenantId = tenantId;
 
     const dbRules = await PricingRule.findAll({ where, order: [['priority', 'ASC']] });

@@ -24,7 +24,7 @@ class LoyaltyService {
 
   async getPrograms(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
@@ -52,7 +52,7 @@ class LoyaltyService {
 
   async getPointsHistory(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.clientId) where.clientId = query.clientId;
     if (query.programId) where.programId = query.programId;
@@ -79,7 +79,7 @@ class LoyaltyService {
    * Returns the current tier and the threshold needed to reach the next tier.
    */
   async calculateTier(clientId: string, programId?: number) {
-    const where: Record<string, any> = { clientId, transactionType: 'EARN' };
+    const where: Record<string, unknown> = { clientId, transactionType: 'EARN' };
     if (programId) where.programId = programId;
 
     const totalEarned = (await LoyaltyPoints.sum('points', { where })) || 0;
@@ -112,7 +112,7 @@ class LoyaltyService {
     const twelveMonthsAgo = new Date();
     twelveMonthsAgo.setFullYear(twelveMonthsAgo.getFullYear() - 1);
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       clientId,
       transactionType: 'EARN',
       createdAt: { [Op.lt]: twelveMonthsAgo }

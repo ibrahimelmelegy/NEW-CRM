@@ -396,7 +396,7 @@ class ProposalService {
   }
 
   public async sendProposalsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       ...(query.relatedEntityId && { relatedEntityId: query.relatedEntityId }),
       ...(query.searchKey && {
         [Op.or]: [

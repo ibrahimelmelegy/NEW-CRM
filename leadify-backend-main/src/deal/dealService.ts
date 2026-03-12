@@ -508,7 +508,7 @@ class DealService {
   }
 
   public async getKanbanDeals(user: User): Promise<Record<string, Deal[]>> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       stage: { [Op.ne]: DealStageEnums.CONVERTED }
     };
 
@@ -667,7 +667,7 @@ class DealService {
     byStage: Record<string, { count: number; totalValue: number; weightedValue: number; avgProbability: number }>;
   }> {
     try {
-      const where: Record<string, any> = {
+      const where: Record<string, unknown> = {
         stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.ARCHIVED, DealStageEnums.CONVERTED] },
         ...(tenantId ? { tenantId } : {})
       };
@@ -781,7 +781,7 @@ class DealService {
     avgDaysToClose: number;
     byMonth: Array<{ month: string; won: number; lost: number; winRate: number }>;
   }> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       stage: { [Op.in]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED] },
       ...(tenantId ? { tenantId } : {})
     };
@@ -860,7 +860,7 @@ class DealService {
   }
 
   public async sendDealsExcelByEmail(query: GetPaginatedDealsInput, user: User, email: string): Promise<void> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       stage: {
         [Op.ne]: DealStageEnums.CONVERTED
       },
