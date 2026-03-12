@@ -348,7 +348,7 @@ class CommunicationService {
     const limit = Math.min(100, Math.max(1, Number(pagination.limit) || 20));
     const offset = (page - 1) * limit;
 
-    const where: unknown = { type: ActivityType.CALL };
+    const where: Record<string, unknown> = { type: ActivityType.CALL };
     if (tenantId) where.tenantId = tenantId;
     if (pagination.search) {
       where[Op.or] = [{ subject: { [Op.iLike]: `%${pagination.search}%` } }, { contactId: { [Op.iLike]: `%${pagination.search}%` } }];
@@ -398,7 +398,7 @@ class CommunicationService {
     const limit = Math.min(100, Math.max(1, Number(pagination.limit) || 20));
     const offset = (page - 1) * limit;
 
-    const where: unknown = { type: ActivityType.MEETING };
+    const where: Record<string, unknown> = { type: ActivityType.MEETING };
     if (tenantId) where.tenantId = tenantId;
     if (pagination.search) {
       where[Op.or] = [{ subject: { [Op.iLike]: `%${pagination.search}%` } }, { body: { [Op.iLike]: `%${pagination.search}%` } }];

@@ -120,11 +120,11 @@ class SalesOrderService {
     // Date range filtering
     if (startDate || endDate) {
       (where as Record<string, unknown>).createdAt = {};
-      if (startDate) (where as Record<string, unknown>).createdAt[Op.gte] = new Date(startDate);
+      if (startDate) ((where as Record<string, unknown>).createdAt as Record<string, unknown>)[Op.gte] = new Date(startDate);
       if (endDate) {
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
-        (where as Record<string, unknown>).createdAt[Op.lte] = end;
+        ((where as Record<string, unknown>).createdAt as Record<string, unknown>)[Op.lte] = end;
       }
     }
 
@@ -427,11 +427,11 @@ class SalesOrderService {
     // Optional date range
     if (query?.startDate || query?.endDate) {
       (where as Record<string, unknown>).createdAt = {};
-      if (query.startDate) (where as Record<string, unknown>).createdAt[Op.gte] = new Date(query.startDate);
+      if (query.startDate) ((where as Record<string, unknown>).createdAt as Record<string, unknown>)[Op.gte] = new Date(query.startDate);
       if (query.endDate) {
         const end = new Date(query.endDate);
         end.setHours(23, 59, 59, 999);
-        (where as Record<string, unknown>).createdAt[Op.lte] = end;
+        ((where as Record<string, unknown>).createdAt as Record<string, unknown>)[Op.lte] = end;
       }
     }
 
@@ -488,10 +488,10 @@ class SalesOrderService {
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const revenueByDayOfWeek: Record<string, number> = {};
     for (const name of dayNames) revenueByDayOfWeek[name] = 0;
-    for (const row of revenueByDow || []) {
-      const dowIndex = parseInt(row.dow, 10);
+    for (const row of (revenueByDow || []) as Record<string, unknown>[]) {
+      const dowIndex = parseInt(row.dow as string, 10);
       if (dayNames[dowIndex]) {
-        revenueByDayOfWeek[dayNames[dowIndex]!] = parseFloat(row.revenue || 0);
+        revenueByDayOfWeek[dayNames[dowIndex]!] = parseFloat(String(row.revenue || 0));
       }
     }
 

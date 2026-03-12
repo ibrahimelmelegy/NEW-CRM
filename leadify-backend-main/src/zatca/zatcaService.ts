@@ -503,8 +503,8 @@ class ZatcaService {
 
     if (query.fromDate || query.toDate) {
       where.issueDate = {};
-      if (query.fromDate) where.issueDate[Op.gte] = query.fromDate;
-      if (query.toDate) where.issueDate[Op.lte] = query.toDate;
+      if (query.fromDate) (where.issueDate as Record<string, unknown>)[Op.gte] = query.fromDate;
+      if (query.toDate) (where.issueDate as Record<string, unknown>)[Op.lte] = query.toDate;
     }
 
     const { rows, count } = await ZatcaInvoice.findAndCountAll({

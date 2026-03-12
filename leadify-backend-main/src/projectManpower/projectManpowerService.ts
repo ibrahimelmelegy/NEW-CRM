@@ -20,13 +20,13 @@ class ProjectManpowerService {
     const manpower = await manpowerService.manpowerOrError({ id: manpowerId });
 
     // Calculate mission weight
-    const missionWeight = mission.reduce((totalWeight: number, missionItem: string) => {
+    const missionWeight = (mission as string[]).reduce((totalWeight: number, missionItem: string) => {
       const missionValue = MissionEnum[missionItem as keyof typeof MissionEnum] || 0;
       return totalWeight + missionValue;
     }, 0);
 
     // Calculate costs
-    const durationCost = manpower.dailyCost * estimatedWorkDays * missionWeight;
+    const durationCost = manpower.dailyCost * Number(estimatedWorkDays) * missionWeight;
 
     const projectManpower = await ProjectManpower.create({
       projectId,
@@ -185,13 +185,13 @@ class ProjectManpowerService {
     });
 
     // Sort by utilization descending (most allocated first)
-    report.sort((a: unknown, b: unknown) => b.utilization - a.utilization);
+    report.sort((a: unknown, b: unknown) => (b as Record<string, unknown>).utilization as number - ((a as Record<string, unknown>).utilization as number));
 
     // Summary
     const totalResources = report.length;
     const overAllocatedCount = report.filter(r => r.overAllocated).length;
-    const avgUtilization = totalResources > 0 ? Math.round(report.reduce((s: number, r: unknown) => s + r.utilization, 0) / totalResources) : 0;
-    const totalAllocatedDays = report.reduce((s: number, r: unknown) => s + r.totalEstimatedDays, 0);
+    const avgUtilization = totalResources > 0 ? Math.round(report.reduce((s: number, r: unknown) => s + ((r as Record<string, unknown>).utilization as number), 0) / totalResources) : 0;
+    const totalAllocatedDays = report.reduce((s: number, r: unknown) => s + Number((r as Record<string, unknown>).totalEstimatedDays), 0);
 
     return {
       summary: {

@@ -373,7 +373,7 @@ class DocBuilderService {
       attributes: ['status', [fn('COUNT', col('id')), 'count']],
       group: ['status'],
       raw: true
-    })) as unknown[];
+    })) as Record<string, unknown>[];
 
     // Counts and value grouped by type
     const byTypeRows = (await DocBuilderDocument.findAll({
@@ -381,7 +381,7 @@ class DocBuilderService {
       attributes: ['type', [fn('COUNT', col('id')), 'count'], [fn('COALESCE', fn('SUM', col('total')), 0), 'value']],
       group: ['type'],
       raw: true
-    })) as unknown[];
+    })) as Record<string, unknown>[];
 
     const byStatus: Record<string, number> = {};
     for (const row of byStatusRows) {

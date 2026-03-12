@@ -29,9 +29,9 @@ class CartRecoveryService {
     if (query.minValue) where.totalValue = { ...(where.totalValue || {}), [Op.gte]: Number(query.minValue) };
     if (query.maxValue) where.totalValue = { ...(where.totalValue || {}), [Op.lte]: Number(query.maxValue) };
     if (query.fromDate || query.toDate) {
-      (where.abandonedAt as Date as Date) = {};
-      if (query.fromDate) (where.abandonedAt as Date as Date)[Op.gte] = new Date(query.fromDate);
-      if (query.toDate) (where.abandonedAt as Date as Date)[Op.lte] = new Date(query.toDate);
+      where.abandonedAt = {};
+      if (query.fromDate) (where.abandonedAt as Record<string, unknown>)[Op.gte] = new Date(query.fromDate);
+      if (query.toDate) (where.abandonedAt as Record<string, unknown>)[Op.lte] = new Date(query.toDate);
     }
 
     try {

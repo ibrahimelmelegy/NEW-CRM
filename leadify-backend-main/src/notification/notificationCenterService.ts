@@ -142,7 +142,7 @@ class NotificationCenterService {
         io.emit('notification:new', {
           userId: data.userId,
           notification: {
-            id: notification.id,
+            id: notification?.id,
             type: data.type,
             title: data.title,
             message: data.message,
@@ -150,7 +150,7 @@ class NotificationCenterService {
             entityType: data.entityType,
             entityId: data.entityId,
             actionUrl: data.actionUrl,
-            createdAt: notification.createdAt
+            createdAt: notification?.createdAt
           }
         });
       }
@@ -439,7 +439,7 @@ class NotificationCenterService {
       group: ['type', 'priority'],
       raw: true,
       order: [[fn('MAX', col('createdAt')), 'DESC']]
-    })) as unknown[];
+    })) as Record<string, unknown>[];
 
     // Get the latest message per type for preview
     const groups: { type: string; count: number; priority: string; latestMessage: string; latestAt: Date }[] = [];
@@ -460,9 +460,9 @@ class NotificationCenterService {
       groups.push({
         type: row.type,
         count: Number(row.count) || 0,
-        priority: row.priority || NotificationPriorityEnum.MEDIUM,
-        latestMessage: latest?.body_en || '',
-        latestAt: new Date(row.latestAt)
+        priority: (row.priority as string) || NotificationPriorityEnum.MEDIUM,
+        latestMessage: (latest as Record<string, unknown>)?.body_en as string || '',
+        latestAt: new Date(row.latestAt as string)
       });
     }
 

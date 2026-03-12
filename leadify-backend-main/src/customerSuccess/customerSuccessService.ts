@@ -43,7 +43,7 @@ export interface CustomerSuccessDashboard {
 
 class CustomerSuccessService {
   // ─── Calculate Health Score for a Single Client ─────────────────────────────
-  private async calculateHealthScore(client: unknown, tenantId?: string): Promise<HealthScore> {
+  private async calculateHealthScore(client: Record<string, unknown>, tenantId?: string): Promise<HealthScore> {
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
@@ -57,10 +57,10 @@ class CustomerSuccessService {
       attributes: ['id', 'price', 'stage', 'createdAt']
     });
 
-    const activeDeals = deals.filter(d => !['CLOSED_WON', 'CLOSED_LOST'].includes(d.stage)).length;
+    const activeDeals = deals.filter((d: Record<string, unknown>) => !['CLOSED_WON', 'CLOSED_LOST'].includes(d.stage as string)).length;
 
-    const wonDeals = deals.filter(d => (d.stage as string) === 'CLOSED_WON');
-    const totalRevenue = wonDeals.reduce((sum: number, d: Record<string, unknown>) => sum + (d.price || 0), 0);
+    const wonDeals = deals.filter((d: Record<string, unknown>) => (d.stage as string) === 'CLOSED_WON');
+    const totalRevenue = wonDeals.reduce((sum: number, d: Record<string, unknown>) => sum + (Number(d.price) || 0), 0);
 
     // Get recent communication activities
     const recentActivities = await CommActivity.count({
@@ -140,9 +140,9 @@ class CustomerSuccessService {
 
     // Get assigned users
     const assignedUsers: Array<{ id: number; name: string }> = [];
-    if (client.users && client.users.length > 0) {
-      client.users.forEach((u: Record<string, unknown>) => {
-        assignedUsers.push({ id: u.id, name: u.name });
+    if (client.users && (client.users as unknown[]).length > 0) {
+      (client.users as Record<string, unknown>[]).forEach((u: Record<string, unknown>) => {
+        assignedUsers.push({ id: u.id as number, name: u.name as string });
       });
     }
 
@@ -248,7 +248,7 @@ class CustomerSuccessService {
         .filter(h => h.riskLevel !== 'HEALTHY')
         .sort((a, b) => a.overallScore - b.overallScore)
         .slice(0, 10),
-      recentActivity: recentActivity.map(a => a.toJSON()),
+      recentActivity: recentActivity.map((a: Record<string, unknown> & { toJSON: () => Record<string, unknown> }) => a.toJSON()),
       revenueByMonth,
       engagementTrend
     };

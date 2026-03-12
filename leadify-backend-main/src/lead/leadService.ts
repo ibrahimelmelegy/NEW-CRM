@@ -69,7 +69,7 @@ function evaluateCondition(lead: Record<string, unknown>, rule: ScoringRule): bo
       if (Array.isArray(fieldValue)) return fieldValue.includes(rule.value);
       return false;
     case 'greater_than':
-      return typeof fieldValue === 'number' && fieldValue > rule.value;
+      return typeof fieldValue === 'number' && fieldValue > Number(rule.value);
     default:
       return false;
   }
@@ -327,7 +327,7 @@ class LeadService {
 
   public async importFile(file: unknown): Promise<string> {
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(file.data);
+    await workbook.xlsx.load((file as Record<string, unknown>).data as Buffer);
     const worksheet = workbook.worksheets[0];
 
     const data: Record<string, unknown>[][] = [];
@@ -384,7 +384,7 @@ class LeadService {
     for (const lead of createdLeads) {
       const leadData = leadArray.find(l => l.name === lead.name);
       if (leadData?.userIds && leadData.userIds.length > 0) {
-        await (lead as Record<string, unknown>).$set('users', leadData.userIds);
+        await (lead as any).$set('users', leadData.userIds);
       }
     }
 
@@ -393,9 +393,9 @@ class LeadService {
   streamToBuffer(stream: Record<string, unknown>) {
     return new Promise((resolve, reject) => {
       const _buf = Array<any>();
-      stream.on('data', (chunk: Record<string, unknown>) => _buf.push(chunk));
-      stream.on('end', () => resolve(Buffer.concat(_buf)));
-      stream.on('error', (err: Record<string, unknown>) => reject(err));
+      (stream as any).on('data', (chunk: Record<string, unknown>) => _buf.push(chunk));
+      (stream as any).on('end', () => resolve(Buffer.concat(_buf)));
+      (stream as any).on('error', (err: Record<string, unknown>) => reject(err));
     });
   }
 

@@ -10,7 +10,7 @@ import logger from '../config/logger';
  * - Online agent tracking
  */
 
-const typingTimers = new Map<string, NodeJS.Timeout>();
+const typingTimers = new Map<string, ReturnType<typeof setTimeout>>();
 const onlineAgents = new Map<string, { socketId: string; userId: number; name: string }>();
 
 export function setupLiveChatHandlers(io: Server) {

@@ -228,11 +228,11 @@ class AIAssistantService {
     }
 
     // Factor 6: Existing score
-    if (lead.score && lead.score > 0) {
-      if (lead.score >= 80) {
+    if (lead.score && Number(lead.score) > 0) {
+      if (Number(lead.score) >= 80) {
         factors.push({ name: 'Existing Score', impact: 'positive', score: 10, detail: `Pre-existing score of ${lead.score}` });
         totalScore += 10;
-      } else if (lead.score >= 50) {
+      } else if (Number(lead.score) >= 50) {
         factors.push({ name: 'Existing Score', impact: 'neutral', score: 3, detail: `Pre-existing score of ${lead.score}` });
         totalScore += 3;
       }
@@ -736,7 +736,7 @@ class AIAssistantService {
       const invoices = deal.invoice || [];
       const overdueInvoices = invoices.filter((inv: Record<string, unknown>) => !inv.collected && new Date(inv.invoiceDate) < now);
       if (overdueInvoices.length > 0) {
-        const totalOverdue = overdueInvoices.reduce((s: number, inv: Record<string, unknown>) => s + (inv.amount || 0), 0);
+        const totalOverdue = overdueInvoices.reduce((s: number, inv: Record<string, unknown>) => s + (Number(inv.amount) || 0), 0);
         suggestions.push({
           id: 'deal-overdue-invoices',
           type: 'warning',

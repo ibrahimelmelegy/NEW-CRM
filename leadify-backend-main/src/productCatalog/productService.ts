@@ -36,8 +36,8 @@ class ProductService {
     // Price range filter
     if (minPrice || maxPrice) {
       (where as Record<string, unknown>).unitPrice = {};
-      if (minPrice) (where as Record<string, unknown>).unitPrice[Op.gte] = Number(minPrice);
-      if (maxPrice) (where as Record<string, unknown>).unitPrice[Op.lte] = Number(maxPrice);
+      if (minPrice) ((where as Record<string, unknown>).unitPrice as Record<string, unknown>)[Op.gte] = Number(minPrice);
+      if (maxPrice) ((where as Record<string, unknown>).unitPrice as Record<string, unknown>)[Op.lte] = Number(maxPrice);
     }
 
     // Low stock filter
@@ -91,7 +91,7 @@ class ProductService {
    */
   async createProduct(data: Record<string, unknown>): Promise<CatalogProduct> {
     // Build initial price history entry
-    if (data.unitPrice !== undefined && data.unitPrice > 0) {
+    if (data.unitPrice !== undefined && Number(data.unitPrice) > 0) {
       data.priceHistory = [{ price: data.unitPrice, date: new Date().toISOString() }];
     }
     return CatalogProduct.create(data);
@@ -279,7 +279,7 @@ class ProductService {
     }
 
     // Sort by date descending
-    activity.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    activity.sort((a: unknown, b: unknown) => new Date((b as Record<string, unknown>).date as string).getTime() - new Date((a as Record<string, unknown>).date as string).getTime());
 
     return activity;
   }

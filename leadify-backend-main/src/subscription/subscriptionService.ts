@@ -156,10 +156,10 @@ class SubscriptionService {
 
     if (searchKey) {
       // Search by client name through the include
-      includeOptions[0].where = {
+      (includeOptions[0] as Record<string, unknown>).where = {
         clientName: { [Op.iLike]: `%${searchKey}%` }
       };
-      includeOptions[0].required = true;
+      (includeOptions[0] as Record<string, unknown>).required = true;
     }
 
     const { rows: docs, count: totalItems } = await CustomerSubscription.findAndCountAll({

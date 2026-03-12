@@ -72,8 +72,8 @@ class DealService {
     const transaction = await sequelize.transaction();
     try {
       lead = await leadService.leadOrError({ id: input.leadId });
-      lead.set({ status: LeadStatusEnums.CONVERTED });
-      await lead.save({ transaction });
+      (lead as any).set({ status: LeadStatusEnums.CONVERTED });
+      await (lead as any).save({ transaction });
 
       client = await Client.findOne({ where: { email: lead.email } });
       if (client) throw new BaseError(ERRORS.CLIENT_ALREADY_FOUND);

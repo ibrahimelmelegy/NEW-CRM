@@ -76,7 +76,7 @@ class SpacesStorageProvider implements StorageProvider {
   async upload(buffer: Buffer, key: string, mimetype: string): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { PutObjectCommand } = require('@aws-sdk/client-s3');
-    await this.s3.send(
+    await (this.s3 as Record<string, unknown> & { send: Function }).send(
       new PutObjectCommand({
         Bucket: this.bucket,
         Key: key,
@@ -107,14 +107,14 @@ class SpacesStorageProvider implements StorageProvider {
   async delete(key: string): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { DeleteObjectCommand } = require('@aws-sdk/client-s3');
-    await this.s3.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
+    await (this.s3 as Record<string, unknown> & { send: Function }).send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
   }
 
   async exists(key: string): Promise<boolean> {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { HeadObjectCommand } = require('@aws-sdk/client-s3');
     try {
-      await this.s3.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
+      await (this.s3 as Record<string, unknown> & { send: Function }).send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
       return true;
     } catch {
       return false;

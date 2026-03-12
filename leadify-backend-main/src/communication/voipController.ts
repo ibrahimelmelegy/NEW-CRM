@@ -31,8 +31,8 @@ class VoipController {
 
       wrapResult(res, {
         message: 'Call initiated successfully.',
-        callSid: call.sid,
-        status: call.status
+        callSid: (call as Record<string, unknown>).sid,
+        status: (call as Record<string, unknown>).status
       });
     } catch (error) {
       next(error);

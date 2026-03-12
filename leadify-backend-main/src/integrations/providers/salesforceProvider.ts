@@ -46,7 +46,7 @@ export class SalesforceProvider {
             loginUrl: process.env.SALESFORCE_LOGIN_URL || 'https://login.salesforce.com'
           }
         });
-        await this.connection.login(process.env.SALESFORCE_USERNAME!, process.env.SALESFORCE_PASSWORD!);
+        await (this.connection as Record<string, unknown> & { login: Function }).login(process.env.SALESFORCE_USERNAME!, process.env.SALESFORCE_PASSWORD!);
         // Connected to Salesforce
       } catch (err) {
         logger.error('[SalesforceProvider] Failed to connect:', err);

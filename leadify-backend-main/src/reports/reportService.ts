@@ -51,7 +51,7 @@ class ReportService {
     }
 
     if (config.filters) {
-      for (const filter of config.filters) {
+      for (const filter of config.filters as Record<string, unknown>[]) {
         const { field, operator, value } = filter;
         switch (operator) {
           case 'equals':
@@ -67,7 +67,7 @@ class ReportService {
             where[field] = { [Op.lt]: value };
             break;
           case 'between':
-            where[field] = { [Op.between]: [value[0], value[1]] };
+            where[field] = { [Op.between]: [(value as unknown[])[0], (value as unknown[])[1]] };
             break;
           case 'in':
             where[field] = { [Op.in]: value };

@@ -116,7 +116,8 @@ class UsageBillingService {
     let totalAmount = 0;
 
     for (const [meterId, usage] of Object.entries(meterUsage)) {
-      const { meter, totalQuantity } = usage;
+      const { meter: meterUnknown, totalQuantity } = usage;
+      const meter = meterUnknown as Record<string, unknown>;
       let amount: number;
 
       switch (meter.billingModel) {
@@ -124,11 +125,11 @@ class UsageBillingService {
           // Each tier has its own price, usage fills tiers sequentially
           amount = 0;
           let remaining = totalQuantity;
-          const tiers = meter.tiers || [];
+          const tiers = (meter.tiers as Record<string, unknown>[] | undefined) || [];
           for (const tier of tiers) {
-            const tierRange = tier.to - tier.from + 1;
+            const tierRange = Number(tier.to) - Number(tier.from) + 1;
             const tierUsage = Math.min(remaining, tierRange);
-            amount += tierUsage * tier.pricePerUnit;
+            amount += tierUsage * Number(tier.pricePerUnit);
             remaining -= tierUsage;
             if (remaining <= 0) break;
           }
@@ -137,11 +138,11 @@ class UsageBillingService {
         }
         case 'VOLUME': {
           // All units priced at the tier the total falls into
-          const tiers = meter.tiers || [];
+          const tiers = (meter.tiers as Record<string, unknown>[] | undefined) || [];
           let unitPrice = Number(meter.pricePerUnit);
           for (const tier of tiers) {
-            if (totalQuantity >= tier.from && (totalQuantity < tier.to || !tier.to || tier.to === Infinity)) {
-              unitPrice = tier.pricePerUnit;
+            if (totalQuantity >= Number(tier.from) && (totalQuantity < Number(tier.to) || !tier.to || tier.to === Infinity)) {
+              unitPrice = Number(tier.pricePerUnit);
               break;
             }
           }
@@ -150,11 +151,11 @@ class UsageBillingService {
         }
         case 'STAIRCASE': {
           // Fixed price per tier bracket
-          const tiers = meter.tiers || [];
+          const tiers = (meter.tiers as Record<string, unknown>[] | undefined) || [];
           amount = 0;
           for (const tier of tiers) {
-            if (totalQuantity >= tier.from) {
-              amount = tier.pricePerUnit; // flat fee for this bracket
+            if (totalQuantity >= Number(tier.from)) {
+              amount = Number(tier.pricePerUnit); // flat fee for this bracket
             }
           }
           break;

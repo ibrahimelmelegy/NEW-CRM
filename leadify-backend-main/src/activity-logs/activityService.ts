@@ -52,13 +52,13 @@ export async function getAllActivityLogs(limit: number = 100) {
         include: [userInclude],
         attributes: ['id', 'description', 'status', 'userId', 'createdAt']
       });
-      return logs.map((log: Record<string, unknown>) => ({ ...log.toJSON(), entityType: modelName }));
+      return logs.map((log: unknown) => ({ ...(log as Record<string, unknown> & { toJSON: () => Record<string, unknown> }).toJSON(), entityType: modelName }));
     })
   );
 
   const allLogs = results.filter((r): r is PromiseFulfilledResult<any[]> => r.status === 'fulfilled').flatMap(r => r.value);
 
-  allLogs.sort((a: unknown, b: unknown) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  allLogs.sort((a: unknown, b: unknown) => new Date((b as Record<string, unknown>).createdAt as string).getTime() - new Date((a as Record<string, unknown>).createdAt as string).getTime());
   return allLogs.slice(0, limit);
 }
 

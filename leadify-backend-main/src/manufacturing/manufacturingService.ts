@@ -46,7 +46,7 @@ class ManufacturingService {
 
       let totalCost = 0;
       if (data.items?.length) {
-        for (const item of data.items) {
+        for (const item of data.items as Record<string, unknown>[]) {
           await BOMItem.create(
             {
               bomId: bom.id,
@@ -90,7 +90,7 @@ class ManufacturingService {
       if (data.items) {
         await BOMItem.destroy({ where: { bomId: id }, transaction: t });
         let totalCost = 0;
-        for (const item of data.items) {
+        for (const item of data.items as Record<string, unknown>[]) {
           await BOMItem.create(
             {
               bomId: id,
@@ -234,8 +234,8 @@ class ManufacturingService {
   }
 
   async createQualityCheck(data: Record<string, unknown>, user: unknown) {
-    const defects = data.inspected - data.passed;
-    const passRate = data.inspected > 0 ? data.passed / data.inspected : 0;
+    const defects = Number(data.inspected) - Number(data.passed);
+    const passRate = Number(data.inspected) > 0 ? Number(data.passed) / Number(data.inspected) : 0;
     const result = passRate >= 0.95 ? 'PASS' : 'FAIL';
 
     return QualityCheck.create(

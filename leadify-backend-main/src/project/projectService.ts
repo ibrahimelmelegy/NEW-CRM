@@ -606,7 +606,7 @@ class ProjectService {
     return !!assignment; // Returns true if assigned, false otherwise
   }
 
-  public async deleteProject(id: string, user: User): Promise<unknown> {
+  public async deleteProject(id: string, user: User): Promise<void> {
     await this.validateProjectAccess(id, user);
     const project = await this.projectOrError({ id });
     if (project.isCompleted) throw new BaseError(ERRORS.INVALID_DELETE_COMPLETED_PROJECT);

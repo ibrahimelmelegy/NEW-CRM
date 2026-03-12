@@ -397,9 +397,9 @@ class SessionSecurityService {
       user: user.toJSON(),
       loginHistory,
       activeSessions: sessions.length,
-      leads: leads.map(l => l.toJSON()),
-      deals: deals.map(d => d.toJSON()),
-      clients: clients.map(c => c.toJSON())
+      leads: leads.map((l: unknown) => (l as Record<string, unknown> & { toJSON: () => Record<string, unknown> }).toJSON()),
+      deals: deals.map((d: unknown) => (d as Record<string, unknown> & { toJSON: () => Record<string, unknown> }).toJSON()),
+      clients: clients.map((cli: unknown) => (cli as Record<string, unknown> & { toJSON: () => Record<string, unknown> }).toJSON())
     };
   }
 }

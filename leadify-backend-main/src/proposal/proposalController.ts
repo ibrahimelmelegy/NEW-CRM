@@ -125,7 +125,7 @@ class ProposalController {
       const html = buildProposalHtml(proposal, settings);
       const { buffer, isPdf } = await pdfService.generatePdfBuffer(html);
 
-      const filename = `Proposal-${proposal.reference || proposal.id}.${isPdf ? 'pdf' : 'html'}`;
+      const filename = `Proposal-${(proposal as Record<string, unknown>).reference || (proposal as Record<string, unknown>).id}.${isPdf ? 'pdf' : 'html'}`;
       const contentType = isPdf ? 'application/pdf' : 'text/html';
 
       res.setHeader('Content-Type', contentType);
@@ -176,7 +176,7 @@ function buildProposalHtml(proposal: Record<string, unknown>, settings: Record<s
   const financeTable = proposal.financeTable;
   const items = financeTable?.items || [];
 
-  const subtotal = financeTable?.grandTotalPrice || items.reduce((sum: number, item: Record<string, unknown>) => sum + (item.totalPrice || 0), 0);
+  const subtotal = financeTable?.grandTotalPrice || items.reduce((sum: number, item: Record<string, unknown>) => sum + (Number(item.totalPrice) || 0), 0);
   const discount = financeTable?.discount || 0;
   const vat = financeTable?.vat || 0;
   const total = financeTable?.finalTotalPrice || subtotal - discount + vat;
@@ -218,7 +218,7 @@ function buildProposalHtml(proposal: Record<string, unknown>, settings: Record<s
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; text-align: center;">${item.qty || 0}</td>
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; text-align: right;">${formatCurrency(item.unitPrice || 0)}</td>
       <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; text-align: right;">${formatCurrency(item.marginAmount || 0)}</td>
-      <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; text-align: right; font-weight: 700;">${formatCurrency(item.totalPrice || 0)}</td>
+      <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; text-align: right; font-weight: 700;">${formatCurrency(Number(item.totalPrice) || 0)}</td>
     </tr>
   `
     )

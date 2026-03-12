@@ -96,7 +96,7 @@ export function registerTenantHooks(sequelize: Sequelize): void {
   for (const [modelName, modelClass] of Object.entries(sequelize.models)) {
     if (!isTenantScopedModel(modelName)) continue;
 
-    const ModelCtor = modelClass as Record<string, unknown>;
+    const ModelCtor = modelClass as Record<string, unknown> & { addHook: Function };
 
     // ─── beforeFind (per-model) ──────────────────────────────────────
     ModelCtor.addHook('beforeFind', 'tenantScopeFind', (options: FindOptions) => {

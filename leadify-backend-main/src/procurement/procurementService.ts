@@ -268,7 +268,7 @@ class ProcurementService {
       })
     );
 
-    return comparison.filter(Boolean).sort((a: unknown, b: unknown) => b.totalSpend - a.totalSpend);
+    return comparison.filter(Boolean).sort((a: unknown, b: unknown) => Number((b as Record<string, unknown>).totalSpend) - Number((a as Record<string, unknown>).totalSpend));
   }
 
   async removePurchaseOrder(id: string, user: User): Promise<void> {
