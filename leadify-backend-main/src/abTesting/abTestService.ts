@@ -66,7 +66,7 @@ class ABTestService {
     if (!test) return null;
     if (test.status !== 'RUNNING') return null;
 
-    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
+    const results: Record<string, VariantResults> = (test.results as unknown as Record<string, VariantResults>) || {};
     if (!results[variantId]) {
       results[variantId] = { impressions: 0, conversions: 0, conversionRate: 0 };
     }
@@ -85,7 +85,7 @@ class ABTestService {
     if (!test) return null;
     if (test.status !== 'RUNNING') return null;
 
-    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
+    const results: Record<string, VariantResults> = (test.results as unknown as Record<string, VariantResults>) || {};
     if (!results[variantId]) {
       results[variantId] = { impressions: 0, conversions: 0, conversionRate: 0 };
     }
@@ -104,7 +104,7 @@ class ABTestService {
     const test = await ABTest.findByPk(testId);
     if (!test) return null;
 
-    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
+    const results: Record<string, VariantResults> = (test.results as unknown as Record<string, VariantResults>) || {};
     const variants = test.variants || [];
     const variantNames = variants.map((v: VariantData) => v.name);
 
@@ -209,7 +209,7 @@ class ABTestService {
     const test = await ABTest.findByPk(testId);
     if (!test) return null;
 
-    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
+    const results: Record<string, VariantResults> = (test.results as unknown as Record<string, VariantResults>) || {};
     const variants = test.variants || [];
     const variantNames = variants.map((v: VariantData) => v.name);
 
@@ -277,7 +277,7 @@ class ABTestService {
     });
 
     return tests.map(test => {
-      const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
+      const results: Record<string, VariantResults> = (test.results as unknown as Record<string, VariantResults>) || {};
       const variants = (test.variants || []).map((v: VariantData) => {
         const data = results[v.name] || { impressions: 0, conversions: 0, conversionRate: 0 };
         return {

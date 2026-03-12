@@ -22,7 +22,7 @@ class ProposalFinanceTableItemService {
     const marginAmount = (material.unitPrice * financeTable.marginPercentage) / 100;
     const unitPrice = material.unitPrice + marginAmount;
     const description = material.description;
-    const totalPrice = data.qty * unitPrice;
+    const totalPrice = Number(data.qty) * unitPrice;
     //update finance table grand total price
 
     financeTable.grandTotalPrice += totalPrice;
@@ -44,9 +44,9 @@ class ProposalFinanceTableItemService {
     await proposalService.validateProposalAccess(financeTable.proposalId, user);
 
     if (data.qty) {
-      data.totalPrice = parseFloat((data.qty * item.unitPrice).toFixed(2));
+      data.totalPrice = parseFloat((Number(data.qty) * item.unitPrice).toFixed(2));
       //update finance table grand total price
-      financeTable.grandTotalPrice += data.totalPrice - item.totalPrice;
+      financeTable.grandTotalPrice += (data.totalPrice as number) - item.totalPrice;
       financeTable.vat = Math.max(0, (financeTable.grandTotalPrice - financeTable.discount) * 0.15);
       financeTable.finalTotalPrice = Math.max(0, financeTable.grandTotalPrice - financeTable.discount + financeTable.vat);
       await financeTable.save();
