@@ -134,7 +134,7 @@ async function loadTickets() {
       tickets.value = (body as unknown).docs || [];
     }
   } catch {
-    /* silent */
+    ElNotification({ type: 'error', title: t('common.error'), message: t('support.failedToLoadTickets') });
   } finally {
     loading.value = false;
   }
