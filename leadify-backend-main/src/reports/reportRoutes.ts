@@ -1,8 +1,10 @@
 import express from 'express';
 import reportController from './reportController';
 import { authenticateUser } from '../middleware/authMiddleware';
+import { reportLimiter, exportLimiter } from '../infrastructure/rateLimitEnhanced';
 
 const router = express.Router();
+router.use(reportLimiter);
 
 /**
  * @swagger

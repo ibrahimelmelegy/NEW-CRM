@@ -5,6 +5,7 @@ import { aiChatController, aiDealController, aiEmailController, aiInsightsContro
 import { aiAssistantController } from './aiAssistantController';
 import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import { LeadAndSalesWidgetsPermissionsEnum } from '../role/roleEnum';
+import { aiLimiter } from '../infrastructure/rateLimitEnhanced';
 
 /**
  * @swagger
@@ -14,6 +15,9 @@ import { LeadAndSalesWidgetsPermissionsEnum } from '../role/roleEnum';
  */
 
 const router = express.Router();
+
+// Apply AI rate limiter to all routes in this router (15 req/min per user)
+router.use(aiLimiter);
 
 // ─── Core AI ──────────────────────────────────────────────────────────────────
 

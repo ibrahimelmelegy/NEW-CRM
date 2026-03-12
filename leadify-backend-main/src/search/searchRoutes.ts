@@ -1,6 +1,7 @@
 import express from 'express';
 import searchController from './searchController';
 import { authenticateUser } from '../middleware/authMiddleware';
+import { searchLimiter } from '../infrastructure/rateLimitEnhanced';
 
 /**
  * @swagger
@@ -10,6 +11,7 @@ import { authenticateUser } from '../middleware/authMiddleware';
  */
 
 const router = express.Router();
+router.use(searchLimiter);
 
 /**
  * @swagger

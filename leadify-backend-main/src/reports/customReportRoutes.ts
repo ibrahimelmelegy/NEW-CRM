@@ -2,8 +2,10 @@ import express from 'express';
 import customReportController from './customReportController';
 import reportBuilderController from './reportBuilderController';
 import { authenticateUser } from '../middleware/authMiddleware';
+import { reportLimiter } from '../infrastructure/rateLimitEnhanced';
 
 const router = express.Router();
+router.use(reportLimiter);
 
 /**
  * @swagger

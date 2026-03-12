@@ -2,6 +2,7 @@ import express from 'express';
 import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import whatsappController from './whatsappController';
 import { WhatsAppPermissionsEnum } from '../role/roleEnum';
+import { bulkOperationLimiter } from '../infrastructure/rateLimitEnhanced';
 
 const router = express.Router();
 
@@ -476,7 +477,7 @@ router.put(
  *       200:
  *         description: Bulk send results
  */
-router.post('/messages/bulk', authenticateUser, HasPermission([WhatsAppPermissionsEnum.SEND_WHATSAPP_BULK]), whatsappController.sendBulkTemplate);
+router.post('/messages/bulk', authenticateUser, bulkOperationLimiter, HasPermission([WhatsAppPermissionsEnum.SEND_WHATSAPP_BULK]), whatsappController.sendBulkTemplate);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TEMPLATES
