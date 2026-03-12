@@ -824,7 +824,8 @@
     "pageNotFound": "الصفحة غير موجودة",
     "pageNotFoundDesc": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
     "goHome": "الذهاب إلى لوحة القيادة",
-    "goBack": "رجوع"
+    "goBack": "رجوع",
+    "unknown": "حدث خطأ غير معروف"
   },
   "crm": {
     "projectStatus": {
@@ -2113,7 +2114,8 @@
       "invalidFile": "يرجى تحميل ملف Excel صالح (.xls أو .xlsx)",
       "importFailed": "فشل استيراد الملف"
     },
-    "noLeadsYet": "لا توجد عملاء محتملون بعد"
+    "noLeadsYet": "لا توجد عملاء محتملون بعد",
+    "present": "حاضر"
   },
   "opportunities": {
     "title": "الفرص",
@@ -8001,7 +8003,9 @@
     "software": "برمجيات",
     "services": "خدمات",
     "hardware": "أجهزة",
-    "accessories": "إكسسوارات"
+    "accessories": "إكسسوارات",
+    "currency": "العملة",
+    "description": "الوصف"
   },
   "companies": {
     "title": "دليل الشركات",
@@ -8550,7 +8554,10 @@
       "categoryCreated": "تم إنشاء التصنيف بنجاح",
       "categoryUpdated": "تم تحديث التصنيف بنجاح",
       "categoryDeleted": "تم حذف التصنيف بنجاح",
-      "noCategories": "لا توجد تصنيفات بعد. أنشئ أول تصنيف."
+      "noCategories": "لا توجد تصنيفات بعد. أنشئ أول تصنيف.",
+      "name": "اسم الفئة",
+      "subcategories": "الفئات الفرعية",
+      "total": "الإجمالي"
     },
     "coupons": {
       "title": "القسائم والخصومات",
@@ -8590,7 +8597,9 @@
       "noExpiry": "بدون انتهاء",
       "active": "نشط",
       "expired": "منتهي",
-      "disabled": "معطل"
+      "disabled": "معطل",
+      "edit": "تعديل الكوبون",
+      "generate": "توليد الكود"
     },
     "reviews": {
       "title": "مراجعات المنتجات",
@@ -8619,8 +8628,17 @@
       "responseSent": "تم إرسال الرد بنجاح",
       "reviewDeleted": "تم حذف المراجعة",
       "confirmDelete": "هل أنت متأكد من حذف هذه المراجعة؟",
-      "noReviews": "لم يتم العثور على مراجعات"
-    }
+      "noReviews": "لم يتم العثور على مراجعات",
+      "verified": "شراء موثق"
+    },
+    "active": "نشط",
+    "cancelled": "ملغي",
+    "client": "العميل",
+    "confirmed": "مؤكد",
+    "pending": "في الانتظار",
+    "processing": "قيد المعالجة",
+    "shipped": "تم الشحن",
+    "total": "الإجمالي"
   },
   "marketing": {
     "surveys": {
@@ -8964,7 +8982,13 @@
     "call": "مكالمة",
     "demo": "عرض توضيحي",
     "consultation": "استشارة",
-    "followUp": "متابعة"
+    "followUp": "متابعة",
+    "check": "تحقق",
+    "completed": "مكتمل",
+    "search": "بحث",
+    "staff": "الموظف",
+    "status": "الحالة",
+    "upcoming": "القادمة"
   },
   "callLog": {
     "title": "سجل المكالمات",
@@ -13621,7 +13645,26 @@
     "express": "سريع",
     "economy": "اقتصادي",
     "preparing": "جاري التجهيز",
-    "inTransit": "في الطريق"
+    "inTransit": "في الطريق",
+    "active": "نشط",
+    "calculate": "حساب",
+    "carrier": "شركة الشحن",
+    "cost": "التكلفة",
+    "currency": "العملة",
+    "delivered": "تم التسليم",
+    "destination": "الوجهة",
+    "origin": "المصدر",
+    "rate": "السعر",
+    "rates": "الأسعار",
+    "recipient": "المستلم",
+    "returned": "مُعاد",
+    "shipments": "الشحنات",
+    "status": "الحالة",
+    "subtitle": "إدارة الشحنات وأسعار الشحن",
+    "title": "الشحن",
+    "track": "تتبع",
+    "weight": "الوزن",
+    "zone": "المنطقة"
   },
   "whatsapp": {
     "english": "الإنجليزية",
