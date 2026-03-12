@@ -16,7 +16,7 @@ export default (error: Error, req: Request, res: Response, _next: NextFunction):
     message = req.t('SOMETHING_WENT_WRONG');
   }
 
-  const response: any = {
+  const response: { status: number; code: number; success: boolean; message: string; body: Record<string, never> } = {
     status: statusCode,
     code: internalCode,
     success: false,

@@ -27,10 +27,10 @@ export const useNotificationStore = defineStore('notifications', {
       this.loading = true;
 
       try {
-        const response: any = await useApiFetch(`notification?page=${page}&limit=${limit}`);
+        const response = await useApiFetch(`notification?page=${page}&limit=${limit}`);
 
         if (response.success && response.body) {
-          const docs = (response.body.docs || []).map((n: any) => ({
+          const docs = (response.body.docs || []).map((n: Record<string, unknown>) => ({
             ...n,
             read: n.read === 'READ' || n.read === 'CLICKED' || n.read === true
           }));
@@ -64,7 +64,7 @@ export const useNotificationStore = defineStore('notifications', {
 
     async fetchUnreadCount() {
       try {
-        const response: any = await useApiFetch('notification/unread-count');
+        const response = await useApiFetch('notification/unread-count');
 
         if (response.success && response.body) {
           this.unreadCount = response.body.count;
@@ -139,7 +139,7 @@ export const useNotificationStore = defineStore('notifications', {
         socketStore.connect();
       }
 
-      socketStore.on('notification:new', (data: any) => {
+      socketStore.on('notification:new', (data: Record<string, unknown>) => {
         if (!data) return;
 
         const notif = data.notification || data;
@@ -175,7 +175,7 @@ export const useNotificationStore = defineStore('notifications', {
         }
       });
 
-      socketStore.on('notification:read', (data: any) => {
+      socketStore.on('notification:read', (data: Record<string, unknown>) => {
         if (!data) return;
         if (data.readAll) {
           // All notifications marked as read by another tab/device

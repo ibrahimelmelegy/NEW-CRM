@@ -56,7 +56,7 @@ export const useOpportunityStore = defineStore('opportunities', {
             ).toString()
           : '';
 
-        const response: any = await useApiFetch(`opportunity${query}`);
+        const response = await useApiFetch(`opportunity${query}`);
 
         if (response.success && response.body) {
           this.opportunities = response.body.docs || [];
@@ -80,7 +80,7 @@ export const useOpportunityStore = defineStore('opportunities', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch(`opportunity/${id}`);
+        const response = await useApiFetch(`opportunity/${id}`);
 
         if (response.success && response.body) {
           this.currentOpportunity = response.body;
@@ -101,7 +101,7 @@ export const useOpportunityStore = defineStore('opportunities', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch('opportunity', 'POST', data as Record<string, unknown>);
+        const response = await useApiFetch('opportunity', 'POST', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           this.opportunities.unshift(response.body);
@@ -125,7 +125,7 @@ export const useOpportunityStore = defineStore('opportunities', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch(`opportunity/${id}`, 'PUT', data as Record<string, unknown>);
+        const response = await useApiFetch(`opportunity/${id}`, 'PUT', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           const index = this.opportunities.findIndex(o => o.id === id);

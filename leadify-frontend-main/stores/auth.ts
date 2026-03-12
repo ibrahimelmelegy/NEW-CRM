@@ -44,14 +44,14 @@ export const useAuthStore = defineStore('auth', {
           success: response.success || false,
           message: response.message || ''
         };
-      } catch (error: any) {
+      } catch (error: unknown) {
         this.loadingChangePassword = false;
         ElNotification({
           title: 'Error',
           type: 'error',
-          message: error.message || 'An error occurred'
+          message: (error instanceof Error ? error.message : null) || 'An error occurred'
         });
-        return { success: false, message: error.message };
+        return { success: false, message: error instanceof Error ? error.message : 'An error occurred' };
       }
     },
 
@@ -59,7 +59,7 @@ export const useAuthStore = defineStore('auth', {
       await useApiFetch('auth/logout', 'POST', {}, true);
 
       // Clear cached user data
-      user.value = null as any;
+      user.value = null;
 
       // HttpOnly auth cookie is cleared by the server on logout
 

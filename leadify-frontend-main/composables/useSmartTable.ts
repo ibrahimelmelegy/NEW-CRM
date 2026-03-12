@@ -1,5 +1,3 @@
-import * as XLSX from 'xlsx';
-
 export interface SmartTableColumn {
   prop: string;
   label: string;
@@ -240,48 +238,34 @@ export function useSmartTable(entityType: string, initialColumns: SmartTableColu
     }));
   };
 
-  const exportData = (data: Record<string, unknown>[], format: 'xlsx' | 'csv' = 'xlsx') => {
+  const exportData = (data: Record<string, unknown>[], _format: 'xlsx' | 'csv' = 'csv') => {
     const exportColumns = visibleColumns.value;
     const headers = exportColumns.map(c => c.label);
     const rows = data.map(row =>
       exportColumns.map(col => {
         const val = row[col.prop];
         if (val === null || val === undefined) return '';
-        if (typeof val === 'object' && val.title) return val.title;
+        if (typeof val === 'object' && (val as Record<string, unknown>).title) return (val as Record<string, unknown>).title;
         return val;
       })
     );
 
-    if (format === 'xlsx') {
-      const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, entityType);
+    const escapeCsv = (val: unknown) => {
+      const str = String(val ?? '');
+      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+    const csvContent = [headers.map(escapeCsv).join(','), ...rows.map(row => row.map(escapeCsv).join(','))].join('\n');
 
-      // Column widths
-      ws['!cols'] = exportColumns.map(col => ({
-        wch: Math.max(String(col.label).length + 2, 15)
-      }));
-
-      XLSX.writeFile(wb, `${entityType}-export-${Date.now()}.xlsx`);
-    } else {
-      // CSV export
-      const escapeCsv = (val: unknown) => {
-        const str = String(val ?? '');
-        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-          return `"${str.replace(/"/g, '""')}"`;
-        }
-        return str;
-      };
-      const csvContent = [headers.map(escapeCsv).join(','), ...rows.map(row => row.map(escapeCsv).join(','))].join('\n');
-
-      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${entityType}-export-${Date.now()}.csv`;
-      link.click();
-      URL.revokeObjectURL(url);
-    }
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${entityType}-export-${Date.now()}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   return {

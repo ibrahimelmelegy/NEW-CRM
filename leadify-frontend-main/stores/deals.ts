@@ -60,7 +60,7 @@ export const useDealStore = defineStore('deals', {
             ).toString()
           : '';
 
-        const response: any = await useApiFetch(`deal${query}`);
+        const response = await useApiFetch(`deal${query}`);
 
         if (response.success && response.body) {
           this.deals = response.body.docs || [];
@@ -84,7 +84,7 @@ export const useDealStore = defineStore('deals', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch(`deal/${id}`);
+        const response = await useApiFetch(`deal/${id}`);
 
         if (response.success && response.body) {
           this.currentDeal = response.body;
@@ -105,7 +105,7 @@ export const useDealStore = defineStore('deals', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch('deal', 'POST', data as Record<string, unknown>);
+        const response = await useApiFetch('deal', 'POST', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           this.deals.unshift(response.body);
@@ -129,7 +129,7 @@ export const useDealStore = defineStore('deals', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch(`deal/${id}`, 'PUT', data as Record<string, unknown>);
+        const response = await useApiFetch(`deal/${id}`, 'PUT', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           const index = this.deals.findIndex(d => d.id === id);
