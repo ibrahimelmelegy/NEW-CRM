@@ -783,7 +783,8 @@
     "refreshInsights": "تحديث الرؤى",
     "noInsightsToday": "لا توجد رؤى متاحة حالياً. تحقق لاحقاً.",
     "askCopilot": "اسأل المساعد...",
-    "pasteMeetingNotes": "الصق ملاحظات الاجتماع هنا..."
+    "pasteMeetingNotes": "الصق ملاحظات الاجتماع هنا...",
+    "copilot": "مساعد الذكاء الاصطناعي"
   },
   "spotlight": {
     "searchPlaceholder": "ابحث عن صفحات أو إجراءات أو اكتب أمر...",
@@ -3244,7 +3245,8 @@
     "priority": "الأولوية",
     "activeToggle": "نشط",
     "addCondition": "إضافة شرط",
-    "addAction": "إضافة إجراء"
+    "addAction": "إضافة إجراء",
+    "description": "الوصف"
   },
   "campaigns": {
     "title": "حملات البريد الإلكتروني",
@@ -3431,7 +3433,8 @@
       "replySent": "تم إرسال الرد بنجاح",
       "replyFailed": "فشل إرسال الرد",
       "conversation": "المحادثة",
-      "ticketClosed": "هذه التذكرة مغلقة. لا يمكن إرسال ردود إضافية."
+      "ticketClosed": "هذه التذكرة مغلقة. لا يمكن إرسال ردود إضافية.",
+      "status": "الحالة"
     },
     "enhanced": {
       "welcome": "مرحباً، {name}",
@@ -4482,7 +4485,8 @@
       "notes": "ملاحظات",
       "date": "التاريخ",
       "noMovements": "لا توجد حركات مخزون مسجلة"
-    }
+    },
+    "product": "المنتج"
   },
   "approvals": {
     "title": "مركز الموافقات",
@@ -4555,7 +4559,8 @@
     "requestDate": "تاريخ الطلب",
     "decision": "القرار",
     "decisionDate": "تاريخ القرار",
-    "request": "الطلب"
+    "request": "الطلب",
+    "notes": "ملاحظات"
   },
   "documents": {
     "title": "مكتبة المستندات",
@@ -9292,7 +9297,8 @@
     "signerName": "اسم الموقّع",
     "signerEmail": "بريد الموقّع",
     "fullName": "الاسم الكامل",
-    "sendRequest": "إرسال الطلب"
+    "sendRequest": "إرسال الطلب",
+    "signature": "التوقيع"
   },
   "reminders": {
     "reminderCreated": "تم إنشاء التذكير!",
@@ -13945,5 +13951,46 @@
       "noDiscountRules": "لا توجد قواعد خصم",
       "noPriceBooks": "لا توجد قوائم أسعار"
     }
-  }
+  },
+  "action": "إجراء",
+  "back": "رجوع",
+  "cancel": "إلغاء",
+  "clear": "مسح",
+  "close": "إغلاق",
+  "confirm": "تأكيد",
+  "csv": "CSV",
+  "delete": "حذف",
+  "deselect": "إلغاء التحديد",
+  "dismiss": "رفض",
+  "duplicate": "نسخ",
+  "excel": "Excel",
+  "logout": "تسجيل الخروج",
+  "preview": "معاينة",
+  "redo": "إعادة",
+  "refresh": "تحديث",
+  "reset": "إعادة تعيين",
+  "save": "حفظ",
+  "saved": "محفوظ",
+  "search": "بحث",
+  "select": "اختيار",
+  "sent": "مرسل",
+  "submit": "إرسال",
+  "success": "نجاح",
+  "toggle": "تبديل",
+  "undo": "تراجع",
+  "updated": "محدث",
+  "bold": "غامق",
+  "italic": "مائل",
+  "underline": "تسطير",
+  "strikethrough": "يتوسطه خط",
+  "left": "يسار",
+  "center": "وسط",
+  "right": "يمين",
+  "justify": "ضبط",
+  "aggressive": "عدوانية",
+  "conservative": "محافظة",
+  "current": "الحالي",
+  "executive": "تنفيذي",
+  "enabled": "مفعّل",
+  "disabled": "معطّل"
 }

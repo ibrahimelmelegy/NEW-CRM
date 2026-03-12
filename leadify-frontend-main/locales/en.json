@@ -755,7 +755,8 @@
     "refreshInsights": "Refresh insights",
     "noInsightsToday": "No insights available right now. Check back later.",
     "askCopilot": "Ask Copilot...",
-    "pasteMeetingNotes": "Paste your meeting notes here..."
+    "pasteMeetingNotes": "Paste your meeting notes here...",
+    "copilot": "AI Copilot"
   },
   "spotlight": {
     "searchPlaceholder": "Search pages, actions, or type a command...",
@@ -3216,7 +3217,8 @@
     "priority": "Priority",
     "activeToggle": "Active",
     "addCondition": "Add Condition",
-    "addAction": "Add Action"
+    "addAction": "Add Action",
+    "description": "Description"
   },
   "campaigns": {
     "title": "Email Campaigns",
@@ -3403,7 +3405,8 @@
       "replySent": "Reply sent successfully",
       "replyFailed": "Failed to send reply",
       "conversation": "Conversation",
-      "ticketClosed": "This ticket is closed. No further replies can be sent."
+      "ticketClosed": "This ticket is closed. No further replies can be sent.",
+      "status": "Status"
     },
     "enhanced": {
       "welcome": "Welcome, {name}",
@@ -4454,7 +4457,8 @@
       "notes": "Notes",
       "date": "Date",
       "noMovements": "No stock movements recorded"
-    }
+    },
+    "product": "Product"
   },
   "approvals": {
     "title": "Approval Center",
@@ -4527,7 +4531,8 @@
     "requestDate": "Request Date",
     "decision": "Decision",
     "decisionDate": "Decision Date",
-    "request": "Request"
+    "request": "Request",
+    "notes": "Notes"
   },
   "documents": {
     "title": "Document Library",
@@ -9292,7 +9297,8 @@
     "signerName": "Signer Name",
     "signerEmail": "Signer Email",
     "fullName": "Full name",
-    "sendRequest": "Send Request"
+    "sendRequest": "Send Request",
+    "signature": "Signature"
   },
   "reminders": {
     "reminderCreated": "Reminder created!",
@@ -13945,5 +13951,46 @@
       "noDiscountRules": "No discount rules",
       "noPriceBooks": "No Price Books"
     }
-  }
+  },
+  "action": "Action",
+  "back": "Back",
+  "cancel": "Cancel",
+  "clear": "Clear",
+  "close": "Close",
+  "confirm": "Confirm",
+  "csv": "CSV",
+  "delete": "Delete",
+  "deselect": "Deselect",
+  "dismiss": "Dismiss",
+  "duplicate": "Duplicate",
+  "excel": "Excel",
+  "logout": "Log Out",
+  "preview": "Preview",
+  "redo": "Redo",
+  "refresh": "Refresh",
+  "reset": "Reset",
+  "save": "Save",
+  "saved": "Saved",
+  "search": "Search",
+  "select": "Select",
+  "sent": "Sent",
+  "submit": "Submit",
+  "success": "Success",
+  "toggle": "Toggle",
+  "undo": "Undo",
+  "updated": "Updated",
+  "bold": "Bold",
+  "italic": "Italic",
+  "underline": "Underline",
+  "strikethrough": "Strikethrough",
+  "left": "Left",
+  "center": "Center",
+  "right": "Right",
+  "justify": "Justify",
+  "aggressive": "Aggressive",
+  "conservative": "Conservative",
+  "current": "Current",
+  "executive": "Executive",
+  "enabled": "Enabled",
+  "disabled": "Disabled"
 }
