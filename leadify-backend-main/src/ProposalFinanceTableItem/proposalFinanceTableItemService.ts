@@ -28,7 +28,7 @@ class ProposalFinanceTableItemService {
     financeTable.grandTotalPrice += totalPrice;
     financeTable.vat = Math.max(0, (financeTable.grandTotalPrice - financeTable.discount) * 0.15);
     financeTable.finalTotalPrice = Math.max(0, financeTable.grandTotalPrice - financeTable.discount + financeTable.vat);
-    financeTable.save();
+    await financeTable.save();
     await proposalLogService.createProposalLog(user.id, financeTable.proposalId, ProposalActionEnum.FINANCE_TABLE_ITEM_CREATED);
     return await ProposalFinanceTableItem.create({ ...data, marginAmount, unitPrice, description, totalPrice: parseFloat(totalPrice.toFixed(2)) });
   }
@@ -49,7 +49,7 @@ class ProposalFinanceTableItemService {
       financeTable.grandTotalPrice += data.totalPrice - item.totalPrice;
       financeTable.vat = Math.max(0, (financeTable.grandTotalPrice - financeTable.discount) * 0.15);
       financeTable.finalTotalPrice = Math.max(0, financeTable.grandTotalPrice - financeTable.discount + financeTable.vat);
-      financeTable.save();
+      await financeTable.save();
     }
     await item.update(data);
     await proposalLogService.createProposalLog(user.id, financeTable.proposalId, ProposalActionEnum.FINANCE_TABLE_ITEM_UPDATED);
@@ -99,7 +99,7 @@ class ProposalFinanceTableItemService {
     financeTable.grandTotalPrice -= item.totalPrice;
     financeTable.vat = Math.max(0, (financeTable.grandTotalPrice - financeTable.discount) * 0.15);
     financeTable.finalTotalPrice = Math.max(0, financeTable.grandTotalPrice - financeTable.discount + financeTable.vat);
-    financeTable.save();
+    await financeTable.save();
     await proposalLogService.createProposalLog(user.id, financeTable.proposalId, ProposalActionEnum.FINANCE_TABLE_ITEM_DELETED);
     await item.destroy();
   }
