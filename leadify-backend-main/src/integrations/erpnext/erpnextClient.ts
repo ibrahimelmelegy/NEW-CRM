@@ -2,6 +2,7 @@ import https from 'https';
 import http from 'http';
 import { URL } from 'url';
 import { ERPNextConfig } from './erpnextConfig';
+import logger from '../config/logger';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -130,7 +131,7 @@ export class ERPNextClient {
     try {
       response = await makeRequest({ method, url, headers, body, timeout: this.timeout });
     } catch (err) {
-      console.error(`[ERPNext] Request failed: ${(err as Error).message}`);
+      logger.error(`[ERPNext] Request failed: ${(err as Error).message}`);
       throw new ERPNextApiError({
         httpCode: 0,
         message: `ERPNext connection failed: ${(err as Error).message}`

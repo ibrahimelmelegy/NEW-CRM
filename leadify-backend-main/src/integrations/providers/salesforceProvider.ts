@@ -1,4 +1,5 @@
 // ─── Salesforce CRM Sync Provider ────────────────────────────────────────────
+import logger from '../config/logger';
 // Uses Salesforce REST API via jsforce when SALESFORCE_CLIENT_ID is configured.
 // Falls back to mock data when credentials are not present.
 
@@ -48,7 +49,7 @@ export class SalesforceProvider {
         await this.connection.login(process.env.SALESFORCE_USERNAME!, process.env.SALESFORCE_PASSWORD!);
         // Connected to Salesforce
       } catch (err) {
-        console.error('[SalesforceProvider] Failed to connect:', err);
+        logger.error('[SalesforceProvider] Failed to connect:', err);
         this.connection = null;
       }
     }
@@ -69,7 +70,7 @@ export class SalesforceProvider {
       return { success: true, data: { synced: leads.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
-      console.error('[SalesforceProvider] syncLeads error:', errMsg);
+      logger.error('[SalesforceProvider] syncLeads error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
@@ -86,7 +87,7 @@ export class SalesforceProvider {
       return { success: true, data: { synced: contacts.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
-      console.error('[SalesforceProvider] syncContacts error:', errMsg);
+      logger.error('[SalesforceProvider] syncContacts error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
@@ -105,7 +106,7 @@ export class SalesforceProvider {
       return { success: true, data: { synced: deals.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
-      console.error('[SalesforceProvider] syncDeals error:', errMsg);
+      logger.error('[SalesforceProvider] syncDeals error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
@@ -130,7 +131,7 @@ export class SalesforceProvider {
       return { success: true, data: mockRecords, mock: true, syncedAt: new Date().toISOString() };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
-      console.error('[SalesforceProvider] importFromSalesforce error:', errMsg);
+      logger.error('[SalesforceProvider] importFromSalesforce error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }
@@ -149,7 +150,7 @@ export class SalesforceProvider {
       return { success: true, data: { exported: records.length, failed: 0 }, mock: true, syncedAt: new Date().toISOString() };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
-      console.error('[SalesforceProvider] exportToSalesforce error:', errMsg);
+      logger.error('[SalesforceProvider] exportToSalesforce error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !SalesforceProvider.isConfigured(), syncedAt: new Date().toISOString() };
     }
   }

@@ -1,4 +1,5 @@
 // ─── WhatsApp Business API Provider ──────────────────────────────────────────
+import logger from '../config/logger';
 // Uses Meta's WhatsApp Business Cloud API when configured, otherwise returns mock data.
 // Env vars: WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_ACCESS_TOKEN, WHATSAPP_WEBHOOK_VERIFY_TOKEN
 
@@ -83,7 +84,7 @@ export class WhatsAppProvider {
       return { success: true, data: { messageId: `mock_wa_${Date.now()}`, status: 'sent' }, mock: true };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to send WhatsApp message';
-      console.error('[WhatsAppProvider] sendTextMessage error:', errMsg);
+      logger.error('[WhatsAppProvider] sendTextMessage error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };
     }
   }
@@ -120,7 +121,7 @@ export class WhatsAppProvider {
       return { success: true, data: { messageId: `mock_wa_tpl_${Date.now()}`, status: 'sent' }, mock: true };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to send template message';
-      console.error('[WhatsAppProvider] sendTemplateMessage error:', errMsg);
+      logger.error('[WhatsAppProvider] sendTemplateMessage error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };
     }
   }
@@ -158,7 +159,7 @@ export class WhatsAppProvider {
       return { success: true, data: { messageId: `mock_wa_media_${Date.now()}`, status: 'sent' }, mock: true };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to send media message';
-      console.error('[WhatsAppProvider] sendMediaMessage error:', errMsg);
+      logger.error('[WhatsAppProvider] sendMediaMessage error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };
     }
   }
@@ -192,7 +193,7 @@ export class WhatsAppProvider {
       };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to get templates';
-      console.error('[WhatsAppProvider] getMessageTemplates error:', errMsg);
+      logger.error('[WhatsAppProvider] getMessageTemplates error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };
     }
   }
@@ -253,7 +254,7 @@ export class WhatsAppProvider {
         }
       }
     } catch (err) {
-      console.error('[WhatsAppProvider] parseWebhookPayload error:', err);
+      logger.error('[WhatsAppProvider] parseWebhookPayload error:', err);
     }
     return events;
   }
