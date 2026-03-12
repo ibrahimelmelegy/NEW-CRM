@@ -125,20 +125,23 @@ export function useWorkflowBuilder() {
 
   async function loadWorkflow(id: number) {
     loading.value = true;
-    const res = await useApiFetch(`workflows/${id}`);
-    if (res.success && res.body) {
-      const wf = res.body as unknown;
-      workflowId.value = wf.id;
-      workflowName.value = wf.name;
-      isActive.value = wf.isActive;
+    try {
+      const res = await useApiFetch(`workflows/${id}`);
+      if (res.success && res.body) {
+        const wf = res.body as unknown;
+        workflowId.value = wf.id;
+        workflowName.value = wf.name;
+        isActive.value = wf.isActive;
 
-      if (wf.graphData?.nodes) {
-        nodes.value = wf.graphData.nodes;
-        edges.value = wf.graphData.edges || [];
-        nodeIdCounter = nodes.value.length + 1;
+        if (wf.graphData?.nodes) {
+          nodes.value = wf.graphData.nodes;
+          edges.value = wf.graphData.edges || [];
+          nodeIdCounter = nodes.value.length + 1;
+        }
       }
+    } finally {
+      loading.value = false;
     }
-    loading.value = false;
   }
 
   return {

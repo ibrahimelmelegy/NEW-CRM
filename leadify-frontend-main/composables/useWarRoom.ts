@@ -56,8 +56,9 @@ export function useWarRoom() {
       };
     } catch (e) {
       console.error('War room metrics fetch failed', e);
+    } finally {
+      loading.value = false;
     }
-    loading.value = false;
   }
 
   async function fetchTeam() {

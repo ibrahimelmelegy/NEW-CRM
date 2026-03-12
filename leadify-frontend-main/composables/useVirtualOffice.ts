@@ -70,30 +70,31 @@ export function useVirtualOffice() {
   // ── Initialize ──
   async function init() {
     loading.value = true;
+    try {
+      // Set current user from auth
+      const u = user.value;
+      if (u?.id) {
+        currentUser.value.userId = u.id;
+        currentUser.value.name = (u as unknown as Record<string, string>).firstName ? `${(u as unknown as Record<string, string>).firstName} ${(u as unknown as Record<string, string>).lastName || ''}`.trim() : u.email || 'You';
+        currentUser.value.avatar = u.profilePicture;
+      }
 
-    // Set current user from auth
-    const u = user.value;
-    if (u?.id) {
-      currentUser.value.userId = u.id;
-      currentUser.value.name = (u as unknown).firstName ? `${(u as unknown).firstName} ${(u as unknown).lastName || ''}`.trim() : u.email || 'You';
-      currentUser.value.avatar = u.profilePicture;
+      // Load rooms from API (seeds defaults on first call)
+      const { body, success } = await useApiFetch('virtual-office/rooms');
+      if (success && Array.isArray(body)) {
+        rooms.value = body.map(r => ({ ...r, occupants: [] }));
+      }
+
+      // Announce presence and sync current state via socket
+      socket.value?.emit('vo:presence', {
+        userId: currentUser.value.userId,
+        name: currentUser.value.name,
+        avatar: currentUser.value.avatar
+      });
+      socket.value?.emit('vo:sync');
+    } finally {
+      loading.value = false;
     }
-
-    // Load rooms from API (seeds defaults on first call)
-    const { body, success } = await useApiFetch('virtual-office/rooms');
-    if (success && Array.isArray(body)) {
-      rooms.value = body.map(r => ({ ...r, occupants: [] }));
-    }
-
-    // Announce presence and sync current state via socket
-    socket.value?.emit('vo:presence', {
-      userId: currentUser.value.userId,
-      name: currentUser.value.name,
-      avatar: currentUser.value.avatar
-    });
-    socket.value?.emit('vo:sync');
-
-    loading.value = false;
   }
 
   // ── Socket listeners ──
