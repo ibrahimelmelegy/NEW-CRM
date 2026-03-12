@@ -603,7 +603,56 @@
     "descending": "Descending",
     "companyName": "Company Name",
     "invalidDateRange": "End date must be after start date",
-    "percentagesSumError": "Variant percentages must sum to 100"
+    "percentagesSumError": "Variant percentages must sum to 100",
+    "addFilter": "Add Filter",
+    "addTask": "Add Task",
+    "any": "Any",
+    "apply": "Apply",
+    "auditHistory": "Audit History",
+    "clearAll": "Clear All",
+    "color": "Color",
+    "createdSuccessfully": "Created successfully",
+    "deleteConfirmation": "Are you sure you want to delete this?",
+    "deletedSuccessfully": "Deleted successfully",
+    "departments": "Departments",
+    "descriptionPlaceholder": "Enter description...",
+    "disabled": "Disabled",
+    "dueDate": "Due Date",
+    "editTask": "Edit Task",
+    "enabled": "Enabled",
+    "enterValue": "Enter value",
+    "eof": "End of list",
+    "generic": "Generic",
+    "goBack": "Go Back",
+    "healthInsurance": "Health Insurance",
+    "home": "Home",
+    "incomingFlightTicket": "Incoming Flight Ticket",
+    "matchCondition": "Match Condition",
+    "more": "More",
+    "noHistory": "No history found",
+    "noTasks": "No tasks found",
+    "notFound": "Not Found",
+    "notes": "Notes",
+    "of": "of",
+    "overview": "Overview",
+    "phone": "Phone",
+    "print": "Print",
+    "rename": "Rename",
+    "retry": "Retry",
+    "saudization": "Saudization",
+    "savedSuccessfully": "Saved successfully",
+    "select": "Select",
+    "selectField": "Select field",
+    "selectValue": "Select value",
+    "setDefault": "Set as Default",
+    "showing": "Showing",
+    "socialInsurance": "Social Insurance",
+    "taskTitlePlaceholder": "Enter task title...",
+    "tasks": "Tasks",
+    "unknown": "Unknown",
+    "updatedSuccessfully": "Updated successfully",
+    "viewNamePlaceholder": "Enter view name...",
+    "visaFees": "Visa Fees"
   },
   "export": {
     "title": "Export",
@@ -2315,7 +2364,8 @@
         "preview": "Preview",
         "proposal": "Proposal",
         "folders": "Folders",
-        "activity": "Activity Log"
+        "activity": "Activity Log",
+        "summary": "Summary"
       },
       "detailsSummary": {
         "title": "Summary",
@@ -2708,7 +2758,8 @@
         "companyName": "Company Name",
         "email": "Email",
         "phone": "Phone",
-        "clientType": "Client Type"
+        "clientType": "Client Type",
+        "editTitle": "Edit Task"
       }
     },
     "vehicle": {
@@ -5804,7 +5855,21 @@
     "deductions": "Deductions",
     "gosi": "GOSI",
     "absent": "Absent",
-    "loan": "Loan"
+    "loan": "Loan",
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    }
   },
   "support": {
     "title": "Support Tickets",
@@ -5984,7 +6049,8 @@
     "supportTickets": "Support Tickets",
     "assignee": "Assignee",
     "created": "Created",
-    "assignedToMe": "Assigned to Me"
+    "assignedToMe": "Assigned to Me",
+    "failedToLoadTickets": "Failed to load tickets"
   },
   "accounting": {
     "title": "Accounting",

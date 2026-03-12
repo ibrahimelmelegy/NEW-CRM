@@ -603,7 +603,56 @@
     "descending": "تنازلي",
     "companyName": "اسم الشركة",
     "invalidDateRange": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية",
-    "percentagesSumError": "يجب أن يكون مجموع نسب المتغيرات 100"
+    "percentagesSumError": "يجب أن يكون مجموع نسب المتغيرات 100",
+    "addFilter": "إضافة فلتر",
+    "addTask": "إضافة مهمة",
+    "any": "أي",
+    "apply": "تطبيق",
+    "auditHistory": "سجل التدقيق",
+    "clearAll": "مسح الكل",
+    "color": "اللون",
+    "createdSuccessfully": "تم الإنشاء بنجاح",
+    "deleteConfirmation": "هل أنت متأكد من حذف هذا العنصر؟",
+    "deletedSuccessfully": "تم الحذف بنجاح",
+    "departments": "الأقسام",
+    "descriptionPlaceholder": "أدخل الوصف...",
+    "disabled": "معطّل",
+    "dueDate": "تاريخ الاستحقاق",
+    "editTask": "تعديل المهمة",
+    "enabled": "مفعّل",
+    "enterValue": "أدخل القيمة",
+    "eof": "نهاية القائمة",
+    "generic": "عام",
+    "goBack": "العودة",
+    "healthInsurance": "التأمين الصحي",
+    "home": "الرئيسية",
+    "incomingFlightTicket": "تذكرة الطيران الواردة",
+    "matchCondition": "شرط المطابقة",
+    "more": "المزيد",
+    "noHistory": "لا يوجد سجل",
+    "noTasks": "لا توجد مهام",
+    "notFound": "غير موجود",
+    "notes": "ملاحظات",
+    "of": "من",
+    "overview": "نظرة عامة",
+    "phone": "الهاتف",
+    "print": "طباعة",
+    "rename": "إعادة تسمية",
+    "retry": "إعادة المحاولة",
+    "saudization": "السعودة",
+    "savedSuccessfully": "تم الحفظ بنجاح",
+    "select": "اختر",
+    "selectField": "اختر الحقل",
+    "selectValue": "اختر القيمة",
+    "setDefault": "تعيين كافتراضي",
+    "showing": "عرض",
+    "socialInsurance": "التأمينات الاجتماعية",
+    "taskTitlePlaceholder": "أدخل عنوان المهمة...",
+    "tasks": "المهام",
+    "unknown": "غير معروف",
+    "updatedSuccessfully": "تم التحديث بنجاح",
+    "viewNamePlaceholder": "أدخل اسم العرض...",
+    "visaFees": "رسوم التأشيرة"
   },
   "export": {
     "title": "تصدير",
@@ -2337,7 +2386,8 @@
         "preview": "معاينة",
         "proposal": "العروض",
         "folders": "المجلدات",
-        "activity": "سجل النشاط"
+        "activity": "سجل النشاط",
+        "summary": "ملخص"
       },
       "detailsSummary": {
         "title": "الملخص",
@@ -2730,7 +2780,8 @@
         "companyName": "اسم الشركة",
         "email": "البريد الإلكتروني",
         "phone": "الهاتف",
-        "clientType": "نوع العميل"
+        "clientType": "نوع العميل",
+        "editTitle": "تعديل المهمة"
       }
     },
     "vehicle": {
@@ -5832,7 +5883,21 @@
     "deductions": "الخصومات",
     "gosi": "GOSI",
     "absent": "غياب",
-    "loan": "قرض"
+    "loan": "قرض",
+    "months": {
+      "january": "يناير",
+      "february": "فبراير",
+      "march": "مارس",
+      "april": "أبريل",
+      "may": "مايو",
+      "june": "يونيو",
+      "july": "يوليو",
+      "august": "أغسطس",
+      "september": "سبتمبر",
+      "october": "أكتوبر",
+      "november": "نوفمبر",
+      "december": "ديسمبر"
+    }
   },
   "support": {
     "title": "تذاكر الدعم",
@@ -6012,7 +6077,8 @@
     "supportTickets": "تذاكر الدعم",
     "assignee": "المسؤول",
     "created": "تم الإنشاء",
-    "assignedToMe": "معين لي"
+    "assignedToMe": "معين لي",
+    "failedToLoadTickets": "فشل تحميل التذاكر"
   },
   "accounting": {
     "title": "المحاسبة",
