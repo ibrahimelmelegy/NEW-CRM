@@ -51,8 +51,8 @@ class RelationshipService {
       if (types.includes('user')) {
         const leadUsers = await LeadUsers.findAll();
         for (const lu of leadUsers) {
-          const leadId = `lead-${(lu as any).leadId}`;
-          const userId = `user-${(lu as any).userId}`;
+          const leadId = `lead-${(lu as Record<string, unknown>).leadId}`;
+          const userId = `user-${(lu as Record<string, unknown>).userId}`;
           if (nodeIds.has(leadId) && nodeIds.has(userId)) {
             edges.push({ source: userId, target: leadId, label: 'assigned' });
           }
@@ -92,8 +92,8 @@ class RelationshipService {
       if (types.includes('user')) {
         const dealUsers = await DealUsers.findAll();
         for (const du of dealUsers) {
-          const dealId = `deal-${(du as any).dealId}`;
-          const userId = `user-${(du as any).userId}`;
+          const dealId = `deal-${(du as Record<string, unknown>).dealId}`;
+          const userId = `user-${(du as Record<string, unknown>).userId}`;
           if (nodeIds.has(dealId) && nodeIds.has(userId)) {
             edges.push({ source: userId, target: dealId, label: 'works on' });
           }
@@ -110,7 +110,7 @@ class RelationshipService {
       for (const c of clients) {
         const id = `client-${c.id}`;
         if (!nodeIds.has(id)) {
-          nodes.push({ id, label: (c as any).companyName || `Client ${c.id}`, type: 'client' });
+          nodes.push({ id, label: (c as Record<string, unknown>).companyName || `Client ${c.id}`, type: 'client' });
           nodeIds.add(id);
         }
       }

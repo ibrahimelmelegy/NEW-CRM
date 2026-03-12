@@ -17,7 +17,7 @@ export interface TenantSettings {
   timezone?: string;
   /** Feature flags */
   features?: Record<string, boolean>;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 @Table({

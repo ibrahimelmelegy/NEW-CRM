@@ -31,7 +31,7 @@ function canSendEmail(userId: number): boolean {
   return true;
 }
 
-let ioInstance: any = null;
+let ioInstance: unknown = null;
 
 function getIO() {
   if (!ioInstance) {
@@ -244,7 +244,7 @@ class NotificationCenterService {
           await webpush.sendNotification(sub.subscription, payload);
         } catch (err) {
           // If subscription expired (410 Gone), remove it
-          if ((err as any)?.statusCode === 410) {
+          if ((err as Record<string, unknown>).statusCode === 410) {
             await sub.destroy();
           }
         }
@@ -439,7 +439,7 @@ class NotificationCenterService {
       group: ['type', 'priority'],
       raw: true,
       order: [[fn('MAX', col('createdAt')), 'DESC']]
-    })) as any[];
+    })) as unknown[];
 
     // Get the latest message per type for preview
     const groups: { type: string; count: number; priority: string; latestMessage: string; latestAt: Date }[] = [];

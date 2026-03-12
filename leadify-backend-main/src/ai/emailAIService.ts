@@ -26,8 +26,8 @@ interface EmailReplyContext {
   thread: string;
   purpose?: string;
   tone?: string;
-  dealInfo?: any;
-  clientInfo?: any;
+  dealInfo?: unknown;
+  clientInfo?: unknown;
   senderName?: string;
 }
 

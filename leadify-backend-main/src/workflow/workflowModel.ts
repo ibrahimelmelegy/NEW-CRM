@@ -5,7 +5,7 @@ import User from '../user/userModel';
 export interface WorkflowCondition {
   field: string;
   operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'is_empty' | 'is_not_empty' | 'in' | 'not_in';
-  value: any;
+  value: unknown;
 }
 
 // ── Action object types stored in the actions JSONB column ──
@@ -118,7 +118,7 @@ class WorkflowRule extends Model {
   public graphData?: Record<string, unknown>;
 
   // Virtual association – defined in execution model
-  public executions?: any[];
+  public executions?: unknown[];
 }
 
 export default WorkflowRule;

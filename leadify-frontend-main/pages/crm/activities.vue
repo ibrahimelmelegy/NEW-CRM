@@ -453,6 +453,10 @@ async function createActivity() {
 onMounted(() => {
   loadActivities();
 });
+
+onUnmounted(() => {
+  clearTimeout(debounceTimer);
+});
 </script>
 
 <style scoped>

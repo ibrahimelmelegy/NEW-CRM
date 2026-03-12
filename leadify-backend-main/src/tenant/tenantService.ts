@@ -15,7 +15,7 @@ import { sequelize } from '../config/db';
  */
 
 // Helper to create bypass options (avoids repeated `as any` casts)
-function bypass(extra: Record<string, unknown> = {}): any {
+function bypass(extra: Record<string, unknown> = {}): unknown {
   return { [TENANT_BYPASS]: true, ...extra };
 }
 
@@ -55,7 +55,7 @@ export async function getAllTenants(
   }
 
   if (options.search) {
-    where[Op.or as any] = [{ name: { [Op.iLike]: `%${options.search}%` } }, { domain: { [Op.iLike]: `%${options.search}%` } }];
+    where[Op.or as symbol] = [{ name: { [Op.iLike]: `%${options.search}%` } }, { domain: { [Op.iLike]: `%${options.search}%` } }];
   }
 
   return Tenant.findAndCountAll(
@@ -101,7 +101,7 @@ export async function createTenant(data: {
       settings: data.settings || {},
       status: 'ACTIVE',
       isActive: true
-    } as any,
+    } as unknown,
     bypass()
   );
   return tenant as Tenant;
@@ -126,7 +126,7 @@ export async function updateTenant(
   const tenant = await getTenantById(tenantId);
   if (!tenant) return null;
 
-  await tenant.update(data as any, bypass());
+  await tenant.update(data as unknown, bypass());
   return tenant;
 }
 
@@ -142,7 +142,7 @@ export async function updateTenantSettings(tenantId: string, settings: Partial<T
     ...settings
   };
 
-  await tenant.update({ settings: merged } as any, bypass());
+  await tenant.update({ settings: merged } as unknown, bypass());
   return merged;
 }
 

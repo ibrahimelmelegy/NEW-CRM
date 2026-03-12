@@ -94,13 +94,13 @@ class DuplicateService {
     entityType: string
   ): {
     score: number;
-    matchedFields: Array<{ field: string; value1: any; value2: any; similarity: number }>;
+    matchedFields: Array<{ field: string; value1: unknown; value2: unknown; similarity: number }>;
   } {
     const fields = entityFieldMap[entityType];
     if (!fields) return { score: 0, matchedFields: [] };
 
     let highestScore = 0;
-    const matchedFields: Array<{ field: string; value1: any; value2: any; similarity: number }> = [];
+    const matchedFields: Array<{ field: string; value1: unknown; value2: unknown; similarity: number }> = [];
 
     switch (entityType) {
       case 'lead': {
@@ -227,7 +227,7 @@ class DuplicateService {
       limit: 50
     });
 
-    const duplicates: Array<{ record: any; matchScore: number; matchedFields: any[] }> = [];
+    const duplicates: Array<{ record: Record<string, unknown>; matchScore: number; matchedFields: unknown[] }> = [];
 
     for (const candidate of candidates) {
       const candidateData = candidate.toJSON();
@@ -252,8 +252,8 @@ class DuplicateService {
     if (!Model) throw new Error(`Unsupported entity type: ${entityType}`);
 
     const records = await Model.findAll();
-    const recordData = records.map((r: any) => r.toJSON());
-    const detectedSets: Array<{ masterRecordId: string; duplicateRecordIds: string[]; matchScore: number; matchedFields: any[] }> = [];
+    const recordData = records.map((r: Record<string, unknown>) => r.toJSON());
+    const detectedSets: Array<{ masterRecordId: string; duplicateRecordIds: string[]; matchScore: number; matchedFields: unknown[] }> = [];
     const processedPairs = new Set<string>();
 
     for (let i = 0; i < recordData.length; i++) {

@@ -24,7 +24,7 @@ export interface SMSResult<T> {
 }
 
 export class TwilioProvider {
-  private client: any = null;
+  private client: unknown = null;
 
   static isConfigured(): boolean {
     return !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN);

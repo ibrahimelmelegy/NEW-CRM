@@ -20,11 +20,11 @@ class SubscriptionService {
     const where: WhereOptions = { isActive: true };
 
     if (query.includeInactive === 'true') {
-      delete (where as any).isActive;
+      delete (where as Record<string, unknown>).isActive;
     }
 
     if (query.tenantId) {
-      (where as any).tenantId = query.tenantId;
+      (where as Record<string, unknown>).tenantId = query.tenantId;
     }
 
     return SubscriptionPlan.findAll({
@@ -135,13 +135,13 @@ class SubscriptionService {
     const where: WhereOptions = {};
 
     if (status) {
-      (where as any).status = status;
+      (where as Record<string, unknown>).status = status;
     }
     if (clientId) {
-      (where as any).clientId = clientId;
+      (where as Record<string, unknown>).clientId = clientId;
     }
 
-    const includeOptions: any[] = [
+    const includeOptions: unknown[] = [
       {
         model: Client,
         as: 'client',
@@ -356,7 +356,7 @@ class SubscriptionService {
 
     let mrr = 0;
     for (const sub of activeSubscriptions) {
-      const plan = (sub as any).plan as SubscriptionPlan;
+      const plan = (sub as Record<string, unknown>).plan as SubscriptionPlan;
       if (!plan) continue;
 
       const price = Number(plan.price) || 0;
@@ -442,7 +442,7 @@ class SubscriptionService {
 
     let totalRevenue = 0;
     for (const sub of activeSubscriptions) {
-      const plan = (sub as any).plan as SubscriptionPlan;
+      const plan = (sub as Record<string, unknown>).plan as SubscriptionPlan;
       if (plan) totalRevenue += Number(plan.price) || 0;
     }
 
@@ -477,7 +477,7 @@ class SubscriptionService {
 
       let monthMrr = 0;
       for (const sub of activeSubs) {
-        const plan = (sub as any).plan as SubscriptionPlan;
+        const plan = (sub as Record<string, unknown>).plan as SubscriptionPlan;
         if (!plan) continue;
         const price = Number(plan.price) || 0;
         switch (plan.billingCycle) {

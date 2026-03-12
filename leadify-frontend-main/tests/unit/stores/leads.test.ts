@@ -64,7 +64,7 @@ describe('useLeadStore', () => {
         mockLead({ id: 'lead-1', status: 'NEW' }),
         mockLead({ id: 'lead-2', status: 'NEW' }),
         mockLead({ id: 'lead-3', status: 'QUALIFIED' })
-      ] as any;
+      ] as unknown;
 
       const grouped = store.leadsByStatus;
       expect(grouped.NEW).toHaveLength(2);
@@ -85,7 +85,7 @@ describe('useLeadStore', () => {
       const leads = [mockLead({ id: 'lead-1' }), mockLead({ id: 'lead-2' })];
       const pagination = { page: 1, limit: 10, total: 2, totalPages: 1 };
 
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: { docs: leads, pagination }
       });
@@ -100,7 +100,7 @@ describe('useLeadStore', () => {
     });
 
     it('should set error on API failure response', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: false,
         message: 'Unauthorized'
       });
@@ -113,7 +113,7 @@ describe('useLeadStore', () => {
     });
 
     it('should set error on thrown exception', async () => {
-      (globalThis.useApiFetch as any).mockRejectedValue(new Error('Network error'));
+      (globalThis.useApiFetch as unknown).mockRejectedValue(new Error('Network error'));
 
       await store.fetchLeads();
 
@@ -122,14 +122,14 @@ describe('useLeadStore', () => {
     });
 
     it('should pass query params to API call', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: { docs: [], pagination: { page: 2, limit: 10, total: 0, totalPages: 0 } }
       });
 
-      await store.fetchLeads({ page: 2, limit: 10 } as any);
+      await store.fetchLeads({ page: 2, limit: 10 } as unknown);
 
-      const calledUrl = (globalThis.useApiFetch as any).mock.calls[0][0];
+      const calledUrl = (globalThis.useApiFetch as unknown).mock.calls[0][0];
       expect(calledUrl).toContain('lead?');
       expect(calledUrl).toContain('page=2');
       expect(calledUrl).toContain('limit=10');
@@ -140,12 +140,12 @@ describe('useLeadStore', () => {
     it('should create a lead and prepend it to the list', async () => {
       const newLead = mockLead({ id: 'lead-new', name: 'New Lead' });
 
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: newLead
       });
 
-      store.leads = [mockLead({ id: 'lead-existing' })] as any;
+      store.leads = [mockLead({ id: 'lead-existing' })] as unknown;
       const result = await store.createLead({ name: 'New Lead' });
 
       expect(result).toEqual(newLead);
@@ -155,7 +155,7 @@ describe('useLeadStore', () => {
     });
 
     it('should return null and set error on failure', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: false,
         message: 'Validation failed'
       });
@@ -170,9 +170,9 @@ describe('useLeadStore', () => {
   describe('updateLead', () => {
     it('should update an existing lead in the list', async () => {
       const updated = mockLead({ id: 'lead-1', name: 'Updated Lead' });
-      store.leads = [mockLead({ id: 'lead-1' })] as any;
+      store.leads = [mockLead({ id: 'lead-1' })] as unknown;
 
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: updated
       });
@@ -187,10 +187,10 @@ describe('useLeadStore', () => {
       const original = mockLead({ id: 'lead-1', name: 'Original' });
       const updated = mockLead({ id: 'lead-1', name: 'Updated' });
 
-      store.leads = [original] as any;
-      store.currentLead = original as any;
+      store.leads = [original] as unknown;
+      store.currentLead = original as unknown;
 
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: updated
       });
@@ -203,9 +203,9 @@ describe('useLeadStore', () => {
 
   describe('deleteLead', () => {
     it('should remove lead from list on success', async () => {
-      store.leads = [mockLead({ id: 'lead-1' }), mockLead({ id: 'lead-2' })] as any;
+      store.leads = [mockLead({ id: 'lead-1' }), mockLead({ id: 'lead-2' })] as unknown;
 
-      (globalThis.useApiFetch as any).mockResolvedValue({ success: true });
+      (globalThis.useApiFetch as unknown).mockResolvedValue({ success: true });
 
       const result = await store.deleteLead('lead-1');
 
@@ -216,10 +216,10 @@ describe('useLeadStore', () => {
 
     it('should clear currentLead if deleted lead matches', async () => {
       const lead = mockLead({ id: 'lead-1' });
-      store.leads = [lead] as any;
-      store.currentLead = lead as any;
+      store.leads = [lead] as unknown;
+      store.currentLead = lead as unknown;
 
-      (globalThis.useApiFetch as any).mockResolvedValue({ success: true });
+      (globalThis.useApiFetch as unknown).mockResolvedValue({ success: true });
 
       await store.deleteLead('lead-1');
 
@@ -227,7 +227,7 @@ describe('useLeadStore', () => {
     });
 
     it('should return false on failure', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: false,
         message: 'Not found'
       });

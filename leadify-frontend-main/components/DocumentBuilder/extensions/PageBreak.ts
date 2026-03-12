@@ -123,7 +123,7 @@ export const PageBreak = Node.create<PageBreakOptions>({
   },
 
   addNodeView() {
-    return VueNodeViewRenderer(PageBreakView as any);
+    return VueNodeViewRenderer(PageBreakView as unknown);
   },
 
   addCommands() {

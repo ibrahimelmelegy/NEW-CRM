@@ -155,7 +155,7 @@ class AttributionService {
     const byChannel: Record<string, { touchpoints: number; totalCredit: number; totalValue: number }> = {};
 
     for (const tp of touchpoints) {
-      const t = tp as any;
+      const t = tp as Record<string, unknown>;
       const ch = t.channel || 'UNKNOWN';
       if (!byChannel[ch]) byChannel[ch] = { touchpoints: 0, totalCredit: 0, totalValue: 0 };
       byChannel[ch].touchpoints++;

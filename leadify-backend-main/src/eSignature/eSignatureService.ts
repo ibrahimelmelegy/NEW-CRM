@@ -15,7 +15,7 @@ interface Recipient {
 class ESignatureService {
   async create(data: Record<string, unknown>, userId: number, tenantId?: string) {
     // Initialize recipients with PENDING status
-    const recipients = (data.recipients || []).map((r: any) => ({
+    const recipients = (data.recipients || []).map((r: Record<string, unknown>) => ({
       name: r.name,
       email: r.email,
       role: r.role || 'SIGNER',

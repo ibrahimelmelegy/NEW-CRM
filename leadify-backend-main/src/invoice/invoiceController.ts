@@ -8,7 +8,7 @@ import Setting from '../setting/settingModel';
 class InvoiceController {
   async getInvoices(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await invoiceService.getInvoices(req.query as any);
+      const result = await invoiceService.getInvoices(req.query as Record<string, string>);
       wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -134,7 +134,7 @@ function formatDate(dateStr?: string | Date): string {
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
-function buildInvoiceHtml(invoice: any, settings: any): string {
+function buildInvoiceHtml(invoice: unknown, settings: unknown): string {
   const color = settings?.primaryColor || '#7c3aed';
   const companyName = settings?.name || '';
   const companyAddress = settings?.companyAddress || '';

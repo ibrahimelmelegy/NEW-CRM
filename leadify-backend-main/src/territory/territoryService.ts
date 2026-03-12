@@ -124,7 +124,7 @@ class TerritoryService {
 
     // First pass: create nodes
     for (const t of territories) {
-      const plain = t.toJSON() as any;
+      const plain = t.toJSON() as unknown;
       territoryMap.set(plain.id, { ...plain, children: [] });
     }
 

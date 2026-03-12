@@ -15,8 +15,8 @@ export interface SlackMessage {
   channel?: string;
   username?: string;
   icon_emoji?: string;
-  blocks?: any[];
-  attachments?: any[];
+  blocks?: unknown[];
+  attachments?: unknown[];
 }
 
 class SlackConnector {

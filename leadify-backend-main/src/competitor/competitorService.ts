@@ -235,7 +235,7 @@ class CompetitorService {
       raw: true
     });
 
-    const totalMarketShare = competitors.reduce((sum, c) => sum + (Number((c as any).marketShare) || 0), 0);
+    const totalMarketShare = competitors.reduce((sum, c) => sum + (Number((c as Record<string, unknown>).marketShare) || 0), 0);
 
     return {
       competitors,

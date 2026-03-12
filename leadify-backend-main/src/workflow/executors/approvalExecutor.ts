@@ -58,7 +58,7 @@ async function resolveApproverUserIds(config: ApprovalConfig): Promise<number[]>
           where: { roleId: role.id, status: 'ACTIVE' },
           attributes: ['id']
         });
-        return users.map((u: any) => u.id);
+        return users.map((u: Record<string, unknown>) => u.id);
       }
     } catch (err: unknown) {
       logger.error({ err: (err as Error).message }, 'Failed to resolve approver role');

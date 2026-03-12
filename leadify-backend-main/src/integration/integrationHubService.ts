@@ -513,7 +513,7 @@ class IntegrationHubService {
   }
 
   // ── Trigger webhooks for a given event ───────────────────────────────────
-  async triggerWebhooks(event: string, payload: any, tenantId?: string): Promise<void> {
+  async triggerWebhooks(event: string, payload: Record<string, unknown>, tenantId?: string): Promise<void> {
     const where: Record<string, unknown> = { status: OutgoingWebhookStatus.ACTIVE };
     if (tenantId) where.tenantId = tenantId;
 
@@ -527,7 +527,7 @@ class IntegrationHubService {
     }
   }
 
-  private async deliverWebhook(webhook: OutgoingWebhook, event: string, payload: any, attempt: number = 1): Promise<void> {
+  private async deliverWebhook(webhook: OutgoingWebhook, event: string, payload: Record<string, unknown>, attempt: number = 1): Promise<void> {
     const body = JSON.stringify({ event, payload, timestamp: new Date().toISOString() });
     const signature = crypto.createHmac('sha256', webhook.secret).update(body).digest('hex');
 

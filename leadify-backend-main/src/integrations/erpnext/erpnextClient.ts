@@ -105,7 +105,7 @@ export class ERPNextClient {
 
   // ---- Low-level request ----
 
-  private async request(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, data?: any, params?: Record<string, string>): Promise<unknown> {
+  private async request(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, data?: unknown, params?: Record<string, string>): Promise<unknown> {
     let url = `${this.baseUrl}${path}`;
     if (params && Object.keys(params).length > 0) {
       const qs = new URLSearchParams(params).toString();
@@ -142,7 +142,7 @@ export class ERPNextClient {
     // ERPNext response received
 
     // Parse response body
-    let parsed: any;
+    let parsed: Record<string, unknown>;
     try {
       parsed = JSON.parse(response.body);
     } catch {
@@ -170,7 +170,7 @@ export class ERPNextClient {
     return parsed;
   }
 
-  private parseServerMessages(parsed: any): string[] {
+  private parseServerMessages(parsed: Record<string, unknown>): string[] {
     const messages: string[] = [];
     if (parsed._server_messages) {
       try {

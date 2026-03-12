@@ -187,12 +187,12 @@ function formatType(type: string): string {
     .replace(/^\w/, (c: string) => c.toUpperCase());
 }
 
-function getNotifTitle(notif: any): string {
+function getNotifTitle(notif: unknown): string {
   if (notif.title) return notif.title;
   return formatType(notif.type);
 }
 
-function getNotifText(notif: any): string {
+function getNotifText(notif: unknown): string {
   return getNotificationText(notif);
 }
 
@@ -252,7 +252,7 @@ async function handleDelete(id: string) {
   await deleteNotification(id);
 }
 
-async function handleNotifClick(notif: any) {
+async function handleNotifClick(notif: unknown) {
   await clickNotification(notif);
   const path = getNotificationPath(notif);
   if (path) {

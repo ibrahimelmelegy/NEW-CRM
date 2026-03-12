@@ -30,7 +30,7 @@ class AIService {
     return this.openai;
   }
 
-  async generateEmail(prompt: string, context: any): Promise<string> {
+  async generateEmail(prompt: string, context: Record<string, unknown>): Promise<string> {
     try {
       const client = await this.getClient();
       if (!client) {

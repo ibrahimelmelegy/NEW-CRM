@@ -18,7 +18,7 @@ export interface HubSpotRecord {
 }
 
 export class HubSpotProvider {
-  private client: any = null;
+  private client: unknown = null;
 
   static isConfigured(): boolean {
     return !!process.env.HUBSPOT_API_KEY;
@@ -116,7 +116,7 @@ export class HubSpotProvider {
           companies: client.crm.companies
         };
         const response = await apiMap[objectType].basicApi.getPage(limit);
-        const records: HubSpotRecord[] = response.results.map((r: any) => ({
+        const records: HubSpotRecord[] = response.results.map((r: Record<string, unknown>) => ({
           id: r.id,
           properties: r.properties,
           createdAt: r.createdAt,

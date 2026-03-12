@@ -17,15 +17,15 @@ class CouponService {
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [{ code: { [Op.iLike]: `%${searchKey}%` } }, { description: { [Op.iLike]: `%${searchKey}%` } }];
+      (where as Record<string, unknown>)[Op.or] = [{ code: { [Op.iLike]: `%${searchKey}%` } }, { description: { [Op.iLike]: `%${searchKey}%` } }];
     }
 
     if (type) {
-      (where as any).type = type;
+      (where as Record<string, unknown>).type = type;
     }
 
     if (status) {
-      (where as any).status = status;
+      (where as Record<string, unknown>).status = status;
     }
 
     const { rows: docs, count: totalItems } = await EcCoupon.findAndCountAll({

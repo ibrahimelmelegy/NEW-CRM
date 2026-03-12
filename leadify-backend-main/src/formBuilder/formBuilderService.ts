@@ -339,7 +339,7 @@ class FormBuilderService {
     });
 
     if (format === 'csv') {
-      const escapeCsv = (val: any) => {
+      const escapeCsv = (val: Record<string, unknown>) => {
         const str = String(val);
         if (str.includes(',') || str.includes('"') || str.includes('\n')) {
           return `"${str.replace(/"/g, '""')}"`;

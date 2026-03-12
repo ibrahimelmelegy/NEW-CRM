@@ -497,7 +497,7 @@ async function getRoundRobinUser(): Promise<number | null> {
   // Find the most recent workflow assignment
   const lastExec = await WorkflowExecution.findOne({
     where: {
-      actionsExecuted: { [Op.contains]: [{ actionType: 'ASSIGN_TO' }] as any }
+      actionsExecuted: { [Op.contains]: [{ actionType: 'ASSIGN_TO' }] as unknown }
     },
     order: [['createdAt', 'DESC']]
   });
@@ -570,7 +570,7 @@ async function executeAction(
     case 'ASSIGN_TO':
       return executeAssignment(action, context.entityType, context.entityId);
     default:
-      throw new Error(`Unknown action type: ${(action as any).type}`);
+      throw new Error(`Unknown action type: ${(action as Record<string, unknown>).type}`);
   }
 }
 
@@ -839,7 +839,7 @@ async function executeDelayedActions(
   executionId: number,
   ruleId: number,
   entity: Record<string, unknown>,
-  actions: any[],
+  actions: unknown[],
   userId?: number
 ): Promise<void> {
   const execution = await WorkflowExecution.findByPk(executionId);

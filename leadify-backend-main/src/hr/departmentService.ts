@@ -23,7 +23,7 @@ class DepartmentService {
       where: { departmentId: { [Op.ne]: null } },
       group: ['departmentId'],
       raw: true
-    })) as any[];
+    })) as unknown[];
 
     const countMap = new Map<string, number>();
     for (const row of employeeCounts) {
@@ -84,7 +84,7 @@ class DepartmentService {
     const departments = (await Department.findAll({
       order: [['name', 'ASC']],
       raw: true
-    })) as any[];
+    })) as unknown[];
 
     // Count employees per department
     const employeeCounts = (await Employee.findAll({
@@ -92,7 +92,7 @@ class DepartmentService {
       where: { departmentId: { [Op.ne]: null } },
       group: ['departmentId'],
       raw: true
-    })) as any[];
+    })) as unknown[];
 
     const countMap = new Map<string, number>();
     for (const row of employeeCounts) {

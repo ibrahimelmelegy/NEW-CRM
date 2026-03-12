@@ -293,8 +293,8 @@ class DailyTaskService {
       monthlyRevenue: formattedMonthlyRevenue,
       taskDistributionByClient,
       salesPerformance: salesPerformance.map(item => ({
-        name: (item as any)['salesRepresentative.name'],
-        tasksCount: Number((item as any).tasksCount),
+        name: (item as Record<string, unknown>)['salesRepresentative.name'],
+        tasksCount: Number((item as Record<string, unknown>).tasksCount),
         totalPaid: Number((item.totalPaid ?? 0).toFixed(2))
       }))
     };

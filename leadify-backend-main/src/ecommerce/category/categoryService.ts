@@ -20,19 +20,19 @@ class CategoryService {
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [{ name: { [Op.iLike]: `%${searchKey}%` } }];
+      (where as Record<string, unknown>)[Op.or] = [{ name: { [Op.iLike]: `%${searchKey}%` } }];
     }
 
     if (parentId !== undefined && parentId !== '') {
       if (parentId === 'null' || parentId === null) {
-        (where as any).parentId = null;
+        (where as Record<string, unknown>).parentId = null;
       } else {
-        (where as any).parentId = parentId;
+        (where as Record<string, unknown>).parentId = parentId;
       }
     }
 
     if (isActive !== undefined && isActive !== '') {
-      (where as any).isActive = isActive === 'true' || isActive === true;
+      (where as Record<string, unknown>).isActive = isActive === 'true' || isActive === true;
     }
 
     const { rows: docs, count: totalItems } = await EcCategory.findAndCountAll({

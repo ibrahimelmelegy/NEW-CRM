@@ -5,7 +5,7 @@ import CoverPageNode from './CoverPageNode.vue';
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     coverPage: {
-      insertCoverPage: (options?: any) => ReturnType;
+      insertCoverPage: (options?: unknown) => ReturnType;
     };
   }
 }

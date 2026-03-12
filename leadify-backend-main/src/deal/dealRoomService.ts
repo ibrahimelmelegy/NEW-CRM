@@ -92,7 +92,7 @@ class DealRoomService {
     }));
 
     // Stakeholder map
-    const sellerSide = (deal as any).users || [];
+    const sellerSide = (deal as Record<string, unknown>).users || [];
 
     return {
       deal: {
@@ -106,7 +106,7 @@ class DealRoomService {
       healthScore,
       timeline,
       stakeholders: {
-        sellers: sellerSide.map((u: any) => ({
+        sellers: sellerSide.map((u: Record<string, unknown>) => ({
           id: u.id,
           name: u.name,
           profilePicture: u.profilePicture,

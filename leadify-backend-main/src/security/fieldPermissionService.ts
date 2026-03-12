@@ -24,7 +24,7 @@ export async function setFieldPermission(roleId: string, entityType: string, fie
       access
     },
     {
-      conflictFields: ['roleId', 'entityType', 'fieldName'] as any
+      conflictFields: ['roleId', 'entityType', 'fieldName'] as unknown
     }
   );
   return permission;

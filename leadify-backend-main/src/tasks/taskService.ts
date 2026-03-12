@@ -59,11 +59,11 @@ class TaskService {
     }
     if (dueDateFrom || dueDateTo) {
       where.dueDate = {};
-      if (dueDateFrom) (where.dueDate as any)[Op.gte] = new Date(dueDateFrom);
-      if (dueDateTo) (where.dueDate as any)[Op.lte] = new Date(dueDateTo);
+      if (dueDateFrom) (where.dueDate as Record<string, unknown>)[Op.gte] = new Date(dueDateFrom);
+      if (dueDateTo) (where.dueDate as Record<string, unknown>)[Op.lte] = new Date(dueDateTo);
     }
     if (search) {
-      where[Op.or as any] = [{ title: { [Op.iLike]: `%${search}%` } }, { description: { [Op.iLike]: `%${search}%` } }];
+      where[Op.or as symbol] = [{ title: { [Op.iLike]: `%${search}%` } }, { description: { [Op.iLike]: `%${search}%` } }];
     }
 
     const allowedSortFields = ['createdAt', 'dueDate', 'priority', 'status', 'title', 'updatedAt'];

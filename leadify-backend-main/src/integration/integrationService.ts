@@ -38,7 +38,7 @@ function decryptSensitiveFields(config: ConfigRecord): ConfigRecord {
 interface UpsertIntegrationInput {
   provider: string;
   config?: ConfigRecord;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 class IntegrationService {

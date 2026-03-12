@@ -1086,7 +1086,7 @@ const DEFAULT_TEMPLATES = [
  * Map frontend email template fields (body -> emailBody, category -> emailCategory)
  * to model column names to avoid conflicts with existing model columns.
  */
-function mapEmailFields(data: Record<string, unknown>): any {
+function mapEmailFields(data: Record<string, unknown>): unknown {
   const mapped = { ...data };
   if (mapped.body !== undefined && mapped.type === 'EMAIL') {
     mapped.emailBody = mapped.body;
@@ -1103,7 +1103,7 @@ function mapEmailFields(data: Record<string, unknown>): any {
  * Reshape a document template record to expose email-friendly field names
  * for email-type templates (emailBody -> body, emailCategory -> category).
  */
-function reshapeForEmail(doc: any): unknown {
+function reshapeForEmail(doc: unknown): unknown {
   if (!doc) return doc;
   const plain = doc.toJSON ? doc.toJSON() : { ...doc };
   if (plain.type === 'EMAIL') {

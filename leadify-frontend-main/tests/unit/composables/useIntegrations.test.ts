@@ -9,28 +9,28 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useIntegrations } from '~/composables/useIntegrations';
 
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 const mockNotification = vi.fn();
 const mockNotificationSuccess = vi.fn();
 const mockNotificationError = vi.fn();
 const mockNotificationWarning = vi.fn();
-(globalThis as any).ElNotification = Object.assign(mockNotification, {
+(globalThis as Record<string, unknown>).ElNotification = Object.assign(mockNotification, {
   success: mockNotificationSuccess,
   error: mockNotificationError,
   warning: mockNotificationWarning
 });
 
 vi.mock('element-plus', () => ({
-  ElNotification: Object.assign((...args: any[]) => mockNotification(...args), {
-    success: (...args: any[]) => mockNotificationSuccess(...args),
-    error: (...args: any[]) => mockNotificationError(...args),
-    warning: (...args: any[]) => mockNotificationWarning(...args)
+  ElNotification: Object.assign((...args: unknown[]) => mockNotification(...args), {
+    success: (...args: unknown[]) => mockNotificationSuccess(...args),
+    error: (...args: unknown[]) => mockNotificationError(...args),
+    warning: (...args: unknown[]) => mockNotificationWarning(...args)
   })
 }));
 
 vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: any[]) => mockApiFetch(...args)
+  useApiFetch: (...args: unknown[]) => mockApiFetch(...args)
 }));
 
 describe('useIntegrations', () => {
@@ -185,7 +185,7 @@ describe('useIntegrations', () => {
     it('should mark configured integrations as connected', () => {
       const int = useIntegrations();
       int.catalog.value = [{ type: 'SLACK', name: 'Slack', description: 'Test', icon: 'slack', category: 'Communication', configFields: [] }];
-      int.configured.value = [{ id: '1', type: 'SLACK', name: 'Slack', status: 'ACTIVE' } as any];
+      int.configured.value = [{ id: '1', type: 'SLACK', name: 'Slack', status: 'ACTIVE' } as unknown];
 
       const slack = int.allIntegrations.value.find(i => i.type === 'SLACK');
       expect(slack?.status).toBe('connected');

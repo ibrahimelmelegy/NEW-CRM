@@ -14,7 +14,7 @@ class InventoryService {
     const where: WhereOptions = {};
 
     if (searchKey) {
-      where[Op.or as any] = [
+      where[Op.or as symbol] = [
         { name: { [Op.iLike]: `%${searchKey}%` } },
         { sku: { [Op.iLike]: `%${searchKey}%` } },
         { description: { [Op.iLike]: `%${searchKey}%` } }
@@ -22,15 +22,15 @@ class InventoryService {
     }
 
     if (category) {
-      (where as any).category = category;
+      (where as Record<string, unknown>).category = category;
     }
 
     if (warehouse) {
-      (where as any).warehouse = warehouse;
+      (where as Record<string, unknown>).warehouse = warehouse;
     }
 
     if (isActive !== undefined && isActive !== '') {
-      (where as any).isActive = isActive === 'true' || isActive === true;
+      (where as Record<string, unknown>).isActive = isActive === 'true' || isActive === true;
     }
 
     const { rows: products, count: totalItems } = await Product.findAndCountAll({

@@ -42,7 +42,7 @@ const entityModelMap: Record<string, unknown> = {
   campaigns: Campaign
 };
 
-function getModelByEntityType(entityType: string): any {
+function getModelByEntityType(entityType: string): unknown {
   const model = entityModelMap[entityType?.toLowerCase()];
   if (!model) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
   return model;
@@ -67,7 +67,7 @@ function getEntityTypeModels(): Record<string, string> {
 }
 
 // ─── Build Filter WHERE Clause ───────────────────────────
-function buildFilterWhere(filters: ReportFilter[]): any {
+function buildFilterWhere(filters: ReportFilter[]): unknown {
   if (!filters || !filters.length) return {};
 
   const where: Record<string, unknown> = {};
@@ -211,7 +211,7 @@ class CustomReportService {
     const where = buildFilterWhere(filters);
 
     // Build attributes
-    const attributes: any = fields && fields.length > 0 ? fields : undefined;
+    const attributes: unknown = fields && fields.length > 0 ? fields : undefined;
 
     // Build query options
     const queryOptions: Record<string, unknown> = {

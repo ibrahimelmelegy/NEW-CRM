@@ -224,7 +224,7 @@ class TrainingService {
 
     const completed = enrollments.filter(e => e.status === 'COMPLETED').length;
     const inProgress = enrollments.filter(e => ['ENROLLED', 'IN_PROGRESS'].includes(e.status)).length;
-    const totalHours = enrollments.filter(e => e.status === 'COMPLETED').reduce((sum, e) => sum + ((e.program as any)?.durationHours || 0), 0);
+    const totalHours = enrollments.filter(e => e.status === 'COMPLETED').reduce((sum, e) => sum + ((e.program as Record<string, unknown>)?.durationHours || 0), 0);
 
     return {
       employeeId,

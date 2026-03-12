@@ -103,9 +103,9 @@ class UsageBillingService {
     });
 
     // Group by meter
-    const meterUsage: Record<number, { meter: any; totalQuantity: number }> = {};
+    const meterUsage: Record<number, { meter: unknown; totalQuantity: number }> = {};
     for (const r of records) {
-      const rec = r as any;
+      const rec = r as Record<string, unknown>;
       if (!meterUsage[rec.meterId]) {
         meterUsage[rec.meterId] = { meter: rec.meter, totalQuantity: 0 };
       }

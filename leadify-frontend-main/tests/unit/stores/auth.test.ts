@@ -14,7 +14,7 @@ const mockElNotification = vi.fn();
 
 // Mock element-plus to intercept the import { ElNotification } in stores/auth.ts
 vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockElNotification(...args)
+  ElNotification: (...args: unknown[]) => mockElNotification(...args)
 }));
 
 // Mock the user ref from composables/useUser
@@ -72,12 +72,12 @@ describe('useAuthStore', () => {
     };
 
     it('should set loadingChangePassword to true during request', async () => {
-      let resolvePromise: (value: any) => void;
+      let resolvePromise: (value: unknown) => void;
       const pendingPromise = new Promise(resolve => {
         resolvePromise = resolve;
       });
 
-      (globalThis.useApiFetch as any).mockReturnValue(pendingPromise);
+      (globalThis.useApiFetch as unknown).mockReturnValue(pendingPromise);
 
       const resultPromise = store.changePassword(validInput);
 
@@ -91,7 +91,7 @@ describe('useAuthStore', () => {
     });
 
     it('should call API with correct parameters', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         message: 'Password changed'
       });
@@ -106,7 +106,7 @@ describe('useAuthStore', () => {
     });
 
     it('should return success result and show success notification', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         message: 'Password changed successfully'
       });
@@ -127,7 +127,7 @@ describe('useAuthStore', () => {
     });
 
     it('should return failure result and show error notification on API failure', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: false,
         message: 'Old password is incorrect'
       });
@@ -149,7 +149,7 @@ describe('useAuthStore', () => {
     });
 
     it('should handle thrown exception gracefully', async () => {
-      (globalThis.useApiFetch as any).mockRejectedValue(new Error('Network error'));
+      (globalThis.useApiFetch as unknown).mockRejectedValue(new Error('Network error'));
 
       const result = await store.changePassword(validInput);
 
@@ -168,7 +168,7 @@ describe('useAuthStore', () => {
     });
 
     it('should use fallback message when API response has no message', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: false
       });
 
@@ -188,7 +188,7 @@ describe('useAuthStore', () => {
 
   describe('logout', () => {
     it('should call the logout API endpoint', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({ success: true });
+      (globalThis.useApiFetch as unknown).mockResolvedValue({ success: true });
 
       await store.logout();
 
@@ -196,7 +196,7 @@ describe('useAuthStore', () => {
     });
 
     it('should navigate to login page after logout', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({ success: true });
+      (globalThis.useApiFetch as unknown).mockResolvedValue({ success: true });
 
       await store.logout();
 

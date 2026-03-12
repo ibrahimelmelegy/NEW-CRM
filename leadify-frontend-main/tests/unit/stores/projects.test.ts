@@ -82,10 +82,10 @@ describe('useProjectStore', () => {
         mockProject({ id: 'proj-2', status: 'COMPLETE' }),
         mockProject({ id: 'proj-3', status: 'ACTIVE' }),
         mockProject({ id: 'proj-4', status: 'ON_HOLD' })
-      ] as any;
+      ] as unknown;
 
       expect(store.activeProjects).toHaveLength(2);
-      expect(store.activeProjects.every((p: any) => p.status === 'ACTIVE')).toBe(true);
+      expect(store.activeProjects.every((p: unknown) => p.status === 'ACTIVE')).toBe(true);
     });
 
     it('projectsByStatus should group projects by status', () => {
@@ -94,7 +94,7 @@ describe('useProjectStore', () => {
         mockProject({ id: 'proj-2', status: 'COMPLETE' }),
         mockProject({ id: 'proj-3', status: 'ACTIVE' }),
         mockProject({ id: 'proj-4', status: 'ON_HOLD' })
-      ] as any;
+      ] as unknown;
 
       const grouped = store.projectsByStatus;
       expect(grouped.ACTIVE).toHaveLength(2);
@@ -103,7 +103,7 @@ describe('useProjectStore', () => {
     });
 
     it('projectsByStatus should skip projects without status', () => {
-      store.projects = [mockProject({ id: 'proj-1', status: 'ACTIVE' }), mockProject({ id: 'proj-2', status: undefined })] as any;
+      store.projects = [mockProject({ id: 'proj-1', status: 'ACTIVE' }), mockProject({ id: 'proj-2', status: undefined })] as unknown;
 
       const grouped = store.projectsByStatus;
       expect(grouped.ACTIVE).toHaveLength(1);
@@ -119,7 +119,7 @@ describe('useProjectStore', () => {
       const projects = [mockProject({ id: 'proj-1' }), mockProject({ id: 'proj-2' })];
       const pagination = { page: 1, limit: 10, total: 2, totalPages: 1 };
 
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: { docs: projects, pagination }
       });
@@ -134,7 +134,7 @@ describe('useProjectStore', () => {
     });
 
     it('should set error on API failure', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: false,
         message: 'Server error'
       });
@@ -146,7 +146,7 @@ describe('useProjectStore', () => {
     });
 
     it('should handle network exceptions', async () => {
-      (globalThis.useApiFetch as any).mockRejectedValue(new Error('Network failure'));
+      (globalThis.useApiFetch as unknown).mockRejectedValue(new Error('Network failure'));
 
       await store.fetchProjects();
 
@@ -159,12 +159,12 @@ describe('useProjectStore', () => {
     it('should create a project and prepend it to the list', async () => {
       const newProject = mockProject({ id: 'proj-new', name: 'New Project' });
 
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: newProject
       });
 
-      store.projects = [mockProject({ id: 'proj-existing' })] as any;
+      store.projects = [mockProject({ id: 'proj-existing' })] as unknown;
       const result = await store.createProject({ name: 'New Project' });
 
       expect(result).toEqual(newProject);
@@ -173,7 +173,7 @@ describe('useProjectStore', () => {
     });
 
     it('should return null and set error on failure', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: false,
         message: 'Name is required'
       });
@@ -190,15 +190,15 @@ describe('useProjectStore', () => {
       const original = mockProject({ id: 'proj-1', name: 'Original' });
       const updated = mockProject({ id: 'proj-1', name: 'Updated', status: 'COMPLETE' });
 
-      store.projects = [original] as any;
-      store.currentProject = original as any;
+      store.projects = [original] as unknown;
+      store.currentProject = original as unknown;
 
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: updated
       });
 
-      const result = await store.updateProject('proj-1', { name: 'Updated', status: 'COMPLETE' } as any);
+      const result = await store.updateProject('proj-1', { name: 'Updated', status: 'COMPLETE' } as unknown);
 
       expect(result).toEqual(updated);
       expect(store.projects[0]!.name).toBe('Updated');
@@ -206,7 +206,7 @@ describe('useProjectStore', () => {
     });
 
     it('should return null on exception', async () => {
-      (globalThis.useApiFetch as any).mockRejectedValue(new Error('Update failed'));
+      (globalThis.useApiFetch as unknown).mockRejectedValue(new Error('Update failed'));
 
       const result = await store.updateProject('proj-1', { name: 'X' });
 

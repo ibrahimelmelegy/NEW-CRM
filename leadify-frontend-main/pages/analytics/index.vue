@@ -118,7 +118,7 @@ import { fetchPipelineData, fetchRevenueChart, fetchTeamPerformance } from '~/co
 import { formatLargeNumber } from '~/composables/format';
 
 // Lazy-load heavy chart dependencies for faster initial page load
-let graphic: any;
+let graphic: unknown;
 const VChart = defineAsyncComponent(() =>
   Promise.all([
     import('echarts/core'),

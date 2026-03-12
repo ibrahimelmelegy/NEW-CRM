@@ -25,7 +25,7 @@ import {
 } from '~/composables/useFinance';
 
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 describe('useFinance', () => {
   beforeEach(() => {

@@ -19,7 +19,7 @@ import cacheService from '../infrastructure/cacheService';
 const DASHBOARD_CACHE_TTL = 120; // 2 minutes
 
 // Maps entity type strings to Sequelize model classes
-function getModelByEntityType(entityType: string): any {
+function getModelByEntityType(entityType: string): unknown {
   const map: Record<string, unknown> = {
     lead: Lead,
     leads: Lead,
@@ -44,7 +44,7 @@ function getModelByEntityType(entityType: string): any {
 }
 
 // Build a date range WHERE clause from dateRange string
-function buildDateRangeWhere(dateRange?: string, customFrom?: string, customTo?: string): any {
+function buildDateRangeWhere(dateRange?: string, customFrom?: string, customTo?: string): unknown {
   if (!dateRange) return {};
 
   const now = new Date();
@@ -95,7 +95,7 @@ function buildDateRangeWhere(dateRange?: string, customFrom?: string, customTo?:
 }
 
 // Build filter WHERE clause from widget filters
-function buildFilterWhere(filters?: Array<{ field: string; operator: string; value: unknown }>): any {
+function buildFilterWhere(filters?: Array<{ field: string; operator: string; value: unknown }>): unknown {
   if (!filters || !filters.length) return {};
 
   const where: Record<string, unknown> = {};
@@ -169,7 +169,7 @@ class DashboardService {
   }
 
   async getDashboards(userId: number, role?: string) {
-    const whereClause: any = {
+    const whereClause: unknown = {
       [Op.or]: [{ userId }, { isShared: true }]
     };
     if (role) {
@@ -231,7 +231,7 @@ class DashboardService {
     const Model = getModelByEntityType(config.entityType || '');
     if (!Model) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
 
-    const where: any = {
+    const where: unknown = {
       ...buildDateRangeWhere(config.dateRange, config.customDateFrom, config.customDateTo),
       ...buildFilterWhere(config.filters)
     };
@@ -260,7 +260,7 @@ class DashboardService {
     const Model = getModelByEntityType(config.entityType || '');
     if (!Model) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
 
-    const where: any = {
+    const where: unknown = {
       ...buildDateRangeWhere(config.dateRange, config.customDateFrom, config.customDateTo),
       ...buildFilterWhere(config.filters)
     };
@@ -273,7 +273,7 @@ class DashboardService {
     const metric = config.metric || 'count';
     const field = config.field || 'id';
 
-    let aggAttr: any;
+    let aggAttr: unknown;
     switch (metric) {
       case 'sum':
         aggAttr = [fn('SUM', col(field)), 'value'];
@@ -297,10 +297,10 @@ class DashboardService {
     });
 
     return {
-      labels: results.map((r: any) => r[groupBy]),
+      labels: results.map((r: Record<string, unknown>) => r[groupBy]),
       datasets: [
         {
-          data: results.map((r: any) => Number(r.value || 0)),
+          data: results.map((r: Record<string, unknown>) => Number(r.value || 0)),
           chartType: config.chartType || 'bar'
         }
       ]
@@ -311,7 +311,7 @@ class DashboardService {
     const Model = getModelByEntityType(config.entityType || '');
     if (!Model) throw new BaseError(ERRORS.SOMETHING_WENT_WRONG);
 
-    const where: any = {
+    const where: unknown = {
       ...buildDateRangeWhere(config.dateRange, config.customDateFrom, config.customDateTo),
       ...buildFilterWhere(config.filters)
     };
@@ -487,7 +487,7 @@ class DashboardService {
       })
     ]);
 
-    const totalRevenue = Number((totalRevenueResult as any)?.totalRevenue || 0);
+    const totalRevenue = Number((totalRevenueResult as Record<string, unknown>).totalRevenue || 0);
     const conversionRate = totalLeads > 0 ? Number(((convertedLeads / totalLeads) * 100).toFixed(2)) : 0;
 
     return {
@@ -524,8 +524,8 @@ class DashboardService {
       const found = stageResults.find(r => r.stage === stage);
       return {
         stage,
-        count: found ? Number((found as any).count) : 0,
-        totalValue: found ? Number((found as any).totalValue || 0) : 0
+        count: found ? Number((found as Record<string, unknown>).count) : 0,
+        totalValue: found ? Number((found as Record<string, unknown>).totalValue || 0) : 0
       };
     });
 
@@ -576,9 +576,9 @@ class DashboardService {
     });
 
     return {
-      labels: results.map(r => (r as any).period),
-      revenue: results.map(r => Number((r as any).revenue || 0)),
-      dealCount: results.map(r => Number((r as any).dealCount || 0))
+      labels: results.map(r => (r as Record<string, unknown>).period),
+      revenue: results.map(r => Number((r as Record<string, unknown>).revenue || 0)),
+      dealCount: results.map(r => Number((r as Record<string, unknown>).dealCount || 0))
     };
   }
 
@@ -631,7 +631,7 @@ class DashboardService {
     });
 
     const performance = await Promise.all(
-      users.map(async (user: any) => {
+      users.map(async (user: Record<string, unknown>) => {
         const [dealsWon, dealRevenue, leadsCreated, tasksCompleted] = await Promise.all([
           Deal.count({
             where: { ...dateWhere, stage: DealStageEnums.CLOSED },
@@ -686,7 +686,7 @@ class DashboardService {
           userId: user.id,
           userName: user.name,
           dealsWon,
-          revenue: Number((dealRevenue as any)?.revenue || 0),
+          revenue: Number((dealRevenue as Record<string, unknown>).revenue || 0),
           leadsCreated,
           tasksCompleted
         };
@@ -726,8 +726,8 @@ class DashboardService {
 
     const totalClosedCancelled = wonDeals + lostDeals;
     const winRate = totalClosedCancelled > 0 ? (wonDeals / totalClosedCancelled) * 100 : 0;
-    const totalRevenue = Number((revenueResult as any)?.totalRevenue || 0);
-    const avgDealCycle = Math.round(Number((avgCycleResult as any)?.avgCycle || 0));
+    const totalRevenue = Number((revenueResult as Record<string, unknown>).totalRevenue || 0);
+    const avgDealCycle = Math.round(Number((avgCycleResult as Record<string, unknown>).avgCycle || 0));
 
     return { totalLeads, totalDeals, totalRevenue, winRate, avgDealCycle };
   }
@@ -747,7 +747,7 @@ class DashboardService {
 
     return results.map(r => ({
       source: r.leadSource,
-      count: Number((r as any).count)
+      count: Number((r as Record<string, unknown>).count)
     }));
   }
 
@@ -778,15 +778,15 @@ class DashboardService {
         [fn('AVG', col('price')), 'avgValue'],
         [fn('COUNT', col('id')), 'dealCount']
       ],
-      group: [literal(`TO_CHAR("createdAt", 'YYYY-MM')`) as any],
+      group: [literal(`TO_CHAR("createdAt", 'YYYY-MM')`) as unknown],
       order: [[literal(`TO_CHAR("createdAt", 'YYYY-MM')`), 'ASC']],
       raw: true
     });
 
     return results.map(r => ({
-      month: (r as any).month,
-      avgValue: Math.round(Number((r as any).avgValue || 0)),
-      dealCount: Number((r as any).dealCount)
+      month: (r as Record<string, unknown>).month,
+      avgValue: Math.round(Number((r as Record<string, unknown>).avgValue || 0)),
+      dealCount: Number((r as Record<string, unknown>).dealCount)
     }));
   }
 
@@ -807,7 +807,7 @@ class DashboardService {
     const results = await Promise.all(
       funnelStages.map(async stage => ({
         name: stage.name,
-        value: await (stage.model as any).count({ where: stage.where })
+        value: await (stage.model as Record<string, unknown>).count({ where: stage.where })
       }))
     );
 

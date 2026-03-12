@@ -152,7 +152,7 @@ class ClvService {
     > = {};
 
     for (const r of records) {
-      const rec = r as any;
+      const rec = r as Record<string, unknown>;
       const seg = rec.segment || 'UNKNOWN';
       if (!cohorts[seg]) cohorts[seg] = { count: 0, totalHistorical: 0, totalPredicted: 0, avgChurnRisk: 0, avgOrderValue: 0 };
       cohorts[seg].count++;

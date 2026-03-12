@@ -36,7 +36,7 @@ export interface StripeResult<T> {
 }
 
 export class StripeProvider {
-  private stripe: any = null;
+  private stripe: unknown = null;
 
   static isConfigured(): boolean {
     return !!process.env.STRIPE_SECRET_KEY;
@@ -153,10 +153,10 @@ export class StripeProvider {
     try {
       const client = this.getClient();
       if (client) {
-        const params: any = { limit };
+        const params: Record<string, unknown> = { limit };
         if (customerId) params.customer = customerId;
         const invoices = await client.invoices.list(params);
-        const items = invoices.data.map((inv: any) => ({ id: inv.id, amount: inv.amount_due, status: inv.status, created: inv.created }));
+        const items = invoices.data.map((inv: Record<string, unknown>) => ({ id: inv.id, amount: inv.amount_due, status: inv.status, created: inv.created }));
         return { success: true, data: items, mock: false };
       }
       return {

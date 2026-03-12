@@ -82,7 +82,7 @@ class CpqService {
     const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.search) {
-      where[Op.or as any] = [{ productName: { [Op.iLike]: `%${query.search}%` } }, { sku: { [Op.iLike]: `%${query.search}%` } }];
+      where[Op.or as symbol] = [{ productName: { [Op.iLike]: `%${query.search}%` } }, { sku: { [Op.iLike]: `%${query.search}%` } }];
     }
     if (query.priceBookId) where.priceBookId = Number(query.priceBookId);
 
@@ -195,7 +195,7 @@ class CpqService {
     const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.search) {
-      where[Op.or as any] = [{ title: { [Op.iLike]: `%${query.search}%` } }, { quoteNumber: { [Op.iLike]: `%${query.search}%` } }];
+      where[Op.or as symbol] = [{ title: { [Op.iLike]: `%${query.search}%` } }, { quoteNumber: { [Op.iLike]: `%${query.search}%` } }];
     }
     if (query.status) where.status = query.status;
     if (query.clientId) where.clientId = Number(query.clientId);

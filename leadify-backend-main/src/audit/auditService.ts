@@ -47,7 +47,7 @@ export function diffObjects(oldObj: Record<string, unknown>, newObj: Record<stri
   return changes;
 }
 
-function normalizeValue(val: any): unknown {
+function normalizeValue(val: unknown): unknown {
   if (val instanceof Date) return val.toISOString();
   return val;
 }
@@ -134,7 +134,7 @@ export async function getFieldHistory(entityType: string, entityId: string | num
 
   // Extract only the relevant field change from each entry
   return entries.map(entry => {
-    const entryJson = entry.toJSON() as any;
+    const entryJson = entry.toJSON() as unknown;
     const fieldChange = entryJson.changes?.find((c: AuditFieldChange) => c.field === fieldName);
     return {
       id: entryJson.id,
@@ -215,10 +215,10 @@ export async function getAllAuditLogs(filters: AuditLogFilters) {
   if (filters.dateFrom || filters.dateTo) {
     where.createdAt = {};
     if (filters.dateFrom) {
-      (where.createdAt as any)[Op.gte] = new Date(filters.dateFrom);
+      (where.createdAt as Record<string, unknown>)[Op.gte] = new Date(filters.dateFrom);
     }
     if (filters.dateTo) {
-      (where.createdAt as any)[Op.lte] = new Date(filters.dateTo);
+      (where.createdAt as Record<string, unknown>)[Op.lte] = new Date(filters.dateTo);
     }
   }
 

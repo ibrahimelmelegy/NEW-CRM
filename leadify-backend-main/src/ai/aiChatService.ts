@@ -15,7 +15,7 @@ interface ChatMessage {
 interface ChatResponse {
   answer: string;
   context?: string;
-  data?: any;
+  data?: unknown;
 }
 
 const CRM_SYSTEM_PROMPT = `You are a CRM data assistant for High Point CRM. You help users query and understand their CRM data.
@@ -227,7 +227,7 @@ class AIChatService {
     return undefined;
   }
 
-  private async executeQuery(plan: any): Promise<unknown> {
+  private async executeQuery(plan: Record<string, unknown>): Promise<unknown> {
     const modelMap: Record<string, unknown> = {
       leads: Lead,
       deals: Deal,
@@ -305,7 +305,7 @@ class AIChatService {
           const items = await Deal.findAll({
             where,
             include: [{ model: Client, as: 'client', attributes: ['clientName', 'companyName'] }],
-            order: order as any,
+            order: order as unknown,
             limit
           });
           return { items: items.map(i => i.toJSON()), total: items.length };
@@ -334,7 +334,7 @@ class AIChatService {
     }
   }
 
-  private async generateResponse(question: string, plan: any, data: Record<string, unknown>): Promise<string> {
+  private async generateResponse(question: string, plan: Record<string, unknown>, data: Record<string, unknown>): Promise<string> {
     try {
       const client = await this.getOpenAIClient();
       if (!client) {
@@ -364,7 +364,7 @@ class AIChatService {
     }
   }
 
-  private formatResponseFallback(plan: any, data: Record<string, unknown>): string {
+  private formatResponseFallback(plan: Record<string, unknown>, data: Record<string, unknown>): string {
     if (!data) return 'No data found for your query.';
 
     switch (plan.intent) {
@@ -384,7 +384,7 @@ class AIChatService {
           const names = data.items
             .slice(0, 5)
             .map(
-              (item: any) =>
+              (item: Record<string, unknown>) =>
                 `- ${item.name || item.clientName || item.invoiceNumber || 'Item'}${item.price ? ` ($${item.price.toLocaleString()})` : ''}${item.amount ? ` ($${item.amount.toLocaleString()})` : ''}`
             )
             .join('\n');
@@ -395,7 +395,7 @@ class AIChatService {
       case 'status':
         if (data.breakdown?.length > 0) {
           const lines = data.breakdown
-            .map((item: any) => {
+            .map((item: Record<string, unknown>) => {
               const key = Object.keys(item).find(k => k !== 'count') || 'status';
               return `- **${item[key]}**: ${item.count}`;
             })
@@ -428,7 +428,7 @@ class AIChatService {
         attributes: [[fn('SUM', col('price')), 'total']],
         raw: true
       });
-      const total = (result as any)?.total || 0;
+      const total = (result as Record<string, unknown>).total || 0;
       return { answer: `The current pipeline value (deals in progress) is **$${Number(total).toLocaleString()}**.` };
     }
 

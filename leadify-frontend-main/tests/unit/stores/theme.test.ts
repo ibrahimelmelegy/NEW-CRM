@@ -271,7 +271,7 @@ describe('useThemeStore', () => {
     it('should default to dark when no saved theme and system prefers dark', () => {
       // No localStorage value; mock matchMedia to report dark preference
       const originalMatchMedia = window.matchMedia;
-      window.matchMedia = vi.fn().mockReturnValue({ matches: false }) as any;
+      window.matchMedia = vi.fn().mockReturnValue({ matches: false }) as unknown;
 
       store.initializeTheme();
 
@@ -282,7 +282,7 @@ describe('useThemeStore', () => {
     it('should detect light theme from system preference', () => {
       // No localStorage value; mock matchMedia to report light preference
       const originalMatchMedia = window.matchMedia;
-      window.matchMedia = vi.fn().mockReturnValue({ matches: true }) as any;
+      window.matchMedia = vi.fn().mockReturnValue({ matches: true }) as unknown;
 
       store.initializeTheme();
 

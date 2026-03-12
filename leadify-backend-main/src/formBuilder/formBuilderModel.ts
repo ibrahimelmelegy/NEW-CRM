@@ -54,7 +54,7 @@ export class FormTemplate extends Model {
   public autoResponse?: { enabled: boolean; subject?: string; body?: string };
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public conditionalLogic?: Array<{ fieldId: string; condition: string; value: any; showFields: string[] }>;
+  public conditionalLogic?: Array<{ fieldId: string; condition: string; value: unknown; showFields: string[] }>;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;

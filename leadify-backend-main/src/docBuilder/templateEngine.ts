@@ -35,7 +35,7 @@ function escapeHtml(str: string): string {
  * Process a single {{#each}} block body for one item, replacing scoped variables
  * and recursively handling any nested {{#each}} blocks within.
  */
-function renderEachItem(body: string, item: any, index: number, parentData: Record<string, unknown>): string {
+function renderEachItem(body: string, item: Record<string, unknown>, index: number, parentData: Record<string, unknown>): string {
   let rendered = body;
 
   // Replace {{@index}} and {{@number}}
@@ -228,7 +228,7 @@ export function renderFromTemplate(templateHtml: string, content: Record<string,
   // Parse items financial data if present
   const items = content.items || [];
   const currency = content.currency || 'SAR';
-  const subtotal = items.reduce((sum: number, item: any) => sum + (item.quantity || 0) * (item.rate || 0), 0);
+  const subtotal = items.reduce((sum: number, item: Record<string, unknown>) => sum + (item.quantity || 0) * (item.rate || 0), 0);
   const discountAmount = content.discountType === 'percent' ? subtotal * ((content.discount || 0) / 100) : content.discount || 0;
   const taxableAmount = subtotal - discountAmount;
   const taxAmount = taxableAmount * ((content.taxRate || 0) / 100);
@@ -257,7 +257,7 @@ export function renderFromTemplate(templateHtml: string, content: Record<string,
       ? new Date(content.validUntil).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
       : '',
     // Enrich items with computed lineTotal
-    items: items.map((item: any, i: number) => ({
+    items: items.map((item: Record<string, unknown>, i: number) => ({
       ...item,
       index: i + 1,
       lineTotal: ((item.quantity || 0) * (item.rate || 0)).toFixed(2)

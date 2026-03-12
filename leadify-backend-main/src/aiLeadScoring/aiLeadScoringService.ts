@@ -83,7 +83,7 @@ class AiLeadScoringService {
     const results: Array<{ leadId: string; leadName: string; score: number; matchedRules: string[] }> = [];
 
     for (const lead of leads) {
-      const l = lead as any;
+      const l = lead as Record<string, unknown>;
       let rawScore = 0;
       const matchedRules: string[] = [];
 
@@ -186,7 +186,7 @@ class AiLeadScoringService {
       }
 
       for (const lead of leads) {
-        const l = lead as any;
+        const l = lead as Record<string, unknown>;
         const fieldValue = l[param.feature];
         let matched = false;
 

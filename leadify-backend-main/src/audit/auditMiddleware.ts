@@ -55,16 +55,16 @@ export function auditUpdate(
       const oldValues = currentRecord.toJSON() as Record<string, unknown>;
 
       // Store old values on the request so the handler can proceed normally
-      (req as any)._auditOldValues = oldValues;
-      (req as any)._auditEntityType = entityType;
-      (req as any)._auditEntityId = entityId;
-      (req as any)._auditFieldLabels = fieldLabels;
-      (req as any)._auditActionResolver = actionResolver;
-      (req as any)._auditModelClass = modelClass;
+      (req as Record<string, unknown>)._auditOldValues = oldValues;
+      (req as Record<string, unknown>)._auditEntityType = entityType;
+      (req as Record<string, unknown>)._auditEntityId = entityId;
+      (req as Record<string, unknown>)._auditFieldLabels = fieldLabels;
+      (req as Record<string, unknown>)._auditActionResolver = actionResolver;
+      (req as Record<string, unknown>)._auditModelClass = modelClass;
 
       // Hook into res.json/res.send to capture when the response is sent (success path)
       const originalJson = _res.json.bind(_res);
-      _res.json = function auditedJson(body: any) {
+      _res.json = function auditedJson(body: Record<string, unknown>) {
         // Only log if the response indicates success (2xx)
         if (_res.statusCode >= 200 && _res.statusCode < 300) {
           // Fire-and-forget: do not block the response
@@ -76,7 +76,7 @@ export function auditUpdate(
       };
 
       const originalSend = _res.send.bind(_res);
-      _res.send = function auditedSend(body: any) {
+      _res.send = function auditedSend(body: Record<string, unknown>) {
         if (_res.statusCode >= 200 && _res.statusCode < 300) {
           captureAuditAfterUpdate(req).catch(err => {
             logger.error({ err }, '[AuditMiddleware] Failed to write audit log');
@@ -99,18 +99,18 @@ export function auditUpdate(
  * and diff it against the snapshot we took before the update.
  */
 async function captureAuditAfterUpdate(req: AuthenticatedRequest): Promise<void> {
-  const oldValues = (req as any)._auditOldValues as Record<string, unknown> | undefined;
-  const entityType = (req as any)._auditEntityType as string | undefined;
-  const entityId = (req as any)._auditEntityId as string | undefined;
-  const fieldLabels = (req as any)._auditFieldLabels as Record<string, string> | undefined;
-  const actionResolver = (req as any)._auditActionResolver as ((req: AuthenticatedRequest, old: Record<string, unknown>) => AuditAction) | undefined;
-  const modelClass = (req as any)._auditModelClass as AuditableModel | undefined;
+  const oldValues = (req as Record<string, unknown>)._auditOldValues as Record<string, unknown> | undefined;
+  const entityType = (req as Record<string, unknown>)._auditEntityType as string | undefined;
+  const entityId = (req as Record<string, unknown>)._auditEntityId as string | undefined;
+  const fieldLabels = (req as Record<string, unknown>)._auditFieldLabels as Record<string, string> | undefined;
+  const actionResolver = (req as Record<string, unknown>)._auditActionResolver as ((req: AuthenticatedRequest, old: Record<string, unknown>) => AuditAction) | undefined;
+  const modelClass = (req as Record<string, unknown>)._auditModelClass as AuditableModel | undefined;
 
   if (!oldValues || !entityType || !entityId || !modelClass) return;
 
   // Prevent double-logging (send + json both fire)
-  if ((req as any)._auditLogged) return;
-  (req as any)._auditLogged = true;
+  if ((req as Record<string, unknown>)._auditLogged) return;
+  (req as Record<string, unknown>)._auditLogged = true;
 
   // Re-fetch the updated record
   const updatedRecord = await modelClass.findByPk(entityId);
@@ -158,7 +158,7 @@ export async function auditCreate(
   req: AuthenticatedRequest,
   fieldLabels?: Record<string, string>
 ): Promise<void> {
-  const changes: { field: string; oldValue: null; newValue: any; fieldLabel?: string }[] = [];
+  const changes: { field: string; oldValue: null; newValue: unknown; fieldLabel?: string }[] = [];
 
   // Log all non-meta fields from the request body as "created" values
   const body = req.body || {};
@@ -192,7 +192,7 @@ export async function auditDelete(
   req: AuthenticatedRequest,
   deletedData?: Record<string, unknown>
 ): Promise<void> {
-  const changes: { field: string; oldValue: any; newValue: null }[] = [];
+  const changes: { field: string; oldValue: unknown; newValue: null }[] = [];
 
   if (deletedData) {
     for (const [key, value] of Object.entries(deletedData)) {

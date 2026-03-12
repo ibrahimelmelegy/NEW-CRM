@@ -293,7 +293,7 @@ class WarrantyService {
     let totalResolutionDays = 0;
     for (const claim of resolvedClaims) {
       if (claim.resolvedAt && claim.createdAt) {
-        const days = Math.ceil((new Date(claim.resolvedAt).getTime() - new Date(claim.createdAt as any).getTime()) / (1000 * 60 * 60 * 24));
+        const days = Math.ceil((new Date(claim.resolvedAt).getTime() - new Date(claim.createdAt as Record<string, unknown>).getTime()) / (1000 * 60 * 60 * 24));
         totalResolutionDays += days;
       }
     }

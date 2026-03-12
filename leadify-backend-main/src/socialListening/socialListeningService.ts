@@ -108,10 +108,10 @@ class SocialListeningService {
     let scoreSum = 0;
 
     for (const m of mentions) {
-      const p = (m as any).platform || 'OTHER';
+      const p = (m as Record<string, unknown>).platform || 'OTHER';
       if (!byPlatform[p]) byPlatform[p] = { positive: 0, negative: 0, neutral: 0, total: 0, avgScore: 0 };
       byPlatform[p].total++;
-      const sentiment = (m as any).sentiment;
+      const sentiment = (m as Record<string, unknown>).sentiment;
       if (sentiment === 'POSITIVE') {
         byPlatform[p].positive++;
         totalPositive++;
@@ -122,14 +122,14 @@ class SocialListeningService {
         byPlatform[p].neutral++;
         totalNeutral++;
       }
-      scoreSum += Number((m as any).sentimentScore) || 0;
+      scoreSum += Number((m as Record<string, unknown>).sentimentScore) || 0;
     }
 
     for (const p of Object.keys(byPlatform)) {
       const group = byPlatform[p];
       // Compute average sentiment score per platform from raw mentions
       const platformMentions = mentions.filter(m => m.platform === p);
-      const platformScoreSum = platformMentions.reduce((s: number, m: any) => s + (Number(m.sentimentScore) || 0), 0);
+      const platformScoreSum = platformMentions.reduce((s: number, m: Record<string, unknown>) => s + (Number(m.sentimentScore) || 0), 0);
       group.avgScore = platformMentions.length > 0 ? parseFloat((platformScoreSum / platformMentions.length).toFixed(2)) : 0;
     }
 

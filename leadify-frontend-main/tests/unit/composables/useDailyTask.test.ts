@@ -22,19 +22,19 @@ import {
 } from '~/composables/useDailyTask';
 
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 const mockNotification = vi.fn();
-(globalThis as any).ElNotification = mockNotification;
+(globalThis as Record<string, unknown>).ElNotification = mockNotification;
 
 const mockNavigateTo = vi.fn();
-(globalThis as any).navigateTo = mockNavigateTo;
+(globalThis as Record<string, unknown>).navigateTo = mockNavigateTo;
 
-(globalThis as any).formatDate = vi.fn((d: string) => d);
-(globalThis as any).capitalizeName = vi.fn((s: string) => s.charAt(0).toUpperCase() + s.slice(1));
+(globalThis as Record<string, unknown>).formatDate = vi.fn((d: string) => d);
+(globalThis as Record<string, unknown>).capitalizeName = vi.fn((s: string) => s.charAt(0).toUpperCase() + s.slice(1));
 
 vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockNotification(...args)
+  ElNotification: (...args: unknown[]) => mockNotification(...args)
 }));
 
 describe('useDailyTask', () => {
@@ -93,8 +93,8 @@ describe('useDailyTask', () => {
 
       expect(mockApiFetch).toHaveBeenCalledWith('daily-task');
       expect(result.tasks).toHaveLength(1);
-      expect((result.tasks[0] as any)!.clientName).toBe('C1');
-      expect((result.tasks[0] as any)!.salesRepresentativeName).toBe('SR1');
+      expect((result.tasks[0] as unknown)!.clientName).toBe('C1');
+      expect((result.tasks[0] as unknown)!.salesRepresentativeName).toBe('SR1');
     });
 
     it('should use limit=1000 when all=true', async () => {

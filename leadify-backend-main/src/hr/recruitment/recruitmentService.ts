@@ -119,7 +119,7 @@ class RecruitmentService {
     }
 
     // Record stage transition timestamp in the experience JSONB
-    const stageHistory = (applicant.experience as any)?.stageHistory || [];
+    const stageHistory = (applicant.experience as Record<string, unknown>)?.stageHistory || [];
     stageHistory.push({
       from: currentStage,
       to: newStage,
@@ -229,13 +229,13 @@ class RecruitmentService {
     const daysArray: number[] = [];
 
     for (const applicant of hiredApplicants) {
-      const exp = applicant.experience as any;
+      const exp = applicant.experience as Record<string, unknown>;
       const stageHistory = exp?.stageHistory || [];
 
       // Find the HIRED transition timestamp
-      const hiredEntry = stageHistory.find((h: any) => h.to === 'HIRED');
+      const hiredEntry = stageHistory.find((h: Record<string, unknown>) => h.to === 'HIRED');
       const hiredDate = hiredEntry?.timestamp ? new Date(hiredEntry.timestamp) : null;
-      const appliedDate = new Date(applicant.createdAt as any);
+      const appliedDate = new Date(applicant.createdAt as Record<string, unknown>);
 
       if (hiredDate) {
         const diffMs = hiredDate.getTime() - appliedDate.getTime();
@@ -313,7 +313,7 @@ class RecruitmentService {
     });
 
     if (firstHired && posting.createdAt) {
-      const diffMs = new Date(firstHired.updatedAt as any).getTime() - new Date(posting.createdAt as any).getTime();
+      const diffMs = new Date(firstHired.updatedAt as Record<string, unknown>).getTime() - new Date(posting.createdAt as Record<string, unknown>).getTime();
       timeToFill = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
     }
 

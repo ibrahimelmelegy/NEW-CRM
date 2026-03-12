@@ -645,7 +645,7 @@ class ClientService {
     let currentId: string | undefined = companyId;
 
     while (currentId) {
-      const company: any = await Client.findOne({
+      const company: unknown = await Client.findOne({
         where: { id: currentId },
         attributes: ['id', 'clientName', 'companyName', 'parentCompanyId']
       });
@@ -724,7 +724,7 @@ class ClientService {
         id: a.id,
         type: 'ACTIVITY',
         title: a.subject || a.type,
-        description: (a as any).description,
+        description: (a as Record<string, unknown>).description,
         timestamp: a.createdAt,
         user: a.user,
         data: a.toJSON()
@@ -732,8 +732,8 @@ class ClientService {
       ...calls.map(c => ({
         id: c.id,
         type: 'CALL',
-        title: `${(c as any).direction} Call`,
-        description: (c as any).notes || `${(c as any).status} - ${c.duration}s`,
+        title: `${(c as Record<string, unknown>).direction} Call`,
+        description: (c as Record<string, unknown>).notes || `${(c as Record<string, unknown>).status} - ${c.duration}s`,
         timestamp: c.createdAt,
         data: c.toJSON()
       })),
@@ -741,7 +741,7 @@ class ClientService {
         id: m.id,
         type: 'MEETING',
         title: m.title,
-        description: (m as any).notes,
+        description: (m as Record<string, unknown>).notes,
         timestamp: m.meetingDate || m.createdAt,
         data: m.toJSON()
       }))
@@ -842,7 +842,7 @@ class ClientService {
   }
 
   // ─── Bulk Operations ─────────────────────────────────────────────────────
-  async bulkUpdateCompanies(companyIds: string[], updates: any, user: User): Promise<number> {
+  async bulkUpdateCompanies(companyIds: string[], updates: unknown, user: User): Promise<number> {
     const updateCount = await Client.update(updates, {
       where: {
         id: { [Op.in]: companyIds },

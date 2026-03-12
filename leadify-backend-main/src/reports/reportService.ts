@@ -37,7 +37,7 @@ class ReportService {
     await report.destroy();
   }
 
-  async executeReport(config: any) {
+  async executeReport(config: Record<string, unknown>) {
     const Model = modelMap[config.entityType];
     if (!Model) throw new Error('Invalid entity type');
 
@@ -153,12 +153,12 @@ class ReportService {
     };
   }
 
-  async exportCSV(config: any): Promise<string> {
+  async exportCSV(config: Record<string, unknown>): Promise<string> {
     const data = await this.executeReport(config);
     if (!data.length) return '';
 
     const headers = Object.keys(data[0]);
-    const rows = data.map((row: any) =>
+    const rows = data.map((row: Record<string, unknown>) =>
       headers
         .map(h => {
           const val = row[h];
@@ -172,7 +172,7 @@ class ReportService {
     return [headers.join(','), ...rows].join('\n');
   }
 
-  async exportExcel(config: any): Promise<Buffer> {
+  async exportExcel(config: Record<string, unknown>): Promise<Buffer> {
     const data = await this.executeReport(config);
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Report');
@@ -194,7 +194,7 @@ class ReportService {
     headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
 
     // Add data rows
-    data.forEach((row: any) => {
+    data.forEach((row: Record<string, unknown>) => {
       const values = headers.map(h => row[h]);
       worksheet.addRow(values);
     });
@@ -202,7 +202,7 @@ class ReportService {
     // Auto-size columns
     worksheet.columns.forEach(column => {
       let maxLength = 0;
-      column!.eachCell!({ includeEmpty: true }, (cell: any) => {
+      column!.eachCell!({ includeEmpty: true }, (cell: Record<string, unknown>) => {
         const length = cell.value ? String(cell.value).length : 10;
         if (length > maxLength) maxLength = length;
       });

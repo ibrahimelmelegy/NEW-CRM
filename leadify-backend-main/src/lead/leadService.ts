@@ -25,7 +25,7 @@ import workflowService from '../workflow/workflowService';
 export interface ScoringRule {
   field: string;
   condition: 'exists' | 'equals' | 'contains' | 'greater_than';
-  value?: any;
+  value?: unknown;
   points: number;
   /** Optional group key. When multiple rules share a group, only the highest-
    *  scoring match within that group is counted (e.g. source quality tiers). */
@@ -55,7 +55,7 @@ export const DEFAULT_SCORING_RULES: ScoringRule[] = [
  * Evaluate a single rule condition against a lead data object.
  * Returns true when the rule's condition is satisfied.
  */
-function evaluateCondition(lead: any, rule: ScoringRule): boolean {
+function evaluateCondition(lead: Record<string, unknown>, rule: ScoringRule): boolean {
   const fieldValue = lead[rule.field];
 
   switch (rule.condition) {
@@ -84,7 +84,7 @@ function evaluateCondition(lead: any, rule: ScoringRule): boolean {
  *
  * The final score is capped at 100.
  */
-export function evaluateScore(lead: any, rules: ScoringRule[] = DEFAULT_SCORING_RULES): number {
+export function evaluateScore(lead: Record<string, unknown>, rules: ScoringRule[] = DEFAULT_SCORING_RULES): number {
   let total = 0;
 
   // Collect the best score per group
@@ -325,20 +325,20 @@ class LeadService {
     return lead;
   }
 
-  public async importFile(file: any): Promise<string> {
+  public async importFile(file: unknown): Promise<string> {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(file.data);
     const worksheet = workbook.worksheets[0];
 
-    const data: any[][] = [];
+    const data: Record<string, unknown>[][] = [];
     worksheet.eachRow((row) => {
-      data.push(row.values as any[]);
+      data.push(row.values as unknown[]);
     });
     const leadArray = [];
 
     for (let index = 1; index < data.length; index++) {
       // ExcelJS row.values is 1-based (index 0 is null), so skip the first element
-      const [, name, companyName, email, phone, otherSource, leadSource, status, userId, notes, lastContactDate] = data[index] as any;
+      const [, name, companyName, email, phone, otherSource, leadSource, status, userId, notes, lastContactDate] = data[index] as unknown[];
       if (!email && !phone) {
         throw new BaseError(ERRORS.LEAD_ALREADY_FOUND, 400, `Lead must have at least Phone or email in row ${index}`);
       }
@@ -384,18 +384,18 @@ class LeadService {
     for (const lead of createdLeads) {
       const leadData = leadArray.find(l => l.name === lead.name);
       if (leadData?.userIds && leadData.userIds.length > 0) {
-        await (lead as any).$set('users', leadData.userIds);
+        await (lead as Record<string, unknown>).$set('users', leadData.userIds);
       }
     }
 
     return leadArray.length + ' leads created succesfully';
   }
-  streamToBuffer(stream: any) {
+  streamToBuffer(stream: Record<string, unknown>) {
     return new Promise((resolve, reject) => {
       const _buf = Array<any>();
-      stream.on('data', (chunk: any) => _buf.push(chunk));
+      stream.on('data', (chunk: Record<string, unknown>) => _buf.push(chunk));
       stream.on('end', () => resolve(Buffer.concat(_buf)));
-      stream.on('error', (err: any) => reject(err));
+      stream.on('error', (err: Record<string, unknown>) => reject(err));
     });
   }
 
@@ -441,7 +441,7 @@ class LeadService {
    *
    * Accepts an optional custom rule set; defaults to DEFAULT_SCORING_RULES.
    */
-  calculateScore(lead: any, rules?: ScoringRule[]): number {
+  calculateScore(lead: Record<string, unknown>, rules?: ScoringRule[]): number {
     // Normalise lead fields to the canonical names used by the scoring rules
     const normalised: Record<string, unknown> = {
       ...lead,

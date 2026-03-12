@@ -152,7 +152,7 @@ class WhatsAppService {
     let skipped = 0;
 
     for (const client of clients) {
-      const phone = (client as any).phoneNumber;
+      const phone = (client as Record<string, unknown>).phoneNumber;
       if (!phone) {
         skipped++;
         continue;
@@ -168,13 +168,13 @@ class WhatsAppService {
       if (existing) {
         // Link if not already linked
         if (!existing.clientId) {
-          await existing.update({ clientId: client.id, name: existing.name || (client as any).clientName });
+          await existing.update({ clientId: client.id, name: existing.name || (client as Record<string, unknown>).clientName });
         }
         skipped++;
       } else {
         await WhatsAppContact.create({
           phoneNumber: phone,
-          name: (client as any).clientName,
+          name: (client as Record<string, unknown>).clientName,
           clientId: client.id,
           tags: [],
           tenantId: tenantId || null
@@ -371,7 +371,7 @@ class WhatsAppService {
     variables: Record<string, string>,
     userId: number,
     tenantId: string | null
-  ): Promise<{ sent: number; failed: number; results: any[] }> {
+  ): Promise<{ sent: number; failed: number; results: unknown[] }> {
     const template = await WhatsAppTemplate.findByPk(templateId);
     if (!template) throw new BaseError(ERRORS.NOT_FOUND);
 

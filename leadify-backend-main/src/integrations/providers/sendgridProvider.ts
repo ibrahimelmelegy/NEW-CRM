@@ -33,7 +33,7 @@ export interface EmailResult<T> {
 }
 
 export class SendGridProvider {
-  private sgMail: any = null;
+  private sgMail: unknown = null;
 
   static isConfigured(): boolean {
     return !!process.env.SENDGRID_API_KEY;
@@ -134,8 +134,8 @@ export class SendGridProvider {
         if (startDate) queryParams.start_date = startDate;
         if (endDate) queryParams.end_date = endDate;
         const [, body] = await sgClient.request({ method: 'GET', url: '/v3/stats', qs: queryParams });
-        const totals = (body as any[]).reduce(
-          (acc: any, day: any) => {
+        const totals = (body as unknown[]).reduce(
+          (acc: unknown, day: unknown) => {
             const m = day.stats?.[0]?.metrics || {};
             acc.delivered += m.delivered || 0;
             acc.opens += m.unique_opens || 0;

@@ -29,7 +29,7 @@ class EmailIntegrationService {
 
     const where: WhereOptions = { accountId } as any;
     if (folder) {
-      (where as any).folder = folder;
+      (where as Record<string, unknown>).folder = folder;
     }
 
     const { rows: docs, count: totalItems } = await EmailMessage.findAndCountAll({

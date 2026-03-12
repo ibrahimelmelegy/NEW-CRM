@@ -22,7 +22,7 @@ const mockRouter = {
 };
 
 // Override the global useRouter mock from setup.ts
-(globalThis as any).useRouter = () => mockRouter;
+(globalThis as Record<string, unknown>).useRouter = () => mockRouter;
 
 describe('useSafeBack', () => {
   beforeEach(() => {

@@ -36,14 +36,14 @@ export interface CustomerSuccessDashboard {
   healthDistribution: Array<{ name: string; value: number; color: string }>;
   topClients: HealthScore[];
   atRiskClients: HealthScore[];
-  recentActivity: any[];
+  recentActivity: unknown[];
   revenueByMonth: Array<{ month: string; revenue: number }>;
   engagementTrend: Array<{ month: string; activities: number }>;
 }
 
 class CustomerSuccessService {
   // ─── Calculate Health Score for a Single Client ─────────────────────────────
-  private async calculateHealthScore(client: any, tenantId?: string): Promise<HealthScore> {
+  private async calculateHealthScore(client: unknown, tenantId?: string): Promise<HealthScore> {
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
@@ -60,7 +60,7 @@ class CustomerSuccessService {
     const activeDeals = deals.filter(d => !['CLOSED_WON', 'CLOSED_LOST'].includes(d.stage)).length;
 
     const wonDeals = deals.filter(d => (d.stage as string) === 'CLOSED_WON');
-    const totalRevenue = wonDeals.reduce((sum: number, d: any) => sum + (d.price || 0), 0);
+    const totalRevenue = wonDeals.reduce((sum: number, d: Record<string, unknown>) => sum + (d.price || 0), 0);
 
     // Get recent communication activities
     const recentActivities = await CommActivity.count({
@@ -141,7 +141,7 @@ class CustomerSuccessService {
     // Get assigned users
     const assignedUsers: Array<{ id: number; name: string }> = [];
     if (client.users && client.users.length > 0) {
-      client.users.forEach((u: any) => {
+      client.users.forEach((u: Record<string, unknown>) => {
         assignedUsers.push({ id: u.id, name: u.name });
       });
     }

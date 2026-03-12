@@ -105,26 +105,26 @@ class SalesOrderService {
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [{ orderNumber: { [Op.iLike]: `%${searchKey}%` } }, { notes: { [Op.iLike]: `%${searchKey}%` } }];
+      (where as Record<string, unknown>)[Op.or] = [{ orderNumber: { [Op.iLike]: `%${searchKey}%` } }, { notes: { [Op.iLike]: `%${searchKey}%` } }];
     }
     if (status) {
-      (where as any).status = status;
+      (where as Record<string, unknown>).status = status;
     }
     if (clientId) {
-      (where as any).clientId = clientId;
+      (where as Record<string, unknown>).clientId = clientId;
     }
     if (paymentStatus) {
-      (where as any).paymentStatus = paymentStatus;
+      (where as Record<string, unknown>).paymentStatus = paymentStatus;
     }
 
     // Date range filtering
     if (startDate || endDate) {
-      (where as any).createdAt = {};
-      if (startDate) (where as any).createdAt[Op.gte] = new Date(startDate);
+      (where as Record<string, unknown>).createdAt = {};
+      if (startDate) (where as Record<string, unknown>).createdAt[Op.gte] = new Date(startDate);
       if (endDate) {
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
-        (where as any).createdAt[Op.lte] = end;
+        (where as Record<string, unknown>).createdAt[Op.lte] = end;
       }
     }
 
@@ -386,7 +386,7 @@ class SalesOrderService {
   /**
    * Convert cart to a sales order
    */
-  async convertCartToOrder(cartData: any): Promise<SalesOrder> {
+  async convertCartToOrder(cartData: unknown): Promise<SalesOrder> {
     const { clientId, items, currency, notes, shippingAddress, couponDiscount } = cartData;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -426,12 +426,12 @@ class SalesOrderService {
 
     // Optional date range
     if (query?.startDate || query?.endDate) {
-      (where as any).createdAt = {};
-      if (query.startDate) (where as any).createdAt[Op.gte] = new Date(query.startDate);
+      (where as Record<string, unknown>).createdAt = {};
+      if (query.startDate) (where as Record<string, unknown>).createdAt[Op.gte] = new Date(query.startDate);
       if (query.endDate) {
         const end = new Date(query.endDate);
         end.setHours(23, 59, 59, 999);
-        (where as any).createdAt[Op.lte] = end;
+        (where as Record<string, unknown>).createdAt[Op.lte] = end;
       }
     }
 
@@ -448,7 +448,7 @@ class SalesOrderService {
         ],
         where,
         raw: true
-      }) as any,
+      }) as unknown,
       SalesOrder.findAll({
         attributes: ['status', [fn('COUNT', col('id')), 'count']],
         where,
@@ -469,7 +469,7 @@ class SalesOrderService {
     // Build status distribution map
     const ordersByStatus: Record<string, number> = {};
     for (const sc of statusCounts || []) {
-      ordersByStatus[(sc as any).status] = parseInt((sc as any).count, 10);
+      ordersByStatus[(sc as Record<string, unknown>).status] = parseInt((sc as Record<string, unknown>).count, 10);
     }
 
     // Revenue grouped by day of week (Mon-Sun) using SQL
@@ -482,7 +482,7 @@ class SalesOrderService {
       group: [fn('EXTRACT', literal(`DOW FROM "createdAt"`))],
       order: [[fn('EXTRACT', literal(`DOW FROM "createdAt"`)), 'ASC']],
       raw: true
-    })) as any[];
+    })) as unknown[];
 
     // Map DOW (0=Sun...6=Sat) -> {Mon,Tue,...,Sun}
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -507,7 +507,7 @@ class SalesOrderService {
       order: [[fn('to_char', col('createdAt'), 'YYYY-MM'), 'DESC']],
       limit: 12,
       raw: true
-    })) as any[];
+    })) as unknown[];
 
     return {
       totalOrders,

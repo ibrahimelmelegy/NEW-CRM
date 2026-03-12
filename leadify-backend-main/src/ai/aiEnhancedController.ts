@@ -211,7 +211,7 @@ export const aiInsightsController = {
 
       // Calculate stalled deals (check for recent activities)
       const stalledDealsList: unknown[] = [];
-      for (const deal of stalledDeals as any[]) {
+      for (const deal of stalledDeals as unknown[]) {
         const lastActivity = await DealActivity.findOne({
           where: { dealId: deal.id },
           order: [['createdAt', 'DESC']],
@@ -244,7 +244,7 @@ export const aiInsightsController = {
 
       // Insight 1: Stalled deals
       if (stalledDealsList.length > 0) {
-        const totalValue = stalledDealsList.reduce((sum: number, d: any) => sum + (d.price || 0), 0);
+        const totalValue = stalledDealsList.reduce((sum: number, d: Record<string, unknown>) => sum + (d.price || 0), 0);
         insights.push({
           id: 'stalled-deals',
           type: 'warning',
@@ -287,7 +287,7 @@ export const aiInsightsController = {
 
       // Insight 3: Overdue invoices
       if (overdueInvoices.length > 0) {
-        const totalOverdue = (overdueInvoices as any[]).reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0);
+        const totalOverdue = (overdueInvoices as unknown[]).reduce((sum: number, inv: Record<string, unknown>) => sum + (inv.amount || 0), 0);
         insights.push({
           id: 'overdue-invoices',
           type: 'danger',
@@ -300,7 +300,7 @@ export const aiInsightsController = {
       }
 
       // Insight 4: Pipeline value
-      const pipelineTotal = (pipelineValue as any)?.total || 0;
+      const pipelineTotal = (pipelineValue as Record<string, unknown>).total || 0;
       if (pipelineTotal > 0) {
         insights.push({
           id: 'pipeline-value',

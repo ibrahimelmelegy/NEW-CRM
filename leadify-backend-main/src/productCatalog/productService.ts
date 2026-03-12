@@ -18,7 +18,7 @@ class ProductService {
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [
+      (where as Record<string, unknown>)[Op.or] = [
         { name: { [Op.iLike]: `%${searchKey}%` } },
         { sku: { [Op.iLike]: `%${searchKey}%` } },
         { description: { [Op.iLike]: `%${searchKey}%` } }
@@ -26,23 +26,23 @@ class ProductService {
     }
 
     if (category) {
-      (where as any).category = category;
+      (where as Record<string, unknown>).category = category;
     }
 
     if (isActive !== undefined && isActive !== '') {
-      (where as any).isActive = isActive === 'true' || isActive === true;
+      (where as Record<string, unknown>).isActive = isActive === 'true' || isActive === true;
     }
 
     // Price range filter
     if (minPrice || maxPrice) {
-      (where as any).unitPrice = {};
-      if (minPrice) (where as any).unitPrice[Op.gte] = Number(minPrice);
-      if (maxPrice) (where as any).unitPrice[Op.lte] = Number(maxPrice);
+      (where as Record<string, unknown>).unitPrice = {};
+      if (minPrice) (where as Record<string, unknown>).unitPrice[Op.gte] = Number(minPrice);
+      if (maxPrice) (where as Record<string, unknown>).unitPrice[Op.lte] = Number(maxPrice);
     }
 
     // Low stock filter
     if (lowStock === 'true') {
-      (where as any).stockQuantity = {
+      (where as Record<string, unknown>).stockQuantity = {
         [Op.lte]: literal('"CatalogProduct"."lowStockThreshold"')
       };
     }
@@ -257,7 +257,7 @@ class ProductService {
     // Price change events from history
     const priceHistory = Array.isArray(product.priceHistory) ? product.priceHistory : [];
     for (const entry of priceHistory) {
-      const e = entry as any;
+      const e = entry as Record<string, unknown>;
       activity.push({
         type: 'price_change',
         description: `Price changed to ${e.price}`,
@@ -349,7 +349,7 @@ class ProductService {
       activeProducts,
       inactiveProducts: totalProducts - activeProducts,
       lowStockProducts,
-      stockValue: parseFloat((stockValueResult as any)?.stockValue || 0),
+      stockValue: parseFloat((stockValueResult as Record<string, unknown>).stockValue || 0),
       categoryDistribution: categoryDist
     };
   }

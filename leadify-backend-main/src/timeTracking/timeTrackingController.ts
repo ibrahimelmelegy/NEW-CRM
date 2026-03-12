@@ -33,7 +33,7 @@ class TimeTrackingController {
 
   async getEntries(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await timeTrackingService.getEntries(req.user!.id, req.query as any);
+      const result = await timeTrackingService.getEntries(req.user!.id, req.query as Record<string, string>);
       wrapResult(res, result);
     } catch (error) {
       next(error);

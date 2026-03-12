@@ -181,7 +181,7 @@ class ShippingService {
     let deliveryDays: number | null = null;
     let onTime: boolean | null = null;
     if (shipment.actualDelivery && shipment.createdAt) {
-      const created = new Date(shipment.createdAt as any).getTime();
+      const created = new Date(shipment.createdAt as Record<string, unknown>).getTime();
       const delivered = new Date(shipment.actualDelivery).getTime();
       deliveryDays = Math.ceil((delivered - created) / (1000 * 60 * 60 * 24));
     }
@@ -312,7 +312,7 @@ class ShippingService {
 
     for (const s of delivered) {
       if (s.createdAt && s.actualDelivery) {
-        const days = Math.ceil((new Date(s.actualDelivery).getTime() - new Date(s.createdAt as any).getTime()) / (1000 * 60 * 60 * 24));
+        const days = Math.ceil((new Date(s.actualDelivery).getTime() - new Date(s.createdAt as Record<string, unknown>).getTime()) / (1000 * 60 * 60 * 24));
         totalDeliveryDays += days;
       }
       if (s.estimatedDelivery && s.actualDelivery) {

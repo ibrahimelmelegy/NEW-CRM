@@ -33,7 +33,7 @@ class EcDashboardService {
           [fn('COALESCE', fn('AVG', col('total')), 0), 'avgOrderValue']
         ],
         raw: true
-      }) as any,
+      }) as unknown,
 
       // Total orders
       SalesOrder.count(),
@@ -99,13 +99,13 @@ class EcDashboardService {
 
     // Build orders by status map
     const statusMap: Record<string, number> = {};
-    for (const row of ordersByStatus as any[]) {
+    for (const row of ordersByStatus as unknown[]) {
       statusMap[row.status] = parseInt(row.count, 10);
     }
 
     // Enrich top products with product details
     const topProducts: unknown[] = [];
-    for (const tp of topProductsResult as any[]) {
+    for (const tp of topProductsResult as unknown[]) {
       if (tp.productId) {
         const product = await CatalogProduct.findByPk(tp.productId, {
           attributes: ['id', 'name', 'sku', 'category', 'unitPrice', 'isActive']

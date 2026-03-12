@@ -67,8 +67,8 @@ const DEAL_STAGE_PROBABILITY: Record<string, number> = {
 
 class DealService {
   public async convertLeadTODeal(input: ConvertLeadToDealInput & { userId: string }, admin: User): Promise<Deal> {
-    let lead: any,
-      client: any = null;
+    let lead: Record<string, unknown>,
+      client: unknown = null;
     const transaction = await sequelize.transaction();
     try {
       lead = await leadService.leadOrError({ id: input.leadId });
@@ -155,7 +155,7 @@ class DealService {
       await transaction.rollback();
       logger.error({ error }, 'Lead-to-deal conversion error');
       if (error instanceof BaseError) throw error;
-      throw new BaseError(ERRORS[(error as any)?.message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
+      throw new BaseError(ERRORS[(error as Record<string, unknown>).message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
   }
 
@@ -213,8 +213,8 @@ class DealService {
       const deal = await Deal.create(
         {
           ...input.deal,
-          leadId: (lead as any)?.id,
-          clientId: (client as any)?.id
+          leadId: (lead as Record<string, unknown>).id,
+          clientId: (client as Record<string, unknown>).id
         },
         {
           transaction: t
@@ -248,7 +248,7 @@ class DealService {
       await t.rollback();
       logger.error({ error }, 'Deal creation error');
       if (error instanceof BaseError) throw error;
-      throw new BaseError(ERRORS[(error as any)?.message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
+      throw new BaseError(ERRORS[(error as Record<string, unknown>).message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
   }
 
@@ -761,7 +761,7 @@ class DealService {
 
     const now = new Date();
     return deals.map(deal => {
-      const plain = deal.toJSON() as any;
+      const plain = deal.toJSON() as unknown;
       const updatedAt = new Date(plain.updatedAt);
       plain.daysStale = Math.floor((now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24));
       return plain;

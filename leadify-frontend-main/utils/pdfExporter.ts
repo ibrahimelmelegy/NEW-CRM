@@ -108,7 +108,7 @@ function renderText(doc: JsPDF, el: TemplateElement, data: PDFData) {
   else if (align === 'right') textX = el.x + el.width;
 
   doc.text(content, textX, el.y + fontSize * 0.35, {
-    align: align as any,
+    align: align as unknown,
     maxWidth: el.width
   });
 }
@@ -130,7 +130,7 @@ function renderTable(doc: JsPDF, el: TemplateElement, data: PDFData) {
   const headerColor = hexToRgb(el.props?.headerColor || '#000000');
   const borderColor = hexToRgb(el.props?.borderColor || '#cccccc');
 
-  (doc as any).autoTable({
+  (doc as Record<string, unknown>).autoTable({
     startY: el.y,
     margin: { left: el.x },
     tableWidth: el.width,

@@ -28,8 +28,8 @@ export interface WorkflowJobData {
   ruleId: number;
   entityType: string;
   entityId: string;
-  actions: any[];
-  entityData: any;
+  actions: unknown[];
+  entityData: unknown;
   triggerUserId?: number;
 }
 
@@ -42,8 +42,8 @@ const setupWorker = () => {
       const { executionId, ruleId, entityType: _entityType, entityId: _entityId, actions, entityData, triggerUserId } = job.data;
 
       // Process the exact delayed actions via the service
-      if (typeof (workflowService as any).executeDelayedActions === 'function') {
-        await (workflowService as any).executeDelayedActions(executionId, ruleId, entityData, actions, triggerUserId);
+      if (typeof (workflowService as Record<string, unknown>).executeDelayedActions === 'function') {
+        await (workflowService as Record<string, unknown>).executeDelayedActions(executionId, ruleId, entityData, actions, triggerUserId);
       } else {
         logger.warn(`[Queue] executeDelayedActions not yet implemented, skipping job ${job.id}`);
       }
@@ -51,7 +51,7 @@ const setupWorker = () => {
       return { status: 'completed' };
     },
     {
-      connection: connection as any,
+      connection: connection as unknown,
       concurrency: 5
     }
   );

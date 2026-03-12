@@ -47,7 +47,7 @@ class JobQueue {
     if (this.queues.has(name)) return;
     try {
       const queue = new Queue(`crm:${name}`, {
-        connection: getConnection() as any,
+        connection: getConnection() as unknown,
         defaultJobOptions: {
           removeOnComplete: { age: 3600, count: 1000 },
           removeOnFail: { age: 86400, count: 5000 }
@@ -81,7 +81,7 @@ class JobQueue {
             return await h(job.data);
           },
           {
-            connection: getConnection() as any,
+            connection: getConnection() as unknown,
             concurrency: 3
           }
         );
@@ -159,7 +159,7 @@ class JobQueue {
     attempts: number;
     maxAttempts: number;
     error?: string;
-    result?: any;
+    result?: unknown;
     createdAt: number;
     startedAt?: number;
     completedAt?: number;

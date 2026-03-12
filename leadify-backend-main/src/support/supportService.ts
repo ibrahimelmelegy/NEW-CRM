@@ -183,7 +183,7 @@ class SupportService {
     if (!agents.length) throw new BaseError(ERRORS.USER_NOT_FOUND);
 
     let minCount = Infinity;
-    let selectedAgent: any = null;
+    let selectedAgent: unknown = null;
 
     for (const agent of agents) {
       const count = await Ticket.count({

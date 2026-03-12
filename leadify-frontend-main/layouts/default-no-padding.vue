@@ -142,7 +142,7 @@ const user = ref<any>({});
 
 if (!user.value?.id) {
   const response = await useApiFetch('auth/me');
-  user.value = (response as any)?.user;
+  user.value = (response as Record<string, unknown>).user;
 }
 
 const breadcrumbRoutes = computed(() => {
@@ -162,7 +162,7 @@ const breadcrumbRoutes = computed(() => {
   }
 
   // Replace hyphens and underscores with spaces in each path segment
-  const formattedSegments = pathSegments.map((segment: any) => segment.replace(/[-_]/g, ' '));
+  const formattedSegments = pathSegments.map((segment: unknown) => segment.replace(/[-_]/g, ' '));
   return formattedSegments;
 });
 

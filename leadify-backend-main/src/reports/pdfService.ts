@@ -75,7 +75,7 @@ class ReportPdfService {
         .trim();
     };
 
-    const escapeHtml = (val: any): string => {
+    const escapeHtml = (val: unknown): string => {
       if (val === null || val === undefined) return '-';
       const str = String(val);
       return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

@@ -29,7 +29,7 @@ class UserController {
   public async updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       // Protect super admin account from modification by non-super-admins
-      if (req.params.id === '1' && !(req as any).user?.isSuperAdmin) {
+      if (req.params.id === '1' && !(req as Record<string, unknown>).user?.isSuperAdmin) {
         res.status(403).json({ success: false, message: 'Cannot modify super admin account' });
         return;
       }

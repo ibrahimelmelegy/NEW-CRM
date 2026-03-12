@@ -76,7 +76,7 @@ export const registerWorkspace = async (req: Request, res: Response, _next: Next
     );
 
     // 5. Automatically log them in (Generate JWT)
-    const token = jwt.sign({ id: user.id, tenantId: tenant.id }, SECRET_KEY, { expiresIn: process.env.JWT_EXPIRATION_TIME || ('7d' as any) });
+    const token = jwt.sign({ id: user.id, tenantId: tenant.id }, SECRET_KEY, { expiresIn: process.env.JWT_EXPIRATION_TIME || ('7d') });
     await Session.create(
       {
         userId: user.id,
@@ -159,7 +159,7 @@ export const loginUser = async (req: Request, res: Response, _next: NextFunction
       }
     }
 
-    const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: process.env.JWT_EXPIRATION_TIME || ('7d' as any) });
+    const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: process.env.JWT_EXPIRATION_TIME || ('7d') });
     await Session.create({
       userId: user.id,
       token,

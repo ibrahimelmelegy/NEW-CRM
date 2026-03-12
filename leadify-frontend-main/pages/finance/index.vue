@@ -163,7 +163,7 @@ import {
 import { getCollectionDashboard, type CollectionDashboard } from '~/composables/usePayments';
 
 // Lazy-load heavy chart dependencies for faster initial page load
-let graphic: any;
+let graphic: unknown;
 const VChart = defineAsyncComponent(() =>
   Promise.all([
     import('echarts/core'),

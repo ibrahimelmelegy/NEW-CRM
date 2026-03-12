@@ -189,7 +189,7 @@ export class WhatsAppTemplate extends Model {
 
   @Default([])
   @Column({ type: DataType.JSONB, allowNull: false })
-  public buttons!: any[];
+  public buttons!: unknown[];
 
   @Default(WATemplateStatus.APPROVED)
   @Column({ type: DataType.ENUM(...Object.values(WATemplateStatus)), allowNull: false })

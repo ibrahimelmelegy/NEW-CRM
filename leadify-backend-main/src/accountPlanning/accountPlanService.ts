@@ -129,7 +129,7 @@ class AccountPlanService {
       const totalGoals = (p.goals || []).length;
       return {
         accountPlanId: p.id,
-        accountName: (p.account as any)?.clientName || 'Unknown',
+        accountName: (p.account as Record<string, unknown>)?.clientName || 'Unknown',
         tier: p.tier,
         annualRevenue: Number(p.annualRevenue) || 0,
         expansionPotential: Number(p.expansionPotential) || 0,
@@ -158,7 +158,7 @@ class AccountPlanService {
     const byTier: Record<string, { count: number; totalRevenue: number; totalExpansion: number; avgHealth: number }> = {};
 
     for (const p of plans) {
-      const plan = p as any;
+      const plan = p as Record<string, unknown>;
       const tier = plan.tier || 'STANDARD';
       if (!byTier[tier]) byTier[tier] = { count: 0, totalRevenue: 0, totalExpansion: 0, avgHealth: 0 };
       byTier[tier].count++;

@@ -81,9 +81,9 @@ class PipelineConfigService {
    * Returns allowed stage transitions derived from pipeline configuration.
    *
    * The default rule set allows:
-   *   - Forward transitions: any stage can move to the next stage in order.
-   *   - Backward transitions: any stage can move to the previous stage in order.
-   *   - Lost/cancelled: any non-terminal stage can move to an isLost stage.
+   *   - Forward transitions: unknown stage can move to the next stage in order.
+   *   - Backward transitions: unknown stage can move to the previous stage in order.
+   *   - Lost/cancelled: Record<string, unknown> non-terminal stage can move to an isLost stage.
    *   - Reopen: an isLost stage can move back to the first (isDefault) stage.
    *
    * NOTE: This does not yet replace the hardcoded DEAL_STAGE_TRANSITIONS or

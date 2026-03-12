@@ -189,7 +189,7 @@ class CartService {
       notes: cart.notes,
       items: items.map(item => ({
         productId: item.productId,
-        productName: (item as any).product?.name || null,
+        productName: (item as Record<string, unknown>).product?.name || null,
         quantity: Number(item.quantity),
         unitPrice: Number(item.unitPrice),
         lineTotal: Number((Number(item.quantity) * Number(item.unitPrice)).toFixed(2)),

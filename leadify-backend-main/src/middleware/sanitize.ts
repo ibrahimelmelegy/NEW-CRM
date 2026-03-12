@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import xss from 'xss';
 
-function sanitizeValue(value: any): unknown {
+function sanitizeValue(value: unknown): unknown {
   if (typeof value === 'string') {
     return xss(value);
   }
@@ -27,10 +27,10 @@ export function sanitizeInput(req: Request, _res: Response, next: NextFunction):
     req.body = sanitizeObject(req.body);
   }
   if (req.query && typeof req.query === 'object') {
-    req.query = sanitizeObject(req.query) as any;
+    req.query = sanitizeObject(req.query) as unknown;
   }
   if (req.params && typeof req.params === 'object') {
-    req.params = sanitizeObject(req.params) as any;
+    req.params = sanitizeObject(req.params) as unknown;
   }
   next();
 }

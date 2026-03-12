@@ -10,11 +10,11 @@ class SequenceService {
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [{ name: { [Op.iLike]: `%${searchKey}%` } }, { description: { [Op.iLike]: `%${searchKey}%` } }];
+      (where as Record<string, unknown>)[Op.or] = [{ name: { [Op.iLike]: `%${searchKey}%` } }, { description: { [Op.iLike]: `%${searchKey}%` } }];
     }
 
     if (isActive !== undefined && isActive !== '') {
-      (where as any).isActive = isActive === 'true' || isActive === true;
+      (where as Record<string, unknown>).isActive = isActive === 'true' || isActive === true;
     }
 
     const { rows: docs, count: totalItems } = await Sequence.findAndCountAll({

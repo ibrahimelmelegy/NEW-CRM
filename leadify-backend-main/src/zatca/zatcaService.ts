@@ -147,7 +147,7 @@ function generateInvoiceXML(invoice: ZatcaInvoice): string {
 
   const buyerAddr = invoice.buyerAddress
     ? typeof invoice.buyerAddress === 'string'
-      ? JSON.parse(invoice.buyerAddress as any)
+      ? JSON.parse(invoice.buyerAddress as Record<string, unknown>)
       : invoice.buyerAddress
     : null;
 
@@ -494,7 +494,7 @@ class ZatcaService {
     }
 
     if (query.search) {
-      where[Op.or as any] = [
+      where[Op.or as symbol] = [
         { invoiceNumber: { [Op.iLike]: `%${query.search}%` } },
         { buyerName: { [Op.iLike]: `%${query.search}%` } },
         { sellerVatNumber: { [Op.iLike]: `%${query.search}%` } }

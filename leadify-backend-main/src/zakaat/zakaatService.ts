@@ -129,7 +129,7 @@ class ZakaatService {
     }
 
     if (query.search) {
-      where[Op.or as any] = [{ fiscalYear: { [Op.iLike]: `%${query.search}%` } }, { companyId: { [Op.iLike]: `%${query.search}%` } }];
+      where[Op.or as symbol] = [{ fiscalYear: { [Op.iLike]: `%${query.search}%` } }, { companyId: { [Op.iLike]: `%${query.search}%` } }];
     }
 
     const { rows, count } = await ZakaatAssessment.findAndCountAll({
@@ -278,8 +278,8 @@ class ZakaatService {
       preparedBy: assessment.creator
         ? {
             id: assessment.creator.id,
-            name: (assessment.creator as any).name,
-            email: (assessment.creator as any).email
+            name: (assessment.creator as Record<string, unknown>).name,
+            email: (assessment.creator as Record<string, unknown>).email
           }
         : null,
       generatedAt: new Date().toISOString()

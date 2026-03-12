@@ -9,7 +9,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fetchConversations, fetchMessages, sendMessage, markConversationRead } from '~/composables/useMessaging';
 
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 describe('useMessaging', () => {
   beforeEach(() => {

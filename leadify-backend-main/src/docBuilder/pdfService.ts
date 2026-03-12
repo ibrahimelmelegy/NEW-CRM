@@ -60,7 +60,7 @@ class PdfService {
     if (document.templateId) {
       const template = await DocumentTemplate.findByPk(document.templateId);
       if (template?.layout) {
-        templateHtml = (template.layout as any).templateHtml;
+        templateHtml = (template.layout as Record<string, unknown>).templateHtml;
       }
     }
 

@@ -23,15 +23,15 @@ const mockNavigateTo = vi.fn();
 
 // Mock element-plus to intercept the import { ElNotification } in stores/auth.ts
 vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockElNotification(...args)
+  ElNotification: (...args: unknown[]) => mockElNotification(...args)
 }));
 
-(globalThis as any).useApiFetch = mockUseApiFetch;
-(globalThis as any).ElNotification = mockElNotification;
-(globalThis as any).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
-(globalThis as any).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
-(globalThis as any).navigateTo = mockNavigateTo;
-(globalThis as any).useState = (key: string, init: () => any) => ref(init());
+(globalThis as Record<string, unknown>).useApiFetch = mockUseApiFetch;
+(globalThis as Record<string, unknown>).ElNotification = mockElNotification;
+(globalThis as Record<string, unknown>).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
+(globalThis as Record<string, unknown>).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
+(globalThis as Record<string, unknown>).navigateTo = mockNavigateTo;
+(globalThis as Record<string, unknown>).useState = (key: string, init: () => any) => ref(init());
 
 describe('Auth: useUser composable', () => {
   beforeEach(() => {
@@ -233,7 +233,7 @@ describe('Auth: useAuthStore (Pinia)', () => {
     });
 
     it('should set loadingChangePassword during the request', async () => {
-      let resolvePromise: (v: any) => void;
+      let resolvePromise: (v: unknown) => void;
       const pendingPromise = new Promise(resolve => {
         resolvePromise = resolve;
       });

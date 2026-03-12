@@ -166,7 +166,7 @@ class AccountingService {
     }
 
     // Validate all account IDs exist
-    const accountIds = lines.map((l: any) => l.accountId);
+    const accountIds = lines.map((l: Record<string, unknown>) => l.accountId);
     const accounts = await ChartOfAccounts.findAll({ where: { id: accountIds } });
     if (accounts.length !== new Set(accountIds).size) {
       throw new Error('One or more account IDs are invalid');
@@ -212,7 +212,7 @@ class AccountingService {
       where.date = { [Op.lte]: new Date(endDate) };
     }
     if (search) {
-      where[Op.or as any] = [
+      where[Op.or as symbol] = [
         { entryNumber: { [Op.iLike]: `%${search}%` } },
         { description: { [Op.iLike]: `%${search}%` } },
         { reference: { [Op.iLike]: `%${search}%` } }
@@ -553,10 +553,10 @@ class AccountingService {
       }
 
       return {
-        date: (line.journalEntry as any)?.date,
-        entryNumber: (line.journalEntry as any)?.entryNumber,
-        reference: (line.journalEntry as any)?.reference,
-        description: line.description || (line.journalEntry as any)?.description,
+        date: (line.journalEntry as Record<string, unknown>)?.date,
+        entryNumber: (line.journalEntry as Record<string, unknown>)?.entryNumber,
+        reference: (line.journalEntry as Record<string, unknown>)?.reference,
+        description: line.description || (line.journalEntry as Record<string, unknown>)?.description,
         debit: Number(line.debit),
         credit: Number(line.credit),
         balance: Math.round(runningBalance * 100) / 100

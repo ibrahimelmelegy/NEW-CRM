@@ -185,13 +185,13 @@ class ProjectManpowerService {
     });
 
     // Sort by utilization descending (most allocated first)
-    report.sort((a: any, b: any) => b.utilization - a.utilization);
+    report.sort((a: unknown, b: unknown) => b.utilization - a.utilization);
 
     // Summary
     const totalResources = report.length;
     const overAllocatedCount = report.filter(r => r.overAllocated).length;
-    const avgUtilization = totalResources > 0 ? Math.round(report.reduce((s: number, r: any) => s + r.utilization, 0) / totalResources) : 0;
-    const totalAllocatedDays = report.reduce((s: number, r: any) => s + r.totalEstimatedDays, 0);
+    const avgUtilization = totalResources > 0 ? Math.round(report.reduce((s: number, r: unknown) => s + r.utilization, 0) / totalResources) : 0;
+    const totalAllocatedDays = report.reduce((s: number, r: unknown) => s + r.totalEstimatedDays, 0);
 
     return {
       summary: {

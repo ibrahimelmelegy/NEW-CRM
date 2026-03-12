@@ -28,7 +28,7 @@ class ProposalFinanceTableService {
     let grandTotalPrice = 0;
 
     const calculatedItems = await Promise.all(
-      items.map(async (item: any) => {
+      items.map(async (item: Record<string, unknown>) => {
         const material = await materialService.materialOrError({ id: item.materialId });
         const marginAmount = (material.unitPrice * marginPercentage) / 100;
         const unitPrice = material.unitPrice + marginAmount;

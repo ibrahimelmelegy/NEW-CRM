@@ -5,8 +5,8 @@
  *
  * The module exports:
  * - getRole(id: string | string[]): Promise<any> - fetches a single role
- * - createRole(values: any): Promise<void> - creates a new role
- * - updateRole(values: any): Promise<void> - updates an existing role
+ * - createRole(values: unknown): Promise<void> - creates a new role
+ * - updateRole(values: unknown): Promise<void> - updates an existing role
  *
  * Internal helpers (not exported):
  * - handleError(message: string) - shows error notification
@@ -21,24 +21,24 @@ import { getRole, createRole, updateRole } from '~/composables/useRoles';
 // Mock useApiFetch globally
 // ============================================
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 // ============================================
 // Mock ElNotification
 // ============================================
 const mockNotification = vi.fn();
-(globalThis as any).ElNotification = mockNotification;
+(globalThis as Record<string, unknown>).ElNotification = mockNotification;
 
 // ============================================
 // Mock navigateTo
 // ============================================
 const mockNavigateTo = vi.fn();
-(globalThis as any).navigateTo = mockNavigateTo;
+(globalThis as Record<string, unknown>).navigateTo = mockNavigateTo;
 
 // ============================================
 // Mock cleanObject (used by updateRole)
 // ============================================
-const mockCleanObject = vi.fn((obj: any) => {
+const mockCleanObject = vi.fn((obj: unknown) => {
   // Replicate the real cleanObject behavior: filter out null/undefined/empty
   return Object.fromEntries(
     Object.entries(obj).filter(([_, value]) => {
@@ -49,7 +49,7 @@ const mockCleanObject = vi.fn((obj: any) => {
     })
   );
 });
-(globalThis as any).cleanObject = mockCleanObject;
+(globalThis as Record<string, unknown>).cleanObject = mockCleanObject;
 
 // ============================================
 // Mock usePermissions (called by updateRole on success)
@@ -58,11 +58,11 @@ const mockUsePermissions = vi.fn().mockResolvedValue({
   hasPermission: vi.fn(),
   hasAnyPermission: vi.fn()
 });
-(globalThis as any).usePermissions = mockUsePermissions;
+(globalThis as Record<string, unknown>).usePermissions = mockUsePermissions;
 
 // Must mock element-plus before importing
 vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockNotification(...args)
+  ElNotification: (...args: unknown[]) => mockNotification(...args)
 }));
 
 describe('useRoles', () => {
