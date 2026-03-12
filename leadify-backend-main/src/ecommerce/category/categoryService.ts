@@ -13,7 +13,7 @@ function slugify(text: string): string {
 }
 
 class CategoryService {
-  async getCategories(query: Record<string, unknown>): Promise<any> {
+  async getCategories(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, parentId, isActive } = query;
 

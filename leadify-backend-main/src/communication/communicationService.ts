@@ -153,7 +153,7 @@ class CommunicationService {
   }
 
   // ─── Get Activity Stats ──────────────────────────────────────────────────
-  public async getActivityStats(userId: number | null, tenantId: string | null, dateRange?: { start?: string; end?: string }): Promise<any> {
+  public async getActivityStats(userId: number | null, tenantId: string | null, dateRange?: { start?: string; end?: string }): Promise<unknown> {
     const where: Record<string, any> = {};
     if (userId) where.userId = userId;
     if (tenantId) where.tenantId = tenantId;
@@ -565,7 +565,7 @@ class CommunicationService {
   }
 
   // ─── Get Call Analytics ───────────────────────────────────────────────────
-  public async getCallAnalytics(tenantId: string | null, dateRange?: { start?: string; end?: string }): Promise<any> {
+  public async getCallAnalytics(tenantId: string | null, dateRange?: { start?: string; end?: string }): Promise<unknown> {
     const where: Record<string, any> = { type: ActivityType.CALL };
     if (tenantId) where.tenantId = tenantId;
     if (dateRange?.start && dateRange?.end) {

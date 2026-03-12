@@ -139,7 +139,7 @@ class SurveyService {
 
     for (const question of questions) {
       const qId = question.id;
-      const values: any[] = [];
+      const values: unknown[] = [];
 
       for (const resp of responses) {
         const answers = resp.answers as Record<string, any>;

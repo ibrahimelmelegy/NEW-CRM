@@ -34,7 +34,7 @@ class WhatsAppService {
     const limit = Math.min(100, Math.max(1, Number(query.limit) || 25));
     const offset = (page - 1) * limit;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     if (query.status) {
@@ -377,7 +377,7 @@ class WhatsAppService {
 
     let sent = 0;
     let failed = 0;
-    const results: any[] = [];
+    const results: unknown[] = [];
 
     for (const contactId of contactIds) {
       try {
@@ -405,7 +405,7 @@ class WhatsAppService {
     const limit = Math.min(100, Math.max(1, Number(query.limit) || 25));
     const offset = (page - 1) * limit;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.category) where.category = query.category;
     if (query.status) where.status = query.status;
@@ -503,7 +503,7 @@ class WhatsAppService {
   // ANALYTICS
   // ═══════════════════════════════════════════════════════════════════════════
 
-  public async getAnalytics(tenantId: string | null, dateRange?: { start: string; end: string }): Promise<any> {
+  public async getAnalytics(tenantId: string | null, dateRange?: { start: string; end: string }): Promise<unknown> {
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
 

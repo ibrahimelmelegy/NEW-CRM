@@ -30,7 +30,7 @@ class DailyTaskService {
     return task;
   }
 
-  public async getDailyTasks(query: Record<string, unknown>): Promise<any> {
+  public async getDailyTasks(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: tasks, count: totalItems } = await DailyTask.findAndCountAll({

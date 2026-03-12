@@ -117,7 +117,7 @@ class AIChatService {
     }
   }
 
-  private async analyzeQuestion(question: string, history: ChatMessage[]): Promise<any> {
+  private async analyzeQuestion(question: string, history: ChatMessage[]): Promise<unknown> {
     try {
       const client = await this.getOpenAIClient();
       if (!client) {
@@ -227,7 +227,7 @@ class AIChatService {
     return undefined;
   }
 
-  private async executeQuery(plan: any): Promise<any> {
+  private async executeQuery(plan: any): Promise<unknown> {
     const modelMap: Record<string, any> = {
       leads: Lead,
       deals: Deal,
@@ -440,7 +440,7 @@ class AIChatService {
     return null;
   }
 
-  private async getOpenAIClient(): Promise<any> {
+  private async getOpenAIClient(): Promise<unknown> {
     // Access the private openai client through the aiService singleton
     // We mirror the getClient pattern
     // eslint-disable-next-line @typescript-eslint/no-require-imports

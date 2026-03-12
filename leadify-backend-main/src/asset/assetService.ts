@@ -24,7 +24,7 @@ class AssetService {
     return asset;
   }
 
-  public async getAssets(query: Record<string, unknown>): Promise<any> {
+  public async getAssets(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: assets, count: totalItems } = await Asset.findAndCountAll({

@@ -392,7 +392,7 @@ class ReportBuilderService {
   /**
    * Build aggregation attributes for grouped queries
    */
-  private buildAggregationAttributes(aggregations: { field: string; function: string }[]): any[] {
+  private buildAggregationAttributes(aggregations: { field: string; function: string }[]): unknown[] {
     if (!aggregations || !aggregations.length) return [];
 
     return aggregations.map(agg => {

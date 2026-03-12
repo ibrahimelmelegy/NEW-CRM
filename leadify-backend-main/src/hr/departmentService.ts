@@ -100,7 +100,7 @@ class DepartmentService {
     }
 
     const deptMap = new Map<string, any>();
-    const roots: any[] = [];
+    const roots: unknown[] = [];
 
     for (const dept of departments) {
       dept.children = [];

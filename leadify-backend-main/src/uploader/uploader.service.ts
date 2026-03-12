@@ -5,6 +5,13 @@ import { ERRORS } from '../utils/error/errors';
 import { FileModel } from './uploader.enum';
 import { Uploader } from './uploader.model';
 
+export interface UploadFileInput {
+  name: string;
+  data: Buffer;
+  size?: number;
+  mimetype?: string;
+}
+
 class UploaderService {
   // Allowed MIME types
   private static readonly ALLOWED_MIME_TYPES = [
@@ -23,7 +30,7 @@ class UploaderService {
 
   private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
-  public async createFile(input: Record<string, unknown>, model: FileModel): Promise<string> {
+  public async createFile(input: UploadFileInput, model: FileModel): Promise<string> {
     // Validate file exists
     if (!input || !input.name) {
       throw new BaseError(ERRORS.FILE_ERROR);

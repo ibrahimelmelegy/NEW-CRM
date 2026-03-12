@@ -127,7 +127,7 @@ class ProposalFinanceTableService {
     return table;
   }
 
-  public async getFinanceTables(query: Record<string, unknown>): Promise<any> {
+  public async getFinanceTables(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: tables, count: totalItems } = await ProposalFinanceTable.findAndCountAll({

@@ -377,7 +377,7 @@ class ERPNextSyncService {
 
   // ---- Pull Account Balances ----
 
-  async pullAccountBalances(): Promise<any> {
+  async pullAccountBalances(): Promise<unknown> {
     const client = this.getClient();
     const config = this.getConfig();
 
@@ -406,7 +406,7 @@ class ERPNextSyncService {
 
   // ---- Pull Profit & Loss Report ----
 
-  async pullProfitAndLoss(fromDate: string, toDate: string): Promise<any> {
+  async pullProfitAndLoss(fromDate: string, toDate: string): Promise<unknown> {
     const client = this.getClient();
     const config = this.getConfig();
 
@@ -428,7 +428,7 @@ class ERPNextSyncService {
 
   // ---- Pull Balance Sheet ----
 
-  async pullBalanceSheet(date: string): Promise<any> {
+  async pullBalanceSheet(date: string): Promise<unknown> {
     const client = this.getClient();
     const config = this.getConfig();
 

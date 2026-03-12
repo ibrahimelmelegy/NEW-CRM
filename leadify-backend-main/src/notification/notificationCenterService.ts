@@ -552,7 +552,7 @@ class NotificationCenterService {
    * Register a push subscription for a user.
    * Stores the browser push subscription object for web push notifications.
    */
-  async registerPushSubscription(userId: number, subscription: { endpoint: string; keys: { p256dh: string; auth: string } }): Promise<any> {
+  async registerPushSubscription(userId: number, subscription: { endpoint: string; keys: { p256dh: string; auth: string } }): Promise<unknown> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const PushSubscription = require('./pushSubscriptionModel').default;

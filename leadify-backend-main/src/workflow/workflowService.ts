@@ -90,7 +90,7 @@ async function getRules(query: RulesQuery) {
   const limit = Math.min(100, Math.max(1, parseInt(query.limit || '20', 10)));
   const offset = (page - 1) * limit;
 
-  const where: any = {};
+  const where: Record<string, unknown> = {};
   if (query.entityType) where.entityType = query.entityType;
   if (query.triggerType) where.triggerType = query.triggerType;
   if (query.isActive !== undefined) where.isActive = query.isActive === 'true';
@@ -295,7 +295,7 @@ async function executeUpdateField(
   entityType: string,
   entityId: string,
   entity: Record<string, any>
-): Promise<any> {
+): Promise<unknown> {
   const registry = getModelRegistry();
   const Model = registry[entityType];
   if (!Model) throw new Error(`Unknown entity type: ${entityType}`);
@@ -306,7 +306,7 @@ async function executeUpdateField(
   return { field: action.field, newValue: resolvedValue };
 }
 
-async function executeCreateRecord(action: Extract<WorkflowAction, { type: 'CREATE_RECORD' }>, entity: Record<string, any>): Promise<any> {
+async function executeCreateRecord(action: Extract<WorkflowAction, { type: 'CREATE_RECORD' }>, entity: Record<string, any>): Promise<unknown> {
   const registry = getModelRegistry();
   const Model = registry[action.entityType];
   if (!Model) throw new Error(`Unknown entity type for record creation: ${action.entityType}`);
@@ -321,7 +321,7 @@ async function executeCreateRecord(action: Extract<WorkflowAction, { type: 'CREA
   return { entityType: action.entityType, id: created.id };
 }
 
-async function executeSendEmail(action: Extract<WorkflowAction, { type: 'SEND_EMAIL' }>, entity: Record<string, any>): Promise<any> {
+async function executeSendEmail(action: Extract<WorkflowAction, { type: 'SEND_EMAIL' }>, entity: Record<string, any>): Promise<unknown> {
   const to = resolveTemplate(action.to, entity);
   const subject = resolveTemplate(action.subject, entity);
   const body = resolveTemplate(action.body, entity);
@@ -340,7 +340,7 @@ async function executeSendNotification(
   action: Extract<WorkflowAction, { type: 'SEND_NOTIFICATION' }>,
   entity: Record<string, any>,
   triggerUserId?: number
-): Promise<any> {
+): Promise<unknown> {
   const title = resolveTemplate(action.title, entity);
   const message = resolveTemplate(action.message, entity);
   const notifiedUserIds: number[] = [];
@@ -379,7 +379,7 @@ async function executeCreateTask(
   action: Extract<WorkflowAction, { type: 'CREATE_TASK' }>,
   entity: Record<string, any>,
   triggerUserId?: number
-): Promise<any> {
+): Promise<unknown> {
   const title = resolveTemplate(action.title, entity);
   const assignedTo = Number(action.assignedTo) || triggerUserId;
 
@@ -404,7 +404,7 @@ async function executeCreateTask(
   return { taskId: task.id, title, assignedTo, dueDate };
 }
 
-async function executeWebhook(action: Extract<WorkflowAction, { type: 'WEBHOOK' }>, entity: Record<string, any>): Promise<any> {
+async function executeWebhook(action: Extract<WorkflowAction, { type: 'WEBHOOK' }>, entity: Record<string, any>): Promise<unknown> {
   const url = resolveTemplate(action.url, entity);
   const method = (action.method || 'POST').toUpperCase();
 
@@ -454,7 +454,7 @@ async function executeWebhook(action: Extract<WorkflowAction, { type: 'WEBHOOK' 
   }
 }
 
-async function executeAssignment(action: Extract<WorkflowAction, { type: 'ASSIGN_TO' }>, entityType: string, entityId: string): Promise<any> {
+async function executeAssignment(action: Extract<WorkflowAction, { type: 'ASSIGN_TO' }>, entityType: string, entityId: string): Promise<unknown> {
   const registry = getModelRegistry();
   const Model = registry[entityType];
   if (!Model) throw new Error(`Unknown entity type: ${entityType}`);
@@ -553,7 +553,7 @@ async function executeAction(
   action: WorkflowAction,
   entity: Record<string, any>,
   context: { entityType: string; entityId: string; userId?: number }
-): Promise<any> {
+): Promise<unknown> {
   switch (action.type) {
     case 'UPDATE_FIELD':
       return executeUpdateField(action, context.entityType, context.entityId, entity);
@@ -589,7 +589,7 @@ async function executeWorkflow(
   let overallStatus: ExecutionStatus = ExecutionStatus.SUCCESS;
 
   let hasDelayedActions = false;
-  let actionsToQueue: any[] = [];
+  let actionsToQueue: unknown[] = [];
 
   for (let i = 0; i < rule.actions.length; i++) {
     const action = rule.actions[i];

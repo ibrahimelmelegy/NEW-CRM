@@ -21,7 +21,7 @@ class KBService {
   async getArticles(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { search, category, status, tag } = query;
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (search) {
       where[Op.or] = [

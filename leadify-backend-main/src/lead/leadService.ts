@@ -170,7 +170,7 @@ class LeadService {
     if (leadWithPhone) throw new BaseError(ERRORS.PHONE_ALREADY_EXISTS);
   }
 
-  async updateLead(id: string, input: Record<string, unknown>, user: User): Promise<any> {
+  async updateLead(id: string, input: Record<string, unknown>, user: User): Promise<unknown> {
     await this.validateLeadAccess(id, user);
     const lead = await this.leadOrError({ id });
 
@@ -215,7 +215,7 @@ class LeadService {
     return lead;
   }
 
-  async getLeads(query: Record<string, unknown>, user: User): Promise<any> {
+  async getLeads(query: Record<string, unknown>, user: User): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(LeadPermissionsEnum.VIEW_GLOBAL_LEADS)) query.userId = user.id;
@@ -308,7 +308,7 @@ class LeadService {
     };
   }
 
-  async leadById(id: string, user: User): Promise<any> {
+  async leadById(id: string, user: User): Promise<unknown> {
     await this.validateLeadAccess(id, user);
 
     const lead = await Lead.findByPk(id, {

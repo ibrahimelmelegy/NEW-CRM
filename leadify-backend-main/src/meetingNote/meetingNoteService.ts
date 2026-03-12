@@ -15,7 +15,7 @@ class MeetingNoteService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.type) where.type = query.type;
     if (query.search) {

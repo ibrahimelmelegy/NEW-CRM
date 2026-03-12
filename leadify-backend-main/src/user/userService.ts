@@ -86,7 +86,7 @@ class UserService {
    * @param query - Query parameters for pagination and filtering
    * @returns Paginated users
    */
-  public async getUsers(query: Record<string, unknown>): Promise<any> {
+  public async getUsers(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, status, roleId } = query;
 

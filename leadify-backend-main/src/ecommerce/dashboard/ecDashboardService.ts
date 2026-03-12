@@ -11,7 +11,7 @@ class EcDashboardService {
   /**
    * Aggregate e-commerce dashboard statistics
    */
-  async getDashboardStats(): Promise<any> {
+  async getDashboardStats(): Promise<unknown> {
     const [
       orderStats,
       totalOrders,
@@ -104,7 +104,7 @@ class EcDashboardService {
     }
 
     // Enrich top products with product details
-    const topProducts: any[] = [];
+    const topProducts: unknown[] = [];
     for (const tp of topProductsResult as any[]) {
       if (tp.productId) {
         const product = await CatalogProduct.findByPk(tp.productId, {

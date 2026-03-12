@@ -74,7 +74,7 @@ class AccountingService {
 
     // Build tree structure
     const accountMap: Record<string, any> = {};
-    const tree: any[] = [];
+    const tree: unknown[] = [];
 
     for (const account of allAccounts) {
       accountMap[account.id] = { ...account, children: [] };

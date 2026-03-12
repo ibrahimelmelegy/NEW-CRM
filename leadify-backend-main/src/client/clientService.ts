@@ -90,7 +90,7 @@ class ClientService {
     if (clientWithPhone) throw new BaseError(ERRORS.PHONE_ALREADY_EXISTS);
   }
 
-  async updateClient(id: string, input: Record<string, unknown>, user: User): Promise<any> {
+  async updateClient(id: string, input: Record<string, unknown>, user: User): Promise<unknown> {
     await this.validateClientAccess(id, user);
     const client = await this.clientOrError({ id });
 
@@ -142,7 +142,7 @@ class ClientService {
     return client;
   }
 
-  async getClients(query: Record<string, unknown>, user: User): Promise<any> {
+  async getClients(query: Record<string, unknown>, user: User): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS)) query.userId = user.id;
@@ -206,7 +206,7 @@ class ClientService {
     };
   }
 
-  async clientById(id: string, user: User): Promise<any> {
+  async clientById(id: string, user: User): Promise<unknown> {
     await this.validateClientAccess(id, user);
     const client = await this.clientOrError({ id }, [
       {
@@ -219,7 +219,7 @@ class ClientService {
     return client;
   }
 
-  async getClientsArray(): Promise<any> {
+  async getClientsArray(): Promise<unknown> {
     const clients = await Client.findAll({
       attributes: ['id', 'clientName', 'companyName']
     });
@@ -599,7 +599,7 @@ class ClientService {
   }
 
   // ─── Company Hierarchy ───────────────────────────────────────────────────
-  async getCompanyHierarchy(companyId: string): Promise<any> {
+  async getCompanyHierarchy(companyId: string): Promise<unknown> {
     const company = await this.clientOrError({ id: companyId });
 
     // Get all subsidiaries (recursive)

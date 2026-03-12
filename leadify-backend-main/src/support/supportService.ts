@@ -61,7 +61,7 @@ class SupportService {
     const { page, limit, offset } = clampPagination(query, 20);
     const { status, priority, assignedTo, categoryId, search, clientId } = query;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (status) where.status = status;
     if (priority) where.priority = priority;
@@ -302,7 +302,7 @@ class SupportService {
    * Generate a detailed SLA compliance report.
    * Returns compliance rates by priority, breach trends, and at-risk tickets.
    */
-  public async getSLAComplianceReport(): Promise<any> {
+  public async getSLAComplianceReport(): Promise<unknown> {
     // Per-priority compliance
     const priorities = Object.values(TicketPriority);
     const complianceByPriority: Record<string, { total: number; compliant: number; breached: number; rate: number }> = {};
@@ -438,7 +438,7 @@ class SupportService {
   }
 
   // ─── Metrics / Dashboard ──────────────────────────────────────────────
-  public async getTicketMetrics(): Promise<any> {
+  public async getTicketMetrics(): Promise<unknown> {
     const openCount = await Ticket.count({
       where: { status: { [Op.in]: [TicketStatus.OPEN, TicketStatus.IN_PROGRESS, TicketStatus.WAITING_CUSTOMER] } }
     });
@@ -602,7 +602,7 @@ class SupportService {
 
   // ─── Canned Responses ─────────────────────────────────────────────────
   public async getCannedResponses(query: Record<string, unknown>): Promise<CannedResponse[]> {
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (query.category) where.category = query.category;
     if (query.search) {
       where[Op.or] = [{ title: { [Op.iLike]: `%${query.search}%` } }, { body: { [Op.iLike]: `%${query.search}%` } }];

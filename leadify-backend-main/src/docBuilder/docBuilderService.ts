@@ -97,7 +97,7 @@ class DocBuilderService {
     return document;
   }
 
-  public async getDocuments(query: Record<string, unknown>, user: User): Promise<any> {
+  public async getDocuments(query: Record<string, unknown>, user: User): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query, 20);
 
     const where: WhereOptions = {
@@ -345,7 +345,7 @@ class DocBuilderService {
     return document;
   }
 
-  public async getStats(query: Record<string, unknown>, user: User): Promise<any> {
+  public async getStats(query: Record<string, unknown>, user: User): Promise<unknown> {
     const where: WhereOptions = { ...tenantWhere(user) };
 
     if (!user.role?.permissions?.includes(DocBuilderPermissionsEnum.VIEW_GLOBAL_DOCUMENTS)) {

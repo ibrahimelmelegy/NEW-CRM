@@ -23,7 +23,7 @@ class EmailIntegrationService {
     await account.destroy();
   }
 
-  async getMessages(accountId: string, query: Record<string, unknown>): Promise<any> {
+  async getMessages(accountId: string, query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query, 20);
     const { folder } = query;
 

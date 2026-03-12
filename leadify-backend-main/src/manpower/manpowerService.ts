@@ -87,7 +87,7 @@ class ManpowerService {
     return manpower;
   }
 
-  public async getManpowers(query: Record<string, unknown>): Promise<any> {
+  public async getManpowers(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { rows: manpowers, count: totalItems } = await Manpower.findAndCountAll({
       where: {

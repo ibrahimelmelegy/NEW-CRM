@@ -360,7 +360,7 @@ class SessionSecurityService {
     });
 
     // Collect leads
-    let leads: any[] = [];
+    let leads: unknown[] = [];
     try {
       leads = await Lead.findAll({
         where: { userId },
@@ -371,7 +371,7 @@ class SessionSecurityService {
     }
 
     // Collect deals
-    let deals: any[] = [];
+    let deals: unknown[] = [];
     try {
       deals = await Deal.findAll({
         where: { userId },
@@ -382,7 +382,7 @@ class SessionSecurityService {
     }
 
     // Collect clients
-    let clients: any[] = [];
+    let clients: unknown[] = [];
     try {
       clients = await Client.findAll({
         where: { userId },

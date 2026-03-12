@@ -46,7 +46,7 @@ class EmployeeService {
     const { page, limit, offset } = clampPagination(query, 20);
     const { departmentId, status, search, managerId, employmentType, sortBy = 'createdAt', sort = 'DESC' } = query;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (departmentId) where.departmentId = departmentId;
     if (status) where.status = status;
@@ -122,7 +122,7 @@ class EmployeeService {
     });
 
     const employeeMap = new Map<string, any>();
-    const roots: any[] = [];
+    const roots: unknown[] = [];
 
     // Build map
     for (const emp of employees) {

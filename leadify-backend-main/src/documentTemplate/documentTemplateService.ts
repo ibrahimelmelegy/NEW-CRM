@@ -1114,13 +1114,13 @@ function reshapeForEmail(doc: any): unknown {
 }
 
 class DocumentTemplateService {
-  public async createTemplate(data: Record<string, unknown>, userId?: string): Promise<any> {
+  public async createTemplate(data: Record<string, unknown>, userId?: string): Promise<unknown> {
     const mapped = mapEmailFields(data);
     const created = await DocumentTemplate.create({ ...mapped, userId });
     return reshapeForEmail(created);
   }
 
-  public async updateTemplate(id: string, data: Record<string, unknown>): Promise<any> {
+  public async updateTemplate(id: string, data: Record<string, unknown>): Promise<unknown> {
     const template = await DocumentTemplate.findByPk(id);
     if (!template) throw new BaseError(ERRORS.DOCUMENT_TEMPLATE_NOT_FOUND);
     const mapped = mapEmailFields({ ...data, type: data.type || template.type });
@@ -1128,7 +1128,7 @@ class DocumentTemplateService {
     return reshapeForEmail(template);
   }
 
-  public async getTemplates(query: Record<string, unknown>): Promise<any> {
+  public async getTemplates(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { type, searchKey } = query;
 
@@ -1159,7 +1159,7 @@ class DocumentTemplateService {
     };
   }
 
-  public async getTemplateById(id: string): Promise<any> {
+  public async getTemplateById(id: string): Promise<unknown> {
     const template = await DocumentTemplate.findByPk(id);
     if (!template) throw new BaseError(ERRORS.DOCUMENT_TEMPLATE_NOT_FOUND);
     return reshapeForEmail(template);

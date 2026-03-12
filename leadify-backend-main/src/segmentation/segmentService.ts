@@ -47,7 +47,7 @@ class SegmentService {
 
   async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -99,7 +99,7 @@ class SegmentService {
     if (!segment) return null;
 
     const criteria = segment.criteria || [];
-    const sequelizeWhere: Record<string, any> = {};
+    const sequelizeWhere: Record<string, unknown> = {};
     if (tenantId) sequelizeWhere.tenantId = tenantId;
 
     for (const rule of criteria) {
@@ -146,7 +146,7 @@ class SegmentService {
 
   /** Get distribution of customers across all active segments */
   async getDistribution(tenantId?: string) {
-    const where: Record<string, any> = { status: 'ACTIVE' };
+    const where: Record<string, unknown> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     const segments = await Segment.findAll({
@@ -156,7 +156,7 @@ class SegmentService {
       raw: true
     });
 
-    const totalCustomers = segments.reduce((sum, s) => sum + (Number((s as any).customerCount) || 0), 0);
+    const totalCustomers = segments.reduce((sum, s) => sum + (Number((s as Record<string, unknown>).customerCount) || 0), 0);
 
     return {
       segments,

@@ -130,7 +130,7 @@ export class SendGridProvider {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const sgClient = require('@sendgrid/client');
         sgClient.setApiKey(process.env.SENDGRID_API_KEY);
-        const queryParams: any = {};
+        const queryParams: Record<string, unknown> = {};
         if (startDate) queryParams.start_date = startDate;
         if (endDate) queryParams.end_date = endDate;
         const [, body] = await sgClient.request({ method: 'GET', url: '/v3/stats', qs: queryParams });

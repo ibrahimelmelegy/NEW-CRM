@@ -205,7 +205,7 @@ class DuplicateService {
     if (!fields) throw new Error(`No field mapping for entity type: ${entityType}`);
 
     // Build a broad WHERE to find candidates (email or phone or name match)
-    const orConditions: any[] = [];
+    const orConditions: unknown[] = [];
 
     if (fields.email && entityData[fields.email]) {
       orConditions.push({ [fields.email]: { [Op.iLike]: entityData[fields.email] } });

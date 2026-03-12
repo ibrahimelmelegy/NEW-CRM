@@ -6,7 +6,7 @@ import Comment from '../comments/commentModel';
 import Attachment from '../attachments/attachmentModel';
 
 class DealRoomService {
-  async getDealRoom(dealId: string): Promise<any> {
+  async getDealRoom(dealId: string): Promise<unknown> {
     const deal = await Deal.findByPk(dealId, {
       include: [{ model: User, as: 'users' }]
     });

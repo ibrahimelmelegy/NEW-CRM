@@ -128,7 +128,7 @@ class SubscriptionService {
     return this.getSubscriptionById(subscription.id);
   }
 
-  async getSubscriptions(query: Record<string, unknown>): Promise<any> {
+  async getSubscriptions(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { status, clientId, searchKey } = query;
 
@@ -413,7 +413,7 @@ class SubscriptionService {
     return parseFloat(((cancelledInPeriod / activeAtStart) * 100).toFixed(2));
   }
 
-  async getSubscriptionMetrics(): Promise<any> {
+  async getSubscriptionMetrics(): Promise<unknown> {
     const mrr = await this.getMRR();
     const arr = mrr * 12;
 

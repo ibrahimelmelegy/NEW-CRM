@@ -22,7 +22,7 @@ class ServiceService {
     return service;
   }
 
-  public async getServices(query: Record<string, unknown>): Promise<any> {
+  public async getServices(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: services, count: totalItems } = await Service.findAndCountAll({

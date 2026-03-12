@@ -115,7 +115,7 @@ class MaterialService {
   }
 
   public async sendMaterialsExcelByEmail(input: GetPaginatedAdditionalMaterialInput, email: string): Promise<void> {
-    const where: any = {}; // You can add filters here if needed
+    const where: Record<string, unknown> = {}; // You can add filters here if needed
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Materials');

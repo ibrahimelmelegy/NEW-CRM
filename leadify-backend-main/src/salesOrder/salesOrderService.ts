@@ -98,7 +98,7 @@ class SalesOrderService {
   /**
    * Get paginated list of orders with filters
    */
-  async getOrders(query: Record<string, unknown>): Promise<any> {
+  async getOrders(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, status, clientId, paymentStatus, startDate, endDate } = query;
 
@@ -357,7 +357,7 @@ class SalesOrderService {
   /**
    * Get orders for a specific client
    */
-  async getClientOrders(clientId: string, query: Record<string, unknown>): Promise<any> {
+  async getClientOrders(clientId: string, query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: docs, count: totalItems } = await SalesOrder.findAndCountAll({
@@ -421,7 +421,7 @@ class SalesOrderService {
   /**
    * Order analytics: revenue, counts, averages, status distribution
    */
-  async getOrderAnalytics(query?: Record<string, any>): Promise<any> {
+  async getOrderAnalytics(query?: Record<string, any>): Promise<unknown> {
     const where: WhereOptions = {};
 
     // Optional date range

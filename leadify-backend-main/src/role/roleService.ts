@@ -46,7 +46,7 @@ class RoleService {
    * @param {any} query - Query parameters (pagination & search)
    * @returns {Promise<any>}
    */
-  public async getRoles(query: Record<string, unknown>): Promise<any> {
+  public async getRoles(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey } = query;
 
@@ -128,7 +128,7 @@ class RoleService {
     return role;
   }
 
-  public async getPermissions(): Promise<any> {
+  public async getPermissions(): Promise<unknown> {
     return getPermissionsGroupedByName();
   }
 }

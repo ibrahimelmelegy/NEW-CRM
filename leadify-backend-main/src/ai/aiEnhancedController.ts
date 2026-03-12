@@ -210,7 +210,7 @@ export const aiInsightsController = {
       ]);
 
       // Calculate stalled deals (check for recent activities)
-      const stalledDealsList: any[] = [];
+      const stalledDealsList: unknown[] = [];
       for (const deal of stalledDeals as any[]) {
         const lastActivity = await DealActivity.findOne({
           where: { dealId: deal.id },

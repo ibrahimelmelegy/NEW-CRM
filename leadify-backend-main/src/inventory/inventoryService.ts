@@ -7,7 +7,7 @@ import { ERRORS } from '../utils/error/errors';
 import { clampPagination } from '../utils/pagination';
 
 class InventoryService {
-  async getProducts(query: Record<string, unknown>): Promise<any> {
+  async getProducts(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, category, warehouse, isActive } = query;
 

@@ -10,7 +10,7 @@ interface ValidateCouponResult {
 }
 
 class CouponService {
-  async getCoupons(query: Record<string, unknown>): Promise<any> {
+  async getCoupons(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, type, status } = query;
 

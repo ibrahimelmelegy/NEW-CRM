@@ -139,7 +139,7 @@ class RFQService {
     }
   }
 
-  async getComparison(rfqId: string): Promise<any> {
+  async getComparison(rfqId: string): Promise<unknown> {
     const rfq = await RFQ.findByPk(rfqId, {
       include: [
         { model: RFQItem },
@@ -153,7 +153,7 @@ class RFQService {
     return rfq;
   }
 
-  async getRFQs(query: Record<string, unknown>): Promise<any> {
+  async getRFQs(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: docs, count: totalItems } = await RFQ.findAndCountAll({

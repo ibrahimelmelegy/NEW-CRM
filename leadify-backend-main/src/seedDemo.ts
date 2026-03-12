@@ -170,7 +170,7 @@ async function seedDemo() {
       { name: 'HR_MANAGER', description: 'Human resources manager', permissions: hrPerms }
     ];
 
-    const createdRoles: any[] = [];
+    const createdRoles: unknown[] = [];
     for (const r of rolesData) {
       const [role] = await (Role as any).findOrCreate({
         where: { name: r.name },
@@ -382,7 +382,7 @@ async function seedDemo() {
     // ── 10. SALES ORDERS (8) ──
     // Seeding Sales Orders
     const soStatuses = ['DRAFT', 'CONFIRMED', 'CONFIRMED', 'PROCESSING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'DELIVERED'];
-    const createdSOs: any[] = [];
+    const createdSOs: unknown[] = [];
     for (let i = 0; i < 8; i++) {
       const client = createdClients[i % createdClients.length];
       const so = await SalesOrder.create({
@@ -533,7 +533,7 @@ async function seedDemo() {
       { name: 'Finance', code: 'FIN', description: 'Finance & Accounting' },
       { name: 'Support', code: 'SUP', description: 'Customer Support' }
     ];
-    const createdDepts: any[] = [];
+    const createdDepts: unknown[] = [];
     for (const d of deptsData) {
       const [dept] = await (Department as any).findOrCreate({
         where: { code: d.code },
@@ -653,7 +653,7 @@ async function seedDemo() {
       }
     ];
 
-    const createdEmployees: any[] = [];
+    const createdEmployees: unknown[] = [];
     for (let i = 0; i < employeeData.length; i++) {
       const emp = employeeData[i];
       const user = createdUsers.find(u => u.email === emp.email);
@@ -801,7 +801,7 @@ async function seedDemo() {
       { name: 'Marketing & Advertising', color: '#f59e0b', description: 'Marketing campaigns and ads' },
       { name: 'Training & Development', color: '#ec4899', description: 'Team training programs' }
     ];
-    const createdCats: any[] = [];
+    const createdCats: unknown[] = [];
     for (const c of catData) {
       const [cat] = await (ExpenseCategory as any).findOrCreate({
         where: { name: c.name },
@@ -865,7 +865,7 @@ async function seedDemo() {
       { name: 'Feature Request', description: 'New feature suggestions' },
       { name: 'Account Management', description: 'Account setup and configuration' }
     ];
-    const createdTicketCats: any[] = [];
+    const createdTicketCats: unknown[] = [];
     for (const tc of ticketCatsData) {
       const [cat] = await (TicketCategory as any).findOrCreate({
         where: { name: tc.name },
@@ -1053,7 +1053,7 @@ async function seedDemo() {
         isActive: true
       }
     ];
-    const createdWorkflows: any[] = [];
+    const createdWorkflows: unknown[] = [];
     for (const wf of workflows) {
       const created = await ApprovalWorkflow.create(wf as any);
       createdWorkflows.push(created);

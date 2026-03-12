@@ -219,7 +219,7 @@ class AchievementEngine {
     return streak;
   }
 
-  async getUserAchievements(userId: number): Promise<any> {
+  async getUserAchievements(userId: number): Promise<unknown> {
     const allAchievements = await Achievement.findAll();
     const awarded = await UserPoints.findAll({
       where: { userId, entityType: 'achievement' }

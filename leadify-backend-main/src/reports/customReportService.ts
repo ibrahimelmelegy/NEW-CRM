@@ -118,7 +118,7 @@ function buildFilterWhere(filters: ReportFilter[]): any {
 }
 
 // ─── Build Aggregation Attributes ────────────────────────
-function buildAggregationAttributes(aggregations: ReportAggregation[]): any[] {
+function buildAggregationAttributes(aggregations: ReportAggregation[]): unknown[] {
   if (!aggregations || !aggregations.length) return [];
 
   return aggregations.map(agg => {

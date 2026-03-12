@@ -73,7 +73,7 @@ class ProcurementService {
     return po;
   }
 
-  async getPurchaseOrders(query: Record<string, unknown>): Promise<any> {
+  async getPurchaseOrders(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, status, projectId, vendorId } = query;
 
@@ -110,7 +110,7 @@ class ProcurementService {
     return await this.poOrError({ id });
   }
 
-  async getDashboardStats(): Promise<any> {
+  async getDashboardStats(): Promise<unknown> {
     // 1. KPI: Total POs and Total Spend
     const totalPos = await PurchaseOrder.count();
     const totalSpendResult = await PurchaseOrder.findAll({
@@ -226,7 +226,7 @@ class ProcurementService {
    * total POs, total spend, average order value, on-time delivery count,
    * rejection rate. Returns vendors sorted by total spend descending.
    */
-  async getVendorComparison(): Promise<any> {
+  async getVendorComparison(): Promise<unknown> {
     const vendors = await Vendor.findAll({ attributes: ['id', 'name'] });
 
     const comparison = await Promise.all(

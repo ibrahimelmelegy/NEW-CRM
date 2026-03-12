@@ -35,7 +35,7 @@ class VendorService {
     return vendor;
   }
 
-  async getVendors(query: Record<string, unknown>): Promise<any> {
+  async getVendors(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey } = query;
 

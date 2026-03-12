@@ -5,11 +5,11 @@ import Client from '../../client/clientModel';
 import { clampPagination } from '../../utils/pagination';
 
 class ReviewService {
-  async getReviews(query: Record<string, unknown>): Promise<any> {
+  async getReviews(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, productId, clientId, status, ratingMin, ratingMax } = query;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (productId) where.productId = productId;
     if (clientId) where.clientId = clientId;
@@ -59,7 +59,7 @@ class ReviewService {
     return review;
   }
 
-  async getProductReviewStats(productId: string): Promise<any> {
+  async getProductReviewStats(productId: string): Promise<unknown> {
     const reviews = await EcReview.findAll({
       where: { productId },
       attributes: ['rating'],

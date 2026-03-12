@@ -134,7 +134,7 @@ class SearchService {
         if (!config) return;
 
         const offset = (page - 1) * perEntity;
-        let rows: any[] = [];
+        let rows: unknown[] = [];
         let count = 0;
 
         // Try tsvector-based full-text search first

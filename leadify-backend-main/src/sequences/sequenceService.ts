@@ -3,7 +3,7 @@ import Sequence, { SequenceEnrollment } from './sequenceModel';
 import { clampPagination } from '../utils/pagination';
 
 class SequenceService {
-  async getSequences(query: Record<string, unknown>): Promise<any> {
+  async getSequences(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, isActive } = query;
 
@@ -105,7 +105,7 @@ class SequenceService {
     });
   }
 
-  async getStats(sequenceId: string): Promise<any> {
+  async getStats(sequenceId: string): Promise<unknown> {
     const enrollments = await SequenceEnrollment.findAll({ where: { sequenceId } });
     const sequence = await Sequence.findByPk(sequenceId);
 

@@ -11,7 +11,7 @@ class ProductService {
   /**
    * Get paginated products with advanced filtering
    */
-  async getProducts(query: Record<string, unknown>): Promise<any> {
+  async getProducts(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, category, isActive, minPrice, maxPrice, lowStock, sortBy, sortOrder: sortDir } = query;
 
@@ -48,7 +48,7 @@ class ProductService {
     }
 
     // Sorting
-    const orderClause: any[] = [];
+    const orderClause: unknown[] = [];
     if (sortBy) {
       orderClause.push([sortBy, (sortDir || 'ASC').toUpperCase()]);
     } else {
@@ -129,7 +129,7 @@ class ProductService {
   /**
    * Get products that are low in stock
    */
-  async getLowStockProducts(query: Record<string, unknown>): Promise<any> {
+  async getLowStockProducts(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: docs, count: totalItems } = await CatalogProduct.findAndCountAll({
@@ -226,7 +226,7 @@ class ProductService {
   /**
    * Get reviews for a specific product
    */
-  async getProductReviews(productId: string): Promise<any> {
+  async getProductReviews(productId: string): Promise<unknown> {
     const reviews = await EcReview.findAll({
       where: { productId },
       include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] }],
@@ -244,7 +244,7 @@ class ProductService {
     const product = await CatalogProduct.findByPk(productId);
     if (!product) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Product not found');
 
-    const activity: any[] = [];
+    const activity: unknown[] = [];
 
     // Creation event
     activity.push({
@@ -317,7 +317,7 @@ class ProductService {
   /**
    * Product analytics: stock value, category distribution, etc.
    */
-  async getProductAnalytics(): Promise<any> {
+  async getProductAnalytics(): Promise<unknown> {
     const [totalProducts, activeProducts, lowStockProducts] = await Promise.all([
       CatalogProduct.count(),
       CatalogProduct.count({ where: { isActive: true } }),

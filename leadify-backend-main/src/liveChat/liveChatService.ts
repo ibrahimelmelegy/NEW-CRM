@@ -31,7 +31,7 @@ class LiveChatService {
 
   async getConversations(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.staffId) where.staffId = query.staffId;

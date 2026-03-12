@@ -72,7 +72,7 @@ class ProjectManpowerService {
     return this.projectManpowerById(projectManpower.id);
   }
 
-  public async getProjectManpowers(query: Record<string, unknown>): Promise<any> {
+  public async getProjectManpowers(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const where: Record<string, any> = {
@@ -140,7 +140,7 @@ class ProjectManpowerService {
    * Returns each manpower resource, their total estimated days, total actual days,
    * project count, daily cost, and whether they are over-allocated (> maxCapacityDays).
    */
-  public async getUtilizationReport(query: Record<string, unknown>): Promise<any> {
+  public async getUtilizationReport(query: Record<string, unknown>): Promise<unknown> {
     const maxCapacityDays = Number(query.maxCapacityDays) || 22; // default ~1 month
 
     // Get all allocations grouped by manpower with aggregation
