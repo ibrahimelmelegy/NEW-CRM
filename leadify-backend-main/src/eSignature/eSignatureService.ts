@@ -13,7 +13,7 @@ interface Recipient {
 }
 
 class ESignatureService {
-  async create(data: any, userId: number, tenantId?: string) {
+  async create(data: Record<string, unknown>, userId: number, tenantId?: string) {
     // Initialize recipients with PENDING status
     const recipients = (data.recipients || []).map((r: any) => ({
       name: r.name,
@@ -37,7 +37,7 @@ class ESignatureService {
     return this.getById(record.id);
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -63,7 +63,7 @@ class ESignatureService {
     });
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: Record<string, unknown>) {
     const item = await ESignature.findByPk(id);
     if (!item) return null;
     await item.update(data);

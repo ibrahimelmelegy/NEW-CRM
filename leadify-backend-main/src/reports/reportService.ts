@@ -21,11 +21,11 @@ class ReportService {
     });
   }
 
-  async createReport(userId: number, data: any) {
+  async createReport(userId: number, data: Record<string, unknown>) {
     return SavedReport.create({ ...data, userId });
   }
 
-  async updateReport(id: string, userId: number, data: any) {
+  async updateReport(id: string, userId: number, data: Record<string, unknown>) {
     const report = await SavedReport.findOne({ where: { id, userId } });
     if (!report) throw new Error('Report not found');
     return report.update(data);

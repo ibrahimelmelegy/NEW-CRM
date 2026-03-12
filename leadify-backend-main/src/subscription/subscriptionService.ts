@@ -12,11 +12,11 @@ class SubscriptionService {
   // Plan CRUD
   // =====================
 
-  async createPlan(data: any): Promise<SubscriptionPlan> {
+  async createPlan(data: Record<string, unknown>): Promise<SubscriptionPlan> {
     return SubscriptionPlan.create(data);
   }
 
-  async getPlans(query: any): Promise<SubscriptionPlan[]> {
+  async getPlans(query: Record<string, unknown>): Promise<SubscriptionPlan[]> {
     const where: WhereOptions = { isActive: true };
 
     if (query.includeInactive === 'true') {
@@ -33,7 +33,7 @@ class SubscriptionService {
     });
   }
 
-  async updatePlan(id: string, data: any): Promise<SubscriptionPlan> {
+  async updatePlan(id: string, data: Record<string, unknown>): Promise<SubscriptionPlan> {
     const plan = await SubscriptionPlan.findByPk(id);
     if (!plan) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Subscription plan not found');
     await plan.update(data);
@@ -72,7 +72,7 @@ class SubscriptionService {
     return end;
   }
 
-  async createSubscription(data: any): Promise<CustomerSubscription> {
+  async createSubscription(data: Record<string, unknown>): Promise<CustomerSubscription> {
     const plan = await SubscriptionPlan.findByPk(data.planId);
     if (!plan) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Subscription plan not found');
     if (!plan.isActive) throw new BaseError(400, 400, 'Plan is inactive');
@@ -128,7 +128,7 @@ class SubscriptionService {
     return this.getSubscriptionById(subscription.id);
   }
 
-  async getSubscriptions(query: any): Promise<any> {
+  async getSubscriptions(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { status, clientId, searchKey } = query;
 

@@ -42,7 +42,7 @@ class SupportService {
   }
 
   // ─── Tickets ──────────────────────────────────────────────────────────
-  public async createTicket(data: any): Promise<Ticket> {
+  public async createTicket(data: Record<string, unknown>): Promise<Ticket> {
     const ticketNumber = await this.generateTicketNumber();
     const priority = data.priority || TicketPriority.MEDIUM;
     const slaDeadline = await this.calculateSLADeadline(priority);
@@ -57,7 +57,7 @@ class SupportService {
     return ticket;
   }
 
-  public async getTickets(query: any): Promise<IPaginationRes<Ticket>> {
+  public async getTickets(query: Record<string, unknown>): Promise<IPaginationRes<Ticket>> {
     const { page, limit, offset } = clampPagination(query, 20);
     const { status, priority, assignedTo, categoryId, search, clientId } = query;
 
@@ -117,7 +117,7 @@ class SupportService {
     return ticket;
   }
 
-  public async updateTicket(id: string, data: any): Promise<Ticket> {
+  public async updateTicket(id: string, data: Record<string, unknown>): Promise<Ticket> {
     const ticket = await Ticket.findByPk(id);
     if (!ticket) throw new BaseError(ERRORS.NOT_FOUND);
     await ticket.update(data);
@@ -125,7 +125,7 @@ class SupportService {
   }
 
   // ─── Messages ─────────────────────────────────────────────────────────
-  public async addMessage(ticketId: string, data: any): Promise<TicketMessage> {
+  public async addMessage(ticketId: string, data: Record<string, unknown>): Promise<TicketMessage> {
     const ticket = await Ticket.findByPk(ticketId);
     if (!ticket) throw new BaseError(ERRORS.NOT_FOUND);
 
@@ -601,7 +601,7 @@ class SupportService {
   }
 
   // ─── Canned Responses ─────────────────────────────────────────────────
-  public async getCannedResponses(query: any): Promise<CannedResponse[]> {
+  public async getCannedResponses(query: Record<string, unknown>): Promise<CannedResponse[]> {
     const where: any = {};
     if (query.category) where.category = query.category;
     if (query.search) {
@@ -611,11 +611,11 @@ class SupportService {
     return CannedResponse.findAll({ where, order: [['title', 'ASC']] });
   }
 
-  public async createCannedResponse(data: any): Promise<CannedResponse> {
+  public async createCannedResponse(data: Record<string, unknown>): Promise<CannedResponse> {
     return CannedResponse.create(data);
   }
 
-  public async updateCannedResponse(id: string, data: any): Promise<CannedResponse> {
+  public async updateCannedResponse(id: string, data: Record<string, unknown>): Promise<CannedResponse> {
     const response = await CannedResponse.findByPk(id);
     if (!response) throw new BaseError(ERRORS.NOT_FOUND);
     await response.update(data);
@@ -637,11 +637,11 @@ class SupportService {
     });
   }
 
-  public async createCategory(data: any): Promise<TicketCategory> {
+  public async createCategory(data: Record<string, unknown>): Promise<TicketCategory> {
     return TicketCategory.create(data);
   }
 
-  public async updateCategory(id: string, data: any): Promise<TicketCategory> {
+  public async updateCategory(id: string, data: Record<string, unknown>): Promise<TicketCategory> {
     const category = await TicketCategory.findByPk(id);
     if (!category) throw new BaseError(ERRORS.NOT_FOUND);
     await category.update(data);
@@ -659,11 +659,11 @@ class SupportService {
     return SLAConfig.findAll({ order: [['priority', 'ASC']] });
   }
 
-  public async createSLAConfig(data: any): Promise<SLAConfig> {
+  public async createSLAConfig(data: Record<string, unknown>): Promise<SLAConfig> {
     return SLAConfig.create(data);
   }
 
-  public async updateSLAConfig(id: string, data: any): Promise<SLAConfig> {
+  public async updateSLAConfig(id: string, data: Record<string, unknown>): Promise<SLAConfig> {
     const config = await SLAConfig.findByPk(id);
     if (!config) throw new BaseError(ERRORS.NOT_FOUND);
     await config.update(data);

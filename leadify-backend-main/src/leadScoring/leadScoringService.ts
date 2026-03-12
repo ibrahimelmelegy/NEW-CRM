@@ -15,11 +15,11 @@ const entityModelMap: Record<string, any> = {
 class LeadScoringService {
   // ---- Rule CRUD ----
 
-  async createRule(data: any, userId: number) {
+  async createRule(data: Record<string, unknown>, userId: number) {
     return LeadScoringRule.create({ ...data, createdBy: userId });
   }
 
-  async updateRule(id: number, data: any) {
+  async updateRule(id: number, data: Record<string, unknown>) {
     const rule = await LeadScoringRule.findByPk(id);
     if (!rule) throw new Error('Scoring rule not found');
     return rule.update(data);
@@ -32,7 +32,7 @@ class LeadScoringService {
     return { deleted: true };
   }
 
-  async getRules(query: any) {
+  async getRules(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 30);
     const { entityType, isActive, sortBy = 'createdAt', sort = 'DESC' } = query;
     const where: Record<string, any> = {};

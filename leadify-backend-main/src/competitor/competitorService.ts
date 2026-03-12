@@ -8,7 +8,7 @@ import { io } from '../server';
 class CompetitorService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string, createdBy?: number) {
+  async create(data: Record<string, unknown>, tenantId?: string, createdBy?: number) {
     const competitor = await Competitor.create({ ...data, tenantId, createdBy });
     try {
       io.emit('competitor:created', { id: competitor.id, name: competitor.name });
@@ -16,7 +16,7 @@ class CompetitorService {
     return competitor;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -40,7 +40,7 @@ class CompetitorService {
     return Competitor.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await Competitor.findByPk(id);
     if (!item) return null;
     await item.update(data);

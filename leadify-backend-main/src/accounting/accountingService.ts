@@ -91,7 +91,7 @@ class AccountingService {
     return tree;
   }
 
-  async createAccount(data: any) {
+  async createAccount(data: Record<string, unknown>) {
     if (data.parentId) {
       const parent = await ChartOfAccounts.findByPk(data.parentId);
       if (!parent) throw new Error('Parent account not found');
@@ -103,7 +103,7 @@ class AccountingService {
     return ChartOfAccounts.create(data);
   }
 
-  async updateAccount(id: string, data: any) {
+  async updateAccount(id: string, data: Record<string, unknown>) {
     const account = await ChartOfAccounts.findByPk(id);
     if (!account) throw new Error('Account not found');
 
@@ -145,7 +145,7 @@ class AccountingService {
     return `JE-${String(nextNumber).padStart(4, '0')}`;
   }
 
-  async createJournalEntry(data: any) {
+  async createJournalEntry(data: Record<string, unknown>) {
     const { lines, ...entryData } = data;
 
     if (!lines || lines.length === 0) {
@@ -197,7 +197,7 @@ class AccountingService {
     return this.getJournalEntryById(entry.id);
   }
 
-  async getJournalEntries(query: any) {
+  async getJournalEntries(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { status, sourceType, startDate, endDate, search } = query;
     const where: Record<string, any> = {};

@@ -1086,7 +1086,7 @@ const DEFAULT_TEMPLATES = [
  * Map frontend email template fields (body -> emailBody, category -> emailCategory)
  * to model column names to avoid conflicts with existing model columns.
  */
-function mapEmailFields(data: any): any {
+function mapEmailFields(data: Record<string, unknown>): any {
   const mapped = { ...data };
   if (mapped.body !== undefined && mapped.type === 'EMAIL') {
     mapped.emailBody = mapped.body;
@@ -1114,13 +1114,13 @@ function reshapeForEmail(doc: any): unknown {
 }
 
 class DocumentTemplateService {
-  public async createTemplate(data: any, userId?: string): Promise<any> {
+  public async createTemplate(data: Record<string, unknown>, userId?: string): Promise<any> {
     const mapped = mapEmailFields(data);
     const created = await DocumentTemplate.create({ ...mapped, userId });
     return reshapeForEmail(created);
   }
 
-  public async updateTemplate(id: string, data: any): Promise<any> {
+  public async updateTemplate(id: string, data: Record<string, unknown>): Promise<any> {
     const template = await DocumentTemplate.findByPk(id);
     if (!template) throw new BaseError(ERRORS.DOCUMENT_TEMPLATE_NOT_FOUND);
     const mapped = mapEmailFields({ ...data, type: data.type || template.type });
@@ -1128,7 +1128,7 @@ class DocumentTemplateService {
     return reshapeForEmail(template);
   }
 
-  public async getTemplates(query: any): Promise<any> {
+  public async getTemplates(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { type, searchKey } = query;
 

@@ -6,7 +6,7 @@ import User from '../user/userModel';
 
 class HRService {
   // Attendance
-  async getAttendance(query: any) {
+  async getAttendance(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 30);
     const { userId, date, startDate, endDate, status, searchKey: _searchKey, sortBy: _sortBy, sort: _sort } = query;
     const where: Record<string, any> = {};
@@ -57,11 +57,11 @@ class HRService {
     return record;
   }
 
-  async createAttendance(data: any) {
+  async createAttendance(data: Record<string, unknown>) {
     return Attendance.create(data);
   }
 
-  async updateAttendance(id: number, data: any) {
+  async updateAttendance(id: number, data: Record<string, unknown>) {
     const record = await Attendance.findByPk(id);
     if (!record) throw new Error('Attendance record not found');
     return record.update(data);
@@ -83,7 +83,7 @@ class HRService {
     return request;
   }
 
-  async getLeaveRequests(query: any) {
+  async getLeaveRequests(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { userId, status, leaveType, searchKey: _searchKey2, sortBy: _sortBy2, sort: _sort2 } = query;
     const where: Record<string, any> = {};
@@ -105,7 +105,7 @@ class HRService {
     };
   }
 
-  async createLeaveRequest(data: any, userId: number) {
+  async createLeaveRequest(data: Record<string, unknown>, userId: number) {
     return LeaveRequest.create({ ...data, userId });
   }
 

@@ -9,7 +9,7 @@ class VirtualOfficeService {
     });
   }
 
-  async createRoom(data: any, user: any) {
+  async createRoom(data: Record<string, unknown>, user: any) {
     return VirtualRoom.create(
       tenantCreate(
         {
@@ -26,7 +26,7 @@ class VirtualOfficeService {
     );
   }
 
-  async updateRoom(id: number, data: any, user: any) {
+  async updateRoom(id: number, data: Record<string, unknown>, user: any) {
     const room = await VirtualRoom.findOne({ where: { id, ...tenantWhere(user) } });
     if (!room) throw new Error('Room not found');
     await room.update(data);

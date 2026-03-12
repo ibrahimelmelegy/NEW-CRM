@@ -4,10 +4,40 @@ import Client from '../client/clientModel';
 import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 
+interface SegmentCriterion {
+  field: string;
+  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'in';
+  value: unknown;
+}
+
+interface SegmentCreateInput {
+  name: string;
+  description?: string;
+  criteria?: SegmentCriterion[];
+  status?: 'ACTIVE' | 'INACTIVE' | 'DRAFT';
+  type?: 'STATIC' | 'DYNAMIC';
+}
+
+interface SegmentUpdateInput {
+  name?: string;
+  description?: string;
+  criteria?: SegmentCriterion[];
+  status?: 'ACTIVE' | 'INACTIVE' | 'DRAFT';
+  type?: 'STATIC' | 'DYNAMIC';
+}
+
+interface SegmentQueryInput {
+  status?: string;
+  type?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
 class SegmentService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string, createdBy?: number) {
+  async create(data: Record<string, unknown>, tenantId?: string, createdBy?: number) {
     const segment = await Segment.create({ ...data, tenantId, createdBy });
     try {
       io.emit('segment:created', { id: segment.id, name: segment.name });
@@ -15,7 +45,7 @@ class SegmentService {
     return segment;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -37,7 +67,7 @@ class SegmentService {
     return Segment.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await Segment.findByPk(id);
     if (!item) return null;
     await item.update(data);

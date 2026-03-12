@@ -303,7 +303,7 @@ class DuplicateService {
 
   // ---- List duplicate sets with filters ----
 
-  async getDuplicateSets(query: any) {
+  async getDuplicateSets(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 30);
     const { entityType, status, sortBy = 'createdAt', sort = 'DESC' } = query;
     const where: Record<string, any> = {};

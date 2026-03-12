@@ -4,11 +4,11 @@ import Client from '../client/clientModel';
 import { clampPagination } from '../utils/pagination';
 
 class SocialCrmService {
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     return SocialProfile.create({ ...data, tenantId });
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -30,7 +30,7 @@ class SocialCrmService {
     }
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await SocialProfile.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -203,11 +203,11 @@ class SocialCrmService {
   }
 
   // ── Social Posts CRUD ─────────────────────────────────────────────────────
-  async createPost(data: any, tenantId?: string) {
+  async createPost(data: Record<string, unknown>, tenantId?: string) {
     return SocialPost.create({ ...data, tenantId });
   }
 
-  async getPosts(query: any, tenantId?: string) {
+  async getPosts(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -221,7 +221,7 @@ class SocialCrmService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updatePost(id: number, data: any) {
+  async updatePost(id: number, data: Record<string, unknown>) {
     const item = await SocialPost.findByPk(id);
     if (!item) return null;
     await item.update(data);

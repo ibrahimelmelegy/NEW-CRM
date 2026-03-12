@@ -27,7 +27,7 @@ class ManufacturingService {
     return bom;
   }
 
-  async createBOM(data: any, user: any) {
+  async createBOM(data: Record<string, unknown>, user: any) {
     const t = await sequelize.transaction();
     try {
       const bom = await BOM.create(
@@ -71,7 +71,7 @@ class ManufacturingService {
     }
   }
 
-  async updateBOM(id: number, data: any, user: any) {
+  async updateBOM(id: number, data: Record<string, unknown>, user: any) {
     const bom = await BOM.findOne({ where: { id, ...tenantWhere(user) } });
     if (!bom) throw new Error('BOM not found');
 
@@ -175,7 +175,7 @@ class ManufacturingService {
     return wo;
   }
 
-  async createWorkOrder(data: any, user: any) {
+  async createWorkOrder(data: Record<string, unknown>, user: any) {
     const woNumber = await this.generateWONumber(user?.tenantId);
 
     let productName = data.productName || '';
@@ -207,7 +207,7 @@ class ManufacturingService {
     );
   }
 
-  async updateWorkOrder(id: number, data: any, user: any) {
+  async updateWorkOrder(id: number, data: Record<string, unknown>, user: any) {
     const wo = await WorkOrder.findOne({ where: { id, ...tenantWhere(user) } });
     if (!wo) throw new Error('Work order not found');
     await wo.update(data);
@@ -233,7 +233,7 @@ class ManufacturingService {
     });
   }
 
-  async createQualityCheck(data: any, user: any) {
+  async createQualityCheck(data: Record<string, unknown>, user: any) {
     const defects = data.inspected - data.passed;
     const passRate = data.inspected > 0 ? data.passed / data.inspected : 0;
     const result = passRate >= 0.95 ? 'PASS' : 'FAIL';

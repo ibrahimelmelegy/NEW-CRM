@@ -19,7 +19,7 @@ interface ValidationError {
 }
 
 class FormBuilderService {
-  async createTemplate(data: any, tenantId?: string) {
+  async createTemplate(data: Record<string, unknown>, tenantId?: string) {
     const embedToken = this.generateEmbedToken();
     return FormTemplate.create({ ...data, tenantId, embedToken });
   }
@@ -28,7 +28,7 @@ class FormBuilderService {
     return `emb_${crypto.randomBytes(16).toString('hex')}`;
   }
 
-  async getTemplates(query: any, tenantId?: string) {
+  async getTemplates(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -38,7 +38,7 @@ class FormBuilderService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateTemplate(id: number, data: any) {
+  async updateTemplate(id: number, data: Record<string, unknown>) {
     const item = await FormTemplate.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -53,7 +53,7 @@ class FormBuilderService {
     return true;
   }
 
-  async submitForm(formId: number, data: any, meta?: { source?: string; ipAddress?: string; utmParams?: Record<string, any>; userAgent?: string }) {
+  async submitForm(formId: number, data: Record<string, unknown>, meta?: { source?: string; ipAddress?: string; utmParams?: Record<string, any>; userAgent?: string }) {
     const form = await FormTemplate.findByPk(formId);
     if (!form) return null;
 
@@ -120,7 +120,7 @@ class FormBuilderService {
     return FormTemplate.findOne({ where: { embedToken: token, status: 'ACTIVE' } });
   }
 
-  async getSubmissions(query: any, tenantId?: string) {
+  async getSubmissions(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;

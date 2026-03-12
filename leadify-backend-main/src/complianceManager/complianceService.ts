@@ -8,7 +8,7 @@ import { io } from '../server';
 class ComplianceService {
   // ─── Consent Record CRUD ──────────────────────────────────────────────────────
 
-  async createConsent(data: any, tenantId?: string) {
+  async createConsent(data: Record<string, unknown>, tenantId?: string) {
     if (!data.consentDate) data.consentDate = new Date();
     const record = await ConsentRecord.create({ ...data, tenantId });
     try {
@@ -17,7 +17,7 @@ class ComplianceService {
     return record;
   }
 
-  async getAllConsents(query: any, tenantId?: string) {
+  async getAllConsents(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -40,7 +40,7 @@ class ComplianceService {
     return ConsentRecord.findByPk(id);
   }
 
-  async updateConsent(id: number, data: any) {
+  async updateConsent(id: number, data: Record<string, unknown>) {
     const item = await ConsentRecord.findByPk(id);
     if (!item) return null;
     // If withdrawing consent, set withdrawnAt
@@ -63,7 +63,7 @@ class ComplianceService {
 
   // ─── Data Request CRUD ────────────────────────────────────────────────────────
 
-  async createDataRequest(data: any, tenantId?: string) {
+  async createDataRequest(data: Record<string, unknown>, tenantId?: string) {
     // Default deadline: 30 days from now (GDPR requirement)
     if (!data.deadline) {
       const deadline = new Date();
@@ -77,7 +77,7 @@ class ComplianceService {
     return request;
   }
 
-  async getAllDataRequests(query: any, tenantId?: string) {
+  async getAllDataRequests(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;

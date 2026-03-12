@@ -8,7 +8,7 @@ type AttributionModel = 'FIRST_TOUCH' | 'LAST_TOUCH' | 'LINEAR' | 'TIME_DECAY';
 class AttributionService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     const tp = await Touchpoint.create({ ...data, tenantId });
     try {
       io.emit('touchpoint:created', { id: tp.id, dealId: tp.dealId });
@@ -16,7 +16,7 @@ class AttributionService {
     return tp;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -38,7 +38,7 @@ class AttributionService {
     return Touchpoint.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await Touchpoint.findByPk(id);
     if (!item) return null;
     await item.update(data);

@@ -152,11 +152,11 @@ function buildFilterWhere(filters?: Array<{ field: string; operator: string; val
 
 class DashboardService {
   // ─── CRUD ─────────────────────────────────────────────
-  async createDashboard(data: any, userId: number) {
+  async createDashboard(data: Record<string, unknown>, userId: number) {
     return Dashboard.create({ ...data, userId });
   }
 
-  async updateDashboard(id: number, data: any, userId: number) {
+  async updateDashboard(id: number, data: Record<string, unknown>, userId: number) {
     const dashboard = await Dashboard.findOne({ where: { id, userId } });
     if (!dashboard) throw new BaseError(ERRORS.DASHBOARD_NOT_FOUND, 404);
     return dashboard.update(data);

@@ -12,7 +12,7 @@ import { createActivityLog } from '../activity-logs/activityService';
 import { clampPagination } from '../utils/pagination';
 
 class ProjectManpowerService {
-  public async createProjectManpower(data: any, user: User): Promise<ProjectManpower> {
+  public async createProjectManpower(data: Record<string, unknown>, user: User): Promise<ProjectManpower> {
     const { projectId, manpowerId, estimatedWorkDays, mission, otherCosts, otherCostsReason, actualWorkDays } = data;
     await projectService.validateProjectAccess(projectId, user);
 
@@ -46,7 +46,7 @@ class ProjectManpowerService {
     return this.projectManpowerById(projectManpower.id);
   }
 
-  public async updateProjectManpower(id: string, data: any, user: User): Promise<ProjectManpower> {
+  public async updateProjectManpower(id: string, data: Record<string, unknown>, user: User): Promise<ProjectManpower> {
     await projectService.validateProjectAccess(id, user);
 
     const projectManpower = await this.projectManpowerOrError({ id });
@@ -72,7 +72,7 @@ class ProjectManpowerService {
     return this.projectManpowerById(projectManpower.id);
   }
 
-  public async getProjectManpowers(query: any): Promise<any> {
+  public async getProjectManpowers(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     const where: Record<string, any> = {
@@ -140,7 +140,7 @@ class ProjectManpowerService {
    * Returns each manpower resource, their total estimated days, total actual days,
    * project count, daily cost, and whether they are over-allocated (> maxCapacityDays).
    */
-  public async getUtilizationReport(query: any): Promise<any> {
+  public async getUtilizationReport(query: Record<string, unknown>): Promise<any> {
     const maxCapacityDays = Number(query.maxCapacityDays) || 22; // default ~1 month
 
     // Get all allocations grouped by manpower with aggregation

@@ -56,7 +56,7 @@ class SalesOrderService {
   /**
    * Create a new sales order
    */
-  async createOrder(input: any): Promise<SalesOrder> {
+  async createOrder(input: Record<string, unknown>): Promise<SalesOrder> {
     const transaction = await sequelize.transaction();
     try {
       const { items, ...orderData } = input;
@@ -98,7 +98,7 @@ class SalesOrderService {
   /**
    * Get paginated list of orders with filters
    */
-  async getOrders(query: any): Promise<any> {
+  async getOrders(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, status, clientId, paymentStatus, startDate, endDate } = query;
 
@@ -170,7 +170,7 @@ class SalesOrderService {
   /**
    * Update a sales order
    */
-  async updateOrder(id: string, input: any): Promise<SalesOrder> {
+  async updateOrder(id: string, input: Record<string, unknown>): Promise<SalesOrder> {
     const transaction = await sequelize.transaction();
     try {
       const order = await this.getOrderById(id);
@@ -288,7 +288,7 @@ class SalesOrderService {
   /**
    * Add a fulfillment record to an order
    */
-  async addFulfillment(orderId: string, data: any): Promise<Fulfillment> {
+  async addFulfillment(orderId: string, data: Record<string, unknown>): Promise<Fulfillment> {
     // Verify order exists
     await this.getOrderById(orderId);
 
@@ -304,7 +304,7 @@ class SalesOrderService {
   /**
    * Update a fulfillment record
    */
-  async updateFulfillment(orderId: string, fulfillmentId: string, data: any): Promise<Fulfillment> {
+  async updateFulfillment(orderId: string, fulfillmentId: string, data: Record<string, unknown>): Promise<Fulfillment> {
     // Verify order exists
     await this.getOrderById(orderId);
 
@@ -357,7 +357,7 @@ class SalesOrderService {
   /**
    * Get orders for a specific client
    */
-  async getClientOrders(clientId: string, query: any): Promise<any> {
+  async getClientOrders(clientId: string, query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: docs, count: totalItems } = await SalesOrder.findAndCountAll({

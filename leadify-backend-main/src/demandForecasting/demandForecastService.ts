@@ -6,7 +6,7 @@ import { io } from '../server';
 class DemandForecastService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string, createdBy?: number) {
+  async create(data: Record<string, unknown>, tenantId?: string, createdBy?: number) {
     const forecast = await DemandForecast.create({ ...data, tenantId, createdBy });
     try {
       io.emit('forecast:created', { id: forecast.id, product: forecast.product });
@@ -14,7 +14,7 @@ class DemandForecastService {
     return forecast;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -37,7 +37,7 @@ class DemandForecastService {
     return DemandForecast.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await DemandForecast.findByPk(id);
     if (!item) return null;
     await item.update(data);

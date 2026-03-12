@@ -14,12 +14,12 @@ const STATUS_ORDER: Record<string, string[]> = {
 };
 
 class ShippingService {
-  async createShipment(data: any, tenantId?: string) {
+  async createShipment(data: Record<string, unknown>, tenantId?: string) {
     const shipmentNumber = `SHP-${Date.now().toString(36).toUpperCase()}`;
     return Shipment.create({ ...data, shipmentNumber, tenantId });
   }
 
-  async getShipments(query: any, tenantId?: string) {
+  async getShipments(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: any = {};
     if (tenantId) where.tenantId = tenantId;
@@ -35,7 +35,7 @@ class ShippingService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateShipment(id: number, data: any) {
+  async updateShipment(id: number, data: Record<string, unknown>) {
     const item = await Shipment.findByPk(id);
     if (!item) return null;
     if (data.status === 'DELIVERED' && !item.actualDelivery) data.actualDelivery = new Date();
@@ -50,11 +50,11 @@ class ShippingService {
     return true;
   }
 
-  async createRate(data: any, tenantId?: string) {
+  async createRate(data: Record<string, unknown>, tenantId?: string) {
     return ShippingRate.create({ ...data, tenantId });
   }
 
-  async getRates(query: any, tenantId?: string) {
+  async getRates(query: Record<string, unknown>, tenantId?: string) {
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.carrier) where.carrier = query.carrier;
@@ -68,7 +68,7 @@ class ShippingService {
     });
   }
 
-  async updateRate(id: number, data: any) {
+  async updateRate(id: number, data: Record<string, unknown>) {
     const item = await ShippingRate.findByPk(id);
     if (!item) return null;
     await item.update(data);

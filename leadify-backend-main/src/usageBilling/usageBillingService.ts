@@ -7,7 +7,7 @@ import { io } from '../server';
 class UsageBillingService {
   // ─── Meter CRUD ───────────────────────────────────────────────────────────────
 
-  async createMeter(data: any, tenantId?: string) {
+  async createMeter(data: Record<string, unknown>, tenantId?: string) {
     const meter = await UsageMeter.create({ ...data, tenantId });
     try {
       io.emit('usageMeter:created', { id: meter.id, name: meter.name });
@@ -15,7 +15,7 @@ class UsageBillingService {
     return meter;
   }
 
-  async getAllMeters(query: any, tenantId?: string) {
+  async getAllMeters(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -36,7 +36,7 @@ class UsageBillingService {
     return UsageMeter.findByPk(id);
   }
 
-  async updateMeter(id: number, data: any) {
+  async updateMeter(id: number, data: Record<string, unknown>) {
     const item = await UsageMeter.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -55,7 +55,7 @@ class UsageBillingService {
 
   // ─── Usage Record CRUD ────────────────────────────────────────────────────────
 
-  async recordUsage(data: any, tenantId?: string) {
+  async recordUsage(data: Record<string, unknown>, tenantId?: string) {
     if (!data.recordedAt) data.recordedAt = new Date();
     if (!data.billingPeriod) {
       const d = new Date(data.recordedAt);
@@ -68,7 +68,7 @@ class UsageBillingService {
     return record;
   }
 
-  async getUsageRecords(query: any, tenantId?: string) {
+  async getUsageRecords(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;

@@ -7,7 +7,7 @@ import { io } from '../server';
 class ClvService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     const record = await ClvRecord.create({ ...data, tenantId, calculatedAt: new Date() });
     try {
       io.emit('clv:created', { id: record.id, customerId: record.customerId });
@@ -15,7 +15,7 @@ class ClvService {
     return record;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -45,7 +45,7 @@ class ClvService {
     });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await ClvRecord.findByPk(id);
     if (!item) return null;
     await item.update(data);

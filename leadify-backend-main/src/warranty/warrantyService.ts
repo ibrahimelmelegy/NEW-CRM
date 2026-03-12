@@ -5,11 +5,11 @@ import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 
 class WarrantyService {
-  async createWarranty(data: any, tenantId?: string) {
+  async createWarranty(data: Record<string, unknown>, tenantId?: string) {
     return Warranty.create({ ...data, tenantId });
   }
 
-  async getWarranties(query: any, tenantId?: string) {
+  async getWarranties(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -34,7 +34,7 @@ class WarrantyService {
     }
   }
 
-  async updateWarranty(id: number, data: any) {
+  async updateWarranty(id: number, data: Record<string, unknown>) {
     const item = await Warranty.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -49,7 +49,7 @@ class WarrantyService {
     return true;
   }
 
-  async createClaim(data: any, tenantId?: string) {
+  async createClaim(data: Record<string, unknown>, tenantId?: string) {
     const claim = await WarrantyClaim.create({ ...data, tenantId });
     try {
       io.emit('warranty:claim_created', { id: claim.id, warrantyId: claim.warrantyId, status: claim.status });
@@ -57,7 +57,7 @@ class WarrantyService {
     return claim;
   }
 
-  async getClaims(query: any, tenantId?: string) {
+  async getClaims(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -74,7 +74,7 @@ class WarrantyService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateClaim(id: number, data: any) {
+  async updateClaim(id: number, data: Record<string, unknown>) {
     const claim = await WarrantyClaim.findByPk(id);
     if (!claim) return null;
     if (data.status === 'RESOLVED' && !claim.resolvedAt) data.resolvedAt = new Date();
@@ -191,7 +191,7 @@ class WarrantyService {
    * Create a warranty claim with automatic coverage validation.
    * If the warranty is not active or the claim date falls outside coverage, throws an error.
    */
-  async createClaimWithValidation(data: any, tenantId?: string) {
+  async createClaimWithValidation(data: Record<string, unknown>, tenantId?: string) {
     const { warrantyId } = data;
     if (!warrantyId) throw new Error('warrantyId is required');
 

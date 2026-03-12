@@ -9,11 +9,11 @@ const STAGE_ORDER: Array<Applicant['stage']> = ['APPLIED', 'SCREENING', 'INTERVI
 
 class RecruitmentService {
   // ──────────── Job Postings CRUD ────────────
-  async createPosting(data: any, tenantId?: string) {
+  async createPosting(data: Record<string, unknown>, tenantId?: string) {
     return JobPosting.create({ ...data, tenantId });
   }
 
-  async getPostings(query: any, tenantId?: string) {
+  async getPostings(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -31,7 +31,7 @@ class RecruitmentService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updatePosting(id: number, data: any) {
+  async updatePosting(id: number, data: Record<string, unknown>) {
     const posting = await JobPosting.findByPk(id);
     if (!posting) return null;
     await posting.update(data);
@@ -46,11 +46,11 @@ class RecruitmentService {
   }
 
   // ──────────── Applicants CRUD ────────────
-  async createApplicant(data: any, tenantId?: string) {
+  async createApplicant(data: Record<string, unknown>, tenantId?: string) {
     return Applicant.create({ ...data, tenantId });
   }
 
-  async getApplicants(query: any, tenantId?: string) {
+  async getApplicants(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -69,7 +69,7 @@ class RecruitmentService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateApplicant(id: number, data: any) {
+  async updateApplicant(id: number, data: Record<string, unknown>) {
     const applicant = await Applicant.findByPk(id);
     if (!applicant) return null;
     await applicant.update(data);

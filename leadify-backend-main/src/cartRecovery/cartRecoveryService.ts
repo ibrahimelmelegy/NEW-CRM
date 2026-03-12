@@ -7,7 +7,7 @@ import { io } from '../server';
 class CartRecoveryService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     // Auto-calculate totalValue from items if not provided
     if (data.items && Array.isArray(data.items) && !data.totalValue) {
       data.totalValue = data.items.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
@@ -20,7 +20,7 @@ class CartRecoveryService {
     return cart;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -55,7 +55,7 @@ class CartRecoveryService {
     });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await AbandonedCart.findByPk(id);
     if (!item) return null;
     await item.update(data);

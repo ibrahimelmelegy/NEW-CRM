@@ -13,7 +13,7 @@ import notificationCenterService from '../notification/notificationCenterService
 import logger from '../config/logger';
 
 class RFQService {
-  async createRFQ(input: any, user: User): Promise<RFQ> {
+  async createRFQ(input: Record<string, unknown>, user: User): Promise<RFQ> {
     const transaction = await sequelize.transaction();
     try {
       const { items, ...rfqData } = input;
@@ -97,7 +97,7 @@ class RFQService {
     }
   }
 
-  async addVendorResponse(rfqId: string, vendorId: number, input: any): Promise<RFQVendor> {
+  async addVendorResponse(rfqId: string, vendorId: number, input: Record<string, unknown>): Promise<RFQVendor> {
     const transaction = await sequelize.transaction();
     try {
       const rfqVendor = await RFQVendor.findOne({
@@ -153,7 +153,7 @@ class RFQService {
     return rfq;
   }
 
-  async getRFQs(query: any): Promise<any> {
+  async getRFQs(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: docs, count: totalItems } = await RFQ.findAndCountAll({

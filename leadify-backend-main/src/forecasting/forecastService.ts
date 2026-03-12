@@ -55,11 +55,11 @@ class ForecastService {
     });
   }
 
-  async createForecast(data: any) {
+  async createForecast(data: Record<string, unknown>) {
     return ForecastPeriod.create(data);
   }
 
-  async updateForecast(id: string, data: any) {
+  async updateForecast(id: string, data: Record<string, unknown>) {
     const forecast = await ForecastPeriod.findByPk(id);
     if (!forecast) throw new Error('Forecast not found');
     return forecast.update(data);

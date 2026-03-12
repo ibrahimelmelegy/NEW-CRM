@@ -10,7 +10,7 @@ import { clampPagination } from '../utils/pagination';
 class PayrollService {
   // ─── Payroll Runs ────────────────────────────────────────────────────
 
-  async createPayrollRun(data: any) {
+  async createPayrollRun(data: Record<string, unknown>) {
     return PayrollRun.create({
       month: data.month,
       year: data.year,
@@ -19,7 +19,7 @@ class PayrollService {
     });
   }
 
-  async getPayrollRuns(query: any, user?: Record<string, any>) {
+  async getPayrollRuns(query: Record<string, unknown>, user?: Record<string, any>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { month, year, status } = query;
     const where: Record<string, any> = { ...(user ? tenantWhere(user) : {}) };
@@ -209,7 +209,7 @@ class PayrollService {
 
   // ─── Salary Structures ──────────────────────────────────────────────
 
-  async getSalaryStructures(query: any) {
+  async getSalaryStructures(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { employeeId } = query;
     const where: Record<string, any> = {};
@@ -240,7 +240,7 @@ class PayrollService {
     };
   }
 
-  async createSalaryStructure(data: any) {
+  async createSalaryStructure(data: Record<string, unknown>) {
     const structure = await SalaryStructure.create(data);
     return SalaryStructure.findByPk(structure.id, {
       include: [
@@ -253,7 +253,7 @@ class PayrollService {
     });
   }
 
-  async updateSalaryStructure(id: string, data: any) {
+  async updateSalaryStructure(id: string, data: Record<string, unknown>) {
     const structure = await SalaryStructure.findByPk(id);
     if (!structure) throw new Error('Salary structure not found');
     await structure.update(data);

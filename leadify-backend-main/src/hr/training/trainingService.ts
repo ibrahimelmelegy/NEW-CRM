@@ -6,7 +6,7 @@ import { io } from '../../server';
 
 class TrainingService {
   // ──────────── Programs CRUD ────────────
-  async createProgram(data: any, tenantId?: string) {
+  async createProgram(data: Record<string, unknown>, tenantId?: string) {
     return TrainingProgram.create({ ...data, tenantId });
   }
 
@@ -22,7 +22,7 @@ class TrainingService {
     });
   }
 
-  async getPrograms(query: any, tenantId?: string) {
+  async getPrograms(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -40,7 +40,7 @@ class TrainingService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateProgram(id: number, data: any) {
+  async updateProgram(id: number, data: Record<string, unknown>) {
     const program = await TrainingProgram.findByPk(id);
     if (!program) return null;
     await program.update(data);
@@ -55,11 +55,11 @@ class TrainingService {
   }
 
   // ──────────── Enrollments CRUD ────────────
-  async enroll(data: any, tenantId?: string) {
+  async enroll(data: Record<string, unknown>, tenantId?: string) {
     return TrainingEnrollment.create({ ...data, tenantId });
   }
 
-  async getEnrollments(query: any, tenantId?: string) {
+  async getEnrollments(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -81,7 +81,7 @@ class TrainingService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateEnrollment(id: number, data: any) {
+  async updateEnrollment(id: number, data: Record<string, unknown>) {
     const enrollment = await TrainingEnrollment.findByPk(id);
     if (!enrollment) return null;
     if (data.status === 'COMPLETED' && !enrollment.completedAt) {

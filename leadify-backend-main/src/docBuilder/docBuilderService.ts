@@ -38,7 +38,7 @@ class DocBuilderService {
     return `${prefix}-${year}-${random}`;
   }
 
-  public async createDocument(data: any, user: User): Promise<DocBuilderDocument> {
+  public async createDocument(data: Record<string, unknown>, user: User): Promise<DocBuilderDocument> {
     if (!data.reference) {
       data.reference = this.generateReference(data.type);
       // Ensure uniqueness
@@ -67,7 +67,7 @@ class DocBuilderService {
     return document;
   }
 
-  public async updateDocument(id: string, data: any, user: User): Promise<DocBuilderDocument> {
+  public async updateDocument(id: string, data: Record<string, unknown>, user: User): Promise<DocBuilderDocument> {
     const document = await this.documentOrError({ id, ...tenantWhere(user) });
 
     if (data.reference && data.reference !== document.reference) {
@@ -97,7 +97,7 @@ class DocBuilderService {
     return document;
   }
 
-  public async getDocuments(query: any, user: User): Promise<any> {
+  public async getDocuments(query: Record<string, unknown>, user: User): Promise<any> {
     const { page, limit, offset } = clampPagination(query, 20);
 
     const where: WhereOptions = {
@@ -345,7 +345,7 @@ class DocBuilderService {
     return document;
   }
 
-  public async getStats(query: any, user: User): Promise<any> {
+  public async getStats(query: Record<string, unknown>, user: User): Promise<any> {
     const where: WhereOptions = { ...tenantWhere(user) };
 
     if (!user.role?.permissions?.includes(DocBuilderPermissionsEnum.VIEW_GLOBAL_DOCUMENTS)) {

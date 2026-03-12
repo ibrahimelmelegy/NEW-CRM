@@ -12,11 +12,11 @@ class FinanceService {
     return ExpenseCategory.findAll({ order: [['name', 'ASC']] });
   }
 
-  async createCategory(data: any) {
+  async createCategory(data: Record<string, unknown>) {
     return ExpenseCategory.create(data);
   }
 
-  async updateCategory(id: number, data: any) {
+  async updateCategory(id: number, data: Record<string, unknown>) {
     const cat = await ExpenseCategory.findByPk(id);
     if (!cat) throw new Error('Category not found');
     return cat.update(data);
@@ -30,7 +30,7 @@ class FinanceService {
   }
 
   // Expenses
-  async getExpenses(query: any, user?: Record<string, any>) {
+  async getExpenses(query: Record<string, unknown>, user?: Record<string, any>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { categoryId, status, startDate, endDate, search, searchKey, sortBy = 'date', sort = 'DESC', submittedBy } = query;
     const where: Record<string, any> = { ...(user ? tenantWhere(user) : {}) };
@@ -69,11 +69,11 @@ class FinanceService {
     return expense;
   }
 
-  async createExpense(data: any, submittedBy?: number) {
+  async createExpense(data: Record<string, unknown>, submittedBy?: number) {
     return Expense.create({ ...data, submittedBy });
   }
 
-  async updateExpense(id: number, data: any) {
+  async updateExpense(id: number, data: Record<string, unknown>) {
     const expense = await Expense.findByPk(id);
     if (!expense) throw new Error('Expense not found');
     return expense.update(data);
@@ -109,7 +109,7 @@ class FinanceService {
   }
 
   // Budgets
-  async getBudgets(query: any) {
+  async getBudgets(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { search, sortBy = 'startDate', sort = 'DESC' } = query;
     const where: Record<string, any> = {};
@@ -137,11 +137,11 @@ class FinanceService {
     return budget;
   }
 
-  async createBudget(data: any) {
+  async createBudget(data: Record<string, unknown>) {
     return Budget.create(data);
   }
 
-  async updateBudget(id: number, data: any) {
+  async updateBudget(id: number, data: Record<string, unknown>) {
     const budget = await Budget.findByPk(id);
     if (!budget) throw new Error('Budget not found');
     return budget.update(data);

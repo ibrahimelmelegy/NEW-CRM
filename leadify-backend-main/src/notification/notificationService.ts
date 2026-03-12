@@ -12,7 +12,7 @@ import Notification from './notificationModel';
 import { io } from '../server';
 
 class NotificationService {
-  async getNotifications(input: any, user: User): Promise<any> {
+  async getNotifications(input: Record<string, unknown>, user: User): Promise<any> {
     const page = input.page || 1;
     const limit = input.limit || 10;
     const offset = (page - 1) * limit;
@@ -59,7 +59,7 @@ class NotificationService {
     await notification.save();
   }
 
-  async sendAssignLeadNotification(input: any): Promise<any> {
+  async sendAssignLeadNotification(input: Record<string, unknown>): Promise<any> {
     const notification = await Notification.create({
       ...input,
       body_en: 'New Lead assigned to you.',
@@ -74,7 +74,7 @@ class NotificationService {
     } catch {}
   }
 
-  async sendAssignOpportunityNotification(input: any, opportunity: Opportunity, admin: User): Promise<any> {
+  async sendAssignOpportunityNotification(input: Record<string, unknown>, opportunity: Opportunity, admin: User): Promise<any> {
     await Notification.create({
       ...input,
       body_en: `The Opportunity ${opportunity.name} at stage ${opportunity.stage}. Assigned by ${admin.name}.`,
@@ -119,7 +119,7 @@ class NotificationService {
     }
   }
 
-  async sendAssignDealNotification(input: any, deal: Deal, admin: User): Promise<any> {
+  async sendAssignDealNotification(input: Record<string, unknown>, deal: Deal, admin: User): Promise<any> {
     const companyName = deal.companyName;
     const dealInfo = companyName ? `The Deal ${deal.name} for ${companyName} at stage ${deal.stage}` : `The Deal ${deal.name} at stage ${deal.stage}`;
 
@@ -133,7 +133,7 @@ class NotificationService {
     });
   }
 
-  async sendAssignProjectNotification(input: any, project: Project, admin: User): Promise<any> {
+  async sendAssignProjectNotification(input: Record<string, unknown>, project: Project, admin: User): Promise<any> {
     const category = project.category || 'Project';
     const clientName = project.client?.clientName || 'Unknown Client';
     const message = `The ${category} ${project.name} for Client ${clientName}. Assigned by ${admin.name}.`;
@@ -146,7 +146,7 @@ class NotificationService {
     });
   }
 
-  async sendAssignClientNotification(input: any, client: Client, admin: User): Promise<any> {
+  async sendAssignClientNotification(input: Record<string, unknown>, client: Client, admin: User): Promise<any> {
     const clientType = client.clientType || 'Client';
     const clientName = client.clientName;
     const companyName = client.companyName;

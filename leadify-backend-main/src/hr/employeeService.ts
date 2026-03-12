@@ -36,7 +36,7 @@ class EmployeeService {
     return `EMP-${nextNumber.toString().padStart(4, '0')}`;
   }
 
-  async createEmployee(data: any) {
+  async createEmployee(data: Record<string, unknown>) {
     const employeeNumber = await this.generateEmployeeNumber();
     const employee = await Employee.create({ ...data, employeeNumber });
     return employee;
@@ -99,7 +99,7 @@ class EmployeeService {
     return employee;
   }
 
-  async updateEmployee(id: string, data: any) {
+  async updateEmployee(id: string, data: Record<string, unknown>) {
     const employee = await Employee.findByPk(id);
     if (!employee) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Employee not found');
     await employee.update(data);
@@ -160,7 +160,7 @@ class EmployeeService {
   }
 
   // Documents
-  async addDocument(employeeId: string, data: any) {
+  async addDocument(employeeId: string, data: Record<string, unknown>) {
     const employee = await Employee.findByPk(employeeId);
     if (!employee) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Employee not found');
     return EmployeeDocument.create({ ...data, employeeId });

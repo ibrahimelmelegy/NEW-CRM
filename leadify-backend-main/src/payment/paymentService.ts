@@ -30,7 +30,7 @@ class PaymentService {
   /**
    * Record a new payment
    */
-  public async recordPayment(data: any): Promise<Payment> {
+  public async recordPayment(data: Record<string, unknown>): Promise<Payment> {
     const paymentNumber = await this.generatePaymentNumber();
 
     const payment = await Payment.create({
@@ -74,7 +74,7 @@ class PaymentService {
   /**
    * List payments with filters and pagination
    */
-  public async getPayments(query: any): Promise<any> {
+  public async getPayments(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { clientId, method, status, startDate, endDate, searchKey } = query;
 

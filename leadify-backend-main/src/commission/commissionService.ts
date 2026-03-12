@@ -28,7 +28,7 @@ export interface CommissionPlan {
 class CommissionService {
   // ─── Existing CRUD ──────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     const commission = await Commission.create({ ...data, tenantId });
     try {
       io.emit('commission:created', { id: commission.id, staffId: commission.staffId, amount: commission.amount, status: commission.status });
@@ -36,7 +36,7 @@ class CommissionService {
     return commission;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: any = {};
     if (tenantId) where.tenantId = tenantId;
@@ -58,7 +58,7 @@ class CommissionService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const commission = await Commission.findByPk(id);
     if (!commission) return null;
     if (data.status === 'PAID' && !commission.paidAt) data.paidAt = new Date();

@@ -398,7 +398,7 @@ class ERPNextSyncService {
           0
         );
         return accounts;
-      } catch (_fallbackErr: any) {
+      } catch (_fallbackErr: unknown) {
         throw new Error(`Failed to pull account balances: ${(err as Error).message}`);
       }
     }

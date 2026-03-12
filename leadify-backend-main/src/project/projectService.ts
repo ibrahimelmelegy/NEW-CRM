@@ -411,7 +411,7 @@ class ProjectService {
     return project;
   }
 
-  public async getProjects(query: any, user: User): Promise<any> {
+  public async getProjects(query: Record<string, unknown>, user: User): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(ProjectPermissionsEnum.VIEW_GLOBAL_PROJECTS)) query.userId = user.id;
@@ -622,7 +622,7 @@ class ProjectService {
     await project.destroy();
   }
 
-  public async sendProjectsExcelByEmail(query: any, user: User, email: string): Promise<void> {
+  public async sendProjectsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
     const where: Record<string, any> = {
       ...tenantWhere(user),
       isCompleted: true,

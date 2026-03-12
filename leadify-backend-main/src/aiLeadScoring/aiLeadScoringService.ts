@@ -7,7 +7,7 @@ import { io } from '../server';
 class AiLeadScoringService {
   // ─── Model Config CRUD ────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string, createdBy?: number) {
+  async create(data: Record<string, unknown>, tenantId?: string, createdBy?: number) {
     const model = await ScoringModelConfig.create({ ...data, tenantId, createdBy });
     try {
       io.emit('scoringModel:created', { id: model.id, name: model.name });
@@ -15,7 +15,7 @@ class AiLeadScoringService {
     return model;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -41,7 +41,7 @@ class AiLeadScoringService {
     return ScoringModelConfig.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await ScoringModelConfig.findByPk(id);
     if (!item) return null;
     await item.update(data);

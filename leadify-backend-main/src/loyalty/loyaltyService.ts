@@ -18,11 +18,11 @@ const DEFAULT_TIERS: TierDefinition[] = [
 ];
 
 class LoyaltyService {
-  async createProgram(data: any, tenantId?: string) {
+  async createProgram(data: Record<string, unknown>, tenantId?: string) {
     return LoyaltyProgram.create({ ...data, tenantId });
   }
 
-  async getPrograms(query: any, tenantId?: string) {
+  async getPrograms(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -32,7 +32,7 @@ class LoyaltyService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateProgram(id: number, data: any) {
+  async updateProgram(id: number, data: Record<string, unknown>) {
     const item = await LoyaltyProgram.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -46,11 +46,11 @@ class LoyaltyService {
     return true;
   }
 
-  async addPoints(data: any, tenantId?: string) {
+  async addPoints(data: Record<string, unknown>, tenantId?: string) {
     return LoyaltyPoints.create({ ...data, tenantId });
   }
 
-  async getPointsHistory(query: any, tenantId?: string) {
+  async getPointsHistory(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;

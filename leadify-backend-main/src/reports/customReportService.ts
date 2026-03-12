@@ -141,11 +141,11 @@ function buildAggregationAttributes(aggregations: ReportAggregation[]): any[] {
 
 class CustomReportService {
   // ─── CRUD ─────────────────────────────────────────────
-  async createReport(data: any, userId: number) {
+  async createReport(data: Record<string, unknown>, userId: number) {
     return CustomReport.create({ ...data, userId });
   }
 
-  async updateReport(id: number, data: any, userId: number) {
+  async updateReport(id: number, data: Record<string, unknown>, userId: number) {
     const report = await CustomReport.findOne({ where: { id, userId } });
     if (!report) throw new BaseError(ERRORS.REPORT_NOT_FOUND, 404);
     return report.update(data);

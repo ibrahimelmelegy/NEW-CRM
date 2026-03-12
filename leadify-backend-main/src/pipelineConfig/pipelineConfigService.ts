@@ -38,7 +38,7 @@ class PipelineConfigService {
     return stage;
   }
 
-  async createStage(data: any): Promise<PipelineStage> {
+  async createStage(data: Record<string, unknown>): Promise<PipelineStage> {
     const maxOrder =
       ((await PipelineStage.max('order', {
         where: { entityType: data.entityType || 'deal' }
@@ -49,7 +49,7 @@ class PipelineConfigService {
     return stage;
   }
 
-  async updateStage(id: string, data: any): Promise<PipelineStage> {
+  async updateStage(id: string, data: Record<string, unknown>): Promise<PipelineStage> {
     const result = await sequelize.transaction(async t => {
       const stage = await PipelineStage.findByPk(id, { transaction: t, lock: true });
       if (!stage) throw new BaseError(ERRORS.NOT_FOUND);

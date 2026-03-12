@@ -63,7 +63,7 @@ class TimeTrackingService {
     return { entries: rows, total: count, page, limit };
   }
 
-  async createManualEntry(userId: number, data: any) {
+  async createManualEntry(userId: number, data: Record<string, unknown>) {
     const startTime = new Date(data.startTime);
     const endTime = new Date(data.endTime);
     const duration = Math.round((endTime.getTime() - startTime.getTime()) / 1000);
@@ -80,7 +80,7 @@ class TimeTrackingService {
     });
   }
 
-  async updateEntry(id: string, userId: number, data: any) {
+  async updateEntry(id: string, userId: number, data: Record<string, unknown>) {
     const entry = await TimeEntry.findOne({ where: { id, userId } });
     if (!entry) throw new Error('Time entry not found');
 

@@ -5,7 +5,7 @@ import Client from '../../client/clientModel';
 import { clampPagination } from '../../utils/pagination';
 
 class ReviewService {
-  async getReviews(query: any): Promise<any> {
+  async getReviews(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, productId, clientId, status, ratingMin, ratingMax } = query;
 
@@ -84,7 +84,7 @@ class ReviewService {
     };
   }
 
-  async createReview(data: any): Promise<EcReview> {
+  async createReview(data: Record<string, unknown>): Promise<EcReview> {
     return EcReview.create(data);
   }
 

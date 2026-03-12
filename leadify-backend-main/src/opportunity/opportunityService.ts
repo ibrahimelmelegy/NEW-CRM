@@ -20,6 +20,60 @@ import { tenantWhere } from '../utils/tenantScope';
 import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 
+// ---------------------------------------------------------------------------
+// Input shapes
+// ---------------------------------------------------------------------------
+
+export interface OpportunityCreateInput {
+  opportunity: {
+    name: string;
+    stage?: string;
+    priority?: string;
+    estimatedValue?: number;
+    expectedCloseDate?: string;
+    leadId?: string;
+    users?: number[];
+    [key: string]: unknown;
+  };
+  lead?: Record<string, unknown>;
+  clientId?: string;
+}
+
+export interface OpportunityConvertInput {
+  leadId: string;
+  users?: number[];
+  name: string;
+  stage?: string;
+  [key: string]: unknown;
+}
+
+export interface OpportunityUpdateInput {
+  stage?: string;
+  users?: number[];
+  opportunityId?: string;
+  probability?: number;
+  [key: string]: unknown;
+}
+
+export interface OpportunityQueryInput {
+  searchKey?: string;
+  stage?: string[];
+  priority?: string[];
+  fromDate?: string;
+  toDate?: string;
+  fromExpectedCloseDate?: string;
+  toExpectedCloseDate?: string;
+  fromEstimatedValue?: number;
+  toEstimatedValue?: number;
+  fromProfit?: number;
+  toProfit?: number;
+  userId?: number;
+  sortBy?: string;
+  sort?: string;
+  page?: number;
+  limit?: number;
+}
+
 /**
  * Defines which stage transitions are allowed for opportunities.
  * Key = current stage, Value = array of stages that can be transitioned to.
@@ -48,7 +102,7 @@ const OPP_STAGE_PROBABILITY: Record<string, number> = {
 };
 
 class OpportunityService {
-  async createOpportunity(input: any, admin: User): Promise<Opportunity | void> {
+  async createOpportunity(input: OpportunityCreateInput, admin: User): Promise<Opportunity | void> {
     const transaction = await sequelize.transaction();
     let lead: Lead | null = null;
     let client: Client | null = null;
@@ -99,7 +153,7 @@ class OpportunityService {
     }
   }
 
-  async convertLeadToOpportunity(input: any, admin: User): Promise<Opportunity> {
+  async convertLeadToOpportunity(input: OpportunityConvertInput, admin: User): Promise<Opportunity> {
     const user = await User.findAll({
       where: {
         id: {
@@ -138,7 +192,7 @@ class OpportunityService {
     }
   }
 
-  async updateOpportunity(id: string, input: any, user: User): Promise<Opportunity> {
+  async updateOpportunity(id: string, input: OpportunityUpdateInput, user: User): Promise<Opportunity> {
     await this.validateOpportunityAccess(id, user);
 
     const opportunity = await this.opportunityOrError({ id }, [
@@ -179,7 +233,7 @@ class OpportunityService {
   }
 
   async getKanbanOpportunities(user: User): Promise<Record<string, Opportunity[]>> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       ...tenantWhere(user),
       stage: { [Op.ne]: OpportunityStageEnums.CONVERTED }
     };
@@ -268,7 +322,10 @@ class OpportunityService {
     return opportunity;
   }
 
-  async getOpportunities(query: any, user: User): Promise<any> {
+  async getOpportunities(query: OpportunityQueryInput, user: User): Promise<{
+    docs: Opportunity[];
+    pagination: { page: number; limit: number; totalItems: number; totalPages: number };
+  }> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(OpportunityPermissionsEnum.VIEW_GLOBAL_OPPORTUNITIES)) query.userId = user.id;
@@ -396,8 +453,8 @@ class OpportunityService {
     return !!assignment; // Returns true if assigned, false otherwise
   }
 
-  async sendOpportunitiesExcelByEmail(query: any, user: User, email: string): Promise<void> {
-    const where: Record<string, any> = {
+  async sendOpportunitiesExcelByEmail(query: OpportunityQueryInput, user: User, email: string): Promise<void> {
+    const where: Record<string, unknown> = {
       ...tenantWhere(user),
       stage: { [Op.ne]: OpportunityStageEnums.CONVERTED },
       ...(query.searchKey && {

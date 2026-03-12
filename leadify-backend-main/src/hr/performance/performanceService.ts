@@ -6,11 +6,11 @@ import { clampPagination } from '../../utils/pagination';
 import { io } from '../../server';
 
 class PerformanceService {
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     return PerformanceReview.create({ ...data, tenantId });
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: any = {};
     if (tenantId) where.tenantId = tenantId;
@@ -44,7 +44,7 @@ class PerformanceService {
     });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const review = await PerformanceReview.findByPk(id);
     if (!review) return null;
     await review.update(data);

@@ -87,7 +87,7 @@ class ManpowerService {
     return manpower;
   }
 
-  public async getManpowers(query: any): Promise<any> {
+  public async getManpowers(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { rows: manpowers, count: totalItems } = await Manpower.findAndCountAll({
       where: {
@@ -196,7 +196,7 @@ class ManpowerService {
     return manpower;
   }
 
-  public async sendManpowerExcelByEmail(query: any, email: string): Promise<void> {
+  public async sendManpowerExcelByEmail(query: Record<string, unknown>, email: string): Promise<void> {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Manpower');
 

@@ -12,11 +12,11 @@ interface SurveyQuestion {
 }
 
 class SurveyService {
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     return Survey.create({ ...data, tenantId });
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -30,7 +30,7 @@ class SurveyService {
     return Survey.findByPk(id, { include: [{ model: SurveyResponse, as: 'responses' }] });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await Survey.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -45,7 +45,7 @@ class SurveyService {
     return true;
   }
 
-  async submitResponse(surveyId: number, data: any) {
+  async submitResponse(surveyId: number, data: Record<string, unknown>) {
     const survey = await Survey.findByPk(surveyId);
     if (!survey) return null;
     if (survey.status === 'CLOSED' || survey.status === 'ARCHIVED') return null;
@@ -57,7 +57,7 @@ class SurveyService {
     return response;
   }
 
-  async getResponses(query: any, tenantId?: string) {
+  async getResponses(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;

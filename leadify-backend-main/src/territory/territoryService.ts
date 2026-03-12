@@ -77,7 +77,7 @@ class TerritoryService {
     return territory;
   }
 
-  async createTerritory(data: any): Promise<Territory> {
+  async createTerritory(data: Record<string, unknown>): Promise<Territory> {
     if (data.parentId) {
       const parent = await Territory.findByPk(data.parentId);
       if (!parent) throw new BaseError(ERRORS.TERRITORY_NOT_FOUND);
@@ -86,7 +86,7 @@ class TerritoryService {
     return Territory.create(data);
   }
 
-  async updateTerritory(id: string, data: any): Promise<Territory> {
+  async updateTerritory(id: string, data: Record<string, unknown>): Promise<Territory> {
     const territory = await Territory.findByPk(id);
     if (!territory) throw new BaseError(ERRORS.TERRITORY_NOT_FOUND);
 

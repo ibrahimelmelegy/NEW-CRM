@@ -25,7 +25,7 @@ function analyzeSentiment(text: string): { sentiment: string; score: number } {
 class SocialListeningService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     // Auto-analyse sentiment if not provided
     if (!data.sentiment && data.content) {
       const analysis = analyzeSentiment(data.content);
@@ -39,7 +39,7 @@ class SocialListeningService {
     return mention;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -68,7 +68,7 @@ class SocialListeningService {
     return SocialMention.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await SocialMention.findByPk(id);
     if (!item) return null;
     await item.update(data);

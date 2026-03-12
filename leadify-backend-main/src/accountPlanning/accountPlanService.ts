@@ -9,7 +9,7 @@ import { io } from '../server';
 class AccountPlanService {
   // ─── Account Plan CRUD ────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string, ownerId?: number) {
+  async create(data: Record<string, unknown>, tenantId?: string, ownerId?: number) {
     const plan = await AccountPlan.create({ ...data, tenantId, ownerId });
     try {
       io.emit('accountPlan:created', { id: plan.id, name: plan.name });
@@ -17,7 +17,7 @@ class AccountPlanService {
     return plan;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
@@ -53,7 +53,7 @@ class AccountPlanService {
     });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await AccountPlan.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -76,7 +76,7 @@ class AccountPlanService {
 
   // ─── Stakeholder CRUD ────────────────────────────────────────────────────────
 
-  async addStakeholder(data: any, tenantId?: string) {
+  async addStakeholder(data: Record<string, unknown>, tenantId?: string) {
     const stakeholder = await Stakeholder.create({ ...data, tenantId });
     try {
       io.emit('stakeholder:created', { id: stakeholder.id, accountPlanId: stakeholder.accountPlanId });
@@ -91,7 +91,7 @@ class AccountPlanService {
     });
   }
 
-  async updateStakeholder(id: number, data: any) {
+  async updateStakeholder(id: number, data: Record<string, unknown>) {
     const item = await Stakeholder.findByPk(id);
     if (!item) return null;
     await item.update(data);

@@ -11,7 +11,7 @@ class ProductService {
   /**
    * Get paginated products with advanced filtering
    */
-  async getProducts(query: any): Promise<any> {
+  async getProducts(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, category, isActive, minPrice, maxPrice, lowStock, sortBy, sortOrder: sortDir } = query;
 
@@ -89,7 +89,7 @@ class ProductService {
   /**
    * Create a new product, recording initial price in priceHistory
    */
-  async createProduct(data: any): Promise<CatalogProduct> {
+  async createProduct(data: Record<string, unknown>): Promise<CatalogProduct> {
     // Build initial price history entry
     if (data.unitPrice !== undefined && data.unitPrice > 0) {
       data.priceHistory = [{ price: data.unitPrice, date: new Date().toISOString() }];
@@ -100,7 +100,7 @@ class ProductService {
   /**
    * Update a product. If unitPrice changed, append to priceHistory.
    */
-  async updateProduct(id: string, data: any): Promise<CatalogProduct> {
+  async updateProduct(id: string, data: Record<string, unknown>): Promise<CatalogProduct> {
     const product = await CatalogProduct.findByPk(id);
     if (!product) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Product not found');
 
@@ -129,7 +129,7 @@ class ProductService {
   /**
    * Get products that are low in stock
    */
-  async getLowStockProducts(query: any): Promise<any> {
+  async getLowStockProducts(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: docs, count: totalItems } = await CatalogProduct.findAndCountAll({
@@ -188,7 +188,7 @@ class ProductService {
   /**
    * Create a price rule for a product
    */
-  async createPriceRule(productId: string, data: any): Promise<PriceRule> {
+  async createPriceRule(productId: string, data: Record<string, unknown>): Promise<PriceRule> {
     // Verify product exists
     await this.getProductById(productId);
 
@@ -206,7 +206,7 @@ class ProductService {
   /**
    * Update a price rule
    */
-  async updatePriceRule(productId: string, ruleId: string, data: any): Promise<PriceRule> {
+  async updatePriceRule(productId: string, ruleId: string, data: Record<string, unknown>): Promise<PriceRule> {
     const rule = await PriceRule.findOne({ where: { id: ruleId, productId } });
     if (!rule) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Price rule not found');
     return rule.update(data);

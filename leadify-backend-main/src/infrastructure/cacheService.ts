@@ -194,7 +194,7 @@ class CacheService {
    * Cache a paginated list result (e.g., lead listing page 1).
    * Short TTL since list data changes frequently.
    */
-  async cacheListResult(entity: string, queryHash: string, data: any, ttl: number = 60): Promise<void> {
+  async cacheListResult(entity: string, queryHash: string, data: Record<string, unknown>, ttl: number = 60): Promise<void> {
     await this.set(`list:${entity}:${queryHash}`, data, ttl);
   }
 

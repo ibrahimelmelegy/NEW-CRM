@@ -11,7 +11,7 @@ import { createActivityLog } from '../activity-logs/activityService';
 import { sequelize } from '../config/db';
 
 class ProcurementService {
-  async createPurchaseOrder(input: any, user: User): Promise<PurchaseOrder> {
+  async createPurchaseOrder(input: Record<string, unknown>, user: User): Promise<PurchaseOrder> {
     const transaction = await sequelize.transaction();
     try {
       const { items, ...poData } = input;
@@ -73,7 +73,7 @@ class ProcurementService {
     return po;
   }
 
-  async getPurchaseOrders(query: any): Promise<any> {
+  async getPurchaseOrders(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, status, projectId, vendorId } = query;
 

@@ -90,7 +90,7 @@ class ClientService {
     if (clientWithPhone) throw new BaseError(ERRORS.PHONE_ALREADY_EXISTS);
   }
 
-  async updateClient(id: string, input: any, user: User): Promise<any> {
+  async updateClient(id: string, input: Record<string, unknown>, user: User): Promise<any> {
     await this.validateClientAccess(id, user);
     const client = await this.clientOrError({ id });
 
@@ -142,7 +142,7 @@ class ClientService {
     return client;
   }
 
-  async getClients(query: any, user: User): Promise<any> {
+  async getClients(query: Record<string, unknown>, user: User): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS)) query.userId = user.id;
@@ -513,7 +513,7 @@ class ClientService {
     };
   }
 
-  public async sendClientsExcelByEmail(query: any, user: User, email: string): Promise<void> {
+  public async sendClientsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
     const where: Record<string, any> = {
       ...(query.searchKey && {
         [Op.or]: [

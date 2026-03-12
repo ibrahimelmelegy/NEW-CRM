@@ -4,11 +4,11 @@ import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 
 class GoalService {
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     return Goal.create({ ...data, tenantId });
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: any = {};
     if (tenantId) where.tenantId = tenantId;
@@ -33,7 +33,7 @@ class GoalService {
     return Goal.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const goal = await Goal.findByPk(id);
     if (!goal) return null;
     await goal.update(data);

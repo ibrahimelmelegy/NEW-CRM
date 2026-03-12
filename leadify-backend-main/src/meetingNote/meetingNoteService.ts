@@ -5,7 +5,7 @@ import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 
 class MeetingNoteService {
-  async create(data: any, userId: number, tenantId?: string) {
+  async create(data: Record<string, unknown>, userId: number, tenantId?: string) {
     const note = await MeetingNote.create({ ...data, createdBy: userId, tenantId });
     try {
       io.emit('meetingNote:created', { id: note.id, title: note.title });
@@ -13,7 +13,7 @@ class MeetingNoteService {
     return this.getById(note.id);
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: any = {};
     if (tenantId) where.tenantId = tenantId;
@@ -46,7 +46,7 @@ class MeetingNoteService {
     });
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: Record<string, unknown>) {
     const item = await MeetingNote.findByPk(id);
     if (!item) return null;
     await item.update(data);

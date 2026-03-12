@@ -5,7 +5,7 @@ import Client from '../../client/clientModel';
 import { clampPagination } from '../../utils/pagination';
 
 class CartService {
-  async getCarts(query: any): Promise<any> {
+  async getCarts(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { clientId, status } = query;
 
@@ -198,7 +198,7 @@ class CartService {
     };
   }
 
-  async getAbandonedCarts(query: any): Promise<any> {
+  async getAbandonedCarts(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     const twentyFourHoursAgo = new Date();

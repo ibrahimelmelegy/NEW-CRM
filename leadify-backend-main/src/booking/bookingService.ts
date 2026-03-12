@@ -21,11 +21,11 @@ function minutesToTime(mins: number): string {
 }
 
 class BookingService {
-  async createSlot(data: any, tenantId?: string) {
+  async createSlot(data: Record<string, unknown>, tenantId?: string) {
     return BookingSlot.create({ ...data, tenantId });
   }
 
-  async getSlots(query: any, tenantId?: string) {
+  async getSlots(query: Record<string, unknown>, tenantId?: string) {
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.staffId) where.staffId = query.staffId;
@@ -47,7 +47,7 @@ class BookingService {
     return true;
   }
 
-  async createBooking(data: any, tenantId?: string) {
+  async createBooking(data: Record<string, unknown>, tenantId?: string) {
     const booking = await Booking.create({ ...data, tenantId });
     try {
       io.emit('booking:created', { id: booking.id, staffId: booking.staffId, date: booking.date, startTime: booking.startTime });
@@ -55,7 +55,7 @@ class BookingService {
     return booking;
   }
 
-  async getBookings(query: any, tenantId?: string) {
+  async getBookings(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
     const where: any = {};
     if (tenantId) where.tenantId = tenantId;
@@ -82,7 +82,7 @@ class BookingService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateBooking(id: number, data: any) {
+  async updateBooking(id: number, data: Record<string, unknown>) {
     const booking = await Booking.findByPk(id);
     if (!booking) return null;
     await booking.update(data);
@@ -130,7 +130,7 @@ class BookingService {
    * Create a booking only if the staff member is available.
    * Throws an error with conflict details when overlapping bookings exist.
    */
-  async createBookingWithValidation(data: any, tenantId?: string) {
+  async createBookingWithValidation(data: Record<string, unknown>, tenantId?: string) {
     const { staffId, date, startTime, endTime } = data;
     if (!staffId || !date || !startTime || !endTime) {
       throw new Error('staffId, date, startTime, and endTime are required');
@@ -294,12 +294,12 @@ class BookingService {
 
   // ─── Booking Pages ───────────────────────────────────────────────────────────
 
-  async createBookingPage(data: any, tenantId?: string) {
+  async createBookingPage(data: Record<string, unknown>, tenantId?: string) {
     const slug = data.slug || this.generateSlug(data.name);
     return BookingPage.create({ ...data, slug, tenantId });
   }
 
-  async getBookingPages(query: any, tenantId?: string) {
+  async getBookingPages(query: Record<string, unknown>, tenantId?: string) {
     const where: Record<string, any> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.isActive !== undefined) where.isActive = query.isActive;
@@ -307,7 +307,7 @@ class BookingService {
     return pages;
   }
 
-  async updateBookingPage(id: number, data: any) {
+  async updateBookingPage(id: number, data: Record<string, unknown>) {
     const page = await BookingPage.findByPk(id);
     if (!page) return null;
     await page.update(data);

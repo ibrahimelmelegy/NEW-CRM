@@ -110,7 +110,7 @@ export function evaluateScore(lead: any, rules: ScoringRule[] = DEFAULT_SCORING_
 }
 
 class LeadService {
-  async createLead(input: any, adminId: number, t?: Transaction): Promise<Lead> {
+  async createLead(input: Record<string, unknown>, adminId: number, t?: Transaction): Promise<Lead> {
     const { users: inputUsers, ...leadData } = input;
 
     if (input.email) await this.errorIfLeadWithExistEmail(input.email);
@@ -170,7 +170,7 @@ class LeadService {
     if (leadWithPhone) throw new BaseError(ERRORS.PHONE_ALREADY_EXISTS);
   }
 
-  async updateLead(id: string, input: any, user: User): Promise<any> {
+  async updateLead(id: string, input: Record<string, unknown>, user: User): Promise<any> {
     await this.validateLeadAccess(id, user);
     const lead = await this.leadOrError({ id });
 
@@ -215,7 +215,7 @@ class LeadService {
     return lead;
   }
 
-  async getLeads(query: any, user: User): Promise<any> {
+  async getLeads(query: Record<string, unknown>, user: User): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(LeadPermissionsEnum.VIEW_GLOBAL_LEADS)) query.userId = user.id;
@@ -454,7 +454,7 @@ class LeadService {
     return evaluateScore(normalised, rules);
   }
 
-  async sendLeadsExcelByEmail(query: any, user: User, email: string): Promise<void> {
+  async sendLeadsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
     const where: Record<string, any> = {
       status: { [Op.ne]: LeadStatusEnums.CONVERTED },
       ...(query.searchKey && {

@@ -334,7 +334,7 @@ class AIChatService {
     }
   }
 
-  private async generateResponse(question: string, plan: any, data: any): Promise<string> {
+  private async generateResponse(question: string, plan: any, data: Record<string, unknown>): Promise<string> {
     try {
       const client = await this.getOpenAIClient();
       if (!client) {
@@ -364,7 +364,7 @@ class AIChatService {
     }
   }
 
-  private formatResponseFallback(plan: any, data: any): string {
+  private formatResponseFallback(plan: any, data: Record<string, unknown>): string {
     if (!data) return 'No data found for your query.';
 
     switch (plan.intent) {

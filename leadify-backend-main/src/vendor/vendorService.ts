@@ -7,14 +7,14 @@ import { createActivityLog } from '../activity-logs/activityService';
 import { clampPagination } from '../utils/pagination';
 
 class VendorService {
-  async createVendor(input: any, user: User): Promise<Vendor> {
+  async createVendor(input: Record<string, unknown>, user: User): Promise<Vendor> {
     if (input.serviceType === '') input.serviceType = null;
     const vendor = await Vendor.create(input);
     await createActivityLog('vendor', 'create', vendor.id, user.id, null, 'Vendor created successfully');
     return vendor;
   }
 
-  async updateVendor(id: string, input: any, user: User): Promise<Vendor> {
+  async updateVendor(id: string, input: Record<string, unknown>, user: User): Promise<Vendor> {
     if (input.serviceType === '') input.serviceType = null;
     const vendor = await this.vendorOrError({ id });
     vendor.set(input);
@@ -35,7 +35,7 @@ class VendorService {
     return vendor;
   }
 
-  async getVendors(query: any): Promise<any> {
+  async getVendors(query: Record<string, unknown>): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey } = query;
 

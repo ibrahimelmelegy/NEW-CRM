@@ -9,7 +9,7 @@ class ProposalLogService {
     await ProposalLog.create({ userId, proposalId, action });
   }
 
-  public async getProposalLogs(query: any, user: User): Promise<any> {
+  public async getProposalLogs(query: Record<string, unknown>, user: User): Promise<any> {
     await proposalService.validateProposalAccess(query.proposalId, user);
 
     const { page, limit, offset } = clampPagination(query);

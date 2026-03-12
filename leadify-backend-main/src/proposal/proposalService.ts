@@ -26,7 +26,7 @@ import { sendEmail } from '../utils/emailHelper';
 import Client from '../client/clientModel';
 
 class ProposalService {
-  public async createProposal(data: any, user: User): Promise<Proposal> {
+  public async createProposal(data: Record<string, unknown>, user: User): Promise<Proposal> {
     if (data.reference) await this.errorIfProposalWithExistReference(data.reference);
 
     if (!data.users || !Array.isArray(data.users)) {
@@ -149,7 +149,7 @@ class ProposalService {
     return proposal;
   }
 
-  public async getProposals(query: any, user: User): Promise<any> {
+  public async getProposals(query: Record<string, unknown>, user: User): Promise<any> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(ProposalPermissionsEnum.VIEW_GLOBAL_PROPOSALS)) query.userId = user.id;
@@ -395,7 +395,7 @@ class ProposalService {
     return !!assignment; // Returns true if assigned, false otherwise
   }
 
-  public async sendProposalsExcelByEmail(query: any, user: User, email: string): Promise<void> {
+  public async sendProposalsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
     const where: Record<string, any> = {
       ...(query.relatedEntityId && { relatedEntityId: query.relatedEntityId }),
       ...(query.searchKey && {

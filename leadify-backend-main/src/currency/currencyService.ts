@@ -12,14 +12,14 @@ class CurrencyService {
     });
   }
 
-  async createCurrency(data: any) {
+  async createCurrency(data: Record<string, unknown>) {
     if (data.isDefault) {
       await Currency.update({ isDefault: false }, { where: { isDefault: true } });
     }
     return Currency.create(data);
   }
 
-  async updateCurrency(id: number, data: any) {
+  async updateCurrency(id: number, data: Record<string, unknown>) {
     const currency = await Currency.findByPk(id);
     if (!currency) throw new Error('Currency not found');
     if (data.isDefault) {
@@ -52,11 +52,11 @@ class CurrencyService {
     return TaxRule.findAll({ order: [['name', 'ASC']] });
   }
 
-  async createTaxRule(data: any) {
+  async createTaxRule(data: Record<string, unknown>) {
     return TaxRule.create(data);
   }
 
-  async updateTaxRule(id: number, data: any) {
+  async updateTaxRule(id: number, data: Record<string, unknown>) {
     const rule = await TaxRule.findByPk(id);
     if (!rule) throw new Error('Tax rule not found');
     return rule.update(data);
