@@ -133,8 +133,11 @@ const handleRemove = () => {
 
 const handleUploadRequest = async (params: unknown) => {
   loading.value = true;
-  const { result, errorData } = await handleUploadRequestApi(params, 'file', props.model);
-  loading.value = false;
+  try {
+    const { result, errorData } = await handleUploadRequestApi(params, 'file', props.model);
+  } finally {
+    loading.value = false;
+  }
 
   if (errorData.value) {
     ElMessage.error(errorData.value || 'Something went wrong');
