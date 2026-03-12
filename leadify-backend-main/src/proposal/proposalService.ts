@@ -26,7 +26,7 @@ import { sendEmail } from '../utils/emailHelper';
 import Client from '../client/clientModel';
 
 class ProposalService {
-  public async createProposal(data: any, user: User): Promise<Proposal> {
+  public async createProposal(data: Record<string, unknown>, user: User): Promise<Proposal> {
     if (data.reference) await this.errorIfProposalWithExistReference(data.reference);
 
     if (!data.users || !Array.isArray(data.users)) {
@@ -149,7 +149,7 @@ class ProposalService {
     return proposal;
   }
 
-  public async getProposals(query: any, user: User): Promise<any> {
+  public async getProposals(query: Record<string, unknown>, user: User): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(ProposalPermissionsEnum.VIEW_GLOBAL_PROPOSALS)) query.userId = user.id;
@@ -265,7 +265,7 @@ class ProposalService {
     if (proposalWithReference) throw new BaseError(ERRORS.REFERENCE_ALREADY_EXISTS);
   }
 
-  public async getProposalById(id: string, user: User): Promise<any> {
+  public async getProposalById(id: string, user: User): Promise<unknown> {
     await this.validateProposalAccess(id, user);
     // Fetch the proposal along with all required associations
     const proposal = await this.proposalOrError({ id }, [
@@ -364,7 +364,7 @@ class ProposalService {
     return proposalData;
   }
 
-  private buildHierarchy(contents: ProposalContent[], parentId: string | null = null, prefix: string = '', tocCounter: { value: number }): any[] {
+  private buildHierarchy(contents: ProposalContent[], parentId: string | null = null, prefix: string = '', tocCounter: { value: number }): unknown[] {
     return contents
       .filter(content => content.parentId === parentId)
       .map((content, index) => {
@@ -395,8 +395,8 @@ class ProposalService {
     return !!assignment; // Returns true if assigned, false otherwise
   }
 
-  public async sendProposalsExcelByEmail(query: any, user: User, email: string): Promise<void> {
-    const where: Record<string, any> = {
+  public async sendProposalsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
+    const where: Record<string, unknown> = {
       ...(query.relatedEntityId && { relatedEntityId: query.relatedEntityId }),
       ...(query.searchKey && {
         [Op.or]: [
@@ -555,7 +555,7 @@ class ProposalService {
    * Load a proposal with all relations needed for PDF rendering.
    * Returns a plain object with all data flattened for the HTML template.
    */
-  public async getProposalForPdf(id: string, user: User): Promise<any> {
+  public async getProposalForPdf(id: string, user: User): Promise<unknown> {
     await this.validateProposalAccess(id, user);
 
     const proposal = await this.proposalOrError({ id }, [

@@ -310,10 +310,11 @@ const fetchQuotes = async () => {
         itemCount: p.itemCount || 0
       }));
     }
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('[CPQ] Failed to fetch quotes:', err);
+  } finally {
+    loading.value = false;
   }
-  loading.value = false;
 };
 
 const fetchProducts = async () => {

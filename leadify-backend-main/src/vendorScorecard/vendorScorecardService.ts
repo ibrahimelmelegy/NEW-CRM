@@ -3,7 +3,7 @@ import Vendor from '../vendor/vendorModel';
 import { clampPagination } from '../utils/pagination';
 
 class VendorScorecardService {
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     const scores = [data.qualityScore, data.deliveryScore, data.priceScore, data.communicationScore].filter(Boolean);
     if (scores.length > 0) {
       data.overallScore = Number((scores.reduce((a: number, b: number) => a + b, 0) / scores.length).toFixed(1));
@@ -11,9 +11,9 @@ class VendorScorecardService {
     return VendorScorecard.create({ ...data, tenantId });
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.vendorId) where.vendorId = query.vendorId;
     if (query.period) where.period = query.period;
@@ -28,7 +28,7 @@ class VendorScorecardService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await VendorScorecard.findByPk(id);
     if (!item) return null;
     const scores = [

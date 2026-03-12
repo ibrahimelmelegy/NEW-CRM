@@ -10,7 +10,7 @@ import { ERRORS } from '../utils/error/errors';
 // ─── Entity Configuration ───────────────────────────────────────────────────────
 
 interface EntityConfig {
-  model: any;
+  model: unknown;
   tableName: string;
   searchFields: string[];
   titleField: string;
@@ -103,7 +103,7 @@ interface EntitySearchFilters {
   limit?: number;
   sortBy?: string;
   sortOrder?: 'ASC' | 'DESC';
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // ─── Search Service ──────────────────────────────────────────────────────────
@@ -134,7 +134,7 @@ class SearchService {
         if (!config) return;
 
         const offset = (page - 1) * perEntity;
-        let rows: any[] = [];
+        let rows: unknown[] = [];
         let count = 0;
 
         // Try tsvector-based full-text search first
@@ -183,7 +183,7 @@ class SearchService {
 
         totalByEntity[entityType] = count;
 
-        rows.forEach((row: any, index: number) => {
+        rows.forEach((row: unknown, index: number) => {
           const plain = row.get ? row.get({ plain: true }) : row;
           allResults.push({
             entityType,
@@ -217,7 +217,7 @@ class SearchService {
     const tenantFilter = tenantId ? { tenantId } : {};
 
     // Build where clause
-    const where: any = { ...tenantFilter };
+    const where: unknown = { ...tenantFilter };
 
     // Text search conditions
     if (searchTerm) {
@@ -233,7 +233,7 @@ class SearchService {
       }
     }
 
-    const order: any = sortBy ? [[sortBy, sortOrder]] : [['createdAt', 'DESC']];
+    const order: unknown = sortBy ? [[sortBy, sortOrder]] : [['createdAt', 'DESC']];
 
     const { count, rows } = await config.model.findAndCountAll({
       where,
@@ -242,7 +242,7 @@ class SearchService {
       order
     });
 
-    const docs: SearchResultItem[] = rows.map((row: any, index: number) => {
+    const docs: SearchResultItem[] = rows.map((row: unknown, index: number) => {
       const plain = row.get ? row.get({ plain: true }) : row;
       return {
         entityType: entity,

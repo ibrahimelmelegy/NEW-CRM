@@ -2,16 +2,18 @@ import { ElNotification } from 'element-plus';
 
 // Handle error during service creation
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 function handleSuccess(message: string, id?: string, redirect: boolean = true) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
   if (!redirect) {
@@ -97,6 +99,7 @@ export async function getService(id: string | string[]): Promise<Service> {
  */
 
 export async function createService(values: Service, redirect: boolean = true): Promise<void> {
+  const t = useNuxtApp().$i18n.t;
   // Normalize the phone number before sending
   try {
     const mappedService = mapToNumbers(values);
@@ -105,7 +108,7 @@ export async function createService(values: Service, redirect: boolean = true): 
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Service created successfully', '', redirect);
+      handleSuccess(t('common.created'), '', redirect);
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -122,6 +125,7 @@ export async function createService(values: Service, redirect: boolean = true): 
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
 export async function updateService(values: Service, redirect: boolean = true): Promise<void> {
+  const t = useNuxtApp().$i18n.t;
   try {
     const mappedService = mapToNumbers(values);
     delete mappedService.id;
@@ -130,7 +134,7 @@ export async function updateService(values: Service, redirect: boolean = true): 
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Service updated successfully', values.id, redirect);
+      handleSuccess(t('common.saved'), values.id, redirect);
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -165,16 +169,17 @@ function mapToNumbers(data: Service): Service {
 }
 
 export async function deleteServiceById(id: string) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`service/${id}`, 'DELETE');
     if (response?.success) {
-      ElNotification({ type: 'success', title: 'Success', message: 'Service deleted successfully' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: response?.message || 'Failed to delete service' });
+      ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to delete service' });
     }
     return response;
   } catch (error) {
-    ElNotification({ type: 'error', title: 'Error', message: error instanceof Error ? error.message : 'Unknown error' });
+    ElNotification({ type: 'error', title: t('common.error'), message: error instanceof Error ? error.message : 'Unknown error' });
     return { success: false, body: null, message: 'Unknown error', code: 500 };
   }
 }

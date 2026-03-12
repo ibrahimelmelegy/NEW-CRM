@@ -6,13 +6,19 @@ import 'reflect-metadata';
 
 // Type definition for ClassConstructor
 type ClassConstructor<T> = {
-  new (...args: any[]): T;
+  new (...args: Record<string, unknown>[]): T;
 };
 
 // Helper function to format errors recursively
-function formatValidationErrors(errors: any[]): any[] {
+interface ValidationErrorFormatted {
+  property: string;
+  constraints: Record<string, string>;
+  children?: ValidationErrorFormatted[];
+}
+
+function formatValidationErrors(errors: { property: string; constraints?: Record<string, string>; children?: unknown[] }[]): ValidationErrorFormatted[] {
   return errors.map(error => {
-    const formattedError: any = {
+    const formattedError: ValidationErrorFormatted = {
       property: error.property,
       constraints: error.constraints || {}
     };
@@ -27,7 +33,7 @@ function formatValidationErrors(errors: any[]): any[] {
 
 // Main validation middleware
 export function validateBody<T extends object>(dtoClass: ClassConstructor<T>) {
-  return async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       // Step 1: Transform the body into an instance of the DTO class
       const dtoObject = plainToInstance(dtoClass, req.body, {
@@ -63,7 +69,7 @@ export function validateQuery<T extends object>(dtoClass: ClassConstructor<T>) {
     req: Request<Record<string, string>, Record<string, unknown>, Record<string, unknown>, ParsedQs>,
     res: Response,
     next: NextFunction
-  ): Promise<any> => {
+  ): Promise<Response | void> => {
     try {
       // Step 1: Transform the query params into an instance of the DTO class
       const dtoObject = plainToInstance(dtoClass, req.query, {

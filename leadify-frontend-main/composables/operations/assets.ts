@@ -2,16 +2,18 @@ import { ElNotification } from 'element-plus';
 
 // Handle error during asset creation
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 function handleSuccess(message: string, id?: string, redirect: boolean = true) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
   if (!redirect) {
@@ -97,6 +99,7 @@ export async function getAsset(id: string | string[]): Promise<Asset> {
  */
 
 export async function createAsset(values: Asset, redirect: boolean = true) {
+  const t = useNuxtApp().$i18n.t;
   // Normalize the phone number before sending
   try {
     const mappedAsset = mapToNumbers(values);
@@ -105,7 +108,7 @@ export async function createAsset(values: Asset, redirect: boolean = true) {
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Asset created successfully', '', redirect);
+      handleSuccess(t('common.created'), '', redirect);
       return response?.body;
     } else {
       handleError(response?.message || 'Something went wrong');
@@ -124,6 +127,7 @@ export async function createAsset(values: Asset, redirect: boolean = true) {
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
 export async function updateAsset(values: Asset, redirect: boolean = true) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const mappedAsset = mapToNumbers(values);
     delete mappedAsset.id;
@@ -132,7 +136,7 @@ export async function updateAsset(values: Asset, redirect: boolean = true) {
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Asset updated successfully', values.id, redirect);
+      handleSuccess(t('common.saved'), values.id, redirect);
       return response?.body;
     } else {
       handleError(response?.message || 'Something went wrong');
@@ -170,16 +174,17 @@ function mapToNumbers(data: Asset): Asset {
 }
 
 export async function deleteAssetById(id: string) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`asset/${id}`, 'DELETE');
     if (response?.success) {
-      ElNotification({ type: 'success', title: 'Success', message: 'Asset deleted successfully' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: response?.message || 'Failed to delete asset' });
+      ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to delete asset' });
     }
     return response;
   } catch (error) {
-    ElNotification({ type: 'error', title: 'Error', message: error instanceof Error ? error.message : 'Unknown error' });
+    ElNotification({ type: 'error', title: t('common.error'), message: error instanceof Error ? error.message : 'Unknown error' });
     return { success: false, body: null, message: 'Unknown error', code: 500 };
   }
 }

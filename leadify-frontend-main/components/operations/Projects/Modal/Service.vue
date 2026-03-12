@@ -24,14 +24,17 @@ const dialog = defineModel();
 const emit = defineEmits(['confirm', 'submit']);
 async function submitForm(values: Service) {
   loading.value = true;
-  if (modifiedService.value?.id) {
-    await updateService({ ...values, id: modifiedService.value?.id }, false);
-    emit('confirm', modifiedService.value?.id);
-  } else {
-    await createService(values, false);
-    emit('confirm');
+  try {
+    if (modifiedService.value?.id) {
+      await updateService({ ...values, id: modifiedService.value?.id }, false);
+      emit('confirm', modifiedService.value?.id);
+    } else {
+      await createService(values, false);
+      emit('confirm');
+    }
+    dialog.value = false;
+  } finally {
+    loading.value = false;
   }
-  loading.value = false;
-  dialog.value = false;
 }
 </script>

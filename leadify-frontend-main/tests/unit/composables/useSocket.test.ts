@@ -23,10 +23,10 @@ const mockSocketInstance = {
   id: 'mock-socket-id'
 };
 
-const mockIo = vi.fn((..._args: any[]) => mockSocketInstance);
+const mockIo = vi.fn((..._args: unknown[]) => mockSocketInstance);
 
 vi.mock('socket.io-client', () => ({
-  io: (...args: any[]) => mockIo(...args),
+  io: (...args: unknown[]) => mockIo(...args),
   Socket: class {}
 }));
 
@@ -36,10 +36,10 @@ vi.mock('socket.io-client', () => ({
 let mountedCallback: (() => void) | null = null;
 let unmountedCallback: (() => void) | null = null;
 
-(globalThis as any).onMounted = (cb: () => void) => {
+(globalThis as Record<string, unknown>).onMounted = (cb: () => void) => {
   mountedCallback = cb;
 };
-(globalThis as any).onUnmounted = (cb: () => void) => {
+(globalThis as Record<string, unknown>).onUnmounted = (cb: () => void) => {
   unmountedCallback = cb;
 };
 
@@ -50,7 +50,7 @@ describe('useSocket', () => {
     unmountedCallback = null;
 
     // Reset runtime config mock
-    (globalThis as any).useRuntimeConfig = () => ({
+    (globalThis as Record<string, unknown>).useRuntimeConfig = () => ({
       public: {
         API_BASE_URL: 'http://localhost:3001/api/v1/'
       }
@@ -102,7 +102,7 @@ describe('useSocket', () => {
     });
 
     it('should derive socket URL from API_BASE_URL by stripping /api path', () => {
-      (globalThis as any).useRuntimeConfig = () => ({
+      (globalThis as Record<string, unknown>).useRuntimeConfig = () => ({
         public: {
           API_BASE_URL: 'http://localhost:3001/api/v1/'
         }
@@ -174,7 +174,7 @@ describe('useSocket', () => {
   // ============================================
   describe('URL derivation', () => {
     it('should use window.location.origin when API_BASE_URL starts with /', () => {
-      (globalThis as any).useRuntimeConfig = () => ({
+      (globalThis as Record<string, unknown>).useRuntimeConfig = () => ({
         public: {
           API_BASE_URL: '/api'
         }
@@ -195,7 +195,7 @@ describe('useSocket', () => {
     });
 
     it('should use window.location.origin when API_BASE_URL is empty', () => {
-      (globalThis as any).useRuntimeConfig = () => ({
+      (globalThis as Record<string, unknown>).useRuntimeConfig = () => ({
         public: {
           API_BASE_URL: ''
         }

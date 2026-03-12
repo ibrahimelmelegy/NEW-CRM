@@ -12,7 +12,7 @@ export default defineNuxtPlugin(() => {
         autoConnect: true
       });
 
-      socket.on('achievement:unlocked', (data: any) => {
+      socket.on('achievement:unlocked', (data: unknown) => {
         // Dispatch custom event that AchievementUnlock component listens for
         window.dispatchEvent(new CustomEvent('achievement-unlocked', { detail: data }));
       });

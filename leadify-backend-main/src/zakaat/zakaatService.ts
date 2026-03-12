@@ -118,7 +118,7 @@ class ZakaatService {
    */
   async getAssessments(query: AssessmentQuery) {
     const { page, limit, offset } = clampPagination(query, 20);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
 
     if (query.status) {
       where.status = query.status;
@@ -129,7 +129,7 @@ class ZakaatService {
     }
 
     if (query.search) {
-      where[Op.or as any] = [{ fiscalYear: { [Op.iLike]: `%${query.search}%` } }, { companyId: { [Op.iLike]: `%${query.search}%` } }];
+      where[Op.or as symbol] = [{ fiscalYear: { [Op.iLike]: `%${query.search}%` } }, { companyId: { [Op.iLike]: `%${query.search}%` } }];
     }
 
     const { rows, count } = await ZakaatAssessment.findAndCountAll({
@@ -173,7 +173,7 @@ class ZakaatService {
       throw new Error('Cannot update a paid assessment');
     }
 
-    const updateData: Record<string, any> = {};
+    const updateData: Record<string, unknown> = {};
 
     if (data.fiscalYear !== undefined) updateData.fiscalYear = data.fiscalYear;
     if (data.companyId !== undefined) updateData.companyId = data.companyId;
@@ -278,8 +278,8 @@ class ZakaatService {
       preparedBy: assessment.creator
         ? {
             id: assessment.creator.id,
-            name: (assessment.creator as any).name,
-            email: (assessment.creator as any).email
+            name: (assessment.creator as Record<string, unknown>).name,
+            email: (assessment.creator as Record<string, unknown>).email
           }
         : null,
       generatedAt: new Date().toISOString()

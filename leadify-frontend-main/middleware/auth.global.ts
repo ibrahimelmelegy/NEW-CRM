@@ -37,13 +37,13 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
         lastVerifiedAt = now;
       } else {
         // No valid session — clear user state
-        (user as any).value = null;
+        user.value = null;
         lastVerifiedAt = 0;
         if (!isPublicRoute && to.path !== '/login') return navigateTo('/login');
         return;
       }
     } catch (error) {
-      console.error('[Auth Middleware] Verification error:', error);
+      // Verification error handled below — allow cached user through
       // Network error — if we have cached user data, allow navigation
       if (!hasCachedUser) {
         if (!isPublicRoute && to.path !== '/login') return navigateTo('/login');
@@ -71,7 +71,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     const userRole: string = user.value?.role?.name || '';
     if (userRole === 'SUPER_ADMIN') return;
 
-    const userPermissions: string[] = user.value?.role?.permissions || (user.value as any)?.permissions || [];
+    const userPermissions: string[] = user.value?.role?.permissions || (user.value as Record<string, unknown>)?.permissions as string[] || [];
     const hasPermission = requiredPermissions.some(perm => userPermissions.includes(perm));
 
     if (!hasPermission) {

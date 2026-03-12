@@ -37,7 +37,7 @@ function getConnection(): IORedis {
 class JobQueue {
   private queues: Map<string, Queue> = new Map();
   private workers: Map<string, Worker> = new Map();
-  private handlers: Map<string, (data: any) => Promise<any>> = new Map();
+  private handlers: Map<string, (data: Record<string, unknown>) => Promise<any>> = new Map();
   private processing = false;
 
   /**
@@ -47,7 +47,7 @@ class JobQueue {
     if (this.queues.has(name)) return;
     try {
       const queue = new Queue(`crm:${name}`, {
-        connection: getConnection() as any,
+        connection: getConnection() as unknown,
         defaultJobOptions: {
           removeOnComplete: { age: 3600, count: 1000 },
           removeOnFail: { age: 86400, count: 5000 }
@@ -63,7 +63,7 @@ class JobQueue {
    * Register a handler for a specific queue.
    * Creates a BullMQ Worker that processes jobs from this queue.
    */
-  registerHandler(queueName: string, handler: (data: any) => Promise<any>): void {
+  registerHandler(queueName: string, handler: (data: Record<string, unknown>) => Promise<any>): void {
     this.handlers.set(queueName, handler);
 
     if (!this.queues.has(queueName)) {
@@ -81,7 +81,7 @@ class JobQueue {
             return await h(job.data);
           },
           {
-            connection: getConnection() as any,
+            connection: getConnection() as unknown,
             concurrency: 3
           }
         );
@@ -99,7 +99,7 @@ class JobQueue {
    * Add a job to the specified queue.
    * Returns a unique job ID for tracking.
    */
-  async addJob(queueName: string, data: any, options?: JobOptions): Promise<string> {
+  async addJob(queueName: string, data: Record<string, unknown>, options?: JobOptions): Promise<string> {
     if (!this.queues.has(queueName)) {
       this.registerQueue(queueName);
     }
@@ -159,7 +159,7 @@ class JobQueue {
     attempts: number;
     maxAttempts: number;
     error?: string;
-    result?: any;
+    result?: unknown;
     createdAt: number;
     startedAt?: number;
     completedAt?: number;

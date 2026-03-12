@@ -38,7 +38,7 @@ export function metricsMiddleware(req: Request, res: Response, next: NextFunctio
   // Hook into res.end to capture metrics after response completes
   const originalEnd = res.end;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (res as any).end = function (this: Response, ...args: any[]) {
+  (res as Record<string, unknown>).end = function (this: Response, ...args: Record<string, unknown>[]) {
     const duration = Date.now() - startTime;
     const statusCode = res.statusCode;
     const method = req.method;

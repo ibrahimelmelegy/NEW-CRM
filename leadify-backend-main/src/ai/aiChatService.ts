@@ -5,6 +5,7 @@ import Client from '../client/clientModel';
 import Invoice from '../deal/model/invoiceMode';
 import Opportunity from '../opportunity/opportunityModel';
 import { DealActivity } from '../activity-logs/model/dealActivities';
+import logger from '../config/logger';
 
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -14,7 +15,7 @@ interface ChatMessage {
 interface ChatResponse {
   answer: string;
   context?: string;
-  data?: any;
+  data?: unknown;
 }
 
 const CRM_SYSTEM_PROMPT = `You are a CRM data assistant for High Point CRM. You help users query and understand their CRM data.
@@ -83,7 +84,7 @@ class AIChatService {
         data: queryResult
       };
     } catch (error) {
-      console.error('AIChatService error:', error);
+      logger.error({ error }, 'AIChatService error');
       // Fallback: try basic keyword matching
       try {
         const fallbackResult = await this.fallbackQuery(question);
@@ -116,14 +117,14 @@ class AIChatService {
     }
   }
 
-  private async analyzeQuestion(question: string, history: ChatMessage[]): Promise<any> {
+  private async analyzeQuestion(question: string, history: ChatMessage[]): Promise<unknown> {
     try {
       const client = await this.getOpenAIClient();
       if (!client) {
         return this.analyzeQuestionFallback(question);
       }
 
-      const messages: Record<string, any>[] = [
+      const messages: Record<string, unknown>[] = [
         { role: 'system', content: CRM_SYSTEM_PROMPT },
         ...history.slice(-6), // Include last 3 exchanges for context
         { role: 'user', content: question }
@@ -150,7 +151,7 @@ class AIChatService {
         return { intent: 'general', module: 'none', answer: response };
       }
     } catch (error) {
-      console.error('OpenAI analysis error:', error);
+      logger.error({ error }, 'OpenAI analysis error');
       return this.analyzeQuestionFallback(question);
     }
   }
@@ -226,8 +227,8 @@ class AIChatService {
     return undefined;
   }
 
-  private async executeQuery(plan: any): Promise<any> {
-    const modelMap: Record<string, any> = {
+  private async executeQuery(plan: Record<string, unknown>): Promise<unknown> {
+    const modelMap: Record<string, unknown> = {
       leads: Lead,
       deals: Deal,
       clients: Client,
@@ -239,7 +240,7 @@ class AIChatService {
     const model = modelMap[plan.module];
     if (!model) return null;
 
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
 
     // Apply filters
     if (plan.filters) {
@@ -265,7 +266,7 @@ class AIChatService {
       if (to) where[dateField][Op.lte] = new Date(to);
     }
 
-    const queryOptions: Record<string, any> = { where };
+    const queryOptions: Record<string, unknown> = { where };
 
     // Execute based on intent
     switch (plan.intent) {
@@ -304,7 +305,7 @@ class AIChatService {
           const items = await Deal.findAll({
             where,
             include: [{ model: Client, as: 'client', attributes: ['clientName', 'companyName'] }],
-            order: order as any,
+            order: order as unknown,
             limit
           });
           return { items: items.map(i => i.toJSON()), total: items.length };
@@ -333,7 +334,7 @@ class AIChatService {
     }
   }
 
-  private async generateResponse(question: string, plan: any, data: any): Promise<string> {
+  private async generateResponse(question: string, plan: Record<string, unknown>, data: Record<string, unknown>): Promise<string> {
     try {
       const client = await this.getOpenAIClient();
       if (!client) {
@@ -363,7 +364,7 @@ class AIChatService {
     }
   }
 
-  private formatResponseFallback(plan: any, data: any): string {
+  private formatResponseFallback(plan: Record<string, unknown>, data: Record<string, unknown>): string {
     if (!data) return 'No data found for your query.';
 
     switch (plan.intent) {
@@ -383,7 +384,7 @@ class AIChatService {
           const names = data.items
             .slice(0, 5)
             .map(
-              (item: any) =>
+              (item: Record<string, unknown>) =>
                 `- ${item.name || item.clientName || item.invoiceNumber || 'Item'}${item.price ? ` ($${item.price.toLocaleString()})` : ''}${item.amount ? ` ($${item.amount.toLocaleString()})` : ''}`
             )
             .join('\n');
@@ -394,7 +395,7 @@ class AIChatService {
       case 'status':
         if (data.breakdown?.length > 0) {
           const lines = data.breakdown
-            .map((item: any) => {
+            .map((item: Record<string, unknown>) => {
               const key = Object.keys(item).find(k => k !== 'count') || 'status';
               return `- **${item[key]}**: ${item.count}`;
             })
@@ -427,7 +428,7 @@ class AIChatService {
         attributes: [[fn('SUM', col('price')), 'total']],
         raw: true
       });
-      const total = (result as any)?.total || 0;
+      const total = (result as Record<string, unknown>).total || 0;
       return { answer: `The current pipeline value (deals in progress) is **$${Number(total).toLocaleString()}**.` };
     }
 
@@ -439,7 +440,7 @@ class AIChatService {
     return null;
   }
 
-  private async getOpenAIClient(): Promise<any> {
+  private async getOpenAIClient(): Promise<unknown> {
     // Access the private openai client through the aiService singleton
     // We mirror the getClient pattern
     // eslint-disable-next-line @typescript-eslint/no-require-imports

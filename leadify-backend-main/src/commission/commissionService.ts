@@ -28,17 +28,17 @@ export interface CommissionPlan {
 class CommissionService {
   // ─── Existing CRUD ──────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     const commission = await Commission.create({ ...data, tenantId });
     try {
       io.emit('commission:created', { id: commission.id, staffId: commission.staffId, amount: commission.amount, status: commission.status });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return commission;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.staffId) where.staffId = query.staffId;
@@ -58,7 +58,7 @@ class CommissionService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const commission = await Commission.findByPk(id);
     if (!commission) return null;
     if (data.status === 'PAID' && !commission.paidAt) data.paidAt = new Date();
@@ -104,7 +104,7 @@ class CommissionService {
 
     try {
       io.emit('commission:created', { id: commission.id, staffId: userId, dealId, amount, status: 'PENDING' });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return commission;
   }
 
@@ -149,7 +149,7 @@ class CommissionService {
    * Returns total earned, total paid, total pending, plus monthly breakdown.
    */
   async getCommissionSummary(userId: number, tenantId?: string) {
-    const where: Record<string, any> = { staffId: userId };
+    const where: Record<string, unknown> = { staffId: userId };
     if (tenantId) where.tenantId = tenantId;
 
     // Overall totals via SQL aggregation
@@ -194,7 +194,7 @@ class CommissionService {
     await commission.update({ status: 'PAID', paidAt: new Date() });
     try {
       io.emit('commission:paid', { id: commission.id, staffId: commission.staffId, amount: commission.amount });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return commission;
   }
 
@@ -203,7 +203,7 @@ class CommissionService {
    * Optionally filtered by period (startDate/endDate).
    */
   async getTeamCommissions(tenantId: string, period?: { startDate?: string; endDate?: string }) {
-    const where: Record<string, any> = { tenantId };
+    const where: Record<string, unknown> = { tenantId };
     if (period?.startDate || period?.endDate) {
       where.createdAt = {};
       if (period.startDate) where.createdAt[Op.gte] = new Date(period.startDate);
@@ -279,7 +279,7 @@ class CommissionService {
 
     try {
       io.emit('commission:created', { id: commission.id, staffId: userId, dealId, amount, status: 'PENDING' });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return commission;
   }
 
@@ -312,7 +312,7 @@ class CommissionService {
     );
     try {
       io.emit('commission:bulkPaid', { count: affectedCount });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return { paidCount: affectedCount };
   }
 
@@ -331,7 +331,7 @@ class CommissionService {
       period?: 'monthly' | 'quarterly';
     }
   ) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query?.staffId) where.staffId = query.staffId;
     if (query?.startDate || query?.endDate) {
@@ -406,7 +406,7 @@ class CommissionService {
    * Works without a userId — returns totals for the entire tenant.
    */
   async getDashboardKPIs(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const result = await Commission.findOne({

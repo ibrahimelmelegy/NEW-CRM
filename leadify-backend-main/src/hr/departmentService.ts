@@ -5,7 +5,7 @@ import { ERRORS } from '../utils/error/errors';
 import { fn, col, Op } from 'sequelize';
 
 class DepartmentService {
-  async createDepartment(data: any) {
+  async createDepartment(data: Record<string, unknown>) {
     const existing = await Department.findOne({ where: { code: data.code } });
     if (existing) throw new BaseError(ERRORS.NAME_ALREADY_EXISTS, 400, 'Department code already exists');
     return Department.create(data);
@@ -23,7 +23,7 @@ class DepartmentService {
       where: { departmentId: { [Op.ne]: null } },
       group: ['departmentId'],
       raw: true
-    })) as any[];
+    })) as unknown[];
 
     const countMap = new Map<string, number>();
     for (const row of employeeCounts) {
@@ -47,7 +47,7 @@ class DepartmentService {
     return department;
   }
 
-  async updateDepartment(id: string, data: any) {
+  async updateDepartment(id: string, data: Record<string, unknown>) {
     const department = await Department.findByPk(id);
     if (!department) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Department not found');
 
@@ -84,7 +84,7 @@ class DepartmentService {
     const departments = (await Department.findAll({
       order: [['name', 'ASC']],
       raw: true
-    })) as any[];
+    })) as unknown[];
 
     // Count employees per department
     const employeeCounts = (await Employee.findAll({
@@ -92,7 +92,7 @@ class DepartmentService {
       where: { departmentId: { [Op.ne]: null } },
       group: ['departmentId'],
       raw: true
-    })) as any[];
+    })) as unknown[];
 
     const countMap = new Map<string, number>();
     for (const row of employeeCounts) {
@@ -100,7 +100,7 @@ class DepartmentService {
     }
 
     const deptMap = new Map<string, any>();
-    const roots: any[] = [];
+    const roots: unknown[] = [];
 
     for (const dept of departments) {
       dept.children = [];

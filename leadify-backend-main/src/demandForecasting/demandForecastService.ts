@@ -6,17 +6,17 @@ import { io } from '../server';
 class DemandForecastService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string, createdBy?: number) {
+  async create(data: Record<string, unknown>, tenantId?: string, createdBy?: number) {
     const forecast = await DemandForecast.create({ ...data, tenantId, createdBy });
     try {
       io.emit('forecast:created', { id: forecast.id, product: forecast.product });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return forecast;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.product) where.product = { [Op.iLike]: `%${query.product}%` };
     if (query.status) where.status = query.status;
@@ -37,13 +37,13 @@ class DemandForecastService {
     return DemandForecast.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await DemandForecast.findByPk(id);
     if (!item) return null;
     await item.update(data);
     try {
       io.emit('forecast:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -53,7 +53,7 @@ class DemandForecastService {
     await item.destroy();
     try {
       io.emit('forecast:deleted', { id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return true;
   }
 
@@ -146,7 +146,7 @@ class DemandForecastService {
 
     try {
       io.emit('forecast:generated', { id: forecast.id, product, predictedDemand });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return forecast;
   }
 
@@ -154,7 +154,7 @@ class DemandForecastService {
 
   /** Compare predicted vs actual for confirmed forecasts to compute accuracy metrics */
   async getAccuracyReport(tenantId?: string) {
-    const where: Record<string, any> = { status: 'CONFIRMED', actualDemand: { [Op.ne]: null } };
+    const where: Record<string, unknown> = { status: 'CONFIRMED', actualDemand: { [Op.ne]: null } };
     if (tenantId) where.tenantId = tenantId;
 
     const forecasts = await DemandForecast.findAll({ where, raw: true });

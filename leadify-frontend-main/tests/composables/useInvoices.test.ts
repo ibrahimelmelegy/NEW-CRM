@@ -29,20 +29,20 @@ const mockFetch = vi.fn();
 
 // Mock element-plus to intercept the import { ElNotification } in useInvoices.ts
 vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockElNotification(...args)
+  ElNotification: (...args: unknown[]) => mockElNotification(...args)
 }));
 
-(globalThis as any).useApiFetch = mockUseApiFetch;
-(globalThis as any).ElNotification = mockElNotification;
-(globalThis as any).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
-(globalThis as any).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
-(globalThis as any).$fetch = mockFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockUseApiFetch;
+(globalThis as Record<string, unknown>).ElNotification = mockElNotification;
+(globalThis as Record<string, unknown>).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
+(globalThis as Record<string, unknown>).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
+(globalThis as unknown).$fetch = mockFetch;
 
 describe('useInvoices composable', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset useI18n for each test
-    (globalThis as any).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
+    (globalThis as Record<string, unknown>).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
   });
 
   // ============================================
@@ -317,12 +317,12 @@ describe('useInvoices composable', () => {
   // downloadInvoicePdf
   // ============================================
   describe('downloadInvoicePdf', () => {
-    let mockCreateObjectURL: any;
-    let mockRevokeObjectURL: any;
-    let mockCreateElement: any;
-    let mockAppendChild: any;
-    let mockRemoveChild: any;
-    let mockLink: any;
+    let mockCreateObjectURL: unknown;
+    let mockRevokeObjectURL: unknown;
+    let mockCreateElement: unknown;
+    let mockAppendChild: unknown;
+    let mockRemoveChild: unknown;
+    let mockLink: unknown;
 
     beforeEach(() => {
       mockCreateObjectURL = vi.fn().mockReturnValue('blob:http://localhost/fake-url');

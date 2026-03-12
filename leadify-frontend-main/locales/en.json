@@ -601,7 +601,58 @@
     "fixedAmount": "Fixed Amount",
     "ascending": "Ascending",
     "descending": "Descending",
-    "companyName": "Company Name"
+    "companyName": "Company Name",
+    "invalidDateRange": "End date must be after start date",
+    "percentagesSumError": "Variant percentages must sum to 100",
+    "addFilter": "Add Filter",
+    "addTask": "Add Task",
+    "any": "Any",
+    "apply": "Apply",
+    "auditHistory": "Audit History",
+    "clearAll": "Clear All",
+    "color": "Color",
+    "createdSuccessfully": "Created successfully",
+    "deleteConfirmation": "Are you sure you want to delete this?",
+    "deletedSuccessfully": "Deleted successfully",
+    "departments": "Departments",
+    "descriptionPlaceholder": "Enter description...",
+    "disabled": "Disabled",
+    "dueDate": "Due Date",
+    "editTask": "Edit Task",
+    "enabled": "Enabled",
+    "enterValue": "Enter value",
+    "eof": "End of list",
+    "generic": "Generic",
+    "goBack": "Go Back",
+    "healthInsurance": "Health Insurance",
+    "home": "Home",
+    "incomingFlightTicket": "Incoming Flight Ticket",
+    "matchCondition": "Match Condition",
+    "more": "More",
+    "noHistory": "No history found",
+    "noTasks": "No tasks found",
+    "notFound": "Not Found",
+    "notes": "Notes",
+    "of": "of",
+    "overview": "Overview",
+    "phone": "Phone",
+    "print": "Print",
+    "rename": "Rename",
+    "retry": "Retry",
+    "saudization": "Saudization",
+    "savedSuccessfully": "Saved successfully",
+    "select": "Select",
+    "selectField": "Select field",
+    "selectValue": "Select value",
+    "setDefault": "Set as Default",
+    "showing": "Showing",
+    "socialInsurance": "Social Insurance",
+    "taskTitlePlaceholder": "Enter task title...",
+    "tasks": "Tasks",
+    "unknown": "Unknown",
+    "updatedSuccessfully": "Updated successfully",
+    "viewNamePlaceholder": "Enter view name...",
+    "visaFees": "Visa Fees"
   },
   "export": {
     "title": "Export",
@@ -704,7 +755,8 @@
     "refreshInsights": "Refresh insights",
     "noInsightsToday": "No insights available right now. Check back later.",
     "askCopilot": "Ask Copilot...",
-    "pasteMeetingNotes": "Paste your meeting notes here..."
+    "pasteMeetingNotes": "Paste your meeting notes here...",
+    "copilot": "AI Copilot"
   },
   "spotlight": {
     "searchPlaceholder": "Search pages, actions, or type a command...",
@@ -745,7 +797,8 @@
     "pageNotFound": "Page Not Found",
     "pageNotFoundDesc": "The page you're looking for doesn't exist or has been moved.",
     "goHome": "Go to Dashboard",
-    "goBack": "Go Back"
+    "goBack": "Go Back",
+    "unknown": "An unknown error occurred"
   },
   "crm": {
     "projectStatus": {
@@ -1853,7 +1906,8 @@
       "invalidFile": "Please upload a valid Excel file (.xls or .xlsx)",
       "importFailed": "Failed to import file"
     },
-    "noLeadsYet": "No leads yet"
+    "noLeadsYet": "No leads yet",
+    "present": "Present"
   },
   "clients": {
     "title": "Clients",
@@ -2313,7 +2367,8 @@
         "preview": "Preview",
         "proposal": "Proposal",
         "folders": "Folders",
-        "activity": "Activity Log"
+        "activity": "Activity Log",
+        "summary": "Summary"
       },
       "detailsSummary": {
         "title": "Summary",
@@ -2706,7 +2761,8 @@
         "companyName": "Company Name",
         "email": "Email",
         "phone": "Phone",
-        "clientType": "Client Type"
+        "clientType": "Client Type",
+        "editTitle": "Edit Task"
       }
     },
     "vehicle": {
@@ -3161,7 +3217,8 @@
     "priority": "Priority",
     "activeToggle": "Active",
     "addCondition": "Add Condition",
-    "addAction": "Add Action"
+    "addAction": "Add Action",
+    "description": "Description"
   },
   "campaigns": {
     "title": "Email Campaigns",
@@ -3348,7 +3405,8 @@
       "replySent": "Reply sent successfully",
       "replyFailed": "Failed to send reply",
       "conversation": "Conversation",
-      "ticketClosed": "This ticket is closed. No further replies can be sent."
+      "ticketClosed": "This ticket is closed. No further replies can be sent.",
+      "status": "Status"
     },
     "enhanced": {
       "welcome": "Welcome, {name}",
@@ -4399,7 +4457,8 @@
       "notes": "Notes",
       "date": "Date",
       "noMovements": "No stock movements recorded"
-    }
+    },
+    "product": "Product"
   },
   "approvals": {
     "title": "Approval Center",
@@ -4472,7 +4531,8 @@
     "requestDate": "Request Date",
     "decision": "Decision",
     "decisionDate": "Decision Date",
-    "request": "Request"
+    "request": "Request",
+    "notes": "Notes"
   },
   "documents": {
     "title": "Document Library",
@@ -5802,7 +5862,21 @@
     "deductions": "Deductions",
     "gosi": "GOSI",
     "absent": "Absent",
-    "loan": "Loan"
+    "loan": "Loan",
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    }
   },
   "support": {
     "title": "Support Tickets",
@@ -5982,7 +6056,8 @@
     "supportTickets": "Support Tickets",
     "assignee": "Assignee",
     "created": "Created",
-    "assignedToMe": "Assigned to Me"
+    "assignedToMe": "Assigned to Me",
+    "failedToLoadTickets": "Failed to load tickets"
   },
   "accounting": {
     "title": "Accounting",
@@ -7933,7 +8008,9 @@
     "software": "Software",
     "services": "Services",
     "hardware": "Hardware",
-    "accessories": "Accessories"
+    "accessories": "Accessories",
+    "currency": "Currency",
+    "description": "Description"
   },
   "companies": {
     "title": "Company Directory",
@@ -8482,7 +8559,10 @@
       "categoryCreated": "Category created successfully",
       "categoryUpdated": "Category updated successfully",
       "categoryDeleted": "Category deleted successfully",
-      "noCategories": "No categories yet. Create your first category."
+      "noCategories": "No categories yet. Create your first category.",
+      "name": "Category Name",
+      "subcategories": "Subcategories",
+      "total": "Total"
     },
     "coupons": {
       "title": "Coupons & Discounts",
@@ -8522,7 +8602,9 @@
       "noExpiry": "No expiry",
       "active": "Active",
       "expired": "Expired",
-      "disabled": "Disabled"
+      "disabled": "Disabled",
+      "edit": "Edit Coupon",
+      "generate": "Generate Code"
     },
     "reviews": {
       "title": "Product Reviews",
@@ -8551,8 +8633,17 @@
       "responseSent": "Response sent successfully",
       "reviewDeleted": "Review deleted",
       "confirmDelete": "Are you sure you want to delete this review?",
-      "noReviews": "No reviews found"
-    }
+      "noReviews": "No reviews found",
+      "verified": "Verified Purchase"
+    },
+    "active": "Active",
+    "cancelled": "Cancelled",
+    "client": "Client",
+    "confirmed": "Confirmed",
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "total": "Total"
   },
   "marketing": {
     "surveys": {
@@ -8896,7 +8987,13 @@
     "call": "Call",
     "demo": "Demo",
     "consultation": "Consultation",
-    "followUp": "Follow-up"
+    "followUp": "Follow-up",
+    "check": "Check",
+    "completed": "Completed",
+    "search": "Search",
+    "staff": "Staff",
+    "status": "Status",
+    "upcoming": "Upcoming"
   },
   "callLog": {
     "title": "Call Log",
@@ -9200,7 +9297,8 @@
     "signerName": "Signer Name",
     "signerEmail": "Signer Email",
     "fullName": "Full name",
-    "sendRequest": "Send Request"
+    "sendRequest": "Send Request",
+    "signature": "Signature"
   },
   "reminders": {
     "reminderCreated": "Reminder created!",
@@ -13553,7 +13651,26 @@
     "express": "Express",
     "economy": "Economy",
     "preparing": "Preparing",
-    "inTransit": "In Transit"
+    "inTransit": "In Transit",
+    "active": "Active",
+    "calculate": "Calculate",
+    "carrier": "Carrier",
+    "cost": "Cost",
+    "currency": "Currency",
+    "delivered": "Delivered",
+    "destination": "Destination",
+    "origin": "Origin",
+    "rate": "Rate",
+    "rates": "Rates",
+    "recipient": "Recipient",
+    "returned": "Returned",
+    "shipments": "Shipments",
+    "status": "Status",
+    "subtitle": "Manage shipments and shipping rates",
+    "title": "Shipping",
+    "track": "Track",
+    "weight": "Weight",
+    "zone": "Zone"
   },
   "whatsapp": {
     "english": "English",
@@ -13834,5 +13951,46 @@
       "noDiscountRules": "No discount rules",
       "noPriceBooks": "No Price Books"
     }
-  }
+  },
+  "action": "Action",
+  "back": "Back",
+  "cancel": "Cancel",
+  "clear": "Clear",
+  "close": "Close",
+  "confirm": "Confirm",
+  "csv": "CSV",
+  "delete": "Delete",
+  "deselect": "Deselect",
+  "dismiss": "Dismiss",
+  "duplicate": "Duplicate",
+  "excel": "Excel",
+  "logout": "Log Out",
+  "preview": "Preview",
+  "redo": "Redo",
+  "refresh": "Refresh",
+  "reset": "Reset",
+  "save": "Save",
+  "saved": "Saved",
+  "search": "Search",
+  "select": "Select",
+  "sent": "Sent",
+  "submit": "Submit",
+  "success": "Success",
+  "toggle": "Toggle",
+  "undo": "Undo",
+  "updated": "Updated",
+  "bold": "Bold",
+  "italic": "Italic",
+  "underline": "Underline",
+  "strikethrough": "Strikethrough",
+  "left": "Left",
+  "center": "Center",
+  "right": "Right",
+  "justify": "Justify",
+  "aggressive": "Aggressive",
+  "conservative": "Conservative",
+  "current": "Current",
+  "executive": "Executive",
+  "enabled": "Enabled",
+  "disabled": "Disabled"
 }

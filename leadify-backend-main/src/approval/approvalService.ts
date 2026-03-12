@@ -56,7 +56,7 @@ class ApprovalService {
     const limit = filters.limit || 20;
     const offset = (page - 1) * limit;
 
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (filters.status) where.status = filters.status;
     if (filters.entityType) where.entityType = filters.entityType;
     if (filters.requesterId) where.requesterId = filters.requesterId;

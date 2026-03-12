@@ -10,17 +10,19 @@ export interface RoleData {
 
 // Handle error during staff creation
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 
 function handleSuccess(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
   navigateTo('/roles'); // Navigate to the roles list
@@ -50,13 +52,14 @@ export async function getRole(id: string | string[]): Promise<RoleData> {
  */
 
 export async function createRole(values: Omit<RoleData, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> {
+  const t = useNuxtApp().$i18n.t;
   try {
     // Call API to create the role
     const response = await useApiFetch('role', 'POST', values as Record<string, unknown>);
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Role created successfully');
+      handleSuccess(t('common.created'));
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -71,6 +74,7 @@ export async function createRole(values: Omit<RoleData, 'id' | 'createdAt' | 'up
  * @param values - The values to update the role with
  */
 export async function updateRole(values: RoleData) {
+  const t = useNuxtApp().$i18n.t;
   try {
     // Call API to create the role
     const formattedValues = cleanObject({ ...values });
@@ -79,7 +83,7 @@ export async function updateRole(values: RoleData) {
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Role updated successfully');
+      handleSuccess(t('common.saved'));
       // Refresh permissions
       await usePermissions(true);
     } else {

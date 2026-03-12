@@ -94,8 +94,8 @@ class MaterialService {
     return await this.getMaterial(material.id);
   }
 
-  private async updateMaterialItems(material: any, items: createAdditionalMaterialItemsInput[]) {
-    const deletedIds = material.materialItem.filter((e: any) => !items.find(f => f.id === e.id)).map((e: any) => e.id);
+  private async updateMaterialItems(material: unknown, items: createAdditionalMaterialItemsInput[]) {
+    const deletedIds = material.materialItem.filter((e: Record<string, unknown>) => !items.find(f => f.id === e.id)).map((e: Record<string, unknown>) => e.id);
     const newMaterialItem: Partial<AdditionalMaterialItem>[] = [];
     const updateMaterialItem: Partial<AdditionalMaterialItem>[] = [];
 
@@ -115,7 +115,7 @@ class MaterialService {
   }
 
   public async sendMaterialsExcelByEmail(input: GetPaginatedAdditionalMaterialInput, email: string): Promise<void> {
-    const where: any = {}; // You can add filters here if needed
+    const where: Record<string, unknown> = {}; // You can add filters here if needed
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Materials');

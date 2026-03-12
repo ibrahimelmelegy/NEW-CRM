@@ -129,7 +129,7 @@ class PortalEnhancedService {
           id: c.id,
           title: c.title,
           status: c.status,
-          deal: (c as any).deal ? { id: (c as any).deal.id, name: (c as any).deal.name } : null
+          deal: (c as Record<string, unknown>).deal ? { id: (c as Record<string, unknown>).deal.id, name: (c as Record<string, unknown>).deal.name } : null
         }))
       },
       sharedDocuments: {
@@ -172,7 +172,7 @@ class PortalEnhancedService {
         collected: inv.collected,
         collectedDate: inv.collectedDate,
         status,
-        deal: (inv as any).deal ? { id: (inv as any).deal.id, name: (inv as any).deal.name } : null
+        deal: (inv as Record<string, unknown>).deal ? { id: (inv as Record<string, unknown>).deal.id, name: (inv as Record<string, unknown>).deal.name } : null
       };
     });
 

@@ -370,7 +370,7 @@ class DealScoringService {
     };
   }
 
-  private async getAISuggestions(deal: any, factors: ScoreFactor[], score: number): Promise<string[]> {
+  private async getAISuggestions(deal: Record<string, unknown>, factors: ScoreFactor[], score: number): Promise<string[]> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const OpenAI = require('openai').default;
@@ -459,7 +459,7 @@ class DealScoringService {
       attributes: [[fn('AVG', col('price')), 'avgPrice']],
       raw: true
     });
-    return (result as any)?.avgPrice || 10000;
+    return (result as Record<string, unknown>).avgPrice || 10000;
   }
 
   private async getUserWinRate(userId: number): Promise<number | null> {

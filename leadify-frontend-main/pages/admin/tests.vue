@@ -226,10 +226,16 @@ const processResults = data => {
   stats.successRate = allTests.length > 0 ? ((passedCount / allTests.length) * 100).toFixed(1) : 0;
 };
 
+let pollInterval: ReturnType<typeof setInterval>;
+
 onMounted(() => {
   loadTestData();
   // Automated background polling every 30 seconds
-  setInterval(loadTestData, 30000);
+  pollInterval = setInterval(loadTestData, 30000);
+});
+
+onUnmounted(() => {
+  clearInterval(pollInterval);
 });
 </script>
 

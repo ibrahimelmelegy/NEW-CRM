@@ -231,7 +231,7 @@ describe('format.ts', () => {
 
     it('should return "-" for empty input', () => {
       expect(formatDate('')).toBe('-');
-      expect(formatDate(null as any)).toBe('-');
+      expect(formatDate(null as unknown)).toBe('-');
     });
   });
 

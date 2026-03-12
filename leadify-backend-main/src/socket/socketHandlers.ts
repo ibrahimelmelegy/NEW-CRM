@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+import logger from '../config/logger';
 
 // ---------------------------------------------------------------------------
 // Type Definitions
@@ -196,7 +197,7 @@ export function setupCrmSocketHandlers(io: Server): void {
         }
         socket.emit('document:locks_sync', locks);
       } catch (err) {
-        console.error('Socket event crm:join error:', err);
+        logger.error({ err }, 'Socket event crm:join error:');
       }
     });
 
@@ -212,7 +213,7 @@ export function setupCrmSocketHandlers(io: Server): void {
           io.to(tenantRoom).emit('crm:online_users', getOnlineUsers(tenantId));
         }
       } catch (err) {
-        console.error('Socket event crm:leave error:', err);
+        logger.error({ err }, 'Socket event crm:leave error:');
       }
     });
 
@@ -223,7 +224,7 @@ export function setupCrmSocketHandlers(io: Server): void {
       try {
         socket.emit('crm:pong', { timestamp: Date.now() });
       } catch (err) {
-        console.error('Socket event crm:ping error:', err);
+        logger.error({ err }, 'Socket event crm:ping error:');
       }
     });
 
@@ -237,7 +238,7 @@ export function setupCrmSocketHandlers(io: Server): void {
       try {
         socket.join(getEntityRoom(data.entityType, data.entityId));
       } catch (err) {
-        console.error('Socket event entity:subscribe error:', err);
+        logger.error({ err }, 'Socket event entity:subscribe error:');
       }
     });
 
@@ -245,7 +246,7 @@ export function setupCrmSocketHandlers(io: Server): void {
       try {
         socket.leave(getEntityRoom(data.entityType, data.entityId));
       } catch (err) {
-        console.error('Socket event entity:unsubscribe error:', err);
+        logger.error({ err }, 'Socket event entity:unsubscribe error:');
       }
     });
 
@@ -285,7 +286,7 @@ export function setupCrmSocketHandlers(io: Server): void {
 
         typingTimers.set(timerKey, timer);
       } catch (err) {
-        console.error('Socket event typing:start error:', err);
+        logger.error({ err }, 'Socket event typing:start error:');
       }
     });
 
@@ -305,7 +306,7 @@ export function setupCrmSocketHandlers(io: Server): void {
           userName: data.userName
         });
       } catch (err) {
-        console.error('Socket event typing:stop error:', err);
+        logger.error({ err }, 'Socket event typing:stop error:');
       }
     });
 
@@ -354,7 +355,7 @@ export function setupCrmSocketHandlers(io: Server): void {
           });
         }
       } catch (err) {
-        console.error('Socket event document:editing error:', err);
+        logger.error({ err }, 'Socket event document:editing error:');
       }
     });
 
@@ -372,7 +373,7 @@ export function setupCrmSocketHandlers(io: Server): void {
           timestamp: data.timestamp || new Date().toISOString()
         });
       } catch (err) {
-        console.error('Socket event message:new error:', err);
+        logger.error({ err }, 'Socket event message:new error:');
       }
     });
 
@@ -386,7 +387,7 @@ export function setupCrmSocketHandlers(io: Server): void {
           timestamp: Date.now()
         });
       } catch (err) {
-        console.error('Socket event message:read error:', err);
+        logger.error({ err }, 'Socket event message:read error:');
       }
     });
 
@@ -400,7 +401,7 @@ export function setupCrmSocketHandlers(io: Server): void {
           isTyping: data.isTyping
         });
       } catch (err) {
-        console.error('Socket event chat:typing error:', err);
+        logger.error({ err }, 'Socket event chat:typing error:');
       }
     });
 
@@ -411,7 +412,7 @@ export function setupCrmSocketHandlers(io: Server): void {
       try {
         socket.join(`chat:${data.conversationId}`);
       } catch (err) {
-        console.error('Socket event chat:join_room error:', err);
+        logger.error({ err }, 'Socket event chat:join_room error:');
       }
     });
 
@@ -419,7 +420,7 @@ export function setupCrmSocketHandlers(io: Server): void {
       try {
         socket.leave(`chat:${data.conversationId}`);
       } catch (err) {
-        console.error('Socket event chat:leave_room error:', err);
+        logger.error({ err }, 'Socket event chat:leave_room error:');
       }
     });
 
@@ -465,7 +466,7 @@ export function setupCrmSocketHandlers(io: Server): void {
           }
         }
       } catch (err) {
-        console.error('Socket event disconnect error:', err);
+        logger.error({ err }, 'Socket event disconnect error:');
       }
     });
   });
@@ -525,7 +526,7 @@ export function setupCrmSocketHandlers(io: Server): void {
  *   import { emitCrmEvent } from '../socket/socketHandlers';
  *   emitCrmEvent(io, 'lead:created', { id: lead.id, tenantId: lead.tenantId });
  */
-export function emitCrmEvent(io: Server, event: string, payload: Record<string, any>): void {
+export function emitCrmEvent(io: Server, event: string, payload: Record<string, unknown>): void {
   try {
     if (payload.tenantId) {
       io.to(getTenantRoom(payload.tenantId)).emit(event, payload);
@@ -533,6 +534,6 @@ export function emitCrmEvent(io: Server, event: string, payload: Record<string, 
       io.emit(event, payload);
     }
   } catch (err) {
-    console.error('Socket emission error:', err);
+    logger.error({ err }, 'Socket emission error');
   }
 }

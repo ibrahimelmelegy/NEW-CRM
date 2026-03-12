@@ -9,13 +9,13 @@ const STAGE_ORDER: Array<Applicant['stage']> = ['APPLIED', 'SCREENING', 'INTERVI
 
 class RecruitmentService {
   // ──────────── Job Postings CRUD ────────────
-  async createPosting(data: any, tenantId?: string) {
+  async createPosting(data: Record<string, unknown>, tenantId?: string) {
     return JobPosting.create({ ...data, tenantId });
   }
 
-  async getPostings(query: any, tenantId?: string) {
+  async getPostings(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.title = { [Op.iLike]: `%${query.search}%` };
@@ -31,7 +31,7 @@ class RecruitmentService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updatePosting(id: number, data: any) {
+  async updatePosting(id: number, data: Record<string, unknown>) {
     const posting = await JobPosting.findByPk(id);
     if (!posting) return null;
     await posting.update(data);
@@ -46,13 +46,13 @@ class RecruitmentService {
   }
 
   // ──────────── Applicants CRUD ────────────
-  async createApplicant(data: any, tenantId?: string) {
+  async createApplicant(data: Record<string, unknown>, tenantId?: string) {
     return Applicant.create({ ...data, tenantId });
   }
 
-  async getApplicants(query: any, tenantId?: string) {
+  async getApplicants(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.jobPostingId) where.jobPostingId = query.jobPostingId;
     if (query.stage) where.stage = query.stage;
@@ -69,7 +69,7 @@ class RecruitmentService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateApplicant(id: number, data: any) {
+  async updateApplicant(id: number, data: Record<string, unknown>) {
     const applicant = await Applicant.findByPk(id);
     if (!applicant) return null;
     await applicant.update(data);
@@ -119,7 +119,7 @@ class RecruitmentService {
     }
 
     // Record stage transition timestamp in the experience JSONB
-    const stageHistory = (applicant.experience as any)?.stageHistory || [];
+    const stageHistory = (applicant.experience as Record<string, unknown>)?.stageHistory || [];
     stageHistory.push({
       from: currentStage,
       to: newStage,
@@ -133,11 +133,11 @@ class RecruitmentService {
 
     try {
       io.emit('recruitment:stage_changed', { id: applicantId, name: applicant.name, previousStage: currentStage, newStage });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     if (newStage === 'HIRED') {
       try {
         io.emit('recruitment:hired', { id: applicantId, name: applicant.name, jobPostingId: applicant.jobPostingId });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
 
     return applicant.reload();
@@ -229,13 +229,13 @@ class RecruitmentService {
     const daysArray: number[] = [];
 
     for (const applicant of hiredApplicants) {
-      const exp = applicant.experience as any;
+      const exp = applicant.experience as Record<string, unknown>;
       const stageHistory = exp?.stageHistory || [];
 
       // Find the HIRED transition timestamp
-      const hiredEntry = stageHistory.find((h: any) => h.to === 'HIRED');
+      const hiredEntry = stageHistory.find((h: Record<string, unknown>) => h.to === 'HIRED');
       const hiredDate = hiredEntry?.timestamp ? new Date(hiredEntry.timestamp) : null;
-      const appliedDate = new Date(applicant.createdAt as any);
+      const appliedDate = new Date(applicant.createdAt as Record<string, unknown>);
 
       if (hiredDate) {
         const diffMs = hiredDate.getTime() - appliedDate.getTime();
@@ -313,7 +313,7 @@ class RecruitmentService {
     });
 
     if (firstHired && posting.createdAt) {
-      const diffMs = new Date(firstHired.updatedAt as any).getTime() - new Date(posting.createdAt as any).getTime();
+      const diffMs = new Date(firstHired.updatedAt as Record<string, unknown>).getTime() - new Date(posting.createdAt as Record<string, unknown>).getTime();
       timeToFill = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
     }
 

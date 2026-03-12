@@ -5,13 +5,13 @@ import { sequelize } from '../config/db';
 import { io } from '../server';
 
 class WarehouseService {
-  async createWarehouse(data: any, tenantId?: string) {
+  async createWarehouse(data: Record<string, unknown>, tenantId?: string) {
     return Warehouse.create({ ...data, tenantId });
   }
 
-  async getWarehouses(query: any, tenantId?: string) {
+  async getWarehouses(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
@@ -30,7 +30,7 @@ class WarehouseService {
     return Warehouse.findByPk(id, { include: [{ model: WarehouseZone, as: 'zones' }] });
   }
 
-  async updateWarehouse(id: number, data: any) {
+  async updateWarehouse(id: number, data: Record<string, unknown>) {
     const item = await Warehouse.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -45,20 +45,20 @@ class WarehouseService {
     return true;
   }
 
-  async getZones(query: any, tenantId?: string) {
+  async getZones(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     const { rows, count } = await WarehouseZone.findAndCountAll({ where, limit, offset, order: [['createdAt', 'DESC']] });
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async createZone(data: any, tenantId?: string) {
+  async createZone(data: Record<string, unknown>, tenantId?: string) {
     return WarehouseZone.create({ ...data, tenantId });
   }
 
   async getStockCount(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     const count = await StockTransfer.count({ where });
     return { count, total: count };
@@ -71,14 +71,14 @@ class WarehouseService {
     return true;
   }
 
-  async createTransfer(data: any, tenantId?: string) {
+  async createTransfer(data: Record<string, unknown>, tenantId?: string) {
     const transferNumber = `TRF-${Date.now().toString(36).toUpperCase()}`;
     return StockTransfer.create({ ...data, transferNumber, tenantId });
   }
 
-  async getTransfers(query: any, tenantId?: string) {
+  async getTransfers(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     const { rows, count } = await StockTransfer.findAndCountAll({
@@ -90,7 +90,7 @@ class WarehouseService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateTransfer(id: number, data: any) {
+  async updateTransfer(id: number, data: Record<string, unknown>) {
     const transfer = await StockTransfer.findByPk(id);
     if (!transfer) return null;
     await transfer.update(data);
@@ -198,7 +198,7 @@ class WarehouseService {
 
     try {
       io.emit('warehouse:stock_updated', { warehouseId, currentOccupancy: totalQty, itemCount: items.length });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return { transfers: results, currentOccupancy: totalQty };
   }
 
@@ -255,7 +255,7 @@ class WarehouseService {
           toWarehouseId: transfer.toWarehouseId,
           status: 'RECEIVED'
         });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
       return transfer;
     } catch (err) {
       await transaction.rollback();
@@ -284,7 +284,7 @@ class WarehouseService {
     if (alerts.length > 0) {
       try {
         io.emit('warehouse:low_stock_alert', { tenantId, threshold, alertCount: alerts.length, alerts: alerts.slice(0, 10) });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
     return alerts;
   }
@@ -385,7 +385,7 @@ class WarehouseService {
 
     try {
       io.emit('warehouse:pick_pack_completed', packingSlip);
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return packingSlip;
   }
 

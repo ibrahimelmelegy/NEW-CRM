@@ -21,7 +21,7 @@ export type FilterOperator =
 export interface FilterObject {
   field: string;
   operator: FilterOperator;
-  value: any;
+  value: unknown;
 }
 
 export type ConditionLogic = 'AND' | 'OR';

@@ -58,7 +58,7 @@ export const useProjectStore = defineStore('projects', {
             ).toString()
           : '';
 
-        const response: any = await useApiFetch(`project${query}`);
+        const response = await useApiFetch(`project${query}`);
 
         if (response.success && response.body) {
           this.projects = response.body.docs || [];
@@ -82,7 +82,7 @@ export const useProjectStore = defineStore('projects', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch(`project/${id}`);
+        const response = await useApiFetch(`project/${id}`);
 
         if (response.success && response.body) {
           this.currentProject = response.body;
@@ -103,7 +103,7 @@ export const useProjectStore = defineStore('projects', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch('project', 'POST', data as Record<string, unknown>);
+        const response = await useApiFetch('project', 'POST', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           this.projects.unshift(response.body);
@@ -127,7 +127,7 @@ export const useProjectStore = defineStore('projects', {
       this.error = null;
 
       try {
-        const response: any = await useApiFetch(`project/${id}`, 'PUT', data as Record<string, unknown>);
+        const response = await useApiFetch(`project/${id}`, 'PUT', data as Record<string, unknown>);
 
         if (response.success && response.body) {
           const index = this.projects.findIndex(p => p.id === id);

@@ -2,6 +2,7 @@ import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from '../types';
 import { wrapResult } from '../utils/response/responseWrapper';
 import emailIntegrationService from './emailIntegrationService';
+import logger from '../config/logger';
 
 class EmailController {
   public async getAccounts(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
@@ -10,7 +11,7 @@ class EmailController {
       wrapResult(res, accounts);
     } catch (error) {
       // Return empty array instead of 500 when email integration isn't set up
-      console.error('[EmailController] getAccounts error:', (error as Error).message);
+      logger.error({ err: (error as Error).message }, '[EmailController] getAccounts error');
       wrapResult(res, []);
     }
   }
@@ -52,7 +53,7 @@ class EmailController {
       wrapResult(res, result);
     } catch (error) {
       // Return empty result instead of 500
-      console.error('[EmailController] getMessages error:', (error as Error).message);
+      logger.error({ err: (error as Error).message }, '[EmailController] getMessages error');
       wrapResult(res, {
         docs: [],
         pagination: { page: 1, limit: 20, totalItems: 0, totalPages: 0 }
@@ -75,7 +76,7 @@ class EmailController {
       wrapResult(res, tracking);
     } catch (error) {
       // Return empty array instead of 500
-      console.error('[EmailController] getTracking error:', (error as Error).message);
+      logger.error({ err: (error as Error).message }, '[EmailController] getTracking error');
       wrapResult(res, []);
     }
   }

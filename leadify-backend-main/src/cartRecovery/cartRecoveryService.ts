@@ -7,22 +7,22 @@ import { io } from '../server';
 class CartRecoveryService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     // Auto-calculate totalValue from items if not provided
     if (data.items && Array.isArray(data.items) && !data.totalValue) {
-      data.totalValue = data.items.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
+      data.totalValue = data.items.reduce((sum: number, item: Record<string, unknown>) => sum + item.price * item.quantity, 0);
     }
     if (!data.abandonedAt) data.abandonedAt = new Date();
     const cart = await AbandonedCart.create({ ...data, tenantId });
     try {
       io.emit('cart:abandoned', { id: cart.id, totalValue: cart.totalValue });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return cart;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.recoveryStatus) where.recoveryStatus = query.recoveryStatus;
     if (query.customerId) where.customerId = query.customerId;
@@ -55,13 +55,13 @@ class CartRecoveryService {
     });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await AbandonedCart.findByPk(id);
     if (!item) return null;
     await item.update(data);
     try {
       io.emit('cart:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -93,7 +93,7 @@ class CartRecoveryService {
 
     try {
       io.emit('cart:reminderSent', { id: cart.id, customerId: cart.customerId, reminderCount: cart.reminderCount });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return {
       success: true,
@@ -117,7 +117,7 @@ class CartRecoveryService {
 
     try {
       io.emit('cart:recovered', { id: cart.id, totalValue: cart.totalValue });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return cart;
   }
 
@@ -126,7 +126,7 @@ class CartRecoveryService {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - days);
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       recoveryStatus: { [Op.in]: ['ABANDONED', 'REMINDED'] },
       abandonedAt: { [Op.lt]: cutoff }
     };
@@ -141,7 +141,7 @@ class CartRecoveryService {
 
   /** Get recovery funnel statistics */
   async getRecoveryStats(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const all = await AbandonedCart.findAll({ where, raw: true });
@@ -154,7 +154,7 @@ class CartRecoveryService {
       recoveredValue = 0;
 
     for (const c of all) {
-      const cart = c as any;
+      const cart = c as Record<string, unknown>;
       const val = Number(cart.totalValue) || 0;
       switch (cart.recoveryStatus) {
         case 'ABANDONED':

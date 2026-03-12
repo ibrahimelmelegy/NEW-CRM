@@ -106,7 +106,7 @@ function openNav() {
 }
 async function logout() {
   const response = await useApiFetch('auth/logout', 'POST');
-  (globalUser as any).value = null;
+  (globalUser as Record<string, unknown>).value = null;
   ElNotification({
     title: response?.success ? 'Success' : 'Error',
     type: response?.success ? 'success' : 'error',

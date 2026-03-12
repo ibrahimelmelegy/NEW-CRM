@@ -5,7 +5,7 @@ import User from '../user/userModel';
 export interface ScoringCriterion {
   field: string;
   operator: 'equals' | 'not_equals' | 'in' | 'not_in' | 'contains' | 'is_empty' | 'is_not_empty' | 'greater_than' | 'less_than' | 'between';
-  value: any;
+  value: unknown;
   points: number;
 }
 

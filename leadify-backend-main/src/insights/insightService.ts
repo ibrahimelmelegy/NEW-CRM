@@ -31,7 +31,7 @@ class InsightService {
     const startDate = startOfMonth(new Date());
     const endDate = endOfMonth(new Date());
 
-    const query: Record<string, any> = {};
+    const query: Record<string, unknown> = {};
     if (!user.role.permissions.includes(LeadAndSalesWidgetsPermissionsEnum.VIEW_GLOBAL_LEAD_SALES_WIDGETS)) query.userId = user.id;
     const [
       leadCount,
@@ -165,7 +165,7 @@ class InsightService {
         acc[stage] = opportunityCount > 0 ? Number(((count / opportunityCount) * 100).toFixed(2)) : 0;
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, unknown>
     );
 
     const dealsPipeline = {
@@ -221,7 +221,7 @@ class InsightService {
     const cachedData = await cacheService.get(cacheKey);
     if (cachedData) return cachedData;
 
-    const query: Record<string, any> = {};
+    const query: Record<string, unknown> = {};
     if (!user.role.permissions.includes(ProjectsAndOperationsWidgetsPermissionsEnum.VIEW_GLOBAL_PROJECTS_OPERATIONS_WIDGETS)) query.userId = user.id;
 
     const [projectCount, projectsByStatusRaw, totalManpowerCount, assignedManpowerCount, totalAssetCount, assignedAssetCount, eitmadProjectsCount] =
@@ -286,7 +286,7 @@ class InsightService {
         acc[status] = count;
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, unknown>
     );
 
     const usedManpowerPercentage = totalManpowerCount > 0 ? Number(((assignedManpowerCount / totalManpowerCount) * 100).toFixed(2)) : 0;
@@ -310,7 +310,7 @@ class InsightService {
     const cachedData = await cacheService.get(cacheKey);
     if (cachedData) return cachedData;
 
-    const query: Record<string, any> = {};
+    const query: Record<string, unknown> = {};
     if (!user.role.permissions.includes(FinancialAndBusinessMetricsWidgetsPermissionsEnum.VIEW_GLOBAL_FINANCIAL_BUSINESS_METRICS_WIDGETS))
       query.userId = user.id;
 
@@ -363,7 +363,7 @@ class InsightService {
     const cachedData = await cacheService.get(cacheKey);
     if (cachedData) return cachedData;
 
-    const query: Record<string, any> = {};
+    const query: Record<string, unknown> = {};
     if (!user.role.permissions.includes(PerformanceAndHRWidgetsPermissionsEnum.VIEW_GLOBAL_PERFORMANCE_HR_WIDGETS)) query.userId = user.id;
 
     const [leadCount, opportunityCount, convertedDealsFromOpportunityCount, dealsCount] = await Promise.all([

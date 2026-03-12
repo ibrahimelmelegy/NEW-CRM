@@ -23,7 +23,7 @@ class TaskService {
   /**
    * List tasks with filters, search, sorting and pagination.
    */
-  public async getTasks(query: any) {
+  public async getTasks(query: Record<string, unknown>) {
     const {
       page = 1,
       limit = 10,
@@ -59,11 +59,11 @@ class TaskService {
     }
     if (dueDateFrom || dueDateTo) {
       where.dueDate = {};
-      if (dueDateFrom) (where.dueDate as any)[Op.gte] = new Date(dueDateFrom);
-      if (dueDateTo) (where.dueDate as any)[Op.lte] = new Date(dueDateTo);
+      if (dueDateFrom) (where.dueDate as Record<string, unknown>)[Op.gte] = new Date(dueDateFrom);
+      if (dueDateTo) (where.dueDate as Record<string, unknown>)[Op.lte] = new Date(dueDateTo);
     }
     if (search) {
-      where[Op.or as any] = [{ title: { [Op.iLike]: `%${search}%` } }, { description: { [Op.iLike]: `%${search}%` } }];
+      where[Op.or as symbol] = [{ title: { [Op.iLike]: `%${search}%` } }, { description: { [Op.iLike]: `%${search}%` } }];
     }
 
     const allowedSortFields = ['createdAt', 'dueDate', 'priority', 'status', 'title', 'updatedAt'];
@@ -117,7 +117,7 @@ class TaskService {
   /**
    * Create a new task.
    */
-  public async createTask(data: any, userId: number) {
+  public async createTask(data: Record<string, unknown>, userId: number) {
     const task = await Task.create({
       ...data,
       createdBy: userId
@@ -129,7 +129,7 @@ class TaskService {
   /**
    * Update an existing task.
    */
-  public async updateTask(id: number, data: any, _userId: number) {
+  public async updateTask(id: number, data: Record<string, unknown>, _userId: number) {
     const task = await this.taskOrError({ id });
 
     // If status is being changed to COMPLETED, set completedAt
@@ -177,7 +177,7 @@ class TaskService {
   /**
    * Get tasks assigned to a specific user with filters.
    */
-  public async getMyTasks(userId: number, query: any) {
+  public async getMyTasks(userId: number, query: Record<string, unknown>) {
     return this.getTasks({ ...query, assignedTo: userId });
   }
 

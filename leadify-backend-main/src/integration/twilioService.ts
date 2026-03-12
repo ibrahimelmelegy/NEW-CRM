@@ -1,4 +1,5 @@
 import twilio from 'twilio';
+import logger from '../config/logger';
 
 class TwilioService {
   private client: twilio.Twilio | null = null;
@@ -16,7 +17,7 @@ class TwilioService {
     if (accountSid && authToken && this.twilioPhoneNumber) {
       this.client = twilio(accountSid, authToken);
     } else {
-      console.warn('[TwilioService] Twilio credentials are not fully configured in environment variables.');
+      logger.warn('[TwilioService] Twilio credentials are not fully configured in environment variables.');
     }
   }
 
@@ -26,7 +27,7 @@ class TwilioService {
    * @param twimlUrl The URL Twilio will request when the call connects to get TwiML instructions
    * @param webhookUrl The URL Twilio will send call status updates to
    */
-  public async makeCall(to: string, twimlUrl: string, webhookUrl?: string): Promise<any> {
+  public async makeCall(to: string, twimlUrl: string, webhookUrl?: string): Promise<unknown> {
     if (!this.client || !this.twilioPhoneNumber) {
       throw new Error('Twilio integration is not fully configured.');
     }
@@ -42,7 +43,7 @@ class TwilioService {
       });
       return call;
     } catch (error) {
-      console.error('[TwilioService] Failed to make call:', error);
+      logger.error({ error }, '[TwilioService] Failed to make call');
       throw error;
     }
   }

@@ -36,23 +36,23 @@ const mockCleanObject = vi.fn((obj: Record<string, unknown>) => {
 
 // Mock element-plus to intercept the import { ElNotification } in useLeads.ts
 vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockElNotification(...args)
+  ElNotification: (...args: unknown[]) => mockElNotification(...args)
 }));
 
 // Set up globals before importing the module under test
-(globalThis as any).useApiFetch = mockUseApiFetch;
-(globalThis as any).ElNotification = mockElNotification;
-(globalThis as any).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
-(globalThis as any).formatDate = mockFormatDate;
-(globalThis as any).getYear = mockGetYear;
-(globalThis as any).cleanObject = mockCleanObject;
-(globalThis as any).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
+(globalThis as Record<string, unknown>).useApiFetch = mockUseApiFetch;
+(globalThis as Record<string, unknown>).ElNotification = mockElNotification;
+(globalThis as Record<string, unknown>).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
+(globalThis as Record<string, unknown>).formatDate = mockFormatDate;
+(globalThis as Record<string, unknown>).getYear = mockGetYear;
+(globalThis as Record<string, unknown>).cleanObject = mockCleanObject;
+(globalThis as Record<string, unknown>).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
 
 describe('useLeads composable', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset useI18n mock for each test
-    (globalThis as any).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
+    (globalThis as Record<string, unknown>).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
   });
 
   // ============================================

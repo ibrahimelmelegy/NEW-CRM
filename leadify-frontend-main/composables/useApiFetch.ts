@@ -82,10 +82,11 @@ export const useApiFetch = async <T = unknown>(
     let rawResponse: Record<string, unknown>;
     try {
       rawResponse = await doFetch();
-    } catch (firstError: any) {
+    } catch (firstError: unknown) {
       // If CSRF token expired, refresh and retry once
-      const status = firstError?.response?.status || firstError?.statusCode;
-      const msg = (firstError?.response?._data?.message || firstError?.message || '').toLowerCase();
+      const fe = firstError as { response?: { status?: number; _data?: { message?: string } }; statusCode?: number; message?: string };
+      const status = fe?.response?.status || fe?.statusCode;
+      const msg = (fe?.response?._data?.message || fe?.message || '').toLowerCase();
       if (status === 403 && msg.includes('csrf')) {
         await refreshCsrfToken();
         rawResponse = await doFetch();
@@ -132,10 +133,6 @@ export const useApiFetch = async <T = unknown>(
 
     // ✅ FIX: Get the Status Code correctly from the HTTP Response first
     const code = fetchError?.response?.status || fetchError?.statusCode || (errorData.code as number) || 500;
-
-    if (!silence) {
-      console.error(`API Error (${code}):`, message);
-    }
 
     return {
       body: null, // Changed from data to body

@@ -9,7 +9,7 @@ export interface PricingTableOptions {
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     pricingTable: {
-      insertPricingTable: (options?: { items?: any[]; taxRate?: number }) => ReturnType;
+      insertPricingTable: (options?: { items?: unknown[]; taxRate?: number }) => ReturnType;
     };
   }
 }

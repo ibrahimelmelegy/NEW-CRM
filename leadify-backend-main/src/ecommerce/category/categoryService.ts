@@ -13,26 +13,26 @@ function slugify(text: string): string {
 }
 
 class CategoryService {
-  async getCategories(query: any): Promise<any> {
+  async getCategories(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, parentId, isActive } = query;
 
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [{ name: { [Op.iLike]: `%${searchKey}%` } }];
+      (where as Record<string, unknown>)[Op.or] = [{ name: { [Op.iLike]: `%${searchKey}%` } }];
     }
 
     if (parentId !== undefined && parentId !== '') {
       if (parentId === 'null' || parentId === null) {
-        (where as any).parentId = null;
+        (where as Record<string, unknown>).parentId = null;
       } else {
-        (where as any).parentId = parentId;
+        (where as Record<string, unknown>).parentId = parentId;
       }
     }
 
     if (isActive !== undefined && isActive !== '') {
-      (where as any).isActive = isActive === 'true' || isActive === true;
+      (where as Record<string, unknown>).isActive = isActive === 'true' || isActive === true;
     }
 
     const { rows: docs, count: totalItems } = await EcCategory.findAndCountAll({
@@ -90,7 +90,7 @@ class CategoryService {
     return categories;
   }
 
-  async createCategory(data: any): Promise<EcCategory> {
+  async createCategory(data: Record<string, unknown>): Promise<EcCategory> {
     const slug = slugify(data.name);
 
     // Ensure slug uniqueness by appending a suffix if needed
@@ -104,7 +104,7 @@ class CategoryService {
     return EcCategory.create({ ...data, slug: finalSlug });
   }
 
-  async updateCategory(id: string, data: any): Promise<EcCategory> {
+  async updateCategory(id: string, data: Record<string, unknown>): Promise<EcCategory> {
     const category = await EcCategory.findByPk(id);
     if (!category) throw new Error('Category not found');
 

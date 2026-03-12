@@ -42,7 +42,7 @@ async function runTypoMigration(sequelize: Sequelize) {
 
   for (const table of tables) {
     try {
-      const [results]: any = await sequelize.query(
+      const [results]: unknown = await sequelize.query(
         `SELECT column_name FROM information_schema.columns WHERE table_name = :tableName AND column_name = 'descripion'`,
         { replacements: { tableName: table } }
       );
@@ -102,7 +102,7 @@ sequelize
 
     // Migrate deal price from INTEGER to DECIMAL(12,2)
     try {
-      const [results]: any = await sequelize.query(
+      const [results]: unknown = await sequelize.query(
         `SELECT data_type FROM information_schema.columns WHERE table_name = 'deals' AND column_name = 'price'`
       );
       if (results.length > 0 && results[0].data_type === 'integer') {

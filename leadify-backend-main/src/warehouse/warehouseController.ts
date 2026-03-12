@@ -141,8 +141,8 @@ class WarehouseController {
       }
       wrapResult(res, await service.pickAndPack(warehouseId, items, orderId));
     } catch (e) {
-      if ((e as any).shortages) {
-        return res.status(400).send({ success: false, message: e instanceof Error ? e.message : String(e), shortages: (e as any).shortages });
+      if ((e as Record<string, unknown>).shortages) {
+        return res.status(400).send({ success: false, message: e instanceof Error ? e.message : String(e), shortages: (e as Record<string, unknown>).shortages });
       }
       next(e);
     }
@@ -151,7 +151,7 @@ class WarehouseController {
   async getInventoryMovement(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const warehouseId = Number(req.params.id);
-      const { dateFrom, dateTo } = req.query as any;
+      const { dateFrom, dateTo } = req.query as Record<string, string>;
       if (!dateFrom || !dateTo) {
         return res.status(400).send({ success: false, message: 'dateFrom and dateTo query params are required' });
       }

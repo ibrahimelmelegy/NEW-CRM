@@ -48,7 +48,7 @@ class PdfService {
     const document = await DocBuilderDocument.findByPk(documentId);
     if (!document) throw new BaseError(ERRORS.NOT_FOUND);
 
-    let content: Record<string, any> = {};
+    let content: Record<string, unknown> = {};
     try {
       content = document.content ? JSON.parse(document.content) : {};
     } catch {
@@ -60,7 +60,7 @@ class PdfService {
     if (document.templateId) {
       const template = await DocumentTemplate.findByPk(document.templateId);
       if (template?.layout) {
-        templateHtml = (template.layout as any).templateHtml;
+        templateHtml = (template.layout as Record<string, unknown>).templateHtml;
       }
     }
 

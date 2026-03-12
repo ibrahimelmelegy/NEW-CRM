@@ -831,6 +831,13 @@ const saveTask = async () => {
     return;
   }
 
+  const startStr = formatDateStr(taskForm.value.start);
+  const endStr = formatDateStr(taskForm.value.end);
+  if (startStr && endStr && new Date(endStr) < new Date(startStr)) {
+    ElMessage.warning(t('common.invalidDateRange') || 'End date must be after start date');
+    return;
+  }
+
   saving.value = true;
 
   try {

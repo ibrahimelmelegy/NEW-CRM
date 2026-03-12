@@ -8,6 +8,7 @@ import { GetProposalsInput } from './inputs/getProposalsInput';
 import { RejectProposalInput } from './inputs/rejectProposalInput';
 import { AssignUserToProposalInput } from './inputs/assignUsersToProposalInput';
 import { ProposalPermissionsEnum } from '../role/roleEnum';
+import { pdfLimiter } from '../infrastructure/rateLimitEnhanced';
 import { validateEmailConfiguration, validateEmailParam } from '../middleware/customMiddleware';
 
 const router = express.Router();
@@ -643,6 +644,7 @@ router.get(
 router.get(
   '/:id/pdf',
   authenticateUser,
+  pdfLimiter,
   HasPermission([ProposalPermissionsEnum.VIEW_OWN_PROPOSALS, ProposalPermissionsEnum.VIEW_GLOBAL_PROPOSALS]),
   proposalController.generatePdf
 );

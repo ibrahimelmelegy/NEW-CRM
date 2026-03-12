@@ -16,7 +16,7 @@ export interface ReportFilter {
     | 'not_in'
     | 'is_null'
     | 'is_not_null';
-  value: any;
+  value: unknown;
 }
 
 export interface ReportAggregation {

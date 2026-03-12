@@ -63,7 +63,7 @@ describe('useDealStore', () => {
         mockDeal({ id: 'deal-1', stage: 'PROGRESS' }),
         mockDeal({ id: 'deal-2', stage: 'PROGRESS' }),
         mockDeal({ id: 'deal-3', stage: 'CLOSED' })
-      ] as any;
+      ] as unknown;
 
       const grouped = store.dealsByStage;
       expect(grouped.PROGRESS).toHaveLength(2);
@@ -80,7 +80,7 @@ describe('useDealStore', () => {
         mockDeal({ id: 'deal-1', price: 5000 }),
         mockDeal({ id: 'deal-2', price: 3000 }),
         mockDeal({ id: 'deal-3', price: 2000 })
-      ] as any;
+      ] as unknown;
 
       expect(store.totalValue).toBe(10000);
     });
@@ -90,7 +90,7 @@ describe('useDealStore', () => {
         mockDeal({ id: 'deal-1', price: 5000 }),
         mockDeal({ id: 'deal-2', price: 0 }),
         mockDeal({ id: 'deal-3', price: undefined })
-      ] as any;
+      ] as unknown;
 
       expect(store.totalValue).toBe(5000);
     });
@@ -104,7 +104,7 @@ describe('useDealStore', () => {
       const deals = [mockDeal({ id: 'deal-1' }), mockDeal({ id: 'deal-2' })];
       const pagination = { page: 1, limit: 10, total: 2, totalPages: 1 };
 
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: { docs: deals, pagination }
       });
@@ -119,7 +119,7 @@ describe('useDealStore', () => {
     });
 
     it('should set error on API failure response', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: false,
         message: 'Access denied'
       });
@@ -132,7 +132,7 @@ describe('useDealStore', () => {
     });
 
     it('should set error on thrown exception', async () => {
-      (globalThis.useApiFetch as any).mockRejectedValue(new Error('Connection timeout'));
+      (globalThis.useApiFetch as unknown).mockRejectedValue(new Error('Connection timeout'));
 
       await store.fetchDeals();
 
@@ -145,12 +145,12 @@ describe('useDealStore', () => {
     it('should create a deal and prepend it to the list', async () => {
       const newDeal = mockDeal({ id: 'deal-new', name: 'New Deal' });
 
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: newDeal
       });
 
-      store.deals = [mockDeal({ id: 'deal-existing' })] as any;
+      store.deals = [mockDeal({ id: 'deal-existing' })] as unknown;
       const result = await store.createDeal({ name: 'New Deal', price: 10000 });
 
       expect(result).toEqual(newDeal);
@@ -160,7 +160,7 @@ describe('useDealStore', () => {
     });
 
     it('should return null and set error on failure', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: false,
         message: 'Price is required'
       });
@@ -175,9 +175,9 @@ describe('useDealStore', () => {
   describe('updateDeal', () => {
     it('should update an existing deal in the list', async () => {
       const updated = mockDeal({ id: 'deal-1', name: 'Updated Deal', price: 20000 });
-      store.deals = [mockDeal({ id: 'deal-1' })] as any;
+      store.deals = [mockDeal({ id: 'deal-1' })] as unknown;
 
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: updated
       });
@@ -192,10 +192,10 @@ describe('useDealStore', () => {
       const original = mockDeal({ id: 'deal-1', name: 'Original' });
       const updated = mockDeal({ id: 'deal-1', name: 'Updated' });
 
-      store.deals = [original] as any;
-      store.currentDeal = original as any;
+      store.deals = [original] as unknown;
+      store.currentDeal = original as unknown;
 
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: true,
         body: updated
       });
@@ -208,9 +208,9 @@ describe('useDealStore', () => {
 
   describe('deleteDeal', () => {
     it('should remove deal from list on success', async () => {
-      store.deals = [mockDeal({ id: 'deal-1' }), mockDeal({ id: 'deal-2' })] as any;
+      store.deals = [mockDeal({ id: 'deal-1' }), mockDeal({ id: 'deal-2' })] as unknown;
 
-      (globalThis.useApiFetch as any).mockResolvedValue({ success: true });
+      (globalThis.useApiFetch as unknown).mockResolvedValue({ success: true });
 
       const result = await store.deleteDeal('deal-1');
 
@@ -221,10 +221,10 @@ describe('useDealStore', () => {
 
     it('should clear currentDeal if deleted deal matches', async () => {
       const deal = mockDeal({ id: 'deal-1' });
-      store.deals = [deal] as any;
-      store.currentDeal = deal as any;
+      store.deals = [deal] as unknown;
+      store.currentDeal = deal as unknown;
 
-      (globalThis.useApiFetch as any).mockResolvedValue({ success: true });
+      (globalThis.useApiFetch as unknown).mockResolvedValue({ success: true });
 
       await store.deleteDeal('deal-1');
 
@@ -232,7 +232,7 @@ describe('useDealStore', () => {
     });
 
     it('should return false on failure', async () => {
-      (globalThis.useApiFetch as any).mockResolvedValue({
+      (globalThis.useApiFetch as unknown).mockResolvedValue({
         success: false,
         message: 'Cannot delete'
       });

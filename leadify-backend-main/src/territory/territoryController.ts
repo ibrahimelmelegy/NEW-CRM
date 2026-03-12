@@ -6,7 +6,7 @@ import { AuthenticatedRequest } from '../types';
 class TerritoryController {
   public async getTerritories(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const responseFromService = await territoryService.getTerritories(req.query as any);
+      const responseFromService = await territoryService.getTerritories(req.query as Record<string, string>);
       wrapResult(res, responseFromService);
     } catch (error) {
       next(error);

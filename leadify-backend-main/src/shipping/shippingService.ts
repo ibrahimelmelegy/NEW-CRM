@@ -14,14 +14,14 @@ const STATUS_ORDER: Record<string, string[]> = {
 };
 
 class ShippingService {
-  async createShipment(data: any, tenantId?: string) {
+  async createShipment(data: Record<string, unknown>, tenantId?: string) {
     const shipmentNumber = `SHP-${Date.now().toString(36).toUpperCase()}`;
     return Shipment.create({ ...data, shipmentNumber, tenantId });
   }
 
-  async getShipments(query: any, tenantId?: string) {
+  async getShipments(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.carrier) where.carrier = query.carrier;
@@ -35,7 +35,7 @@ class ShippingService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateShipment(id: number, data: any) {
+  async updateShipment(id: number, data: Record<string, unknown>) {
     const item = await Shipment.findByPk(id);
     if (!item) return null;
     if (data.status === 'DELIVERED' && !item.actualDelivery) data.actualDelivery = new Date();
@@ -50,12 +50,12 @@ class ShippingService {
     return true;
   }
 
-  async createRate(data: any, tenantId?: string) {
+  async createRate(data: Record<string, unknown>, tenantId?: string) {
     return ShippingRate.create({ ...data, tenantId });
   }
 
-  async getRates(query: any, tenantId?: string) {
-    const where: Record<string, any> = {};
+  async getRates(query: Record<string, unknown>, tenantId?: string) {
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.carrier) where.carrier = query.carrier;
     if (query.isActive !== undefined) where.isActive = query.isActive === 'true';
@@ -68,7 +68,7 @@ class ShippingService {
     });
   }
 
-  async updateRate(id: number, data: any) {
+  async updateRate(id: number, data: Record<string, unknown>) {
     const item = await ShippingRate.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -93,7 +93,7 @@ class ShippingService {
   async calculateShippingRate(weight: number, zone?: string, tenantId?: string) {
     if (!weight || weight <= 0) throw new Error('Weight must be a positive number');
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       isActive: true,
       weightMin: { [Op.lte]: weight },
       weightMax: { [Op.gte]: weight }
@@ -146,7 +146,7 @@ class ShippingService {
       throw new Error(`Invalid status transition: ${currentStatus} -> ${newStatus}. Allowed: ${allowedNext.join(', ') || 'none (terminal state)'}`);
     }
 
-    const updateData: Record<string, any> = { status: newStatus };
+    const updateData: Record<string, unknown> = { status: newStatus };
 
     // Auto-set timestamps based on the new status
     if (newStatus === 'SHIPPED') {
@@ -159,11 +159,11 @@ class ShippingService {
     await shipment.update(updateData);
     try {
       io.emit('shipping:status_changed', { id: shipment.id, shipmentNumber: shipment.shipmentNumber, previousStatus: currentStatus, newStatus });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     if (newStatus === 'DELIVERED') {
       try {
         io.emit('shipping:delivered', { id: shipment.id, shipmentNumber: shipment.shipmentNumber, recipientName: shipment.recipientName });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
     return shipment;
   }
@@ -181,7 +181,7 @@ class ShippingService {
     let deliveryDays: number | null = null;
     let onTime: boolean | null = null;
     if (shipment.actualDelivery && shipment.createdAt) {
-      const created = new Date(shipment.createdAt as any).getTime();
+      const created = new Date(shipment.createdAt as Record<string, unknown>).getTime();
       const delivered = new Date(shipment.actualDelivery).getTime();
       deliveryDays = Math.ceil((delivered - created) / (1000 * 60 * 60 * 24));
     }
@@ -215,7 +215,7 @@ class ShippingService {
   async getCarrierRates(weight: number, zone?: string, tenantId?: string) {
     if (!weight || weight <= 0) throw new Error('Weight must be a positive number');
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       isActive: true,
       weightMin: { [Op.lte]: weight },
       weightMax: { [Op.gte]: weight }
@@ -275,7 +275,7 @@ class ShippingService {
 
     try {
       io.emit('shipping:bulk_status_updated', { successCount, failCount });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return { total: updates.length, successCount, failCount, results };
   }
@@ -285,7 +285,7 @@ class ShippingService {
    * total shipments, breakdown by status, on-time rate, average delivery time.
    */
   async getShippingAnalytics(tenantId: string) {
-    const where: Record<string, any> = { tenantId };
+    const where: Record<string, unknown> = { tenantId };
 
     // Total count
     const totalShipments = await Shipment.count({ where });
@@ -312,7 +312,7 @@ class ShippingService {
 
     for (const s of delivered) {
       if (s.createdAt && s.actualDelivery) {
-        const days = Math.ceil((new Date(s.actualDelivery).getTime() - new Date(s.createdAt as any).getTime()) / (1000 * 60 * 60 * 24));
+        const days = Math.ceil((new Date(s.actualDelivery).getTime() - new Date(s.createdAt as Record<string, unknown>).getTime()) / (1000 * 60 * 60 * 24));
         totalDeliveryDays += days;
       }
       if (s.estimatedDelivery && s.actualDelivery) {

@@ -8,7 +8,7 @@ import { io } from '../server';
 class LiveChatService {
   // ───────── Conversation CRUD ─────────────────────────────────────────────
 
-  async createConversation(data: any, tenantId?: string) {
+  async createConversation(data: Record<string, unknown>, tenantId?: string) {
     const conversation = await ChatConversation.create({
       ...data,
       tenantId,
@@ -29,9 +29,9 @@ class LiveChatService {
     return conversation;
   }
 
-  async getConversations(query: any, tenantId?: string) {
+  async getConversations(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.staffId) where.staffId = query.staffId;
@@ -84,7 +84,7 @@ class LiveChatService {
     });
   }
 
-  async updateConversation(id: number, data: any) {
+  async updateConversation(id: number, data: Record<string, unknown>) {
     const conv = await ChatConversation.findByPk(id);
     if (!conv) return null;
 
@@ -121,7 +121,7 @@ class LiveChatService {
 
   // ───────── Message CRUD ──────────────────────────────────────────────────
 
-  async sendMessage(data: any, tenantId?: string) {
+  async sendMessage(data: Record<string, unknown>, tenantId?: string) {
     const message = await ChatMessage.create({ ...data, tenantId });
 
     // Update conversation counters and lastMessage
@@ -174,7 +174,7 @@ class LiveChatService {
     return message;
   }
 
-  async getMessages(conversationId: number, query: any) {
+  async getMessages(conversationId: number, query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 50);
     const { rows, count } = await ChatMessage.findAndCountAll({
       where: { conversationId },
@@ -228,7 +228,7 @@ class LiveChatService {
     if (!conv) return null;
 
     const previousAgent = conv.staffId;
-    const updateData: Record<string, any> = { staffId: agentId };
+    const updateData: Record<string, unknown> = { staffId: agentId };
     if (conv.status === 'WAITING' || conv.status === 'OPEN') {
       updateData.status = 'ACTIVE';
     }

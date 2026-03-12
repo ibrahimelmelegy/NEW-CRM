@@ -12,13 +12,13 @@ interface SurveyQuestion {
 }
 
 class SurveyService {
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     return Survey.create({ ...data, tenantId });
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.title = { [Op.iLike]: `%${query.search}%` };
@@ -30,7 +30,7 @@ class SurveyService {
     return Survey.findByPk(id, { include: [{ model: SurveyResponse, as: 'responses' }] });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await Survey.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -45,7 +45,7 @@ class SurveyService {
     return true;
   }
 
-  async submitResponse(surveyId: number, data: any) {
+  async submitResponse(surveyId: number, data: Record<string, unknown>) {
     const survey = await Survey.findByPk(surveyId);
     if (!survey) return null;
     if (survey.status === 'CLOSED' || survey.status === 'ARCHIVED') return null;
@@ -53,13 +53,13 @@ class SurveyService {
     await survey.increment('responseCount');
     try {
       io.emit('survey:response_submitted', { surveyId, responseId: response.id, surveyTitle: survey.title });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return response;
   }
 
-  async getResponses(query: any, tenantId?: string) {
+  async getResponses(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.surveyId) where.surveyId = query.surveyId;
     const { rows, count } = await SurveyResponse.findAndCountAll({ where, order: [['createdAt', 'DESC']], limit, offset });
@@ -95,7 +95,7 @@ class SurveyService {
     let validResponses = 0;
 
     for (const resp of responses) {
-      const answers = resp.answers as Record<string, any>;
+      const answers = resp.answers as Record<string, unknown>;
       const score = Number(answers[npsQuestion.id]);
       if (isNaN(score) || score < 0 || score > 10) continue;
 
@@ -135,14 +135,14 @@ class SurveyService {
     const questions: SurveyQuestion[] = survey.questions || [];
     const responses = await SurveyResponse.findAll({ where: { surveyId } });
 
-    const analytics: Record<string, any> = {};
+    const analytics: Record<string, unknown> = {};
 
     for (const question of questions) {
       const qId = question.id;
-      const values: any[] = [];
+      const values: unknown[] = [];
 
       for (const resp of responses) {
-        const answers = resp.answers as Record<string, any>;
+        const answers = resp.answers as Record<string, unknown>;
         if (answers[qId] !== undefined && answers[qId] !== null && answers[qId] !== '') {
           values.push(answers[qId]);
         }
@@ -264,7 +264,7 @@ class SurveyService {
 
     try {
       io.emit('survey:closed', { surveyId, title: survey.title, responseCount: survey.responseCount });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return {
       survey,
       finalSnapshot: {
@@ -295,7 +295,7 @@ class SurveyService {
     const rows: string[] = [headers.map(h => `"${h}"`).join(',')];
 
     for (const resp of responses) {
-      const answers = resp.answers as Record<string, any>;
+      const answers = resp.answers as Record<string, unknown>;
       const row: string[] = [
         String(resp.id),
         `"${(resp.respondentName || '').replace(/"/g, '""')}"`,

@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import NotificationPreference, { DEFAULT_NOTIFICATION_PREFERENCES } from './notificationPreferenceModel';
+import logger from '../config/logger';
 
 const router = express.Router();
 
@@ -61,7 +62,7 @@ router.get('/unsubscribe', async (req: Request, res: Response) => {
           '</body></html>'
       );
   } catch (error) {
-    console.error('Unsubscribe error:', error);
+    logger.error({ error }, 'Unsubscribe error');
     res.status(500).send('<h2>Something went wrong. Please try again later.</h2>');
   }
 });

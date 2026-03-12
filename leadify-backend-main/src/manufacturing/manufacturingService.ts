@@ -10,7 +10,7 @@ import { io } from '../server';
 class ManufacturingService {
   // ─── BOM ───────────────────────────────────────────────────────────
 
-  async getBOMs(user: any) {
+  async getBOMs(user: unknown) {
     return BOM.findAll({
       where: { ...tenantWhere(user) },
       include: [{ model: BOMItem, as: 'items' }],
@@ -18,7 +18,7 @@ class ManufacturingService {
     });
   }
 
-  async getBOMById(id: number, user: any) {
+  async getBOMById(id: number, user: unknown) {
     const bom = await BOM.findOne({
       where: { id, ...tenantWhere(user) },
       include: [{ model: BOMItem, as: 'items' }]
@@ -27,7 +27,7 @@ class ManufacturingService {
     return bom;
   }
 
-  async createBOM(data: any, user: any) {
+  async createBOM(data: Record<string, unknown>, user: unknown) {
     const t = await sequelize.transaction();
     try {
       const bom = await BOM.create(
@@ -71,7 +71,7 @@ class ManufacturingService {
     }
   }
 
-  async updateBOM(id: number, data: any, user: any) {
+  async updateBOM(id: number, data: Record<string, unknown>, user: unknown) {
     const bom = await BOM.findOne({ where: { id, ...tenantWhere(user) } });
     if (!bom) throw new Error('BOM not found');
 
@@ -115,7 +115,7 @@ class ManufacturingService {
     }
   }
 
-  async deleteBOM(id: number, user: any) {
+  async deleteBOM(id: number, user: unknown) {
     const bom = await BOM.findOne({ where: { id, ...tenantWhere(user) } });
     if (!bom) throw new Error('BOM not found');
     await BOMItem.destroy({ where: { bomId: id } });
@@ -123,7 +123,7 @@ class ManufacturingService {
     return { deleted: true };
   }
 
-  async duplicateBOM(id: number, user: any) {
+  async duplicateBOM(id: number, user: unknown) {
     const original = await this.getBOMById(id, user);
     const data = {
       productName: `${original.productName} (Copy)`,
@@ -144,7 +144,7 @@ class ManufacturingService {
   // ─── Work Orders ──────────────────────────────────────────────────
 
   async generateWONumber(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const last = await WorkOrder.findOne({
@@ -155,8 +155,8 @@ class ManufacturingService {
     return `WO-${String(num).padStart(3, '0')}`;
   }
 
-  async getWorkOrders(user: any, query?: Record<string, any>) {
-    const where: Record<string, any> = { ...tenantWhere(user) };
+  async getWorkOrders(user: unknown, query?: Record<string, unknown>) {
+    const where: Record<string, unknown> = { ...tenantWhere(user) };
     if (query?.status) where.status = query.status;
     if (query?.priority) where.priority = query.priority;
 
@@ -166,7 +166,7 @@ class ManufacturingService {
     });
   }
 
-  async getWorkOrderById(id: number, user: any) {
+  async getWorkOrderById(id: number, user: unknown) {
     const wo = await WorkOrder.findOne({
       where: { id, ...tenantWhere(user) },
       include: [{ model: BOM, as: 'bom', include: [{ model: BOMItem, as: 'items' }] }]
@@ -175,7 +175,7 @@ class ManufacturingService {
     return wo;
   }
 
-  async createWorkOrder(data: any, user: any) {
+  async createWorkOrder(data: Record<string, unknown>, user: unknown) {
     const woNumber = await this.generateWONumber(user?.tenantId);
 
     let productName = data.productName || '';
@@ -207,14 +207,14 @@ class ManufacturingService {
     );
   }
 
-  async updateWorkOrder(id: number, data: any, user: any) {
+  async updateWorkOrder(id: number, data: Record<string, unknown>, user: unknown) {
     const wo = await WorkOrder.findOne({ where: { id, ...tenantWhere(user) } });
     if (!wo) throw new Error('Work order not found');
     await wo.update(data);
     return wo;
   }
 
-  async updateProduction(id: number, produced: number, user: any) {
+  async updateProduction(id: number, produced: number, user: unknown) {
     const wo = await WorkOrder.findOne({ where: { id, ...tenantWhere(user) } });
     if (!wo) throw new Error('Work order not found');
 
@@ -226,14 +226,14 @@ class ManufacturingService {
 
   // ─── Quality Checks ───────────────────────────────────────────────
 
-  async getQualityChecks(user: any) {
+  async getQualityChecks(user: unknown) {
     return QualityCheck.findAll({
       where: { ...tenantWhere(user) },
       order: [['createdAt', 'DESC']]
     });
   }
 
-  async createQualityCheck(data: any, user: any) {
+  async createQualityCheck(data: Record<string, unknown>, user: unknown) {
     const defects = data.inspected - data.passed;
     const passRate = data.inspected > 0 ? data.passed / data.inspected : 0;
     const result = passRate >= 0.95 ? 'PASS' : 'FAIL';
@@ -257,7 +257,7 @@ class ManufacturingService {
 
   // ─── Delete Work Order ──────────────────────────────────────────────
 
-  async deleteWorkOrder(id: number, user: any) {
+  async deleteWorkOrder(id: number, user: unknown) {
     const wo = await WorkOrder.findOne({ where: { id, ...tenantWhere(user) } });
     if (!wo) throw new Error('Work order not found');
     if (wo.status === 'IN_PROGRESS') {
@@ -266,7 +266,7 @@ class ManufacturingService {
     await wo.destroy();
     try {
       io.emit('manufacturing:work_order_deleted', { id, woNumber: wo.woNumber });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return { deleted: true };
   }
 
@@ -277,7 +277,7 @@ class ManufacturingService {
    * Adds the produced quantity, validates it does not exceed planned,
    * automatically transitions status, and logs a quality check if defects are reported.
    */
-  async trackProduction(id: number, data: { produced: number; defects?: number; inspector?: string; notes?: string }, user: any) {
+  async trackProduction(id: number, data: { produced: number; defects?: number; inspector?: string; notes?: string }, user: unknown) {
     const wo = await WorkOrder.findOne({ where: { id, ...tenantWhere(user) } });
     if (!wo) throw new Error('Work order not found');
     if (wo.status === 'COMPLETED') throw new Error('Work order is already completed');
@@ -320,7 +320,7 @@ class ManufacturingService {
         status,
         percentComplete: wo.planned > 0 ? Math.round((newProduced / wo.planned) * 100) : 0
       });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return { workOrder: wo, qualityCheck, percentComplete: wo.planned > 0 ? Math.round((newProduced / wo.planned) * 100) : 0 };
   }
@@ -332,7 +332,7 @@ class ManufacturingService {
    * overall efficiency, throughput by status, quality pass rate,
    * overdue work orders, and top products by volume.
    */
-  async getProductionMetrics(user: any) {
+  async getProductionMetrics(user: unknown) {
     const where = tenantWhere(user);
 
     // Work order counts by status
@@ -396,7 +396,7 @@ class ManufacturingService {
    * Return a detailed cost breakdown for a BOM, including per-item
    * line cost, percentage of total, and material type summary.
    */
-  async getBOMCostBreakdown(id: number, user: any) {
+  async getBOMCostBreakdown(id: number, user: unknown) {
     const bom = await this.getBOMById(id, user);
     const items = bom.items || [];
 
@@ -436,7 +436,7 @@ class ManufacturingService {
 
   // ─── Stats ────────────────────────────────────────────────────────
 
-  async getStats(user: any) {
+  async getStats(user: unknown) {
     const where = tenantWhere(user);
 
     const [bomCount, woCount, completed, inProgress, qualityIssues] = await Promise.all([

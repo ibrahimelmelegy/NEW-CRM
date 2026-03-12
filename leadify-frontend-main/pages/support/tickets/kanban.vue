@@ -117,7 +117,7 @@ async function onDrop(event: DragEvent, newStatus: string) {
 
   try {
     await useApiFetch(`support/tickets/${draggedTicket.id}`, 'PUT', { status: newStatus });
-    ElNotification({ type: 'success', title: t('common.success'), message: `Ticket moved to ${newStatus.replace(/_/g, ' ')}` });
+    ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
   } catch {
     draggedTicket.status = oldStatus;
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
@@ -134,7 +134,7 @@ async function loadTickets() {
       tickets.value = (body as unknown).docs || [];
     }
   } catch {
-    /* silent */
+    ElNotification({ type: 'error', title: t('common.error'), message: t('support.failedToLoadTickets') });
   } finally {
     loading.value = false;
   }

@@ -37,17 +37,17 @@ import {
 // Mock useApiFetch globally
 // ============================================
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 // ============================================
 // Mock ElNotification
 // ============================================
 const mockNotification = vi.fn();
-(globalThis as any).ElNotification = mockNotification;
+(globalThis as Record<string, unknown>).ElNotification = mockNotification;
 
 // Must mock element-plus before importing
 vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockNotification(...args)
+  ElNotification: (...args: unknown[]) => mockNotification(...args)
 }));
 
 // ============================================

@@ -6,13 +6,13 @@ import { clampPagination } from '../../utils/pagination';
 import { io } from '../../server';
 
 class PerformanceService {
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     return PerformanceReview.create({ ...data, tenantId });
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.period) where.period = query.period;
@@ -44,7 +44,7 @@ class PerformanceService {
     });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const review = await PerformanceReview.findByPk(id);
     if (!review) return null;
     await review.update(data);
@@ -111,7 +111,7 @@ class PerformanceService {
    * Buckets: 1-2 = Needs Improvement, 2-3 = Meets Expectations, 3-4 = Exceeds, 4-5 = Outstanding.
    */
   async getPerformanceDistribution(tenantId: string, period: string) {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       tenantId,
       period,
       overallRating: { [Op.ne]: null }
@@ -266,7 +266,7 @@ class PerformanceService {
     await review.update({ status: 'COMPLETED' });
     try {
       io.emit('performance:submitted', { id: reviewId, employeeId: review.employeeId, status: 'COMPLETED' });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getById(reviewId);
   }
 
@@ -292,7 +292,7 @@ class PerformanceService {
 
     try {
       io.emit('performance:approved', { id: reviewId, employeeId: review.employeeId, approverId, status: 'ACKNOWLEDGED' });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getById(reviewId);
   }
 }

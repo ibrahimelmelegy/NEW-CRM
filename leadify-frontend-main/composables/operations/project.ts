@@ -3,16 +3,18 @@ import { ElNotification } from 'element-plus';
 
 // Handle error during service creation
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 function handleSuccess(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
 }
@@ -593,12 +595,13 @@ export async function deleteProjectManPower(id: string) {
  * @throws {Error} If the API call is unsuccessful, an error is handled and logged.
  */
 export async function completeProject(values: { discount?: number }) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`project/complete-project-creation/${projectId.value}`, 'PUT', values);
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Project created successfully');
+      handleSuccess(t('common.created'));
       projectId.value = '';
       project.value = {};
     } else {
@@ -613,10 +616,11 @@ export async function completeProject(values: { discount?: number }) {
 }
 
 export async function deleteProjectById(id: string) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`project/${id}`, 'DELETE');
     if (response?.success) {
-      handleSuccess('Project deleted successfully');
+      handleSuccess(t('common.deleted'));
     } else {
       handleError(response?.message || 'Failed to delete project');
     }

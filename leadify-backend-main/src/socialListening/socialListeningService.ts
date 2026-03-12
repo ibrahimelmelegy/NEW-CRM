@@ -25,7 +25,7 @@ function analyzeSentiment(text: string): { sentiment: string; score: number } {
 class SocialListeningService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     // Auto-analyse sentiment if not provided
     if (!data.sentiment && data.content) {
       const analysis = analyzeSentiment(data.content);
@@ -35,13 +35,13 @@ class SocialListeningService {
     const mention = await SocialMention.create({ ...data, tenantId });
     try {
       io.emit('socialMention:created', { id: mention.id, platform: mention.platform });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return mention;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.platform) where.platform = query.platform;
     if (query.sentiment) where.sentiment = query.sentiment;
@@ -68,13 +68,13 @@ class SocialListeningService {
     return SocialMention.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await SocialMention.findByPk(id);
     if (!item) return null;
     await item.update(data);
     try {
       io.emit('socialMention:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -84,7 +84,7 @@ class SocialListeningService {
     await item.destroy();
     try {
       io.emit('socialMention:deleted', { id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return true;
   }
 
@@ -95,7 +95,7 @@ class SocialListeningService {
     const since = new Date();
     since.setDate(since.getDate() - days);
 
-    const where: Record<string, any> = { mentionDate: { [Op.gte]: since } };
+    const where: Record<string, unknown> = { mentionDate: { [Op.gte]: since } };
     if (tenantId) where.tenantId = tenantId;
 
     const mentions = await SocialMention.findAll({ where, raw: true });
@@ -108,10 +108,10 @@ class SocialListeningService {
     let scoreSum = 0;
 
     for (const m of mentions) {
-      const p = (m as any).platform || 'OTHER';
+      const p = (m as Record<string, unknown>).platform || 'OTHER';
       if (!byPlatform[p]) byPlatform[p] = { positive: 0, negative: 0, neutral: 0, total: 0, avgScore: 0 };
       byPlatform[p].total++;
-      const sentiment = (m as any).sentiment;
+      const sentiment = (m as Record<string, unknown>).sentiment;
       if (sentiment === 'POSITIVE') {
         byPlatform[p].positive++;
         totalPositive++;
@@ -122,14 +122,14 @@ class SocialListeningService {
         byPlatform[p].neutral++;
         totalNeutral++;
       }
-      scoreSum += Number((m as any).sentimentScore) || 0;
+      scoreSum += Number((m as Record<string, unknown>).sentimentScore) || 0;
     }
 
     for (const p of Object.keys(byPlatform)) {
       const group = byPlatform[p];
       // Compute average sentiment score per platform from raw mentions
       const platformMentions = mentions.filter(m => m.platform === p);
-      const platformScoreSum = platformMentions.reduce((s: number, m: any) => s + (Number(m.sentimentScore) || 0), 0);
+      const platformScoreSum = platformMentions.reduce((s: number, m: Record<string, unknown>) => s + (Number(m.sentimentScore) || 0), 0);
       group.avgScore = platformMentions.length > 0 ? parseFloat((platformScoreSum / platformMentions.length).toFixed(2)) : 0;
     }
 
@@ -151,7 +151,7 @@ class SocialListeningService {
     const since = new Date();
     since.setDate(since.getDate() - 7);
 
-    const where: Record<string, any> = { mentionDate: { [Op.gte]: since }, keyword: { [Op.ne]: null } };
+    const where: Record<string, unknown> = { mentionDate: { [Op.gte]: since }, keyword: { [Op.ne]: null } };
     if (tenantId) where.tenantId = tenantId;
 
     const results = await SocialMention.findAll({

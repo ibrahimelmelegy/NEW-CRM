@@ -322,7 +322,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useApiFetch } from '~/composables/useApiFetch';
 // Lazy-load heavy chart dependencies for faster initial page load
-let graphic: any;
+let graphic: unknown;
 const VChart = defineAsyncComponent(() =>
   Promise.all([import('echarts/core'), import('vue-echarts')]).then(([echartsCore, VChartModule]) => {
     graphic = echartsCore.graphic;
@@ -657,7 +657,7 @@ const recentActivities = computed(() => {
   const activities: Record<string, unknown>[] = [];
   for (const member of team) {
     for (const actType of activityTypes) {
-      const count = (member as any)[actType.key] as number;
+      const count = (member as unknown)[actType.key] as number;
       if (count > 0) {
         activities.push({
           memberName: member.userName,
@@ -700,7 +700,7 @@ const activityHeatmapOption = computed(() => {
   return {
     tooltip: {
       ...tooltipStyle,
-      formatter: (params: any) => {
+      formatter: (params: unknown) => {
         return `${days[params.value[0]]} ${hours[params.value[1]]}<br/>Activities: <b>${params.value[2]}</b>`;
       }
     },
@@ -857,8 +857,8 @@ async function loadData() {
   try {
     const goalsRes = await useApiFetch('goals');
     if (goalsRes.success && Array.isArray(goalsRes.body)) {
-      departmentGoals.value = (goalsRes.body as any[]).filter(g => g.type === 'department');
-      individualGoals.value = (goalsRes.body as any[]).filter(g => g.type === 'individual');
+      departmentGoals.value = (goalsRes.body as unknown[]).filter(g => g.type === 'department');
+      individualGoals.value = (goalsRes.body as unknown[]).filter(g => g.type === 'individual');
     } else {
       departmentGoals.value = [];
       individualGoals.value = [];

@@ -24,7 +24,7 @@ class PipelineConfigService {
     return cacheService.getOrSet<PipelineStage[]>(
       cacheKey,
       async () => {
-        const where: Record<string, any> = {};
+        const where: Record<string, unknown> = {};
         if (entityType) where.entityType = entityType;
         return PipelineStage.findAll({ where, order: [['order', 'ASC']] });
       },
@@ -38,7 +38,7 @@ class PipelineConfigService {
     return stage;
   }
 
-  async createStage(data: any): Promise<PipelineStage> {
+  async createStage(data: Record<string, unknown>): Promise<PipelineStage> {
     const maxOrder =
       ((await PipelineStage.max('order', {
         where: { entityType: data.entityType || 'deal' }
@@ -49,7 +49,7 @@ class PipelineConfigService {
     return stage;
   }
 
-  async updateStage(id: string, data: any): Promise<PipelineStage> {
+  async updateStage(id: string, data: Record<string, unknown>): Promise<PipelineStage> {
     const result = await sequelize.transaction(async t => {
       const stage = await PipelineStage.findByPk(id, { transaction: t, lock: true });
       if (!stage) throw new BaseError(ERRORS.NOT_FOUND);
@@ -81,9 +81,9 @@ class PipelineConfigService {
    * Returns allowed stage transitions derived from pipeline configuration.
    *
    * The default rule set allows:
-   *   - Forward transitions: any stage can move to the next stage in order.
-   *   - Backward transitions: any stage can move to the previous stage in order.
-   *   - Lost/cancelled: any non-terminal stage can move to an isLost stage.
+   *   - Forward transitions: unknown stage can move to the next stage in order.
+   *   - Backward transitions: unknown stage can move to the previous stage in order.
+   *   - Lost/cancelled: Record<string, unknown> non-terminal stage can move to an isLost stage.
    *   - Reopen: an isLost stage can move back to the first (isDefault) stage.
    *
    * NOTE: This does not yet replace the hardcoded DEAL_STAGE_TRANSITIONS or

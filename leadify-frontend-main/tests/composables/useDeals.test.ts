@@ -32,14 +32,14 @@ const mockFormatDate = vi.fn((d: string) => `formatted-${d}`);
 
 // Mock element-plus to intercept the import { ElNotification } in useDeals.ts
 vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockElNotification(...args)
+  ElNotification: (...args: unknown[]) => mockElNotification(...args)
 }));
 
-(globalThis as any).useApiFetch = mockUseApiFetch;
-(globalThis as any).ElNotification = mockElNotification;
-(globalThis as any).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
-(globalThis as any).formatDate = mockFormatDate;
-(globalThis as any).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
+(globalThis as Record<string, unknown>).useApiFetch = mockUseApiFetch;
+(globalThis as Record<string, unknown>).ElNotification = mockElNotification;
+(globalThis as Record<string, unknown>).useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
+(globalThis as Record<string, unknown>).formatDate = mockFormatDate;
+(globalThis as Record<string, unknown>).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
 
 describe('useDeals composable', () => {
   beforeEach(() => {
@@ -390,7 +390,7 @@ describe('useDeals composable', () => {
   // ============================================
   describe('convertToDeal', () => {
     const convertValues: DealValues = {
-      lead: { id: 'lead-1', name: 'Hot Lead' } as any,
+      lead: { id: 'lead-1', name: 'Hot Lead' } as unknown,
       deal: { name: 'Converted Deal', price: 60000, stage: 'PROGRESS' }
     };
 

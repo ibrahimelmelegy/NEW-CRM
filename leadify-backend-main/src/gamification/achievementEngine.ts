@@ -107,7 +107,7 @@ class AchievementEngine {
     }
   }
 
-  async checkAndAward(userId: number, eventType: string, eventData?: any): Promise<void> {
+  async checkAndAward(userId: number, eventType: string, eventData?: unknown): Promise<void> {
     const achievements = await Achievement.findAll();
     const userTotalPoints = (await UserPoints.sum('points', { where: { userId } })) || 0;
 
@@ -146,7 +146,7 @@ class AchievementEngine {
     }
   }
 
-  private async checkCriteria(userId: number, criteria: string, totalPoints: number, eventData?: any): Promise<boolean> {
+  private async checkCriteria(userId: number, criteria: string, totalPoints: number, eventData?: unknown): Promise<boolean> {
     if (criteria.startsWith('deals_closed_')) {
       const target = parseInt(criteria.split('_')[2]);
       const count = await Deal.count({ where: { stage: 'CLOSED' } });
@@ -219,7 +219,7 @@ class AchievementEngine {
     return streak;
   }
 
-  async getUserAchievements(userId: number): Promise<any> {
+  async getUserAchievements(userId: number): Promise<unknown> {
     const allAchievements = await Achievement.findAll();
     const awarded = await UserPoints.findAll({
       where: { userId, entityType: 'achievement' }

@@ -6,11 +6,11 @@ import { ERRORS } from '../utils/error/errors';
 import { LeadStatusEnums, SortByEnum, SortEnum } from './leadEnum';
 import Lead from './leadModel';
 import { createActivityLog } from '../activity-logs/activityService';
-import xlsx from 'xlsx';
 import { LeadPermissionsEnum } from '../role/roleEnum';
 import LeadUsers from './model/lead_UsersModel';
 import { LeadActivity } from '../activity-logs/model/leadActivities';
 import * as ExcelJS from 'exceljs';
+import logger from '../config/logger';
 import { sendEmail } from '../utils/emailHelper';
 import { io } from '../server';
 import { tenantWhere } from '../utils/tenantScope';
@@ -25,7 +25,7 @@ import workflowService from '../workflow/workflowService';
 export interface ScoringRule {
   field: string;
   condition: 'exists' | 'equals' | 'contains' | 'greater_than';
-  value?: any;
+  value?: unknown;
   points: number;
   /** Optional group key. When multiple rules share a group, only the highest-
    *  scoring match within that group is counted (e.g. source quality tiers). */
@@ -55,7 +55,7 @@ export const DEFAULT_SCORING_RULES: ScoringRule[] = [
  * Evaluate a single rule condition against a lead data object.
  * Returns true when the rule's condition is satisfied.
  */
-function evaluateCondition(lead: any, rule: ScoringRule): boolean {
+function evaluateCondition(lead: Record<string, unknown>, rule: ScoringRule): boolean {
   const fieldValue = lead[rule.field];
 
   switch (rule.condition) {
@@ -84,7 +84,7 @@ function evaluateCondition(lead: any, rule: ScoringRule): boolean {
  *
  * The final score is capped at 100.
  */
-export function evaluateScore(lead: any, rules: ScoringRule[] = DEFAULT_SCORING_RULES): number {
+export function evaluateScore(lead: Record<string, unknown>, rules: ScoringRule[] = DEFAULT_SCORING_RULES): number {
   let total = 0;
 
   // Collect the best score per group
@@ -110,7 +110,7 @@ export function evaluateScore(lead: any, rules: ScoringRule[] = DEFAULT_SCORING_
 }
 
 class LeadService {
-  async createLead(input: any, adminId: number, t?: Transaction): Promise<Lead> {
+  async createLead(input: Record<string, unknown>, adminId: number, t?: Transaction): Promise<Lead> {
     const { users: inputUsers, ...leadData } = input;
 
     if (input.email) await this.errorIfLeadWithExistEmail(input.email);
@@ -154,7 +154,7 @@ class LeadService {
 
     // Trigger workflow automation for lead creation
     workflowService.processEntityEvent('lead', String(lead.id), TriggerType.ON_CREATE, null, lead.toJSON(), adminId).catch((err: Error) => {
-      console.error('Workflow processEntityEvent (lead.create) error:', err.message);
+      logger.error({ err }, 'Workflow processEntityEvent (lead.create) error');
     });
 
     return lead;
@@ -170,7 +170,7 @@ class LeadService {
     if (leadWithPhone) throw new BaseError(ERRORS.PHONE_ALREADY_EXISTS);
   }
 
-  async updateLead(id: string, input: any, user: User): Promise<any> {
+  async updateLead(id: string, input: Record<string, unknown>, user: User): Promise<unknown> {
     await this.validateLeadAccess(id, user);
     const lead = await this.leadOrError({ id });
 
@@ -203,7 +203,7 @@ class LeadService {
     // Trigger workflow automation for lead update (including field change detection)
     const newData = updatedLead.toJSON();
     workflowService.processEntityEvent('lead', String(lead.id), TriggerType.ON_UPDATE, oldData, newData, user.id).catch((err: Error) => {
-      console.error('Workflow processEntityEvent (lead.update) error:', err.message);
+      logger.error({ err }, 'Workflow processEntityEvent (lead.update) error');
     });
 
     return updatedLead;
@@ -215,7 +215,7 @@ class LeadService {
     return lead;
   }
 
-  async getLeads(query: any, user: User): Promise<any> {
+  async getLeads(query: Record<string, unknown>, user: User): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(LeadPermissionsEnum.VIEW_GLOBAL_LEADS)) query.userId = user.id;
@@ -308,7 +308,7 @@ class LeadService {
     };
   }
 
-  async leadById(id: string, user: User): Promise<any> {
+  async leadById(id: string, user: User): Promise<unknown> {
     await this.validateLeadAccess(id, user);
 
     const lead = await Lead.findByPk(id, {
@@ -325,15 +325,20 @@ class LeadService {
     return lead;
   }
 
-  public async importFile(file: any): Promise<string> {
-    const workbook = xlsx.read(file.data);
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+  public async importFile(file: unknown): Promise<string> {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(file.data);
+    const worksheet = workbook.worksheets[0];
 
-    const data: Omit<Lead, 'id'>[] = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+    const data: Record<string, unknown>[][] = [];
+    worksheet.eachRow((row) => {
+      data.push(row.values as unknown[]);
+    });
     const leadArray = [];
 
     for (let index = 1; index < data.length; index++) {
-      const [name, companyName, email, phone, otherSource, leadSource, status, userId, notes, lastContactDate] = data[index] as any;
+      // ExcelJS row.values is 1-based (index 0 is null), so skip the first element
+      const [, name, companyName, email, phone, otherSource, leadSource, status, userId, notes, lastContactDate] = data[index] as unknown[];
       if (!email && !phone) {
         throw new BaseError(ERRORS.LEAD_ALREADY_FOUND, 400, `Lead must have at least Phone or email in row ${index}`);
       }
@@ -379,18 +384,18 @@ class LeadService {
     for (const lead of createdLeads) {
       const leadData = leadArray.find(l => l.name === lead.name);
       if (leadData?.userIds && leadData.userIds.length > 0) {
-        await (lead as any).$set('users', leadData.userIds);
+        await (lead as Record<string, unknown>).$set('users', leadData.userIds);
       }
     }
 
     return leadArray.length + ' leads created succesfully';
   }
-  streamToBuffer(stream: any) {
+  streamToBuffer(stream: Record<string, unknown>) {
     return new Promise((resolve, reject) => {
       const _buf = Array<any>();
-      stream.on('data', (chunk: any) => _buf.push(chunk));
+      stream.on('data', (chunk: Record<string, unknown>) => _buf.push(chunk));
       stream.on('end', () => resolve(Buffer.concat(_buf)));
-      stream.on('error', (err: any) => reject(err));
+      stream.on('error', (err: Record<string, unknown>) => reject(err));
     });
   }
 
@@ -436,9 +441,9 @@ class LeadService {
    *
    * Accepts an optional custom rule set; defaults to DEFAULT_SCORING_RULES.
    */
-  calculateScore(lead: any, rules?: ScoringRule[]): number {
+  calculateScore(lead: Record<string, unknown>, rules?: ScoringRule[]): number {
     // Normalise lead fields to the canonical names used by the scoring rules
-    const normalised: Record<string, any> = {
+    const normalised: Record<string, unknown> = {
       ...lead,
       // Alias mappings for backward compatibility
       company: lead.company || lead.companyName,
@@ -449,8 +454,8 @@ class LeadService {
     return evaluateScore(normalised, rules);
   }
 
-  async sendLeadsExcelByEmail(query: any, user: User, email: string): Promise<void> {
-    const where: Record<string, any> = {
+  async sendLeadsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
+    const where: Record<string, unknown> = {
       status: { [Op.ne]: LeadStatusEnums.CONVERTED },
       ...(query.searchKey && {
         [Op.or]: [

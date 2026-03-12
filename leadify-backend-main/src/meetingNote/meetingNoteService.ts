@@ -5,17 +5,17 @@ import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 
 class MeetingNoteService {
-  async create(data: any, userId: number, tenantId?: string) {
+  async create(data: Record<string, unknown>, userId: number, tenantId?: string) {
     const note = await MeetingNote.create({ ...data, createdBy: userId, tenantId });
     try {
       io.emit('meetingNote:created', { id: note.id, title: note.title });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getById(note.id);
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.type) where.type = query.type;
     if (query.search) {
@@ -46,13 +46,13 @@ class MeetingNoteService {
     });
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: Record<string, unknown>) {
     const item = await MeetingNote.findByPk(id);
     if (!item) return null;
     await item.update(data);
     try {
       io.emit('meetingNote:updated', { id: item.id, title: item.title });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getById(item.id);
   }
 
@@ -62,7 +62,7 @@ class MeetingNoteService {
     await item.destroy();
     try {
       io.emit('meetingNote:deleted', { id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return true;
   }
 }

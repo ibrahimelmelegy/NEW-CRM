@@ -11,8 +11,8 @@ import { ref } from 'vue';
 import { useNotificationCenter } from '~/composables/useNotificationCenter';
 
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
-(globalThis as any).useI18n = () => ({
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useI18n = () => ({
   t: (key: string) => key,
   locale: ref('en')
 });
@@ -127,7 +127,7 @@ describe('useNotificationCenter', () => {
       nc.notifications.value = [
         { id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() },
         { id: '2', type: 'DEAL_WON', read: 'READ', createdAt: new Date().toISOString() }
-      ] as any;
+      ] as unknown;
       nc.activeTab.value = 'all';
 
       expect(nc.filteredNotifications.value).toHaveLength(2);
@@ -138,7 +138,7 @@ describe('useNotificationCenter', () => {
       nc.notifications.value = [
         { id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() },
         { id: '2', type: 'DEAL_WON', read: 'READ', createdAt: new Date().toISOString() }
-      ] as any;
+      ] as unknown;
       nc.activeTab.value = 'unread';
 
       expect(nc.filteredNotifications.value).toHaveLength(1);
@@ -151,7 +151,7 @@ describe('useNotificationCenter', () => {
         { id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() },
         { id: '2', type: 'DEAL_WON', read: 'READ', createdAt: new Date().toISOString() },
         { id: '3', type: 'SLA_BREACH', read: 'UN_READ', createdAt: new Date().toISOString() }
-      ] as any;
+      ] as unknown;
       nc.activeTab.value = 'important';
 
       expect(nc.filteredNotifications.value).toHaveLength(2);
@@ -165,7 +165,7 @@ describe('useNotificationCenter', () => {
     it('should mark all notifications as read on success', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
       const nc = useNotificationCenter();
-      nc.notifications.value = [{ id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() }] as any;
+      nc.notifications.value = [{ id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() }] as unknown;
       nc.unreadCount.value = 1;
 
       await nc.markAllRead();
@@ -182,7 +182,7 @@ describe('useNotificationCenter', () => {
     it('should mark a single notification as read', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
       const nc = useNotificationCenter();
-      nc.notifications.value = [{ id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() }] as any;
+      nc.notifications.value = [{ id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() }] as unknown;
       nc.unreadCount.value = 1;
 
       await nc.markRead('1');
@@ -199,7 +199,7 @@ describe('useNotificationCenter', () => {
     it('should mark unread notification as clicked', async () => {
       mockApiFetch.mockResolvedValue({ success: true });
       const nc = useNotificationCenter();
-      const notif = { id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() } as any;
+      const notif = { id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: new Date().toISOString() } as unknown;
       nc.notifications.value = [notif];
       nc.unreadCount.value = 1;
 
@@ -216,31 +216,31 @@ describe('useNotificationCenter', () => {
   describe('getNotificationPath', () => {
     it('should return null when no target', () => {
       const nc = useNotificationCenter();
-      const result = nc.getNotificationPath({ id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: '' } as any);
+      const result = nc.getNotificationPath({ id: '1', type: 'LEAD_CREATED', read: 'UN_READ', createdAt: '' } as unknown);
       expect(result).toBeNull();
     });
 
     it('should return correct path for lead type', () => {
       const nc = useNotificationCenter();
-      const result = nc.getNotificationPath({ id: '1', type: 'LEAD_CREATED', target: '123', read: 'UN_READ', createdAt: '' } as any);
+      const result = nc.getNotificationPath({ id: '1', type: 'LEAD_CREATED', target: '123', read: 'UN_READ', createdAt: '' } as unknown);
       expect(result).toBe('/sales/leads/123');
     });
 
     it('should return project path for project type', () => {
       const nc = useNotificationCenter();
-      const result = nc.getNotificationPath({ id: '1', type: 'PROJECT_UPDATED', target: '5', read: 'UN_READ', createdAt: '' } as any);
+      const result = nc.getNotificationPath({ id: '1', type: 'PROJECT_UPDATED', target: '5', read: 'UN_READ', createdAt: '' } as unknown);
       expect(result).toBe('/operations/projects/5');
     });
 
     it('should return null for system alert type', () => {
       const nc = useNotificationCenter();
-      const result = nc.getNotificationPath({ id: '1', type: 'SYSTEM_ALERT', target: '1', read: 'UN_READ', createdAt: '' } as any);
+      const result = nc.getNotificationPath({ id: '1', type: 'SYSTEM_ALERT', target: '1', read: 'UN_READ', createdAt: '' } as unknown);
       expect(result).toBeNull();
     });
 
     it('should return task path for task type', () => {
       const nc = useNotificationCenter();
-      const result = nc.getNotificationPath({ id: '1', type: 'TASK_ASSIGNED', target: '1', read: 'UN_READ', createdAt: '' } as any);
+      const result = nc.getNotificationPath({ id: '1', type: 'TASK_ASSIGNED', target: '1', read: 'UN_READ', createdAt: '' } as unknown);
       expect(result).toBe('/operations/daily-tasks');
     });
   });
@@ -251,13 +251,13 @@ describe('useNotificationCenter', () => {
   describe('getNotificationText', () => {
     it('should return English text for en locale', () => {
       const nc = useNotificationCenter();
-      const result = nc.getNotificationText({ body_en: 'Hello', body_ar: 'Marhaba' } as any);
+      const result = nc.getNotificationText({ body_en: 'Hello', body_ar: 'Marhaba' } as unknown);
       expect(result).toBe('Hello');
     });
 
     it('should return empty string when no text available', () => {
       const nc = useNotificationCenter();
-      const result = nc.getNotificationText({} as any);
+      const result = nc.getNotificationText({} as unknown);
       expect(result).toBe('');
     });
   });

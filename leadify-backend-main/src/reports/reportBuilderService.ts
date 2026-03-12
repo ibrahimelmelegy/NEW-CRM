@@ -210,7 +210,7 @@ const MODULE_FIELDS: Record<string, ModuleDefinition> = {
 
 // ─── Entity Model Mapping ────────────────────────────────────
 
-const moduleModelMap: Record<string, any> = {
+const moduleModelMap: Record<string, unknown> = {
   leads: Lead,
   deals: Deal,
   clients: Client,
@@ -250,7 +250,7 @@ class ReportBuilderService {
     }
 
     const where = this.buildWhereClause(config.filters);
-    const queryOptions: Record<string, any> = {
+    const queryOptions: Record<string, unknown> = {
       where,
       raw: true,
       limit: config.limit || 5000,
@@ -306,7 +306,7 @@ class ReportBuilderService {
   /**
    * Compute summary statistics (totals, averages) for numeric columns
    */
-  private computeSummary(data: Record<string, any>[], config: ReportBuilderConfig) {
+  private computeSummary(data: Record<string, unknown>[], config: ReportBuilderConfig) {
     if (!data.length) return {};
 
     const moduleKey = config.modules[0];
@@ -342,7 +342,7 @@ class ReportBuilderService {
   private buildWhereClause(filters: ReportFilter[]): unknown {
     if (!filters || !filters.length) return {};
 
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     for (const filter of filters) {
       const { field, operator, value } = filter;
       switch (operator) {
@@ -392,7 +392,7 @@ class ReportBuilderService {
   /**
    * Build aggregation attributes for grouped queries
    */
-  private buildAggregationAttributes(aggregations: { field: string; function: string }[]): any[] {
+  private buildAggregationAttributes(aggregations: { field: string; function: string }[]): unknown[] {
     if (!aggregations || !aggregations.length) return [];
 
     return aggregations.map(agg => {
@@ -430,7 +430,7 @@ class ReportBuilderService {
   /**
    * Generate CSV string from report data
    */
-  generateCSV(data: Record<string, any>[], fields?: string[]): string {
+  generateCSV(data: Record<string, unknown>[], fields?: string[]): string {
     if (!data || !data.length) return '';
 
     const headers = fields && fields.length > 0 ? fields : Object.keys(data[0]);
@@ -454,7 +454,7 @@ class ReportBuilderService {
   /**
    * Generate structured data for Excel export
    */
-  generateExcelData(data: Record<string, any>[], fields?: string[]) {
+  generateExcelData(data: Record<string, unknown>[], fields?: string[]) {
     if (!data || !data.length) return { headers: [], rows: [] };
 
     const headers = fields && fields.length > 0 ? fields : Object.keys(data[0]);

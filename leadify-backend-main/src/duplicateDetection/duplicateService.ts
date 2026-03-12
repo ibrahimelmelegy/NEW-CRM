@@ -7,7 +7,7 @@ import Opportunity from '../opportunity/opportunityModel';
 import User from '../user/userModel';
 
 // Map entity types to their Sequelize models
-const entityModelMap: Record<string, any> = {
+const entityModelMap: Record<string, unknown> = {
   lead: Lead,
   client: Client,
   opportunity: Opportunity
@@ -89,18 +89,18 @@ class DuplicateService {
   // ---- Match Score Calculation ----
 
   calculateMatchScore(
-    record1: Record<string, any>,
-    record2: Record<string, any>,
+    record1: Record<string, unknown>,
+    record2: Record<string, unknown>,
     entityType: string
   ): {
     score: number;
-    matchedFields: Array<{ field: string; value1: any; value2: any; similarity: number }>;
+    matchedFields: Array<{ field: string; value1: unknown; value2: unknown; similarity: number }>;
   } {
     const fields = entityFieldMap[entityType];
     if (!fields) return { score: 0, matchedFields: [] };
 
     let highestScore = 0;
-    const matchedFields: Array<{ field: string; value1: any; value2: any; similarity: number }> = [];
+    const matchedFields: Array<{ field: string; value1: unknown; value2: unknown; similarity: number }> = [];
 
     switch (entityType) {
       case 'lead': {
@@ -197,7 +197,7 @@ class DuplicateService {
 
   // ---- Find duplicates for a given record (pre-creation check) ----
 
-  async findDuplicates(entityType: string, entityData: Record<string, any>) {
+  async findDuplicates(entityType: string, entityData: Record<string, unknown>) {
     const Model = entityModelMap[entityType];
     if (!Model) throw new Error(`Unsupported entity type: ${entityType}`);
 
@@ -205,7 +205,7 @@ class DuplicateService {
     if (!fields) throw new Error(`No field mapping for entity type: ${entityType}`);
 
     // Build a broad WHERE to find candidates (email or phone or name match)
-    const orConditions: any[] = [];
+    const orConditions: unknown[] = [];
 
     if (fields.email && entityData[fields.email]) {
       orConditions.push({ [fields.email]: { [Op.iLike]: entityData[fields.email] } });
@@ -227,7 +227,7 @@ class DuplicateService {
       limit: 50
     });
 
-    const duplicates: Array<{ record: any; matchScore: number; matchedFields: any[] }> = [];
+    const duplicates: Array<{ record: Record<string, unknown>; matchScore: number; matchedFields: unknown[] }> = [];
 
     for (const candidate of candidates) {
       const candidateData = candidate.toJSON();
@@ -252,8 +252,8 @@ class DuplicateService {
     if (!Model) throw new Error(`Unsupported entity type: ${entityType}`);
 
     const records = await Model.findAll();
-    const recordData = records.map((r: any) => r.toJSON());
-    const detectedSets: Array<{ masterRecordId: string; duplicateRecordIds: string[]; matchScore: number; matchedFields: any[] }> = [];
+    const recordData = records.map((r: Record<string, unknown>) => r.toJSON());
+    const detectedSets: Array<{ masterRecordId: string; duplicateRecordIds: string[]; matchScore: number; matchedFields: unknown[] }> = [];
     const processedPairs = new Set<string>();
 
     for (let i = 0; i < recordData.length; i++) {
@@ -303,10 +303,10 @@ class DuplicateService {
 
   // ---- List duplicate sets with filters ----
 
-  async getDuplicateSets(query: any) {
+  async getDuplicateSets(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 30);
     const { entityType, status, sortBy = 'createdAt', sort = 'DESC' } = query;
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (entityType) where.entityType = entityType;
     if (status) where.status = status;
     const { rows, count } = await DuplicateSet.findAndCountAll({
@@ -376,14 +376,14 @@ class DuplicateService {
     const idsToMerge = allIds.filter(id => id !== masterRecordId);
 
     // Get master record data and merge non-empty fields from duplicates
-    const masterData = masterRecord.toJSON() as Record<string, any>;
+    const masterData = masterRecord.toJSON() as Record<string, unknown>;
     const fields = entityFieldMap[set.entityType];
 
     for (const dupId of idsToMerge) {
       const dupRecord = await Model.findByPk(dupId);
       if (!dupRecord) continue;
 
-      const dupData = dupRecord.toJSON() as Record<string, any>;
+      const dupData = dupRecord.toJSON() as Record<string, unknown>;
 
       // Fill empty fields in master with data from duplicate
       const fillableFields = fields ? Object.values(fields).filter(Boolean) : [];

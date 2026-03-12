@@ -12,7 +12,7 @@ import { createActivityLog } from '../activity-logs/activityService';
 import { clampPagination } from '../utils/pagination';
 
 class ProjectManpowerService {
-  public async createProjectManpower(data: any, user: User): Promise<ProjectManpower> {
+  public async createProjectManpower(data: Record<string, unknown>, user: User): Promise<ProjectManpower> {
     const { projectId, manpowerId, estimatedWorkDays, mission, otherCosts, otherCostsReason, actualWorkDays } = data;
     await projectService.validateProjectAccess(projectId, user);
 
@@ -46,7 +46,7 @@ class ProjectManpowerService {
     return this.projectManpowerById(projectManpower.id);
   }
 
-  public async updateProjectManpower(id: string, data: any, user: User): Promise<ProjectManpower> {
+  public async updateProjectManpower(id: string, data: Record<string, unknown>, user: User): Promise<ProjectManpower> {
     await projectService.validateProjectAccess(id, user);
 
     const projectManpower = await this.projectManpowerOrError({ id });
@@ -72,10 +72,10 @@ class ProjectManpowerService {
     return this.projectManpowerById(projectManpower.id);
   }
 
-  public async getProjectManpowers(query: any): Promise<any> {
+  public async getProjectManpowers(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       ...(query.projectId && { projectId: query.projectId }),
       ...(query.manpowerId && { manpowerId: query.manpowerId }),
       ...(query.searchKey && {
@@ -140,7 +140,7 @@ class ProjectManpowerService {
    * Returns each manpower resource, their total estimated days, total actual days,
    * project count, daily cost, and whether they are over-allocated (> maxCapacityDays).
    */
-  public async getUtilizationReport(query: any): Promise<any> {
+  public async getUtilizationReport(query: Record<string, unknown>): Promise<unknown> {
     const maxCapacityDays = Number(query.maxCapacityDays) || 22; // default ~1 month
 
     // Get all allocations grouped by manpower with aggregation
@@ -185,13 +185,13 @@ class ProjectManpowerService {
     });
 
     // Sort by utilization descending (most allocated first)
-    report.sort((a: any, b: any) => b.utilization - a.utilization);
+    report.sort((a: unknown, b: unknown) => b.utilization - a.utilization);
 
     // Summary
     const totalResources = report.length;
     const overAllocatedCount = report.filter(r => r.overAllocated).length;
-    const avgUtilization = totalResources > 0 ? Math.round(report.reduce((s: number, r: any) => s + r.utilization, 0) / totalResources) : 0;
-    const totalAllocatedDays = report.reduce((s: number, r: any) => s + r.totalEstimatedDays, 0);
+    const avgUtilization = totalResources > 0 ? Math.round(report.reduce((s: number, r: unknown) => s + r.utilization, 0) / totalResources) : 0;
+    const totalAllocatedDays = report.reduce((s: number, r: unknown) => s + r.totalEstimatedDays, 0);
 
     return {
       summary: {

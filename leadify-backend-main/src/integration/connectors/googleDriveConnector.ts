@@ -82,7 +82,7 @@ class GoogleDriveConnector {
       const targetFolder = folderId || config.folderId;
 
       // Create multipart upload
-      const metadata: Record<string, any> = {
+      const metadata: Record<string, unknown> = {
         name: file.name,
         mimeType: file.mimeType
       };

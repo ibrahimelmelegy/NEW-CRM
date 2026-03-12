@@ -11,7 +11,7 @@ class CalendarController {
 
   async getEvents(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      wrapResult(res, await calendarService.getEvents(req.query as Record<string, any>));
+      wrapResult(res, await calendarService.getEvents(req.query as Record<string, unknown>));
     } catch (error) {
       next(error);
     }

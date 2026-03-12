@@ -28,13 +28,13 @@ interface TestResultVariant extends VariantResults {
 }
 
 class ABTestService {
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     return ABTest.create({ ...data, tenantId });
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -43,7 +43,7 @@ class ABTestService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await ABTest.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -66,7 +66,7 @@ class ABTestService {
     if (!test) return null;
     if (test.status !== 'RUNNING') return null;
 
-    const results: Record<string, VariantResults> = (test.results as any) || {};
+    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
     if (!results[variantId]) {
       results[variantId] = { impressions: 0, conversions: 0, conversionRate: 0 };
     }
@@ -85,7 +85,7 @@ class ABTestService {
     if (!test) return null;
     if (test.status !== 'RUNNING') return null;
 
-    const results: Record<string, VariantResults> = (test.results as any) || {};
+    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
     if (!results[variantId]) {
       results[variantId] = { impressions: 0, conversions: 0, conversionRate: 0 };
     }
@@ -104,7 +104,7 @@ class ABTestService {
     const test = await ABTest.findByPk(testId);
     if (!test) return null;
 
-    const results: Record<string, VariantResults> = (test.results as any) || {};
+    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
     const variants = test.variants || [];
     const variantNames = variants.map((v: VariantData) => v.name);
 
@@ -209,7 +209,7 @@ class ABTestService {
     const test = await ABTest.findByPk(testId);
     if (!test) return null;
 
-    const results: Record<string, VariantResults> = (test.results as any) || {};
+    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
     const variants = test.variants || [];
     const variantNames = variants.map((v: VariantData) => v.name);
 
@@ -263,7 +263,7 @@ class ABTestService {
 
     try {
       io.emit('abtest:winner_declared', { testId, testName: test.name, winner: bestVariant, confidence: bestConfidence });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return result;
   }
 
@@ -277,7 +277,7 @@ class ABTestService {
     });
 
     return tests.map(test => {
-      const results: Record<string, VariantResults> = (test.results as any) || {};
+      const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
       const variants = (test.variants || []).map((v: VariantData) => {
         const data = results[v.name] || { impressions: 0, conversions: 0, conversionRate: 0 };
         return {
@@ -296,8 +296,8 @@ class ABTestService {
         status: test.status,
         startDate: test.startDate,
         variants,
-        totalImpressions: variants.reduce((sum: number, v: any) => sum + v.impressions, 0),
-        totalConversions: variants.reduce((sum: number, v: any) => sum + v.conversions, 0)
+        totalImpressions: variants.reduce((sum: number, v: Record<string, unknown>) => sum + v.impressions, 0),
+        totalConversions: variants.reduce((sum: number, v: Record<string, unknown>) => sum + v.conversions, 0)
       };
     });
   }

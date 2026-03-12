@@ -7,17 +7,17 @@ import { io } from '../server';
 class AiLeadScoringService {
   // ─── Model Config CRUD ────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string, createdBy?: number) {
+  async create(data: Record<string, unknown>, tenantId?: string, createdBy?: number) {
     const model = await ScoringModelConfig.create({ ...data, tenantId, createdBy });
     try {
       io.emit('scoringModel:created', { id: model.id, name: model.name });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return model;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -41,13 +41,13 @@ class AiLeadScoringService {
     return ScoringModelConfig.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await ScoringModelConfig.findByPk(id);
     if (!item) return null;
     await item.update(data);
     try {
       io.emit('scoringModel:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -73,7 +73,7 @@ class AiLeadScoringService {
     if (parameters.length === 0) return { modelId, scored: 0, results: [], error: 'No scoring parameters defined' };
 
     // Fetch leads to score
-    const leadWhere: Record<string, any> = {};
+    const leadWhere: Record<string, unknown> = {};
     if (leadIds && leadIds.length > 0) leadWhere.id = { [Op.in]: leadIds };
     if (tenantId) leadWhere.tenantId = tenantId;
 
@@ -83,7 +83,7 @@ class AiLeadScoringService {
     const results: Array<{ leadId: string; leadName: string; score: number; matchedRules: string[] }> = [];
 
     for (const lead of leads) {
-      const l = lead as any;
+      const l = lead as Record<string, unknown>;
       let rawScore = 0;
       const matchedRules: string[] = [];
 
@@ -148,7 +148,7 @@ class AiLeadScoringService {
 
     try {
       io.emit('scoringModel:leadsScored', { modelId, count: results.length });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return {
       modelId,
@@ -172,7 +172,7 @@ class AiLeadScoringService {
     if (parameters.length === 0) return { modelId, features: [] };
 
     // Fetch sample leads to test rules against
-    const leadWhere: Record<string, any> = {};
+    const leadWhere: Record<string, unknown> = {};
     if (tenantId) leadWhere.tenantId = tenantId;
 
     const leads = await Lead.findAll({ where: leadWhere, limit: 100, raw: true });
@@ -186,7 +186,7 @@ class AiLeadScoringService {
       }
 
       for (const lead of leads) {
-        const l = lead as any;
+        const l = lead as Record<string, unknown>;
         const fieldValue = l[param.feature];
         let matched = false;
 

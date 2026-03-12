@@ -106,7 +106,7 @@ export const VariableNode = Node.create<VariableNodeOptions>({
   },
 
   addNodeView() {
-    return VueNodeViewRenderer(VariableNodeView as any);
+    return VueNodeViewRenderer(VariableNodeView as unknown);
   },
 
   addCommands() {

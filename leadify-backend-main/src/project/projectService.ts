@@ -149,7 +149,7 @@ class ProjectService {
     }
   }
 
-  public async associatingVehicles(id: string, input: AssociatingVehiclesToProjectInput, user: User): Promise<any> {
+  public async associatingVehicles(id: string, input: AssociatingVehiclesToProjectInput, user: User): Promise<unknown> {
     await this.validateProjectAccess(id, user);
     const project = await this.projectOrError({ id });
     if (!input.vehiclesIds) {
@@ -195,7 +195,7 @@ class ProjectService {
     return this.recalculateProject(project);
   }
 
-  public async associatingManpower(id: string, data: AssociatingManpowerToProjectInput, user: User): Promise<any> {
+  public async associatingManpower(id: string, data: AssociatingManpowerToProjectInput, user: User): Promise<unknown> {
     await this.validateProjectAccess(id, user);
 
     const project = await this.projectOrError({ id });
@@ -213,7 +213,7 @@ class ProjectService {
     return this.recalculateProject(project);
   }
 
-  public async associateingMaterial(id: string, input: AssociatingMaterialsToProjectInput, user: User): Promise<any> {
+  public async associateingMaterial(id: string, input: AssociatingMaterialsToProjectInput, user: User): Promise<unknown> {
     await this.validateProjectAccess(id, user);
 
     const project = await this.projectOrError({ id });
@@ -324,7 +324,7 @@ class ProjectService {
     return this.recalculateProject(project);
   }
 
-  public async associateAssetsToProject(id: string, input: AssociatingAssetToProjectInput, user: User): Promise<any> {
+  public async associateAssetsToProject(id: string, input: AssociatingAssetToProjectInput, user: User): Promise<unknown> {
     await this.validateProjectAccess(id, user);
 
     const project = await this.projectOrError({ id });
@@ -385,7 +385,7 @@ class ProjectService {
     return this.recalculateProject(project);
   }
 
-  public async completeProjectCreation(projectId: string, input: completeProjectCreationInput, user: User): Promise<any> {
+  public async completeProjectCreation(projectId: string, input: completeProjectCreationInput, user: User): Promise<unknown> {
     await this.validateProjectAccess(projectId, user);
 
     const project = await this.projectOrError({ id: projectId });
@@ -411,7 +411,7 @@ class ProjectService {
     return project;
   }
 
-  public async getProjects(query: any, user: User): Promise<any> {
+  public async getProjects(query: Record<string, unknown>, user: User): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(ProjectPermissionsEnum.VIEW_GLOBAL_PROJECTS)) query.userId = user.id;
@@ -500,14 +500,14 @@ class ProjectService {
     });
   }
 
-  public async getProjectById(projectId: string, user: User): Promise<any> {
+  public async getProjectById(projectId: string, user: User): Promise<unknown> {
     await this.validateProjectAccess(projectId, user);
     const project = await this.projectOrError({ id: projectId }, RelationArray);
 
     return project;
   }
 
-  public async getDraftProject(user: User): Promise<any> {
+  public async getDraftProject(user: User): Promise<unknown> {
     const project = await this.projectOrError(
       {
         isCompleted: false,
@@ -552,7 +552,7 @@ class ProjectService {
     await opportunity.update({ stage: OpportunityStageEnums.CONVERTED });
   }
 
-  public async recalculateProject(project: Project): Promise<any> {
+  public async recalculateProject(project: Project): Promise<unknown> {
     const manpowerRecords = await ProjectManpower.findAll({ where: { projectId: project.id } });
     const resourceCount = manpowerRecords.length || 1;
     const accommodationCostPerManpower = (project.accommodationCost || 0) / resourceCount;
@@ -606,7 +606,7 @@ class ProjectService {
     return !!assignment; // Returns true if assigned, false otherwise
   }
 
-  public async deleteProject(id: string, user: User): Promise<any> {
+  public async deleteProject(id: string, user: User): Promise<unknown> {
     await this.validateProjectAccess(id, user);
     const project = await this.projectOrError({ id });
     if (project.isCompleted) throw new BaseError(ERRORS.INVALID_DELETE_COMPLETED_PROJECT);
@@ -622,8 +622,8 @@ class ProjectService {
     await project.destroy();
   }
 
-  public async sendProjectsExcelByEmail(query: any, user: User, email: string): Promise<void> {
-    const where: Record<string, any> = {
+  public async sendProjectsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
+    const where: Record<string, unknown> = {
       ...tenantWhere(user),
       isCompleted: true,
       ...(query.searchKey && {

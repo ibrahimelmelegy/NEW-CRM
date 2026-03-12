@@ -601,7 +601,58 @@
     "fixedAmount": "مبلغ ثابت",
     "ascending": "تصاعدي",
     "descending": "تنازلي",
-    "companyName": "اسم الشركة"
+    "companyName": "اسم الشركة",
+    "invalidDateRange": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية",
+    "percentagesSumError": "يجب أن يكون مجموع نسب المتغيرات 100",
+    "addFilter": "إضافة فلتر",
+    "addTask": "إضافة مهمة",
+    "any": "أي",
+    "apply": "تطبيق",
+    "auditHistory": "سجل التدقيق",
+    "clearAll": "مسح الكل",
+    "color": "اللون",
+    "createdSuccessfully": "تم الإنشاء بنجاح",
+    "deleteConfirmation": "هل أنت متأكد من حذف هذا العنصر؟",
+    "deletedSuccessfully": "تم الحذف بنجاح",
+    "departments": "الأقسام",
+    "descriptionPlaceholder": "أدخل الوصف...",
+    "disabled": "معطّل",
+    "dueDate": "تاريخ الاستحقاق",
+    "editTask": "تعديل المهمة",
+    "enabled": "مفعّل",
+    "enterValue": "أدخل القيمة",
+    "eof": "نهاية القائمة",
+    "generic": "عام",
+    "goBack": "العودة",
+    "healthInsurance": "التأمين الصحي",
+    "home": "الرئيسية",
+    "incomingFlightTicket": "تذكرة الطيران الواردة",
+    "matchCondition": "شرط المطابقة",
+    "more": "المزيد",
+    "noHistory": "لا يوجد سجل",
+    "noTasks": "لا توجد مهام",
+    "notFound": "غير موجود",
+    "notes": "ملاحظات",
+    "of": "من",
+    "overview": "نظرة عامة",
+    "phone": "الهاتف",
+    "print": "طباعة",
+    "rename": "إعادة تسمية",
+    "retry": "إعادة المحاولة",
+    "saudization": "السعودة",
+    "savedSuccessfully": "تم الحفظ بنجاح",
+    "select": "اختر",
+    "selectField": "اختر الحقل",
+    "selectValue": "اختر القيمة",
+    "setDefault": "تعيين كافتراضي",
+    "showing": "عرض",
+    "socialInsurance": "التأمينات الاجتماعية",
+    "taskTitlePlaceholder": "أدخل عنوان المهمة...",
+    "tasks": "المهام",
+    "unknown": "غير معروف",
+    "updatedSuccessfully": "تم التحديث بنجاح",
+    "viewNamePlaceholder": "أدخل اسم العرض...",
+    "visaFees": "رسوم التأشيرة"
   },
   "export": {
     "title": "تصدير",
@@ -732,7 +783,8 @@
     "refreshInsights": "تحديث الرؤى",
     "noInsightsToday": "لا توجد رؤى متاحة حالياً. تحقق لاحقاً.",
     "askCopilot": "اسأل المساعد...",
-    "pasteMeetingNotes": "الصق ملاحظات الاجتماع هنا..."
+    "pasteMeetingNotes": "الصق ملاحظات الاجتماع هنا...",
+    "copilot": "مساعد الذكاء الاصطناعي"
   },
   "spotlight": {
     "searchPlaceholder": "ابحث عن صفحات أو إجراءات أو اكتب أمر...",
@@ -773,7 +825,8 @@
     "pageNotFound": "الصفحة غير موجودة",
     "pageNotFoundDesc": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
     "goHome": "الذهاب إلى لوحة القيادة",
-    "goBack": "رجوع"
+    "goBack": "رجوع",
+    "unknown": "حدث خطأ غير معروف"
   },
   "crm": {
     "projectStatus": {
@@ -2062,7 +2115,8 @@
       "invalidFile": "يرجى تحميل ملف Excel صالح (.xls أو .xlsx)",
       "importFailed": "فشل استيراد الملف"
     },
-    "noLeadsYet": "لا توجد عملاء محتملون بعد"
+    "noLeadsYet": "لا توجد عملاء محتملون بعد",
+    "present": "حاضر"
   },
   "opportunities": {
     "title": "الفرص",
@@ -2335,7 +2389,8 @@
         "preview": "معاينة",
         "proposal": "العروض",
         "folders": "المجلدات",
-        "activity": "سجل النشاط"
+        "activity": "سجل النشاط",
+        "summary": "ملخص"
       },
       "detailsSummary": {
         "title": "الملخص",
@@ -2728,7 +2783,8 @@
         "companyName": "اسم الشركة",
         "email": "البريد الإلكتروني",
         "phone": "الهاتف",
-        "clientType": "نوع العميل"
+        "clientType": "نوع العميل",
+        "editTitle": "تعديل المهمة"
       }
     },
     "vehicle": {
@@ -3189,7 +3245,8 @@
     "priority": "الأولوية",
     "activeToggle": "نشط",
     "addCondition": "إضافة شرط",
-    "addAction": "إضافة إجراء"
+    "addAction": "إضافة إجراء",
+    "description": "الوصف"
   },
   "campaigns": {
     "title": "حملات البريد الإلكتروني",
@@ -3376,7 +3433,8 @@
       "replySent": "تم إرسال الرد بنجاح",
       "replyFailed": "فشل إرسال الرد",
       "conversation": "المحادثة",
-      "ticketClosed": "هذه التذكرة مغلقة. لا يمكن إرسال ردود إضافية."
+      "ticketClosed": "هذه التذكرة مغلقة. لا يمكن إرسال ردود إضافية.",
+      "status": "الحالة"
     },
     "enhanced": {
       "welcome": "مرحباً، {name}",
@@ -4427,7 +4485,8 @@
       "notes": "ملاحظات",
       "date": "التاريخ",
       "noMovements": "لا توجد حركات مخزون مسجلة"
-    }
+    },
+    "product": "المنتج"
   },
   "approvals": {
     "title": "مركز الموافقات",
@@ -4500,7 +4559,8 @@
     "requestDate": "تاريخ الطلب",
     "decision": "القرار",
     "decisionDate": "تاريخ القرار",
-    "request": "الطلب"
+    "request": "الطلب",
+    "notes": "ملاحظات"
   },
   "documents": {
     "title": "مكتبة المستندات",
@@ -5830,7 +5890,21 @@
     "deductions": "الخصومات",
     "gosi": "GOSI",
     "absent": "غياب",
-    "loan": "قرض"
+    "loan": "قرض",
+    "months": {
+      "january": "يناير",
+      "february": "فبراير",
+      "march": "مارس",
+      "april": "أبريل",
+      "may": "مايو",
+      "june": "يونيو",
+      "july": "يوليو",
+      "august": "أغسطس",
+      "september": "سبتمبر",
+      "october": "أكتوبر",
+      "november": "نوفمبر",
+      "december": "ديسمبر"
+    }
   },
   "support": {
     "title": "تذاكر الدعم",
@@ -6010,7 +6084,8 @@
     "supportTickets": "تذاكر الدعم",
     "assignee": "المسؤول",
     "created": "تم الإنشاء",
-    "assignedToMe": "معين لي"
+    "assignedToMe": "معين لي",
+    "failedToLoadTickets": "فشل تحميل التذاكر"
   },
   "accounting": {
     "title": "المحاسبة",
@@ -7933,7 +8008,9 @@
     "software": "برمجيات",
     "services": "خدمات",
     "hardware": "أجهزة",
-    "accessories": "إكسسوارات"
+    "accessories": "إكسسوارات",
+    "currency": "العملة",
+    "description": "الوصف"
   },
   "companies": {
     "title": "دليل الشركات",
@@ -8482,7 +8559,10 @@
       "categoryCreated": "تم إنشاء التصنيف بنجاح",
       "categoryUpdated": "تم تحديث التصنيف بنجاح",
       "categoryDeleted": "تم حذف التصنيف بنجاح",
-      "noCategories": "لا توجد تصنيفات بعد. أنشئ أول تصنيف."
+      "noCategories": "لا توجد تصنيفات بعد. أنشئ أول تصنيف.",
+      "name": "اسم الفئة",
+      "subcategories": "الفئات الفرعية",
+      "total": "الإجمالي"
     },
     "coupons": {
       "title": "القسائم والخصومات",
@@ -8522,7 +8602,9 @@
       "noExpiry": "بدون انتهاء",
       "active": "نشط",
       "expired": "منتهي",
-      "disabled": "معطل"
+      "disabled": "معطل",
+      "edit": "تعديل الكوبون",
+      "generate": "توليد الكود"
     },
     "reviews": {
       "title": "مراجعات المنتجات",
@@ -8551,8 +8633,17 @@
       "responseSent": "تم إرسال الرد بنجاح",
       "reviewDeleted": "تم حذف المراجعة",
       "confirmDelete": "هل أنت متأكد من حذف هذه المراجعة؟",
-      "noReviews": "لم يتم العثور على مراجعات"
-    }
+      "noReviews": "لم يتم العثور على مراجعات",
+      "verified": "شراء موثق"
+    },
+    "active": "نشط",
+    "cancelled": "ملغي",
+    "client": "العميل",
+    "confirmed": "مؤكد",
+    "pending": "في الانتظار",
+    "processing": "قيد المعالجة",
+    "shipped": "تم الشحن",
+    "total": "الإجمالي"
   },
   "marketing": {
     "surveys": {
@@ -8896,7 +8987,13 @@
     "call": "مكالمة",
     "demo": "عرض توضيحي",
     "consultation": "استشارة",
-    "followUp": "متابعة"
+    "followUp": "متابعة",
+    "check": "تحقق",
+    "completed": "مكتمل",
+    "search": "بحث",
+    "staff": "الموظف",
+    "status": "الحالة",
+    "upcoming": "القادمة"
   },
   "callLog": {
     "title": "سجل المكالمات",
@@ -9200,7 +9297,8 @@
     "signerName": "اسم الموقّع",
     "signerEmail": "بريد الموقّع",
     "fullName": "الاسم الكامل",
-    "sendRequest": "إرسال الطلب"
+    "sendRequest": "إرسال الطلب",
+    "signature": "التوقيع"
   },
   "reminders": {
     "reminderCreated": "تم إنشاء التذكير!",
@@ -13553,7 +13651,26 @@
     "express": "سريع",
     "economy": "اقتصادي",
     "preparing": "جاري التجهيز",
-    "inTransit": "في الطريق"
+    "inTransit": "في الطريق",
+    "active": "نشط",
+    "calculate": "حساب",
+    "carrier": "شركة الشحن",
+    "cost": "التكلفة",
+    "currency": "العملة",
+    "delivered": "تم التسليم",
+    "destination": "الوجهة",
+    "origin": "المصدر",
+    "rate": "السعر",
+    "rates": "الأسعار",
+    "recipient": "المستلم",
+    "returned": "مُعاد",
+    "shipments": "الشحنات",
+    "status": "الحالة",
+    "subtitle": "إدارة الشحنات وأسعار الشحن",
+    "title": "الشحن",
+    "track": "تتبع",
+    "weight": "الوزن",
+    "zone": "المنطقة"
   },
   "whatsapp": {
     "english": "الإنجليزية",
@@ -13834,5 +13951,46 @@
       "noDiscountRules": "لا توجد قواعد خصم",
       "noPriceBooks": "لا توجد قوائم أسعار"
     }
-  }
+  },
+  "action": "إجراء",
+  "back": "رجوع",
+  "cancel": "إلغاء",
+  "clear": "مسح",
+  "close": "إغلاق",
+  "confirm": "تأكيد",
+  "csv": "CSV",
+  "delete": "حذف",
+  "deselect": "إلغاء التحديد",
+  "dismiss": "رفض",
+  "duplicate": "نسخ",
+  "excel": "Excel",
+  "logout": "تسجيل الخروج",
+  "preview": "معاينة",
+  "redo": "إعادة",
+  "refresh": "تحديث",
+  "reset": "إعادة تعيين",
+  "save": "حفظ",
+  "saved": "محفوظ",
+  "search": "بحث",
+  "select": "اختيار",
+  "sent": "مرسل",
+  "submit": "إرسال",
+  "success": "نجاح",
+  "toggle": "تبديل",
+  "undo": "تراجع",
+  "updated": "محدث",
+  "bold": "غامق",
+  "italic": "مائل",
+  "underline": "تسطير",
+  "strikethrough": "يتوسطه خط",
+  "left": "يسار",
+  "center": "وسط",
+  "right": "يمين",
+  "justify": "ضبط",
+  "aggressive": "عدوانية",
+  "conservative": "محافظة",
+  "current": "الحالي",
+  "executive": "تنفيذي",
+  "enabled": "مفعّل",
+  "disabled": "معطّل"
 }

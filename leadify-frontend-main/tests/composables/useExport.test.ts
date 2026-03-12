@@ -13,11 +13,11 @@ import { useExport } from '@/composables/useExport';
 // ============================================
 // Global mocks required by the composable
 // ============================================
-(globalThis as any).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
+(globalThis as Record<string, unknown>).useRuntimeConfig = () => ({ public: { API_BASE_URL: 'http://localhost:3001/api/v1/' } });
 
 // Mock the global fetch
 const mockGlobalFetch = vi.fn();
-(globalThis as any).fetch = mockGlobalFetch;
+(globalThis as Record<string, unknown>).fetch = mockGlobalFetch;
 
 describe('useExport composable', () => {
   let exportInstance: ReturnType<typeof useExport>;
@@ -169,7 +169,7 @@ describe('useExport composable', () => {
     it('should handle null and undefined values', () => {
       const dataWithNulls = [{ name: null, email: undefined, value: 0 }];
 
-      exportInstance.exportToCSV('Report', dataWithNulls as any, columns);
+      exportInstance.exportToCSV('Report', dataWithNulls as unknown, columns);
 
       expect(mockCreateObjectURL).toHaveBeenCalled();
     });

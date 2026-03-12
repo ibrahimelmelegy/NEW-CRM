@@ -9,17 +9,17 @@ import { io } from '../server';
 class AccountPlanService {
   // ─── Account Plan CRUD ────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string, ownerId?: number) {
+  async create(data: Record<string, unknown>, tenantId?: string, ownerId?: number) {
     const plan = await AccountPlan.create({ ...data, tenantId, ownerId });
     try {
       io.emit('accountPlan:created', { id: plan.id, name: plan.name });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return plan;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.tier) where.tier = query.tier;
     if (query.status) where.status = query.status;
@@ -53,13 +53,13 @@ class AccountPlanService {
     });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await AccountPlan.findByPk(id);
     if (!item) return null;
     await item.update(data);
     try {
       io.emit('accountPlan:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -70,17 +70,17 @@ class AccountPlanService {
     await item.destroy();
     try {
       io.emit('accountPlan:deleted', { id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return true;
   }
 
   // ─── Stakeholder CRUD ────────────────────────────────────────────────────────
 
-  async addStakeholder(data: any, tenantId?: string) {
+  async addStakeholder(data: Record<string, unknown>, tenantId?: string) {
     const stakeholder = await Stakeholder.create({ ...data, tenantId });
     try {
       io.emit('stakeholder:created', { id: stakeholder.id, accountPlanId: stakeholder.accountPlanId });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return stakeholder;
   }
 
@@ -91,7 +91,7 @@ class AccountPlanService {
     });
   }
 
-  async updateStakeholder(id: number, data: any) {
+  async updateStakeholder(id: number, data: Record<string, unknown>) {
     const item = await Stakeholder.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -113,7 +113,7 @@ class AccountPlanService {
    * Returns accounts with highest expansion potential and nearest renewal dates.
    */
   async getWhitespaceAnalysis(tenantId?: string) {
-    const where: Record<string, any> = { status: 'ACTIVE' };
+    const where: Record<string, unknown> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     const plans = await AccountPlan.findAll({
@@ -129,7 +129,7 @@ class AccountPlanService {
       const totalGoals = (p.goals || []).length;
       return {
         accountPlanId: p.id,
-        accountName: (p.account as any)?.clientName || 'Unknown',
+        accountName: (p.account as Record<string, unknown>)?.clientName || 'Unknown',
         tier: p.tier,
         annualRevenue: Number(p.annualRevenue) || 0,
         expansionPotential: Number(p.expansionPotential) || 0,
@@ -150,7 +150,7 @@ class AccountPlanService {
 
   /** Forecast revenue across all active account plans grouped by tier */
   async getForecast(tenantId?: string) {
-    const where: Record<string, any> = { status: 'ACTIVE' };
+    const where: Record<string, unknown> = { status: 'ACTIVE' };
     if (tenantId) where.tenantId = tenantId;
 
     const plans = await AccountPlan.findAll({ where, raw: true });
@@ -158,7 +158,7 @@ class AccountPlanService {
     const byTier: Record<string, { count: number; totalRevenue: number; totalExpansion: number; avgHealth: number }> = {};
 
     for (const p of plans) {
-      const plan = p as any;
+      const plan = p as Record<string, unknown>;
       const tier = plan.tier || 'STANDARD';
       if (!byTier[tier]) byTier[tier] = { count: 0, totalRevenue: 0, totalExpansion: 0, avgHealth: 0 };
       byTier[tier].count++;

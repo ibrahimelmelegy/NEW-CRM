@@ -8,18 +8,18 @@ import { io } from '../server';
 class ComplianceService {
   // ─── Consent Record CRUD ──────────────────────────────────────────────────────
 
-  async createConsent(data: any, tenantId?: string) {
+  async createConsent(data: Record<string, unknown>, tenantId?: string) {
     if (!data.consentDate) data.consentDate = new Date();
     const record = await ConsentRecord.create({ ...data, tenantId });
     try {
       io.emit('consent:created', { id: record.id, contactId: record.contactId });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return record;
   }
 
-  async getAllConsents(query: any, tenantId?: string) {
+  async getAllConsents(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.contactId) where.contactId = query.contactId;
@@ -40,7 +40,7 @@ class ComplianceService {
     return ConsentRecord.findByPk(id);
   }
 
-  async updateConsent(id: number, data: any) {
+  async updateConsent(id: number, data: Record<string, unknown>) {
     const item = await ConsentRecord.findByPk(id);
     if (!item) return null;
     // If withdrawing consent, set withdrawnAt
@@ -50,7 +50,7 @@ class ComplianceService {
     await item.update(data);
     try {
       io.emit('consent:updated', { id: item.id, status: item.status });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -63,7 +63,7 @@ class ComplianceService {
 
   // ─── Data Request CRUD ────────────────────────────────────────────────────────
 
-  async createDataRequest(data: any, tenantId?: string) {
+  async createDataRequest(data: Record<string, unknown>, tenantId?: string) {
     // Default deadline: 30 days from now (GDPR requirement)
     if (!data.deadline) {
       const deadline = new Date();
@@ -73,13 +73,13 @@ class ComplianceService {
     const request = await DataRequest.create({ ...data, tenantId });
     try {
       io.emit('dataRequest:created', { id: request.id, type: request.type });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return request;
   }
 
-  async getAllDataRequests(query: any, tenantId?: string) {
+  async getAllDataRequests(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -106,7 +106,7 @@ class ComplianceService {
     const request = await DataRequest.findByPk(id);
     if (!request) return null;
 
-    const updateData: Record<string, any> = { status: data.status };
+    const updateData: Record<string, unknown> = { status: data.status };
     if (data.resolution) updateData.resolution = data.resolution;
     if (data.assignedTo) updateData.assignedTo = data.assignedTo;
     if (data.status === 'COMPLETED') updateData.completedAt = new Date();
@@ -114,7 +114,7 @@ class ComplianceService {
     await request.update(updateData);
     try {
       io.emit('dataRequest:processed', { id: request.id, status: data.status });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return request;
   }
 
@@ -125,7 +125,7 @@ class ComplianceService {
    * Checks for expired consents, overdue data requests, and missing consent coverage.
    */
   async runAudit(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const now = new Date();
@@ -175,7 +175,7 @@ class ComplianceService {
 
     try {
       io.emit('compliance:auditCompleted', { issueCount: issues.length });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return {
       auditDate: now,
@@ -190,7 +190,7 @@ class ComplianceService {
 
   /** Calculate an overall compliance score based on consent coverage and request resolution */
   async getComplianceScore(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const totalConsents = await ConsentRecord.count({ where });

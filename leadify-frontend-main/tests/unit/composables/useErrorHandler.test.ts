@@ -13,17 +13,17 @@ import { useErrorHandler } from '~/composables/useErrorHandler';
 
 // Mock ElNotification
 const mockNotification = vi.fn();
-(globalThis as any).ElNotification = mockNotification;
+(globalThis as Record<string, unknown>).ElNotification = mockNotification;
 
 // Mock useI18n
-(globalThis as any).useI18n = () => ({
+(globalThis as Record<string, unknown>).useI18n = () => ({
   t: (key: string) => key,
   locale: { value: 'en' }
 });
 
 // Must mock element-plus before importing
 vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockNotification(...args)
+  ElNotification: (...args: unknown[]) => mockNotification(...args)
 }));
 
 describe('useErrorHandler', () => {

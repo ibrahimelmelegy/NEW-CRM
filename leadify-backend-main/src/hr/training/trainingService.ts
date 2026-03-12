@@ -6,7 +6,7 @@ import { io } from '../../server';
 
 class TrainingService {
   // ──────────── Programs CRUD ────────────
-  async createProgram(data: any, tenantId?: string) {
+  async createProgram(data: Record<string, unknown>, tenantId?: string) {
     return TrainingProgram.create({ ...data, tenantId });
   }
 
@@ -22,9 +22,9 @@ class TrainingService {
     });
   }
 
-  async getPrograms(query: any, tenantId?: string) {
+  async getPrograms(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.type) where.type = query.type;
@@ -40,7 +40,7 @@ class TrainingService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateProgram(id: number, data: any) {
+  async updateProgram(id: number, data: Record<string, unknown>) {
     const program = await TrainingProgram.findByPk(id);
     if (!program) return null;
     await program.update(data);
@@ -55,13 +55,13 @@ class TrainingService {
   }
 
   // ──────────── Enrollments CRUD ────────────
-  async enroll(data: any, tenantId?: string) {
+  async enroll(data: Record<string, unknown>, tenantId?: string) {
     return TrainingEnrollment.create({ ...data, tenantId });
   }
 
-  async getEnrollments(query: any, tenantId?: string) {
+  async getEnrollments(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.programId) where.programId = query.programId;
     if (query.employeeId) where.employeeId = query.employeeId;
@@ -81,7 +81,7 @@ class TrainingService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateEnrollment(id: number, data: any) {
+  async updateEnrollment(id: number, data: Record<string, unknown>) {
     const enrollment = await TrainingEnrollment.findByPk(id);
     if (!enrollment) return null;
     if (data.status === 'COMPLETED' && !enrollment.completedAt) {
@@ -152,7 +152,7 @@ class TrainingService {
 
     try {
       io.emit('training:enrolled', { id: enrollment.id, programId, employeeId, programTitle: program.title });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return enrollment;
   }
 
@@ -179,7 +179,7 @@ class TrainingService {
 
     try {
       io.emit('training:completed', { id: enrollmentId, programId: enrollment.programId, employeeId: enrollment.employeeId });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return enrollment.reload();
   }
 
@@ -224,7 +224,7 @@ class TrainingService {
 
     const completed = enrollments.filter(e => e.status === 'COMPLETED').length;
     const inProgress = enrollments.filter(e => ['ENROLLED', 'IN_PROGRESS'].includes(e.status)).length;
-    const totalHours = enrollments.filter(e => e.status === 'COMPLETED').reduce((sum, e) => sum + ((e.program as any)?.durationHours || 0), 0);
+    const totalHours = enrollments.filter(e => e.status === 'COMPLETED').reduce((sum, e) => sum + ((e.program as Record<string, unknown>)?.durationHours || 0), 0);
 
     return {
       employeeId,

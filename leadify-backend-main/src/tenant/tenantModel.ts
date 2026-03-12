@@ -17,7 +17,7 @@ export interface TenantSettings {
   timezone?: string;
   /** Feature flags */
   features?: Record<string, boolean>;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 @Table({
@@ -124,7 +124,7 @@ class Tenant extends Model {
   @HasMany(() => Client)
   public clients!: Client[];
 
-  public toJSON(): Record<string, any> {
+  public toJSON(): Record<string, unknown> {
     return { ...this.get() };
   }
 }

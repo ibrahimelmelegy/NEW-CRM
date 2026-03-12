@@ -6,7 +6,7 @@ import { AuthenticatedRequest } from '../types';
 class ZatcaController {
   async getInvoices(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await zatcaService.getZatcaInvoices(req.query as any);
+      const result = await zatcaService.getZatcaInvoices(req.query as Record<string, string>);
       wrapResult(res, result);
     } catch (error) {
       next(error);

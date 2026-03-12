@@ -14,7 +14,7 @@ const mockElNotification = vi.fn();
 
 // Mock element-plus to intercept the import { ElNotification } in stores/common.ts
 vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockElNotification(...args)
+  ElNotification: (...args: unknown[]) => mockElNotification(...args)
 }));
 
 // Mock useApiFetch globally
@@ -24,7 +24,7 @@ globalThis.useApiFetch = vi.fn();
 globalThis.useI18n = () => ({ t: (key: string) => key, locale: ref('en') });
 
 // Mock useAsyncGql (GraphQL composable used by uploadFile)
-(globalThis as any).useAsyncGql = vi.fn();
+(globalThis as Record<string, unknown>).useAsyncGql = vi.fn();
 
 describe('useMain', () => {
   let store: ReturnType<typeof useMain>;
@@ -139,7 +139,7 @@ describe('useMain', () => {
       const mockFile = new File(['test-content'], 'photo.png', { type: 'image/png' });
 
       const mockLink = 'https://bucket.example.com/uploads/HPT-123456.png?signature=abc';
-      ((globalThis as any).useAsyncGql as any).mockResolvedValue({
+      ((globalThis as Record<string, unknown>).useAsyncGql as unknown).mockResolvedValue({
         data: ref({
           generateUploadLink: {
             data: mockLink
@@ -147,7 +147,7 @@ describe('useMain', () => {
         })
       });
 
-      (globalThis.$fetch as any).mockResolvedValue({});
+      (globalThis.$fetch as unknown).mockResolvedValue({});
 
       // Override useRuntimeConfig for this test
       const originalConfig = globalThis.useRuntimeConfig;
@@ -161,7 +161,7 @@ describe('useMain', () => {
       try {
         await store.uploadFile('blog_cover', mockFile);
 
-        expect((globalThis as any).useAsyncGql).toHaveBeenCalledWith(
+        expect((globalThis as Record<string, unknown>).useAsyncGql).toHaveBeenCalledWith(
           'generateUploadLink',
           expect.objectContaining({
             model: 'BLOG_COVER',
@@ -178,13 +178,13 @@ describe('useMain', () => {
       const mockFile = new File(['test'], 'doc.pdf', { type: 'application/pdf' });
       const mockLink = 'https://bucket.example.com/uploads/HPT-999.pdf?sig=xyz';
 
-      ((globalThis as any).useAsyncGql as any).mockResolvedValue({
+      ((globalThis as Record<string, unknown>).useAsyncGql as unknown).mockResolvedValue({
         data: ref({
           generateUploadLink: { data: mockLink }
         })
       });
 
-      (globalThis.$fetch as any).mockResolvedValue({});
+      (globalThis.$fetch as unknown).mockResolvedValue({});
 
       const originalConfig = globalThis.useRuntimeConfig;
       globalThis.useRuntimeConfig = () => ({
@@ -211,7 +211,7 @@ describe('useMain', () => {
     it('should show error notification and rethrow on upload failure', async () => {
       const mockFile = new File(['test'], 'broken.png', { type: 'image/png' });
 
-      ((globalThis as any).useAsyncGql as any).mockRejectedValue(new Error('GraphQL error'));
+      ((globalThis as Record<string, unknown>).useAsyncGql as unknown).mockRejectedValue(new Error('GraphQL error'));
 
       await expect(store.uploadFile('avatar', mockFile)).rejects.toThrow('GraphQL error');
 
@@ -227,7 +227,7 @@ describe('useMain', () => {
     it('should show generic error message for non-Error exceptions', async () => {
       const mockFile = new File(['test'], 'broken.png', { type: 'image/png' });
 
-      ((globalThis as any).useAsyncGql as any).mockRejectedValue('string error');
+      ((globalThis as Record<string, unknown>).useAsyncGql as unknown).mockRejectedValue('string error');
 
       await expect(store.uploadFile('avatar', mockFile)).rejects.toBe('string error');
 

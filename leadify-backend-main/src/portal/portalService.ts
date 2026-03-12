@@ -227,7 +227,7 @@ class PortalService {
         collected: inv.collected,
         collectedDate: inv.collectedDate,
         status,
-        deal: (inv as unknown as Record<string, any>).deal || null
+        deal: (inv as unknown as Record<string, unknown>).deal || null
       };
     });
   }

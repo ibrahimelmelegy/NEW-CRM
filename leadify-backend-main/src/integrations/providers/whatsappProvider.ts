@@ -1,4 +1,5 @@
 // ─── WhatsApp Business API Provider ──────────────────────────────────────────
+import logger from '../config/logger';
 // Uses Meta's WhatsApp Business Cloud API when configured, otherwise returns mock data.
 // Env vars: WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_ACCESS_TOKEN, WHATSAPP_WEBHOOK_VERIFY_TOKEN
 
@@ -83,7 +84,7 @@ export class WhatsAppProvider {
       return { success: true, data: { messageId: `mock_wa_${Date.now()}`, status: 'sent' }, mock: true };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to send WhatsApp message';
-      console.error('[WhatsAppProvider] sendTextMessage error:', errMsg);
+      logger.error('[WhatsAppProvider] sendTextMessage error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };
     }
   }
@@ -92,7 +93,7 @@ export class WhatsAppProvider {
     try {
       const config = this.getConfig();
       if (config) {
-        const templatePayload: Record<string, any> = {
+        const templatePayload: Record<string, unknown> = {
           messaging_product: 'whatsapp',
           recipient_type: 'individual',
           to: input.to,
@@ -120,7 +121,7 @@ export class WhatsAppProvider {
       return { success: true, data: { messageId: `mock_wa_tpl_${Date.now()}`, status: 'sent' }, mock: true };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to send template message';
-      console.error('[WhatsAppProvider] sendTemplateMessage error:', errMsg);
+      logger.error('[WhatsAppProvider] sendTemplateMessage error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };
     }
   }
@@ -129,7 +130,7 @@ export class WhatsAppProvider {
     try {
       const config = this.getConfig();
       if (config) {
-        const mediaPayload: Record<string, any> = {
+        const mediaPayload: Record<string, unknown> = {
           messaging_product: 'whatsapp',
           recipient_type: 'individual',
           to: input.to,
@@ -137,7 +138,7 @@ export class WhatsAppProvider {
         };
 
         // Build the media object based on type
-        const mediaObj: Record<string, any> = { link: input.mediaUrl };
+        const mediaObj: Record<string, unknown> = { link: input.mediaUrl };
         if (input.caption) mediaObj.caption = input.caption;
         if (input.filename && input.type === 'document') mediaObj.filename = input.filename;
         mediaPayload[input.type] = mediaObj;
@@ -158,7 +159,7 @@ export class WhatsAppProvider {
       return { success: true, data: { messageId: `mock_wa_media_${Date.now()}`, status: 'sent' }, mock: true };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to send media message';
-      console.error('[WhatsAppProvider] sendMediaMessage error:', errMsg);
+      logger.error('[WhatsAppProvider] sendMediaMessage error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };
     }
   }
@@ -192,7 +193,7 @@ export class WhatsAppProvider {
       };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to get templates';
-      console.error('[WhatsAppProvider] getMessageTemplates error:', errMsg);
+      logger.error('[WhatsAppProvider] getMessageTemplates error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !WhatsAppProvider.isConfigured() };
     }
   }
@@ -211,10 +212,10 @@ export class WhatsAppProvider {
   /**
    * Parse incoming webhook payload from Meta WhatsApp Business API.
    */
-  parseWebhookPayload(body: Record<string, any>): WhatsAppWebhookEvent[] {
+  parseWebhookPayload(body: Record<string, unknown>): WhatsAppWebhookEvent[] {
     const events: WhatsAppWebhookEvent[] = [];
     try {
-      const entry = body.entry as Array<{ changes: Array<{ value: Record<string, any> }> }>;
+      const entry = body.entry as Array<{ changes: Array<{ value: Record<string, unknown> }> }>;
       if (!entry) return events;
 
       for (const e of entry) {
@@ -253,7 +254,7 @@ export class WhatsAppProvider {
         }
       }
     } catch (err) {
-      console.error('[WhatsAppProvider] parseWebhookPayload error:', err);
+      logger.error('[WhatsAppProvider] parseWebhookPayload error:', err);
     }
     return events;
   }

@@ -1,4 +1,5 @@
 // ─── Twilio SMS Service Provider ─────────────────────────────────────────────
+import logger from '../config/logger';
 // Uses real Twilio SDK when TWILIO_AUTH_TOKEN is set, otherwise returns mock data.
 // Note: The existing TwilioService in src/integration/twilioService.ts handles VoIP calls.
 // This provider focuses on SMS messaging capabilities.
@@ -23,7 +24,7 @@ export interface SMSResult<T> {
 }
 
 export class TwilioProvider {
-  private client: any = null;
+  private client: unknown = null;
 
   static isConfigured(): boolean {
     return !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN);
@@ -36,7 +37,7 @@ export class TwilioProvider {
         const twilio = require('twilio');
         this.client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
       } catch (err) {
-        console.error('[TwilioProvider] Failed to initialize Twilio SDK:', err);
+        logger.error('[TwilioProvider] Failed to initialize Twilio SDK:', err);
       }
     }
     return this.client;
@@ -60,7 +61,7 @@ export class TwilioProvider {
       return { success: true, data: { sid: `mock_sms_${Date.now()}`, status: 'queued' }, mock: true };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
-      console.error('[TwilioProvider] sendSMS error:', errMsg);
+      logger.error('[TwilioProvider] sendSMS error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !TwilioProvider.isConfigured() };
     }
   }
@@ -83,7 +84,7 @@ export class TwilioProvider {
       return { success: true, data: { sent: items.length, results: items }, mock: true };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
-      console.error('[TwilioProvider] sendBulkSMS error:', errMsg);
+      logger.error('[TwilioProvider] sendBulkSMS error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !TwilioProvider.isConfigured() };
     }
   }
@@ -98,7 +99,7 @@ export class TwilioProvider {
       return { success: true, data: { sid: messageSid, status: 'delivered', to: '+1234567890', dateSent: new Date().toISOString() }, mock: true };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
-      console.error('[TwilioProvider] getMessageStatus error:', errMsg);
+      logger.error('[TwilioProvider] getMessageStatus error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !TwilioProvider.isConfigured() };
     }
   }
@@ -125,7 +126,7 @@ export class TwilioProvider {
       return { success: true, data: { valid: isValid, countryCode: 'US', phoneNumber, carrier: null }, mock: true };
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
-      console.error('[TwilioProvider] validatePhoneNumber error:', errMsg);
+      logger.error('[TwilioProvider] validatePhoneNumber error:', errMsg);
       return { success: false, data: null, error: errMsg, mock: !TwilioProvider.isConfigured() };
     }
   }

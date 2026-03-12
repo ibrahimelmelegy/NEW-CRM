@@ -13,15 +13,15 @@ export enum AuditAction {
 
 export interface AuditFieldChange {
   field: string;
-  oldValue: any;
-  newValue: any;
+  oldValue: unknown;
+  newValue: unknown;
   fieldLabel?: string;
 }
 
 export interface AuditMetadata {
   ipAddress?: string;
   userAgent?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 @Table({

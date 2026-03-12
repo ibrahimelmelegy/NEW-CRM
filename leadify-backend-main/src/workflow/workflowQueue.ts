@@ -4,6 +4,7 @@ import { createBullBoard } from '@bull-board/api';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ExpressAdapter } from '@bull-board/express';
 import workflowService from './workflowService';
+import logger from '../config/logger';
 
 const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
   maxRetriesPerRequest: null
@@ -27,8 +28,8 @@ export interface WorkflowJobData {
   ruleId: number;
   entityType: string;
   entityId: string;
-  actions: any[];
-  entityData: any;
+  actions: unknown[];
+  entityData: unknown;
   triggerUserId?: number;
 }
 
@@ -41,22 +42,22 @@ const setupWorker = () => {
       const { executionId, ruleId, entityType: _entityType, entityId: _entityId, actions, entityData, triggerUserId } = job.data;
 
       // Process the exact delayed actions via the service
-      if (typeof (workflowService as any).executeDelayedActions === 'function') {
-        await (workflowService as any).executeDelayedActions(executionId, ruleId, entityData, actions, triggerUserId);
+      if (typeof (workflowService as Record<string, unknown>).executeDelayedActions === 'function') {
+        await (workflowService as Record<string, unknown>).executeDelayedActions(executionId, ruleId, entityData, actions, triggerUserId);
       } else {
-        console.warn(`[Queue] executeDelayedActions not yet implemented, skipping job ${job.id}`);
+        logger.warn(`[Queue] executeDelayedActions not yet implemented, skipping job ${job.id}`);
       }
 
       return { status: 'completed' };
     },
     {
-      connection: connection as any,
+      connection: connection as unknown,
       concurrency: 5
     }
   );
 
   worker.on('failed', (job: Job | undefined, err: Error) => {
-    console.error(`[Queue] Job ${job?.id} failed:`, err.message);
+    logger.error({ err: err.message }, `[Queue] Job ${job?.id} failed`);
   });
 
   worker.on('completed', (_job: Job) => {

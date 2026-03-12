@@ -250,6 +250,10 @@ function formatDate(date: string): string {
 }
 
 onMounted(loadData);
+
+onUnmounted(() => {
+  clearTimeout(searchTimeout);
+});
 </script>
 
 <style lang="scss" scoped>

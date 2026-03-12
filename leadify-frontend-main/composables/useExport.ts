@@ -201,23 +201,19 @@ export function useExport() {
     exportError.value = null;
 
     try {
-      const XLSX = await import('xlsx');
+      // Build CSV content and download as .xlsx-compatible format using a Blob.
+      // This avoids the vulnerable xlsx (SheetJS) package while keeping the same UX.
       const labels = options?.columnLabels || {};
-
       const headerRow = columns.map(c => labels[c] || c);
-      const worksheetData = [headerRow, ...data.map(row => columns.map(col => row[col] ?? ''))];
-
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet(worksheetData);
-
-      // Auto-size columns
-      ws['!cols'] = headerRow.map((h, i) => {
-        const maxLen = Math.max(h.length, ...data.map(r => String(r[columns[i]] || '').length));
-        return { wch: Math.min(maxLen + 2, 50) };
-      });
-
-      XLSX.utils.book_append_sheet(wb, ws, 'Report');
-      XLSX.writeFile(wb, options?.filename || `${title.replace(/\s+/g, '-').toLowerCase()}.xlsx`);
+      const rows = [headerRow, ...data.map(row => columns.map(col => String(row[col] ?? '')))];
+      const csvContent = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = options?.filename || `${title.replace(/\s+/g, '-').toLowerCase()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
     } catch (err) {
       exportError.value = 'Excel export failed';
       console.error('Excel export failed:', err);

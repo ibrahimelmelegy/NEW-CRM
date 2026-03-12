@@ -65,7 +65,7 @@ class CommActivity extends Model {
   public duration?: number;
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public metadata?: Record<string, any>;
+  public metadata?: Record<string, unknown>;
 
   @Column({ type: DataType.STRING, allowNull: true })
   public tenantId?: string;

@@ -6,6 +6,7 @@ import Invoice from '../deal/model/invoiceMode';
 import { DealActivity } from '../activity-logs/model/dealActivities';
 import { DealStageEnums } from '../deal/dealEnum';
 import User from '../user/userModel';
+import logger from '../config/logger';
 
 // ─── Interfaces ─────────────────────────────────────────────────────────────
 
@@ -106,7 +107,7 @@ class AIAssistantService {
   // 1. LEAD SCORING - Analyze lead quality and return score 1-100
   // ===================================================================
   async scoreLeadQuality(leadId: string): Promise<LeadScoreResult> {
-    const lead = (await Lead.findByPk(leadId, { raw: true })) as any;
+    const lead = (await Lead.findByPk(leadId, { raw: true })) as unknown;
     if (!lead) throw new Error('Lead not found');
 
     const factors: LeadScoreResult['factors'] = [];
@@ -351,7 +352,7 @@ class AIAssistantService {
           }
         }
       } catch (error) {
-        console.error('AI email generation error:', error);
+        logger.error({ error }, 'AI email generation error');
       }
     }
 
@@ -370,7 +371,7 @@ class AIAssistantService {
         { model: Lead, as: 'lead' },
         { model: Invoice, as: 'invoice' }
       ]
-    })) as any;
+    })) as unknown;
 
     if (!deal) throw new Error('Deal not found');
 
@@ -490,7 +491,7 @@ class AIAssistantService {
     // Factor 7: Invoice status
     const invoices = deal.invoice || [];
     if (invoices.length > 0) {
-      const collectedCount = invoices.filter((inv: any) => inv.collected).length;
+      const collectedCount = invoices.filter((inv: Record<string, unknown>) => inv.collected).length;
       if (collectedCount > 0) {
         probability += 8;
         positiveSignals.push(`${collectedCount} of ${invoices.length} invoices collected`);
@@ -501,7 +502,7 @@ class AIAssistantService {
     const avgPriceResult = (await Deal.findOne({
       attributes: [[fn('AVG', col('price')), 'avgPrice']],
       raw: true
-    })) as any;
+    })) as unknown;
     const avgPrice = avgPriceResult?.avgPrice || 10000;
     const dealPrice = deal.price || 0;
 
@@ -603,7 +604,7 @@ class AIAssistantService {
     const now = new Date();
 
     if (entityType === 'lead') {
-      const lead = (await Lead.findByPk(entityId, { raw: true })) as any;
+      const lead = (await Lead.findByPk(entityId, { raw: true })) as unknown;
       if (!lead) throw new Error('Lead not found');
       entityName = lead.name || 'Unknown Lead';
 
@@ -685,7 +686,7 @@ class AIAssistantService {
           { model: Client, as: 'client' },
           { model: Invoice, as: 'invoice' }
         ]
-      })) as any;
+      })) as unknown;
       if (!deal) throw new Error('Deal not found');
       entityName = deal.name || 'Unknown Deal';
 
@@ -697,7 +698,7 @@ class AIAssistantService {
         order: [['createdAt', 'DESC']],
         attributes: ['createdAt'],
         raw: true
-      })) as any;
+      })) as unknown;
 
       const daysSinceActivity = lastActivity
         ? Math.floor((now.getTime() - new Date(lastActivity.createdAt).getTime()) / (1000 * 60 * 60 * 24))
@@ -733,9 +734,9 @@ class AIAssistantService {
 
       // Suggestion: overdue invoices
       const invoices = deal.invoice || [];
-      const overdueInvoices = invoices.filter((inv: any) => !inv.collected && new Date(inv.invoiceDate) < now);
+      const overdueInvoices = invoices.filter((inv: Record<string, unknown>) => !inv.collected && new Date(inv.invoiceDate) < now);
       if (overdueInvoices.length > 0) {
-        const totalOverdue = overdueInvoices.reduce((s: number, inv: any) => s + (inv.amount || 0), 0);
+        const totalOverdue = overdueInvoices.reduce((s: number, inv: Record<string, unknown>) => s + (inv.amount || 0), 0);
         suggestions.push({
           id: 'deal-overdue-invoices',
           type: 'warning',
@@ -776,7 +777,7 @@ class AIAssistantService {
         });
       }
     } else if (entityType === 'client') {
-      const client = (await Client.findByPk(entityId, { raw: true })) as any;
+      const client = (await Client.findByPk(entityId, { raw: true })) as unknown;
       if (!client) throw new Error('Client not found');
       entityName = client.clientName || client.companyName || 'Unknown Client';
 
@@ -788,7 +789,7 @@ class AIAssistantService {
           where: { clientId: entityId },
           attributes: [[fn('SUM', col('price')), 'total']],
           raw: true
-        }) as any
+        }) as unknown
       ]);
 
       const revenue = totalDealValue?.total || 0;
@@ -873,7 +874,7 @@ class AIAssistantService {
   // Private helpers
   // ===================================================================
 
-  private async getAILeadInsight(lead: any, currentScore: number): Promise<{ reasoning: string; recommendation?: string } | null> {
+  private async getAILeadInsight(lead: Record<string, unknown>, currentScore: number): Promise<{ reasoning: string; recommendation?: string } | null> {
     try {
       const client = await getOpenAIClient();
       if (!client) return null;

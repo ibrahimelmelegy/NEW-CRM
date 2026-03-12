@@ -21,13 +21,13 @@ import {
 } from '~/composables/useReports';
 
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
-(globalThis as any).useRuntimeConfig = () => ({
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useRuntimeConfig = () => ({
   public: { apiBaseUrl: 'http://localhost:3001/api/v1/' }
 });
 
 vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: any[]) => mockApiFetch(...args)
+  useApiFetch: (...args: unknown[]) => mockApiFetch(...args)
 }));
 
 describe('useReports', () => {
@@ -272,11 +272,11 @@ describe('useReports', () => {
 
       globalThis.window = {
         URL: { createObjectURL: mockCreateObjectURL, revokeObjectURL: mockRevokeObjectURL }
-      } as any;
+      } as unknown;
       globalThis.document = {
         createElement: mockCreateElement,
         body: { appendChild: mockAppendChild, removeChild: mockRemoveChild }
-      } as any;
+      } as unknown;
 
       const blob = new Blob(['test'], { type: 'text/csv' });
       downloadBlob(blob, 'report.csv');

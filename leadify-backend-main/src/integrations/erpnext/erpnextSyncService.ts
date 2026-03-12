@@ -95,13 +95,13 @@ class ERPNextSyncService {
       throw new Error(`Invoice #${invoiceId} not found`);
     }
 
-    const deal = (invoice as any).deal as Deal | undefined;
-    const crmClient = deal ? ((deal as any).client as Client | undefined) : undefined;
+    const deal = (invoice as Record<string, unknown>).deal as Deal | undefined;
+    const crmClient = deal ? ((deal as Record<string, unknown>).client as Client | undefined) : undefined;
 
     // Map CRM invoice -> ERPNext Sales Invoice
     const customerName = crmClient?.clientName || crmClient?.companyName || deal?.companyName || 'Walk-in Customer';
 
-    const erpnextData: Record<string, any> = {
+    const erpnextData: Record<string, unknown> = {
       doctype: 'Sales Invoice',
       naming_series: 'SINV-.YYYY.-',
       customer: customerName,
@@ -134,7 +134,7 @@ class ERPNextSyncService {
       // Check if we already synced this invoice (by searching for custom field)
       const existing = await this.findExistingSyncedDoc('Sales Invoice', 'invoice', String(invoiceId));
 
-      let result: any;
+      let result: unknown;
       if (existing) {
         result = await client.update('Sales Invoice', existing, erpnextData);
       } else {
@@ -154,7 +154,7 @@ class ERPNextSyncService {
 
   // ---- Payment pull from ERPNext ----
 
-  async syncPaymentFromERPNext(erpnextPaymentName: string): Promise<{ success: boolean; data?: any; error?: string }> {
+  async syncPaymentFromERPNext(erpnextPaymentName: string): Promise<{ success: boolean; data?: unknown; error?: string }> {
     const client = this.getClient();
 
     const syncLog = await this.createSyncLog({
@@ -185,7 +185,7 @@ class ERPNextSyncService {
       throw new Error(`Client ${clientId} not found`);
     }
 
-    const erpnextData: Record<string, any> = {
+    const erpnextData: Record<string, unknown> = {
       doctype: 'Customer',
       customer_name: crmClient.clientName,
       customer_type: crmClient.clientType === 'Individual' ? 'Individual' : 'Company',
@@ -212,7 +212,7 @@ class ERPNextSyncService {
     try {
       const existing = await this.findExistingSyncedDoc('Customer', 'client', clientId);
 
-      let result: any;
+      let result: unknown;
       if (existing) {
         result = await client.update('Customer', existing, erpnextData);
       } else {
@@ -240,7 +240,7 @@ class ERPNextSyncService {
       throw new Error(`Vendor #${vendorId} not found`);
     }
 
-    const erpnextData: Record<string, any> = {
+    const erpnextData: Record<string, unknown> = {
       doctype: 'Supplier',
       supplier_name: vendor.name,
       supplier_group: 'All Supplier Groups',
@@ -268,7 +268,7 @@ class ERPNextSyncService {
     try {
       const existing = await this.findExistingSyncedDoc('Supplier', 'vendor', String(vendorId));
 
-      let result: any;
+      let result: unknown;
       if (existing) {
         result = await client.update('Supplier', existing, erpnextData);
       } else {
@@ -302,8 +302,8 @@ class ERPNextSyncService {
       throw new Error(`Purchase Order #${poId} not found`);
     }
 
-    const vendor = (po as any).vendor as Vendor | undefined;
-    const items = ((po as any).items || []) as PurchaseOrderItem[];
+    const vendor = (po as Record<string, unknown>).vendor as Vendor | undefined;
+    const items = ((po as Record<string, unknown>).items || []) as PurchaseOrderItem[];
 
     const erpnextItems = items.map(item => ({
       item_code: 'Services', // Default; can be mapped if product catalog synced
@@ -314,7 +314,7 @@ class ERPNextSyncService {
       amount: Number(item.unitPrice) * item.quantity
     }));
 
-    const erpnextData: Record<string, any> = {
+    const erpnextData: Record<string, unknown> = {
       doctype: 'Purchase Order',
       naming_series: 'PO-.YYYY.-',
       supplier: vendor?.name || 'Unknown Supplier',
@@ -337,7 +337,7 @@ class ERPNextSyncService {
     try {
       const existing = await this.findExistingSyncedDoc('Purchase Order', 'po', String(poId));
 
-      let result: any;
+      let result: unknown;
       if (existing) {
         result = await client.update('Purchase Order', existing, erpnextData);
       } else {
@@ -377,7 +377,7 @@ class ERPNextSyncService {
 
   // ---- Pull Account Balances ----
 
-  async pullAccountBalances(): Promise<any> {
+  async pullAccountBalances(): Promise<unknown> {
     const client = this.getClient();
     const config = this.getConfig();
 
@@ -398,7 +398,7 @@ class ERPNextSyncService {
           0
         );
         return accounts;
-      } catch (_fallbackErr: any) {
+      } catch (_fallbackErr: unknown) {
         throw new Error(`Failed to pull account balances: ${(err as Error).message}`);
       }
     }
@@ -406,7 +406,7 @@ class ERPNextSyncService {
 
   // ---- Pull Profit & Loss Report ----
 
-  async pullProfitAndLoss(fromDate: string, toDate: string): Promise<any> {
+  async pullProfitAndLoss(fromDate: string, toDate: string): Promise<unknown> {
     const client = this.getClient();
     const config = this.getConfig();
 
@@ -428,7 +428,7 @@ class ERPNextSyncService {
 
   // ---- Pull Balance Sheet ----
 
-  async pullBalanceSheet(date: string): Promise<any> {
+  async pullBalanceSheet(date: string): Promise<unknown> {
     const client = this.getClient();
     const config = this.getConfig();
 
@@ -449,12 +449,12 @@ class ERPNextSyncService {
 
   // ---- Pull Payment Entries ----
 
-  async pullPaymentEntries(filters?: Record<string, any>): Promise<any[]> {
+  async pullPaymentEntries(filters?: Record<string, unknown>): Promise<any[]> {
     const client = this.getClient();
     const config = this.getConfig();
 
     try {
-      const defaultFilters: Record<string, any> = {
+      const defaultFilters: Record<string, unknown> = {
         company: config.company,
         docstatus: 1 // submitted entries only
       };
@@ -544,7 +544,7 @@ class ERPNextSyncService {
     limit?: number;
     offset?: number;
   }): Promise<{ logs: SyncLog[]; total: number }> {
-    const where: Record<string, any> = { integration: 'erpnext' };
+    const where: Record<string, unknown> = { integration: 'erpnext' };
     if (filters?.entityType) where.entityType = filters.entityType;
     if (filters?.status) where.status = filters.status;
     if (filters?.direction) where.direction = filters.direction;

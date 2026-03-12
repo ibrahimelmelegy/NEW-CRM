@@ -4,6 +4,7 @@ import { wrapResult } from '../utils/response/responseWrapper';
 import whatsappService from './whatsappService';
 import { io } from '../server';
 import { WhatsAppMessage } from './whatsappModel';
+import logger from '../config/logger';
 
 class WhatsAppController {
   // ═══════════════════════════════════════════════════════════════════════════
@@ -317,7 +318,7 @@ class WhatsAppController {
                 const phoneNumber = msg.from;
                 const content = msg.text?.body || msg.caption || '';
                 const type = (msg.type || 'text').toUpperCase();
-                const metadata: Record<string, any> = {};
+                const metadata: Record<string, unknown> = {};
 
                 // Extract media URLs based on type
                 if (msg.image) metadata.imageId = msg.image.id;
@@ -376,7 +377,7 @@ class WhatsAppController {
       res.sendStatus(200);
     } catch (error) {
       // Still respond 200 to prevent webhook retries
-      console.error('[WhatsApp Webhook Error]', error);
+      logger.error({ error }, '[WhatsApp Webhook Error]');
       res.sendStatus(200);
     }
   }

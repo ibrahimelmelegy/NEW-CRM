@@ -23,16 +23,19 @@ const dialog = defineModel();
 
 const loading = ref(false);
 async function submitForm(values: Asset) {
-  let response;
   loading.value = true;
-  if (props.asset?.id) {
-    response = await updateAsset({ ...values, id: props.asset.id }, false);
-    emit('confirm', (response as unknown)?.id, true);
-  } else {
-    response = await createAsset(values, false);
-    emit('confirm', (response as unknown)?.id);
+  try {
+    let response;
+    if (props.asset?.id) {
+      response = await updateAsset({ ...values, id: props.asset.id }, false);
+      emit('confirm', (response as unknown as Record<string, unknown>)?.id, true);
+    } else {
+      response = await createAsset(values, false);
+      emit('confirm', (response as unknown as Record<string, unknown>)?.id);
+    }
+    if (Object.keys(response as Record<string, unknown>).length) dialog.value = false;
+  } finally {
+    loading.value = false;
   }
-  loading.value = false;
-  if (Object.keys(response as unknown).length) dialog.value = false;
 }
 </script>

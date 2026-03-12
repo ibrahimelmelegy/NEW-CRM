@@ -3,18 +3,18 @@ import Sequence, { SequenceEnrollment } from './sequenceModel';
 import { clampPagination } from '../utils/pagination';
 
 class SequenceService {
-  async getSequences(query: any): Promise<any> {
+  async getSequences(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, isActive } = query;
 
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [{ name: { [Op.iLike]: `%${searchKey}%` } }, { description: { [Op.iLike]: `%${searchKey}%` } }];
+      (where as Record<string, unknown>)[Op.or] = [{ name: { [Op.iLike]: `%${searchKey}%` } }, { description: { [Op.iLike]: `%${searchKey}%` } }];
     }
 
     if (isActive !== undefined && isActive !== '') {
-      (where as any).isActive = isActive === 'true' || isActive === true;
+      (where as Record<string, unknown>).isActive = isActive === 'true' || isActive === true;
     }
 
     const { rows: docs, count: totalItems } = await Sequence.findAndCountAll({
@@ -35,11 +35,11 @@ class SequenceService {
     };
   }
 
-  async createSequence(data: any): Promise<Sequence> {
+  async createSequence(data: Record<string, unknown>): Promise<Sequence> {
     return Sequence.create(data);
   }
 
-  async updateSequence(id: string, data: any): Promise<Sequence> {
+  async updateSequence(id: string, data: Record<string, unknown>): Promise<Sequence> {
     const sequence = await Sequence.findByPk(id);
     if (!sequence) throw new Error('Sequence not found');
     return sequence.update(data);
@@ -105,7 +105,7 @@ class SequenceService {
     });
   }
 
-  async getStats(sequenceId: string): Promise<any> {
+  async getStats(sequenceId: string): Promise<unknown> {
     const enrollments = await SequenceEnrollment.findAll({ where: { sequenceId } });
     const sequence = await Sequence.findByPk(sequenceId);
 

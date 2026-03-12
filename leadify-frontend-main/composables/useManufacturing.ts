@@ -91,8 +91,11 @@ export function useManufacturing() {
 
   async function init() {
     loading.value = true;
-    await Promise.all([loadBOMs(), loadWorkOrders(), loadQualityChecks(), loadStats()]);
-    loading.value = false;
+    try {
+      await Promise.all([loadBOMs(), loadWorkOrders(), loadQualityChecks(), loadStats()]);
+    } finally {
+      loading.value = false;
+    }
   }
 
   // ── BOM ──

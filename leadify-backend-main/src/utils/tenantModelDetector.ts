@@ -10,7 +10,7 @@ export function buildTenantScopedModelSet(sequelize: Sequelize): Set<string> {
   const scoped = new Set<string>();
 
   for (const [modelName, model] of Object.entries(sequelize.models)) {
-    const attrs = (model as any).rawAttributes;
+    const attrs = (model as Record<string, unknown>).rawAttributes;
     if (attrs && attrs.tenantId) {
       scoped.add(modelName);
     }

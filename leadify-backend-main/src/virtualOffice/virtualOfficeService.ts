@@ -2,14 +2,14 @@ import VirtualRoom from './virtualRoomModel';
 import { tenantWhere, tenantCreate } from '../utils/tenantScope';
 
 class VirtualOfficeService {
-  async getRooms(user: any) {
+  async getRooms(user: unknown) {
     return VirtualRoom.findAll({
       where: { ...tenantWhere(user) },
       order: [['createdAt', 'ASC']]
     });
   }
 
-  async createRoom(data: any, user: any) {
+  async createRoom(data: Record<string, unknown>, user: unknown) {
     return VirtualRoom.create(
       tenantCreate(
         {
@@ -26,14 +26,14 @@ class VirtualOfficeService {
     );
   }
 
-  async updateRoom(id: number, data: any, user: any) {
+  async updateRoom(id: number, data: Record<string, unknown>, user: unknown) {
     const room = await VirtualRoom.findOne({ where: { id, ...tenantWhere(user) } });
     if (!room) throw new Error('Room not found');
     await room.update(data);
     return room;
   }
 
-  async deleteRoom(id: number, user: any) {
+  async deleteRoom(id: number, user: unknown) {
     const room = await VirtualRoom.findOne({ where: { id, ...tenantWhere(user) } });
     if (!room) throw new Error('Room not found');
     await room.destroy();

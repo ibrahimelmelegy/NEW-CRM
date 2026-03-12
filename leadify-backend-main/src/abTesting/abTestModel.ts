@@ -18,7 +18,7 @@ export default class ABTest extends Model {
   public variants?: Array<{ name: string; description: string; traffic: number }>;
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public results?: Record<string, any>;
+  public results?: Record<string, unknown>;
 
   @Column({ type: DataType.DATEONLY, allowNull: true })
   public startDate?: string;

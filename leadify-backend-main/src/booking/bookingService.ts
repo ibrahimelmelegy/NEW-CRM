@@ -21,12 +21,12 @@ function minutesToTime(mins: number): string {
 }
 
 class BookingService {
-  async createSlot(data: any, tenantId?: string) {
+  async createSlot(data: Record<string, unknown>, tenantId?: string) {
     return BookingSlot.create({ ...data, tenantId });
   }
 
-  async getSlots(query: any, tenantId?: string) {
-    const where: Record<string, any> = {};
+  async getSlots(query: Record<string, unknown>, tenantId?: string) {
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.staffId) where.staffId = query.staffId;
     const slots = await BookingSlot.findAll({
@@ -47,17 +47,17 @@ class BookingService {
     return true;
   }
 
-  async createBooking(data: any, tenantId?: string) {
+  async createBooking(data: Record<string, unknown>, tenantId?: string) {
     const booking = await Booking.create({ ...data, tenantId });
     try {
       io.emit('booking:created', { id: booking.id, staffId: booking.staffId, date: booking.date, startTime: booking.startTime });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return booking;
   }
 
-  async getBookings(query: any, tenantId?: string) {
+  async getBookings(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.staffId) where.staffId = query.staffId;
@@ -82,7 +82,7 @@ class BookingService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateBooking(id: number, data: any) {
+  async updateBooking(id: number, data: Record<string, unknown>) {
     const booking = await Booking.findByPk(id);
     if (!booking) return null;
     await booking.update(data);
@@ -130,7 +130,7 @@ class BookingService {
    * Create a booking only if the staff member is available.
    * Throws an error with conflict details when overlapping bookings exist.
    */
-  async createBookingWithValidation(data: any, tenantId?: string) {
+  async createBookingWithValidation(data: Record<string, unknown>, tenantId?: string) {
     const { staffId, date, startTime, endTime } = data;
     if (!staffId || !date || !startTime || !endTime) {
       throw new Error('staffId, date, startTime, and endTime are required');
@@ -144,7 +144,7 @@ class BookingService {
         endTime: c.endTime,
         clientName: c.clientName
       }));
-      const err: Record<string, any> = new Error('Time slot is not available — conflicts with existing bookings');
+      const err: Record<string, unknown> = new Error('Time slot is not available — conflicts with existing bookings');
       err.statusCode = 409;
       err.conflicts = conflictDetails;
       throw err;
@@ -153,7 +153,7 @@ class BookingService {
     const booking = await Booking.create({ ...data, tenantId });
     try {
       io.emit('booking:created', { id: booking.id, staffId: booking.staffId, date: booking.date, startTime: booking.startTime });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return booking;
   }
 
@@ -206,7 +206,7 @@ class BookingService {
     await booking.update({ status: 'CANCELLED' });
     try {
       io.emit('booking:cancelled', { id: booking.id, staffId: booking.staffId, date: booking.date });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return booking;
   }
 
@@ -215,7 +215,7 @@ class BookingService {
    */
   async getUpcomingBookings(staffId: number, tenantId?: string) {
     const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       staffId,
       date: { [Op.gte]: today },
       status: { [Op.notIn]: ['CANCELLED'] }
@@ -240,7 +240,7 @@ class BookingService {
    * Get booking analytics: total bookings, confirmed, pending, cancelled, no-show rate, popular time slots.
    */
   async getBookingAnalytics(staffId?: number, tenantId?: string, dateFrom?: string, dateTo?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (staffId) where.staffId = staffId;
     if (tenantId) where.tenantId = tenantId;
     if (dateFrom && dateTo) where.date = { [Op.between]: [dateFrom, dateTo] };
@@ -294,20 +294,20 @@ class BookingService {
 
   // ─── Booking Pages ───────────────────────────────────────────────────────────
 
-  async createBookingPage(data: any, tenantId?: string) {
+  async createBookingPage(data: Record<string, unknown>, tenantId?: string) {
     const slug = data.slug || this.generateSlug(data.name);
     return BookingPage.create({ ...data, slug, tenantId });
   }
 
-  async getBookingPages(query: any, tenantId?: string) {
-    const where: Record<string, any> = {};
+  async getBookingPages(query: Record<string, unknown>, tenantId?: string) {
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.isActive !== undefined) where.isActive = query.isActive;
     const pages = await BookingPage.findAll({ where, order: [['createdAt', 'DESC']] });
     return pages;
   }
 
-  async updateBookingPage(id: number, data: any) {
+  async updateBookingPage(id: number, data: Record<string, unknown>) {
     const page = await BookingPage.findByPk(id);
     if (!page) return null;
     await page.update(data);

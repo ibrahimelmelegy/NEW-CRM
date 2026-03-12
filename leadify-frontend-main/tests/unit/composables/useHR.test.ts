@@ -26,7 +26,7 @@ import {
 } from '~/composables/useHR';
 
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 describe('useHR', () => {
   beforeEach(() => {

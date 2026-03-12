@@ -29,20 +29,26 @@ export function useSalesCoach() {
 
   async function analyzeDeal(dealId: string) {
     loading.value = true;
-    const res = await useApiFetch(`ai/sales-coach/deal/${dealId}`);
-    if (res.success && res.body) {
-      dealAnalysis.value = res.body as unknown;
+    try {
+      const res = await useApiFetch(`ai/sales-coach/deal/${dealId}`);
+      if (res.success && res.body) {
+        dealAnalysis.value = res.body as unknown;
+      }
+    } finally {
+      loading.value = false;
     }
-    loading.value = false;
   }
 
   async function fetchPipelineHealth() {
     loading.value = true;
-    const res = await useApiFetch('ai/sales-coach/pipeline');
-    if (res.success && res.body) {
-      pipelineHealth.value = res.body as unknown;
+    try {
+      const res = await useApiFetch('ai/sales-coach/pipeline');
+      if (res.success && res.body) {
+        pipelineHealth.value = res.body as unknown;
+      }
+    } finally {
+      loading.value = false;
     }
-    loading.value = false;
   }
 
   async function fetchWeeklySummary() {

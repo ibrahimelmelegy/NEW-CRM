@@ -19,7 +19,7 @@ interface BrandSettings {
 /**
  * Resolve a dotted path like "item.name" from a data object.
  */
-function resolvePath(obj: Record<string, any>, path: string): unknown {
+function resolvePath(obj: Record<string, unknown>, path: string): unknown {
   return path.split('.').reduce((acc, key) => (acc != null ? acc[key] : undefined), obj);
 }
 
@@ -35,7 +35,7 @@ function escapeHtml(str: string): string {
  * Process a single {{#each}} block body for one item, replacing scoped variables
  * and recursively handling any nested {{#each}} blocks within.
  */
-function renderEachItem(body: string, item: any, index: number, parentData: Record<string, any>): string {
+function renderEachItem(body: string, item: Record<string, unknown>, index: number, parentData: Record<string, unknown>): string {
   let rendered = body;
 
   // Replace {{@index}} and {{@number}}
@@ -43,7 +43,7 @@ function renderEachItem(body: string, item: any, index: number, parentData: Reco
   rendered = rendered.replace(/\{\{@number\}\}/g, String(index + 1));
 
   // Build a merged context: parent data + current item properties (item takes priority)
-  const itemContext: Record<string, any> = { ...parentData };
+  const itemContext: Record<string, unknown> = { ...parentData };
   if (typeof item === 'object' && item !== null) {
     Object.assign(itemContext, item);
   }
@@ -78,7 +78,7 @@ function renderEachItem(body: string, item: any, index: number, parentData: Reco
  * recursively processed with the child item's data merged into the context.
  * This supports at least 2 levels of nesting (e.g. items -> item.subItems).
  */
-function processEachBlocks(template: string, data: Record<string, any>): string {
+function processEachBlocks(template: string, data: Record<string, unknown>): string {
   // Match outermost {{#each}} blocks by finding the opening tag and then
   // manually locating the matching {{/each}} (accounting for nesting depth).
   const openTag = /\{\{#each\s+(\w+(?:\.\w+)*)\}\}/g;
@@ -157,7 +157,7 @@ function processEachBlocks(template: string, data: Record<string, any>): string 
  * Process {{#if condition}}...{{else}}...{{/if}} blocks.
  * condition is truthy check on the data value.
  */
-function processIfBlocks(template: string, data: Record<string, any>): string {
+function processIfBlocks(template: string, data: Record<string, unknown>): string {
   // Handle if/else
   const ifElseRegex = /\{\{#if\s+(\w+(?:\.\w+)*)\}\}([\s\S]*?)\{\{else\}\}([\s\S]*?)\{\{\/if\}\}/g;
   let result = template.replace(ifElseRegex, (_match, condition: string, trueBlock: string, falseBlock: string) => {
@@ -178,7 +178,7 @@ function processIfBlocks(template: string, data: Record<string, any>): string {
 /**
  * Replace simple {{variable}} placeholders with data values.
  */
-function replaceVariables(template: string, data: Record<string, any>): string {
+function replaceVariables(template: string, data: Record<string, unknown>): string {
   return template.replace(/\{\{(\w+(?:\.\w+)*)\}\}/g, (_match, path: string) => {
     const val = resolvePath(data, path);
     return val != null ? escapeHtml(String(val)) : '';
@@ -194,9 +194,9 @@ function replaceVariables(template: string, data: Record<string, any>): string {
  * 3. Process {{#if}} blocks
  * 4. Replace {{variable}} placeholders
  */
-export function renderTemplate(template: string, data: Record<string, any>, brand?: BrandSettings): string {
+export function renderTemplate(template: string, data: Record<string, unknown>, brand?: BrandSettings): string {
   // Merge brand settings into data under "brand" namespace
-  const mergedData: Record<string, any> = {
+  const mergedData: Record<string, unknown> = {
     ...data,
     brand: {
       companyName: brand?.companyName || data.companyName || '',
@@ -224,11 +224,11 @@ export function renderTemplate(template: string, data: Record<string, any>, bran
  * Render a full document using a DocumentTemplate layout + content data + brand settings.
  * The template layout contains an HTML string with {{placeholders}}.
  */
-export function renderFromTemplate(templateHtml: string, content: Record<string, any>, brand?: BrandSettings): string {
+export function renderFromTemplate(templateHtml: string, content: Record<string, unknown>, brand?: BrandSettings): string {
   // Parse items financial data if present
   const items = content.items || [];
   const currency = content.currency || 'SAR';
-  const subtotal = items.reduce((sum: number, item: any) => sum + (item.quantity || 0) * (item.rate || 0), 0);
+  const subtotal = items.reduce((sum: number, item: Record<string, unknown>) => sum + (item.quantity || 0) * (item.rate || 0), 0);
   const discountAmount = content.discountType === 'percent' ? subtotal * ((content.discount || 0) / 100) : content.discount || 0;
   const taxableAmount = subtotal - discountAmount;
   const taxAmount = taxableAmount * ((content.taxRate || 0) / 100);
@@ -257,7 +257,7 @@ export function renderFromTemplate(templateHtml: string, content: Record<string,
       ? new Date(content.validUntil).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
       : '',
     // Enrich items with computed lineTotal
-    items: items.map((item: any, i: number) => ({
+    items: items.map((item: Record<string, unknown>, i: number) => ({
       ...item,
       index: i + 1,
       lineTotal: ((item.quantity || 0) * (item.rate || 0)).toFixed(2)

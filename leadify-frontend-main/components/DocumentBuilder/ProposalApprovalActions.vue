@@ -73,20 +73,26 @@ const statusConfig = computed(() => {
 
 async function handleSubmit() {
   loading.value = true;
-  const ok = await submitForApproval(props.proposalId);
-  loading.value = false;
-  if (ok) emit('updated');
+  try {
+    const ok = await submitForApproval(props.proposalId);
+    if (ok) emit('updated');
+  } finally {
+    loading.value = false;
+  }
 }
 
 async function handleApprove() {
   try {
     await ElMessageBox.confirm('Approve this proposal?', 'Confirm Approval', { type: 'success' });
     loading.value = true;
-    const ok = await approveProposal(props.proposalId);
-    loading.value = false;
-    if (ok) emit('updated');
+    try {
+      const ok = await approveProposal(props.proposalId);
+      if (ok) emit('updated');
+    } finally {
+      loading.value = false;
+    }
   } catch {
-    /* cancelled */
+    /* cancelled by user */
   }
 }
 
@@ -101,11 +107,14 @@ async function handleReject() {
     return;
   }
   loading.value = true;
-  const ok = await rejectProposal(props.proposalId, rejectReason.value);
-  loading.value = false;
-  if (ok) {
-    rejectDialogVisible.value = false;
-    emit('updated');
+  try {
+    const ok = await rejectProposal(props.proposalId, rejectReason.value);
+    if (ok) {
+      rejectDialogVisible.value = false;
+      emit('updated');
+    }
+  } finally {
+    loading.value = false;
   }
 }
 </script>

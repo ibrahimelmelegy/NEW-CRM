@@ -19,7 +19,7 @@ interface ValidationError {
 }
 
 class FormBuilderService {
-  async createTemplate(data: any, tenantId?: string) {
+  async createTemplate(data: Record<string, unknown>, tenantId?: string) {
     const embedToken = this.generateEmbedToken();
     return FormTemplate.create({ ...data, tenantId, embedToken });
   }
@@ -28,9 +28,9 @@ class FormBuilderService {
     return `emb_${crypto.randomBytes(16).toString('hex')}`;
   }
 
-  async getTemplates(query: any, tenantId?: string) {
+  async getTemplates(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.status) where.status = query.status;
     if (query.search) where.name = { [Op.iLike]: `%${query.search}%` };
@@ -38,7 +38,7 @@ class FormBuilderService {
     return { docs: rows, pagination: { page, limit, totalItems: count, totalPages: Math.ceil(count / limit) } };
   }
 
-  async updateTemplate(id: number, data: any) {
+  async updateTemplate(id: number, data: Record<string, unknown>) {
     const item = await FormTemplate.findByPk(id);
     if (!item) return null;
     await item.update(data);
@@ -53,7 +53,7 @@ class FormBuilderService {
     return true;
   }
 
-  async submitForm(formId: number, data: any, meta?: { source?: string; ipAddress?: string; utmParams?: Record<string, any>; userAgent?: string }) {
+  async submitForm(formId: number, data: Record<string, unknown>, meta?: { source?: string; ipAddress?: string; utmParams?: Record<string, unknown>; userAgent?: string }) {
     const form = await FormTemplate.findByPk(formId);
     if (!form) return null;
 
@@ -90,7 +90,7 @@ class FormBuilderService {
     return submission;
   }
 
-  private async sendAutoResponseEmail(form: FormTemplate, data: Record<string, any>) {
+  private async sendAutoResponseEmail(form: FormTemplate, data: Record<string, unknown>) {
     try {
       const autoResponse = form.autoResponse as { subject?: string; body?: string; enabled?: boolean } | undefined;
       const subject = autoResponse?.subject || `Thank you for submitting ${form.name}`;
@@ -120,9 +120,9 @@ class FormBuilderService {
     return FormTemplate.findOne({ where: { embedToken: token, status: 'ACTIVE' } });
   }
 
-  async getSubmissions(query: any, tenantId?: string) {
+  async getSubmissions(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.formId) where.formId = query.formId;
     const { rows, count } = await FormSubmission.findAndCountAll({ where, order: [['createdAt', 'DESC']], limit, offset });
@@ -133,7 +133,7 @@ class FormBuilderService {
    * Validate submitted data against the form template's field definitions.
    * Checks: required fields, type correctness (email format, number range), string length limits.
    */
-  async validateSubmission(formId: number, data: Record<string, any>): Promise<{ valid: boolean; errors: ValidationError[] }> {
+  async validateSubmission(formId: number, data: Record<string, unknown>): Promise<{ valid: boolean; errors: ValidationError[] }> {
     const form = await FormTemplate.findByPk(formId);
     if (!form) return { valid: false, errors: [{ field: '_form', message: 'Form template not found' }] };
 
@@ -259,7 +259,7 @@ class FormBuilderService {
       for (const field of fields) {
         let completed = 0;
         for (const sub of allSubmissions) {
-          const data = sub.data as Record<string, any>;
+          const data = sub.data as Record<string, unknown>;
           if (data && data[field.name] !== undefined && data[field.name] !== null && data[field.name] !== '') {
             completed++;
           }
@@ -324,7 +324,7 @@ class FormBuilderService {
     const headers = ['Submission ID', 'Submitted At', 'Source', ...fields.map(f => f.label)];
 
     const rows = submissions.map(sub => {
-      const data = sub.data as Record<string, any>;
+      const data = sub.data as Record<string, unknown>;
       return [
         sub.id,
         sub.createdAt,
@@ -339,7 +339,7 @@ class FormBuilderService {
     });
 
     if (format === 'csv') {
-      const escapeCsv = (val: any) => {
+      const escapeCsv = (val: Record<string, unknown>) => {
         const str = String(val);
         if (str.includes(',') || str.includes('"') || str.includes('\n')) {
           return `"${str.replace(/"/g, '""')}"`;

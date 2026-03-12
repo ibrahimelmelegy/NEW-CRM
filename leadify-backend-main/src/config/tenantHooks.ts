@@ -8,7 +8,7 @@ import logger from './logger';
  * Checks whether a given model has a tenantId column using rawAttributes.
  * Used as a runtime check inside hooks (works for any model including dynamically added ones).
  */
-function modelHasTenantId(model: any): boolean {
+function modelHasTenantId(model: unknown): boolean {
   if (!model) return false;
   const attrs = model.rawAttributes || model.tableAttributes;
   return !!(attrs && attrs.tenantId);
@@ -17,7 +17,7 @@ function modelHasTenantId(model: any): boolean {
 /**
  * Resolves the model from various hook option shapes.
  */
-function getModelFromOptions(options: any): unknown {
+function getModelFromOptions(options: Record<string, unknown>): unknown {
   return options?.model || options?.Model || null;
 }
 
@@ -25,9 +25,9 @@ function getModelFromOptions(options: any): unknown {
  * Determines if hooks should be skipped for the current context + options.
  * Returns a reason string if skipped, or null if hooks should proceed.
  */
-function shouldSkip(options: any, modelOrName?: any): string | null {
+function shouldSkip(options: Record<string, unknown>, modelOrName?: unknown): string | null {
   // Per-query bypass via symbol
-  if (options && (options as any)[TENANT_BYPASS]) {
+  if (options && (options as Record<string, unknown>)[TENANT_BYPASS]) {
     return 'TENANT_BYPASS';
   }
 
@@ -65,11 +65,11 @@ function shouldSkip(options: any, modelOrName?: any): string | null {
 /**
  * Injects tenantId into a where clause.
  */
-function injectTenantWhere(options: any, tenantId: string): void {
+function injectTenantWhere(options: Record<string, unknown>, tenantId: string): void {
   if (!options.where) {
     options.where = { tenantId };
   } else if (typeof options.where === 'object' && !Array.isArray(options.where)) {
-    (options.where as any).tenantId = tenantId;
+    (options.where as Record<string, unknown>).tenantId = tenantId;
   }
 }
 
@@ -96,7 +96,7 @@ export function registerTenantHooks(sequelize: Sequelize): void {
   for (const [modelName, modelClass] of Object.entries(sequelize.models)) {
     if (!isTenantScopedModel(modelName)) continue;
 
-    const ModelCtor = modelClass as any;
+    const ModelCtor = modelClass as Record<string, unknown>;
 
     // ─── beforeFind (per-model) ──────────────────────────────────────
     ModelCtor.addHook('beforeFind', 'tenantScopeFind', (options: FindOptions) => {
@@ -107,7 +107,7 @@ export function registerTenantHooks(sequelize: Sequelize): void {
     });
 
     // ─── beforeBulkUpdate (per-model) ────────────────────────────────
-    ModelCtor.addHook('beforeBulkUpdate', 'tenantScopeBulkUpdate', (options: any) => {
+    ModelCtor.addHook('beforeBulkUpdate', 'tenantScopeBulkUpdate', (options: Record<string, unknown>) => {
       const skip = shouldSkip(options, ModelCtor);
       if (skip) return;
       const ctx = getTenantContext()!;
@@ -115,7 +115,7 @@ export function registerTenantHooks(sequelize: Sequelize): void {
     });
 
     // ─── beforeBulkDestroy (per-model) ───────────────────────────────
-    ModelCtor.addHook('beforeBulkDestroy', 'tenantScopeBulkDestroy', (options: any) => {
+    ModelCtor.addHook('beforeBulkDestroy', 'tenantScopeBulkDestroy', (options: Record<string, unknown>) => {
       const skip = shouldSkip(options, ModelCtor);
       if (skip) return;
       const ctx = getTenantContext()!;
@@ -126,49 +126,49 @@ export function registerTenantHooks(sequelize: Sequelize): void {
   // ─── Global instance-based hooks (model available via instance.constructor) ──
 
   // ─── beforeCreate ──────────────────────────────────────────────────────
-  sequelize.addHook('beforeCreate', 'tenantScopeCreate', (instance: Model, options: any) => {
-    const model = (instance as any).constructor;
+  sequelize.addHook('beforeCreate', 'tenantScopeCreate', (instance: Model, options: Record<string, unknown>) => {
+    const model = (instance as Record<string, unknown>).constructor;
     if (!modelHasTenantId(model)) return;
     const skip = shouldSkip(options, model);
     if (skip) return;
 
     const ctx = getTenantContext()!;
-    const current = (instance as any).tenantId;
+    const current = (instance as Record<string, unknown>).tenantId;
 
     if (!current) {
-      (instance as any).tenantId = ctx.tenantId;
+      (instance as Record<string, unknown>).tenantId = ctx.tenantId;
     } else if (current !== ctx.tenantId) {
       logger.error(
         { model: model.name, attemptedTenantId: current, correctedTenantId: ctx.tenantId },
         'SECURITY: Cross-tenant create attempt blocked'
       );
-      (instance as any).tenantId = ctx.tenantId;
+      (instance as Record<string, unknown>).tenantId = ctx.tenantId;
     }
   });
 
   // ─── beforeBulkCreate ──────────────────────────────────────────────────
-  sequelize.addHook('beforeBulkCreate', 'tenantScopeBulkCreate', (instances: Model[], options: any) => {
+  sequelize.addHook('beforeBulkCreate', 'tenantScopeBulkCreate', (instances: Model[], options: Record<string, unknown>) => {
     if (!instances.length) return;
-    const model = (instances[0] as any).constructor;
+    const model = (instances[0] as Record<string, unknown>).constructor;
     if (!modelHasTenantId(model)) return;
     const skip = shouldSkip(options, model);
     if (skip) return;
 
     const ctx = getTenantContext()!;
     for (const instance of instances) {
-      (instance as any).tenantId = ctx.tenantId;
+      (instance as Record<string, unknown>).tenantId = ctx.tenantId;
     }
   });
 
   // ─── beforeUpdate ──────────────────────────────────────────────────────
-  sequelize.addHook('beforeUpdate', 'tenantScopeUpdate', (instance: Model, options: any) => {
-    const model = (instance as any).constructor;
+  sequelize.addHook('beforeUpdate', 'tenantScopeUpdate', (instance: Model, options: Record<string, unknown>) => {
+    const model = (instance as Record<string, unknown>).constructor;
     if (!modelHasTenantId(model)) return;
     const skip = shouldSkip(options, model);
     if (skip) return;
 
     const ctx = getTenantContext()!;
-    const current = (instance as any).tenantId;
+    const current = (instance as Record<string, unknown>).tenantId;
 
     if (current && current !== ctx.tenantId) {
       throw new Error(
@@ -178,14 +178,14 @@ export function registerTenantHooks(sequelize: Sequelize): void {
   });
 
   // ─── beforeDestroy ────────────────────────────────────────────────────
-  sequelize.addHook('beforeDestroy', 'tenantScopeDestroy', (instance: Model, options: any) => {
-    const model = (instance as any).constructor;
+  sequelize.addHook('beforeDestroy', 'tenantScopeDestroy', (instance: Model, options: Record<string, unknown>) => {
+    const model = (instance as Record<string, unknown>).constructor;
     if (!modelHasTenantId(model)) return;
     const skip = shouldSkip(options, model);
     if (skip) return;
 
     const ctx = getTenantContext()!;
-    const instanceTenantId = (instance as any).tenantId;
+    const instanceTenantId = (instance as Record<string, unknown>).tenantId;
 
     if (instanceTenantId && instanceTenantId !== ctx.tenantId) {
       throw new Error(

@@ -8,7 +8,7 @@ class WorkflowController {
 
   async getRules(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await workflowService.getRules(req.query as any);
+      const result = await workflowService.getRules(req.query as Record<string, string>);
       wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -96,7 +96,7 @@ class WorkflowController {
 
   async getExecutions(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await workflowService.getExecutions(req.query as any);
+      const result = await workflowService.getExecutions(req.query as Record<string, string>);
       wrapResult(res, result);
     } catch (error) {
       next(error);
@@ -106,7 +106,7 @@ class WorkflowController {
   async getExecutionsForRule(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const ruleId = parseInt(req.params.id as string, 10);
-      const result = await workflowService.getExecutionsForRule(ruleId, req.query as any);
+      const result = await workflowService.getExecutionsForRule(ruleId, req.query as Record<string, string>);
       wrapResult(res, result);
     } catch (error) {
       next(error);

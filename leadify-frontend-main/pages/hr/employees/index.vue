@@ -323,6 +323,10 @@ departments.value = await fetchDepartments();
 const initialResult = await fetchEmployees();
 employees.value = initialResult.docs;
 pagination.value = initialResult.pagination;
+
+onUnmounted(() => {
+  if (searchTimeout) clearTimeout(searchTimeout);
+});
 </script>
 
 <style scoped>

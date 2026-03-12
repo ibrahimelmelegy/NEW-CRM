@@ -211,7 +211,7 @@ const breadcrumbRoutes = computed(() => {
   }
 
   // Create breadcrumb items with translation support
-  const breadcrumbs = pathSegments.map((segment: any) => {
+  const breadcrumbs = pathSegments.map((segment: unknown) => {
     // Convert kebab-case to camelCase for key matching (e.g. daily-tasks -> dailyTasks)
     const camelSegment = segment ? String(segment).replace(/-([a-z])/g, (match: string, p1: string) => (p1 ? p1.toUpperCase() : '')) : '';
 
@@ -230,7 +230,7 @@ const breadcrumbRoutes = computed(() => {
   return breadcrumbs;
 });
 
-const getPath = (routeSegment: any) => {
+const getPath = (routeSegment: unknown) => {
   const pathSegments = route.path.split('/').filter(Boolean);
   let pathGo = '';
   // Find index using the raw path segment

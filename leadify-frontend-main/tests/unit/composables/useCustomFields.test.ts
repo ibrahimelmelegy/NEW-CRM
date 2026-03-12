@@ -16,7 +16,7 @@ import {
 } from '~/composables/useCustomFields';
 
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 describe('useCustomFields', () => {
   beforeEach(() => {

@@ -11,14 +11,14 @@ class ProductService {
   /**
    * Get paginated products with advanced filtering
    */
-  async getProducts(query: any): Promise<any> {
+  async getProducts(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, category, isActive, minPrice, maxPrice, lowStock, sortBy, sortOrder: sortDir } = query;
 
     const where: WhereOptions = {};
 
     if (searchKey) {
-      (where as any)[Op.or] = [
+      (where as Record<string, unknown>)[Op.or] = [
         { name: { [Op.iLike]: `%${searchKey}%` } },
         { sku: { [Op.iLike]: `%${searchKey}%` } },
         { description: { [Op.iLike]: `%${searchKey}%` } }
@@ -26,29 +26,29 @@ class ProductService {
     }
 
     if (category) {
-      (where as any).category = category;
+      (where as Record<string, unknown>).category = category;
     }
 
     if (isActive !== undefined && isActive !== '') {
-      (where as any).isActive = isActive === 'true' || isActive === true;
+      (where as Record<string, unknown>).isActive = isActive === 'true' || isActive === true;
     }
 
     // Price range filter
     if (minPrice || maxPrice) {
-      (where as any).unitPrice = {};
-      if (minPrice) (where as any).unitPrice[Op.gte] = Number(minPrice);
-      if (maxPrice) (where as any).unitPrice[Op.lte] = Number(maxPrice);
+      (where as Record<string, unknown>).unitPrice = {};
+      if (minPrice) (where as Record<string, unknown>).unitPrice[Op.gte] = Number(minPrice);
+      if (maxPrice) (where as Record<string, unknown>).unitPrice[Op.lte] = Number(maxPrice);
     }
 
     // Low stock filter
     if (lowStock === 'true') {
-      (where as any).stockQuantity = {
+      (where as Record<string, unknown>).stockQuantity = {
         [Op.lte]: literal('"CatalogProduct"."lowStockThreshold"')
       };
     }
 
     // Sorting
-    const orderClause: any[] = [];
+    const orderClause: unknown[] = [];
     if (sortBy) {
       orderClause.push([sortBy, (sortDir || 'ASC').toUpperCase()]);
     } else {
@@ -89,7 +89,7 @@ class ProductService {
   /**
    * Create a new product, recording initial price in priceHistory
    */
-  async createProduct(data: any): Promise<CatalogProduct> {
+  async createProduct(data: Record<string, unknown>): Promise<CatalogProduct> {
     // Build initial price history entry
     if (data.unitPrice !== undefined && data.unitPrice > 0) {
       data.priceHistory = [{ price: data.unitPrice, date: new Date().toISOString() }];
@@ -100,7 +100,7 @@ class ProductService {
   /**
    * Update a product. If unitPrice changed, append to priceHistory.
    */
-  async updateProduct(id: string, data: any): Promise<CatalogProduct> {
+  async updateProduct(id: string, data: Record<string, unknown>): Promise<CatalogProduct> {
     const product = await CatalogProduct.findByPk(id);
     if (!product) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Product not found');
 
@@ -129,7 +129,7 @@ class ProductService {
   /**
    * Get products that are low in stock
    */
-  async getLowStockProducts(query: any): Promise<any> {
+  async getLowStockProducts(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: docs, count: totalItems } = await CatalogProduct.findAndCountAll({
@@ -188,7 +188,7 @@ class ProductService {
   /**
    * Create a price rule for a product
    */
-  async createPriceRule(productId: string, data: any): Promise<PriceRule> {
+  async createPriceRule(productId: string, data: Record<string, unknown>): Promise<PriceRule> {
     // Verify product exists
     await this.getProductById(productId);
 
@@ -206,7 +206,7 @@ class ProductService {
   /**
    * Update a price rule
    */
-  async updatePriceRule(productId: string, ruleId: string, data: any): Promise<PriceRule> {
+  async updatePriceRule(productId: string, ruleId: string, data: Record<string, unknown>): Promise<PriceRule> {
     const rule = await PriceRule.findOne({ where: { id: ruleId, productId } });
     if (!rule) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Price rule not found');
     return rule.update(data);
@@ -226,7 +226,7 @@ class ProductService {
   /**
    * Get reviews for a specific product
    */
-  async getProductReviews(productId: string): Promise<any> {
+  async getProductReviews(productId: string): Promise<unknown> {
     const reviews = await EcReview.findAll({
       where: { productId },
       include: [{ model: Client, as: 'client', attributes: ['id', 'clientName', 'email'] }],
@@ -244,7 +244,7 @@ class ProductService {
     const product = await CatalogProduct.findByPk(productId);
     if (!product) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Product not found');
 
-    const activity: any[] = [];
+    const activity: unknown[] = [];
 
     // Creation event
     activity.push({
@@ -257,7 +257,7 @@ class ProductService {
     // Price change events from history
     const priceHistory = Array.isArray(product.priceHistory) ? product.priceHistory : [];
     for (const entry of priceHistory) {
-      const e = entry as any;
+      const e = entry as Record<string, unknown>;
       activity.push({
         type: 'price_change',
         description: `Price changed to ${e.price}`,
@@ -289,7 +289,7 @@ class ProductService {
   /**
    * Bulk import products
    */
-  async bulkImport(products: Record<string, any>[]): Promise<{ created: number; errors: string[] }> {
+  async bulkImport(products: Record<string, unknown>[]): Promise<{ created: number; errors: string[] }> {
     let created = 0;
     const errors: string[] = [];
 
@@ -317,7 +317,7 @@ class ProductService {
   /**
    * Product analytics: stock value, category distribution, etc.
    */
-  async getProductAnalytics(): Promise<any> {
+  async getProductAnalytics(): Promise<unknown> {
     const [totalProducts, activeProducts, lowStockProducts] = await Promise.all([
       CatalogProduct.count(),
       CatalogProduct.count({ where: { isActive: true } }),
@@ -337,7 +337,7 @@ class ProductService {
     });
 
     // Category distribution
-    const categoryDist: Record<string, any>[] = await CatalogProduct.findAll({
+    const categoryDist: Record<string, unknown>[] = await CatalogProduct.findAll({
       attributes: ['category', [fn('COUNT', col('id')), 'count']],
       group: ['category'],
       raw: true,
@@ -349,7 +349,7 @@ class ProductService {
       activeProducts,
       inactiveProducts: totalProducts - activeProducts,
       lowStockProducts,
-      stockValue: parseFloat((stockValueResult as any)?.stockValue || 0),
+      stockValue: parseFloat((stockValueResult as Record<string, unknown>).stockValue || 0),
       categoryDistribution: categoryDist
     };
   }

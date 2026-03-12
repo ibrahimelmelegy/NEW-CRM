@@ -422,4 +422,8 @@ onMounted(() => {
   fetchActivities();
   fetchStats();
 });
+
+onUnmounted(() => {
+  clearTimeout(searchTimeout);
+});
 </script>

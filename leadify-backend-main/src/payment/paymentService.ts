@@ -30,7 +30,7 @@ class PaymentService {
   /**
    * Record a new payment
    */
-  public async recordPayment(data: any): Promise<Payment> {
+  public async recordPayment(data: Record<string, unknown>): Promise<Payment> {
     const paymentNumber = await this.generatePaymentNumber();
 
     const payment = await Payment.create({
@@ -74,11 +74,11 @@ class PaymentService {
   /**
    * List payments with filters and pagination
    */
-  public async getPayments(query: any): Promise<any> {
+  public async getPayments(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { clientId, method, status, startDate, endDate, searchKey } = query;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (clientId) where.clientId = clientId;
     if (method) where.method = method;
@@ -164,7 +164,7 @@ class PaymentService {
   /**
    * Collection dashboard data
    */
-  public async getCollectionDashboard(): Promise<any> {
+  public async getCollectionDashboard(): Promise<unknown> {
     // Total receivable: sum of all uncollected invoice amounts
     const totalReceivableResult = await Invoice.sum('amount', {
       where: { collected: { [Op.or]: [false, null] } }
@@ -224,7 +224,7 @@ class PaymentService {
   /**
    * Get payment history for a specific client
    */
-  public async getClientPaymentHistory(clientId: string): Promise<any> {
+  public async getClientPaymentHistory(clientId: string): Promise<unknown> {
     const payments = await Payment.findAll({
       where: { clientId },
       order: [['date', 'DESC']],

@@ -7,11 +7,14 @@ export function useDealRoom() {
 
   async function fetchDealRoom(dealId: string) {
     loading.value = true;
-    const res = await useApiFetch(`deal/${dealId}/room`);
-    if (res.success && res.body) {
-      roomData.value = res.body;
+    try {
+      const res = await useApiFetch(`deal/${dealId}/room`);
+      if (res.success && res.body) {
+        roomData.value = res.body;
+      }
+    } finally {
+      loading.value = false;
     }
-    loading.value = false;
   }
 
   return {

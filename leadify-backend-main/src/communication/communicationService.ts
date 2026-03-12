@@ -18,7 +18,7 @@ class CommunicationService {
       body?: string;
       direction?: string;
       duration?: number;
-      metadata?: Record<string, any>;
+      metadata?: Record<string, unknown>;
     },
     userId: number,
     tenantId?: string
@@ -54,7 +54,7 @@ class CommunicationService {
       transcription?: string;
       disposition?: string;
       notes?: string;
-      metadata?: Record<string, any>;
+      metadata?: Record<string, unknown>;
     },
     userId: number,
     tenantId?: string
@@ -99,7 +99,7 @@ class CommunicationService {
     const limit = Number(pagination.limit) || 20;
     const offset = (page - 1) * limit;
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       contactId,
       contactType
     };
@@ -134,7 +134,7 @@ class CommunicationService {
 
     // Attach call log data to activity metadata for call entries
     const enrichedRows = rows.map(activity => {
-      const plain = activity.toJSON() as any;
+      const plain = activity.toJSON() as unknown;
       if (plain.type === ActivityType.CALL && callLogsMap[plain.id]) {
         plain.callLog = callLogsMap[plain.id].toJSON();
       }
@@ -142,7 +142,7 @@ class CommunicationService {
     });
 
     return {
-      docs: enrichedRows as any,
+      docs: enrichedRows as unknown,
       pagination: {
         page,
         limit,
@@ -153,8 +153,8 @@ class CommunicationService {
   }
 
   // ─── Get Activity Stats ──────────────────────────────────────────────────
-  public async getActivityStats(userId: number | null, tenantId: string | null, dateRange?: { start?: string; end?: string }): Promise<any> {
-    const where: Record<string, any> = {};
+  public async getActivityStats(userId: number | null, tenantId: string | null, dateRange?: { start?: string; end?: string }): Promise<unknown> {
+    const where: Record<string, unknown> = {};
     if (userId) where.userId = userId;
     if (tenantId) where.tenantId = tenantId;
 
@@ -180,33 +180,33 @@ class CommunicationService {
       createdAt: { [Op.gte]: todayStart }
     };
     // Remove date range override for today's calls
-    delete (callsTodayWhere as any).createdAt;
+    delete (callsTodayWhere as Record<string, unknown>).createdAt;
     callsTodayWhere.createdAt = { [Op.gte]: todayStart };
     const callsToday = await CommActivity.count({ where: callsTodayWhere });
 
     // Emails this week
-    const emailsWeekWhere: Record<string, any> = { ...where };
+    const emailsWeekWhere: Record<string, unknown> = { ...where };
     delete emailsWeekWhere.createdAt;
     emailsWeekWhere.type = ActivityType.EMAIL;
     emailsWeekWhere.createdAt = { [Op.gte]: weekStart };
     const emailsThisWeek = await CommActivity.count({ where: emailsWeekWhere });
 
     // Meetings scheduled (upcoming)
-    const meetingsWhere: Record<string, any> = { ...where };
+    const meetingsWhere: Record<string, unknown> = { ...where };
     delete meetingsWhere.createdAt;
     meetingsWhere.type = ActivityType.MEETING;
     meetingsWhere.createdAt = { [Op.gte]: todayStart };
     const meetingsScheduled = await CommActivity.count({ where: meetingsWhere });
 
     // Notes created this week
-    const notesWhere: Record<string, any> = { ...where };
+    const notesWhere: Record<string, unknown> = { ...where };
     delete notesWhere.createdAt;
     notesWhere.type = ActivityType.NOTE;
     notesWhere.createdAt = { [Op.gte]: weekStart };
     const notesCreated = await CommActivity.count({ where: notesWhere });
 
     // Tasks this week
-    const tasksWhere: Record<string, any> = { ...where };
+    const tasksWhere: Record<string, unknown> = { ...where };
     delete tasksWhere.createdAt;
     tasksWhere.type = ActivityType.TASK;
     tasksWhere.createdAt = { [Op.gte]: weekStart };
@@ -233,12 +233,12 @@ class CommunicationService {
     const prevWeekStart = new Date(weekStart);
     prevWeekStart.setDate(prevWeekStart.getDate() - 7);
 
-    const prevWhere: Record<string, any> = { ...where };
+    const prevWhere: Record<string, unknown> = { ...where };
     delete prevWhere.createdAt;
     prevWhere.createdAt = { [Op.between]: [prevWeekStart, weekStart] };
     const prevTotal = await CommActivity.count({ where: prevWhere });
 
-    const currentWeekWhere: Record<string, any> = { ...where };
+    const currentWeekWhere: Record<string, unknown> = { ...where };
     delete currentWeekWhere.createdAt;
     currentWeekWhere.createdAt = { [Op.gte]: weekStart };
     const currentTotal = await CommActivity.count({ where: currentWeekWhere });
@@ -248,7 +248,7 @@ class CommunicationService {
     // Breakdown by type
     const byType: Record<string, number> = {};
     for (const t of Object.values(ActivityType)) {
-      const typeWhere: Record<string, any> = { ...where };
+      const typeWhere: Record<string, unknown> = { ...where };
       delete typeWhere.createdAt;
       typeWhere.type = t;
       if (dateRange?.start && dateRange?.end) {
@@ -274,7 +274,7 @@ class CommunicationService {
 
   // ─── Get Recent Activities ───────────────────────────────────────────────
   public async getRecentActivities(userId: number, tenantId: string | null, limit: number = 20): Promise<CommActivity[]> {
-    const where: Record<string, any> = { userId };
+    const where: Record<string, unknown> = { userId };
     if (tenantId) where.tenantId = tenantId;
 
     const activities = await CommActivity.findAll({
@@ -301,7 +301,7 @@ class CommunicationService {
       body?: string;
       direction?: string;
       duration?: number;
-      metadata?: Record<string, any>;
+      metadata?: Record<string, unknown>;
     },
     userId: number
   ): Promise<CommActivity> {
@@ -314,7 +314,7 @@ class CommunicationService {
       throw new BaseError(ERRORS.ACCESS_DENIED);
     }
 
-    const updateData: Record<string, any> = {};
+    const updateData: Record<string, unknown> = {};
     if (data.subject !== undefined) updateData.subject = data.subject;
     if (data.body !== undefined) updateData.body = data.body;
     if (data.direction !== undefined) updateData.direction = data.direction;
@@ -348,7 +348,7 @@ class CommunicationService {
     const limit = Math.min(100, Math.max(1, Number(pagination.limit) || 20));
     const offset = (page - 1) * limit;
 
-    const where: any = { type: ActivityType.CALL };
+    const where: unknown = { type: ActivityType.CALL };
     if (tenantId) where.tenantId = tenantId;
     if (pagination.search) {
       where[Op.or] = [{ subject: { [Op.iLike]: `%${pagination.search}%` } }, { contactId: { [Op.iLike]: `%${pagination.search}%` } }];
@@ -376,7 +376,7 @@ class CommunicationService {
     }
 
     const enrichedRows = rows.map(activity => {
-      const plain = activity.toJSON() as any;
+      const plain = activity.toJSON() as unknown;
       if (callLogsMap[plain.id]) {
         plain.callLog = callLogsMap[plain.id].toJSON();
       }
@@ -398,7 +398,7 @@ class CommunicationService {
     const limit = Math.min(100, Math.max(1, Number(pagination.limit) || 20));
     const offset = (page - 1) * limit;
 
-    const where: any = { type: ActivityType.MEETING };
+    const where: unknown = { type: ActivityType.MEETING };
     if (tenantId) where.tenantId = tenantId;
     if (pagination.search) {
       where[Op.or] = [{ subject: { [Op.iLike]: `%${pagination.search}%` } }, { body: { [Op.iLike]: `%${pagination.search}%` } }];
@@ -426,7 +426,7 @@ class CommunicationService {
     }
 
     const enrichedRows = rows.map(activity => {
-      const plain = activity.toJSON() as any;
+      const plain = activity.toJSON() as unknown;
       if (meetingNotesMap[plain.id]) {
         const noteData = meetingNotesMap[plain.id].toJSON();
         plain.title = noteData.title;
@@ -533,7 +533,7 @@ class CommunicationService {
     const meetingNote = await CommMeetingNote.findOne({ where: { activityId } });
     if (!meetingNote) throw new BaseError(ERRORS.NOT_FOUND);
 
-    const updateData: Record<string, any> = {};
+    const updateData: Record<string, unknown> = {};
     if (data.title !== undefined) {
       updateData.title = data.title;
       await activity.update({ subject: data.title });
@@ -565,8 +565,8 @@ class CommunicationService {
   }
 
   // ─── Get Call Analytics ───────────────────────────────────────────────────
-  public async getCallAnalytics(tenantId: string | null, dateRange?: { start?: string; end?: string }): Promise<any> {
-    const where: Record<string, any> = { type: ActivityType.CALL };
+  public async getCallAnalytics(tenantId: string | null, dateRange?: { start?: string; end?: string }): Promise<unknown> {
+    const where: Record<string, unknown> = { type: ActivityType.CALL };
     if (tenantId) where.tenantId = tenantId;
     if (dateRange?.start && dateRange?.end) {
       where.createdAt = {
@@ -639,7 +639,7 @@ class CommunicationService {
     const thirtyDaysAgo = new Date(today);
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const trendWhere: Record<string, any> = { ...where };
+    const trendWhere: Record<string, unknown> = { ...where };
     trendWhere.createdAt = { [Op.gte]: thirtyDaysAgo };
 
     const trendCalls = await CommActivity.findAll({
@@ -673,7 +673,7 @@ class CommunicationService {
     tenantId: string | null,
     limit: number = 10
   ): Promise<Array<{ id: number; name: string; email: string; type: string }>> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       [Op.or]: [{ name: { [Op.iLike]: `%${search}%` } }, { email: { [Op.iLike]: `%${search}%` } }]
     };
     if (tenantId) where.tenantId = tenantId;

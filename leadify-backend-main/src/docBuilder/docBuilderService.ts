@@ -38,7 +38,7 @@ class DocBuilderService {
     return `${prefix}-${year}-${random}`;
   }
 
-  public async createDocument(data: any, user: User): Promise<DocBuilderDocument> {
+  public async createDocument(data: Record<string, unknown>, user: User): Promise<DocBuilderDocument> {
     if (!data.reference) {
       data.reference = this.generateReference(data.type);
       // Ensure uniqueness
@@ -67,7 +67,7 @@ class DocBuilderService {
     return document;
   }
 
-  public async updateDocument(id: string, data: any, user: User): Promise<DocBuilderDocument> {
+  public async updateDocument(id: string, data: Record<string, unknown>, user: User): Promise<DocBuilderDocument> {
     const document = await this.documentOrError({ id, ...tenantWhere(user) });
 
     if (data.reference && data.reference !== document.reference) {
@@ -97,7 +97,7 @@ class DocBuilderService {
     return document;
   }
 
-  public async getDocuments(query: any, user: User): Promise<any> {
+  public async getDocuments(query: Record<string, unknown>, user: User): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query, 20);
 
     const where: WhereOptions = {
@@ -106,24 +106,24 @@ class DocBuilderService {
 
     // Apply ownership filter if no global view permission
     if (!user.role?.permissions?.includes(DocBuilderPermissionsEnum.VIEW_GLOBAL_DOCUMENTS)) {
-      (where as any).createdBy = user.id;
+      (where as Record<string, unknown>).createdBy = user.id;
     }
 
     // Type filter
     if (query.type) {
       const types = Array.isArray(query.type) ? query.type : [query.type];
-      if (types.length > 0) (where as any).type = { [Op.in]: types };
+      if (types.length > 0) (where as Record<string, unknown>).type = { [Op.in]: types };
     }
 
     // Status filter
     if (query.status) {
       const statuses = Array.isArray(query.status) ? query.status : [query.status];
-      if (statuses.length > 0) (where as any).status = { [Op.in]: statuses };
+      if (statuses.length > 0) (where as Record<string, unknown>).status = { [Op.in]: statuses };
     }
 
     // Search
     if (query.searchKey) {
-      (where as any)[Op.or] = [
+      (where as Record<string, unknown>)[Op.or] = [
         { title: { [Op.iLike]: `%${query.searchKey}%` } },
         { reference: { [Op.iLike]: `%${query.searchKey}%` } },
         { clientName: { [Op.iLike]: `%${query.searchKey}%` } },
@@ -133,7 +133,7 @@ class DocBuilderService {
 
     // Date range
     if (query.fromDate || query.toDate) {
-      (where as any).createdAt = {
+      (where as Record<string, unknown>).createdAt = {
         ...(query.fromDate && { [Op.gte]: new Date(query.fromDate) }),
         ...(query.toDate && { [Op.lte]: new Date(query.toDate) })
       };
@@ -141,7 +141,7 @@ class DocBuilderService {
 
     // Client filter
     if (query.clientName) {
-      (where as any).clientName = { [Op.iLike]: `%${query.clientName}%` };
+      (where as Record<string, unknown>).clientName = { [Op.iLike]: `%${query.clientName}%` };
     }
 
     const { rows: documents, count: totalItems } = await DocBuilderDocument.findAndCountAll({
@@ -201,7 +201,7 @@ class DocBuilderService {
     const where: WhereOptions = { id, ...tenantWhere(user) };
 
     if (!user.role?.permissions?.includes(DocBuilderPermissionsEnum.VIEW_GLOBAL_DOCUMENTS)) {
-      (where as any).createdBy = user.id;
+      (where as Record<string, unknown>).createdBy = user.id;
     }
 
     const document = await DocBuilderDocument.findOne({
@@ -241,7 +241,7 @@ class DocBuilderService {
   public async changeStatus(id: string, status: DocStatusEnum, reason: string | undefined, user: User): Promise<DocBuilderDocument> {
     const document = await this.documentOrError({ id, ...tenantWhere(user) });
 
-    const updateData: Record<string, any> = { status };
+    const updateData: Record<string, unknown> = { status };
     if (reason) updateData.rejectionReason = reason;
     if (status === DocStatusEnum.SENT) updateData.sentAt = new Date();
 
@@ -345,16 +345,16 @@ class DocBuilderService {
     return document;
   }
 
-  public async getStats(query: any, user: User): Promise<any> {
+  public async getStats(query: Record<string, unknown>, user: User): Promise<unknown> {
     const where: WhereOptions = { ...tenantWhere(user) };
 
     if (!user.role?.permissions?.includes(DocBuilderPermissionsEnum.VIEW_GLOBAL_DOCUMENTS)) {
-      (where as any).createdBy = user.id;
+      (where as Record<string, unknown>).createdBy = user.id;
     }
 
     if (query.type) {
       const types = Array.isArray(query.type) ? query.type : [query.type];
-      if (types.length > 0) (where as any).type = { [Op.in]: types };
+      if (types.length > 0) (where as Record<string, unknown>).type = { [Op.in]: types };
     }
 
     // Total count and total value via SQL
@@ -365,7 +365,7 @@ class DocBuilderService {
         [fn('COALESCE', fn('SUM', col('total')), 0), 'totalValue']
       ],
       raw: true
-    })) as any;
+    })) as unknown;
 
     // Counts grouped by status
     const byStatusRows = (await DocBuilderDocument.findAll({
@@ -373,7 +373,7 @@ class DocBuilderService {
       attributes: ['status', [fn('COUNT', col('id')), 'count']],
       group: ['status'],
       raw: true
-    })) as any[];
+    })) as unknown[];
 
     // Counts and value grouped by type
     const byTypeRows = (await DocBuilderDocument.findAll({
@@ -381,7 +381,7 @@ class DocBuilderService {
       attributes: ['type', [fn('COUNT', col('id')), 'count'], [fn('COALESCE', fn('SUM', col('total')), 0), 'value']],
       group: ['type'],
       raw: true
-    })) as any[];
+    })) as unknown[];
 
     const byStatus: Record<string, number> = {};
     for (const row of byStatusRows) {
@@ -485,7 +485,7 @@ class DocBuilderService {
    * an explicit watermark string is provided.
    */
   public async renderDocument(document: DocBuilderDocument, watermark?: string): Promise<string> {
-    let content: Record<string, any> = {};
+    let content: Record<string, unknown> = {};
     try {
       content = document.content ? JSON.parse(document.content) : {};
     } catch {
@@ -497,7 +497,7 @@ class DocBuilderService {
     if (document.templateId) {
       const template = await DocumentTemplate.findByPk(document.templateId);
       if (template?.layout) {
-        templateHtml = (template.layout as any).templateHtml;
+        templateHtml = (template.layout as Record<string, unknown>).templateHtml;
       }
     }
 

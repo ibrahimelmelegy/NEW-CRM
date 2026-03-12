@@ -60,7 +60,7 @@ class BookingController {
 
   async checkAvailability(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const { staffId, date, startTime, endTime } = req.query as any;
+      const { staffId, date, startTime, endTime } = req.query as Record<string, string>;
       if (!staffId || !date || !startTime || !endTime) {
         return res.status(400).send({ success: false, message: 'staffId, date, startTime, endTime are required' });
       }
@@ -74,8 +74,8 @@ class BookingController {
     try {
       wrapResult(res, await service.createBookingWithValidation(req.body, req.user!.tenantId!), 201);
     } catch (e) {
-      if ((e as any).statusCode === 409) {
-        return res.status(409).send({ success: false, message: e instanceof Error ? e.message : String(e), conflicts: (e as any).conflicts });
+      if ((e as Record<string, unknown>).statusCode === 409) {
+        return res.status(409).send({ success: false, message: e instanceof Error ? e.message : String(e), conflicts: (e as Record<string, unknown>).conflicts });
       }
       next(e);
     }
@@ -83,7 +83,7 @@ class BookingController {
 
   async getAvailableSlots(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const { staffId, date } = req.query as any;
+      const { staffId, date } = req.query as Record<string, string>;
       if (!staffId || !date) {
         return res.status(400).send({ success: false, message: 'staffId and date are required' });
       }
@@ -115,7 +115,7 @@ class BookingController {
 
   async getBookingAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const { staffId, dateFrom, dateTo } = req.query as any;
+      const { staffId, dateFrom, dateTo } = req.query as Record<string, string>;
       wrapResult(res, await service.getBookingAnalytics(staffId ? Number(staffId) : undefined, req.user!.tenantId!, dateFrom, dateTo));
     } catch (e) {
       next(e);

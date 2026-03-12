@@ -9,10 +9,10 @@ import { useNotifications, type CrmNotification } from '~/composables/useNotific
 
 // Mock useApiFetch globally
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: any[]) => mockApiFetch(...args)
+  useApiFetch: (...args: unknown[]) => mockApiFetch(...args)
 }));
 
 describe('useNotifications', () => {
@@ -123,7 +123,7 @@ describe('useNotifications', () => {
 
       push({ type: 'info', category: 'system', title: 'Test', message: 'msg', icon: 'ph:bell' });
       // Override the auto-generated string id with a numeric one
-      (notifications.value[0] as any).id = 42;
+      (notifications.value[0] as unknown).id = 42;
 
       await markAsRead(42);
 
@@ -183,7 +183,7 @@ describe('useNotifications', () => {
       mockApiFetch.mockResolvedValue({ success: true });
 
       push({ type: 'info', category: 'system', title: 'Test', message: 'msg', icon: 'ph:bell' });
-      (notifications.value[0] as any).id = 99;
+      (notifications.value[0] as unknown).id = 99;
 
       await remove(99);
 
@@ -262,7 +262,7 @@ describe('useNotifications', () => {
     });
 
     it('should set loading state during fetch', async () => {
-      let resolvePromise: (value: any) => void;
+      let resolvePromise: (value: unknown) => void;
       const pendingPromise = new Promise(resolve => {
         resolvePromise = resolve;
       });

@@ -2,6 +2,7 @@ import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from '../types';
 import Tenant from '../tenant/tenantModel';
 import { TENANT_BYPASS } from './tenantContext';
+import logger from '../config/logger';
 
 /**
  * Tenant validation middleware.
@@ -69,7 +70,7 @@ export const validateTenant = async (req: AuthenticatedRequest, res: Response, n
 
     next();
   } catch (error) {
-    console.error('[TenantMiddleware] Error validating tenant:', error);
+    logger.error({ err: error }, '[TenantMiddleware] Error validating tenant');
     res.status(500).json({ message: 'Internal server error during tenant validation' });
   }
 };

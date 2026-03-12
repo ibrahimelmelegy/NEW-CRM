@@ -1,5 +1,6 @@
 import { Op, fn, col } from 'sequelize';
 import jwt from 'jsonwebtoken';
+import logger from '../config/logger';
 import Notification from './notificationModel';
 import NotificationPreference, {
   DEFAULT_NOTIFICATION_PREFERENCES,
@@ -30,7 +31,7 @@ function canSendEmail(userId: number): boolean {
   return true;
 }
 
-let ioInstance: any = null;
+let ioInstance: unknown = null;
 
 function getIO() {
   if (!ioInstance) {
@@ -170,7 +171,7 @@ class NotificationCenterService {
             const unsubscribeToken = jwt.sign({ userId: data.userId, notificationType: prefKey }, secret, { expiresIn: '30d' });
             unsubscribeUrl = `${process.env.BACKEND_URL || 'http://localhost:3000'}/api/notification/unsubscribe?token=${unsubscribeToken}`;
           } else {
-            console.error('[NotificationCenter] SECRET_KEY not set — omitting unsubscribe link');
+            logger.error('[NotificationCenter] SECRET_KEY not set — omitting unsubscribe link');
           }
 
           const priorityPrefix = isCritical ? '[CRITICAL] ' : priority === NotificationPriorityEnum.HIGH ? '[HIGH] ' : '';
@@ -190,7 +191,7 @@ class NotificationCenterService {
           });
         }
       } catch (emailError) {
-        console.error('Failed to send notification email:', emailError);
+        logger.error({ err: emailError }, 'Failed to send notification email');
       }
     }
 
@@ -200,7 +201,7 @@ class NotificationCenterService {
         await this.sendWebPush(data.userId, data.title, data.message, data.actionUrl);
       } catch (pushError) {
         // Silent failure — push is best-effort
-        console.error('Failed to send push notification:', pushError);
+        logger.error({ err: pushError }, 'Failed to send push notification');
       }
     }
 
@@ -243,7 +244,7 @@ class NotificationCenterService {
           await webpush.sendNotification(sub.subscription, payload);
         } catch (err) {
           // If subscription expired (410 Gone), remove it
-          if ((err as any)?.statusCode === 410) {
+          if ((err as Record<string, unknown>).statusCode === 410) {
             await sub.destroy();
           }
         }
@@ -293,7 +294,7 @@ class NotificationCenterService {
     const limit = query.limit || 10;
     const offset = (page - 1) * limit;
 
-    const where: Record<string, any> = { userId };
+    const where: Record<string, unknown> = { userId };
 
     // Filter by read status
     if (query.read === 'unread') {
@@ -438,7 +439,7 @@ class NotificationCenterService {
       group: ['type', 'priority'],
       raw: true,
       order: [[fn('MAX', col('createdAt')), 'DESC']]
-    })) as any[];
+    })) as unknown[];
 
     // Get the latest message per type for preview
     const groups: { type: string; count: number; priority: string; latestMessage: string; latestAt: Date }[] = [];
@@ -551,7 +552,7 @@ class NotificationCenterService {
    * Register a push subscription for a user.
    * Stores the browser push subscription object for web push notifications.
    */
-  async registerPushSubscription(userId: number, subscription: { endpoint: string; keys: { p256dh: string; auth: string } }): Promise<any> {
+  async registerPushSubscription(userId: number, subscription: { endpoint: string; keys: { p256dh: string; auth: string } }): Promise<unknown> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const PushSubscription = require('./pushSubscriptionModel').default;

@@ -36,6 +36,7 @@ import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 import { TriggerType } from '../workflow/workflowModel';
 import workflowService from '../workflow/workflowService';
+import logger from '../config/logger';
 
 /**
  * Defines which stage transitions are allowed for deals.
@@ -66,8 +67,8 @@ const DEAL_STAGE_PROBABILITY: Record<string, number> = {
 
 class DealService {
   public async convertLeadTODeal(input: ConvertLeadToDealInput & { userId: string }, admin: User): Promise<Deal> {
-    let lead: any,
-      client: any = null;
+    let lead: Record<string, unknown>,
+      client: unknown = null;
     const transaction = await sequelize.transaction();
     try {
       lead = await leadService.leadOrError({ id: input.leadId });
@@ -146,15 +147,15 @@ class DealService {
 
       // Trigger workflow automation for deal creation (from lead conversion)
       workflowService.processEntityEvent('deal', String(deal.id), TriggerType.ON_CREATE, null, deal.toJSON(), admin.id).catch((err: Error) => {
-        console.error('Workflow processEntityEvent (deal.convertCreate) error:', err.message);
+        logger.error({ err: err.message }, 'Workflow processEntityEvent (deal.convertCreate) error');
       });
 
       return deal;
     } catch (error) {
       await transaction.rollback();
-      console.error('Lead-to-deal conversion error:', error);
+      logger.error({ error }, 'Lead-to-deal conversion error');
       if (error instanceof BaseError) throw error;
-      throw new BaseError(ERRORS[(error as any)?.message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
+      throw new BaseError(ERRORS[(error as Record<string, unknown>).message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
   }
 
@@ -212,8 +213,8 @@ class DealService {
       const deal = await Deal.create(
         {
           ...input.deal,
-          leadId: (lead as any)?.id,
-          clientId: (client as any)?.id
+          leadId: (lead as Record<string, unknown>).id,
+          clientId: (client as Record<string, unknown>).id
         },
         {
           transaction: t
@@ -239,15 +240,15 @@ class DealService {
 
       // Trigger workflow automation for deal creation
       workflowService.processEntityEvent('deal', String(deal.id), TriggerType.ON_CREATE, null, deal.toJSON(), admin.id).catch((err: Error) => {
-        console.error('Workflow processEntityEvent (deal.create) error:', err.message);
+        logger.error({ err: err.message }, 'Workflow processEntityEvent (deal.create) error');
       });
 
       return deal;
     } catch (error: Error | unknown) {
       await t.rollback();
-      console.error('Deal creation error:', error);
+      logger.error({ error }, 'Deal creation error');
       if (error instanceof BaseError) throw error;
-      throw new BaseError(ERRORS[(error as any)?.message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
+      throw new BaseError(ERRORS[(error as Record<string, unknown>).message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
   }
 
@@ -445,7 +446,7 @@ class DealService {
     // Trigger workflow automation for deal update (including field change detection)
     const newDealData = deal.toJSON();
     workflowService.processEntityEvent('deal', String(deal.id), TriggerType.ON_UPDATE, oldDealData, newDealData, user.id).catch((err: Error) => {
-      console.error('Workflow processEntityEvent (deal.update) error:', err.message);
+      logger.error({ err: err.message }, 'Workflow processEntityEvent (deal.update) error');
     });
 
     return await this.getDealById(deal.id, user);
@@ -507,7 +508,7 @@ class DealService {
   }
 
   public async getKanbanDeals(user: User): Promise<Record<string, Deal[]>> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       stage: { [Op.ne]: DealStageEnums.CONVERTED }
     };
 
@@ -601,7 +602,7 @@ class DealService {
         await createActivityLog('deal', 'update', deal.id, user.id, null, `Auto-generated Project for Winning Deal`);
       } catch (err) {
         // Log but don't fail the deal update if project creation fails (graceful degradation)
-        console.error('Failed to auto-create project from deal:', (err as Error).message);
+        logger.error({ err: (err as Error).message }, 'Failed to auto-create project from deal');
       }
     }
 
@@ -610,7 +611,7 @@ class DealService {
     // Trigger workflow automation for deal stage change (ON_UPDATE + ON_FIELD_CHANGE)
     const newStageData = deal.toJSON();
     workflowService.processEntityEvent('deal', String(deal.id), TriggerType.ON_UPDATE, oldStageData, newStageData, user.id).catch((err: Error) => {
-      console.error('Workflow processEntityEvent (deal.stageChange) error:', err.message);
+      logger.error({ err: err.message }, 'Workflow processEntityEvent (deal.stageChange) error');
     });
 
     return deal;
@@ -666,7 +667,7 @@ class DealService {
     byStage: Record<string, { count: number; totalValue: number; weightedValue: number; avgProbability: number }>;
   }> {
     try {
-      const where: Record<string, any> = {
+      const where: Record<string, unknown> = {
         stage: { [Op.notIn]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED, DealStageEnums.ARCHIVED, DealStageEnums.CONVERTED] },
         ...(tenantId ? { tenantId } : {})
       };
@@ -730,7 +731,7 @@ class DealService {
         byStage: result
       };
     } catch (error) {
-      console.error('getWeightedPipeline error:', error);
+      logger.error({ error }, 'getWeightedPipeline error');
       return { totalPipelineValue: 0, weightedValue: 0, dealCount: 0, byStage: {} };
     }
   }
@@ -760,7 +761,7 @@ class DealService {
 
     const now = new Date();
     return deals.map(deal => {
-      const plain = deal.toJSON() as any;
+      const plain = deal.toJSON() as unknown;
       const updatedAt = new Date(plain.updatedAt);
       plain.daysStale = Math.floor((now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24));
       return plain;
@@ -780,7 +781,7 @@ class DealService {
     avgDaysToClose: number;
     byMonth: Array<{ month: string; won: number; lost: number; winRate: number }>;
   }> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       stage: { [Op.in]: [DealStageEnums.CLOSED, DealStageEnums.CANCELLED] },
       ...(tenantId ? { tenantId } : {})
     };
@@ -859,7 +860,7 @@ class DealService {
   }
 
   public async sendDealsExcelByEmail(query: GetPaginatedDealsInput, user: User, email: string): Promise<void> {
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       stage: {
         [Op.ne]: DealStageEnums.CONVERTED
       },

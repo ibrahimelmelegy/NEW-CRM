@@ -2,6 +2,7 @@ import express from 'express';
 import invoiceController from './invoiceController';
 import { authenticateUser, HasPermission } from '../middleware/authMiddleware';
 import { DealPermissionsEnum } from '../role/roleEnum';
+import { pdfLimiter } from '../infrastructure/rateLimitEnhanced';
 
 /**
  * @swagger
@@ -179,7 +180,7 @@ router.post('/calculate-totals', authenticateUser, invoiceController.calculateTo
  *       500:
  *         description: Server error
  */
-router.get('/:id/pdf', authenticateUser, invoiceController.generatePdf);
+router.get('/:id/pdf', authenticateUser, pdfLimiter, invoiceController.generatePdf);
 router.get('/:id', authenticateUser, invoiceController.getInvoiceById);
 router.put('/:id/collect', authenticateUser, HasPermission([DealPermissionsEnum.EDIT_DEALS]), invoiceController.markCollected);
 router.put('/:id/uncollect', authenticateUser, HasPermission([DealPermissionsEnum.EDIT_DEALS]), invoiceController.markUncollected);

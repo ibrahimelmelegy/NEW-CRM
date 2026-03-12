@@ -2,16 +2,18 @@ import { ElNotification } from 'element-plus';
 
 // Handle error during additional material creation
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 function handleSuccess(message: string, id?: string, redirect: boolean = true) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
   if (!redirect) {
@@ -83,13 +85,14 @@ export async function getMaterials(project?: number): Promise<UseAdditionalMater
 }
 
 export async function createMaterial(values: Material) {
+  const t = useNuxtApp().$i18n.t;
   try {
     // Call API to create the additional material
     const response = await useApiFetch('material', 'POST', values);
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('material created successfully', '', false);
+      handleSuccess(t('common.created'), '', false);
       return response?.body;
     } else {
       handleError(response?.message || 'Something went wrong');
@@ -162,13 +165,14 @@ export async function getAdditionalMaterial(id: string | string[]): Promise<Addi
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
 export async function createAdditionalMaterial(values: AdditionalMaterial, redirect: boolean = true) {
+  const t = useNuxtApp().$i18n.t;
   try {
     // Call API to create the additional material
     const response = await useApiFetch('additional-material/create', 'POST', cleanObject(values));
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Additional material created successfully', '', redirect);
+      handleSuccess(t('common.created'), '', redirect);
       return response?.body;
     } else {
       handleError(response?.message || 'Something went wrong');
@@ -188,13 +192,14 @@ export async function createAdditionalMaterial(values: AdditionalMaterial, redir
  * @throws {Error} If the API call is unsuccessful, an error is thrown with a message
  */
 export async function updateAdditionalMaterial(values: AdditionalMaterial, redirect: boolean = true): Promise<void> {
+  const t = useNuxtApp().$i18n.t;
   try {
     // Call API to create the additional material
     const response = await useApiFetch(`additional-material/update`, 'POST', cleanObject(values));
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Additional material updated successfully', values.id, redirect);
+      handleSuccess(t('common.saved'), values.id, redirect);
       return response?.body;
     } else {
       handleError(response?.message || 'Something went wrong');
@@ -206,16 +211,17 @@ export async function updateAdditionalMaterial(values: AdditionalMaterial, redir
 }
 
 export async function deleteAdditionalMaterialById(id: string) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`additional-material/${id}`, 'DELETE');
     if (response?.success) {
-      ElNotification({ type: 'success', title: 'Success', message: 'Material deleted successfully' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: response?.message || 'Failed to delete material' });
+      ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to delete material' });
     }
     return response;
   } catch (error) {
-    ElNotification({ type: 'error', title: 'Error', message: error instanceof Error ? error.message : 'Unknown error' });
+    ElNotification({ type: 'error', title: t('common.error'), message: error instanceof Error ? error.message : 'Unknown error' });
     return { success: false, body: null, message: 'Unknown error', code: 500 };
   }
 }

@@ -102,10 +102,12 @@ const loading = ref(false);
 
 const handleUploadRequest = async (params: unknown) => {
   loading.value = true;
-  const result = (await uploadFile(params)) as unknown;
-
-  loading.value = false;
-  return result?.data;
+  try {
+    const result = (await uploadFile(params)) as unknown;
+    return result?.data;
+  } finally {
+    loading.value = false;
+  }
 };
 
 const beforeUpload: UploadProps['beforeUpload'] = rawFile => {

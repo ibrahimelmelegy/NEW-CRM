@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import Integration from '../integration/integrationModel';
+import logger from '../config/logger';
 
 interface EmailContext {
   to?: string;
@@ -25,8 +26,8 @@ interface EmailReplyContext {
   thread: string;
   purpose?: string;
   tone?: string;
-  dealInfo?: any;
-  clientInfo?: any;
+  dealInfo?: unknown;
+  clientInfo?: unknown;
   senderName?: string;
 }
 
@@ -148,7 +149,7 @@ class EmailAIService {
         };
       }
     } catch (error) {
-      console.error('Email generation error:', error);
+      logger.error({ error }, 'Email generation error');
       return this.generateEmailFallback(context);
     }
   }
@@ -210,7 +211,7 @@ class EmailAIService {
         return { subject: 'Re: Your Message', body: response };
       }
     } catch (error) {
-      console.error('Reply suggestion error:', error);
+      logger.error({ error }, 'Reply suggestion error');
       return { subject: 'Re: Your Message', body: 'Thank you for your email. I will review and respond shortly.' };
     }
   }
@@ -253,7 +254,7 @@ class EmailAIService {
         return { subject: '', body: response };
       }
     } catch (error) {
-      console.error('Email improvement error:', error);
+      logger.error({ error }, 'Email improvement error');
       return { subject: '', body: draft };
     }
   }

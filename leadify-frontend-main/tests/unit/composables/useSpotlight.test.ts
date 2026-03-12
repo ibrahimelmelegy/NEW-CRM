@@ -9,10 +9,10 @@ import { openSpotlightDirect, type SpotlightItem } from '~/composables/useSpotli
 
 // Mock useApiFetch globally
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: any[]) => mockApiFetch(...args)
+  useApiFetch: (...args: unknown[]) => mockApiFetch(...args)
 }));
 
 // Mock usePermissions
@@ -31,13 +31,13 @@ vi.mock('@/composables/useKeyboardShortcuts', () => ({
 }));
 
 // Mock stores
-(globalThis as any).useThemeStore = vi.fn().mockReturnValue({
+(globalThis as Record<string, unknown>).useThemeStore = vi.fn().mockReturnValue({
   toggleTheme: vi.fn()
 });
-(globalThis as any).useMain = vi.fn().mockReturnValue({
+(globalThis as Record<string, unknown>).useMain = vi.fn().mockReturnValue({
   fullNav: true
 });
-(globalThis as any).useI18n = vi.fn().mockReturnValue({
+(globalThis as Record<string, unknown>).useI18n = vi.fn().mockReturnValue({
   locale: { value: 'en' },
   setLocale: vi.fn()
 });
@@ -52,7 +52,7 @@ const localStorageMock = {
 Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
 
 // Mock window for keyboard event listener
-(globalThis as any).window = {
+(globalThis as Record<string, unknown>).window = {
   addEventListener: vi.fn(),
   removeEventListener: vi.fn()
 };

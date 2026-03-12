@@ -6,7 +6,7 @@ import User from '../user/userModel';
 import { clampPagination } from '../utils/pagination';
 
 // Map entity types to their Sequelize models
-const entityModelMap: Record<string, any> = {
+const entityModelMap: Record<string, unknown> = {
   lead: Lead,
   client: Client,
   opportunity: Opportunity
@@ -15,11 +15,11 @@ const entityModelMap: Record<string, any> = {
 class LeadScoringService {
   // ---- Rule CRUD ----
 
-  async createRule(data: any, userId: number) {
+  async createRule(data: Record<string, unknown>, userId: number) {
     return LeadScoringRule.create({ ...data, createdBy: userId });
   }
 
-  async updateRule(id: number, data: any) {
+  async updateRule(id: number, data: Record<string, unknown>) {
     const rule = await LeadScoringRule.findByPk(id);
     if (!rule) throw new Error('Scoring rule not found');
     return rule.update(data);
@@ -32,10 +32,10 @@ class LeadScoringService {
     return { deleted: true };
   }
 
-  async getRules(query: any) {
+  async getRules(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 30);
     const { entityType, isActive, sortBy = 'createdAt', sort = 'DESC' } = query;
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (entityType) where.entityType = entityType;
     if (isActive !== undefined) where.isActive = isActive === 'true' || isActive === true;
 
@@ -166,7 +166,7 @@ class LeadScoringService {
 
   // ---- Criteria Evaluation ----
 
-  evaluateCriteria(entity: Record<string, any>, criterion: ScoringCriterion): number {
+  evaluateCriteria(entity: Record<string, unknown>, criterion: ScoringCriterion): number {
     const { field, operator, value, points } = criterion;
     const fieldValue = entity[field];
 

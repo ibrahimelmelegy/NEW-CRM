@@ -7,9 +7,10 @@ import SalesOrder from '../salesOrder/models/salesOrderModel';
 import SalesOrderItem from '../salesOrder/models/salesOrderItemModel';
 import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
+import logger from '../config/logger';
 
 class InvoiceBillingService {
-  async listInvoices(page = 1, limit = 20): Promise<{ docs: any[]; pagination: { total: number; page: number; limit: number; totalPages: number } }> {
+  async listInvoices(page = 1, limit = 20): Promise<{ docs: Record<string, unknown>[]; pagination: { total: number; page: number; limit: number; totalPages: number } }> {
     try {
       const offset = (page - 1) * limit;
       const { rows, count } = await Invoice.findAndCountAll({
@@ -22,7 +23,7 @@ class InvoiceBillingService {
         pagination: { total: count, page, limit, totalPages: Math.ceil(count / limit) }
       };
     } catch (error) {
-      console.error('listInvoices error:', error);
+      logger.error({ error }, 'listInvoices error');
       return { docs: [], pagination: { total: 0, page, limit, totalPages: 0 } };
     }
   }
@@ -236,10 +237,10 @@ class InvoiceBillingService {
 
     const now = new Date();
     const buckets = {
-      current: { amount: 0, count: 0, invoices: [] as any[] },
-      thirtyDays: { amount: 0, count: 0, invoices: [] as any[] },
-      sixtyDays: { amount: 0, count: 0, invoices: [] as any[] },
-      ninetyPlus: { amount: 0, count: 0, invoices: [] as any[] }
+      current: { amount: 0, count: 0, invoices: [] as unknown[] },
+      thirtyDays: { amount: 0, count: 0, invoices: [] as unknown[] },
+      sixtyDays: { amount: 0, count: 0, invoices: [] as unknown[] },
+      ninetyPlus: { amount: 0, count: 0, invoices: [] as unknown[] }
     };
 
     const clientBreakdown: Record<
@@ -258,7 +259,7 @@ class InvoiceBillingService {
       const invoiceDate = inv.invoiceDate ? new Date(inv.invoiceDate) : new Date(inv.getDataValue('createdAt'));
       const daysOld = Math.floor((now.getTime() - invoiceDate.getTime()) / (1000 * 60 * 60 * 24));
       const amount = Number(inv.amount) || 0;
-      const clientName = (inv as any).deal?.name || `Deal #${inv.dealId}`;
+      const clientName = (inv as Record<string, unknown>).deal?.name || `Deal #${inv.dealId}`;
       const clientKey = inv.dealId;
 
       if (!clientBreakdown[clientKey]) {
@@ -447,7 +448,7 @@ class InvoiceBillingService {
       throw new BaseError(ERRORS.SOMETHING_WENT_WRONG, 400, 'Cannot update a collected invoice');
     }
 
-    const updateData: Record<string, any> = {};
+    const updateData: Record<string, unknown> = {};
     if (data.invoiceDate) updateData.invoiceDate = new Date(data.invoiceDate);
     if (data.dealId) updateData.dealId = data.dealId;
 

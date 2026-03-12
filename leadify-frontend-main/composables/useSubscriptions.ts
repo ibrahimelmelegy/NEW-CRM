@@ -2,17 +2,19 @@
 import { ElNotification } from 'element-plus';
 
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 
 function handleSuccess(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
 }
@@ -176,7 +178,7 @@ export async function createPlan(data: Partial<SubscriptionPlan>): Promise<Subsc
   try {
     const response = await useApiFetch('subscriptions/plans', 'POST', data as unknown);
     if (response?.success) {
-      handleSuccess('Plan created successfully');
+      handleSuccess(useNuxtApp().$i18n.t('common.created'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to create plan');
@@ -192,7 +194,7 @@ export async function updatePlan(id: string, data: Partial<SubscriptionPlan>): P
   try {
     const response = await useApiFetch(`subscriptions/plans/${id}`, 'PUT', data as unknown);
     if (response?.success) {
-      handleSuccess('Plan updated successfully');
+      handleSuccess(useNuxtApp().$i18n.t('common.saved'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to update plan');
@@ -208,7 +210,7 @@ export async function deletePlan(id: string): Promise<boolean> {
   try {
     const response = await useApiFetch(`subscriptions/plans/${id}`, 'DELETE');
     if (response?.success) {
-      handleSuccess('Plan deactivated successfully');
+      handleSuccess(useNuxtApp().$i18n.t('common.deleted'));
       return true;
     } else {
       handleError(response?.message || 'Failed to deactivate plan');
@@ -246,7 +248,7 @@ export async function createSubscription(data: unknown): Promise<CustomerSubscri
   try {
     const response = await useApiFetch('subscriptions', 'POST', data);
     if (response?.success) {
-      handleSuccess('Subscription created successfully');
+      handleSuccess(useNuxtApp().$i18n.t('common.created'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to create subscription');
@@ -262,7 +264,7 @@ export async function cancelSubscription(id: string, reason?: string): Promise<C
   try {
     const response = await useApiFetch(`subscriptions/${id}/cancel`, 'PATCH', { reason });
     if (response?.success) {
-      handleSuccess('Subscription cancelled successfully');
+      handleSuccess(useNuxtApp().$i18n.t('common.deleted'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to cancel subscription');
@@ -278,7 +280,7 @@ export async function changeSubscriptionPlan(id: string, newPlanId: string): Pro
   try {
     const response = await useApiFetch(`subscriptions/${id}/change-plan`, 'PATCH', { newPlanId });
     if (response?.success) {
-      handleSuccess('Plan changed successfully');
+      handleSuccess(useNuxtApp().$i18n.t('common.saved'));
       return response.body;
     } else {
       handleError(response?.message || 'Failed to change plan');

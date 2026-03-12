@@ -67,7 +67,7 @@ class ShippingController {
 
   async calculateRate(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const { weight, zone } = req.query as any;
+      const { weight, zone } = req.query as Record<string, string>;
       if (!weight) return res.status(400).send({ success: false, message: 'weight query param is required' });
       wrapResult(res, await service.calculateShippingRate(Number(weight), zone, req.user!.tenantId!));
     } catch (e) {
@@ -106,7 +106,7 @@ class ShippingController {
 
   async getCarrierRates(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const { weight, zone } = req.query as any;
+      const { weight, zone } = req.query as Record<string, string>;
       if (!weight) return res.status(400).send({ success: false, message: 'weight query param is required' });
       wrapResult(res, await service.getCarrierRates(Number(weight), zone, req.user!.tenantId!));
     } catch (e) {

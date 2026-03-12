@@ -4,13 +4,13 @@ import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
 
 class GoalService {
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     return Goal.create({ ...data, tenantId });
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.level) where.level = query.level;
     if (query.status) where.status = query.status;
@@ -33,7 +33,7 @@ class GoalService {
     return Goal.findByPk(id);
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const goal = await Goal.findByPk(id);
     if (!goal) return null;
     await goal.update(data);
@@ -60,7 +60,7 @@ class GoalService {
     if (!goal) throw new Error('Goal not found');
 
     const clampedProgress = Math.max(0, Math.min(100, progress));
-    const updateData: Record<string, any> = { progress: clampedProgress };
+    const updateData: Record<string, unknown> = { progress: clampedProgress };
 
     if (clampedProgress >= 100 && goal.status !== 'COMPLETED') {
       updateData.status = 'COMPLETED';
@@ -71,11 +71,11 @@ class GoalService {
     await goal.update(updateData);
     try {
       io.emit('goal:progress_updated', { id: goalId, title: goal.title, progress: clampedProgress, status: updateData.status || goal.status });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     if (clampedProgress >= 100) {
       try {
         io.emit('goal:completed', { id: goalId, title: goal.title });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
 
     // Check milestones after progress update
@@ -106,7 +106,7 @@ class GoalService {
 
     const avgProgress = Math.round(children.reduce((sum, child) => sum + (child.progress || 0), 0) / children.length);
 
-    const updateData: Record<string, any> = { progress: avgProgress };
+    const updateData: Record<string, unknown> = { progress: avgProgress };
     if (avgProgress >= 100 && parent.status !== 'COMPLETED') {
       updateData.status = 'COMPLETED';
     } else if (avgProgress > 0 && parent.status === 'NOT_STARTED') {
@@ -126,7 +126,7 @@ class GoalService {
    * Returns total, completed, in-progress, overdue counts, avg progress, completion rate.
    */
   async getGoalStats(tenantId: string, owner?: string) {
-    const where: Record<string, any> = { tenantId };
+    const where: Record<string, unknown> = { tenantId };
     if (owner) where.owner = owner;
 
     const today = new Date().toISOString().split('T')[0];
@@ -204,7 +204,7 @@ class GoalService {
     for (const milestone of crossedMilestones) {
       try {
         io.emit('goal:milestone_reached', { goalId, milestone, title: goal.title, currentProgress: curr });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
 
     return {

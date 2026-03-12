@@ -7,17 +7,17 @@ import { io } from '../server';
 class ClvService {
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-  async create(data: any, tenantId?: string) {
+  async create(data: Record<string, unknown>, tenantId?: string) {
     const record = await ClvRecord.create({ ...data, tenantId, calculatedAt: new Date() });
     try {
       io.emit('clv:created', { id: record.id, customerId: record.customerId });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return record;
   }
 
-  async getAll(query: any, tenantId?: string) {
+  async getAll(query: Record<string, unknown>, tenantId?: string) {
     const { page, limit, offset } = clampPagination(query);
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
     if (query.segment) where.segment = query.segment;
     if (query.customerId) where.customerId = query.customerId;
@@ -45,13 +45,13 @@ class ClvService {
     });
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Record<string, unknown>) {
     const item = await ClvRecord.findByPk(id);
     if (!item) return null;
     await item.update(data);
     try {
       io.emit('clv:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -127,7 +127,7 @@ class ClvService {
 
     try {
       io.emit('clv:calculated', { id: record.id, customerId, segment, churnRisk });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return record;
   }
 
@@ -135,7 +135,7 @@ class ClvService {
 
   /** Group customers by segment and compute aggregated metrics */
   async getCohortAnalysis(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const records = await ClvRecord.findAll({ where, raw: true });
@@ -152,7 +152,7 @@ class ClvService {
     > = {};
 
     for (const r of records) {
-      const rec = r as any;
+      const rec = r as Record<string, unknown>;
       const seg = rec.segment || 'UNKNOWN';
       if (!cohorts[seg]) cohorts[seg] = { count: 0, totalHistorical: 0, totalPredicted: 0, avgChurnRisk: 0, avgOrderValue: 0 };
       cohorts[seg].count++;
@@ -178,7 +178,7 @@ class ClvService {
 
   /** Get customers at highest risk of churn, sorted by risk descending */
   async getChurnPredictions(tenantId?: string, limit = 20) {
-    const where: Record<string, any> = { churnRisk: { [Op.gt]: 0.3 } };
+    const where: Record<string, unknown> = { churnRisk: { [Op.gt]: 0.3 } };
     if (tenantId) where.tenantId = tenantId;
 
     const atRisk = await ClvRecord.findAll({

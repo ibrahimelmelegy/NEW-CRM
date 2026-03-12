@@ -12,19 +12,19 @@ class SubscriptionService {
   // Plan CRUD
   // =====================
 
-  async createPlan(data: any): Promise<SubscriptionPlan> {
+  async createPlan(data: Record<string, unknown>): Promise<SubscriptionPlan> {
     return SubscriptionPlan.create(data);
   }
 
-  async getPlans(query: any): Promise<SubscriptionPlan[]> {
+  async getPlans(query: Record<string, unknown>): Promise<SubscriptionPlan[]> {
     const where: WhereOptions = { isActive: true };
 
     if (query.includeInactive === 'true') {
-      delete (where as any).isActive;
+      delete (where as Record<string, unknown>).isActive;
     }
 
     if (query.tenantId) {
-      (where as any).tenantId = query.tenantId;
+      (where as Record<string, unknown>).tenantId = query.tenantId;
     }
 
     return SubscriptionPlan.findAll({
@@ -33,7 +33,7 @@ class SubscriptionService {
     });
   }
 
-  async updatePlan(id: string, data: any): Promise<SubscriptionPlan> {
+  async updatePlan(id: string, data: Record<string, unknown>): Promise<SubscriptionPlan> {
     const plan = await SubscriptionPlan.findByPk(id);
     if (!plan) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Subscription plan not found');
     await plan.update(data);
@@ -72,7 +72,7 @@ class SubscriptionService {
     return end;
   }
 
-  async createSubscription(data: any): Promise<CustomerSubscription> {
+  async createSubscription(data: Record<string, unknown>): Promise<CustomerSubscription> {
     const plan = await SubscriptionPlan.findByPk(data.planId);
     if (!plan) throw new BaseError(ERRORS.NOT_FOUND, 404, 'Subscription plan not found');
     if (!plan.isActive) throw new BaseError(400, 400, 'Plan is inactive');
@@ -128,20 +128,20 @@ class SubscriptionService {
     return this.getSubscriptionById(subscription.id);
   }
 
-  async getSubscriptions(query: any): Promise<any> {
+  async getSubscriptions(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { status, clientId, searchKey } = query;
 
     const where: WhereOptions = {};
 
     if (status) {
-      (where as any).status = status;
+      (where as Record<string, unknown>).status = status;
     }
     if (clientId) {
-      (where as any).clientId = clientId;
+      (where as Record<string, unknown>).clientId = clientId;
     }
 
-    const includeOptions: any[] = [
+    const includeOptions: unknown[] = [
       {
         model: Client,
         as: 'client',
@@ -356,7 +356,7 @@ class SubscriptionService {
 
     let mrr = 0;
     for (const sub of activeSubscriptions) {
-      const plan = (sub as any).plan as SubscriptionPlan;
+      const plan = (sub as Record<string, unknown>).plan as SubscriptionPlan;
       if (!plan) continue;
 
       const price = Number(plan.price) || 0;
@@ -413,7 +413,7 @@ class SubscriptionService {
     return parseFloat(((cancelledInPeriod / activeAtStart) * 100).toFixed(2));
   }
 
-  async getSubscriptionMetrics(): Promise<any> {
+  async getSubscriptionMetrics(): Promise<unknown> {
     const mrr = await this.getMRR();
     const arr = mrr * 12;
 
@@ -442,7 +442,7 @@ class SubscriptionService {
 
     let totalRevenue = 0;
     for (const sub of activeSubscriptions) {
-      const plan = (sub as any).plan as SubscriptionPlan;
+      const plan = (sub as Record<string, unknown>).plan as SubscriptionPlan;
       if (plan) totalRevenue += Number(plan.price) || 0;
     }
 
@@ -477,7 +477,7 @@ class SubscriptionService {
 
       let monthMrr = 0;
       for (const sub of activeSubs) {
-        const plan = (sub as any).plan as SubscriptionPlan;
+        const plan = (sub as Record<string, unknown>).plan as SubscriptionPlan;
         if (!plan) continue;
         const price = Number(plan.price) || 0;
         switch (plan.billingCycle) {

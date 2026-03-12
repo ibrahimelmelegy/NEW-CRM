@@ -17,7 +17,7 @@ describe('useApiFetch.ts', () => {
     vi.clearAllMocks();
 
     // Reset $fetch mock
-    globalThis.$fetch = vi.fn() as any;
+    globalThis.$fetch = vi.fn() as unknown;
   });
 
   // ============================================
@@ -26,13 +26,13 @@ describe('useApiFetch.ts', () => {
   describe('Successful API requests', () => {
     it('should handle new format response { success, body }', async () => {
       const mockData = { id: 1, name: 'Test' };
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: mockData,
         message: 'Success'
       });
 
-      const result: any = await useApiFetch('users');
+      const result: unknown = await useApiFetch('users');
 
       expect(result.success).toBe(true);
       expect(result.body).toEqual(mockData);
@@ -42,7 +42,7 @@ describe('useApiFetch.ts', () => {
 
     it('should handle legacy user format { user: {...} }', async () => {
       const mockUser = { id: 1, name: 'User', email: 'test@test.com' };
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         user: mockUser
       });
 
@@ -54,7 +54,7 @@ describe('useApiFetch.ts', () => {
 
     it('should handle legacy token format { token: "..." }', async () => {
       const mockToken = 'abc123token';
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         token: mockToken
       });
 
@@ -66,7 +66,7 @@ describe('useApiFetch.ts', () => {
 
     it('should treat whole object as body for unrecognized format', async () => {
       const mockData = { customField: 'value', anotherField: 123 };
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue(mockData);
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue(mockData);
 
       const result = await useApiFetch('custom-endpoint');
 
@@ -80,7 +80,7 @@ describe('useApiFetch.ts', () => {
   // ============================================
   describe('HTTP Methods', () => {
     it('should default to GET method', async () => {
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: {}
       });
@@ -91,7 +91,7 @@ describe('useApiFetch.ts', () => {
     });
 
     it('should use POST method when specified', async () => {
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: {}
       });
@@ -108,7 +108,7 @@ describe('useApiFetch.ts', () => {
     });
 
     it('should use PUT method when specified', async () => {
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: {}
       });
@@ -125,7 +125,7 @@ describe('useApiFetch.ts', () => {
     });
 
     it('should use DELETE method when specified', async () => {
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: {}
       });
@@ -136,7 +136,7 @@ describe('useApiFetch.ts', () => {
     });
 
     it('should not include body for GET requests', async () => {
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: {}
       });
@@ -152,7 +152,7 @@ describe('useApiFetch.ts', () => {
   // ============================================
   describe('Request Headers', () => {
     it('should include Content-Type and Accept headers by default', async () => {
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: {}
       });
@@ -171,20 +171,20 @@ describe('useApiFetch.ts', () => {
     });
 
     it('should use credentials include instead of Authorization header', async () => {
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: {}
       });
 
       await useApiFetch('users');
 
-      const callArgs = vi.mocked(globalThis.$fetch).mock.calls[0]?.[1] as any;
+      const callArgs = vi.mocked(globalThis.$fetch).mock.calls[0]?.[1] as unknown;
       expect(callArgs?.credentials).toBe('include');
       expect(callArgs?.headers).not.toHaveProperty('Authorization');
     });
 
     it('should include X-Tenant-ID header when user has tenantId', async () => {
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: {}
       });
@@ -202,7 +202,7 @@ describe('useApiFetch.ts', () => {
     });
 
     it('should not include Content-Type when isFd is true (FormData)', async () => {
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: {}
       });
@@ -234,7 +234,7 @@ describe('useApiFetch.ts', () => {
         }
       };
 
-      (vi.mocked(globalThis.$fetch) as any).mockRejectedValue(mockError);
+      (vi.mocked(globalThis.$fetch) as unknown).mockRejectedValue(mockError);
 
       const result = await useApiFetch('users', 'POST', { invalid: 'data' });
 
@@ -252,7 +252,7 @@ describe('useApiFetch.ts', () => {
         }
       };
 
-      (vi.mocked(globalThis.$fetch) as any).mockRejectedValue(mockError);
+      (vi.mocked(globalThis.$fetch) as unknown).mockRejectedValue(mockError);
 
       const result = await useApiFetch('admin/users');
 
@@ -262,7 +262,7 @@ describe('useApiFetch.ts', () => {
     it('should default to 500 when no status code is available', async () => {
       const mockError = new Error('Network error');
 
-      (vi.mocked(globalThis.$fetch) as any).mockRejectedValue(mockError);
+      (vi.mocked(globalThis.$fetch) as unknown).mockRejectedValue(mockError);
 
       const result = await useApiFetch('users');
 
@@ -273,7 +273,7 @@ describe('useApiFetch.ts', () => {
     it('should use error message when no response message', async () => {
       const mockError = new Error('Connection timeout');
 
-      (vi.mocked(globalThis.$fetch) as any).mockRejectedValue(mockError);
+      (vi.mocked(globalThis.$fetch) as unknown).mockRejectedValue(mockError);
 
       const result = await useApiFetch('users');
 
@@ -284,7 +284,7 @@ describe('useApiFetch.ts', () => {
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const mockError = new Error('Test error');
 
-      (vi.mocked(globalThis.$fetch) as any).mockRejectedValue(mockError);
+      (vi.mocked(globalThis.$fetch) as unknown).mockRejectedValue(mockError);
 
       await useApiFetch('users', 'GET', {}, true); // silence = true
 
@@ -302,7 +302,7 @@ describe('useApiFetch.ts', () => {
         }
       };
 
-      (vi.mocked(globalThis.$fetch) as any).mockRejectedValue(mockError);
+      (vi.mocked(globalThis.$fetch) as unknown).mockRejectedValue(mockError);
 
       await useApiFetch('users/999', 'GET', {}, false); // silence = false
 
@@ -317,7 +317,7 @@ describe('useApiFetch.ts', () => {
   // ============================================
   describe('URL construction', () => {
     it('should prepend API_BASE_URL to endpoint', async () => {
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: {}
       });
@@ -328,7 +328,7 @@ describe('useApiFetch.ts', () => {
     });
 
     it('should handle endpoints with query parameters', async () => {
-      (vi.mocked(globalThis.$fetch) as any).mockResolvedValue({
+      (vi.mocked(globalThis.$fetch) as unknown).mockResolvedValue({
         success: true,
         body: {}
       });

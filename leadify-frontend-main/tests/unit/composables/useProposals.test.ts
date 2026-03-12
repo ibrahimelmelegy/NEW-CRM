@@ -29,10 +29,10 @@ import {
 
 // Mock useApiFetch globally
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: any[]) => mockApiFetch(...args)
+  useApiFetch: (...args: unknown[]) => mockApiFetch(...args)
 }));
 
 // Mock dependencies
@@ -41,14 +41,14 @@ vi.mock('@/composables/useOpportunity', () => ({
 }));
 
 // Mock getDeals and getProjects globals (Nuxt auto-imports)
-(globalThis as any).getDeals = vi.fn();
-(globalThis as any).getProjects = vi.fn();
+(globalThis as Record<string, unknown>).getDeals = vi.fn();
+(globalThis as Record<string, unknown>).getProjects = vi.fn();
 
 describe('useProposals', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (globalThis as any).ElNotification = vi.fn();
-    (globalThis as any).navigateTo = vi.fn();
+    (globalThis as Record<string, unknown>).ElNotification = vi.fn();
+    (globalThis as Record<string, unknown>).navigateTo = vi.fn();
   });
 
   // ============================================
@@ -167,7 +167,7 @@ describe('useProposals', () => {
       const result = await getProposal('bad-id');
 
       expect(result).toEqual({});
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
   });
 
@@ -232,7 +232,7 @@ describe('useProposals', () => {
       await createProposalFinanceTable({ name: 'New Table', proposalId: 'prop-1' });
 
       expect(mockApiFetch).toHaveBeenCalledWith('proposal-finance-table', 'POST', expect.objectContaining({ name: 'New Table' }));
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
     });
 
     it('should show error on failed response', async () => {
@@ -240,7 +240,7 @@ describe('useProposals', () => {
 
       await createProposalFinanceTable({ name: '' });
 
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Validation error' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Validation error' }));
     });
 
     it('should handle unexpected errors', async () => {
@@ -248,7 +248,7 @@ describe('useProposals', () => {
 
       await createProposalFinanceTable({ name: 'Table' });
 
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Connection timeout' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Connection timeout' }));
     });
   });
 
@@ -262,7 +262,7 @@ describe('useProposals', () => {
       await updateProposalFinanceTable({ name: 'Updated Table' }, 1, 'prop-1');
 
       expect(mockApiFetch).toHaveBeenCalledWith('proposal-finance-table/1', 'PUT', expect.objectContaining({ name: 'Updated Table' }));
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
     });
 
     it('should show error on failed response', async () => {
@@ -270,7 +270,7 @@ describe('useProposals', () => {
 
       await updateProposalFinanceTable({ name: 'X' }, 999, undefined);
 
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Not found' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Not found' }));
     });
   });
 
@@ -284,7 +284,7 @@ describe('useProposals', () => {
       await deleteProposalFinanceTableItem(5);
 
       expect(mockApiFetch).toHaveBeenCalledWith('proposal-finance-table-item/5', 'DELETE');
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
     });
 
     it('should show error on failed delete', async () => {
@@ -292,7 +292,7 @@ describe('useProposals', () => {
 
       await deleteProposalFinanceTableItem(5);
 
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Cannot delete' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Cannot delete' }));
     });
   });
 
@@ -306,7 +306,7 @@ describe('useProposals', () => {
       await deleteCustomColumn(1, 'col_discount');
 
       expect(mockApiFetch).toHaveBeenCalledWith('proposal-finance-table/1/col_discount', 'DELETE');
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
     });
 
     it('should show error on failure', async () => {
@@ -314,7 +314,7 @@ describe('useProposals', () => {
 
       await deleteCustomColumn(1, 'nonexistent');
 
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Column not found' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Column not found' }));
     });
   });
 
@@ -329,7 +329,7 @@ describe('useProposals', () => {
 
       expect(mockApiFetch).toHaveBeenCalledWith('proposal/waiting-approval/prop-1', 'PUT');
       expect(result).toBe(true);
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'success', message: 'Proposal submitted for approval' })
       );
     });
@@ -428,7 +428,7 @@ describe('useProposals', () => {
 
       expect(mockApiFetch).toHaveBeenCalledWith('proposal/prop-1', 'DELETE');
       expect(result).toBe(true);
-      expect((globalThis as any).ElNotification).toHaveBeenCalledWith(
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'success', message: 'Proposal deleted successfully' })
       );
     });

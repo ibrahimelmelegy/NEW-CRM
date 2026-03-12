@@ -7,14 +7,14 @@ import { ERRORS } from '../utils/error/errors';
 import { clampPagination } from '../utils/pagination';
 
 class InventoryService {
-  async getProducts(query: any): Promise<any> {
+  async getProducts(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { searchKey, category, warehouse, isActive } = query;
 
     const where: WhereOptions = {};
 
     if (searchKey) {
-      where[Op.or as any] = [
+      where[Op.or as symbol] = [
         { name: { [Op.iLike]: `%${searchKey}%` } },
         { sku: { [Op.iLike]: `%${searchKey}%` } },
         { description: { [Op.iLike]: `%${searchKey}%` } }
@@ -22,15 +22,15 @@ class InventoryService {
     }
 
     if (category) {
-      (where as any).category = category;
+      (where as Record<string, unknown>).category = category;
     }
 
     if (warehouse) {
-      (where as any).warehouse = warehouse;
+      (where as Record<string, unknown>).warehouse = warehouse;
     }
 
     if (isActive !== undefined && isActive !== '') {
-      (where as any).isActive = isActive === 'true' || isActive === true;
+      (where as Record<string, unknown>).isActive = isActive === 'true' || isActive === true;
     }
 
     const { rows: products, count: totalItems } = await Product.findAndCountAll({
@@ -59,11 +59,11 @@ class InventoryService {
     return product;
   }
 
-  async createProduct(data: any): Promise<Product> {
+  async createProduct(data: Record<string, unknown>): Promise<Product> {
     return await Product.create(data);
   }
 
-  async updateProduct(id: string, data: any): Promise<Product> {
+  async updateProduct(id: string, data: Record<string, unknown>): Promise<Product> {
     const product = await this.productOrError({ id });
     product.set(data);
     await product.save();
@@ -83,7 +83,7 @@ class InventoryService {
     });
   }
 
-  async addStockMovement(data: any): Promise<StockMovement> {
+  async addStockMovement(data: Record<string, unknown>): Promise<StockMovement> {
     const product = await this.productOrError({ id: data.productId });
 
     const movement = await StockMovement.create(data);

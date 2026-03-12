@@ -5,11 +5,11 @@ import Client from '../../client/clientModel';
 import { clampPagination } from '../../utils/pagination';
 
 class CartService {
-  async getCarts(query: any): Promise<any> {
+  async getCarts(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
     const { clientId, status } = query;
 
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (clientId) where.clientId = clientId;
     if (status) where.status = status;
 
@@ -40,7 +40,7 @@ class CartService {
     };
   }
 
-  async getCartById(id: string): Promise<any> {
+  async getCartById(id: string): Promise<unknown> {
     const cart = await EcCart.findByPk(id, {
       include: [
         { model: Client, as: 'client' },
@@ -149,7 +149,7 @@ class CartService {
     return cart.update({ couponCode });
   }
 
-  async convertToOrder(cartId: string): Promise<any> {
+  async convertToOrder(cartId: string): Promise<unknown> {
     const cart = await EcCart.findByPk(cartId, {
       include: [
         { model: Client, as: 'client' },
@@ -189,7 +189,7 @@ class CartService {
       notes: cart.notes,
       items: items.map(item => ({
         productId: item.productId,
-        productName: (item as any).product?.name || null,
+        productName: (item as Record<string, unknown>).product?.name || null,
         quantity: Number(item.quantity),
         unitPrice: Number(item.unitPrice),
         lineTotal: Number((Number(item.quantity) * Number(item.unitPrice)).toFixed(2)),
@@ -198,13 +198,13 @@ class CartService {
     };
   }
 
-  async getAbandonedCarts(query: any): Promise<any> {
+  async getAbandonedCarts(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const twentyFourHoursAgo = new Date();
     twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       status: CartStatusEnum.ABANDONED,
       updatedAt: { [Op.lt]: twentyFourHoursAgo }
     };

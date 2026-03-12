@@ -8,7 +8,7 @@ class DocumentService {
   // ==================== FOLDERS ====================
 
   async getFolders(parentId?: number) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (parentId) {
       where.parentId = parentId;
     } else {
@@ -33,7 +33,7 @@ class DocumentService {
 
     // Build tree structure from flat list
     const folderMap = new Map<number, any>();
-    const roots: any[] = [];
+    const roots: unknown[] = [];
 
     // First pass: create map of all folders
     for (const folder of folders) {
@@ -90,7 +90,7 @@ class DocumentService {
   async getFiles(query: { folderId?: number; search?: string; tags?: string; page?: number; limit?: number }) {
     const { page, limit, offset } = clampPagination(query, 50);
     const { folderId, search, tags } = query;
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (folderId) {
       where.folderId = folderId;

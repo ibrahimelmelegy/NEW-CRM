@@ -80,7 +80,7 @@ class UsageBillingController {
   async calculateCharges(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const tenantId = req.user?.tenantId || undefined;
-      const { customerId, billingPeriod } = req.query as any;
+      const { customerId, billingPeriod } = req.query as Record<string, string>;
       if (!customerId || !billingPeriod) {
         wrapResult(res, { customerId: customerId || null, billingPeriod: billingPeriod || null, lineItems: [], totalAmount: 0 });
         return;

@@ -176,7 +176,7 @@ describe('AppTable.vue', () => {
   // ============================================
   describe('Data Format', () => {
     it('should handle empty data array', () => {
-      const data: any[] = [];
+      const data: unknown[] = [];
       expect(data).toHaveLength(0);
     });
 

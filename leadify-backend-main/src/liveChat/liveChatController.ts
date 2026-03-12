@@ -61,7 +61,7 @@ class LiveChatController {
   async sendMessage(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const tenantId = req.user!.tenantId!;
-      const user = req.user as any;
+      const user = req.user as Record<string, unknown>;
 
       // Enrich with sender info if the sender is an agent
       const data = { ...req.body };
@@ -88,7 +88,7 @@ class LiveChatController {
 
   async markAsRead(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const user = req.user as any;
+      const user = req.user as Record<string, unknown>;
       const readerId = String(user?.id || '');
       const result = await service.markMessagesAsRead(Number(req.params.conversationId), readerId);
       wrapResult(res, result);
@@ -213,7 +213,7 @@ class LiveChatController {
 
   async getUnreadCount(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const user = req.user as any;
+      const user = req.user as Record<string, unknown>;
       const tenantId = user?.tenantId || '';
       const count = await service.getUnreadCountForAgent(user?.id, tenantId);
       wrapResult(res, { unreadCount: count });

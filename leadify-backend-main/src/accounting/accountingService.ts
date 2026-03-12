@@ -63,7 +63,7 @@ class AccountingService {
   }
 
   async getChartOfAccounts(tenantId?: string) {
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
     if (tenantId) where.tenantId = tenantId;
 
     const allAccounts = await ChartOfAccounts.findAll({
@@ -73,8 +73,8 @@ class AccountingService {
     });
 
     // Build tree structure
-    const accountMap: Record<string, any> = {};
-    const tree: any[] = [];
+    const accountMap: Record<string, unknown> = {};
+    const tree: unknown[] = [];
 
     for (const account of allAccounts) {
       accountMap[account.id] = { ...account, children: [] };
@@ -91,7 +91,7 @@ class AccountingService {
     return tree;
   }
 
-  async createAccount(data: any) {
+  async createAccount(data: Record<string, unknown>) {
     if (data.parentId) {
       const parent = await ChartOfAccounts.findByPk(data.parentId);
       if (!parent) throw new Error('Parent account not found');
@@ -103,7 +103,7 @@ class AccountingService {
     return ChartOfAccounts.create(data);
   }
 
-  async updateAccount(id: string, data: any) {
+  async updateAccount(id: string, data: Record<string, unknown>) {
     const account = await ChartOfAccounts.findByPk(id);
     if (!account) throw new Error('Account not found');
 
@@ -145,7 +145,7 @@ class AccountingService {
     return `JE-${String(nextNumber).padStart(4, '0')}`;
   }
 
-  async createJournalEntry(data: any) {
+  async createJournalEntry(data: Record<string, unknown>) {
     const { lines, ...entryData } = data;
 
     if (!lines || lines.length === 0) {
@@ -166,7 +166,7 @@ class AccountingService {
     }
 
     // Validate all account IDs exist
-    const accountIds = lines.map((l: any) => l.accountId);
+    const accountIds = lines.map((l: Record<string, unknown>) => l.accountId);
     const accounts = await ChartOfAccounts.findAll({ where: { id: accountIds } });
     if (accounts.length !== new Set(accountIds).size) {
       throw new Error('One or more account IDs are invalid');
@@ -197,10 +197,10 @@ class AccountingService {
     return this.getJournalEntryById(entry.id);
   }
 
-  async getJournalEntries(query: any) {
+  async getJournalEntries(query: Record<string, unknown>) {
     const { page, limit, offset } = clampPagination(query, 20);
     const { status, sourceType, startDate, endDate, search } = query;
-    const where: Record<string, any> = {};
+    const where: Record<string, unknown> = {};
 
     if (status) where.status = status;
     if (sourceType) where.sourceType = sourceType;
@@ -212,7 +212,7 @@ class AccountingService {
       where.date = { [Op.lte]: new Date(endDate) };
     }
     if (search) {
-      where[Op.or as any] = [
+      where[Op.or as symbol] = [
         { entryNumber: { [Op.iLike]: `%${search}%` } },
         { description: { [Op.iLike]: `%${search}%` } },
         { reference: { [Op.iLike]: `%${search}%` } }
@@ -339,7 +339,7 @@ class AccountingService {
   // ─── Financial Reports ────────────────────────────────────────────
 
   async getTrialBalance(date?: string) {
-    const whereEntry: Record<string, any> = { status: JournalEntryStatus.POSTED };
+    const whereEntry: Record<string, unknown> = { status: JournalEntryStatus.POSTED };
     if (date) {
       whereEntry.date = { [Op.lte]: new Date(date) };
     }
@@ -394,7 +394,7 @@ class AccountingService {
   }
 
   async getProfitAndLoss(from: string, to: string) {
-    const whereEntry: Record<string, any> = {
+    const whereEntry: Record<string, unknown> = {
       status: JournalEntryStatus.POSTED,
       date: { [Op.between]: [new Date(from), new Date(to)] }
     };
@@ -451,7 +451,7 @@ class AccountingService {
   }
 
   async getBalanceSheet(date: string) {
-    const whereEntry: Record<string, any> = {
+    const whereEntry: Record<string, unknown> = {
       status: JournalEntryStatus.POSTED,
       date: { [Op.lte]: new Date(date) }
     };
@@ -519,7 +519,7 @@ class AccountingService {
     const account = await ChartOfAccounts.findByPk(accountId);
     if (!account) throw new Error('Account not found');
 
-    const whereEntry: Record<string, any> = { status: JournalEntryStatus.POSTED };
+    const whereEntry: Record<string, unknown> = { status: JournalEntryStatus.POSTED };
     if (from && to) {
       whereEntry.date = { [Op.between]: [new Date(from), new Date(to)] };
     } else if (from) {
@@ -553,10 +553,10 @@ class AccountingService {
       }
 
       return {
-        date: (line.journalEntry as any)?.date,
-        entryNumber: (line.journalEntry as any)?.entryNumber,
-        reference: (line.journalEntry as any)?.reference,
-        description: line.description || (line.journalEntry as any)?.description,
+        date: (line.journalEntry as Record<string, unknown>)?.date,
+        entryNumber: (line.journalEntry as Record<string, unknown>)?.entryNumber,
+        reference: (line.journalEntry as Record<string, unknown>)?.reference,
+        description: line.description || (line.journalEntry as Record<string, unknown>)?.description,
         debit: Number(line.debit),
         credit: Number(line.credit),
         balance: Math.round(runningBalance * 100) / 100

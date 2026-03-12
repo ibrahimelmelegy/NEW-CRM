@@ -185,7 +185,7 @@ export const SignatureBlock = Node.create<SignatureBlockOptions>({
   },
 
   addNodeView() {
-    return VueNodeViewRenderer(SignatureBlockView as any);
+    return VueNodeViewRenderer(SignatureBlockView as unknown);
   },
 
   addCommands() {

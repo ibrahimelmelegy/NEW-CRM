@@ -9,16 +9,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ENTITY_TYPES, TRIGGER_TYPES, CONDITION_OPERATORS, ACTION_TYPES, useWorkflows } from '~/composables/useWorkflows';
 
 const mockApiFetch = vi.fn();
-(globalThis as any).useApiFetch = mockApiFetch;
+(globalThis as Record<string, unknown>).useApiFetch = mockApiFetch;
 
 const mockNotification = vi.fn();
-(globalThis as any).ElNotification = mockNotification;
+(globalThis as Record<string, unknown>).ElNotification = mockNotification;
 
 const mockT = (key: string) => key;
-(globalThis as any).useI18n = () => ({ t: mockT });
+(globalThis as Record<string, unknown>).useI18n = () => ({ t: mockT });
 
 vi.mock('element-plus', () => ({
-  ElNotification: (...args: any[]) => mockNotification(...args),
+  ElNotification: (...args: unknown[]) => mockNotification(...args),
   ElMessage: { success: vi.fn(), error: vi.fn(), warning: vi.fn() }
 }));
 
@@ -48,11 +48,11 @@ describe('useWorkflows', () => {
     });
 
     it('should include ON_CREATE trigger', () => {
-      expect(TRIGGER_TYPES.find((t: any) => t.value === 'ON_CREATE')).toBeDefined();
+      expect(TRIGGER_TYPES.find((t: unknown) => t.value === 'ON_CREATE')).toBeDefined();
     });
 
     it('should include lead entity type', () => {
-      expect(ENTITY_TYPES.find((e: any) => e.value === 'lead')).toBeDefined();
+      expect(ENTITY_TYPES.find((e: unknown) => e.value === 'lead')).toBeDefined();
     });
   });
 

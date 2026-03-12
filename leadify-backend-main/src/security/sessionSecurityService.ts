@@ -65,7 +65,7 @@ class SessionSecurityService {
   public async getLoginHistory(userId: number, tenantId: string | undefined, filters: LoginHistoryFilters = {}) {
     const { page = 1, limit = 20, status, startDate, endDate } = filters;
 
-    const where: Record<string, any> = { userId };
+    const where: Record<string, unknown> = { userId };
 
     if (tenantId) {
       where.tenantId = tenantId;
@@ -153,7 +153,7 @@ class SessionSecurityService {
    * Terminate all sessions for a user except the current one.
    */
   public async terminateAllSessions(userId: number, exceptToken?: string): Promise<number> {
-    const where: Record<string, any> = { userId };
+    const where: Record<string, unknown> = { userId };
 
     if (exceptToken) {
       where.token = { [Op.ne]: exceptToken };
@@ -172,7 +172,7 @@ class SessionSecurityService {
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
-    const todayWhere: Record<string, any> = {
+    const todayWhere: Record<string, unknown> = {
       createdAt: { [Op.gte]: todayStart }
     };
     if (tenantId) {
@@ -207,7 +207,7 @@ class SessionSecurityService {
     });
 
     // Recent login history (last 10)
-    const recentWhere: Record<string, any> = {};
+    const recentWhere: Record<string, unknown> = {};
     if (tenantId) {
       recentWhere.tenantId = tenantId;
     }
@@ -265,7 +265,7 @@ class SessionSecurityService {
    * Remove (soft-delete by setting inactive) an IP from the whitelist.
    */
   public async removeIPWhitelist(id: string, tenantId?: string): Promise<void> {
-    const where: Record<string, any> = { id };
+    const where: Record<string, unknown> = { id };
     if (tenantId) {
       where.tenantId = tenantId;
     }
@@ -283,7 +283,7 @@ class SessionSecurityService {
    * Get all whitelisted IPs for a tenant.
    */
   public async getIPWhitelist(tenantId?: string): Promise<IPWhitelist[]> {
-    const where: Record<string, any> = { isActive: true };
+    const where: Record<string, unknown> = { isActive: true };
     if (tenantId) {
       where.tenantId = tenantId;
     }
@@ -306,7 +306,7 @@ class SessionSecurityService {
    * Returns true if the whitelist is empty (no restrictions) or if the IP is whitelisted.
    */
   public async checkIPWhitelist(ip: string, tenantId?: string): Promise<boolean> {
-    const where: Record<string, any> = { isActive: true };
+    const where: Record<string, unknown> = { isActive: true };
     if (tenantId) {
       where.tenantId = tenantId;
     }
@@ -332,7 +332,7 @@ class SessionSecurityService {
    * Export all user data for GDPR compliance.
    * Collects data from multiple tables related to the user.
    */
-  public async exportUserData(userId: number, tenantId?: string): Promise<Record<string, any>> {
+  public async exportUserData(userId: number, tenantId?: string): Promise<Record<string, unknown>> {
     const user = await User.findByPk(userId, {
       attributes: { exclude: ['password', 'twoFactorSecret'] }
     });
@@ -342,7 +342,7 @@ class SessionSecurityService {
     }
 
     // Collect login history
-    const loginHistoryWhere: Record<string, any> = { userId };
+    const loginHistoryWhere: Record<string, unknown> = { userId };
     if (tenantId) {
       loginHistoryWhere.tenantId = tenantId;
     }
@@ -360,7 +360,7 @@ class SessionSecurityService {
     });
 
     // Collect leads
-    let leads: any[] = [];
+    let leads: unknown[] = [];
     try {
       leads = await Lead.findAll({
         where: { userId },
@@ -371,7 +371,7 @@ class SessionSecurityService {
     }
 
     // Collect deals
-    let deals: any[] = [];
+    let deals: unknown[] = [];
     try {
       deals = await Deal.findAll({
         where: { userId },
@@ -382,7 +382,7 @@ class SessionSecurityService {
     }
 
     // Collect clients
-    let clients: any[] = [];
+    let clients: unknown[] = [];
     try {
       clients = await Client.findAll({
         where: { userId },

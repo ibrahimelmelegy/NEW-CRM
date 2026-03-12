@@ -93,7 +93,7 @@ export function mockUseCookie(value: string | null = 'mock-token') {
 /**
  * Mock $fetch function
  */
-export function mockFetch(response: any) {
+export function mockFetch(response: unknown) {
   return vi.fn().mockResolvedValue(response);
 }
 
@@ -101,7 +101,7 @@ export function mockFetch(response: any) {
  * Mock $fetch with error
  */
 export function mockFetchError(status: number, message: string) {
-  const error = new Error(message) as any;
+  const error = new Error(message) as unknown;
   error.response = {
     status,
     _data: { message }

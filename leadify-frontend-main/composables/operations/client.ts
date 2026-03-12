@@ -5,16 +5,18 @@ function normalizePhoneNumber(phone: string): string {
 }
 // Handle error during client creation
 function handleError(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'error',
-    title: 'Error',
+    title: t('common.error'),
     message
   });
 }
 function handleSuccess(message: string) {
+  const t = useNuxtApp().$i18n.t;
   ElNotification({
     type: 'success',
-    title: 'Success',
+    title: t('common.success'),
     message
   });
 }
@@ -184,6 +186,7 @@ export async function getClientActivity(id: string | string[]): Promise<Lead> {
  * @throws {Error} If the API call is unsuccessful, an error is handled and logged.
  */
 export async function createClient(values: unknown) {
+  const t = useNuxtApp().$i18n.t;
   try {
     // Normalize the phone number before sending
     const normalizedPhone = normalizePhoneNumber(values.phone);
@@ -200,7 +203,7 @@ export async function createClient(values: unknown) {
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Client created successfully');
+      handleSuccess(t('common.created'));
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -219,6 +222,7 @@ export async function createClient(values: unknown) {
  * @throws {Error} If the API call is unsuccessful, an error is handled and logged.
  */
 export async function updateClient(values: unknown) {
+  const t = useNuxtApp().$i18n.t;
   try {
     // Normalize the phone number before sending
     const normalizedPhone = normalizePhoneNumber(values.phone);
@@ -236,7 +240,7 @@ export async function updateClient(values: unknown) {
 
     // Handle the API response
     if (response?.success) {
-      handleSuccess('Client updated successfully');
+      handleSuccess(t('common.saved'));
     } else {
       handleError(response?.message || 'Something went wrong');
     }
@@ -249,10 +253,11 @@ export async function updateClient(values: unknown) {
 }
 
 export async function deleteClient(id: string) {
+  const t = useNuxtApp().$i18n.t;
   try {
     const response = await useApiFetch(`client/${id}`, 'DELETE');
     if (response?.success) {
-      handleSuccess('Client deleted successfully');
+      handleSuccess(t('common.deleted'));
     } else {
       handleError(response?.message || 'Failed to delete client');
     }

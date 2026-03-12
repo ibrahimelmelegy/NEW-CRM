@@ -13,6 +13,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
+import logger from '../config/logger';
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -232,12 +233,12 @@ export function requestLoggerMiddleware(req: Request, res: Response, next: NextF
   // Capture original end to intercept status code
   const originalEnd = res.end;
 
-  res.end = function (this: Response, ...args: any[]) {
+  res.end = function (this: Response, ...args: Record<string, unknown>[]) {
     const durationNs = process.hrtime.bigint() - startTime;
     const durationMs = Number(durationNs) / 1_000_000;
     const slow = durationMs > SLOW_THRESHOLD_MS;
 
-    const user = (req as any).user;
+    const user = (req as Record<string, unknown>).user;
     const userId = user?.id;
 
     const entry: RequestLogEntry = {
@@ -255,7 +256,7 @@ export function requestLoggerMiddleware(req: Request, res: Response, next: NextF
 
     // Immediately log slow requests to stderr for operational visibility
     if (slow && SLOW_LOG_IMMEDIATE) {
-      console.warn(
+      logger.warn(
         `[SLOW REQUEST] ${entry.method} ${entry.path} - ${entry.durationMs.toFixed(0)}ms ` +
           `(status: ${entry.statusCode}, user: ${userId || 'anonymous'}, ip: ${entry.ip})`
       );

@@ -4,6 +4,33 @@ import EmailTemplate from './emailTemplateModel';
 import { CampaignStatus, RecipientStatus } from './campaignEnum';
 import { sendEmail } from '../utils/emailHelper';
 
+interface CampaignRecipientInput {
+  email: string;
+  name?: string;
+}
+
+interface CampaignCreateInput {
+  recipients?: CampaignRecipientInput[];
+  name: string;
+  subject: string;
+  htmlContent?: string;
+  scheduledAt?: string;
+}
+
+interface CampaignUpdateInput {
+  recipients?: CampaignRecipientInput[];
+  name?: string;
+  subject?: string;
+  htmlContent?: string;
+  scheduledAt?: string;
+}
+
+interface TemplateCreateInput {
+  name: string;
+  subject?: string;
+  htmlContent?: string;
+}
+
 class CampaignService {
   async getCampaigns(userId: number) {
     return Campaign.findAll({
@@ -22,12 +49,12 @@ class CampaignService {
     return campaign;
   }
 
-  async create(userId: number, data: any) {
+  async create(userId: number, data: CampaignCreateInput) {
     const campaign = await Campaign.create({ ...data, userId, status: CampaignStatus.DRAFT });
 
     if (data.recipients?.length) {
       await CampaignRecipient.bulkCreate(
-        data.recipients.map((r: any) => ({
+        data.recipients.map((r: CampaignRecipientInput) => ({
           campaignId: campaign.id,
           contactEmail: r.email,
           contactName: r.name
@@ -38,7 +65,7 @@ class CampaignService {
     return campaign;
   }
 
-  async update(id: string, userId: number, data: any) {
+  async update(id: string, userId: number, data: CampaignUpdateInput) {
     const campaign = await Campaign.findOne({ where: { id, userId } });
     if (!campaign) throw new Error('Campaign not found');
     if (campaign.status !== CampaignStatus.DRAFT) throw new Error('Can only edit draft campaigns');
@@ -46,7 +73,7 @@ class CampaignService {
     if (data.recipients) {
       await CampaignRecipient.destroy({ where: { campaignId: id } });
       await CampaignRecipient.bulkCreate(
-        data.recipients.map((r: any) => ({
+        data.recipients.map((r: CampaignRecipientInput) => ({
           campaignId: id,
           contactEmail: r.email,
           contactName: r.name
@@ -129,7 +156,7 @@ class CampaignService {
     return EmailTemplate.findAll({ where: { userId }, order: [['createdAt', 'DESC']] });
   }
 
-  async createTemplate(userId: number, data: any) {
+  async createTemplate(userId: number, data: TemplateCreateInput) {
     return EmailTemplate.create({ ...data, userId });
   }
 

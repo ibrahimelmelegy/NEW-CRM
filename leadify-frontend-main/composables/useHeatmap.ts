@@ -48,12 +48,15 @@ export function useHeatmap() {
 
   async function fetchHeatmap(userId?: number) {
     loading.value = true;
-    const query = userId ? `insights/heatmap?year=${year.value}&userId=${userId}` : `insights/heatmap?year=${year.value}`;
-    const res = await useApiFetch(query);
-    if (res.success && res.body) {
-      heatmapData.value = buildYearGrid(res.body as unknown);
+    try {
+      const query = userId ? `insights/heatmap?year=${year.value}&userId=${userId}` : `insights/heatmap?year=${year.value}`;
+      const res = await useApiFetch(query);
+      if (res.success && res.body) {
+        heatmapData.value = buildYearGrid(res.body as unknown);
+      }
+    } finally {
+      loading.value = false;
     }
-    loading.value = false;
   }
 
   async function fetchRecentActivity() {

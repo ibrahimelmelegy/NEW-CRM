@@ -132,7 +132,7 @@ class PortalController {
         dueDate: invoice.dueDate,
         collected: invoice.collected,
         collectedDate: invoice.collectedDate,
-        deal: (invoice as unknown as Record<string, any>).deal || null
+        deal: (invoice as unknown as Record<string, unknown>).deal || null
       };
 
       wrapResult(res, invoiceData);

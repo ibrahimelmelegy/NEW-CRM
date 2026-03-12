@@ -1,5 +1,6 @@
 import WorkflowExecution, { ExecutionStatus } from '../workflowExecutionModel';
 import { io } from '../../server';
+import logger from '../../config/logger';
 
 export interface ApprovalConfig {
   approverUserId?: number;
@@ -57,10 +58,10 @@ async function resolveApproverUserIds(config: ApprovalConfig): Promise<number[]>
           where: { roleId: role.id, status: 'ACTIVE' },
           attributes: ['id']
         });
-        return users.map((u: any) => u.id);
+        return users.map((u: Record<string, unknown>) => u.id);
       }
     } catch (err: unknown) {
-      console.error('Failed to resolve approver role:', (err as Error).message);
+      logger.error({ err: (err as Error).message }, 'Failed to resolve approver role');
     }
   }
 
@@ -114,7 +115,7 @@ export async function executeApproval(nodeConfig: ApprovalConfig, context: Appro
       });
     }
   } catch (err: unknown) {
-    console.error('Failed to persist approval record:', (err as Error).message);
+    logger.error({ err: (err as Error).message }, 'Failed to persist approval record');
   }
 
   // Create notifications for approver(s)
@@ -142,7 +143,7 @@ export async function executeApproval(nodeConfig: ApprovalConfig, context: Appro
       });
     }
   } catch (err: unknown) {
-    console.error('Failed to create approval notifications:', (err as Error).message);
+    logger.error({ err: (err as Error).message }, 'Failed to create approval notifications');
   }
 
   return approvalRecord;

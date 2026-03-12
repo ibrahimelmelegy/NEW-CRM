@@ -22,6 +22,7 @@ import { tenantWhere } from '../utils/tenantScope';
 import { io } from '../server';
 import { TriggerType } from '../workflow/workflowModel';
 import workflowService from '../workflow/workflowService';
+import logger from '../config/logger';
 import Deal from '../deal/model/dealModel';
 import { DealStageEnums } from '../deal/dealEnum';
 import Invoice from '../deal/model/invoiceMode';
@@ -69,11 +70,11 @@ class ClientService {
 
     try {
       io.emit('client:created', { id: client.id, clientName: client.clientName, companyName: client.companyName });
-    } catch {}
+    } catch (err: unknown) { logger.warn({ err }, 'Non-critical operation failed'); }
 
     // Trigger workflow automation for client creation
     workflowService.processEntityEvent('client', String(client.id), TriggerType.ON_CREATE, null, client.toJSON(), admin.id).catch((err: Error) => {
-      console.error('Workflow processEntityEvent (client.create) error:', err.message);
+      logger.error({ err: err.message }, 'Workflow processEntityEvent (client.create) error');
     });
 
     return client;
@@ -89,7 +90,7 @@ class ClientService {
     if (clientWithPhone) throw new BaseError(ERRORS.PHONE_ALREADY_EXISTS);
   }
 
-  async updateClient(id: string, input: any, user: User): Promise<any> {
+  async updateClient(id: string, input: Record<string, unknown>, user: User): Promise<unknown> {
     await this.validateClientAccess(id, user);
     const client = await this.clientOrError({ id });
 
@@ -110,14 +111,14 @@ class ClientService {
     const updatedClient = await client.save();
     try {
       io.emit('client:updated', { id: updatedClient.id, clientName: updatedClient.clientName, companyName: updatedClient.companyName });
-    } catch {}
+    } catch (err: unknown) { logger.warn({ err }, 'Non-critical operation failed'); }
 
     // Trigger workflow automation for client update
     const newClientData = updatedClient.toJSON();
     workflowService
       .processEntityEvent('client', String(client.id), TriggerType.ON_UPDATE, oldClientData, newClientData, user.id)
       .catch((err: Error) => {
-        console.error('Workflow processEntityEvent (client.update) error:', err.message);
+        logger.error({ err: err.message }, 'Workflow processEntityEvent (client.update) error');
       });
 
     return updatedClient;
@@ -141,7 +142,7 @@ class ClientService {
     return client;
   }
 
-  async getClients(query: any, user: User): Promise<any> {
+  async getClients(query: Record<string, unknown>, user: User): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     if (!user.role.permissions.includes(ClientPermissionsEnum.VIEW_GLOBAL_CLIENTS)) query.userId = user.id;
@@ -205,7 +206,7 @@ class ClientService {
     };
   }
 
-  async clientById(id: string, user: User): Promise<any> {
+  async clientById(id: string, user: User): Promise<unknown> {
     await this.validateClientAccess(id, user);
     const client = await this.clientOrError({ id }, [
       {
@@ -218,7 +219,7 @@ class ClientService {
     return client;
   }
 
-  async getClientsArray(): Promise<any> {
+  async getClientsArray(): Promise<unknown> {
     const clients = await Client.findAll({
       attributes: ['id', 'clientName', 'companyName']
     });
@@ -367,7 +368,7 @@ class ClientService {
     segments: Record<string, { count: number; clients: Array<{ id: string; clientName: string; score: number }> }>;
     totalClients: number;
   }> {
-    const where: Record<string, any> = tenantId ? { tenantId } : {};
+    const where: Record<string, unknown> = tenantId ? { tenantId } : {};
     const clients = await Client.findAll({
       where,
       attributes: ['id', 'clientName']
@@ -416,7 +417,7 @@ class ClientService {
     segmentDistribution: Record<string, number>;
     topByDealValue: Array<{ id: string; clientName: string; totalDealValue: number }>;
   }> {
-    const where: Record<string, any> = tenantId ? { tenantId } : {};
+    const where: Record<string, unknown> = tenantId ? { tenantId } : {};
 
     // Total clients
     const totalClients = await Client.count({ where });
@@ -512,8 +513,8 @@ class ClientService {
     };
   }
 
-  public async sendClientsExcelByEmail(query: any, user: User, email: string): Promise<void> {
-    const where: Record<string, any> = {
+  public async sendClientsExcelByEmail(query: Record<string, unknown>, user: User, email: string): Promise<void> {
+    const where: Record<string, unknown> = {
       ...(query.searchKey && {
         [Op.or]: [
           { clientName: { [Op.iLike]: `%${query.searchKey}%` } },
@@ -598,7 +599,7 @@ class ClientService {
   }
 
   // ─── Company Hierarchy ───────────────────────────────────────────────────
-  async getCompanyHierarchy(companyId: string): Promise<any> {
+  async getCompanyHierarchy(companyId: string): Promise<unknown> {
     const company = await this.clientOrError({ id: companyId });
 
     // Get all subsidiaries (recursive)
@@ -644,7 +645,7 @@ class ClientService {
     let currentId: string | undefined = companyId;
 
     while (currentId) {
-      const company: any = await Client.findOne({
+      const company: unknown = await Client.findOne({
         where: { id: currentId },
         attributes: ['id', 'clientName', 'companyName', 'parentCompanyId']
       });
@@ -723,7 +724,7 @@ class ClientService {
         id: a.id,
         type: 'ACTIVITY',
         title: a.subject || a.type,
-        description: (a as any).description,
+        description: (a as Record<string, unknown>).description,
         timestamp: a.createdAt,
         user: a.user,
         data: a.toJSON()
@@ -731,8 +732,8 @@ class ClientService {
       ...calls.map(c => ({
         id: c.id,
         type: 'CALL',
-        title: `${(c as any).direction} Call`,
-        description: (c as any).notes || `${(c as any).status} - ${c.duration}s`,
+        title: `${(c as Record<string, unknown>).direction} Call`,
+        description: (c as Record<string, unknown>).notes || `${(c as Record<string, unknown>).status} - ${c.duration}s`,
         timestamp: c.createdAt,
         data: c.toJSON()
       })),
@@ -740,7 +741,7 @@ class ClientService {
         id: m.id,
         type: 'MEETING',
         title: m.title,
-        description: (m as any).notes,
+        description: (m as Record<string, unknown>).notes,
         timestamp: m.meetingDate || m.createdAt,
         data: m.toJSON()
       }))
@@ -841,7 +842,7 @@ class ClientService {
   }
 
   // ─── Bulk Operations ─────────────────────────────────────────────────────
-  async bulkUpdateCompanies(companyIds: string[], updates: any, user: User): Promise<number> {
+  async bulkUpdateCompanies(companyIds: string[], updates: unknown, user: User): Promise<number> {
     const updateCount = await Client.update(updates, {
       where: {
         id: { [Op.in]: companyIds },

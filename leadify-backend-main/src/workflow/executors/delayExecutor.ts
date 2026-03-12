@@ -1,4 +1,5 @@
 import WorkflowExecution from '../workflowExecutionModel';
+import logger from '../../config/logger';
 
 export interface DelayConfig {
   delay: number;
@@ -114,7 +115,7 @@ export async function executeDelay(
       }
     }
   } catch (err: unknown) {
-    console.error('Failed to persist delay metadata:', (err as Error).message);
+    logger.error({ err: (err as Error).message }, 'Failed to persist delay metadata');
   }
 
   return {

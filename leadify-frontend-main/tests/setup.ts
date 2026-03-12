@@ -7,7 +7,7 @@
 import { vi } from 'vitest';
 import { ref, computed, reactive, watch, watchEffect, toRefs, onMounted, onUnmounted, h } from 'vue';
 
-const _global = globalThis as any;
+const _global = globalThis as unknown;
 
 // Make Vue reactivity functions globally available
 _global.ref = ref;

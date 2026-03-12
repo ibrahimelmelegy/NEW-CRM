@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import { Op } from 'sequelize';
 import Session from '../user/models/sessionModel';
+import logger from '../config/logger';
 
 // Run every hour to clean up expired sessions
 export const sessionCleanupCron = cron.schedule('0 * * * *', async () => {
@@ -17,6 +18,6 @@ export const sessionCleanupCron = cron.schedule('0 * * * *', async () => {
       // Expired sessions cleaned up
     }
   } catch (error) {
-    console.error('[Cron] Error cleaning up expired sessions:', error);
+    logger.error({ error }, '[Cron] Error cleaning up expired sessions');
   }
 });

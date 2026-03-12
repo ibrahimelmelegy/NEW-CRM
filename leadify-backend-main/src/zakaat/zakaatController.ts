@@ -6,7 +6,7 @@ import { AuthenticatedRequest } from '../types';
 class ZakaatController {
   async getAssessments(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
-      const result = await zakaatService.getAssessments(req.query as any);
+      const result = await zakaatService.getAssessments(req.query as Record<string, string>);
       wrapResult(res, result);
     } catch (error) {
       next(error);

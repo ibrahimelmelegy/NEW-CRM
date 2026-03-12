@@ -14,7 +14,7 @@ import { DailyTaskStatusEnum } from './dailyTaskEnum';
 import { addMonths, startOfMonth, subYears } from 'date-fns';
 
 class DailyTaskService {
-  public async createDailyTask(data: any): Promise<DailyTask> {
+  public async createDailyTask(data: Record<string, unknown>): Promise<DailyTask> {
     await userService.userOrError({ id: data.userId });
     await userService.userOrError({ id: data.salesRepresentativeId });
     if (data.clientId) await clientService.clientOrError({ id: data.clientId });
@@ -30,7 +30,7 @@ class DailyTaskService {
     return task;
   }
 
-  public async getDailyTasks(query: any): Promise<any> {
+  public async getDailyTasks(query: Record<string, unknown>): Promise<unknown> {
     const { page, limit, offset } = clampPagination(query);
 
     const { rows: tasks, count: totalItems } = await DailyTask.findAndCountAll({
@@ -110,8 +110,8 @@ class DailyTaskService {
     return task;
   }
 
-  public async sendTasksExcelByEmail(query: any, email: string): Promise<void> {
-    const where: Record<string, any> = {
+  public async sendTasksExcelByEmail(query: Record<string, unknown>, email: string): Promise<void> {
+    const where: Record<string, unknown> = {
       ...(query.search && {
         name: { [Op.iLike]: `%${query.search}%` }
       })
@@ -293,8 +293,8 @@ class DailyTaskService {
       monthlyRevenue: formattedMonthlyRevenue,
       taskDistributionByClient,
       salesPerformance: salesPerformance.map(item => ({
-        name: (item as any)['salesRepresentative.name'],
-        tasksCount: Number((item as any).tasksCount),
+        name: (item as Record<string, unknown>)['salesRepresentative.name'],
+        tasksCount: Number((item as Record<string, unknown>).tasksCount),
         totalPaid: Number((item.totalPaid ?? 0).toFixed(2))
       }))
     };

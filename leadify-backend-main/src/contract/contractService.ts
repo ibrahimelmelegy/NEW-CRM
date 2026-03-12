@@ -21,7 +21,7 @@ class ContractService {
     return contract;
   }
 
-  async create(userId: number, data: any) {
+  async create(userId: number, data: Record<string, unknown>) {
     const signingToken = crypto.randomBytes(32).toString('hex');
     return Contract.create({
       ...data,
@@ -31,7 +31,7 @@ class ContractService {
     });
   }
 
-  async update(id: string, userId: number, data: any) {
+  async update(id: string, userId: number, data: Record<string, unknown>) {
     const contract = await Contract.findOne({ where: { id, userId } });
     if (!contract) throw new Error('Contract not found');
     if (contract.status === ContractStatus.SIGNED) throw new Error('Cannot edit signed contract');

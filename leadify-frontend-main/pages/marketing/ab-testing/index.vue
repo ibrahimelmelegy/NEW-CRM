@@ -421,6 +421,16 @@ async function handleSave() {
       return;
     }
 
+    const variantsWithPercentage = validVariants.filter(v => v.percentage !== undefined && v.percentage !== null);
+    if (variantsWithPercentage.length > 0) {
+      const total = variantsWithPercentage.reduce((sum: number, v) => sum + Number(v.percentage), 0);
+      if (Math.round(total) !== 100) {
+        ElMessage.warning(t('common.percentagesSumError') || 'Variant percentages must sum to 100');
+        saving.value = false;
+        return;
+      }
+    }
+
     const payload = { ...form.value, variants: validVariants };
 
     if (editingItem.value) {

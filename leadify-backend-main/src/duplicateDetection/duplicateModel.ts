@@ -31,7 +31,7 @@ class DuplicateSet extends Model {
   public matchScore!: number;
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  public matchedFields!: Array<{ field: string; value1: any; value2: any; similarity: number }>;
+  public matchedFields!: Array<{ field: string; value1: unknown; value2: unknown; similarity: number }>;
 
   @Column({ type: DataType.ENUM(...Object.values(DuplicateStatus)), allowNull: false, defaultValue: DuplicateStatus.DETECTED })
   public status!: string;
