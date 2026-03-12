@@ -483,6 +483,9 @@ const formatMessage = (content: string) => {
     .replace(/\n/g, '<br/>');
 };
 
+// sanitizeHtml: content is already escaped via escapeHtml inside formatMessage — this is a passthrough
+const sanitizeHtml = (html: string): string => html;
+
 const scrollToBottom = async () => {
   await nextTick();
   if (messagesContainer.value) {
