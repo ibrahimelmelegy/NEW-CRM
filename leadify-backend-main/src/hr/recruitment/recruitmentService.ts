@@ -133,11 +133,11 @@ class RecruitmentService {
 
     try {
       io.emit('recruitment:stage_changed', { id: applicantId, name: applicant.name, previousStage: currentStage, newStage });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     if (newStage === 'HIRED') {
       try {
         io.emit('recruitment:hired', { id: applicantId, name: applicant.name, jobPostingId: applicant.jobPostingId });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
 
     return applicant.reload();

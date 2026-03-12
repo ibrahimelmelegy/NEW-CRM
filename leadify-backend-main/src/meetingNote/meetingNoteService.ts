@@ -9,7 +9,7 @@ class MeetingNoteService {
     const note = await MeetingNote.create({ ...data, createdBy: userId, tenantId });
     try {
       io.emit('meetingNote:created', { id: note.id, title: note.title });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getById(note.id);
   }
 
@@ -52,7 +52,7 @@ class MeetingNoteService {
     await item.update(data);
     try {
       io.emit('meetingNote:updated', { id: item.id, title: item.title });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getById(item.id);
   }
 
@@ -62,7 +62,7 @@ class MeetingNoteService {
     await item.destroy();
     try {
       io.emit('meetingNote:deleted', { id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return true;
   }
 }

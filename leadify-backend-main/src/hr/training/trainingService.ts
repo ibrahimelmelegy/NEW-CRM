@@ -152,7 +152,7 @@ class TrainingService {
 
     try {
       io.emit('training:enrolled', { id: enrollment.id, programId, employeeId, programTitle: program.title });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return enrollment;
   }
 
@@ -179,7 +179,7 @@ class TrainingService {
 
     try {
       io.emit('training:completed', { id: enrollmentId, programId: enrollment.programId, employeeId: enrollment.employeeId });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return enrollment.reload();
   }
 

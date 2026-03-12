@@ -32,7 +32,7 @@ class CommissionService {
     const commission = await Commission.create({ ...data, tenantId });
     try {
       io.emit('commission:created', { id: commission.id, staffId: commission.staffId, amount: commission.amount, status: commission.status });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return commission;
   }
 
@@ -104,7 +104,7 @@ class CommissionService {
 
     try {
       io.emit('commission:created', { id: commission.id, staffId: userId, dealId, amount, status: 'PENDING' });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return commission;
   }
 
@@ -194,7 +194,7 @@ class CommissionService {
     await commission.update({ status: 'PAID', paidAt: new Date() });
     try {
       io.emit('commission:paid', { id: commission.id, staffId: commission.staffId, amount: commission.amount });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return commission;
   }
 
@@ -279,7 +279,7 @@ class CommissionService {
 
     try {
       io.emit('commission:created', { id: commission.id, staffId: userId, dealId, amount, status: 'PENDING' });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return commission;
   }
 
@@ -312,7 +312,7 @@ class CommissionService {
     );
     try {
       io.emit('commission:bulkPaid', { count: affectedCount });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return { paidCount: affectedCount };
   }
 

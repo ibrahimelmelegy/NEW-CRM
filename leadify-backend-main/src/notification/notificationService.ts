@@ -47,7 +47,7 @@ class NotificationService {
     );
     try {
       io.emit('notification:read', { userId: user.id, readAll: true });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
   }
 
   async updateNotificationToClicked(id: string, user: User): Promise<unknown> {
@@ -68,10 +68,10 @@ class NotificationService {
     });
     try {
       io.emit('lead:assigned', { leadId: input.target, assignedTo: input.userId });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     try {
       io.emit('notification:new', { userId: input.userId, notification: { id: notification.id, type: NotificationTypeEnums.LEAD_ASSIGNED } });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
   }
 
   async sendAssignOpportunityNotification(input: Record<string, unknown>, opportunity: Opportunity, admin: User): Promise<unknown> {

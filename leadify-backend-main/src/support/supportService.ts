@@ -259,7 +259,7 @@ class SupportService {
         newPriority,
         assignedTo: updateData.assignedTo || ticket.assignedTo
       });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return this.getTicketById(ticketId);
   }
@@ -293,7 +293,7 @@ class SupportService {
 
     try {
       io.emit('ticket:reopened', { ticketId: ticket.id, ticketNumber: ticket.ticketNumber });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getTicketById(ticketId);
   }
 

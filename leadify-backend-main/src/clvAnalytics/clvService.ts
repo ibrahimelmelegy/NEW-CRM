@@ -11,7 +11,7 @@ class ClvService {
     const record = await ClvRecord.create({ ...data, tenantId, calculatedAt: new Date() });
     try {
       io.emit('clv:created', { id: record.id, customerId: record.customerId });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return record;
   }
 
@@ -51,7 +51,7 @@ class ClvService {
     await item.update(data);
     try {
       io.emit('clv:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -127,7 +127,7 @@ class ClvService {
 
     try {
       io.emit('clv:calculated', { id: record.id, customerId, segment, churnRisk });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return record;
   }
 

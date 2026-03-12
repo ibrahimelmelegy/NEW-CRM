@@ -12,7 +12,7 @@ class CompetitorService {
     const competitor = await Competitor.create({ ...data, tenantId, createdBy });
     try {
       io.emit('competitor:created', { id: competitor.id, name: competitor.name });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return competitor;
   }
 
@@ -46,7 +46,7 @@ class CompetitorService {
     await item.update(data);
     try {
       io.emit('competitor:updated', { id: item.id, name: item.name });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -58,7 +58,7 @@ class CompetitorService {
     await CompetitorDeal.destroy({ where: { competitorId: id } });
     try {
       io.emit('competitor:deleted', { id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return true;
   }
 

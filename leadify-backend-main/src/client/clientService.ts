@@ -70,7 +70,7 @@ class ClientService {
 
     try {
       io.emit('client:created', { id: client.id, clientName: client.clientName, companyName: client.companyName });
-    } catch {}
+    } catch (err: unknown) { logger.warn({ err }, 'Non-critical operation failed'); }
 
     // Trigger workflow automation for client creation
     workflowService.processEntityEvent('client', String(client.id), TriggerType.ON_CREATE, null, client.toJSON(), admin.id).catch((err: Error) => {
@@ -111,7 +111,7 @@ class ClientService {
     const updatedClient = await client.save();
     try {
       io.emit('client:updated', { id: updatedClient.id, clientName: updatedClient.clientName, companyName: updatedClient.companyName });
-    } catch {}
+    } catch (err: unknown) { logger.warn({ err }, 'Non-critical operation failed'); }
 
     // Trigger workflow automation for client update
     const newClientData = updatedClient.toJSON();

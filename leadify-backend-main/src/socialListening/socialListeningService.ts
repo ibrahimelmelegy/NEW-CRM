@@ -35,7 +35,7 @@ class SocialListeningService {
     const mention = await SocialMention.create({ ...data, tenantId });
     try {
       io.emit('socialMention:created', { id: mention.id, platform: mention.platform });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return mention;
   }
 
@@ -74,7 +74,7 @@ class SocialListeningService {
     await item.update(data);
     try {
       io.emit('socialMention:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -84,7 +84,7 @@ class SocialListeningService {
     await item.destroy();
     try {
       io.emit('socialMention:deleted', { id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return true;
   }
 

@@ -33,7 +33,7 @@ class ESignatureService {
     });
     try {
       io.emit('eSignature:created', { id: record.id, title: record.title });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getById(record.id);
   }
 
@@ -100,7 +100,7 @@ class ESignatureService {
     await item.update({ recipients, status: newStatus });
     try {
       io.emit('eSignature:signed', { id: item.id, title: item.title, signer: email, allSigned });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getById(item.id);
   }
 
@@ -121,7 +121,7 @@ class ESignatureService {
     await item.update({ recipients, status: 'DECLINED' });
     try {
       io.emit('eSignature:declined', { id: item.id, title: item.title, decliner: email });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getById(item.id);
   }
 
@@ -137,7 +137,7 @@ class ESignatureService {
     const pendingRecipients = (item.recipients || []).filter((r: Recipient) => r.status === 'PENDING');
     try {
       io.emit('eSignature:reminder_sent', { id: item.id, title: item.title, pendingCount: pendingRecipients.length });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return { sent: true, pendingRecipients: pendingRecipients.length };
   }
 }

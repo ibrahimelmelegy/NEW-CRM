@@ -53,7 +53,7 @@ class SurveyService {
     await survey.increment('responseCount');
     try {
       io.emit('survey:response_submitted', { surveyId, responseId: response.id, surveyTitle: survey.title });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return response;
   }
 
@@ -264,7 +264,7 @@ class SurveyService {
 
     try {
       io.emit('survey:closed', { surveyId, title: survey.title, responseCount: survey.responseCount });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return {
       survey,
       finalSnapshot: {

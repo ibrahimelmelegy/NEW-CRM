@@ -71,11 +71,11 @@ class GoalService {
     await goal.update(updateData);
     try {
       io.emit('goal:progress_updated', { id: goalId, title: goal.title, progress: clampedProgress, status: updateData.status || goal.status });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     if (clampedProgress >= 100) {
       try {
         io.emit('goal:completed', { id: goalId, title: goal.title });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
 
     // Check milestones after progress update
@@ -204,7 +204,7 @@ class GoalService {
     for (const milestone of crossedMilestones) {
       try {
         io.emit('goal:milestone_reached', { goalId, milestone, title: goal.title, currentProgress: curr });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
 
     return {

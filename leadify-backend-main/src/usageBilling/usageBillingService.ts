@@ -11,7 +11,7 @@ class UsageBillingService {
     const meter = await UsageMeter.create({ ...data, tenantId });
     try {
       io.emit('usageMeter:created', { id: meter.id, name: meter.name });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return meter;
   }
 
@@ -42,7 +42,7 @@ class UsageBillingService {
     await item.update(data);
     try {
       io.emit('usageMeter:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -64,7 +64,7 @@ class UsageBillingService {
     const record = await UsageRecord.create({ ...data, tenantId });
     try {
       io.emit('usage:recorded', { id: record.id, meterId: record.meterId });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return record;
   }
 
@@ -206,7 +206,7 @@ class UsageBillingService {
 
     try {
       io.emit('usageInvoice:generated', { customerId, billingPeriod, total: invoice.total });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return invoice;
   }
 }

@@ -266,7 +266,7 @@ class PerformanceService {
     await review.update({ status: 'COMPLETED' });
     try {
       io.emit('performance:submitted', { id: reviewId, employeeId: review.employeeId, status: 'COMPLETED' });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getById(reviewId);
   }
 
@@ -292,7 +292,7 @@ class PerformanceService {
 
     try {
       io.emit('performance:approved', { id: reviewId, employeeId: review.employeeId, approverId, status: 'ACKNOWLEDGED' });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return this.getById(reviewId);
   }
 }

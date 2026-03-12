@@ -246,11 +246,11 @@ class LoyaltyService {
 
     try {
       io.emit('loyalty:points_earned', { clientId, programId, pointsEarned, totalEarned: tierAfter.totalEarned });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     if (tierChanged) {
       try {
         io.emit('loyalty:tier_upgrade', { clientId, programId, previousTier: tierBefore.currentTier, currentTier: tierAfter.currentTier });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
 
     return {

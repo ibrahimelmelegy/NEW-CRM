@@ -186,7 +186,7 @@ class CpqService {
     });
     try {
       io.emit('cpq:quote_created', { id: quote.id, quoteNumber });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return quote;
   }
 
@@ -230,7 +230,7 @@ class CpqService {
     await quote.update(data);
     try {
       io.emit('cpq:quote_updated', { id: quote.id, status: quote.status });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return quote;
   }
 
@@ -248,7 +248,7 @@ class CpqService {
     await quote.update({ status: 'APPROVED' });
     try {
       io.emit('cpq:quote_approved', { id: quote.id, quoteNumber: quote.quoteNumber });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return quote;
   }
 
@@ -258,7 +258,7 @@ class CpqService {
     await quote.update({ status: 'REJECTED' });
     try {
       io.emit('cpq:quote_rejected', { id: quote.id, quoteNumber: quote.quoteNumber });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return quote;
   }
 
@@ -268,7 +268,7 @@ class CpqService {
     await quote.update({ status: 'SENT' });
     try {
       io.emit('cpq:quote_sent', { id: quote.id, quoteNumber: quote.quoteNumber });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return quote;
   }
 
@@ -554,7 +554,7 @@ class CpqService {
     try {
       const dbRules = await this.getApplicablePricingRules(tenantId, totalQuantity, lineItems.length);
       allRules = [...allRules, ...dbRules];
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     // Apply additional discount rules
     let discountAmount = 0;
@@ -593,7 +593,7 @@ class CpqService {
 
     try {
       io.emit('cpq:quote_generated', { priceBookId, grandTotal, totalItems: lineItems.length });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return result;
   }
 }

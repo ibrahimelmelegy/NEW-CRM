@@ -51,7 +51,7 @@ class BookingService {
     const booking = await Booking.create({ ...data, tenantId });
     try {
       io.emit('booking:created', { id: booking.id, staffId: booking.staffId, date: booking.date, startTime: booking.startTime });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return booking;
   }
 
@@ -153,7 +153,7 @@ class BookingService {
     const booking = await Booking.create({ ...data, tenantId });
     try {
       io.emit('booking:created', { id: booking.id, staffId: booking.staffId, date: booking.date, startTime: booking.startTime });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return booking;
   }
 
@@ -206,7 +206,7 @@ class BookingService {
     await booking.update({ status: 'CANCELLED' });
     try {
       io.emit('booking:cancelled', { id: booking.id, staffId: booking.staffId, date: booking.date });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return booking;
   }
 

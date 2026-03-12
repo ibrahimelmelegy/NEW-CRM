@@ -198,7 +198,7 @@ class WarehouseService {
 
     try {
       io.emit('warehouse:stock_updated', { warehouseId, currentOccupancy: totalQty, itemCount: items.length });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return { transfers: results, currentOccupancy: totalQty };
   }
 
@@ -255,7 +255,7 @@ class WarehouseService {
           toWarehouseId: transfer.toWarehouseId,
           status: 'RECEIVED'
         });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
       return transfer;
     } catch (err) {
       await transaction.rollback();
@@ -284,7 +284,7 @@ class WarehouseService {
     if (alerts.length > 0) {
       try {
         io.emit('warehouse:low_stock_alert', { tenantId, threshold, alertCount: alerts.length, alerts: alerts.slice(0, 10) });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
     return alerts;
   }
@@ -385,7 +385,7 @@ class WarehouseService {
 
     try {
       io.emit('warehouse:pick_pack_completed', packingSlip);
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return packingSlip;
   }
 

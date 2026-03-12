@@ -266,7 +266,7 @@ class ManufacturingService {
     await wo.destroy();
     try {
       io.emit('manufacturing:work_order_deleted', { id, woNumber: wo.woNumber });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return { deleted: true };
   }
 
@@ -320,7 +320,7 @@ class ManufacturingService {
         status,
         percentComplete: wo.planned > 0 ? Math.round((newProduced / wo.planned) * 100) : 0
       });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return { workOrder: wo, qualityCheck, percentComplete: wo.planned > 0 ? Math.round((newProduced / wo.planned) * 100) : 0 };
   }

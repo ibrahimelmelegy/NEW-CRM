@@ -10,7 +10,7 @@ class DemandForecastService {
     const forecast = await DemandForecast.create({ ...data, tenantId, createdBy });
     try {
       io.emit('forecast:created', { id: forecast.id, product: forecast.product });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return forecast;
   }
 
@@ -43,7 +43,7 @@ class DemandForecastService {
     await item.update(data);
     try {
       io.emit('forecast:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -53,7 +53,7 @@ class DemandForecastService {
     await item.destroy();
     try {
       io.emit('forecast:deleted', { id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return true;
   }
 
@@ -146,7 +146,7 @@ class DemandForecastService {
 
     try {
       io.emit('forecast:generated', { id: forecast.id, product, predictedDemand });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return forecast;
   }
 

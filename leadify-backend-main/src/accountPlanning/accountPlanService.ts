@@ -13,7 +13,7 @@ class AccountPlanService {
     const plan = await AccountPlan.create({ ...data, tenantId, ownerId });
     try {
       io.emit('accountPlan:created', { id: plan.id, name: plan.name });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return plan;
   }
 
@@ -59,7 +59,7 @@ class AccountPlanService {
     await item.update(data);
     try {
       io.emit('accountPlan:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -70,7 +70,7 @@ class AccountPlanService {
     await item.destroy();
     try {
       io.emit('accountPlan:deleted', { id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return true;
   }
 
@@ -80,7 +80,7 @@ class AccountPlanService {
     const stakeholder = await Stakeholder.create({ ...data, tenantId });
     try {
       io.emit('stakeholder:created', { id: stakeholder.id, accountPlanId: stakeholder.accountPlanId });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return stakeholder;
   }
 

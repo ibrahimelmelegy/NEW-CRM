@@ -159,11 +159,11 @@ class ShippingService {
     await shipment.update(updateData);
     try {
       io.emit('shipping:status_changed', { id: shipment.id, shipmentNumber: shipment.shipmentNumber, previousStatus: currentStatus, newStatus });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     if (newStatus === 'DELIVERED') {
       try {
         io.emit('shipping:delivered', { id: shipment.id, shipmentNumber: shipment.shipmentNumber, recipientName: shipment.recipientName });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
     return shipment;
   }
@@ -275,7 +275,7 @@ class ShippingService {
 
     try {
       io.emit('shipping:bulk_status_updated', { successCount, failCount });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return { total: updates.length, successCount, failCount, results };
   }

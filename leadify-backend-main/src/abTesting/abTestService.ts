@@ -263,7 +263,7 @@ class ABTestService {
 
     try {
       io.emit('abtest:winner_declared', { testId, testName: test.name, winner: bestVariant, confidence: bestConfidence });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return result;
   }
 

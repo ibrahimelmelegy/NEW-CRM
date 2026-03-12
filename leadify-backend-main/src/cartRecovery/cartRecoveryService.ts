@@ -16,7 +16,7 @@ class CartRecoveryService {
     const cart = await AbandonedCart.create({ ...data, tenantId });
     try {
       io.emit('cart:abandoned', { id: cart.id, totalValue: cart.totalValue });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return cart;
   }
 
@@ -61,7 +61,7 @@ class CartRecoveryService {
     await item.update(data);
     try {
       io.emit('cart:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -93,7 +93,7 @@ class CartRecoveryService {
 
     try {
       io.emit('cart:reminderSent', { id: cart.id, customerId: cart.customerId, reminderCount: cart.reminderCount });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return {
       success: true,
@@ -117,7 +117,7 @@ class CartRecoveryService {
 
     try {
       io.emit('cart:recovered', { id: cart.id, totalValue: cart.totalValue });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return cart;
   }
 

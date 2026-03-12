@@ -41,7 +41,7 @@ class SegmentService {
     const segment = await Segment.create({ ...data, tenantId, createdBy });
     try {
       io.emit('segment:created', { id: segment.id, name: segment.name });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return segment;
   }
 
@@ -73,7 +73,7 @@ class SegmentService {
     await item.update(data);
     try {
       io.emit('segment:updated', { id: item.id, name: item.name });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -83,7 +83,7 @@ class SegmentService {
     await item.destroy();
     try {
       io.emit('segment:deleted', { id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return true;
   }
 
@@ -133,7 +133,7 @@ class SegmentService {
 
     try {
       io.emit('segment:evaluated', { id: segment.id, customerCount: count });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return {
       segment,

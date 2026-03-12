@@ -12,7 +12,7 @@ class AttributionService {
     const tp = await Touchpoint.create({ ...data, tenantId });
     try {
       io.emit('touchpoint:created', { id: tp.id, dealId: tp.dealId });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return tp;
   }
 
@@ -138,7 +138,7 @@ class AttributionService {
 
     try {
       io.emit('attribution:calculated', { dealId, model });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return { dealId, model, dealValue: totalValue, touchpoints: updated };
   }

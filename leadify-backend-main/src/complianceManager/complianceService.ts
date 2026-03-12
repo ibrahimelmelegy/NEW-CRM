@@ -13,7 +13,7 @@ class ComplianceService {
     const record = await ConsentRecord.create({ ...data, tenantId });
     try {
       io.emit('consent:created', { id: record.id, contactId: record.contactId });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return record;
   }
 
@@ -50,7 +50,7 @@ class ComplianceService {
     await item.update(data);
     try {
       io.emit('consent:updated', { id: item.id, status: item.status });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -73,7 +73,7 @@ class ComplianceService {
     const request = await DataRequest.create({ ...data, tenantId });
     try {
       io.emit('dataRequest:created', { id: request.id, type: request.type });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return request;
   }
 
@@ -114,7 +114,7 @@ class ComplianceService {
     await request.update(updateData);
     try {
       io.emit('dataRequest:processed', { id: request.id, status: data.status });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return request;
   }
 
@@ -175,7 +175,7 @@ class ComplianceService {
 
     try {
       io.emit('compliance:auditCompleted', { issueCount: issues.length });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return {
       auditDate: now,

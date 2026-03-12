@@ -11,7 +11,7 @@ class AiLeadScoringService {
     const model = await ScoringModelConfig.create({ ...data, tenantId, createdBy });
     try {
       io.emit('scoringModel:created', { id: model.id, name: model.name });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return model;
   }
 
@@ -47,7 +47,7 @@ class AiLeadScoringService {
     await item.update(data);
     try {
       io.emit('scoringModel:updated', { id: item.id });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return item;
   }
 
@@ -148,7 +148,7 @@ class AiLeadScoringService {
 
     try {
       io.emit('scoringModel:leadsScored', { modelId, count: results.length });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return {
       modelId,

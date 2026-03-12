@@ -53,7 +53,7 @@ class WarrantyService {
     const claim = await WarrantyClaim.create({ ...data, tenantId });
     try {
       io.emit('warranty:claim_created', { id: claim.id, warrantyId: claim.warrantyId, status: claim.status });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return claim;
   }
 
@@ -122,7 +122,7 @@ class WarrantyService {
         newEndDate,
         extensionDays: data.extensionDays
       });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
 
     return warranty;
   }
@@ -141,7 +141,7 @@ class WarrantyService {
     if (affectedCount > 0) {
       try {
         io.emit('warranty:bulk_expired', { tenantId, count: affectedCount });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
 
     return { expiredCount: affectedCount };
@@ -206,7 +206,7 @@ class WarrantyService {
     const claim = await WarrantyClaim.create({ ...data, tenantId });
     try {
       io.emit('warranty:claim_created', { id: claim.id, warrantyId: claim.warrantyId, status: claim.status });
-    } catch {}
+    } catch (_ignored: unknown) { /* non-critical */ }
     return claim;
   }
 
@@ -247,7 +247,7 @@ class WarrantyService {
     if (results.length > 0) {
       try {
         io.emit('warranty:expiring', { tenantId, daysAhead, count: results.length, warranties: results.slice(0, 10) });
-      } catch {}
+      } catch (_ignored: unknown) { /* non-critical */ }
     }
     return results;
   }
