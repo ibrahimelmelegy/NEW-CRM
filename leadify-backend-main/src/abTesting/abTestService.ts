@@ -136,8 +136,8 @@ class ABTestService {
       testName: test.name,
       status: test.status,
       variants: variantResults,
-      totalImpressions: variantResults.reduce((sum, v) => sum + v.impressions, 0),
-      totalConversions: variantResults.reduce((sum, v) => sum + v.conversions, 0)
+      totalImpressions: variantResults.reduce((sum, v) => sum + (Number(v.impressions) || 0), 0),
+      totalConversions: variantResults.reduce((sum, v) => sum + (Number(v.conversions) || 0), 0)
     };
   }
 
@@ -296,8 +296,8 @@ class ABTestService {
         status: test.status,
         startDate: test.startDate,
         variants,
-        totalImpressions: variants.reduce((sum: number, v: Record<string, unknown>) => sum + v.impressions, 0),
-        totalConversions: variants.reduce((sum: number, v: Record<string, unknown>) => sum + v.conversions, 0)
+        totalImpressions: variants.reduce((sum: number, v: Record<string, unknown>) => sum + (Number(v.impressions) || 0), 0),
+        totalConversions: variants.reduce((sum: number, v: Record<string, unknown>) => sum + (Number(v.conversions) || 0), 0)
       };
     });
   }

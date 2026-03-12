@@ -761,7 +761,7 @@ class DealService {
 
     const now = new Date();
     return deals.map(deal => {
-      const plain = deal.toJSON() as unknown;
+      const plain = deal.toJSON() as Record<string, unknown>;
       const updatedAt = new Date(plain.updatedAt);
       plain.daysStale = Math.floor((now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24));
       return plain;

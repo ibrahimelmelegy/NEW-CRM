@@ -183,7 +183,7 @@ class SearchService {
 
         totalByEntity[entityType] = count;
 
-        rows.forEach((row: unknown, index: number) => {
+        rows.forEach((row: Record<string, unknown>, index: number) => {
           const plain = row.get ? row.get({ plain: true }) : row;
           allResults.push({
             entityType,
@@ -242,7 +242,7 @@ class SearchService {
       order
     });
 
-    const docs: SearchResultItem[] = rows.map((row: unknown, index: number) => {
+    const docs: SearchResultItem[] = rows.map((row: Record<string, unknown>, index: number) => {
       const plain = row.get ? row.get({ plain: true }) : row;
       return {
         entityType: entity,

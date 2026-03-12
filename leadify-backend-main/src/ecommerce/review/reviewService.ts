@@ -17,8 +17,8 @@ class ReviewService {
 
     if (ratingMin || ratingMax) {
       where.rating = {};
-      if (ratingMin) where.rating[Op.gte] = Number(ratingMin);
-      if (ratingMax) where.rating[Op.lte] = Number(ratingMax);
+      if (ratingMin) (where.rating as Record<string, unknown>)[Op.gte] = Number(ratingMin);
+      if (ratingMax) (where.rating as Record<string, unknown>)[Op.lte] = Number(ratingMax);
     }
 
     if (searchKey) {

@@ -78,10 +78,10 @@ class SessionSecurityService {
     if (startDate || endDate) {
       where.createdAt = {};
       if (startDate) {
-        where.createdAt[Op.gte] = new Date(startDate);
+        (where.createdAt as Record<string, unknown>)[Op.gte] = new Date(startDate);
       }
       if (endDate) {
-        where.createdAt[Op.lte] = new Date(endDate);
+        (where.createdAt as Record<string, unknown>)[Op.lte] = new Date(endDate);
       }
     }
 

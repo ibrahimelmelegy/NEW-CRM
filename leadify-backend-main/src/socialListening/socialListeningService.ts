@@ -50,8 +50,8 @@ class SocialListeningService {
     if (query.search) where.content = { [Op.iLike]: `%${query.search}%` };
     if (query.fromDate || query.toDate) {
       where.mentionDate = {};
-      if (query.fromDate) where.mentionDate[Op.gte] = new Date(query.fromDate);
-      if (query.toDate) where.mentionDate[Op.lte] = new Date(query.toDate);
+      if (query.fromDate) (where.mentionDate as Record<string, unknown>)[Op.gte] = new Date(query.fromDate);
+      if (query.toDate) (where.mentionDate as Record<string, unknown>)[Op.lte] = new Date(query.toDate);
     }
 
     const { rows, count } = await SocialMention.findAndCountAll({

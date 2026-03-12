@@ -156,7 +156,7 @@ function formatDate(dateStr?: string | Date): string {
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
-function buildProposalHtml(proposal: unknown, settings: unknown): string {
+function buildProposalHtml(proposal: Record<string, unknown>, settings: Record<string, unknown>): string {
   const color = settings?.primaryColor || '#7c3aed';
   const companyName = settings?.name || '';
   const companyAddress = settings?.companyAddress || '';

@@ -454,8 +454,8 @@ class SLAService {
 
     if (dateRange?.from || dateRange?.to) {
       where.startedAt = {};
-      if (dateRange.from) where.startedAt[Op.gte] = new Date(dateRange.from);
-      if (dateRange.to) where.startedAt[Op.lte] = new Date(dateRange.to);
+      if (dateRange.from) (where.startedAt as Record<string, unknown>)[Op.gte] = new Date(dateRange.from);
+      if (dateRange.to) (where.startedAt as Record<string, unknown>)[Op.lte] = new Date(dateRange.to);
     }
 
     const instances = await SLAInstance.findAll({

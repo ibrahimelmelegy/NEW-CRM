@@ -134,7 +134,7 @@ class CommunicationService {
 
     // Attach call log data to activity metadata for call entries
     const enrichedRows = rows.map(activity => {
-      const plain = activity.toJSON() as unknown;
+      const plain = activity.toJSON() as Record<string, unknown>;
       if (plain.type === ActivityType.CALL && callLogsMap[plain.id]) {
         plain.callLog = callLogsMap[plain.id].toJSON();
       }
@@ -376,7 +376,7 @@ class CommunicationService {
     }
 
     const enrichedRows = rows.map(activity => {
-      const plain = activity.toJSON() as unknown;
+      const plain = activity.toJSON() as Record<string, unknown>;
       if (callLogsMap[plain.id]) {
         plain.callLog = callLogsMap[plain.id].toJSON();
       }
@@ -426,7 +426,7 @@ class CommunicationService {
     }
 
     const enrichedRows = rows.map(activity => {
-      const plain = activity.toJSON() as unknown;
+      const plain = activity.toJSON() as Record<string, unknown>;
       if (meetingNotesMap[plain.id]) {
         const noteData = meetingNotesMap[plain.id].toJSON();
         plain.title = noteData.title;

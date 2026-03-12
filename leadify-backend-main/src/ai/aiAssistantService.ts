@@ -107,7 +107,7 @@ class AIAssistantService {
   // 1. LEAD SCORING - Analyze lead quality and return score 1-100
   // ===================================================================
   async scoreLeadQuality(leadId: string): Promise<LeadScoreResult> {
-    const lead = (await Lead.findByPk(leadId, { raw: true })) as unknown;
+    const lead = (await Lead.findByPk(leadId, { raw: true })) as Record<string, unknown>;
     if (!lead) throw new Error('Lead not found');
 
     const factors: LeadScoreResult['factors'] = [];
@@ -604,7 +604,7 @@ class AIAssistantService {
     const now = new Date();
 
     if (entityType === 'lead') {
-      const lead = (await Lead.findByPk(entityId, { raw: true })) as unknown;
+      const lead = (await Lead.findByPk(entityId, { raw: true })) as Record<string, unknown>;
       if (!lead) throw new Error('Lead not found');
       entityName = lead.name || 'Unknown Lead';
 
@@ -777,7 +777,7 @@ class AIAssistantService {
         });
       }
     } else if (entityType === 'client') {
-      const client = (await Client.findByPk(entityId, { raw: true })) as unknown;
+      const client = (await Client.findByPk(entityId, { raw: true })) as Record<string, unknown>;
       if (!client) throw new Error('Client not found');
       entityName = client.clientName || client.companyName || 'Unknown Client';
 
