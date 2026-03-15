@@ -46,12 +46,12 @@ class ReportService {
     // Handle date range filters
     if (config.startDate || config.endDate) {
       where.createdAt = {};
-      if (config.startDate) where.createdAt[Op.gte] = new Date(config.startDate);
-      if (config.endDate) where.createdAt[Op.lte] = new Date(config.endDate);
+      if (config.startDate) (where.createdAt as Record<string, unknown>)[Op.gte] = new Date(config.startDate);
+      if (config.endDate) (where.createdAt as Record<string, unknown>)[Op.lte] = new Date(config.endDate);
     }
 
     if (config.filters) {
-      for (const filter of config.filters) {
+      for (const filter of config.filters as Record<string, unknown>[]) {
         const { field, operator, value } = filter;
         switch (operator) {
           case 'equals':
@@ -67,7 +67,7 @@ class ReportService {
             where[field] = { [Op.lt]: value };
             break;
           case 'between':
-            where[field] = { [Op.between]: [value[0], value[1]] };
+            where[field] = { [Op.between]: [(value as unknown[])[0], (value as unknown[])[1]] };
             break;
           case 'in':
             where[field] = { [Op.in]: value };
@@ -101,8 +101,8 @@ class ReportService {
     const where: Record<string, unknown> = {};
     if (startDate || endDate) {
       where.createdAt = {};
-      if (startDate) where.createdAt[Op.gte] = new Date(startDate);
-      if (endDate) where.createdAt[Op.lte] = new Date(endDate);
+      if (startDate) (where.createdAt as Record<string, unknown>)[Op.gte] = new Date(startDate);
+      if (endDate) (where.createdAt as Record<string, unknown>)[Op.lte] = new Date(endDate);
     }
 
     // Get totals

@@ -238,11 +238,11 @@ class ForecastService {
           closedLost: 0
         };
       }
-      byUser[uid].target += f.target || 0;
-      byUser[uid].actual += f.actual || 0;
-      byUser[uid].pipeline += f.pipeline || 0;
-      byUser[uid].closedWon += f.closedWon || 0;
-      byUser[uid].closedLost += f.closedLost || 0;
+      (byUser[uid] as Record<string, unknown>).target = (Number((byUser[uid] as Record<string, unknown>).target) || 0) + (Number(f.target) || 0);
+      (byUser[uid] as Record<string, unknown>).actual = (Number((byUser[uid] as Record<string, unknown>).actual) || 0) + (Number(f.actual) || 0);
+      (byUser[uid] as Record<string, unknown>).pipeline = (Number((byUser[uid] as Record<string, unknown>).pipeline) || 0) + (Number(f.pipeline) || 0);
+      (byUser[uid] as Record<string, unknown>).closedWon = (Number((byUser[uid] as Record<string, unknown>).closedWon) || 0) + (Number(f.closedWon) || 0);
+      (byUser[uid] as Record<string, unknown>).closedLost = (Number((byUser[uid] as Record<string, unknown>).closedLost) || 0) + (Number(f.closedLost) || 0);
     }
 
     return Object.values(byUser);

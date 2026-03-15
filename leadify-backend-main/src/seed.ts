@@ -18,7 +18,7 @@ async function seed() {
     const roleModel = Role as Record<string, unknown>;
 
     // Delete all roles NOT named SUPER_ADMIN
-    await roleModel.destroy({
+    await (roleModel as any).destroy({
       where: {
         name: { [Op.ne]: 'SUPER_ADMIN' }
       }
@@ -26,7 +26,7 @@ async function seed() {
     // Deleted all non-SUPER_ADMIN roles
 
     // First, try to find existing SUPER_ADMIN role
-    let adminRole = await roleModel.findOne({ where: { name: 'SUPER_ADMIN' } });
+    let adminRole = await (roleModel as any).findOne({ where: { name: 'SUPER_ADMIN' } });
 
     if (adminRole) {
       // Update existing role with all permissions
@@ -34,7 +34,7 @@ async function seed() {
       // Updated existing SUPER_ADMIN role with all permissions
     } else {
       // Create new role with all permissions
-      adminRole = await roleModel.create({
+      adminRole = await (roleModel as any).create({
         name: 'SUPER_ADMIN',
         description: 'System Administrator with full access',
         permissions: allPermissions
@@ -64,7 +64,7 @@ async function seed() {
     }
 
     const hashedPassword = await bcrypt.hash(adminPassword, 12);
-    const _newAdmin = await userModel.create({
+    const _newAdmin = await (userModel as any).create({
       name: 'System Admin',
       email: adminEmail,
       password: hashedPassword,
@@ -75,7 +75,7 @@ async function seed() {
     // Super Admin created successfully
 
     // 4. Verify the user was created correctly
-    const verifyUser = await userModel.findOne({ where: { email: adminEmail } });
+    const verifyUser = await (userModel as any).findOne({ where: { email: adminEmail } });
     if (verifyUser) {
       // Verification passed - User exists in database
       const _passwordMatch = await bcrypt.compare(adminPassword, verifyUser.password);

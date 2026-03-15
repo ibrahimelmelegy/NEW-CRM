@@ -50,7 +50,7 @@ export class MailchimpProvider {
   private getAuth(): { baseUrl: string; headers: Record<string, string> } | null {
     if (!this.apiKey && MailchimpProvider.isConfigured()) {
       this.apiKey = process.env.MAILCHIMP_API_KEY!;
-      const server = process.env.MAILCHIMP_SERVER_PREFIX || this.apiKey.split('-').pop() || 'us1';
+      const server = process.env.MAILCHIMP_SERVER_PREFIX || (this.apiKey || '').split('-').pop() || 'us1';
       this.baseUrl = `https://${server}.api.mailchimp.com/3.0`;
     }
     if (!this.apiKey || !this.baseUrl) return null;

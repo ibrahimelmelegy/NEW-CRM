@@ -68,7 +68,7 @@ class TaskService {
 
     const allowedSortFields = ['createdAt', 'dueDate', 'priority', 'status', 'title', 'updatedAt'];
     const orderField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
-    const orderDir = sort.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+    const orderDir = ((sort as string)).toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
 
     const { rows: docs, count: totalItems } = await Task.findAndCountAll({
       where,
@@ -141,7 +141,7 @@ class TaskService {
       data.completedAt = null;
     }
 
-    await task.update(data);
+    await (task as any).update(data);
     return this.getTaskById(id);
   }
 
@@ -166,7 +166,7 @@ class TaskService {
       return this.getTaskById(id);
     }
 
-    await task.update({
+    await (task as any).update({
       status: TaskStatus.COMPLETED,
       completedAt: new Date()
     });

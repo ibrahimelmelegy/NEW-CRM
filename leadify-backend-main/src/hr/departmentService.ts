@@ -23,11 +23,11 @@ class DepartmentService {
       where: { departmentId: { [Op.ne]: null } },
       group: ['departmentId'],
       raw: true
-    })) as unknown[];
+    })) as Record<string, unknown>[];
 
     const countMap = new Map<string, number>();
     for (const row of employeeCounts) {
-      countMap.set(row.departmentId, parseInt(row.employeeCount, 10));
+      countMap.set(row.departmentId as string, parseInt(row.employeeCount as string, 10));
     }
 
     return departments.map(dept => {
@@ -84,7 +84,7 @@ class DepartmentService {
     const departments = (await Department.findAll({
       order: [['name', 'ASC']],
       raw: true
-    })) as unknown[];
+    })) as Record<string, unknown>[];
 
     // Count employees per department
     const employeeCounts = (await Employee.findAll({
@@ -92,11 +92,11 @@ class DepartmentService {
       where: { departmentId: { [Op.ne]: null } },
       group: ['departmentId'],
       raw: true
-    })) as unknown[];
+    })) as Record<string, unknown>[];
 
     const countMap = new Map<string, number>();
     for (const row of employeeCounts) {
-      countMap.set(row.departmentId, parseInt(row.employeeCount, 10));
+      countMap.set(row.departmentId as string, parseInt(row.employeeCount as string, 10));
     }
 
     const deptMap = new Map<string, any>();

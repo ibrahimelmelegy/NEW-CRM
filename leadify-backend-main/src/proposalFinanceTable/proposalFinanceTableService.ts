@@ -33,7 +33,7 @@ class ProposalFinanceTableService {
         const marginAmount = (material.unitPrice * marginPercentage) / 100;
         const unitPrice = material.unitPrice + marginAmount;
         const description = material.description;
-        const totalPrice = item.qty * unitPrice;
+        const totalPrice = Number(Number(item.qty)) * unitPrice;
         grandTotalPrice += totalPrice;
 
         return {
@@ -91,7 +91,7 @@ class ProposalFinanceTableService {
         // Recalculate unitPrice and marginAmount
         const newMarginAmount = (data.marginPercentage * item.unitPrice) / 100;
         const newUnitPrice = item.unitPrice - item.marginAmount + newMarginAmount;
-        const totalPrice = item.qty * newUnitPrice;
+        const totalPrice = Number(Number(item.qty)) * newUnitPrice;
 
         // Update the item in the database
         await item.update({

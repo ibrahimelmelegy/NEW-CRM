@@ -173,7 +173,7 @@ class DashboardService {
       [Op.or]: [{ userId }, { isShared: true }]
     };
     if (role) {
-      whereClause[Op.or].push({ role });
+      ((whereClause as Record<symbol, unknown[]>)[Op.or] || []).push({ role });
     }
 
     return Dashboard.findAll({
@@ -807,7 +807,7 @@ class DashboardService {
     const results = await Promise.all(
       funnelStages.map(async stage => ({
         name: stage.name,
-        value: await (stage.model as Record<string, unknown>).count({ where: stage.where })
+        value: await (stage.model as unknown as { count: Function }).count({ where: stage.where })
       }))
     );
 

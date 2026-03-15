@@ -66,10 +66,10 @@ function makeRequest(opts: RequestOptions): Promise<{ statusCode: number; body: 
 
     const req = lib.request(reqOpts, res => {
       const chunks: Buffer[] = [];
-      res.on('data', (chunk: Buffer) => chunks.push(chunk));
-      res.on('end', () => {
+      (res as any).on('data', (chunk: Buffer) => chunks.push(chunk));
+      (res as any).on('end', () => {
         resolve({
-          statusCode: res.statusCode || 500,
+          statusCode: (res as Record<string, unknown>).statusCode || 500,
           body: Buffer.concat(chunks).toString('utf-8')
         });
       });
@@ -207,7 +207,7 @@ export class ERPNextClient {
   async get(doctype: string, name?: string, filters?: Record<string, unknown>, fields?: string[], limit?: number): Promise<unknown> {
     if (name) {
       const res = await this.request('GET', `/api/resource/${encodeURIComponent(doctype)}/${encodeURIComponent(name)}`);
-      return res.data;
+      return (res as Record<string, unknown>).data;
     }
     // If no name, fall back to list
     return this.getList(doctype, filters, fields, undefined, limit);
@@ -244,7 +244,7 @@ export class ERPNextClient {
     }
 
     const res = await this.request('GET', `/api/resource/${encodeURIComponent(doctype)}`, undefined, params);
-    return res.data || [];
+    return (res as Record<string, unknown>).data || [];
   }
 
   /**
@@ -253,7 +253,7 @@ export class ERPNextClient {
    */
   async create(doctype: string, data: Record<string, unknown>): Promise<unknown> {
     const res = await this.request('POST', `/api/resource/${encodeURIComponent(doctype)}`, data);
-    return res.data;
+    return (res as Record<string, unknown>).data;
   }
 
   /**
@@ -262,7 +262,7 @@ export class ERPNextClient {
    */
   async update(doctype: string, name: string, data: Record<string, unknown>): Promise<unknown> {
     const res = await this.request('PUT', `/api/resource/${encodeURIComponent(doctype)}/${encodeURIComponent(name)}`, data);
-    return res.data;
+    return (res as Record<string, unknown>).data;
   }
 
   /**
@@ -297,6 +297,6 @@ export class ERPNextClient {
    */
   async ping(): Promise<{ user: string; version?: string }> {
     const res = await this.getMethod('frappe.auth.get_logged_user');
-    return { user: res.message };
+    return { user: (res as Record<string, unknown>).message };
   }
 }

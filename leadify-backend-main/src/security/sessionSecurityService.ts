@@ -78,10 +78,10 @@ class SessionSecurityService {
     if (startDate || endDate) {
       where.createdAt = {};
       if (startDate) {
-        where.createdAt[Op.gte] = new Date(startDate);
+        (where.createdAt as Record<string, unknown>)[Op.gte] = new Date(startDate);
       }
       if (endDate) {
-        where.createdAt[Op.lte] = new Date(endDate);
+        (where.createdAt as Record<string, unknown>)[Op.lte] = new Date(endDate);
       }
     }
 
@@ -397,9 +397,9 @@ class SessionSecurityService {
       user: user.toJSON(),
       loginHistory,
       activeSessions: sessions.length,
-      leads: leads.map(l => l.toJSON()),
-      deals: deals.map(d => d.toJSON()),
-      clients: clients.map(c => c.toJSON())
+      leads: leads.map((l: unknown) => (l as Record<string, unknown> & { toJSON: () => Record<string, unknown> }).toJSON()),
+      deals: deals.map((d: unknown) => (d as Record<string, unknown> & { toJSON: () => Record<string, unknown> }).toJSON()),
+      clients: clients.map((cli: unknown) => (cli as Record<string, unknown> & { toJSON: () => Record<string, unknown> }).toJSON())
     };
   }
 }

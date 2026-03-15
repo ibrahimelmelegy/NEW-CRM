@@ -206,8 +206,8 @@ class CommissionService {
     const where: Record<string, unknown> = { tenantId };
     if (period?.startDate || period?.endDate) {
       where.createdAt = {};
-      if (period.startDate) where.createdAt[Op.gte] = new Date(period.startDate);
-      if (period.endDate) where.createdAt[Op.lte] = new Date(period.endDate);
+      if (period.startDate) (where.createdAt as Record<string, unknown>)[Op.gte] = new Date(period.startDate);
+      if (period.endDate) (where.createdAt as Record<string, unknown>)[Op.lte] = new Date(period.endDate);
     }
 
     const results = await Commission.findAll({
@@ -336,8 +336,8 @@ class CommissionService {
     if (query?.staffId) where.staffId = query.staffId;
     if (query?.startDate || query?.endDate) {
       where.createdAt = {};
-      if (query?.startDate) where.createdAt[Op.gte] = new Date(query.startDate);
-      if (query?.endDate) where.createdAt[Op.lte] = new Date(query.endDate);
+      if (query?.startDate) (where.createdAt as Record<string, unknown>)[Op.gte] = new Date(query.startDate);
+      if (query?.endDate) (where.createdAt as Record<string, unknown>)[Op.lte] = new Date(query.endDate);
     }
 
     // Totals

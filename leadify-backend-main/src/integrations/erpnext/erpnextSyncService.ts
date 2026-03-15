@@ -141,8 +141,8 @@ class ERPNextSyncService {
         result = await client.create('Sales Invoice', erpnextData);
       }
 
-      const erpnextName = result.name;
-      await this.markSuccess(syncLog, erpnextName, result);
+      const erpnextName = (result as Record<string, unknown>).name;
+      await this.markSuccess(syncLog, erpnextName as string, result as Record<string, unknown>);
       return { success: true, erpnextName };
     } catch (err: unknown) {
       const message =
@@ -219,8 +219,8 @@ class ERPNextSyncService {
         result = await client.create('Customer', erpnextData);
       }
 
-      const erpnextName = result.name;
-      await this.markSuccess(syncLog, erpnextName, result);
+      const erpnextName = (result as Record<string, unknown>).name;
+      await this.markSuccess(syncLog, erpnextName as string, result as Record<string, unknown>);
       return { success: true, erpnextName };
     } catch (err: unknown) {
       const message =
@@ -275,8 +275,8 @@ class ERPNextSyncService {
         result = await client.create('Supplier', erpnextData);
       }
 
-      const erpnextName = result.name;
-      await this.markSuccess(syncLog, erpnextName, result);
+      const erpnextName = (result as Record<string, unknown>).name;
+      await this.markSuccess(syncLog, erpnextName as string, result as Record<string, unknown>);
       return { success: true, erpnextName };
     } catch (err: unknown) {
       const message =
@@ -344,8 +344,8 @@ class ERPNextSyncService {
         result = await client.create('Purchase Order', erpnextData);
       }
 
-      const erpnextName = result.name;
-      await this.markSuccess(syncLog, erpnextName, result);
+      const erpnextName = (result as Record<string, unknown>).name;
+      await this.markSuccess(syncLog, erpnextName as string, result as Record<string, unknown>);
       return { success: true, erpnextName };
     } catch (err: unknown) {
       const message =
@@ -386,7 +386,7 @@ class ERPNextSyncService {
         company: config.company,
         date: new Date().toISOString().split('T')[0]
       });
-      return result.message;
+      return (result as Record<string, unknown>).message;
     } catch (err: unknown) {
       // Fallback: pull accounts with balances from resource API
       try {
@@ -420,7 +420,7 @@ class ERPNextSyncService {
         filter_based_on: 'Date Range',
         periodicity: 'Monthly'
       });
-      return result.message;
+      return (result as Record<string, unknown>).message;
     } catch (err: unknown) {
       throw new Error(`Failed to pull Profit & Loss report: ${(err as Error).message}`);
     }
@@ -441,7 +441,7 @@ class ERPNextSyncService {
         period_end_date: date,
         periodicity: 'Yearly'
       });
-      return result.message;
+      return (result as Record<string, unknown>).message;
     } catch (err: unknown) {
       throw new Error(`Failed to pull Balance Sheet: ${(err as Error).message}`);
     }

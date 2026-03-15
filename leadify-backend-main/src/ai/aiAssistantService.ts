@@ -107,7 +107,7 @@ class AIAssistantService {
   // 1. LEAD SCORING - Analyze lead quality and return score 1-100
   // ===================================================================
   async scoreLeadQuality(leadId: string): Promise<LeadScoreResult> {
-    const lead = (await Lead.findByPk(leadId, { raw: true })) as unknown;
+    const lead = (await Lead.findByPk(leadId, { raw: true })) as Record<string, unknown>;
     if (!lead) throw new Error('Lead not found');
 
     const factors: LeadScoreResult['factors'] = [];
@@ -228,11 +228,11 @@ class AIAssistantService {
     }
 
     // Factor 6: Existing score
-    if (lead.score && lead.score > 0) {
-      if (lead.score >= 80) {
+    if (lead.score && Number(lead.score) > 0) {
+      if (Number(lead.score) >= 80) {
         factors.push({ name: 'Existing Score', impact: 'positive', score: 10, detail: `Pre-existing score of ${lead.score}` });
         totalScore += 10;
-      } else if (lead.score >= 50) {
+      } else if (Number(lead.score) >= 50) {
         factors.push({ name: 'Existing Score', impact: 'neutral', score: 3, detail: `Pre-existing score of ${lead.score}` });
         totalScore += 3;
       }
@@ -604,7 +604,7 @@ class AIAssistantService {
     const now = new Date();
 
     if (entityType === 'lead') {
-      const lead = (await Lead.findByPk(entityId, { raw: true })) as unknown;
+      const lead = (await Lead.findByPk(entityId, { raw: true })) as Record<string, unknown>;
       if (!lead) throw new Error('Lead not found');
       entityName = lead.name || 'Unknown Lead';
 
@@ -736,7 +736,7 @@ class AIAssistantService {
       const invoices = deal.invoice || [];
       const overdueInvoices = invoices.filter((inv: Record<string, unknown>) => !inv.collected && new Date(inv.invoiceDate) < now);
       if (overdueInvoices.length > 0) {
-        const totalOverdue = overdueInvoices.reduce((s: number, inv: Record<string, unknown>) => s + (inv.amount || 0), 0);
+        const totalOverdue = overdueInvoices.reduce((s: number, inv: Record<string, unknown>) => s + (Number(inv.amount) || 0), 0);
         suggestions.push({
           id: 'deal-overdue-invoices',
           type: 'warning',
@@ -777,7 +777,7 @@ class AIAssistantService {
         });
       }
     } else if (entityType === 'client') {
-      const client = (await Client.findByPk(entityId, { raw: true })) as unknown;
+      const client = (await Client.findByPk(entityId, { raw: true })) as Record<string, unknown>;
       if (!client) throw new Error('Client not found');
       entityName = client.clientName || client.companyName || 'Unknown Client';
 

@@ -6,7 +6,7 @@ class VendorScorecardService {
   async create(data: Record<string, unknown>, tenantId?: string) {
     const scores = [data.qualityScore, data.deliveryScore, data.priceScore, data.communicationScore].filter(Boolean);
     if (scores.length > 0) {
-      data.overallScore = Number((scores.reduce((a: number, b: number) => a + b, 0) / scores.length).toFixed(1));
+      data.overallScore = Number((scores.reduce((a: number, b: unknown) => a + Number(b), 0) / scores.length).toFixed(1));
     }
     return VendorScorecard.create({ ...data, tenantId });
   }

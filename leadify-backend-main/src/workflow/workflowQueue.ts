@@ -43,7 +43,7 @@ const setupWorker = () => {
 
       // Process the exact delayed actions via the service
       if (typeof (workflowService as Record<string, unknown>).executeDelayedActions === 'function') {
-        await (workflowService as Record<string, unknown>).executeDelayedActions(executionId, ruleId, entityData, actions, triggerUserId);
+        await ((workflowService as Record<string, unknown>).executeDelayedActions as Function)(executionId, ruleId, entityData, actions, triggerUserId);
       } else {
         logger.warn(`[Queue] executeDelayedActions not yet implemented, skipping job ${job.id}`);
       }

@@ -136,11 +136,14 @@ export class SendGridProvider {
         const [, body] = await sgClient.request({ method: 'GET', url: '/v3/stats', qs: queryParams });
         const totals = (body as unknown[]).reduce(
           (acc: unknown, day: unknown) => {
-            const m = day.stats?.[0]?.metrics || {};
-            acc.delivered += m.delivered || 0;
-            acc.opens += m.unique_opens || 0;
-            acc.clicks += m.unique_clicks || 0;
-            acc.bounces += m.bounces || 0;
+            const dayRec = day as Record<string, unknown>;
+            const stats = dayRec.stats as Record<string, unknown>[] | undefined;
+            const m = (stats?.[0] as Record<string, unknown>)?.metrics as Record<string, unknown> || {};
+            const accRec = acc as Record<string, number>;
+            accRec.delivered += Number(m.delivered) || 0;
+            accRec.opens += Number(m.unique_opens) || 0;
+            accRec.clicks += Number(m.unique_clicks) || 0;
+            accRec.bounces += Number(m.bounces) || 0;
             return acc;
           },
           { delivered: 0, opens: 0, clicks: 0, bounces: 0 }

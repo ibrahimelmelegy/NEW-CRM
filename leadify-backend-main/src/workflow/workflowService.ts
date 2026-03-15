@@ -616,13 +616,13 @@ async function executeWorkflow(
       });
 
       actionResults.push({
-        actionType: action.type,
+        actionType: (action as Record<string, unknown>).type as string,
         status: 'SUCCESS',
         result
       });
     } catch (error: unknown) {
       actionResults.push({
-        actionType: action.type,
+        actionType: (action as Record<string, unknown>).type as string,
         status: 'FAILED',
         error: (error as Error).message || 'Unknown error'
       });
@@ -857,13 +857,13 @@ async function executeDelayedActions(
       });
 
       actionResults.push({
-        actionType: action.type,
+        actionType: (action as Record<string, unknown>).type as string,
         status: 'SUCCESS',
         result
       });
     } catch (error: unknown) {
       actionResults.push({
-        actionType: action.type,
+        actionType: (action as Record<string, unknown>).type as string,
         status: 'FAILED',
         error: (error as Error).message || 'Unknown error'
       });

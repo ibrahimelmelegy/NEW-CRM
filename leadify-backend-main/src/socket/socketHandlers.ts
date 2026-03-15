@@ -114,7 +114,7 @@ export interface CommentEventPayload {
 const tenantUsers = new Map<string, Map<string, TenantUser>>(); // tenantId -> (socketId -> user)
 
 /** Track active typing indicators with auto-expire timers */
-const typingTimers = new Map<string, NodeJS.Timeout>();
+const typingTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 /** Track document editing locks: tenantId:documentId -> lock info */
 const documentLocks = new Map<string, { userId: number; userName: string; lockedAt: Date }>();

@@ -262,8 +262,8 @@ class AIChatService {
       const { field, from, to } = plan.timeRange;
       const dateField = field || 'createdAt';
       where[dateField] = {};
-      if (from) where[dateField][Op.gte] = new Date(from);
-      if (to) where[dateField][Op.lte] = new Date(to);
+      if (from) (where[dateField] as Record<string, unknown>)[Op.gte] = new Date(from);
+      if (to) (where[dateField] as Record<string, unknown>)[Op.lte] = new Date(to);
     }
 
     const queryOptions: Record<string, unknown> = { where };
@@ -380,12 +380,12 @@ class AIChatService {
       case 'list':
       case 'recent':
       case 'top':
-        if (data.items?.length > 0) {
-          const names = data.items
+        if ((data.items as Record<string, unknown>[] | undefined)?.length ?? 0 > 0) {
+          const names = (data.items as Record<string, unknown>[])
             .slice(0, 5)
             .map(
               (item: Record<string, unknown>) =>
-                `- ${item.name || item.clientName || item.invoiceNumber || 'Item'}${item.price ? ` ($${item.price.toLocaleString()})` : ''}${item.amount ? ` ($${item.amount.toLocaleString()})` : ''}`
+                `- ${item.name || item.clientName || item.invoiceNumber || 'Item'}${item.price ? ` ($${(item.price as number).toLocaleString()})` : ''}${item.amount ? ` ($${(item.amount as number).toLocaleString()})` : ''}`
             )
             .join('\n');
           return `Found **${data.total}** results:\n${names}`;
@@ -393,8 +393,8 @@ class AIChatService {
         return `No ${plan.module} found matching your criteria.`;
 
       case 'status':
-        if (data.breakdown?.length > 0) {
-          const lines = data.breakdown
+        if ((data.breakdown as Record<string, unknown>[] | undefined)?.length ?? 0 > 0) {
+          const lines = (data.breakdown as Record<string, unknown>[])
             .map((item: Record<string, unknown>) => {
               const key = Object.keys(item).find(k => k !== 'count') || 'status';
               return `- **${item[key]}**: ${item.count}`;

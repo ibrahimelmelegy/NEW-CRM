@@ -134,7 +134,7 @@ class CommunicationService {
 
     // Attach call log data to activity metadata for call entries
     const enrichedRows = rows.map(activity => {
-      const plain = activity.toJSON() as unknown;
+      const plain = activity.toJSON() as Record<string, unknown>;
       if (plain.type === ActivityType.CALL && callLogsMap[plain.id]) {
         plain.callLog = callLogsMap[plain.id].toJSON();
       }
@@ -348,7 +348,7 @@ class CommunicationService {
     const limit = Math.min(100, Math.max(1, Number(pagination.limit) || 20));
     const offset = (page - 1) * limit;
 
-    const where: unknown = { type: ActivityType.CALL };
+    const where: Record<string, unknown> = { type: ActivityType.CALL };
     if (tenantId) where.tenantId = tenantId;
     if (pagination.search) {
       where[Op.or] = [{ subject: { [Op.iLike]: `%${pagination.search}%` } }, { contactId: { [Op.iLike]: `%${pagination.search}%` } }];
@@ -376,7 +376,7 @@ class CommunicationService {
     }
 
     const enrichedRows = rows.map(activity => {
-      const plain = activity.toJSON() as unknown;
+      const plain = activity.toJSON() as Record<string, unknown>;
       if (callLogsMap[plain.id]) {
         plain.callLog = callLogsMap[plain.id].toJSON();
       }
@@ -398,7 +398,7 @@ class CommunicationService {
     const limit = Math.min(100, Math.max(1, Number(pagination.limit) || 20));
     const offset = (page - 1) * limit;
 
-    const where: unknown = { type: ActivityType.MEETING };
+    const where: Record<string, unknown> = { type: ActivityType.MEETING };
     if (tenantId) where.tenantId = tenantId;
     if (pagination.search) {
       where[Op.or] = [{ subject: { [Op.iLike]: `%${pagination.search}%` } }, { body: { [Op.iLike]: `%${pagination.search}%` } }];
@@ -426,7 +426,7 @@ class CommunicationService {
     }
 
     const enrichedRows = rows.map(activity => {
-      const plain = activity.toJSON() as unknown;
+      const plain = activity.toJSON() as Record<string, unknown>;
       if (meetingNotesMap[plain.id]) {
         const noteData = meetingNotesMap[plain.id].toJSON();
         plain.title = noteData.title;

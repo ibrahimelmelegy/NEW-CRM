@@ -86,8 +86,8 @@ class PaymentService {
 
     if (startDate || endDate) {
       where.date = {};
-      if (startDate) where.date[Op.gte] = startDate;
-      if (endDate) where.date[Op.lte] = endDate;
+      if (startDate) (where.date as Record<string, unknown>)[Op.gte] = startDate;
+      if (endDate) (where.date as Record<string, unknown>)[Op.lte] = endDate;
     }
 
     if (searchKey) {

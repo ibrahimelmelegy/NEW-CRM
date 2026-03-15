@@ -243,8 +243,8 @@ class CustomReportService {
       }
     }
 
-    const data = await Model.findAll(queryOptions);
-    const totalCount = await Model.count({ where });
+    const data = await (Model as unknown as { findAll: Function }).findAll(queryOptions);
+    const totalCount = await (Model as unknown as { count: Function }).count({ where });
 
     return {
       data,
@@ -284,7 +284,7 @@ class CustomReportService {
   getAvailableFields(entityType: string) {
     const Model = getModelByEntityType(entityType);
 
-    const rawAttributes = Model.rawAttributes || Model.getAttributes?.() || {};
+    const rawAttributes = (Model as any).rawAttributes || (Model as any).getAttributes?.() || {};
     const fields = Object.entries(rawAttributes).map(([name, attr]: [string, any]) => ({
       name,
       type: attr.type?.key || attr.type?.constructor?.name || 'STRING',

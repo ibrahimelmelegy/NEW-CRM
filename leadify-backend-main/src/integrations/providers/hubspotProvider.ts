@@ -115,8 +115,8 @@ export class HubSpotProvider {
           deals: client.crm.deals,
           companies: client.crm.companies
         };
-        const response = await apiMap[objectType].basicApi.getPage(limit);
-        const records: HubSpotRecord[] = response.results.map((r: Record<string, unknown>) => ({
+        const response = await (apiMap[objectType] as Record<string, unknown> & { basicApi: { getPage: Function } }).basicApi.getPage(limit) as Record<string, unknown>;
+        const records: HubSpotRecord[] = (response.results as Record<string, unknown>[]).map((r: Record<string, unknown>) => ({
           id: r.id,
           properties: r.properties,
           createdAt: r.createdAt,
@@ -149,10 +149,10 @@ export class HubSpotProvider {
           deals: client.crm.deals,
           companies: client.crm.companies
         };
-        const response = await apiMap[objectType].batchApi.create({ inputs });
+        const response = await (apiMap[objectType] as Record<string, unknown> & { batchApi: { create: Function } }).batchApi.create({ inputs }) as Record<string, unknown>;
         return {
           success: true,
-          data: { exported: response.results.length, failed: records.length - response.results.length },
+          data: { exported: (response.results as unknown[]).length, failed: records.length - (response.results as unknown[]).length },
           mock: false,
           syncedAt: new Date().toISOString()
         };

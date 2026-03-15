@@ -171,9 +171,9 @@ async function seedDemo() {
       { name: 'HR_MANAGER', description: 'Human resources manager', permissions: hrPerms }
     ];
 
-    const createdRoles: unknown[] = [];
+    const createdRoles: Record<string, unknown>[] = [];
     for (const r of rolesData) {
-      const [role] = await (Role as Record<string, unknown>).findOrCreate({
+      const [role] = await (Role as any).findOrCreate({
         where: { name: r.name },
         defaults: r
       });
@@ -183,7 +183,7 @@ async function seedDemo() {
 
     // ── 2. STAFF / USERS (8) ──
     // Seeding Staff
-    const _superAdminRole = await (Role as Record<string, unknown>).findOne({ where: { name: 'SUPER_ADMIN' } });
+    const _superAdminRole = await (Role as any).findOne({ where: { name: 'SUPER_ADMIN' } });
     const staffData = [
       { name: 'Khalid Al-Rashid', email: 'khalid@hp-tech.com', phone: '0501234001', roleId: createdRoles[0].id, status: 'ACTIVE' },
       { name: 'Omar Al-Dosari', email: 'omar@hp-tech.com', phone: '0501234002', roleId: createdRoles[0].id, status: 'ACTIVE' },
@@ -195,9 +195,9 @@ async function seedDemo() {
       { name: 'Youssef Al-Zahrani', email: 'youssef@hp-tech.com', phone: '0501234008', roleId: createdRoles[3].id, status: 'ACTIVE' }
     ];
 
-    const createdUsers: unknown[] = [admin]; // Admin is user[0]
+    const createdUsers: Record<string, unknown>[] = [admin as Record<string, unknown>]; // Admin is user[0]
     for (const s of staffData) {
-      const [user] = await (User as Record<string, unknown>).findOrCreate({
+      const [user] = await (User as any).findOrCreate({
         where: { email: s.email },
         defaults: { ...s, password: hashedPw }
       });
@@ -282,7 +282,7 @@ async function seedDemo() {
     ];
     const priorities = Object.values(OpportunityPriorityEnums);
 
-    const qualifiedLeads = createdLeads.filter(l => ['QUALIFIED', 'CONVERTED', 'CONTACTED'].includes((l as Record<string, unknown>).status));
+    const qualifiedLeads = createdLeads.filter(l => ['QUALIFIED', 'CONVERTED', 'CONTACTED'].includes((l as any).status));
     const oppsData = Array.from({ length: 30 }, (_, i) => {
       const lead = qualifiedLeads[i % qualifiedLeads.length];
       return {
@@ -313,7 +313,7 @@ async function seedDemo() {
 
     // ── 7. DEALS (25) ──
     // Seeding Deals
-    const wonOpps = createdOpps.filter(o => ['WON', 'NEGOTIATION', 'PROPOSAL'].includes((o as Record<string, unknown>).stage));
+    const wonOpps = createdOpps.filter(o => ['WON', 'NEGOTIATION', 'PROPOSAL'].includes((o as any).stage));
     const dealsData = Array.from({ length: 25 }, (_, i) => {
       const opp = wonOpps[i % wonOpps.length];
       return {
@@ -337,7 +337,7 @@ async function seedDemo() {
 
     // ── 8. INVOICES (20) ──
     // Seeding Invoices
-    const closedDeals = createdDeals.filter(d => ['CLOSED', 'PROGRESS'].includes((d as Record<string, unknown>).stage));
+    const closedDeals = createdDeals.filter(d => ['CLOSED', 'PROGRESS'].includes((d as any).stage));
     const invoicesData = Array.from({ length: 20 }, (_, i) => {
       const deal = closedDeals[i % closedDeals.length];
       return {
@@ -383,7 +383,7 @@ async function seedDemo() {
     // ── 10. SALES ORDERS (8) ──
     // Seeding Sales Orders
     const soStatuses = ['DRAFT', 'CONFIRMED', 'CONFIRMED', 'PROCESSING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'DELIVERED'];
-    const createdSOs: unknown[] = [];
+    const createdSOs: Record<string, unknown>[] = [];
     for (let i = 0; i < 8; i++) {
       const client = createdClients[i % createdClients.length];
       const so = await SalesOrder.create({
@@ -534,9 +534,9 @@ async function seedDemo() {
       { name: 'Finance', code: 'FIN', description: 'Finance & Accounting' },
       { name: 'Support', code: 'SUP', description: 'Customer Support' }
     ];
-    const createdDepts: unknown[] = [];
+    const createdDepts: Record<string, unknown>[] = [];
     for (const d of deptsData) {
-      const [dept] = await (Department as Record<string, unknown>).findOrCreate({
+      const [dept] = await (Department as any).findOrCreate({
         where: { code: d.code },
         defaults: d
       });
@@ -654,11 +654,11 @@ async function seedDemo() {
       }
     ];
 
-    const createdEmployees: unknown[] = [];
+    const createdEmployees: Record<string, unknown>[] = [];
     for (let i = 0; i < employeeData.length; i++) {
       const emp = employeeData[i];
       const user = createdUsers.find(u => u.email === emp.email);
-      const [employee] = await (Employee as Record<string, unknown>).findOrCreate({
+      const [employee] = await (Employee as any).findOrCreate({
         where: { employeeNumber: `EMP-${(i + 1).toString().padStart(4, '0')}` },
         defaults: {
           employeeNumber: `EMP-${(i + 1).toString().padStart(4, '0')}`,
@@ -674,7 +674,7 @@ async function seedDemo() {
     // Set manager relationships
     if (createdEmployees[0]?.id) {
       for (let i = 1; i < 5; i++) {
-        await createdEmployees[i]?.update({ managerId: createdEmployees[0].id });
+        await (createdEmployees[i] as any)?.update({ managerId: createdEmployees[0].id });
       }
     }
     // Departments and employees created
@@ -749,7 +749,7 @@ async function seedDemo() {
         defaultPaymentMethod: 'Credit'
       }
     ];
-    const createdVendors = await Vendor.bulkCreate(vendorsData as unknown[]);
+    const createdVendors = await Vendor.bulkCreate(vendorsData as any[]);
     // Vendors created
 
     // ── 15. PURCHASE ORDERS (5) ──
@@ -761,7 +761,7 @@ async function seedDemo() {
         poNumber: `PO-2026-${(i + 1).toString().padStart(4, '0')}`,
         vendorId: vendor.id,
         status: poStatuses[i],
-        paymentMethod: (vendor as Record<string, unknown>).defaultPaymentMethod || 'Cash',
+        paymentMethod: (vendor as any).defaultPaymentMethod || 'Cash',
         dueDate: days(rand(15, 60)),
         totalAmount: 0,
         createdBy: adminId,
@@ -802,9 +802,9 @@ async function seedDemo() {
       { name: 'Marketing & Advertising', color: '#f59e0b', description: 'Marketing campaigns and ads' },
       { name: 'Training & Development', color: '#ec4899', description: 'Team training programs' }
     ];
-    const createdCats: unknown[] = [];
+    const createdCats: Record<string, unknown>[] = [];
     for (const c of catData) {
-      const [cat] = await (ExpenseCategory as Record<string, unknown>).findOrCreate({
+      const [cat] = await (ExpenseCategory as any).findOrCreate({
         where: { name: c.name },
         defaults: c
       });
@@ -866,9 +866,9 @@ async function seedDemo() {
       { name: 'Feature Request', description: 'New feature suggestions' },
       { name: 'Account Management', description: 'Account setup and configuration' }
     ];
-    const createdTicketCats: unknown[] = [];
+    const createdTicketCats: Record<string, unknown>[] = [];
     for (const tc of ticketCatsData) {
-      const [cat] = await (TicketCategory as Record<string, unknown>).findOrCreate({
+      const [cat] = await (TicketCategory as any).findOrCreate({
         where: { name: tc.name },
         defaults: tc
       });
@@ -1054,9 +1054,9 @@ async function seedDemo() {
         isActive: true
       }
     ];
-    const createdWorkflows: unknown[] = [];
+    const createdWorkflows: Record<string, unknown>[] = [];
     for (const wf of workflows) {
-      const created = await ApprovalWorkflow.create(wf as unknown);
+      const created = await ApprovalWorkflow.create(wf as any);
       createdWorkflows.push(created);
     }
 
@@ -1141,7 +1141,7 @@ async function seedDemo() {
         createdBy: adminId
       }
     ];
-    await WorkflowRule.bulkCreate(workflowRules as unknown[]);
+    await WorkflowRule.bulkCreate(workflowRules as any[]);
     // Workflow rules created
 
     // ── 23. NOTIFICATIONS (20) ──

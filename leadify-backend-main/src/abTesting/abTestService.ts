@@ -66,7 +66,7 @@ class ABTestService {
     if (!test) return null;
     if (test.status !== 'RUNNING') return null;
 
-    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
+    const results: Record<string, VariantResults> = (test.results as unknown as Record<string, VariantResults>) || {};
     if (!results[variantId]) {
       results[variantId] = { impressions: 0, conversions: 0, conversionRate: 0 };
     }
@@ -85,7 +85,7 @@ class ABTestService {
     if (!test) return null;
     if (test.status !== 'RUNNING') return null;
 
-    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
+    const results: Record<string, VariantResults> = (test.results as unknown as Record<string, VariantResults>) || {};
     if (!results[variantId]) {
       results[variantId] = { impressions: 0, conversions: 0, conversionRate: 0 };
     }
@@ -104,7 +104,7 @@ class ABTestService {
     const test = await ABTest.findByPk(testId);
     if (!test) return null;
 
-    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
+    const results: Record<string, VariantResults> = (test.results as unknown as Record<string, VariantResults>) || {};
     const variants = test.variants || [];
     const variantNames = variants.map((v: VariantData) => v.name);
 
@@ -136,8 +136,8 @@ class ABTestService {
       testName: test.name,
       status: test.status,
       variants: variantResults,
-      totalImpressions: variantResults.reduce((sum, v) => sum + v.impressions, 0),
-      totalConversions: variantResults.reduce((sum, v) => sum + v.conversions, 0)
+      totalImpressions: variantResults.reduce((sum, v) => sum + (Number(v.impressions) || 0), 0),
+      totalConversions: variantResults.reduce((sum, v) => sum + (Number(v.conversions) || 0), 0)
     };
   }
 
@@ -209,7 +209,7 @@ class ABTestService {
     const test = await ABTest.findByPk(testId);
     if (!test) return null;
 
-    const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
+    const results: Record<string, VariantResults> = (test.results as unknown as Record<string, VariantResults>) || {};
     const variants = test.variants || [];
     const variantNames = variants.map((v: VariantData) => v.name);
 
@@ -277,7 +277,7 @@ class ABTestService {
     });
 
     return tests.map(test => {
-      const results: Record<string, VariantResults> = (test.results as Record<string, unknown>) || {};
+      const results: Record<string, VariantResults> = (test.results as unknown as Record<string, VariantResults>) || {};
       const variants = (test.variants || []).map((v: VariantData) => {
         const data = results[v.name] || { impressions: 0, conversions: 0, conversionRate: 0 };
         return {
@@ -296,8 +296,8 @@ class ABTestService {
         status: test.status,
         startDate: test.startDate,
         variants,
-        totalImpressions: variants.reduce((sum: number, v: Record<string, unknown>) => sum + v.impressions, 0),
-        totalConversions: variants.reduce((sum: number, v: Record<string, unknown>) => sum + v.conversions, 0)
+        totalImpressions: variants.reduce((sum: number, v: Record<string, unknown>) => sum + (Number(v.impressions) || 0), 0),
+        totalConversions: variants.reduce((sum: number, v: Record<string, unknown>) => sum + (Number(v.conversions) || 0), 0)
       };
     });
   }

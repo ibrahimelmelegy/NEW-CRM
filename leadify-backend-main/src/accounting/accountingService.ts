@@ -73,7 +73,7 @@ class AccountingService {
     });
 
     // Build tree structure
-    const accountMap: Record<string, unknown> = {};
+    const accountMap: Record<string, Record<string, unknown> & { children: unknown[] }> = {};
     const tree: unknown[] = [];
 
     for (const account of allAccounts) {
@@ -146,7 +146,8 @@ class AccountingService {
   }
 
   async createJournalEntry(data: Record<string, unknown>) {
-    const { lines, ...entryData } = data;
+    const lines = data.lines as Record<string, unknown>[];
+    const { lines: _lines, ...entryData } = data;
 
     if (!lines || lines.length === 0) {
       throw new Error('Journal entry must have at least one line');

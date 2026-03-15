@@ -10,7 +10,7 @@ class CartRecoveryService {
   async create(data: Record<string, unknown>, tenantId?: string) {
     // Auto-calculate totalValue from items if not provided
     if (data.items && Array.isArray(data.items) && !data.totalValue) {
-      data.totalValue = data.items.reduce((sum: number, item: Record<string, unknown>) => sum + item.price * item.quantity, 0);
+      data.totalValue = data.items.reduce((sum: number, item: Record<string, unknown>) => sum + Number(item.price) * Number(item.quantity), 0);
     }
     if (!data.abandonedAt) data.abandonedAt = new Date();
     const cart = await AbandonedCart.create({ ...data, tenantId });
@@ -30,8 +30,8 @@ class CartRecoveryService {
     if (query.maxValue) where.totalValue = { ...(where.totalValue || {}), [Op.lte]: Number(query.maxValue) };
     if (query.fromDate || query.toDate) {
       where.abandonedAt = {};
-      if (query.fromDate) where.abandonedAt[Op.gte] = new Date(query.fromDate);
-      if (query.toDate) where.abandonedAt[Op.lte] = new Date(query.toDate);
+      if (query.fromDate) (where.abandonedAt as Record<string, unknown>)[Op.gte] = new Date(query.fromDate);
+      if (query.toDate) (where.abandonedAt as Record<string, unknown>)[Op.lte] = new Date(query.toDate);
     }
 
     try {

@@ -140,7 +140,7 @@ class SearchService {
         // Try tsvector-based full-text search first
         try {
           const escaped = sequelize.escape(searchTerm);
-          const result = await config.model.findAndCountAll({
+          const result = await (config.model as unknown as { findAndCountAll: Function }).findAndCountAll({
             where: {
               ...tenantFilter,
               ...literal(`search_vector @@ plainto_tsquery('english', ${escaped})`)
@@ -167,7 +167,7 @@ class SearchService {
             [field]: { [Op.iLike]: `%${searchTerm}%` }
           }));
 
-          const result = await config.model.findAndCountAll({
+          const result = await (config.model as unknown as { findAndCountAll: Function }).findAndCountAll({
             where: {
               ...tenantFilter,
               [Op.or]: whereConditions
@@ -183,8 +183,9 @@ class SearchService {
 
         totalByEntity[entityType] = count;
 
-        rows.forEach((row: unknown, index: number) => {
-          const plain = row.get ? row.get({ plain: true }) : row;
+        rows.forEach((row: Record<string, unknown>, index: number) => {
+          const getMethod = (row as unknown as { get?: Function }).get;
+          const plain = (getMethod ? getMethod.call(row, { plain: true }) : row) as Record<string, unknown>;
           allResults.push({
             entityType,
             id: plain.id,
@@ -217,7 +218,7 @@ class SearchService {
     const tenantFilter = tenantId ? { tenantId } : {};
 
     // Build where clause
-    const where: unknown = { ...tenantFilter };
+    const where: Record<string, unknown> = { ...tenantFilter };
 
     // Text search conditions
     if (searchTerm) {
@@ -235,15 +236,16 @@ class SearchService {
 
     const order: unknown = sortBy ? [[sortBy, sortOrder]] : [['createdAt', 'DESC']];
 
-    const { count, rows } = await config.model.findAndCountAll({
+    const { count, rows } = await (config.model as unknown as { findAndCountAll: Function }).findAndCountAll({
       where,
       limit,
       offset,
       order
     });
 
-    const docs: SearchResultItem[] = rows.map((row: unknown, index: number) => {
-      const plain = row.get ? row.get({ plain: true }) : row;
+    const docs: SearchResultItem[] = rows.map((row: Record<string, unknown>, index: number) => {
+      const getMethod = (row as unknown as { get?: Function }).get;
+      const plain = (getMethod ? getMethod.call(row, { plain: true }) : row) as Record<string, unknown>;
       return {
         entityType: entity,
         id: plain.id,

@@ -260,7 +260,7 @@ class ReportBuilderService {
     if (config.groupBy) {
       const aggAttributes = this.buildAggregationAttributes(config.aggregations || []);
       // Always include count when grouping
-      if (!aggAttributes.some(a => a[1]?.startsWith('count_'))) {
+      if (!aggAttributes.some((a: unknown) => ((a as unknown[])[1] as string | undefined)?.startsWith('count_'))) {
         aggAttributes.push([fn('COUNT', col(config.groupBy)), 'count']);
       }
       queryOptions.attributes = [config.groupBy, ...aggAttributes];

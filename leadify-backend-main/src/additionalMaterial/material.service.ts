@@ -31,7 +31,7 @@ class MaterialService {
 
     const material = await AdditionalMaterial.create({ ...input });
     material.items = await AdditionalMaterialItem.bulkCreate(
-      input.items.map(e => ({ name: e.name, price: e.price, additionalMaterialId: material.id }))
+      input.items.map(e => ({ name: e.name, price: e.price, additionalMaterialId: (material as Record<string, unknown>).id }))
     );
 
     return await this.getMaterial(material.id);
@@ -95,11 +95,12 @@ class MaterialService {
   }
 
   private async updateMaterialItems(material: unknown, items: createAdditionalMaterialItemsInput[]) {
-    const deletedIds = material.materialItem.filter((e: Record<string, unknown>) => !items.find(f => f.id === e.id)).map((e: Record<string, unknown>) => e.id);
+    const materialData = material as Record<string, unknown>;
+    const deletedIds = ((materialData.materialItem || []) as Record<string, unknown>[]).filter((e: Record<string, unknown>) => !items.find(f => f.id === e.id)).map((e: Record<string, unknown>) => e.id);
     const newMaterialItem: Partial<AdditionalMaterialItem>[] = [];
     const updateMaterialItem: Partial<AdditionalMaterialItem>[] = [];
 
-    items!.forEach(e => (e.id ? updateMaterialItem.push(e) : newMaterialItem.push({ ...e, additionalMaterialId: material.id })));
+    items!.forEach(e => (e.id ? updateMaterialItem.push(e) : newMaterialItem.push({ ...e, additionalMaterialId: (material as Record<string, unknown>).id })));
     await AdditionalMaterialItem.bulkCreate(newMaterialItem as []);
 
     await Promise.all(updateMaterialItem.map(async e => await AdditionalMaterialItem.update(e, { where: { id: e.id } })));

@@ -84,7 +84,7 @@ router.get('/health', (_req: Request, res: Response) => {
 router.get('/health/ready', async (_req: Request, res: Response) => {
   try {
     await sequelize.authenticate();
-    const [_results]: unknown = await sequelize.query('SELECT 1+1 AS result');
+    const [_results] = await sequelize.query('SELECT 1+1 AS result');
 
     res.status(200).json({
       status: 'ok',
