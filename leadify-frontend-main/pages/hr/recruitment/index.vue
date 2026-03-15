@@ -455,6 +455,24 @@ const defaultApplicantForm = () => ({
 const postingForm = reactive(defaultPostingForm());
 const applicantForm = reactive(defaultApplicantForm());
 
+// ─── Form Refs ───────────────────────────────────────────
+const postingFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const applicantFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+
+// ─── Validation Rules ────────────────────────────────────
+const postingRules = computed(() => ({
+  title: [{ required: true, message: t('validation.required') || 'Job title is required', trigger: 'blur' }]
+}));
+
+const applicantRules = computed(() => ({
+  name: [{ required: true, message: t('validation.required') || 'Name is required', trigger: 'blur' }],
+  email: [
+    { required: true, message: t('validation.required') || 'Email is required', trigger: 'blur' },
+    { type: 'email' as const, message: t('validation.email') || 'Invalid email format', trigger: 'blur' }
+  ],
+  jobPostingId: [{ required: true, message: t('validation.required') || 'Job posting is required', trigger: 'change' }]
+}));
+
 // ─── KPI Stats ───────────────────────────────────────────
 const kpiStats = computed(() => {
   const openPositions = postings.value.filter(p => p.status === 'OPEN').length;

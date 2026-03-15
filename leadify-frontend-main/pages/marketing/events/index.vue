@@ -368,6 +368,7 @@ div
 import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 interface EventItem {
   id: number;
@@ -956,8 +957,13 @@ async function handleDeleteEvent(event: EventItem) {
       confirmButtonText: t('common.delete'),
       cancelButtonText: t('common.cancel')
     });
-    events.value = events.value.filter(e => e.id !== event.id);
-    ElMessage.success(t('common.deleted'));
+    const res = await useApiFetch(`marketing/events/${event.id}`, 'DELETE');
+    if (res.success !== false) {
+      events.value = events.value.filter(e => e.id !== event.id);
+      ElMessage.success(t('common.deleted'));
+    } else {
+      ElMessage.error(t('common.deleteError') || 'Delete failed');
+    }
   } catch {
     // User cancelled
   }
