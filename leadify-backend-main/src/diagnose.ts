@@ -1,6 +1,7 @@
 import redisClient from './config/redis';
 import { sequelize } from './config/db';
 import Lead from './lead/leadModel';
+import logger from './config/logger';
 
 const diagnose = async () => {
   // DIAGNOSE AUDIT
@@ -9,7 +10,7 @@ const diagnose = async () => {
     await sequelize.authenticate();
     // Database Connection: OK
   } catch (error) {
-    console.error('Database Connection: FAILED', (error as Error).message);
+    logger.error('Database Connection: FAILED ' + (error as Error).message);
   }
 
   // 2. Check Redis Connection
@@ -20,7 +21,7 @@ const diagnose = async () => {
     }
     // Redis Connection: OK
   } catch (error) {
-    console.warn('Redis Connection: FAILED (Caching will be skipped)');
+    logger.warn('Redis Connection: FAILED (Caching will be skipped)');
   }
 
   // 3. Check Data
@@ -28,7 +29,7 @@ const diagnose = async () => {
     const _leadCount = await Lead.count();
     // Lead count retrieved
   } catch (error) {
-    console.error('Data Access Error:', (error as Error).message);
+    logger.error('Data Access Error: ' + (error as Error).message);
   }
 
   // Diagnose complete

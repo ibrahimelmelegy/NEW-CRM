@@ -652,7 +652,8 @@
     "unknown": "غير معروف",
     "updatedSuccessfully": "تم التحديث بنجاح",
     "viewNamePlaceholder": "أدخل اسم العرض...",
-    "visaFees": "رسوم التأشيرة"
+    "visaFees": "رسوم التأشيرة",
+    "fields": "حقول"
   },
   "export": {
     "title": "تصدير",
@@ -1004,6 +1005,8 @@
       "rejected": "مرفوض",
       "archived": "مؤرشف"
     },
+    "recentlyExecuted": "تم التنفيذ مؤخراً",
+    "scheduled": "مجدول",
     "optionalDescription": "وصف اختياري",
     "defaultSort": "افتراضي (createdAt)",
     "confirmDeleteReport": "حذف هذا التقرير؟",
@@ -13425,7 +13428,8 @@
     "picking": "التقاط",
     "receiving": "استلام",
     "shippingZone": "شحن",
-    "quarantine": "حجر صحي"
+    "quarantine": "حجر صحي",
+    "changeStatusConfirm": "تغيير حالة {count} مستودع(ات) إلى {status}؟"
   },
   "archive": {
     "title": "أرشيف المستندات",

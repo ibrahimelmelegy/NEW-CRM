@@ -27,7 +27,7 @@
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34,197,94,0.12);")
           Icon(name="ph:play-circle-bold" size="20" style="color: #22c55e")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Recently Executed
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reports.recentlyExecuted') }}
           p.text-2xl.font-black.mt-1(style="color: #22c55e;") {{ recentlyExecutedCount }}
 
     .relative.overflow-hidden.p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
@@ -35,7 +35,7 @@
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59,130,246,0.12);")
           Icon(name="ph:clock-bold" size="20" style="color: #3b82f6")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Scheduled
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reports.scheduled') }}
           p.text-2xl.font-black.mt-1(style="color: #3b82f6;") {{ scheduledCount }}
 
   //- Filters Row
@@ -87,7 +87,7 @@
             el-tag(size="small" effect="plain" round) {{ entityTypes[scope.row.entityType] || scope.row.entityType }}
         el-table-column(:label="$t('reportBuilder.fields')" min-width="100")
           template(#default="scope")
-            span.text-sm {{ scope.row.fields?.length || 0 }} fields
+            span.text-sm {{ scope.row.fields?.length || 0 }} {{ $t('common.fields') }}
         el-table-column(:label="$t('reportsPage.createdBy')" min-width="140")
           template(#default="scope")
             span.text-sm {{ scope.row.user?.name || '--' }}
@@ -125,8 +125,8 @@
               el-popconfirm(
                 :title="$t('reports.confirmDeleteReport')"
                 @confirm="handleDelete(scope.row.id)"
-                confirm-button-text="Delete"
-                cancel-button-text="Cancel"
+                :confirm-button-text="$t('common.delete')"
+                :cancel-button-text="$t('common.cancel')"
               )
                 template(#reference)
                   el-button(size="small" text type="danger")

@@ -747,7 +747,7 @@ async function bulkDeleteWarehouses() {
 async function bulkChangeWarehouseStatus(newStatus: string) {
   if (!selectedWarehouses.value.length) return;
   try {
-    await ElMessageBox.confirm(`Change ${selectedWarehouses.value.length} warehouse(s) to ${newStatus}?`, t('common.warning'), { type: 'warning' });
+    await ElMessageBox.confirm(t('warehouse.changeStatusConfirm', { count: selectedWarehouses.value.length, status: newStatus }), t('common.warning'), { type: 'warning' });
     for (const row of selectedWarehouses.value) {
       await useApiFetch(`warehouse/${row.id}`, 'PUT', { status: newStatus });
     }

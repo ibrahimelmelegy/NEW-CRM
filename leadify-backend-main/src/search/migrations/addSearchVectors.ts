@@ -6,6 +6,7 @@
  * leads, deals, clients, opportunities, projects, invoices, contracts
  */
 import { sequelize } from '../../config/db';
+import logger from '../../config/logger';
 
 const TABLES: {
   table: string;
@@ -98,7 +99,7 @@ async function migrate() {
       try {
         await sequelize.query(sql);
       } catch (err: unknown) {
-        console.error(`  Error: ${(err as Error).message}`);
+        logger.error(`  Error: ${(err as Error).message}`);
       }
     }
     // Table done
@@ -109,6 +110,6 @@ async function migrate() {
 }
 
 migrate().catch(err => {
-  console.error('Migration failed:', err);
+  logger.error('Migration failed: ' + err);
   process.exit(1);
 });

@@ -1,4 +1,5 @@
 import { sequelize } from './config/db';
+import logger from './config/logger';
 import User from './user/userModel';
 import Lead from './lead/leadModel';
 import Deal from './deal/model/dealModel';
@@ -17,7 +18,7 @@ const seedRadical = async () => {
 
     const admin = await User.findOne();
     if (!admin) {
-      console.error('No user found. Run npm run seed first.');
+      logger.error('No user found. Run npm run seed first.');
       process.exit(1);
     }
     // Using admin user
@@ -76,7 +77,7 @@ const seedRadical = async () => {
 
     // RADICAL SEEDING COMPLETE
   } catch (e: unknown) {
-    console.error('Seeding Error:', (e as Error).message);
+    logger.error('Seeding Error: ' + (e as Error).message);
   }
   process.exit();
 };

@@ -652,7 +652,8 @@
     "unknown": "Unknown",
     "updatedSuccessfully": "Updated successfully",
     "viewNamePlaceholder": "Enter view name...",
-    "visaFees": "Visa Fees"
+    "visaFees": "Visa Fees",
+    "fields": "fields"
   },
   "export": {
     "title": "Export",
@@ -976,6 +977,8 @@
       "rejected": "Rejected",
       "archived": "Archived"
     },
+    "recentlyExecuted": "Recently Executed",
+    "scheduled": "Scheduled",
     "optionalDescription": "Optional description",
     "defaultSort": "Default (createdAt)",
     "confirmDeleteReport": "Delete this report?",
@@ -13425,7 +13428,8 @@
     "picking": "Picking",
     "receiving": "Receiving",
     "shippingZone": "Shipping",
-    "quarantine": "Quarantine"
+    "quarantine": "Quarantine",
+    "changeStatusConfirm": "Change {count} warehouse(s) to {status}?"
   },
   "archive": {
     "title": "Document Archive",
