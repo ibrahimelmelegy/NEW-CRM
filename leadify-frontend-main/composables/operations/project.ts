@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 // Handle error during service creation
 function handleError(message: string) {
@@ -175,7 +176,7 @@ export async function getProjects(all?: false): Promise<CombinedProjectValues> {
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching projects:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching projects:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching projects. Please try again.');
@@ -264,7 +265,7 @@ export async function getProject(id: string): Promise<CombinedProjectValues> {
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching draft project:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching draft project:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching draft project. Please try again.');
@@ -279,7 +280,7 @@ export async function getProjectActivity(id: string | string[]): Promise<Lead> {
     const { body: lead } = await useApiFetch(`activity/project/${id}`);
     return lead;
   } catch (error) {
-    console.error('Error fetching lead:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching lead:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching project. Please try again.');
     return {} as Lead;
   }
@@ -529,7 +530,7 @@ export async function getProjectManpowers(): Promise<ProjectManpower[]> {
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching draft project:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching draft project:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching draft project. Please try again.');
@@ -553,7 +554,7 @@ export async function getProjectManpower(id: string): Promise<ProjectManpower> {
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching draft project:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching draft project:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching draft project. Please try again.');

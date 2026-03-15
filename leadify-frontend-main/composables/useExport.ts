@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 /**
  * useExport composable
  *
@@ -53,7 +54,7 @@ export function useExport() {
       const blob = await response.blob();
       downloadBlob(blob, options?.filename || `${title.replace(/\s+/g, '-').toLowerCase()}.pdf`);
     } catch (err) {
-      console.warn('Server-side PDF failed, falling back to client-side:', err);
+      logger.warn('Server-side PDF failed, falling back to client-side:', err);
       // Fallback to client-side PDF generation
       await exportToPDFClientSide(title, data, columns, options?.filename);
     } finally {
@@ -137,7 +138,7 @@ export function useExport() {
       doc.save(filename || `${title.replace(/\s+/g, '-').toLowerCase()}.pdf`);
     } catch (err) {
       exportError.value = 'PDF export failed';
-      console.error('Client-side PDF export failed:', err);
+      logger.error('Client-side PDF export failed:', err);
     }
   }
 
@@ -179,7 +180,7 @@ export function useExport() {
       downloadBlob(blob, options?.filename || `${title.replace(/\s+/g, '-').toLowerCase()}.csv`);
     } catch (err) {
       exportError.value = 'CSV export failed';
-      console.error('CSV export failed:', err);
+      logger.error('CSV export failed:', err);
     } finally {
       exporting.value = false;
     }
@@ -216,7 +217,7 @@ export function useExport() {
       URL.revokeObjectURL(url);
     } catch (err) {
       exportError.value = 'Excel export failed';
-      console.error('Excel export failed:', err);
+      logger.error('Excel export failed:', err);
     } finally {
       exporting.value = false;
     }
@@ -261,7 +262,7 @@ export function useExport() {
       downloadBlob(blob, filename || `report-${reportId}.${ext}`);
     } catch (err) {
       exportError.value = `${format.toUpperCase()} export failed`;
-      console.error('Report export failed:', err);
+      logger.error('Report export failed:', err);
     } finally {
       exporting.value = false;
     }
@@ -295,7 +296,7 @@ export function useExport() {
       }
     } catch (err) {
       exportError.value = `${format.toUpperCase()} export failed`;
-      console.error('Config export failed:', err);
+      logger.error('Config export failed:', err);
     } finally {
       exporting.value = false;
     }

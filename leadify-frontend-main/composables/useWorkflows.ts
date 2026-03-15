@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 // ── Types ──
 
@@ -134,7 +135,7 @@ export function useWorkflows() {
         }
       }
     } catch (err) {
-      console.error('Failed to fetch workflows:', err);
+      logger.error('Failed to fetch workflows:', err);
     } finally {
       loading.value = false;
     }
@@ -151,7 +152,7 @@ export function useWorkflows() {
       }
       return null;
     } catch (err) {
-      console.error('Failed to fetch workflow:', err);
+      logger.error('Failed to fetch workflow:', err);
       return null;
     } finally {
       loading.value = false;
@@ -203,7 +204,7 @@ export function useWorkflows() {
       }
       return false;
     } catch (err) {
-      console.error('Failed to delete workflow:', err);
+      logger.error('Failed to delete workflow:', err);
       return false;
     }
   }
@@ -220,7 +221,7 @@ export function useWorkflows() {
       }
       return false;
     } catch (err) {
-      console.error('Failed to toggle workflow:', err);
+      logger.error('Failed to toggle workflow:', err);
       return false;
     }
   }
@@ -234,7 +235,7 @@ export function useWorkflows() {
       }
       return null;
     } catch (err) {
-      console.error('Failed to test workflow:', err);
+      logger.error('Failed to test workflow:', err);
       return null;
     }
   }
@@ -251,7 +252,7 @@ export function useWorkflows() {
         return null;
       }
     } catch (err) {
-      console.error('Failed to execute workflow:', err);
+      logger.error('Failed to execute workflow:', err);
       return null;
     }
   }
@@ -274,7 +275,7 @@ export function useWorkflows() {
         }
       }
     } catch (err) {
-      console.error('Failed to fetch executions:', err);
+      logger.error('Failed to fetch executions:', err);
     } finally {
       loading.value = false;
     }
@@ -298,7 +299,7 @@ export function useWorkflows() {
         }
       }
     } catch (err) {
-      console.error('Failed to fetch all executions:', err);
+      logger.error('Failed to fetch all executions:', err);
     } finally {
       loading.value = false;
     }
@@ -313,7 +314,7 @@ export function useWorkflows() {
       }
       return null;
     } catch (err) {
-      console.error('Failed to fetch execution detail:', err);
+      logger.error('Failed to fetch execution detail:', err);
       return null;
     }
   }
@@ -327,7 +328,7 @@ export function useWorkflows() {
       }
       return [];
     } catch (err) {
-      console.error('Failed to fetch templates:', err);
+      logger.error('Failed to fetch templates:', err);
       return [];
     }
   }

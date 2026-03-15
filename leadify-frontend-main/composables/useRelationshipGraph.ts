@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { useApiFetch } from './useApiFetch';
+import logger from '~/utils/logger'
 
 export interface GraphNode {
   id: string;
@@ -39,7 +40,7 @@ export function useRelationshipGraph() {
         edges.value = rb.edges || [];
       }
     } catch (e) {
-      console.warn('[RelationshipGraph] Failed to fetch graph data:', e);
+      logger.warn('[RelationshipGraph] Failed to fetch graph data:', e);
     } finally {
       loading.value = false;
     }

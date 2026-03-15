@@ -1,4 +1,5 @@
 import { io, Socket } from 'socket.io-client';
+import logger from '~/utils/logger'
 
 export const useSocket = () => {
   const config = useRuntimeConfig();
@@ -12,11 +13,11 @@ export const useSocket = () => {
     socket.value = io(socketUrl, { withCredentials: true });
 
     socket.value.on('connect', () => {
-      console.warn('[Socket] Connected to server:', socket.value?.id);
+      logger.warn('[Socket] Connected to server:', socket.value?.id);
     });
 
     socket.value.on('disconnect', () => {
-      console.warn('[Socket] Disconnected from server');
+      logger.warn('[Socket] Disconnected from server');
     });
   });
 

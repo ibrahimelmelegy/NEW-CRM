@@ -1,6 +1,7 @@
 /* eslint-disable no-use-before-define */
 import { getOpportunities } from './useOpportunity';
 import type { RelatedTypesValues, RelatedTypeOptions, RelatedToOptions, ProposalTypeOptions, ProposalInfoPayload } from '~/types/Proposal';
+import logger from '~/utils/logger'
 
 // Handle error during lead creation
 function handleError(message: string) {
@@ -134,7 +135,7 @@ export async function getProposal(id: string | string[]): Promise<ProposalData> 
     const { body: proposal } = await useApiFetch(`proposal/${id}`);
     return proposal as unknown as ProposalData;
   } catch (error) {
-    console.error('Error fetching proposal:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching proposal:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching proposal. Please try again.');
     return {} as ProposalData;
   }
@@ -145,7 +146,7 @@ export async function getProposalFinanceTableByPropsalId(proposalId: string | st
     const { body: table } = await useApiFetch(`proposal-finance-table/?page=1&limit=10&proposalId=${proposalId}`);
     return table as unknown as FinanceTableData;
   } catch (error) {
-    console.error('Error fetching proposal:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching proposal:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching proposal. Please try again.');
     return {} as FinanceTableData;
   }
@@ -156,7 +157,7 @@ export async function getProposalFinanceTableItemByTablelId(TablelId: string | s
     const { body: tableItem } = await useApiFetch(`proposal-finance-table-item/?page=1&limit=1000&financeTableId=${TablelId}`);
     return tableItem as unknown as { items?: FinanceTableItem[] };
   } catch (error) {
-    console.error('Error fetching tableItem:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching tableItem:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching table Item. Please try again.');
     return {};
   }
@@ -627,7 +628,7 @@ export async function getProposalFinanceTable(proposalId: string | number): Prom
 
     return tablesWithItems;
   } catch (error) {
-    console.error('Error fetching finance tables:', error);
+    logger.error('Error fetching finance tables:', error);
     return [];
   }
 }

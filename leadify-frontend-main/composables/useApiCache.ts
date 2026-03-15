@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue';
+import logger from '~/utils/logger'
 
 interface CacheEntry<T> {
   data: T;
@@ -149,7 +150,7 @@ export const withRetry = async <T>(fn: () => Promise<T>, options: RetryOptions =
       if (attempt < maxRetries && shouldRetry) {
         // Exponential backoff: delay * 2^attempt
         const delay = retryDelay * Math.pow(2, attempt);
-        console.warn(`[Retry] Attempt ${attempt + 1}/${maxRetries} failed. Retrying in ${delay}ms...`);
+        logger.warn(`[Retry] Attempt ${attempt + 1}/${maxRetries} failed. Retrying in ${delay}ms...`);
         await sleep(delay);
       } else if (!shouldRetry) {
         // Don't retry on non-retryable errors (4xx client errors)

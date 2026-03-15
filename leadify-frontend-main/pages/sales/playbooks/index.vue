@@ -359,6 +359,7 @@
 import { ref, reactive, computed } from 'vue';
 import { ElNotification, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({ layout: 'default', title: 'Sales Playbooks' });
 
@@ -439,7 +440,7 @@ async function loadPlaybooks() {
       playbooks.value = data.docs || data || [];
     }
   } catch (e) {
-    console.error('Failed to load playbooks', e);
+    logger.error('Failed to load playbooks', e);
     playbooks.value = [];
   } finally {
     loading.value = false;

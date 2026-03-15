@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 export interface RoleData {
   id?: string;
@@ -39,7 +40,7 @@ export async function getRole(id: string | string[]): Promise<RoleData> {
     const { body: role } = await useApiFetch(`role/${id}`);
     return role as unknown as RoleData;
   } catch (error) {
-    console.error('Error fetching role:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching role:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching role. Please try again.');
     return {} as RoleData;
   }

@@ -240,6 +240,7 @@ import { ElMessage, ElNotification } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 import * as echarts from 'echarts/core';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({
   layout: 'default',
@@ -461,7 +462,7 @@ async function fetchBookingPages() {
       bookingPages.value = res.body || [];
     }
   } catch (e) {
-    console.error('Failed to fetch booking pages:', e);
+    logger.error('Failed to fetch booking pages:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   }
 }
@@ -475,7 +476,7 @@ async function fetchAnalytics() {
       renderCharts();
     }
   } catch (e) {
-    console.error('Failed to fetch analytics:', e);
+    logger.error('Failed to fetch analytics:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   }
 }
@@ -672,7 +673,7 @@ async function fetchStaffAvailability() {
       staffAvailability.value = Array.from(staffMap.values());
     }
   } catch (e) {
-    console.error('Failed to fetch staff availability:', e);
+    logger.error('Failed to fetch staff availability:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   }
 }

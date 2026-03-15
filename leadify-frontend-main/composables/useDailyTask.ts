@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 // Handle error during task operations
 function handleError(message: string) {
@@ -98,7 +99,7 @@ export async function getDailyTasks(all?: boolean): Promise<UseDailyTaskResult> 
       throw new Error(message || 'Failed to fetch Daily Tasks');
     }
   } catch (error) {
-    console.error('Error fetching daily tasks:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching daily tasks:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching daily tasks. Please try again.');
     return {
       tasks: [],
@@ -117,7 +118,7 @@ export async function getDailyTask(id: string | string[]): Promise<DailyTask> {
     const { body: task } = await useApiFetch(`daily-task/${id}`);
     return task as DailyTask;
   } catch (error) {
-    console.error('Error fetching daily task:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching daily task:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching daily task. Please try again.');
     return {} as DailyTask;
   }

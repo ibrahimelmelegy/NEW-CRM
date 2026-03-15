@@ -119,6 +119,7 @@ div
 import { ElNotification } from 'element-plus';
 import { getIncreaseLineChart, getBarChartData } from '~/composables/charts';
 import { fetchExecutiveSummary, fetchPipelineData, fetchRevenueChart } from '~/composables/useDashboard';
+import logger from '~/utils/logger'
 
 // Lazy-load heavy chart dependencies for faster initial page load
 const VChart = defineAsyncComponent(() =>
@@ -219,7 +220,7 @@ async function loadExecutiveSummary() {
       topDeals.value = data.topDeals || [];
     }
   } catch (e: unknown) {
-    console.error('Failed to load executive summary:', e);
+    logger.error('Failed to load executive summary:', e);
   } finally {
     loadingSummary.value = false;
   }
@@ -230,7 +231,7 @@ async function loadRevenueChart() {
   try {
     revenueData.value = await fetchRevenueChart(revenuePeriod.value);
   } catch (e: unknown) {
-    console.error('Failed to load revenue chart:', e);
+    logger.error('Failed to load revenue chart:', e);
   } finally {
     loadingRevenue.value = false;
   }
@@ -241,7 +242,7 @@ async function loadPipeline() {
   try {
     pipelineData.value = await fetchPipelineData();
   } catch (e: unknown) {
-    console.error('Failed to load pipeline:', e);
+    logger.error('Failed to load pipeline:', e);
   } finally {
     loadingPipeline.value = false;
   }
@@ -255,7 +256,7 @@ async function loadActivities() {
       activities.value = body.docs || body || [];
     }
   } catch (e: unknown) {
-    console.error('Failed to load activities:', e);
+    logger.error('Failed to load activities:', e);
   } finally {
     loadingActivities.value = false;
   }
@@ -269,7 +270,7 @@ async function loadPendingTasks() {
       pendingTasks.value = body.docs || body || [];
     }
   } catch (e: unknown) {
-    console.error('Failed to load tasks:', e);
+    logger.error('Failed to load tasks:', e);
   } finally {
     loadingTasks.value = false;
   }

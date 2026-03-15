@@ -310,6 +310,7 @@ import {
 } from 'lucide-vue-next';
 import { getProposal, deleteProposal as deleteProposalApi } from '~/composables/useProposals';
 import ProposalApprovalActions from '~/components/DocumentBuilder/ProposalApprovalActions.vue';
+import logger from '~/utils/logger'
 
 definePageMeta({
   layout: 'default',
@@ -390,7 +391,7 @@ async function reloadProposal() {
     const data = await getProposal(proposalId.value);
     proposal.value = data && Object.keys(data).length > 0 ? data : null;
   } catch (error) {
-    console.error('Failed to load proposal:', error);
+    logger.error('Failed to load proposal:', error);
     proposal.value = null;
   } finally {
     loading.value = false;

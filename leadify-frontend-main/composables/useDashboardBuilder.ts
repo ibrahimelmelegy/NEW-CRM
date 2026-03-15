@@ -5,6 +5,7 @@
 import { ref } from 'vue';
 import { ElNotification } from 'element-plus';
 import { useApiFetch } from './useApiFetch';
+import logger from '~/utils/logger'
 
 export interface BuilderWidget {
   id: string;
@@ -254,7 +255,7 @@ export function useDashboardBuilder() {
       const t = useNuxtApp().$i18n.t;
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
     } catch (e) {
-      console.error('Failed to save dashboard layout:', e);
+      logger.error('Failed to save dashboard layout:', e);
       const t = useNuxtApp().$i18n.t;
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.saveFailed') });
     }

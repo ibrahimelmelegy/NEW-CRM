@@ -44,6 +44,7 @@ import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { Plus, Select, Edit } from '@element-plus/icons-vue';
 import { ref } from 'vue';
+import logger from '~/utils/logger'
 const props = defineProps({
   title: String,
   descriptionOne: String,
@@ -105,7 +106,7 @@ const onSubmit = handleSubmit(async (values: unknown, actions: unknown) => {
     dialog.value = false;
   } catch (error) {
     // Handle the error and prevent the step from being incremented
-    console.error('Project creation failed', error);
+    logger.error('Project creation failed', error);
   }
   // emit('submit')
 });

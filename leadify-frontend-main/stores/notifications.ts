@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { useSocketStore } from '~/stores/socket';
 import type { AppNotification } from '~/types/models';
+import logger from '~/utils/logger'
 
 export const useNotificationStore = defineStore('notifications', {
   state: () => ({
@@ -50,7 +51,7 @@ export const useNotificationStore = defineStore('notifications', {
           this.totalItems = response.body.pagination?.totalItems ?? this.notifications.length;
         }
       } catch (error: unknown) {
-        console.error('Error fetching notifications:', error);
+        logger.error('Error fetching notifications:', error);
       } finally {
         this.loading = false;
       }
@@ -70,7 +71,7 @@ export const useNotificationStore = defineStore('notifications', {
           this.unreadCount = response.body.count;
         }
       } catch (error: unknown) {
-        console.error('Error fetching unread count:', error);
+        logger.error('Error fetching unread count:', error);
       }
     },
 
@@ -86,7 +87,7 @@ export const useNotificationStore = defineStore('notifications', {
           }
         }
       } catch (error: unknown) {
-        console.error('Error marking notification as read:', error);
+        logger.error('Error marking notification as read:', error);
       }
     },
 
@@ -101,7 +102,7 @@ export const useNotificationStore = defineStore('notifications', {
           this.unreadCount = 0;
         }
       } catch (error: unknown) {
-        console.error('Error marking all notifications as read:', error);
+        logger.error('Error marking all notifications as read:', error);
       }
     },
 
@@ -121,7 +122,7 @@ export const useNotificationStore = defineStore('notifications', {
           }
         }
       } catch (error: unknown) {
-        console.error('Error deleting notification:', error);
+        logger.error('Error deleting notification:', error);
       }
     },
 

@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template lang="pug">
 .flex.items-center.justify-between.mb-5.mt-5
   .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.projects.details.title') }}
@@ -681,7 +682,7 @@ function materialMappedData() {
     const additionalMaterials =
       project?.additionalMaterialItem?.filter(item => item.AdditionalMaterialItem.additionalMateria === material.additionalMaterialId) || [];
 
-    console.warn('material', material);
+    logger.warn('material', material);
     const totalAdditionalMaterialCost = additionalMaterials.reduce((sum, item) => {
       return sum + item.quantity * Number(item.AdditionalMaterialItem?.price || 0);
     }, 0);

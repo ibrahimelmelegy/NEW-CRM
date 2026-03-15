@@ -1,4 +1,5 @@
 import { user, useUser } from '@/composables/useUser';
+import logger from '~/utils/logger'
 
 const permissions = ref<string[]>([]);
 const isLoaded = ref(false);
@@ -40,7 +41,7 @@ export async function usePermissions(isUpdated = false) {
 export function usePermissionsSync() {
   if (!isLoaded.value) {
     usePermissions().catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
   }
   return {

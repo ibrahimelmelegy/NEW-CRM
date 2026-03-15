@@ -27,6 +27,7 @@ el-form-item(:label="label" :error="errorMessage" class="!mb-6 w-full")
 import { ElMessage } from 'element-plus';
 import { useField } from 'vee-validate';
 import type { UploadFile, UploadProps } from 'element-plus';
+import logger from '~/utils/logger'
 const { t } = useI18n();
 
 const props = defineProps({
@@ -156,7 +157,7 @@ const handleUploadRequest = async (params: unknown) => {
       return response.body;
     }
   } catch (error) {
-    console.error('Upload failed:', error);
+    logger.error('Upload failed:', error);
   } finally {
     loading.value = false;
   }

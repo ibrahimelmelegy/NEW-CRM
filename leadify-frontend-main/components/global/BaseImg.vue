@@ -8,6 +8,7 @@
 import { storeToRefs } from 'pinia';
 import { useMain } from '~/stores/common';
 import { useAuthStore } from '~/stores/auth';
+import logger from '~/utils/logger'
 const authStore = useAuthStore();
 
 const activeName = ref('Personal info');
@@ -29,7 +30,7 @@ function getImageRedirectedLink(link: string) {
         generatedSrc.value = response;
       })
       .catch(error => {
-        console.error('Error:', error);
+        logger.error('Error:', error);
       });
   } else {
     generatedSrc.value = props.src;
@@ -63,7 +64,7 @@ async function getRedirectedUrlWithHeaders(url: string) {
 
     return redirectedUrl;
   } catch (error) {
-    console.error('Error getting redirected URL:', error);
+    logger.error('Error getting redirected URL:', error);
     throw error;
   }
 }

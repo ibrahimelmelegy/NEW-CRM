@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import type { Client } from '~/types/models';
 import type { ApiListParams } from '~/types/api';
 import type { ClientIndustry } from '~/types/enums';
+import logger from '~/utils/logger'
 
 interface Pagination {
   page: number;
@@ -71,7 +72,7 @@ export const useClientStore = defineStore('clients', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to fetch clients';
         this.error = message;
-        console.error('Error fetching clients:', error);
+        logger.error('Error fetching clients:', error);
       } finally {
         this.loading = false;
       }
@@ -92,7 +93,7 @@ export const useClientStore = defineStore('clients', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to fetch client';
         this.error = message;
-        console.error('Error fetching client:', error);
+        logger.error('Error fetching client:', error);
       } finally {
         this.loading = false;
       }
@@ -115,7 +116,7 @@ export const useClientStore = defineStore('clients', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to create client';
         this.error = message;
-        console.error('Error creating client:', error);
+        logger.error('Error creating client:', error);
         return null;
       } finally {
         this.loading = false;
@@ -145,7 +146,7 @@ export const useClientStore = defineStore('clients', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to update client';
         this.error = message;
-        console.error('Error updating client:', error);
+        logger.error('Error updating client:', error);
         return null;
       } finally {
         this.loading = false;
@@ -172,7 +173,7 @@ export const useClientStore = defineStore('clients', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to delete client';
         this.error = message;
-        console.error('Error deleting client:', error);
+        logger.error('Error deleting client:', error);
         return false;
       } finally {
         this.loading = false;

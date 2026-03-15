@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import { ElNotification } from 'element-plus';
 import { useApiFetch } from './useApiFetch';
+import logger from '~/utils/logger'
 
 export interface AIChatMessage {
   role: 'user' | 'assistant';
@@ -253,7 +254,7 @@ export function useAI() {
       }
       return [];
     } catch (error) {
-      console.error('Error fetching insights:', error);
+      logger.error('Error fetching insights:', error);
       return [];
     } finally {
       isInsightsLoading.value = false;

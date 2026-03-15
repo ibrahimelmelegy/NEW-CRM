@@ -107,6 +107,7 @@ import { ref, reactive } from 'vue';
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { fetchScoringRules, createScoringRule, updateScoringRule, deleteScoringRule, getGradeThresholds } from '~/composables/useLeadScoring';
 import type { ScoringRule, ScoringCriteria, GradeThreshold } from '~/composables/useLeadScoring';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Lead Scoring' });
 
@@ -133,7 +134,7 @@ try {
   rules.value = rulesData;
   grades.value = gradesData;
 } catch (e) {
-  console.error('Failed to load lead scoring data', e);
+  logger.error('Failed to load lead scoring data', e);
 } finally {
   loading.value = false;
 }

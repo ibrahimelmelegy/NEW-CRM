@@ -81,6 +81,7 @@ import { useMain } from '~/stores/common';
 import { useApiFetch } from '~/composables/useApiFetch';
 import { useThemeStore } from '~/stores/theme';
 import { useSidebarFavorites } from '~/composables/useSidebarFavorites';
+import logger from '~/utils/logger'
 
 const themeStore = useThemeStore();
 const mainStore = useMain();
@@ -102,7 +103,7 @@ onMounted(async () => {
     const response = await useApiFetch('auth/me');
     user.value = response?.user;
   } catch (e) {
-    console.error('Auth fetch failed', e);
+    logger.error('Auth fetch failed', e);
   }
 });
 

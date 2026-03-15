@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 // Handle error during additional material creation
 function handleError(message: string) {
@@ -74,7 +75,7 @@ export async function getMaterials(project?: number): Promise<UseAdditionalMater
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching additional Material:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching additional Material:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching additional Material. Please try again.');
@@ -132,7 +133,7 @@ export async function getAdditionalMaterials(): Promise<UseAdditionalMaterialsRe
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching additional Material:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching additional Material:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching additional Material. Please try again.');
@@ -153,7 +154,7 @@ export async function getAdditionalMaterial(id: string | string[]): Promise<Addi
     const { body: material } = await useApiFetch(`additional-material/${id}`);
     return material;
   } catch (error) {
-    console.error('Error fetching material:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching material:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching material. Please try again.');
     return {} as AdditionalMaterial;
   }

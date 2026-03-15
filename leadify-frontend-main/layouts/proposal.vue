@@ -28,14 +28,14 @@ section
               el-button.bg-gray-100(
                 v-if="!route.fullPath.includes('preview')",
                 size="large",
-                @click="proposal?.status == 'APPROVED' ? [router.push(`/sales/proposals/editor/preview/${route.params.slug}`)]: [saveContent() , router.push(`/sales/proposals/editor/preview/${route.params.slug}`)]",
+                @click="proposal?.status === 'APPROVED' ? [router.push(`/sales/proposals/editor/preview/${route.params.slug}`)]: [saveContent() , router.push(`/sales/proposals/editor/preview/${route.params.slug}`)]",
                 class="!rounded-2xl"
               )
                 Icon(name="IconEye", size="20")
               el-button.bg-gray-100(
                 v-if="route.fullPath.includes('preview')",
                 size="large",
-                :disabled="proposal?.status == 'APPROVED'",
+                :disabled="proposal?.status === 'APPROVED'",
                 @click="router.push(`/sales/proposals/editor/content/${route.params.slug}`)",
                 class="!rounded-2xl"
               )
@@ -55,7 +55,7 @@ section
                 type="primary",
                 :icon="Plus",
                 class="!my-4 !rounded-2xl",
-                :disabled="proposal?.status == 'APPROVED'",
+                :disabled="proposal?.status === 'APPROVED'",
                 @click="saveContent"
               ) Save
 

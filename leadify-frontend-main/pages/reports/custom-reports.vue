@@ -368,6 +368,7 @@
 import { ref, computed, onMounted, reactive } from 'vue';
 import { ElNotification } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
+import logger from '~/utils/logger'
 
 definePageMeta({});
 
@@ -456,7 +457,7 @@ async function fetchReports() {
       reports.value = Array.isArray(body) ? body : (body as unknown).docs || [];
     }
   } catch (e) {
-    console.error('Failed to fetch reports', e);
+    logger.error('Failed to fetch reports', e);
   } finally {
     loading.value = false;
   }
@@ -469,7 +470,7 @@ async function fetchEntityTypes() {
       entityTypes.value = body as Record<string, string>;
     }
   } catch (e) {
-    console.error('Failed to fetch entity types', e);
+    logger.error('Failed to fetch entity types', e);
   }
 }
 
@@ -485,7 +486,7 @@ async function fetchFields(entityType: string) {
       availableFields.value = (body as unknown).fields || [];
     }
   } catch (e) {
-    console.error('Failed to fetch fields', e);
+    logger.error('Failed to fetch fields', e);
     availableFields.value = [];
   } finally {
     loadingFields.value = false;
@@ -507,7 +508,7 @@ async function handleExecute(report: unknown) {
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
     }
   } catch (e) {
-    console.error('Failed to execute report', e);
+    logger.error('Failed to execute report', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     executingId.value = null;
@@ -553,7 +554,7 @@ async function handleExport(reportId: number, format: string) {
 
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.success') });
   } catch (e) {
-    console.error('Export failed', e);
+    logger.error('Export failed', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   }
 }
@@ -595,7 +596,7 @@ async function handleSaveReport() {
       formDialogVisible.value = false;
       await fetchReports();
     } catch (e) {
-      console.error('Save failed', e);
+      logger.error('Save failed', e);
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
     } finally {
       saving.value = false;
@@ -613,7 +614,7 @@ async function handleDelete(id: number) {
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
     }
   } catch (e) {
-    console.error('Delete failed', e);
+    logger.error('Delete failed', e);
   }
 }
 

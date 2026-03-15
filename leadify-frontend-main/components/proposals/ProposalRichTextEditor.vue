@@ -298,6 +298,7 @@ import {
 } from 'lucide-vue-next';
 
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 // ---- Inline FontSize extension (avoids external dependency) ----
 const FontSize = Extension.create({
@@ -483,7 +484,7 @@ const buildExtensions = () => {
     );
   } catch {
     // @tiptap/extension-mention not installed - mention support disabled
-    console.warn('[ProposalRichTextEditor] @tiptap/extension-mention not installed. Mention support is disabled.');
+    logger.warn('[ProposalRichTextEditor] @tiptap/extension-mention not installed. Mention support is disabled.');
   }
 
   // Dynamically add Markdown extension if available
@@ -494,7 +495,7 @@ const buildExtensions = () => {
     extensions.push(Markdown);
   } catch {
     // tiptap-markdown not installed - markdown paste support disabled
-    console.warn('[ProposalRichTextEditor] tiptap-markdown not installed. Markdown paste support is disabled.');
+    logger.warn('[ProposalRichTextEditor] tiptap-markdown not installed. Markdown paste support is disabled.');
   }
 
   return extensions;

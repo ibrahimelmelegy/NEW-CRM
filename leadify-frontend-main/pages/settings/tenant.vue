@@ -123,6 +123,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 const router = useRouter();
 
@@ -209,7 +210,7 @@ async function loadTenantInfo() {
       usage.value = usageRes.body as TenantUsage;
     }
   } catch (e) {
-    console.error('Failed to load tenant info', e);
+    logger.error('Failed to load tenant info', e);
   } finally {
     loading.value = false;
   }

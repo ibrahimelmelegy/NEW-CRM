@@ -7,6 +7,7 @@
  */
 
 import { useSocketStore as _importedSocketStore } from '~/stores/socket';
+import logger from '~/utils/logger'
 
 // Wrapper to get the socket store instance (only call client-side)
 function _getSocketStore() {
@@ -75,7 +76,7 @@ export function useNotificationCenter() {
         unreadCount.value = body.unreadNotificationsCount || 0;
       }
     } catch (e) {
-      console.error('[NotificationCenter] Failed to fetch:', e);
+      logger.error('[NotificationCenter] Failed to fetch:', e);
     } finally {
       loading.value = false;
     }
@@ -225,7 +226,7 @@ export function useNotificationCenter() {
         unreadCount.value = 0;
       }
     } catch (e) {
-      console.error('[NotificationCenter] Failed to mark all read:', e);
+      logger.error('[NotificationCenter] Failed to mark all read:', e);
     }
   }
 
@@ -244,7 +245,7 @@ export function useNotificationCenter() {
         }
       }
     } catch (e) {
-      console.error('[NotificationCenter] Failed to mark read:', e);
+      logger.error('[NotificationCenter] Failed to mark read:', e);
     }
   }
 
@@ -264,7 +265,7 @@ export function useNotificationCenter() {
         }
       }
     } catch (e) {
-      console.error('[NotificationCenter] Failed to delete:', e);
+      logger.error('[NotificationCenter] Failed to delete:', e);
     }
   }
 

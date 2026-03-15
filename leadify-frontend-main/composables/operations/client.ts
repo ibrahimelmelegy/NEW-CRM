@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 // Helper function to normalize phone numbers
 function normalizePhoneNumber(phone: string): string {
   return phone.replace(/\s+/g, '').replace(/^\+/, '').replace(/^2/, ''); // Assuming removing country code prefix '2', modify if needed
@@ -141,7 +142,7 @@ export async function getClients(): Promise<UseClientsResult> {
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching clients:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching clients:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching clients. Please try again.');
@@ -162,7 +163,7 @@ export async function getClient(id: string | string[]): Promise<Client> {
     const { body: lead } = await useApiFetch(`client/${id}`);
     return lead;
   } catch (error) {
-    console.error('Error fetching lead:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching lead:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching lead. Please try again.');
     return {} as Client;
   }
@@ -173,7 +174,7 @@ export async function getClientActivity(id: string | string[]): Promise<Lead> {
     const { body: lead } = await useApiFetch(`activity/client/${id}`);
     return lead;
   } catch (error) {
-    console.error('Error fetching lead:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching lead:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching client. Please try again.');
     return {} as Lead;
   }

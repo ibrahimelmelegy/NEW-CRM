@@ -65,6 +65,7 @@ import { ref, reactive } from 'vue';
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { fetchEmailAccounts, connectEmailAccount, disconnectEmailAccount } from '~/composables/useEmailIntegration';
 import type { EmailAccount } from '~/composables/useEmailIntegration';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Email Accounts' });
 
@@ -88,7 +89,7 @@ const connectForm = reactive({
 try {
   accounts.value = await fetchEmailAccounts();
 } catch (e) {
-  console.error('Failed to load email accounts', e);
+  logger.error('Failed to load email accounts', e);
 } finally {
   loading.value = false;
 }

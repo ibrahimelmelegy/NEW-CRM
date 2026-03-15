@@ -31,6 +31,7 @@
 
 <script setup lang="ts">
 import { formatLargeNumber } from '@/composables/format';
+import logger from '~/utils/logger'
 
 const props = defineProps<{
   tableType: 'recent-deals' | 'team';
@@ -57,7 +58,7 @@ async function loadData() {
       await loadTeamPerformance();
     }
   } catch (e) {
-    console.error('Table widget load failed:', e);
+    logger.error('Table widget load failed:', e);
   } finally {
     loading.value = false;
   }

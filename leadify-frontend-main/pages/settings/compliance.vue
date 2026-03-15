@@ -405,6 +405,7 @@ import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
 import { graphic } from 'echarts/core';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Compliance Center' });
 
@@ -780,7 +781,7 @@ function processDsrRequest(dsr: unknown) {
       updateKpis();
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 

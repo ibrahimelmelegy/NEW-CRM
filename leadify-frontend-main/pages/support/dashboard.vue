@@ -295,6 +295,7 @@ import {
   ticketPriorityOptions
 } from '@/composables/useSupport';
 import type { TicketMetrics, AgentWorkload } from '@/composables/useSupport';
+import logger from '~/utils/logger'
 
 const router = useRouter();
 const { t } = useI18n();
@@ -483,7 +484,7 @@ async function loadAgentWorkload() {
       agentWorkload.value = body || [];
     }
   } catch (error) {
-    console.error('Failed to load agent workload:', error);
+    logger.error('Failed to load agent workload:', error);
   }
 }
 
@@ -495,7 +496,7 @@ async function handleRowClick(row: unknown) {
       drawerVisible.value = true;
     }
   } catch (error) {
-    console.error('Failed to load ticket details:', error);
+    logger.error('Failed to load ticket details:', error);
   }
 }
 

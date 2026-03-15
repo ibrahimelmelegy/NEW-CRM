@@ -507,6 +507,7 @@ import { useApiFetch } from '~/composables/useApiFetch';
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
+import logger from '~/utils/logger'
 
 definePageMeta({ middleware: 'permissions', title: 'Territory Management' });
 
@@ -819,7 +820,7 @@ async function loadData() {
       }));
     }
   } catch (e) {
-    console.error('Failed to load territory data', e);
+    logger.error('Failed to load territory data', e);
     ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;

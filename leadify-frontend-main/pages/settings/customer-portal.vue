@@ -429,6 +429,7 @@
 import { ref, reactive, computed, onMounted, nextTick, watch, onBeforeUnmount } from 'vue';
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 const { goBack } = useSafeBack('/settings');
 const { t } = useI18n();
@@ -706,7 +707,7 @@ function deleteArticle(idx: number) {
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 
@@ -805,7 +806,7 @@ function deleteFaq(idx: number) {
       ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 
@@ -951,7 +952,7 @@ async function initChart() {
       ]
     });
   } catch (err) {
-    console.error('Failed to init portal analytics chart', err);
+    logger.error('Failed to init portal analytics chart', err);
   }
 }
 

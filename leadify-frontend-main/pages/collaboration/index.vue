@@ -383,6 +383,7 @@ import VChart from 'vue-echarts';
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 import { useSocket } from '~/composables/useSocket';
+import logger from '~/utils/logger'
 
 const { t } = useI18n();
 const router = useRouter();
@@ -564,7 +565,7 @@ async function loadActivities(isLoadMore = false) {
       offset.value += items.length;
     }
   } catch (e) {
-    console.error('Failed to load activities:', e);
+    logger.error('Failed to load activities:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {
     loadingFeed.value = false;
@@ -588,7 +589,7 @@ async function loadTeamMembers() {
       }));
     }
   } catch (e) {
-    console.error('Failed to load team members:', e);
+    logger.error('Failed to load team members:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   }
 }
@@ -615,7 +616,7 @@ async function loadStats() {
       stats.avgResponseTime = stats.avgResponseTime ?? 0;
     }
   } catch (e) {
-    console.error('Failed to load stats:', e);
+    logger.error('Failed to load stats:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   }
 }

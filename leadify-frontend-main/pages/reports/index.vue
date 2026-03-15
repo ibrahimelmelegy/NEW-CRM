@@ -196,6 +196,7 @@ import { useReminders } from '~/composables/useReminders';
 import { useDocumentArchive } from '~/composables/useDocumentArchive';
 import { useActivityLog } from '~/composables/useActivityLog';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({});
 
@@ -377,7 +378,7 @@ const drillDownData = computed(() => {
 async function loadData() {
   // This would trigger a reload of data with date range filter
   // For now, we use the existing composables
-  console.warn('Loading data with date range:', dateRange.value);
+  logger.warn('Loading data with date range:', dateRange.value);
 }
 
 async function handleExport(format: 'csv' | 'excel') {
@@ -418,7 +419,7 @@ async function handleExport(format: 'csv' | 'excel') {
 
     ElMessage.success(t('reports.exportSuccess', { format: format.toUpperCase() }));
   } catch (error) {
-    console.error('Export failed:', error);
+    logger.error('Export failed:', error);
     ElMessage.error(t('reports.exportFailed'));
   } finally {
     exporting.value = false;

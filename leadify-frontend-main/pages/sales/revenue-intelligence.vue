@@ -192,6 +192,7 @@ import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import * as echarts from 'echarts/core';
 import { ElMessage } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Revenue Intelligence' });
 
@@ -506,7 +507,7 @@ async function loadAllData() {
     await nextTick();
     renderCharts();
   } catch (e) {
-    console.error('Failed to load revenue intelligence data', e);
+    logger.error('Failed to load revenue intelligence data', e);
     ElMessage.error(t('revenueIntelligence.loadFailed'));
   } finally {
     loading.value = false;

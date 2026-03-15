@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 export interface ChurnLead {
   id: string;
@@ -31,7 +32,7 @@ export async function getChurnDashboardData(): Promise<ChurnDashboardData | null
     const t = useNuxtApp().$i18n.t;
     throw new Error(message || t('common.fetchError'));
   } catch (error) {
-    console.error('Error fetching churn dashboard:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching churn dashboard:', error instanceof Error ? error.message : error);
     const t = useNuxtApp().$i18n.t;
     ElNotification({
       type: 'error',

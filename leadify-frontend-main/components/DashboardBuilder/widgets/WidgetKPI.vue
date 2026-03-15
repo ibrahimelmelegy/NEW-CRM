@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template lang="pug">
 .widget-kpi.glass-card.p-5.h-full
   .flex.items-center.justify-between(v-if="!loading")
@@ -59,7 +60,7 @@ async function loadData() {
       }
     }
   } catch (e) {
-    console.error('KPI widget load failed:', e);
+    logger.error('KPI widget load failed:', e);
     displayValue.value = '--';
   } finally {
     loading.value = false;

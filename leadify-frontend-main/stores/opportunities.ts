@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import type { Opportunity } from '~/types/models';
 import type { ApiListParams } from '~/types/api';
 import type { OpportunityStage } from '~/types/enums';
+import logger from '~/utils/logger'
 
 interface Pagination {
   page: number;
@@ -69,7 +70,7 @@ export const useOpportunityStore = defineStore('opportunities', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to fetch opportunities';
         this.error = message;
-        console.error('Error fetching opportunities:', error);
+        logger.error('Error fetching opportunities:', error);
       } finally {
         this.loading = false;
       }
@@ -90,7 +91,7 @@ export const useOpportunityStore = defineStore('opportunities', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to fetch opportunity';
         this.error = message;
-        console.error('Error fetching opportunity:', error);
+        logger.error('Error fetching opportunity:', error);
       } finally {
         this.loading = false;
       }
@@ -113,7 +114,7 @@ export const useOpportunityStore = defineStore('opportunities', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to create opportunity';
         this.error = message;
-        console.error('Error creating opportunity:', error);
+        logger.error('Error creating opportunity:', error);
         return null;
       } finally {
         this.loading = false;
@@ -143,7 +144,7 @@ export const useOpportunityStore = defineStore('opportunities', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to update opportunity';
         this.error = message;
-        console.error('Error updating opportunity:', error);
+        logger.error('Error updating opportunity:', error);
         return null;
       } finally {
         this.loading = false;

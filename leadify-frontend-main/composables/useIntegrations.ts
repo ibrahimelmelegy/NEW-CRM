@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { ElNotification } from 'element-plus';
 import { useApiFetch } from './useApiFetch';
+import logger from '~/utils/logger'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -184,7 +185,7 @@ export function useIntegrations() {
         catalog.value = response.body;
       }
     } catch (e) {
-      console.error('Failed to fetch integration catalog', e);
+      logger.error('Failed to fetch integration catalog', e);
     } finally {
       loading.value = false;
     }
@@ -198,7 +199,7 @@ export function useIntegrations() {
         configured.value = response.body;
       }
     } catch (e) {
-      console.error('Failed to fetch configured integrations', e);
+      logger.error('Failed to fetch configured integrations', e);
     }
   }
 
@@ -271,7 +272,7 @@ export function useIntegrations() {
         webhooks.value = response.body;
       }
     } catch (e) {
-      console.error('Failed to fetch webhooks', e);
+      logger.error('Failed to fetch webhooks', e);
     } finally {
       webhooksLoading.value = false;
     }

@@ -27,6 +27,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { Loading } from '@element-plus/icons-vue';
+import logger from '~/utils/logger'
 
 const { t } = useI18n();
 const route = useRoute();
@@ -56,7 +57,7 @@ async function fetchProposal() {
       errorMessage.value = response?.message || 'Proposal not found';
     }
   } catch (error: unknown) {
-    console.error('Failed to load proposal:', error);
+    logger.error('Failed to load proposal:', error);
     errorMessage.value = error?.message || 'Error loading proposal';
   } finally {
     loading.value = false;
@@ -74,7 +75,7 @@ const handleSave = async (data: unknown) => {
       ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to update proposal' });
     }
   } catch (error: unknown) {
-    console.error('Failed to update proposal:', error);
+    logger.error('Failed to update proposal:', error);
     ElNotification({ type: 'error', title: t('common.error'), message: error?.message || 'Failed to update proposal' });
   }
 };

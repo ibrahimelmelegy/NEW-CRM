@@ -29,6 +29,7 @@ import * as yup from 'yup';
 import { ref, computed, onMounted } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
+import logger from '~/utils/logger'
 
 const props = defineProps({
   loading: Boolean,
@@ -165,7 +166,7 @@ const onSubmit = handleSubmit(async (values: unknown) => {
     }
     if (typeof activeStep.value === 'number') activeStep.value++;
   } catch (error) {
-    console.error('Project creation failed', error);
+    logger.error('Project creation failed', error);
   }
 });
 

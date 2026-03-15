@@ -146,6 +146,7 @@ div
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
 import {
+import logger from '~/utils/logger'
   fetchDashboards,
   createDashboard,
   updateDashboard,
@@ -238,7 +239,7 @@ async function loadWidgetData(idx: number) {
       }
     }
   } catch (e) {
-    console.error('Widget data load failed:', e);
+    logger.error('Widget data load failed:', e);
   }
 }
 

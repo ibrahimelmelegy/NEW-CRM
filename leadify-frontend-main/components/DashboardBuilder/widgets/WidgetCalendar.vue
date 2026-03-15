@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template lang="pug">
 .widget-calendar.glass-card.p-5.h-full
   .flex.items-center.justify-between.mb-3
@@ -74,7 +75,7 @@ async function loadData() {
       });
     }
   } catch (e) {
-    console.error('Calendar widget load failed:', e);
+    logger.error('Calendar widget load failed:', e);
   } finally {
     loading.value = false;
   }

@@ -1,5 +1,6 @@
 // Formatting utilities are now auto-imported from composables/format.ts
 import { useApiFetch } from '@/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 export const globalFilterOptions = ref<Record<string, string | string[] | number[]>>({});
 
@@ -157,11 +158,11 @@ export default async function useTableFilter(position: string = 'lead', queryPar
 
       return { formattedData, pagination, status: '200', unreadNotificationsCount: body?.unreadNotificationsCount ?? 0 };
     } else {
-      console.error(message || 'Failed to fetch data.');
+      logger.error(message || 'Failed to fetch data.');
       return { formattedData: [], pagination: {}, status: 'Failed to fetch data.' };
     }
   } catch (error) {
-    console.error('Error fetching table data:', error);
+    logger.error('Error fetching table data:', error);
     return { formattedData: [], pagination: {} };
   }
 }

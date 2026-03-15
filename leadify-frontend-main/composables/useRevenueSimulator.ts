@@ -1,4 +1,5 @@
 import { ref, reactive, computed } from 'vue';
+import logger from '~/utils/logger'
 
 export interface SimulatorBaseline {
   conversionRate: number;
@@ -187,7 +188,7 @@ export function useRevenueSimulator() {
         reset();
       }
     } catch (err) {
-      console.error('Failed to fetch simulator baseline:', err);
+      logger.error('Failed to fetch simulator baseline:', err);
     } finally {
       loading.value = false;
     }

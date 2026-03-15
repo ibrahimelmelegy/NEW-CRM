@@ -259,6 +259,7 @@ div
 <script lang="ts" setup>
 import { ElNotification } from 'element-plus';
 import {
+import logger from '~/utils/logger'
   fetchLeaderboard,
   fetchAchievements,
   awardPoints,
@@ -345,7 +346,7 @@ async function loadUsers() {
       allUsers.value = body as unknown[];
     }
   } catch (error) {
-    console.error('Failed to load users', error);
+    logger.error('Failed to load users', error);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   }
 }
@@ -383,7 +384,7 @@ async function handleAwardPoints() {
       ElNotification({ type: 'error', title: t('common.error'), message: message || t('common.error') });
     }
   } catch (error) {
-    console.error('Failed to award points', error);
+    logger.error('Failed to award points', error);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     awarding.value = false;
@@ -417,7 +418,7 @@ async function handleCreateAchievement() {
       ElNotification({ type: 'error', title: t('common.error'), message: message || t('common.error') });
     }
   } catch (error) {
-    console.error('Failed to create achievement', error);
+    logger.error('Failed to create achievement', error);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     creatingAchievement.value = false;
@@ -441,7 +442,7 @@ async function confirmDeleteAchievement() {
       ElNotification({ type: 'error', title: t('common.error'), message: message || t('common.error') });
     }
   } catch (error) {
-    console.error('Failed to delete achievement', error);
+    logger.error('Failed to delete achievement', error);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     deletingAchievement.value = false;

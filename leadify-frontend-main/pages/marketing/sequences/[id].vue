@@ -168,6 +168,7 @@ import {
 } from '~/composables/useSequences';
 import type { Sequence, SequenceEnrollment, SequenceStats, SequenceStep } from '~/composables/useSequences';
 import { useSafeBack } from '~/composables/useSafeBack';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Sequence Detail' });
 
@@ -205,7 +206,7 @@ async function loadData() {
       editForm.isActive = sequence.value.isActive;
     }
   } catch (e) {
-    console.error('Failed to load sequence', e);
+    logger.error('Failed to load sequence', e);
   } finally {
     loading.value = false;
   }

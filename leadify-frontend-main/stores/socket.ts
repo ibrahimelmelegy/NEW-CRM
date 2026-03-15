@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { io as socketIo, type Socket } from 'socket.io-client';
+import logger from '~/utils/logger'
 
 type EventCallback = (...args: unknown[]) => void;
 
@@ -34,7 +35,7 @@ export const useSocketStore = defineStore('socket', {
       });
 
       socket.on('connect_error', (error: Error) => {
-        console.error('Socket connection error:', error.message);
+        logger.error('Socket connection error:', error.message);
         this.connected = false;
         this.socketId = null;
       });
@@ -53,7 +54,7 @@ export const useSocketStore = defineStore('socket', {
       if (socket?.connected) {
         socket.emit(event, data);
       } else {
-        console.error('Socket is not connected. Cannot emit event:', event);
+        logger.error('Socket is not connected. Cannot emit event:', event);
       }
     },
 
@@ -61,7 +62,7 @@ export const useSocketStore = defineStore('socket', {
       if (socket) {
         socket.on(event, callback);
       } else {
-        console.error('Socket is not initialized. Cannot listen to event:', event);
+        logger.error('Socket is not initialized. Cannot listen to event:', event);
       }
     },
 

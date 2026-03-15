@@ -215,6 +215,7 @@
 import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import OperationsDailyTasksStatistics from '@/components/operations/daily-tasks/Statistics.vue';
+import logger from '~/utils/logger'
 
 const { t } = useI18n();
 const activeName = ref('info');
@@ -557,7 +558,7 @@ const handleClick = async tab => {
       }
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
+    logger.error('Error fetching data:', error);
     ElMessage.error(t('common.fetchError'));
   } finally {
     loading.value = false;

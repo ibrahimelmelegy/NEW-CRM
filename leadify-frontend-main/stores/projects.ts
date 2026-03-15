@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import type { Project } from '~/types/models';
 import type { ApiListParams } from '~/types/api';
 import type { ProjectStatus } from '~/types/enums';
+import logger from '~/utils/logger'
 
 interface Pagination {
   page: number;
@@ -71,7 +72,7 @@ export const useProjectStore = defineStore('projects', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to fetch projects';
         this.error = message;
-        console.error('Error fetching projects:', error);
+        logger.error('Error fetching projects:', error);
       } finally {
         this.loading = false;
       }
@@ -92,7 +93,7 @@ export const useProjectStore = defineStore('projects', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to fetch project';
         this.error = message;
-        console.error('Error fetching project:', error);
+        logger.error('Error fetching project:', error);
       } finally {
         this.loading = false;
       }
@@ -115,7 +116,7 @@ export const useProjectStore = defineStore('projects', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to create project';
         this.error = message;
-        console.error('Error creating project:', error);
+        logger.error('Error creating project:', error);
         return null;
       } finally {
         this.loading = false;
@@ -145,7 +146,7 @@ export const useProjectStore = defineStore('projects', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to update project';
         this.error = message;
-        console.error('Error updating project:', error);
+        logger.error('Error updating project:', error);
         return null;
       } finally {
         this.loading = false;

@@ -60,6 +60,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { getYear } from '#imports';
+import logger from '~/utils/logger'
 
 const contentToPrint = ref(null);
 
@@ -315,7 +316,7 @@ async function exportToPDF() {
     // Save the PDF
     doc.save(`${props.project?.name || 'Project'} Project Report ${new Date().toLocaleDateString()}.pdf`);
   } catch (error) {
-    console.error('Error exporting PDF:', error);
+    logger.error('Error exporting PDF:', error);
   }
 }
 </script>

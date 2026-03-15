@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 // ImageUploader import moved to action to prevent SSR crash
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 export const useMain = defineStore('Main', {
   state: () => ({
@@ -88,7 +89,7 @@ export const useMain = defineStore('Main', {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         ImageUploaderModule = require('quill-image-uploader');
       } catch (e) {
-        console.warn('Quill Image Uploader not loaded');
+        logger.warn('Quill Image Uploader not loaded');
         return {};
       }
 
@@ -104,7 +105,7 @@ export const useMain = defineStore('Main', {
                 return runtimeConfig.public.BUCKET_URL + fileAdded;
               }
             } catch (error) {
-              console.error('Error:', error);
+              logger.error('Error:', error);
               throw new Error('Upload failed');
             }
           }

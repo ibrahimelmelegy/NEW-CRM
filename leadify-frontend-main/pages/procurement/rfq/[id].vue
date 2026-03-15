@@ -74,6 +74,7 @@
 /* eslint-disable require-await */
 import { ArrowLeft } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 const route = useRoute();
 const router = useRouter();
@@ -143,7 +144,7 @@ async function submitOffer() {
     const res = await useApiFetch(`rfq/${route.params.id}`);
     rfq.value = res;
   } catch (e) {
-    console.error(e);
+    logger.error(e);
   }
 }
 

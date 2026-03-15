@@ -100,6 +100,7 @@ import { ref, reactive, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import {
+import logger from '~/utils/logger'
   fetchDealKanban,
   fetchOpportunityKanban,
   updateDealStage,
@@ -234,7 +235,7 @@ async function fetchData() {
       cards.value = mapOpportunityCards(data);
     }
   } catch (e) {
-    console.error('Failed to fetch kanban data:', e);
+    logger.error('Failed to fetch kanban data:', e);
     ElMessage.error($t('kanbanBoard.loadError'));
   } finally {
     loading.value = false;
@@ -287,7 +288,7 @@ async function saveCard() {
     Object.assign(form, { title: '', description: '', columnId: columns.value[0]?.id || 'PROGRESS', priority: 'medium', assignee: '', value: 0 });
     showDialog.value = false;
   } catch (e) {
-    console.error('Failed to save card:', e);
+    logger.error('Failed to save card:', e);
     ElMessage.error($t('common.error'));
   } finally {
     saving.value = false;
@@ -318,7 +319,7 @@ async function moveCard(cardId: string, targetCol: string) {
     }
   } catch (e) {
     card.columnId = previousCol;
-    console.error('Failed to move card:', e);
+    logger.error('Failed to move card:', e);
     ElMessage.error($t('kanbanBoard.moveError'));
   }
 }

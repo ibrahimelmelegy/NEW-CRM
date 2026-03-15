@@ -40,6 +40,7 @@
 
 <script setup lang="ts">
 import { Plus, View } from '@element-plus/icons-vue';
+import logger from '~/utils/logger'
 
 const router = useRouter();
 const { t } = useI18n();
@@ -70,7 +71,7 @@ onMounted(async () => {
     const res = await useApiFetch('rfq'); // Fetch from the new endpoint
     rfqs.value = res?.body?.docs || [];
   } catch (e) {
-    console.error('Failed to fetch RFQs', e);
+    logger.error('Failed to fetch RFQs', e);
   }
 });
 

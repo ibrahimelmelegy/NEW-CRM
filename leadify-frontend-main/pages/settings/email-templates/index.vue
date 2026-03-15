@@ -156,6 +156,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import logger from '~/utils/logger'
 
 definePageMeta({});
 
@@ -342,7 +343,7 @@ async function sendTestEmail() {
       ElMessage.error($t('common.error'));
     }
   } catch (e) {
-    console.error('Failed to send test email:', e);
+    logger.error('Failed to send test email:', e);
     ElMessage.error($t('common.error'));
   } finally {
     sendingTest.value = false;
@@ -366,7 +367,7 @@ async function fetchTemplates() {
       }));
     }
   } catch (e) {
-    console.error('Failed to fetch email templates:', e);
+    logger.error('Failed to fetch email templates:', e);
     ElMessage.error($t('common.error'));
   } finally {
     loading.value = false;
@@ -413,7 +414,7 @@ async function saveTemplate() {
       ElMessage.error($t('common.error'));
     }
   } catch (e) {
-    console.error('Failed to save template:', e);
+    logger.error('Failed to save template:', e);
     ElMessage.error($t('common.error'));
   } finally {
     saving.value = false;
@@ -430,7 +431,7 @@ async function removeTemplate(id: string) {
       ElMessage.error($t('common.error'));
     }
   } catch (e) {
-    console.error('Failed to delete template:', e);
+    logger.error('Failed to delete template:', e);
     ElMessage.error($t('common.error'));
   }
 }
@@ -450,7 +451,7 @@ async function copyTemplate(tmpl: EmailTemplate) {
       type: 'EMAIL'
     });
   } catch (e) {
-    console.error('Failed to update usage count:', e);
+    logger.error('Failed to update usage count:', e);
   }
   ElMessage.success($t('emailTemplates.templateCopied'));
 }

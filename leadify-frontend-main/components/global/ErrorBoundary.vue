@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template>
   <div v-if="error" class="error-boundary">
     <div class="error-container glass-card-premium p-8 md:p-12 text-center max-w-lg mx-auto">
@@ -92,13 +93,13 @@ const isTransientError = (err: Error): boolean => {
 onErrorCaptured((err: Error, instance, info) => {
   // During route transitions, suppress ALL errors (old-page cleanup)
   if (isNavigating.value) {
-    console.warn('[ErrorBoundary] Suppressed navigation error:', err.message);
+    logger.warn('[ErrorBoundary] Suppressed navigation error:', err.message);
     return false;
   }
 
   // Skip transient cleanup errors even outside navigation
   if (isTransientError(err)) {
-    console.warn('[ErrorBoundary] Suppressed transient error:', err.message);
+    logger.warn('[ErrorBoundary] Suppressed transient error:', err.message);
     return false;
   }
 
@@ -106,7 +107,7 @@ onErrorCaptured((err: Error, instance, info) => {
   errorMessage.value = err.message || props.fallback;
   errorDetails.value = `${err.stack}\n\nComponent: ${instance?.$options?.name || 'Unknown'}\nInfo: ${info}`;
 
-  console.error('[ErrorBoundary] Caught error:', err);
+  logger.error('[ErrorBoundary] Caught error:', err);
 
   // Return false to prevent the error from propagating further
   return false;

@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 export function useEmailComposer() {
   const templates = ref<Record<string, unknown>[]>([]);
@@ -29,7 +30,7 @@ export function useEmailComposer() {
         templates.value = body as unknown[];
       }
     } catch (err) {
-      console.error('Failed to fetch email templates:', err);
+      logger.error('Failed to fetch email templates:', err);
       const t = useNuxtApp().$i18n.t;
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
     } finally {

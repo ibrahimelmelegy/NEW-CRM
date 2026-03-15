@@ -27,6 +27,7 @@ import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { Plus } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 const route = useRoute();
 const props = defineProps({
   loading: Boolean,
@@ -78,7 +79,7 @@ const onSubmit = handleSubmit(async (values: unknown, actions: unknown) => {
     }
   } catch (error) {
     // Handle the error and prevent the step from being incremented
-    console.error('Project creation failed', error);
+    logger.error('Project creation failed', error);
   }
   // emit('submit')
 });

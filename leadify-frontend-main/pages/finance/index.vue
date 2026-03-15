@@ -161,6 +161,7 @@ import {
   type ExpenseCategory
 } from '~/composables/useFinance';
 import { getCollectionDashboard, type CollectionDashboard } from '~/composables/usePayments';
+import logger from '~/utils/logger'
 
 // Lazy-load heavy chart dependencies for faster initial page load
 let graphic: unknown;
@@ -379,7 +380,7 @@ async function loadExpenses() {
     recentExpenses.value = expensesRes.docs;
     categories.value = cats;
   } catch (e: unknown) {
-    console.error('Failed to load expenses:', e);
+    logger.error('Failed to load expenses:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {
     loadingExpenses.value = false;
@@ -392,7 +393,7 @@ async function loadBudgets() {
     const result = await fetchBudgets();
     budgets.value = result.docs;
   } catch (e: unknown) {
-    console.error('Failed to load budgets:', e);
+    logger.error('Failed to load budgets:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {
     loadingBudgets.value = false;
@@ -405,7 +406,7 @@ async function loadCollectionData() {
   try {
     collectionData.value = await getCollectionDashboard();
   } catch (e: unknown) {
-    console.error('Failed to load collection data:', e);
+    logger.error('Failed to load collection data:', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {
     loadingCollection.value = false;

@@ -57,6 +57,7 @@ import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { fetchTerritoryTree, createTerritory, updateTerritory, deleteTerritory } from '~/composables/useTerritories';
 import type { Territory } from '~/composables/useTerritories';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Territories' });
 
@@ -100,7 +101,7 @@ try {
     users.value = usersRes.body.docs.map(u => ({ label: u.name, value: u.id }));
   }
 } catch (e) {
-  console.error('Failed to load territories', e);
+  logger.error('Failed to load territories', e);
 } finally {
   loading.value = false;
 }

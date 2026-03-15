@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { useApiFetch } from './useApiFetch';
+import logger from '~/utils/logger'
 
 export interface WarRoomMetrics {
   totalDeals: number;
@@ -55,7 +56,7 @@ export function useWarRoom() {
         conversion: generateSparkline(metrics.value.conversionRate)
       };
     } catch (e) {
-      console.error('War room metrics fetch failed', e);
+      logger.error('War room metrics fetch failed', e);
     } finally {
       loading.value = false;
     }

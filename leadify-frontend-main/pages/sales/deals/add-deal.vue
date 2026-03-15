@@ -15,6 +15,7 @@ el-tabs.demo-tabs(v-model="activeName", :lazy="false")
 <script lang="ts" setup>
 import { ElNotification } from 'element-plus';
 import { useI18n } from 'vue-i18n';
+import logger from '~/utils/logger'
 const { t } = useI18n();
 const activeName = ref('deal');
 const informationRef = ref();
@@ -86,7 +87,7 @@ async function saveAllForms() {
     isDeliveries.value = false;
     isInvoices.value = false;
   } catch (error) {
-    console.error('Error saving forms:', error);
+    logger.error('Error saving forms:', error);
   } finally {
     loading.value = false;
   }

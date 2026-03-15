@@ -113,6 +113,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, markRaw, type Component } from 'vue';
 import { Search, Building2, Briefcase, FolderKanban, ChevronDown, X, Loader2 } from 'lucide-vue-next';
+import logger from '~/utils/logger'
 
 // ---- Types ----
 type EntityType = 'Opportunity' | 'Deal' | 'Project';
@@ -240,7 +241,7 @@ const fetchOpportunities = async () => {
       opportunities.value = Array.isArray(response.body) ? response.body : (response.body as unknown).rows || [];
     }
   } catch (error) {
-    console.error('Failed to fetch opportunities:', error);
+    logger.error('Failed to fetch opportunities:', error);
   } finally {
     isLoadingOpportunities.value = false;
   }
@@ -254,7 +255,7 @@ const fetchDeals = async () => {
       deals.value = Array.isArray(response.body) ? response.body : (response.body as unknown).rows || [];
     }
   } catch (error) {
-    console.error('Failed to fetch deals:', error);
+    logger.error('Failed to fetch deals:', error);
   } finally {
     isLoadingDeals.value = false;
   }
@@ -268,7 +269,7 @@ const fetchProjects = async () => {
       projects.value = Array.isArray(response.body) ? response.body : (response.body as unknown).rows || [];
     }
   } catch (error) {
-    console.error('Failed to fetch projects:', error);
+    logger.error('Failed to fetch projects:', error);
   } finally {
     isLoadingProjects.value = false;
   }

@@ -52,6 +52,7 @@ import { ref, computed, onMounted } from 'vue';
 import { Loading } from '@element-plus/icons-vue';
 import { ArrowLeft, Download } from 'lucide-vue-next';
 import { getProposal } from '~/composables/useProposals';
+import logger from '~/utils/logger'
 // ProposalPrintTemplate is auto-imported by Nuxt from components/proposals/
 
 definePageMeta({
@@ -120,7 +121,7 @@ async function fetchProposal() {
     const data = await getProposal(proposalId.value);
     proposal.value = data && Object.keys(data).length > 0 ? data : null;
   } catch (error) {
-    console.error('Failed to load proposal:', error);
+    logger.error('Failed to load proposal:', error);
     proposal.value = null;
   } finally {
     loading.value = false;

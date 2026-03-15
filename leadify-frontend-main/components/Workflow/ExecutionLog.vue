@@ -119,6 +119,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import logger from '~/utils/logger'
 
 interface ActionResult {
   actionType: string;
@@ -251,7 +252,7 @@ async function fetchLogs() {
       }
     }
   } catch (err) {
-    console.error('Failed to fetch execution logs:', err);
+    logger.error('Failed to fetch execution logs:', err);
   } finally {
     loading.value = false;
   }
@@ -264,7 +265,7 @@ async function fetchWorkflowOptions() {
       workflowOptions.value = body.docs.map(w => ({ id: w.id, name: w.name }));
     }
   } catch (err) {
-    console.error('Failed to fetch workflow options:', err);
+    logger.error('Failed to fetch workflow options:', err);
   }
 }
 

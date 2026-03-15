@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template lang="pug">
 el-dialog(v-model='dialog' width='750' title="Add New Additional Material Category" append-to-body align-center='')
   OperationsMaterialCategory.border-t.pt-4(ref="categoryRef" @onSubmit="submitCategoryForm" :name="material.name" :key="material")
@@ -53,7 +54,7 @@ async function onSubmitMaterials() {
     if (Object.keys(response as unknown).length) dialog.value = false;
     loading.value = false;
   } catch (error) {
-    console.error('Error saving forms:', error);
+    logger.error('Error saving forms:', error);
     loading.value = false;
   } finally {
     loading.value = false;

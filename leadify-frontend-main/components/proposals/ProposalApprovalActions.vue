@@ -126,6 +126,7 @@
 /* eslint-disable require-await */
 import { ref, computed } from 'vue';
 import { CheckCircle, XCircle, Clock, Send, AlertCircle, Loader2, MessageSquare } from 'lucide-vue-next';
+import logger from '~/utils/logger'
 
 // ---- Types ----
 type ProposalStatus = 'DRAFT' | 'WAITING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'SENT' | 'ARCHIVED';
@@ -174,7 +175,7 @@ const handleAction = async (action: string, callback: () => void) => {
   try {
     callback();
   } catch (error) {
-    console.error(`${action} failed:`, error);
+    logger.error(`${action} failed:`, error);
   } finally {
     isLoading.value = false;
     loadingAction.value = null;
@@ -188,7 +189,7 @@ const handleReject = async () => {
   try {
     emit('statusChange', 'REJECTED');
   } catch (error) {
-    console.error('Reject failed:', error);
+    logger.error('Reject failed:', error);
   } finally {
     isLoading.value = false;
     loadingAction.value = null;

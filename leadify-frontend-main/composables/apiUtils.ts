@@ -1,5 +1,6 @@
 import { ElNotification } from 'element-plus';
 import { useAuthStore } from '~/stores/auth';
+import logger from '~/utils/logger'
 
 // ✅ Removed top-level useRuntimeConfig to prevent Nuxt context errors
 
@@ -44,7 +45,7 @@ export async function downloadFile(file: string) {
       URL.revokeObjectURL(url);
     })
     .catch((error: unknown) => {
-      console.error('File download failed:', error);
+      logger.error('File download failed:', error);
       const t = useNuxtApp().$i18n.t;
       ElNotification({
         title: t('common.error'),

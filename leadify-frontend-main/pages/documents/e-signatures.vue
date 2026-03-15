@@ -173,6 +173,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({
   layout: 'default',
@@ -258,7 +259,7 @@ async function fetchDocuments() {
     }
   } catch (e: unknown) {
     ElMessage.error(t('common.error'));
-    console.error(e);
+    logger.error(e);
   } finally {
     loading.value = false;
   }
@@ -404,7 +405,7 @@ const sendForSignature = async () => {
     }
   } catch (e: unknown) {
     ElMessage.error(t('common.error'));
-    console.error(e);
+    logger.error(e);
   } finally {
     sending.value = false;
   }

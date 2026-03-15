@@ -120,6 +120,7 @@ import { ElNotification } from 'element-plus';
 import { fetchTasks, updateTask, completeTask } from '~/composables/useTasks';
 import type { Task } from '~/composables/useTasks';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Task Details' });
 
@@ -172,7 +173,7 @@ try {
     users.value = usersRes.body.docs.map(u => ({ label: u.name, value: u.id }));
   }
 } catch (e) {
-  console.error('Failed to load task', e);
+  logger.error('Failed to load task', e);
 } finally {
   loading.value = false;
 }

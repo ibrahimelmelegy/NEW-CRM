@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template lang="pug">
     OperationsDailyTasksForm( :loading="loading" @fetchClient = "fetchClient" @submit="submitForm")
       .flex.items-center.justify-between.mb-8
@@ -94,7 +95,7 @@ async function submitFormClient() {
     });
     await createClient(formattedValues);
   } catch (err) {
-    console.error('Error saving forms:', err);
+    logger.error('Error saving forms:', err);
     loadingClient.value = false;
   } finally {
     openFormClient.value = false;

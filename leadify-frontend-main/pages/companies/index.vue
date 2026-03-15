@@ -346,6 +346,7 @@ import { ref, reactive, onMounted, computed, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
 import * as echarts from 'echarts/core';
+import logger from '~/utils/logger'
 
 definePageMeta({});
 
@@ -524,12 +525,12 @@ async function fetchCompanies() {
             company.healthScore = healthBody.score;
           }
         } catch (e) {
-          console.error(`Failed to fetch health score for ${company.id}:`, e);
+          logger.error(`Failed to fetch health score for ${company.id}:`, e);
         }
       }
     }
   } catch (e) {
-    console.error('Failed to fetch companies:', e);
+    logger.error('Failed to fetch companies:', e);
     ElNotification({ type: 'error', title: $t('common.error'), message: $t('common.fetchError') });
   } finally {
     loading.value = false;
@@ -543,7 +544,7 @@ async function fetchAnalytics() {
       analytics.value = body;
     }
   } catch (e) {
-    console.error('Failed to fetch analytics:', e);
+    logger.error('Failed to fetch analytics:', e);
     ElNotification({ type: 'error', title: $t('common.error'), message: $t('common.fetchError') });
   }
 }
@@ -636,7 +637,7 @@ async function saveCompany() {
     showDialog.value = false;
     await fetchAnalytics();
   } catch (e) {
-    console.error('Failed to save company:', e);
+    logger.error('Failed to save company:', e);
     ElMessage.error($t('common.error'));
   } finally {
     saving.value = false;
@@ -659,7 +660,7 @@ async function removeCompany(id: string) {
     }
   } catch (e: unknown) {
     if (e !== 'cancel') {
-      console.error('Failed to delete company:', e);
+      logger.error('Failed to delete company:', e);
       ElMessage.error($t('common.error'));
     }
   }
@@ -692,7 +693,7 @@ async function fetchHealthScore(companyId: string) {
       companyHealthScore.value = body;
     }
   } catch (e) {
-    console.error('Failed to fetch health score:', e);
+    logger.error('Failed to fetch health score:', e);
   }
 }
 
@@ -703,7 +704,7 @@ async function fetchRevenue(companyId: string) {
       companyRevenue.value = body;
     }
   } catch (e) {
-    console.error('Failed to fetch revenue:', e);
+    logger.error('Failed to fetch revenue:', e);
   }
 }
 
@@ -714,7 +715,7 @@ async function fetchHierarchy(companyId: string) {
       companyHierarchy.value = body;
     }
   } catch (e) {
-    console.error('Failed to fetch hierarchy:', e);
+    logger.error('Failed to fetch hierarchy:', e);
   }
 }
 
@@ -725,7 +726,7 @@ async function fetchTimeline(companyId: string) {
       companyTimeline.value = body;
     }
   } catch (e) {
-    console.error('Failed to fetch timeline:', e);
+    logger.error('Failed to fetch timeline:', e);
   }
 }
 
@@ -736,7 +737,7 @@ async function fetchNotes(companyId: string) {
       companyNotes.value = body;
     }
   } catch (e) {
-    console.error('Failed to fetch notes:', e);
+    logger.error('Failed to fetch notes:', e);
   }
 }
 
@@ -747,7 +748,7 @@ async function fetchContacts(companyId: string) {
       relatedContacts.value = body;
     }
   } catch (e) {
-    console.error('Failed to fetch contacts:', e);
+    logger.error('Failed to fetch contacts:', e);
   }
 }
 
@@ -764,7 +765,7 @@ async function saveNote() {
       ElMessage.success($t('companies.noteAdded'));
     }
   } catch (e) {
-    console.error('Failed to save note:', e);
+    logger.error('Failed to save note:', e);
     ElMessage.error($t('common.error'));
   } finally {
     savingNote.value = false;
@@ -781,7 +782,7 @@ async function togglePinNote(note: unknown) {
       ElMessage.success($t('companies.noteUpdated'));
     }
   } catch (e) {
-    console.error('Failed to update note:', e);
+    logger.error('Failed to update note:', e);
     ElMessage.error($t('common.error'));
   }
 }
@@ -794,7 +795,7 @@ async function deleteNote(noteId: string) {
       ElMessage.success($t('companies.noteDeleted'));
     }
   } catch (e) {
-    console.error('Failed to delete note:', e);
+    logger.error('Failed to delete note:', e);
     ElMessage.error($t('common.error'));
   }
 }
@@ -820,7 +821,7 @@ async function bulkUpdate() {
       selectedCompanies.value = [];
     }
   } catch (e) {
-    console.error('Failed to bulk update:', e);
+    logger.error('Failed to bulk update:', e);
     ElMessage.error($t('common.error'));
   } finally {
     bulkUpdating.value = false;
@@ -844,7 +845,7 @@ async function mergeCompanies() {
       selectedCompanies.value = [];
     }
   } catch (e) {
-    console.error('Failed to merge companies:', e);
+    logger.error('Failed to merge companies:', e);
     ElMessage.error($t('common.error'));
   } finally {
     merging.value = false;

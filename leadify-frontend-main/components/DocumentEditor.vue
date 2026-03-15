@@ -112,7 +112,7 @@
     <input ref="imageInput" type="file" accept="image/*" class="hidden" @change="handleImageUpload" />
 
     <button
-      :class="buttonClass(sections.type == 'title')"
+      :class="buttonClass(sections.type === 'title')"
       class="relative group"
       @click="
         () => {
@@ -132,7 +132,7 @@
     </button>
 
     <button
-      :class="buttonClass(sections.type == 'subtitle')"
+      :class="buttonClass(sections.type === 'subtitle')"
       class="relative group"
       @click="
         () => {
@@ -152,7 +152,7 @@
     </button>
 
     <button
-      :class="buttonClass(sections.type == 'description')"
+      :class="buttonClass(sections.type === 'description')"
       class="relative group"
       @click="
         () => {
@@ -172,7 +172,7 @@
     </button>
 
     <button
-      :class="buttonClass(sections.type == 'table')"
+      :class="buttonClass(sections.type === 'table')"
       class="relative group"
       @click="
         () => {

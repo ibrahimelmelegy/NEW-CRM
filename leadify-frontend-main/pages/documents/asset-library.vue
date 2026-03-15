@@ -416,6 +416,7 @@
 import { ref, computed, onMounted } from 'vue';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Asset Library' });
 
@@ -591,7 +592,7 @@ function deleteAsset(asset: Asset) {
       ElMessage.success(`Deleted: ${asset.name}`);
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 
@@ -641,7 +642,7 @@ function deleteCollection(collection: Collection) {
       ElMessage.success('Collection deleted');
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 
@@ -835,7 +836,7 @@ function restoreVersion(entry: VersionEntry) {
       ElMessage.success(`Restored ${entry.assetName} to ${entry.version}`);
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 

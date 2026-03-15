@@ -75,7 +75,9 @@ export function useVirtualOffice() {
       const u = user.value;
       if (u?.id) {
         currentUser.value.userId = u.id;
-        currentUser.value.name = (u as unknown as Record<string, string>).firstName ? `${(u as unknown as Record<string, string>).firstName} ${(u as unknown as Record<string, string>).lastName || ''}`.trim() : u.email || 'You';
+        currentUser.value.name = (u as unknown as Record<string, string>).firstName
+          ? `${(u as unknown as Record<string, string>).firstName} ${(u as unknown as Record<string, string>).lastName || ''}`.trim()
+          : u.email || 'You';
         currentUser.value.avatar = u.profilePicture;
       }
 

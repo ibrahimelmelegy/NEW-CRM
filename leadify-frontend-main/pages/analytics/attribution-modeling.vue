@@ -316,6 +316,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Attribution Modeling' });
 
@@ -630,7 +631,7 @@ async function loadData() {
       topPaths.value = mockTopPaths;
     }
   } catch (e) {
-    console.error('Failed to load attribution data, using mock data', e);
+    logger.error('Failed to load attribution data, using mock data', e);
     baseChannels.value = [];
     topPaths.value = mockTopPaths;
   } finally {
