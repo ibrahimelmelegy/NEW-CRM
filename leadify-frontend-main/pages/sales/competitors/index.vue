@@ -168,9 +168,9 @@
       )
 
   el-dialog(v-model="showDialog" :title="editingId ? $t('competitors.edit') : $t('competitors.add')" width="700px")
-    el-form(label-position="top" size="large")
+    el-form(:model="form" :rules="formRules" ref="formRef" label-position="top" size="large")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('competitors.name')" required)
+        el-form-item(:label="$t('competitors.name')" prop="name" required)
           el-input(v-model="form.name" :placeholder="$t('competitors.namePlaceholder')")
         el-form-item(:label="$t('competitors.website')")
           el-input(v-model="form.website" placeholder="https://")
@@ -336,6 +336,12 @@ const defaultForm = () => ({
 
 const form = reactive(defaultForm());
 const threatMatrix = ref<Record<string, unknown>[]>([]);
+
+const formRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+
+const formRules = computed(() => ({
+  name: [{ required: true, message: t('validation.required') || 'Competitor name is required', trigger: 'blur' }]
+}));
 
 const pricingData = computed(() => {
   return items.value
@@ -586,10 +592,8 @@ function activityIcon(type: string): string {
 }
 
 async function saveItem() {
-  if (!form.name?.trim()) {
-    ElMessage.warning(t('common.fillRequired'));
-    return;
-  }
+  const valid = await formRef.value?.validate().catch(() => false);
+  if (!valid) return;
   saving.value = true;
   try {
     if (editingId.value) {

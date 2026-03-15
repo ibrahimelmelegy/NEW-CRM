@@ -262,12 +262,12 @@
     destroy-on-close
   )
     el-scrollbar(height="65vh")
-      el-form(:model="form" label-position="top" class="px-2")
+      el-form(:model="form" :rules="playbookRules" ref="playbookFormRef" label-position="top" class="px-2")
         .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-          el-form-item(:label="$t('playbooks.playbookName')" required)
+          el-form-item(:label="$t('playbooks.playbookName')" prop="name" required)
             el-input(v-model="form.name" :placeholder="$t('playbooks.playbookNamePlaceholder')")
 
-          el-form-item(:label="$t('playbooks.category')" required)
+          el-form-item(:label="$t('playbooks.category')" prop="category" required)
             el-select(v-model="form.category" style="width: 100%")
               el-option(:label="$t('playbooks.prospecting')" value="prospecting")
               el-option(:label="$t('playbooks.discovery')" value="discovery")
@@ -406,6 +406,13 @@ const form = reactive<PlaybookForm>({
   winRateImprovement: 0,
   steps: []
 });
+
+const playbookFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+
+const playbookRules = computed(() => ({
+  name: [{ required: true, message: t('validation.required') || 'Playbook name is required', trigger: 'blur' }],
+  category: [{ required: true, message: t('validation.required') || 'Category is required', trigger: 'change' }]
+}));
 
 const playbooks = ref<Record<string, unknown>[]>([]);
 
@@ -620,10 +627,8 @@ function moveStep(idx: number, dir: number) {
 }
 
 async function handleSave() {
-  if (!form.name) {
-    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
-    return;
-  }
+  const valid = await playbookFormRef.value?.validate().catch(() => false);
+  if (!valid) return;
   saving.value = true;
   try {
     const payload = {

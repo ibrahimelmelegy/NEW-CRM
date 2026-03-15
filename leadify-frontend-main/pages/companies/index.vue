@@ -105,9 +105,9 @@
     :title="dialogTitle"
     width="700px"
   )
-    el-form(label-position="top" size="large")
+    el-form(:model="form" :rules="companyRules" ref="companyFormRef" label-position="top" size="large")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="labelCompanyName")
+        el-form-item(:label="labelCompanyName" prop="clientName")
           el-input(v-model="form.clientName" :placeholder="placeholderCompanyName")
         el-form-item(:label="labelIndustry")
           el-select(v-model="form.industry" class="w-full")
@@ -392,6 +392,12 @@ const form = reactive({
   customFields: {} as Record<string, unknown>
 });
 
+const companyFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+
+const companyRules = computed(() => ({
+  clientName: [{ required: true, message: t('validation.required') || 'Company name is required', trigger: 'blur' }]
+}));
+
 const customFieldsArray = ref<Array<{ name: string; value: string }>>([]);
 
 const noteForm = reactive({ content: '' });
@@ -596,6 +602,8 @@ function removeCustomField(index: number) {
 }
 
 async function saveCompany() {
+  const valid = await companyFormRef.value?.validate().catch(() => false);
+  if (!valid) return;
   saving.value = true;
   try {
     // Convert custom fields array to object

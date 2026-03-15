@@ -274,9 +274,9 @@ div.animate-fade-in
     width="650px"
     :close-on-click-modal="false"
   )
-    el-form(:model="territoryForm" label-position="top")
+    el-form(:model="territoryForm" :rules="territoryRules" ref="territoryFormRef" label-position="top")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('common.name')" required)
+        el-form-item(:label="$t('common.name')" prop="name" required)
           el-input(v-model="territoryForm.name" :placeholder="$t('territoryManagement.territoryNamePlaceholder')")
         el-form-item(:label="$t('territoryManagement.region')" required)
           el-select(v-model="territoryForm.type" style="width: 100%")
@@ -562,6 +562,12 @@ const territoryForm = reactive({
   revenueTarget: 0,
   isActive: true
 });
+
+const territoryFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+
+const territoryRules = computed(() => ({
+  name: [{ required: true, message: t('validation.required') || 'Territory name is required', trigger: 'blur' }]
+}));
 
 // ──────────── Computed: enrich territories with mock analytics ────────────
 const enrichedTerritories = computed(() => {
@@ -878,10 +884,8 @@ function openEditDialog(territory: unknown) {
 }
 
 async function handleSaveTerritory() {
-  if (!territoryForm.name.trim()) {
-    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
-    return;
-  }
+  const valid = await territoryFormRef.value?.validate().catch(() => false);
+  if (!valid) return;
   saving.value = true;
   try {
     const payload = {

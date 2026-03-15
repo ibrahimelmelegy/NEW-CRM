@@ -118,10 +118,12 @@ div
   )
     el-form(
       :model="newSubscription"
+      :rules="subscriptionRules"
+      ref="subscriptionFormRef"
       label-position="top"
       @submit.prevent="handleCreateSubscription"
     )
-      el-form-item(:label="$t('subscriptions.client')" required)
+      el-form-item(:label="$t('subscriptions.client')" prop="clientId" required)
         el-select(
           v-model="newSubscription.clientId"
           filterable
@@ -134,7 +136,7 @@ div
             :label="client.clientName"
             :value="client.id"
           )
-      el-form-item(:label="$t('subscriptions.plan')" required)
+      el-form-item(:label="$t('subscriptions.plan')" prop="planId" required)
         el-select(
           v-model="newSubscription.planId"
           :placeholder="$t('subscriptions.selectPlan')"
@@ -190,6 +192,13 @@ const newSubscription = ref({
   clientId: '',
   planId: ''
 });
+
+const subscriptionFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+
+const subscriptionRules = computed(() => ({
+  clientId: [{ required: true, message: t('validation.required') || 'Client is required', trigger: 'change' }],
+  planId: [{ required: true, message: t('validation.required') || 'Plan is required', trigger: 'change' }]
+}));
 
 function formatDate(date: string | undefined): string {
   if (!date) return '-';
@@ -247,7 +256,8 @@ function goToDetail(row: CustomerSubscription) {
 }
 
 async function handleCreateSubscription() {
-  if (!newSubscription.value.clientId || !newSubscription.value.planId) return;
+  const valid = await subscriptionFormRef.value?.validate().catch(() => false);
+  if (!valid) return;
   creating.value = true;
   try {
     const result = await createSubscription(newSubscription.value);
