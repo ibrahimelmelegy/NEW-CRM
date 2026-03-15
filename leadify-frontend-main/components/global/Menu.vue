@@ -14,6 +14,7 @@
       v-if="mobile ? !hideNav : true"
       :collapse='mobile ? false : !fullNav'
       :default-openeds="defaultOpenMenus"
+      data-testid="sidebar"
     )
       //- Logo Area (Expanded)
       .py-5.px-12.flex.items-center.gap-3(v-if="fullNav")
@@ -46,7 +47,7 @@
 
           template(v-for="(subLink, subIndex) in navLink.submenu" :key="subIndex")
             //- Only show items the user has access to (v-if, not grayed out)
-            NuxtLink(:to="subLink.link" v-if="!getDisabled(subLink.role)")
+            NuxtLink(:to="subLink.link" v-if="!getDisabled(subLink.role)" :data-testid="`nav-${subLink.link.split('/').filter(Boolean).join('-')}`")
               el-menu-item.menu-item-with-star(:index="subLink.link" @click="mobileNavigate(subLink.link)" :class="{'is-active': route?.fullPath?.includes(subLink.link)}")
                 Icon.mr-2.submenu-icon(size="18" :name="subLink.icon" v-if="subLink.icon")
                 span {{ $t(subLink.name) }}
@@ -60,7 +61,7 @@
 
         //- Single Level Items — hidden if user has no access
         template(v-else-if="!navLink.submenu && !getDisabled(navLink.role)")
-          NuxtLink(:to="navLink.link")
+          NuxtLink(:to="navLink.link" :data-testid="`nav-${navLink.link.split('/').filter(Boolean).join('-') || 'dashboard'}`")
             el-menu-item.menu-item-with-star(:index="navLink.link" @click="mobileNavigate(navLink.link)" :class="{'is-active': route?.fullPath?.includes(navLink.link) && navLink.link !== '/'}")
               Icon.myicon.mr-2(size="32" :name="navLink.icon")
               template(#title)

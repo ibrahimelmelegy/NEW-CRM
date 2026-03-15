@@ -25,7 +25,7 @@
           .flex.items-center.justify-between(:class="{'!pl-[32px] !pr-[50px] ' : !mobile , '!px-[20px] '  : mobile}")
             .flex.items-center.gap-2
               .headings(class="block lg:hidden" )
-                button.toggle-icon(@click="openNav" :class="{'margined' : !fullNav}"): Icon.text-sm(name="ph:list-bold")
+                button.toggle-icon(data-testid="sidebar-toggle" @click="openNav" :class="{'margined' : !fullNav}"): Icon.text-sm(name="ph:list-bold")
               div(class="breadcrumb")
                 el-breadcrumb(:separator-icon="ArrowRight")      
                   el-breadcrumb-item(to="/") 
@@ -48,7 +48,7 @@
                     div.notification-badge(v-if="notificationCenter.unreadCount.value > 0")
                 
                 //- Profile Dropdown
-                el-dropdown(class="outline-0")
+                el-dropdown(class="outline-0" data-testid="user-menu")
                     div.profile-trigger(class="!text-[var(--text-primary)]")
                           Avatar(:src="user?.profilePicture", small, table)
                           p.mb-0 {{user?.name}}
@@ -62,7 +62,7 @@
                             .flex.items-center.gap-2
                               Icon(name="ph:gear-bold")
                               span {{ $t('navigation.settings') }}
-                          el-dropdown-item(divided, @click="logout")
+                          el-dropdown-item(divided, @click="logout" data-testid="logout-button")
                             .flex.items-center.gap-2
                               Icon(name="ph:sign-out-bold")
                               span {{ $t('common.logout') }}

@@ -1,9 +1,9 @@
 <template lang="pug">
-.flex.items-center.justify-between.mb-8
+.flex.items-center.justify-between.mb-8(data-testid="deal-form")
   .title.font-bold.text-2xl.mb-1.capitalize.mb-5.mt-5 {{ $t('deals.newDeal') }}
   .flex.items-center.gap-x-2
-    el-button(size='large' plain type="primary" class="w-full !rounded-2xl" @click="goBack()") {{ $t('common.cancel') }}
-    el-button(size='large' type="primary" native-type="submit" :loading="loading" :disabled="loading" class="w-full !px-5 !rounded-2xl" @click="saveAllForms") {{ $t('common.save') }}
+    el-button(size='large' plain type="primary" class="w-full !rounded-2xl" @click="goBack()" data-testid="deal-cancel-button") {{ $t('common.cancel') }}
+    el-button(size='large' type="primary" native-type="submit" :loading="loading" :disabled="loading" class="w-full !px-5 !rounded-2xl" @click="saveAllForms" data-testid="deal-save-button") {{ $t('common.save') }}
 el-tabs.demo-tabs(v-model="activeName", :lazy="false")
   el-tab-pane(:label="$t('deals.tabs.deal')", name="deal")
     DealInformation( :loading="loading" ref="informationRef" @onSubmit="getDealInformation" :editMode="route.query?.leadId || route.query?.opportunityId")

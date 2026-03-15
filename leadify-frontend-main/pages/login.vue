@@ -70,6 +70,7 @@
                 class="modern-form"
                 aria-label="Login form"
                 role="form"
+                data-testid="login-form"
                 @submit.prevent="onSubmit"
               >
                 <div class="space-y-6">
@@ -81,6 +82,7 @@
                       class="modern-input"
                       aria-label="Email address"
                       aria-required="true"
+                      data-testid="email-input"
                     />
                   </div>
 
@@ -93,6 +95,7 @@
                       class="modern-input"
                       aria-label="Password"
                       aria-required="true"
+                      data-testid="password-input"
                     />
                     <div class="flex justify-end px-1 mt-1">
                       <nuxt-link
@@ -118,6 +121,7 @@
                     class="login-btn w-full !h-[58px] !rounded-2xl !bg-[#7849ff] hover:!bg-[#6a3ae0] !border-none !text-lg !font-bold !text-white shadow-[0_10px_20px_-5px_rgba(120,73,255,0.5)] active:scale-[0.98] transition-all"
                     aria-label="Sign in to your account"
                     :aria-busy="loading"
+                    data-testid="login-button"
                   >
                     {{ $t('auth.login') }}
                   </el-button>

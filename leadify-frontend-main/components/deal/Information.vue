@@ -13,9 +13,9 @@ el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-p
       h3.text-xl.font-semibold.my-6 {{ $t('deals.form.dealInfo') }}
       .grid.grid-cols-2.gap-3
         InputSelect(v-if="!switchType" :label="$t('deals.info.lead')" name="leadId" :options="mappedLeads" :value="selectedLead?.id" :disabled="editMode")
-        InputText(:label="$t('deals.info.dealName')"  name="dealName" :value="deal?.name"  is-form)
+        InputText(:label="$t('deals.info.dealName')"  name="dealName" :value="deal?.name"  is-form data-testid="deal-name-input")
         InputText(:label="$t('common.companyName')"  name="companyName" :value="deal?.companyName" is-form)
-        InputText(:label="$t('deals.info.price')"  type="number" name="dealPrice" :value="deal?.price" is-form)
+        InputText(:label="$t('deals.info.price')"  type="number" name="dealPrice" :value="deal?.price" is-form data-testid="deal-price-input")
         InputSelect(:label="$t('deals.info.contractType')" name="contractType" :options="contractTypeOptions" :value="deal?.contractType" )
         InputSelect(:label="$t('deals.table.assigned')" name="assignUser" isMultiple :options="users" :value="users?.filter((user) => deal?.users?.map((user) => user.id)?.includes(user.value))?.map((user) => user.value)"  )
         InputDate(:label="$t('deals.info.signatureDate')" :placeholder="$t('deals.form.enterSignatureDate')" :value="deal?.signatureDate" name="signatureDate" )

@@ -12,6 +12,7 @@
                 :placeholder="`${$t('common.search')} ${searchPlaceholder}`"
                 :prefix-icon="Search"
                 clearable
+                data-testid="table-search-input"
                 @input="searchTimeOut"
                 @clear="searchTimeOut"
             )
@@ -22,7 +23,7 @@
     
     div(:class="{ 'mt-4': !withoutSearch || !withoutFilters }")
         SkeletonTable(v-if="isLoading || loading")
-        el-table(v-else :data='finalData || []' ref="tableRef" style='width:100%' :row-style="{cursor:'pointer'}" @current-change="(val)=> $emit('handleRowClick' , val)"   @sort-change="handleSortChange" @filter-change="handleFilterChange"  :default-sort="sort" @selection-change="handleSelectionChange")
+        el-table(v-else :data='finalData || []' ref="tableRef" style='width:100%' :row-style="{cursor:'pointer'}" @current-change="(val)=> $emit('handleRowClick' , val)"   @sort-change="handleSortChange" @filter-change="handleFilterChange"  :default-sort="sort" @selection-change="handleSelectionChange" data-testid="data-table")
             el-table-column(type="index", width="50" :index="calculateIndex")
             el-table-column( class-name="wrap-text" :min-width="column?.width" :show-overflow-tooltip="true"   v-for="column in columns"  :filtered-value="filters[column?.prop]"  :prop="column.prop" :label="column.label"  :column-key="column.prop" :sortable="column?.sortable ? 'custom' : undefined" )
                 template(#default="scope")
