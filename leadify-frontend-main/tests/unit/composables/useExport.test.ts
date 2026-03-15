@@ -283,7 +283,7 @@ describe('useExport', () => {
       expect(exporting.value).toBe(false);
     });
 
-    it('should use column labels when provided', async () => {
+    it('should use column labels when provided', () => {
       const { exportToExcel } = useExport();
       const columnLabels = { product: 'Product Name', quantity: 'Qty', price: 'Unit Price' };
 
