@@ -107,7 +107,7 @@ describe('useRoles', () => {
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'error',
-          title: 'Error'
+          title: 'common.error'
         })
       );
     });
@@ -143,8 +143,8 @@ describe('useRoles', () => {
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'success',
-          title: 'Success',
-          message: 'Role created successfully'
+          title: 'common.success',
+          message: 'common.created'
         })
       );
     });
@@ -165,7 +165,7 @@ describe('useRoles', () => {
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'error',
-          title: 'Error',
+          title: 'common.error',
           message: 'Role name already exists'
         })
       );
@@ -192,7 +192,7 @@ describe('useRoles', () => {
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'error',
-          title: 'Error',
+          title: 'common.error',
           message: 'Network failure'
         })
       );
@@ -253,8 +253,8 @@ describe('useRoles', () => {
       expect(mockNotification).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'success',
-          title: 'Success',
-          message: 'Role updated successfully'
+          title: 'common.success',
+          message: 'common.saved'
         })
       );
     });

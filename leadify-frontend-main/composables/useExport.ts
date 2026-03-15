@@ -190,12 +190,12 @@ export function useExport() {
   /**
    * Generate an Excel file client-side using SheetJS and download it.
    */
-  function exportToExcel(
+  async function exportToExcel(
     title: string,
     data: Record<string, unknown>[],
     columns: string[],
     options?: { columnLabels?: Record<string, string>; filename?: string }
-  ): void {
+  ): Promise<void> {
     if (!data.length || !columns.length) return;
 
     exporting.value = true;

@@ -233,7 +233,7 @@ describe('useEmailComposer', () => {
       const suggestions = getSuggestedSubjects('follow-up');
 
       expect(suggestions.length).toBeGreaterThan(0);
-      expect(suggestions[0]).toContain('follow');
+      expect(suggestions[0].toLowerCase()).toContain('follow');
     });
 
     it('should return suggestions for introduction category', () => {

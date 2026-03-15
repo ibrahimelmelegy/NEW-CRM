@@ -1,7 +1,7 @@
-// ESLint v9+ flat config (compatible with global ESLint v10)
-// This replaces .eslintrc.js for the global ESLint v10 runner used in CI
-const tsParser = require('/opt/node22/lib/node_modules/@typescript-eslint/parser/dist/index.js');
-const tsPlugin = require('/opt/node22/lib/node_modules/@typescript-eslint/eslint-plugin/dist/index.js');
+// ESLint flat config (v9+ format, also supported by ESLint v8 with flat config mode)
+// This file takes precedence over .eslintrc.js when present
+const tsParser = require('@typescript-eslint/parser');
+const tsPlugin = require('@typescript-eslint/eslint-plugin');
 
 module.exports = [
   {
