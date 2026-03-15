@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+// xlsx removed — use CSV-based export instead
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -385,18 +385,10 @@ export function useReportBuilderPro() {
     if (!data.length) return;
 
     const headers = columns.length ? columns : Object.keys(data[0]);
-    const worksheetData = [headers, ...data.map(row => headers.map(h => row[h] ?? ''))];
-
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(worksheetData);
-
-    // Set column widths
-    ws['!cols'] = headers.map(() => ({ wch: 18 }));
-
-    XLSX.utils.book_append_sheet(wb, ws, 'Report');
-    const buffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    downloadFile(blob, `${filename}.xlsx`);
+    const rows = [headers, ...data.map(row => headers.map(h => String(row[h] ?? '')))];
+    const csvContent = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    downloadFile(blob, `${filename}.csv`);
   }
 
   async function exportToPDF(data: Record<string, unknown>[], columns: string[], filename: string): Promise<void> {
