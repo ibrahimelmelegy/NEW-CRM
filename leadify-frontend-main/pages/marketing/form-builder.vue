@@ -132,6 +132,14 @@
 
       <!-- Form Builder (inline) -->
       <el-tab-pane :label="$t('formBuilder.builder')" name="builder">
+        <el-alert
+          type="info"
+          :title="$t('formBuilder.builderComingSoon') || 'Drag-and-Drop Builder — Preview'"
+          description="Full drag-and-drop reordering and live preview are under development. You can still add fields by clicking them and save the form via the API."
+          show-icon
+          :closable="true"
+          style="margin-bottom: 16px"
+        />
         <div class="grid grid-cols-12 gap-4">
           <!-- Field Palette -->
           <div class="col-span-3 glass-panel p-4 rounded-xl">
