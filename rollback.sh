@@ -24,7 +24,7 @@ echo "[1/5] Current commit: ${CURRENT_COMMIT}"
 
 # Stop running containers gracefully
 echo "[2/5] Stopping containers..."
-docker compose down --timeout 30
+docker compose -f docker-compose.prod.yml down --timeout 30
 
 # Roll back git
 echo "[3/5] Rolling back to HEAD~${COMMITS_BACK}..."
@@ -34,8 +34,8 @@ echo "       Target commit: ${TARGET_COMMIT}"
 
 # Rebuild and start
 echo "[4/5] Rebuilding containers..."
-docker compose build --no-cache
-docker compose up -d
+docker compose -f docker-compose.prod.yml build --no-cache
+docker compose -f docker-compose.prod.yml up -d
 
 # Health check with retries
 echo "[5/5] Verifying deployment health..."
