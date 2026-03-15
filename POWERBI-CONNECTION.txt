@@ -1,85 +1,51 @@
 ============================================
   إعدادات اتصال Power BI بقاعدة البيانات
   HP-Tech CRM (Leadify)
-  الطريقة: Web API (أسهل وأأمن)
 ============================================
 
-=== الخطوة 1: احصل على التوكن (Token) ===
+نوع الاتصال: PostgreSQL Database
 
-1. افتح المتصفح وادخل على:
-   https://crm.hp-tech.com
+--- بيانات الاتصال ---
 
-2. ادخل بحسابك كـ Admin
+Server (السيرفر):    157.245.223.119
+Port (البورت):       5432
+Database (قاعدة البيانات): leadify
+Username (المستخدم): powerbi_user
+Password (كلمة المرور): moac39bKyhZ5m2rkqqrh
 
-3. افتح المتصفح وادخل على هذا الرابط:
-   https://crm.hp-tech.com/api/auth/login
-
-   أو استخدم هذا الأمر في PowerShell:
-   -----------------------------------------------
-   $body = @{
-       email = "your-email@example.com"
-       password = "your-password"
-   } | ConvertTo-Json
-
-   $response = Invoke-RestMethod -Uri "https://crm.hp-tech.com/api/auth/login" `
-       -Method POST `
-       -ContentType "application/json" `
-       -Body $body
-
-   $token = $response.data.token
-   Write-Host "Your Token: $token"
-   -----------------------------------------------
-
-=== الخطوة 2: ربط Power BI ===
+--- خطوات الربط في Power BI Desktop ---
 
 1. افتح Power BI Desktop
 2. اضغط "Get Data" (جلب البيانات)
-3. اختر "Web"
-4. اختر "Advanced"
-
---- للحصول على بيانات العملاء المحتملين (Leads) ---
-URL: https://crm.hp-tech.com/api/powerbi/leads
-
---- للحصول على بيانات الصفقات (Deals) ---
-URL: https://crm.hp-tech.com/api/powerbi/deals
-
---- للحصول على بيانات العملاء (Clients) ---
-URL: https://crm.hp-tech.com/api/powerbi/clients
-
---- للحصول على بيانات الفواتير (Invoices) ---
-URL: https://crm.hp-tech.com/api/powerbi/invoices
-
---- للحصول على بيانات المهام (Tasks) ---
-URL: https://crm.hp-tech.com/api/powerbi/tasks
-
---- ملخص شامل (Dashboard) ---
-URL: https://crm.hp-tech.com/api/powerbi/summary
-
-5. في قسم "HTTP request header parameters" أضف:
-   Header Name:  Authorization
-   Header Value: Bearer YOUR_TOKEN_HERE
-   (استبدل YOUR_TOKEN_HERE بالتوكن من الخطوة 1)
-
+3. اختر "PostgreSQL database"
+4. في خانة Server: اكتب  157.245.223.119
+5. في خانة Database: اكتب  leadify
 6. اضغط OK
+7. اختر "Database" من القائمة
+8. في Username: اكتب  powerbi_user
+9. في Password: اكتب  moac39bKyhZ5m2rkqqrh
+10. اضغط Connect
 
-=== الخطوة 3: استيراد البيانات ===
+--- ملاحظات مهمة ---
 
-1. ستظهر البيانات كـ JSON
-2. اضغط "To Table" لتحويلها لجدول
-3. اضغط "Expand" على عمود data
-4. اختر الأعمدة اللي تريدها
-5. اضغط "Close & Apply"
+- هذا المستخدم للقراءة فقط (لا يمكنه تعديل البيانات)
+- يمكن الوصول لجميع الجداول
+- إذا لم يعمل الاتصال، قم بتثبيت:
+  "Npgsql" PostgreSQL driver من:
+  https://www.npgsql.org/
 
-============================================
-=== البيانات المتاحة ===
-============================================
+--- الجداول الرئيسية في قاعدة البيانات ---
 
-/api/powerbi/leads     → العملاء المحتملين (الاسم، الإيميل، الحالة، المصدر، التقييم)
-/api/powerbi/deals     → الصفقات (العنوان، القيمة، المرحلة، الحالة)
-/api/powerbi/clients   → العملاء (الاسم، الشركة، الإيميل)
-/api/powerbi/invoices  → الفواتير (الرقم، المبلغ، الحالة)
-/api/powerbi/tasks     → المهام (العنوان، الأولوية، الحالة)
-/api/powerbi/summary   → ملخص إحصائي شامل
+- leads          (العملاء المحتملين)
+- deals          (الصفقات)
+- clients        (العملاء)
+- contacts       (جهات الاتصال)
+- tasks          (المهام)
+- users          (المستخدمين)
+- invoices       (الفواتير)
+- proposals      (العروض)
+- activities     (الأنشطة)
+- opportunities  (الفرص)
 
 ============================================
 تاريخ الإعداد: 2026-03-15

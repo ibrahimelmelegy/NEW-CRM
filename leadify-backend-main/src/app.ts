@@ -156,7 +156,6 @@ import tenantAdminRoutes from './tenant/tenantRoutes';
 import tenantSelfRoutes from './tenant/tenantSelfRoutes';
 import backupRoutes from './backup/backupRoutes';
 import monitoringRoutes from './monitoring/monitoringRoutes';
-import powerbiRoutes from './powerbi/powerbiRoutes';
 import { metricsMiddleware } from './middleware/metricsMiddleware';
 import { errorTracker } from './middleware/errorTracker';
 
@@ -487,8 +486,6 @@ app.use('/api/ai-lead-scoring', aiLeadScoringRoutes);
 app.use('/api/backups', backupRoutes);
 // ─── Monitoring & Health Dashboard ──────────────────────────────────────────
 app.use('/api/monitoring', monitoringRoutes);
-// ─── Power BI Data Export ────────────────────────────────────────────────────
-app.use('/api/powerbi', powerbiRoutes);
 
 // Public notification unsubscribe (no auth required) — singular to match /api/notification
 app.use('/api/notification', unsubscribeRoutes);
