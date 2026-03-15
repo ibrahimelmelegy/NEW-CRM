@@ -171,7 +171,7 @@
 </template>
 
 <script setup lang="ts">
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 // Security: Open access for local development
 definePageMeta({
   auth: false
