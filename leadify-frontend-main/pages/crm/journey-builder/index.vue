@@ -442,7 +442,7 @@
 import { ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
 import { graphic } from 'echarts/core';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'Customer Journey Builder' });
 

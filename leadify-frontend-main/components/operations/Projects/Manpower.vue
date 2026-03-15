@@ -32,7 +32,7 @@ ActionModel(v-model="isDelete" v-if="isDelete" :loading="loadingAction" @confirm
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { Plus } from '@element-plus/icons-vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 const route = useRoute();
 const props = defineProps({
   loading: Boolean,

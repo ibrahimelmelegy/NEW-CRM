@@ -6,15 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// ============================================
-// Mock useApiFetch
-// ============================================
-const mockUseApiFetch = vi.fn();
-
-vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
-}));
-
 import {
   fetchProducts,
   fetchProductById,
@@ -32,6 +23,15 @@ import {
   type CatalogProduct,
   type QuoteLine
 } from '@/composables/useProductCatalog';
+
+// ============================================
+// Mock useApiFetch
+// ============================================
+const mockUseApiFetch = vi.fn();
+
+vi.mock('@/composables/useApiFetch', () => ({
+  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
+}));
 
 const mockProduct = (overrides: Partial<CatalogProduct> = {}): CatalogProduct => ({
   id: 'prod-1',

@@ -315,7 +315,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 import { user } from '~/composables/useUser';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({
   layout: 'default',

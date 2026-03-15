@@ -71,7 +71,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     const userRole: string = user.value?.role?.name || '';
     if (userRole === 'SUPER_ADMIN') return;
 
-    const userPermissions: string[] = user.value?.role?.permissions || (user.value as Record<string, unknown>)?.permissions as string[] || [];
+    const userPermissions: string[] = user.value?.role?.permissions || ((user.value as Record<string, unknown>)?.permissions as string[]) || [];
     const hasPermission = requiredPermissions.some(perm => userPermissions.includes(perm));
 
     if (!hasPermission) {

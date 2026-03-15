@@ -13,6 +13,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref } from 'vue';
 
+import { useBulkActions } from '@/composables/useBulkActions';
+
 // ============================================
 // Mocks
 // ============================================
@@ -25,8 +27,6 @@ vi.mock('element-plus', () => ({
     confirm: (...args: unknown[]) => mockElMessageBox.confirm(...args)
   }
 }));
-
-import { useBulkActions } from '@/composables/useBulkActions';
 
 interface TestItem {
   id: string;
@@ -235,25 +235,18 @@ describe('useBulkActions', () => {
       bulkActions.toggleItem('item-1');
       await bulkActions.bulkDelete(deleteFn, 'leads');
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'success' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
     });
 
     it('should show warning notification when some deletions fail', async () => {
       mockElMessageBox.confirm.mockResolvedValue('confirm');
-      const deleteFn = vi
-        .fn()
-        .mockResolvedValueOnce(true)
-        .mockRejectedValueOnce(new Error('Server error'));
+      const deleteFn = vi.fn().mockResolvedValueOnce(true).mockRejectedValueOnce(new Error('Server error'));
 
       bulkActions.toggleItem('item-1');
       bulkActions.toggleItem('item-2');
       await bulkActions.bulkDelete(deleteFn);
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'warning' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'warning' }));
     });
 
     it('should clear selection after successful deletion', async () => {
@@ -327,24 +320,17 @@ describe('useBulkActions', () => {
       bulkActions.toggleItem('item-1');
       await bulkActions.bulkUpdate(updateFn, { name: 'Updated' }, 'leads');
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'success' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
     });
 
     it('should show warning notification when some updates fail', async () => {
-      const updateFn = vi
-        .fn()
-        .mockResolvedValueOnce(true)
-        .mockRejectedValueOnce(new Error('Server error'));
+      const updateFn = vi.fn().mockResolvedValueOnce(true).mockRejectedValueOnce(new Error('Server error'));
 
       bulkActions.toggleItem('item-1');
       bulkActions.toggleItem('item-2');
       await bulkActions.bulkUpdate(updateFn, { name: 'Updated' });
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'warning' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'warning' }));
     });
 
     it('should clear selection after update', async () => {

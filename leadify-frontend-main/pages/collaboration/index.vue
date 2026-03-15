@@ -383,7 +383,7 @@ import VChart from 'vue-echarts';
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 import { useSocket } from '~/composables/useSocket';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const { t } = useI18n();
 const router = useRouter();

@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { Plus, View } from '@element-plus/icons-vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const router = useRouter();
 const { t } = useI18n();

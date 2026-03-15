@@ -13,7 +13,7 @@
 <script lang="ts" setup>
 /* eslint-disable require-await */
 import { ref } from 'vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 const { t } = useI18n();
 const loading = ref(false);
 const categoryRef = ref();

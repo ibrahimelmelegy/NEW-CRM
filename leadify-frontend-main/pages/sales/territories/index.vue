@@ -507,7 +507,7 @@ import { useApiFetch } from '~/composables/useApiFetch';
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ middleware: 'permissions', title: 'Territory Management' });
 
@@ -563,7 +563,7 @@ const territoryForm = reactive({
   isActive: true
 });
 
-const territoryFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const territoryFormRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
 
 const territoryRules = computed(() => ({
   name: [{ required: true, message: t('validation.required') || 'Territory name is required', trigger: 'blur' }]

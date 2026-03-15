@@ -8,7 +8,7 @@
 import { storeToRefs } from 'pinia';
 import { useMain } from '~/stores/common';
 import { useAuthStore } from '~/stores/auth';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 const authStore = useAuthStore();
 
 const activeName = ref('Personal info');

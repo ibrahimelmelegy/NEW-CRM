@@ -11,14 +11,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockUseApiFetch = vi.fn();
-
-vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
-}));
-
-(globalThis as Record<string, unknown>).useApiFetch = (...args: unknown[]) => mockUseApiFetch(...args);
-
 import {
   fetchChartOfAccounts,
   createAccount,
@@ -42,6 +34,14 @@ import {
   sourceTypeOptions,
   journalStatusOptions
 } from '@/composables/useAccounting';
+
+const mockUseApiFetch = vi.fn();
+
+vi.mock('@/composables/useApiFetch', () => ({
+  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
+}));
+
+(globalThis as Record<string, unknown>).useApiFetch = (...args: unknown[]) => mockUseApiFetch(...args);
 
 describe('useAccounting', () => {
   beforeEach(() => {
@@ -151,8 +151,22 @@ describe('useAccounting', () => {
   // ============================================
   describe('fetchJournalEntries', () => {
     it('should fetch journal entries without params', async () => {
-      const mockDocs = [{ id: 'je-1', entryNumber: 'JE-001', date: '2024-01-01', status: JournalEntryStatus.POSTED, totalDebit: 1000, totalCredit: 1000, sourceType: JournalEntrySourceType.MANUAL, createdAt: '2024-01-01' }];
-      mockUseApiFetch.mockResolvedValue({ body: { docs: mockDocs, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } }, success: true });
+      const mockDocs = [
+        {
+          id: 'je-1',
+          entryNumber: 'JE-001',
+          date: '2024-01-01',
+          status: JournalEntryStatus.POSTED,
+          totalDebit: 1000,
+          totalCredit: 1000,
+          sourceType: JournalEntrySourceType.MANUAL,
+          createdAt: '2024-01-01'
+        }
+      ];
+      mockUseApiFetch.mockResolvedValue({
+        body: { docs: mockDocs, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } },
+        success: true
+      });
 
       const result = await fetchJournalEntries();
 
@@ -186,7 +200,16 @@ describe('useAccounting', () => {
   // ============================================
   describe('fetchJournalEntryById', () => {
     it('should fetch a single journal entry by ID', async () => {
-      const mockEntry = { id: 'je-1', entryNumber: 'JE-001', date: '2024-01-01', status: JournalEntryStatus.POSTED, totalDebit: 1000, totalCredit: 1000, sourceType: JournalEntrySourceType.MANUAL, createdAt: '2024-01-01' };
+      const mockEntry = {
+        id: 'je-1',
+        entryNumber: 'JE-001',
+        date: '2024-01-01',
+        status: JournalEntryStatus.POSTED,
+        totalDebit: 1000,
+        totalCredit: 1000,
+        sourceType: JournalEntrySourceType.MANUAL,
+        createdAt: '2024-01-01'
+      };
       mockUseApiFetch.mockResolvedValue({ body: mockEntry, success: true });
 
       const result = await fetchJournalEntryById('je-1');
@@ -286,7 +309,14 @@ describe('useAccounting', () => {
   // ============================================
   describe('fetchProfitAndLoss', () => {
     it('should fetch P&L for given date range', async () => {
-      const mockPL = { period: { from: '2024-01-01', to: '2024-12-31' }, revenue: [], totalRevenue: 50000, expenses: [], totalExpenses: 30000, netIncome: 20000 };
+      const mockPL = {
+        period: { from: '2024-01-01', to: '2024-12-31' },
+        revenue: [],
+        totalRevenue: 50000,
+        expenses: [],
+        totalExpenses: 30000,
+        netIncome: 20000
+      };
       mockUseApiFetch.mockResolvedValue({ body: mockPL, success: true });
 
       const result = await fetchProfitAndLoss('2024-01-01', '2024-12-31');
@@ -356,7 +386,10 @@ describe('useAccounting', () => {
     });
 
     it('should include date range when provided', async () => {
-      mockUseApiFetch.mockResolvedValue({ body: { account: { id: '1', code: '1000', name: 'Cash', type: 'ASSET' }, entries: [], closingBalance: 0 }, success: true });
+      mockUseApiFetch.mockResolvedValue({
+        body: { account: { id: '1', code: '1000', name: 'Cash', type: 'ASSET' }, entries: [], closingBalance: 0 },
+        success: true
+      });
 
       await fetchGeneralLedger('1', '2024-01-01', '2024-12-31');
 

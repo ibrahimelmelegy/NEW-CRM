@@ -34,8 +34,24 @@ describe('useActivityLog', () => {
   describe('fetchActivities', () => {
     it('should fetch activities from audit endpoint', async () => {
       const mockDocs = [
-        { id: '1', action: 'CREATE', entityType: 'contact', entityId: '10', entityLabel: 'John Doe', description: 'Created', createdAt: '2024-01-01T10:00:00Z' },
-        { id: '2', action: 'UPDATE', entityType: 'deal', entityId: '20', entityLabel: 'Deal A', description: 'Updated', createdAt: '2024-01-02T10:00:00Z' }
+        {
+          id: '1',
+          action: 'CREATE',
+          entityType: 'contact',
+          entityId: '10',
+          entityLabel: 'John Doe',
+          description: 'Created',
+          createdAt: '2024-01-01T10:00:00Z'
+        },
+        {
+          id: '2',
+          action: 'UPDATE',
+          entityType: 'deal',
+          entityId: '20',
+          entityLabel: 'Deal A',
+          description: 'Updated',
+          createdAt: '2024-01-02T10:00:00Z'
+        }
       ];
       mockUseApiFetch.mockResolvedValue({ body: { docs: mockDocs }, success: true });
 
@@ -48,9 +64,33 @@ describe('useActivityLog', () => {
 
     it('should map action codes to activity actions correctly', async () => {
       const mockDocs = [
-        { id: '1', action: 'CREATE', entityType: 'contact', entityId: '10', entityLabel: 'Jane', description: 'Created', createdAt: '2024-01-01T10:00:00Z' },
-        { id: '2', action: 'DELETE', entityType: 'deal', entityId: '20', entityLabel: 'Deal', description: 'Deleted', createdAt: '2024-01-02T10:00:00Z' },
-        { id: '3', action: 'ARCHIVE', entityType: 'invoice', entityId: '30', entityLabel: 'Invoice', description: 'Archived', createdAt: '2024-01-03T10:00:00Z' }
+        {
+          id: '1',
+          action: 'CREATE',
+          entityType: 'contact',
+          entityId: '10',
+          entityLabel: 'Jane',
+          description: 'Created',
+          createdAt: '2024-01-01T10:00:00Z'
+        },
+        {
+          id: '2',
+          action: 'DELETE',
+          entityType: 'deal',
+          entityId: '20',
+          entityLabel: 'Deal',
+          description: 'Deleted',
+          createdAt: '2024-01-02T10:00:00Z'
+        },
+        {
+          id: '3',
+          action: 'ARCHIVE',
+          entityType: 'invoice',
+          entityId: '30',
+          entityLabel: 'Invoice',
+          description: 'Archived',
+          createdAt: '2024-01-03T10:00:00Z'
+        }
       ];
       mockUseApiFetch.mockResolvedValue({ body: { docs: mockDocs }, success: true });
 
@@ -64,7 +104,15 @@ describe('useActivityLog', () => {
 
     it('should handle body as array (not wrapped in docs)', async () => {
       const mockDocs = [
-        { id: '1', action: 'UPDATE', entityType: 'contact', entityId: '10', entityLabel: 'X', description: 'Updated', createdAt: '2024-01-01T10:00:00Z' }
+        {
+          id: '1',
+          action: 'UPDATE',
+          entityType: 'contact',
+          entityId: '10',
+          entityLabel: 'X',
+          description: 'Updated',
+          createdAt: '2024-01-01T10:00:00Z'
+        }
       ];
       mockUseApiFetch.mockResolvedValue({ body: mockDocs, success: true });
 
@@ -76,7 +124,11 @@ describe('useActivityLog', () => {
 
     it('should manage loading state during fetch', async () => {
       let resolvePromise: (value: unknown) => void;
-      mockUseApiFetch.mockReturnValueOnce(new Promise(resolve => { resolvePromise = resolve; }));
+      mockUseApiFetch.mockReturnValueOnce(
+        new Promise(resolve => {
+          resolvePromise = resolve;
+        })
+      );
 
       const { fetchActivities, loading } = useActivityLog();
 
@@ -113,7 +165,17 @@ describe('useActivityLog', () => {
   // ============================================
   describe('fetchByEntity', () => {
     it('should fetch by entity type and id using specific URL', async () => {
-      const mockDocs = [{ id: '1', action: 'UPDATE', entityType: 'deal', entityId: '5', entityLabel: 'Deal 5', description: 'Updated', createdAt: '2024-01-01T00:00:00Z' }];
+      const mockDocs = [
+        {
+          id: '1',
+          action: 'UPDATE',
+          entityType: 'deal',
+          entityId: '5',
+          entityLabel: 'Deal 5',
+          description: 'Updated',
+          createdAt: '2024-01-01T00:00:00Z'
+        }
+      ];
       mockUseApiFetch.mockResolvedValue({ body: { docs: mockDocs }, success: true });
 
       const { fetchByEntity } = useActivityLog();
@@ -171,7 +233,14 @@ describe('useActivityLog', () => {
       const { log, activities } = useActivityLog();
 
       for (let i = 0; i < 505; i++) {
-        activities.value.unshift({ id: `old-${i}`, action: 'created', entityType: 'contact', entityLabel: `Contact ${i}`, description: 'Old', timestamp: '2024-01-01T00:00:00Z' });
+        activities.value.unshift({
+          id: `old-${i}`,
+          action: 'created',
+          entityType: 'contact',
+          entityLabel: `Contact ${i}`,
+          description: 'Old',
+          timestamp: '2024-01-01T00:00:00Z'
+        });
       }
 
       log({ action: 'created', entityType: 'contact', entityLabel: 'New Contact', description: 'New' });
@@ -186,8 +255,24 @@ describe('useActivityLog', () => {
   describe('getByEntity', () => {
     it('should filter activities by entity type and id', async () => {
       const mockDocs = [
-        { id: '1', action: 'CREATE', entityType: 'deal', entityId: '5', entityLabel: 'Deal 5', description: 'Created', createdAt: '2024-01-01T10:00:00Z' },
-        { id: '2', action: 'UPDATE', entityType: 'contact', entityId: '3', entityLabel: 'Contact 3', description: 'Updated', createdAt: '2024-01-02T10:00:00Z' }
+        {
+          id: '1',
+          action: 'CREATE',
+          entityType: 'deal',
+          entityId: '5',
+          entityLabel: 'Deal 5',
+          description: 'Created',
+          createdAt: '2024-01-01T10:00:00Z'
+        },
+        {
+          id: '2',
+          action: 'UPDATE',
+          entityType: 'contact',
+          entityId: '3',
+          entityLabel: 'Contact 3',
+          description: 'Updated',
+          createdAt: '2024-01-02T10:00:00Z'
+        }
       ];
       mockUseApiFetch.mockResolvedValue({ body: { docs: mockDocs }, success: true });
 
@@ -201,9 +286,33 @@ describe('useActivityLog', () => {
 
     it('should return all activities of a type when no id given', async () => {
       const mockDocs = [
-        { id: '1', action: 'CREATE', entityType: 'deal', entityId: '5', entityLabel: 'Deal 5', description: 'Created', createdAt: '2024-01-01T10:00:00Z' },
-        { id: '2', action: 'UPDATE', entityType: 'deal', entityId: '6', entityLabel: 'Deal 6', description: 'Updated', createdAt: '2024-01-02T10:00:00Z' },
-        { id: '3', action: 'CREATE', entityType: 'contact', entityId: '1', entityLabel: 'Contact 1', description: 'Created', createdAt: '2024-01-03T10:00:00Z' }
+        {
+          id: '1',
+          action: 'CREATE',
+          entityType: 'deal',
+          entityId: '5',
+          entityLabel: 'Deal 5',
+          description: 'Created',
+          createdAt: '2024-01-01T10:00:00Z'
+        },
+        {
+          id: '2',
+          action: 'UPDATE',
+          entityType: 'deal',
+          entityId: '6',
+          entityLabel: 'Deal 6',
+          description: 'Updated',
+          createdAt: '2024-01-02T10:00:00Z'
+        },
+        {
+          id: '3',
+          action: 'CREATE',
+          entityType: 'contact',
+          entityId: '1',
+          entityLabel: 'Contact 1',
+          description: 'Created',
+          createdAt: '2024-01-03T10:00:00Z'
+        }
       ];
       mockUseApiFetch.mockResolvedValue({ body: { docs: mockDocs }, success: true });
 
@@ -220,7 +329,22 @@ describe('useActivityLog', () => {
   // ============================================
   describe('clearAll', () => {
     it('should empty the activities list', async () => {
-      mockUseApiFetch.mockResolvedValue({ body: { docs: [{ id: '1', action: 'CREATE', entityType: 'contact', entityId: '1', entityLabel: 'Test', description: 'Created', createdAt: '2024-01-01T00:00:00Z' }] }, success: true });
+      mockUseApiFetch.mockResolvedValue({
+        body: {
+          docs: [
+            {
+              id: '1',
+              action: 'CREATE',
+              entityType: 'contact',
+              entityId: '1',
+              entityLabel: 'Test',
+              description: 'Created',
+              createdAt: '2024-01-01T00:00:00Z'
+            }
+          ]
+        },
+        success: true
+      });
 
       const { fetchActivities, clearAll, activities } = useActivityLog();
       await fetchActivities();

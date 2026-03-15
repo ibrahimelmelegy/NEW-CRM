@@ -10,6 +10,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { fetchSavedViews, createSavedView, updateSavedView, deleteSavedView, setDefaultView, type SavedView } from '@/composables/useSavedViews';
+
 // ============================================
 // Mock useApiFetch
 // ============================================
@@ -18,15 +20,6 @@ const mockUseApiFetch = vi.fn();
 vi.mock('@/composables/useApiFetch', () => ({
   useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
 }));
-
-import {
-  fetchSavedViews,
-  createSavedView,
-  updateSavedView,
-  deleteSavedView,
-  setDefaultView,
-  type SavedView
-} from '@/composables/useSavedViews';
 
 describe('useSavedViews', () => {
   beforeEach(() => {
@@ -55,9 +48,7 @@ describe('useSavedViews', () => {
     });
 
     it('should return array directly when not wrapped in docs', async () => {
-      const mockViews: SavedView[] = [
-        { id: 1, name: 'View 1', entityType: 'deal', filters: {}, userId: 1 }
-      ];
+      const mockViews: SavedView[] = [{ id: 1, name: 'View 1', entityType: 'deal', filters: {}, userId: 1 }];
 
       mockUseApiFetch.mockResolvedValue({
         body: mockViews,

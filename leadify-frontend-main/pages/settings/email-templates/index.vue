@@ -156,7 +156,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({});
 

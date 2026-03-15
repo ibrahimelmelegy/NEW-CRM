@@ -1,5 +1,5 @@
 import { user, useUser } from '@/composables/useUser';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const permissions = ref<string[]>([]);
 const isLoaded = ref(false);

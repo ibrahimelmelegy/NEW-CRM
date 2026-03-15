@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const csrfToken = ref<string>('');
 

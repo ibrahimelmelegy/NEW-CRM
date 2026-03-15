@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 interface CacheEntry<T> {
   data: T;

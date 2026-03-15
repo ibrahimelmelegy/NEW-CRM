@@ -255,7 +255,7 @@ import { ref, computed } from 'vue';
 import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'Subscription Analytics' });
 

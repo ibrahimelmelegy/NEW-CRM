@@ -215,7 +215,7 @@
 import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import OperationsDailyTasksStatistics from '@/components/operations/daily-tasks/Statistics.vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const { t } = useI18n();
 const activeName = ref('info');

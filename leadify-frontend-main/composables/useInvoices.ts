@@ -1,6 +1,6 @@
 /* eslint-disable require-await */
 import { ElNotification } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 export interface InvoiceItem {
   id: number;

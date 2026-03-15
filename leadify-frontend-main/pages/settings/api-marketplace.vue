@@ -329,7 +329,7 @@ import { ref, reactive, computed } from 'vue';
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
 import { graphic } from 'echarts/core';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'API Marketplace' });
 

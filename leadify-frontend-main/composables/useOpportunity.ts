@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 // Handle error during Opportunity creation
 function handleError(message: string) {
   const t = useNuxtApp().$i18n.t;

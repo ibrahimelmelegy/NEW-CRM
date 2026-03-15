@@ -31,9 +31,15 @@ const localStorageMock = (() => {
   let store: Record<string, string> = {};
   return {
     getItem: vi.fn((key: string) => store[key] || null),
-    setItem: vi.fn((key: string, value: string) => { store[key] = value; }),
-    removeItem: vi.fn((key: string) => { delete store[key]; }),
-    clear: vi.fn(() => { store = {}; })
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value;
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    })
   };
 })();
 Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
@@ -72,9 +78,7 @@ describe('usePlaybook', () => {
     });
 
     it('should set the first playbook as selectedPlaybook when none is selected', async () => {
-      const mockPlaybooks: PlaybookData[] = [
-        { id: 'pb-1', name: 'First Playbook', description: 'desc', stages: [], isActive: true }
-      ];
+      const mockPlaybooks: PlaybookData[] = [{ id: 'pb-1', name: 'First Playbook', description: 'desc', stages: [], isActive: true }];
       mockApiFetch.mockResolvedValue({ success: true, body: mockPlaybooks });
 
       const { fetchPlaybooks, selectedPlaybook } = usePlaybook();
@@ -87,7 +91,11 @@ describe('usePlaybook', () => {
 
     it('should manage loading state', async () => {
       let resolvePromise: (value: unknown) => void;
-      mockApiFetch.mockReturnValueOnce(new Promise(resolve => { resolvePromise = resolve; }));
+      mockApiFetch.mockReturnValueOnce(
+        new Promise(resolve => {
+          resolvePromise = resolve;
+        })
+      );
 
       const { fetchPlaybooks, loading } = usePlaybook();
 
@@ -204,9 +212,7 @@ describe('usePlaybook', () => {
       const initial = { id: 'pb-1', name: 'Old', description: '', stages: [], isActive: true };
       const updated = { ...initial, name: 'Updated' };
 
-      mockApiFetch
-        .mockResolvedValueOnce({ success: true, body: [initial] })
-        .mockResolvedValueOnce({ success: true, body: updated });
+      mockApiFetch.mockResolvedValueOnce({ success: true, body: [initial] }).mockResolvedValueOnce({ success: true, body: updated });
 
       const { fetchPlaybooks, updatePlaybook, selectedPlaybook } = usePlaybook();
       await fetchPlaybooks();
@@ -236,9 +242,7 @@ describe('usePlaybook', () => {
         { id: 'pb-2', name: 'Playbook 2', description: '', stages: [], isActive: true }
       ];
 
-      mockApiFetch
-        .mockResolvedValueOnce({ success: true, body: playbooks_data })
-        .mockResolvedValueOnce({ success: true });
+      mockApiFetch.mockResolvedValueOnce({ success: true, body: playbooks_data }).mockResolvedValueOnce({ success: true });
 
       const { fetchPlaybooks, deletePlaybook, playbooks } = usePlaybook();
       await fetchPlaybooks();

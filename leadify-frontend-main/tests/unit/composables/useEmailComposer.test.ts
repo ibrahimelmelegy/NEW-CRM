@@ -14,6 +14,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { useEmailComposer } from '@/composables/useEmailComposer';
+
 const mockUseApiFetch = vi.fn();
 const mockElNotification = vi.fn();
 const mockNuxtApp = { $i18n: { t: (key: string) => key } };
@@ -34,8 +36,6 @@ const { ref, reactive, computed } = await import('vue');
 (globalThis as Record<string, unknown>).ref = ref;
 (globalThis as Record<string, unknown>).reactive = reactive;
 (globalThis as Record<string, unknown>).computed = computed;
-
-import { useEmailComposer } from '@/composables/useEmailComposer';
 
 describe('useEmailComposer', () => {
   beforeEach(() => {
@@ -62,7 +62,11 @@ describe('useEmailComposer', () => {
 
     it('should manage loading state', async () => {
       let resolvePromise: (value: unknown) => void;
-      mockUseApiFetch.mockReturnValueOnce(new Promise(resolve => { resolvePromise = resolve; }));
+      mockUseApiFetch.mockReturnValueOnce(
+        new Promise(resolve => {
+          resolvePromise = resolve;
+        })
+      );
 
       const { fetchTemplates, loading } = useEmailComposer();
 

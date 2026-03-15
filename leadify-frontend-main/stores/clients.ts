@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import type { Client } from '~/types/models';
 import type { ApiListParams } from '~/types/api';
 import type { ClientIndustry } from '~/types/enums';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 interface Pagination {
   page: number;

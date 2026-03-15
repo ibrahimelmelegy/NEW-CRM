@@ -337,7 +337,7 @@ const defaultForm = () => ({
 const form = reactive(defaultForm());
 const threatMatrix = ref<Record<string, unknown>[]>([]);
 
-const formRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const formRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
 
 const formRules = computed(() => ({
   name: [{ required: true, message: t('validation.required') || 'Competitor name is required', trigger: 'blur' }]

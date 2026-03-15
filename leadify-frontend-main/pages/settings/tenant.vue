@@ -123,7 +123,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const router = useRouter();
 

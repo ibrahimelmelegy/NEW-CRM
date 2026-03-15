@@ -290,7 +290,7 @@ import { ref, computed, nextTick, watch, onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useLiveChat } from '~/composables/liveChat';
 import { user } from '~/composables/useUser';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ layout: 'default', middleware: 'permissions' });
 

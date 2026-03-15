@@ -240,7 +240,7 @@ import { ElMessage, ElNotification } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 import * as echarts from 'echarts/core';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({
   layout: 'default',

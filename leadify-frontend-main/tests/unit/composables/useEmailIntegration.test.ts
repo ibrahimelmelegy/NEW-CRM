@@ -14,14 +14,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockUseApiFetch = vi.fn();
-
-vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
-}));
-
-(globalThis as Record<string, unknown>).useApiFetch = (...args: unknown[]) => mockUseApiFetch(...args);
-
 import {
   fetchEmailAccounts,
   connectEmailAccount,
@@ -30,6 +22,14 @@ import {
   sendEmail,
   fetchEmailTracking
 } from '@/composables/useEmailIntegration';
+
+const mockUseApiFetch = vi.fn();
+
+vi.mock('@/composables/useApiFetch', () => ({
+  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
+}));
+
+(globalThis as Record<string, unknown>).useApiFetch = (...args: unknown[]) => mockUseApiFetch(...args);
 
 describe('useEmailIntegration', () => {
   beforeEach(() => {
@@ -150,9 +150,23 @@ describe('useEmailIntegration', () => {
   describe('fetchEmailMessages', () => {
     it('should fetch messages without query params', async () => {
       const mockMessages = [
-        { id: 'msg-1', accountId: 'acc-1', subject: 'Hello', from: 'sender@example.com', to: ['user@gmail.com'], body: 'Hi', isRead: false, folder: 'INBOX', sentAt: '2024-01-01', createdAt: '2024-01-01' }
+        {
+          id: 'msg-1',
+          accountId: 'acc-1',
+          subject: 'Hello',
+          from: 'sender@example.com',
+          to: ['user@gmail.com'],
+          body: 'Hi',
+          isRead: false,
+          folder: 'INBOX',
+          sentAt: '2024-01-01',
+          createdAt: '2024-01-01'
+        }
       ];
-      mockUseApiFetch.mockResolvedValue({ body: { docs: mockMessages, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } }, success: true });
+      mockUseApiFetch.mockResolvedValue({
+        body: { docs: mockMessages, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } },
+        success: true
+      });
 
       const result = await fetchEmailMessages();
 

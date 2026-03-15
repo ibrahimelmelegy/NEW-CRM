@@ -237,7 +237,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({});
 

@@ -6,15 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// ============================================
-// Mock useApiFetch
-// ============================================
-const mockUseApiFetch = vi.fn();
-
-vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
-}));
-
 import {
   fetchForecasts,
   fetchForecastByPeriod,
@@ -27,6 +18,15 @@ import {
   fetchTeamBreakdown,
   type ForecastPeriod
 } from '@/composables/useForecasting';
+
+// ============================================
+// Mock useApiFetch
+// ============================================
+const mockUseApiFetch = vi.fn();
+
+vi.mock('@/composables/useApiFetch', () => ({
+  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
+}));
 
 const mockForecast = (overrides: Partial<ForecastPeriod> = {}): ForecastPeriod => ({
   id: 'forecast-1',

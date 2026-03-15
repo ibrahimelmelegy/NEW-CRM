@@ -359,8 +359,8 @@ const enrollmentForm = reactive({
 });
 
 // Form Refs & Validation Rules
-const programFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
-const enrollmentFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const programFormRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
+const enrollmentFormRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
 
 const programRules = computed(() => ({
   title: [{ required: true, message: t('validation.required') || 'Title is required', trigger: 'blur' }],

@@ -7,7 +7,7 @@
  */
 
 import { useSocketStore as _importedSocketStore } from '~/stores/socket';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 // Wrapper to get the socket store instance (only call client-side)
 function _getSocketStore() {

@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { Loading } from '@element-plus/icons-vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const { t } = useI18n();
 const route = useRoute();

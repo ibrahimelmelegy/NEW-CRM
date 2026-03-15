@@ -113,7 +113,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, markRaw, type Component } from 'vue';
 import { Search, Building2, Briefcase, FolderKanban, ChevronDown, X, Loader2 } from 'lucide-vue-next';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 // ---- Types ----
 type EntityType = 'Opportunity' | 'Deal' | 'Project';

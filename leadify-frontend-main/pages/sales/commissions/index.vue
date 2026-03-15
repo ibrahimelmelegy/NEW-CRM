@@ -168,7 +168,7 @@ const selectedIds = ref<number[]>([]);
 const form = reactive({ amount: 0, rate: 5, dealValue: 0, notes: '' });
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
 
-const commissionFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const commissionFormRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
 
 const commissionRules = computed(() => ({
   amount: [

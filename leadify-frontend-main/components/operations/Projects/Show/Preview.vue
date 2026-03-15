@@ -60,7 +60,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { getYear } from '#imports';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const contentToPrint = ref(null);
 

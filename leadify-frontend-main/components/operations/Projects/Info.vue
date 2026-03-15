@@ -66,7 +66,7 @@ el-form( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-po
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 const route = useRoute();
 const router = useRouter();
 const props = defineProps({

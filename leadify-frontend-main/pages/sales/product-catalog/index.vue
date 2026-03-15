@@ -558,7 +558,7 @@ const defaultProductForm = () => ({
 });
 const productForm = reactive(defaultProductForm());
 
-const productFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const productFormRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
 
 const productRules = computed(() => ({
   name: [{ required: true, message: t('validation.required') || 'Product name is required', trigger: 'blur' }],

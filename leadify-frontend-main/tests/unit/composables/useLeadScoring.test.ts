@@ -10,15 +10,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// ============================================
-// Mock useApiFetch
-// ============================================
-const mockUseApiFetch = vi.fn();
-
-vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
-}));
-
 import {
   fetchScoringRules,
   createScoringRule,
@@ -32,6 +23,15 @@ import {
   type ScoringRule,
   type GradeThreshold
 } from '@/composables/useLeadScoring';
+
+// ============================================
+// Mock useApiFetch
+// ============================================
+const mockUseApiFetch = vi.fn();
+
+vi.mock('@/composables/useApiFetch', () => ({
+  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
+}));
 
 describe('useLeadScoring', () => {
   beforeEach(() => {
@@ -62,9 +62,7 @@ describe('useLeadScoring', () => {
     });
 
     it('should return array directly when not wrapped in docs', async () => {
-      const mockRules: ScoringRule[] = [
-        { id: 1, name: 'Rule 1', entityType: 'lead', criteria: [], isActive: true }
-      ];
+      const mockRules: ScoringRule[] = [{ id: 1, name: 'Rule 1', entityType: 'lead', criteria: [], isActive: true }];
 
       mockUseApiFetch.mockResolvedValue({ body: mockRules, success: true });
 
@@ -277,9 +275,7 @@ describe('useLeadScoring', () => {
     });
 
     it('should return grades directly when not wrapped in docs', async () => {
-      const mockGrades: GradeThreshold[] = [
-        { grade: 'A', label: 'Hot', minScore: 80, maxScore: 100, color: '#10B981' }
-      ];
+      const mockGrades: GradeThreshold[] = [{ grade: 'A', label: 'Hot', minScore: 80, maxScore: 100, color: '#10B981' }];
 
       mockUseApiFetch.mockResolvedValue({ body: mockGrades, success: true });
 

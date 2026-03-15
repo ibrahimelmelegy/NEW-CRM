@@ -6,15 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// ============================================
-// Mock useApiFetch
-// ============================================
-const mockUseApiFetch = vi.fn();
-
-vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
-}));
-
 import {
   fetchSequences,
   createSequence,
@@ -30,6 +21,15 @@ import {
   type SequenceEnrollment,
   type SequenceStats
 } from '@/composables/useSequences';
+
+// ============================================
+// Mock useApiFetch
+// ============================================
+const mockUseApiFetch = vi.fn();
+
+vi.mock('@/composables/useApiFetch', () => ({
+  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
+}));
 
 describe('useSequences', () => {
   beforeEach(() => {
@@ -59,9 +59,7 @@ describe('useSequences', () => {
     });
 
     it('should return docs and pagination', async () => {
-      const mockSequences: Sequence[] = [
-        { id: 'seq-1', name: 'Welcome Sequence', steps: [], isActive: true }
-      ];
+      const mockSequences: Sequence[] = [{ id: 'seq-1', name: 'Welcome Sequence', steps: [], isActive: true }];
       const mockPagination = { page: 1, limit: 20, totalItems: 1, totalPages: 1 };
 
       mockUseApiFetch.mockResolvedValue({

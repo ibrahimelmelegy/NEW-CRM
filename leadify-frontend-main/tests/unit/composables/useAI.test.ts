@@ -175,7 +175,15 @@ describe('useAI', () => {
   // ============================================
   describe('scoreDeal', () => {
     it('should call the correct API endpoint', async () => {
-      const mockScore = { dealId: 'deal-1', score: 'A', winProbability: 0.85, factors: [], suggestions: [], dealName: 'Test Deal', scoredAt: '2024-01-01' };
+      const mockScore = {
+        dealId: 'deal-1',
+        score: 'A',
+        winProbability: 0.85,
+        factors: [],
+        suggestions: [],
+        dealName: 'Test Deal',
+        scoredAt: '2024-01-01'
+      };
       mockApiFetch.mockResolvedValue({ success: true, body: mockScore });
 
       const { scoreDeal } = useAI();
@@ -185,7 +193,15 @@ describe('useAI', () => {
     });
 
     it('should return score result on success', async () => {
-      const mockScore = { dealId: 'deal-1', score: 'A', winProbability: 0.85, factors: [], suggestions: [], dealName: 'Test Deal', scoredAt: '2024-01-01' };
+      const mockScore = {
+        dealId: 'deal-1',
+        score: 'A',
+        winProbability: 0.85,
+        factors: [],
+        suggestions: [],
+        dealName: 'Test Deal',
+        scoredAt: '2024-01-01'
+      };
       mockApiFetch.mockResolvedValue({ success: true, body: mockScore });
 
       const { scoreDeal, dealScore } = useAI();
@@ -207,7 +223,11 @@ describe('useAI', () => {
 
     it('should manage isDealScoreLoading state', async () => {
       let resolvePromise: (value: unknown) => void;
-      mockApiFetch.mockReturnValueOnce(new Promise(resolve => { resolvePromise = resolve; }));
+      mockApiFetch.mockReturnValueOnce(
+        new Promise(resolve => {
+          resolvePromise = resolve;
+        })
+      );
 
       const { scoreDeal, isDealScoreLoading } = useAI();
 
@@ -215,7 +235,10 @@ describe('useAI', () => {
       const promise = scoreDeal('deal-1');
       expect(isDealScoreLoading.value).toBe(true);
 
-      resolvePromise!({ success: true, body: { dealId: 'deal-1', score: 'B', winProbability: 0.6, factors: [], suggestions: [], dealName: 'Test', scoredAt: '2024-01-01' } });
+      resolvePromise!({
+        success: true,
+        body: { dealId: 'deal-1', score: 'B', winProbability: 0.6, factors: [], suggestions: [], dealName: 'Test', scoredAt: '2024-01-01' }
+      });
       await promise;
       expect(isDealScoreLoading.value).toBe(false);
     });

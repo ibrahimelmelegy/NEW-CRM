@@ -196,7 +196,7 @@ import { useReminders } from '~/composables/useReminders';
 import { useDocumentArchive } from '~/composables/useDocumentArchive';
 import { useActivityLog } from '~/composables/useActivityLog';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({});
 

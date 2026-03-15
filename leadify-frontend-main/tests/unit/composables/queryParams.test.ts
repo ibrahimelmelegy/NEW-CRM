@@ -15,6 +15,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref, nextTick } from 'vue';
 
+import useQuery from '@/composables/queryParams';
+
 // ============================================
 // Mock router and route
 // ============================================
@@ -37,8 +39,6 @@ let mountedCallback: (() => void | Promise<void>) | null = null;
 (globalThis as Record<string, unknown>).onMounted = (cb: () => void | Promise<void>) => {
   mountedCallback = cb;
 };
-
-import useQuery from '@/composables/queryParams';
 
 describe('queryParams (useQuery)', () => {
   beforeEach(() => {

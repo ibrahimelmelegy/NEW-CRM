@@ -339,7 +339,7 @@ import type { SLAPolicy, SLAMetrics, EscalationRule } from '~/composables/useSLA
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'SLA Management' });
 

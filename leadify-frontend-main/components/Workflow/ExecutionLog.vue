@@ -119,7 +119,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 interface ActionResult {
   actionType: string;

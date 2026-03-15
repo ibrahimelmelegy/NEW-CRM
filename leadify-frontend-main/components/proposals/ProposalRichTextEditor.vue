@@ -298,7 +298,7 @@ import {
 } from 'lucide-vue-next';
 
 import { ElNotification } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 // ---- Inline FontSize extension (avoids external dependency) ----
 const FontSize = Extension.create({

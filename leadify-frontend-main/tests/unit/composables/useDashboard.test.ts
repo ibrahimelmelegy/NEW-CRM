@@ -12,15 +12,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// ============================================
-// Mock useApiFetch
-// ============================================
-const mockUseApiFetch = vi.fn();
-
-vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
-}));
-
 import {
   fetchDashboards,
   fetchDashboard,
@@ -35,6 +26,15 @@ import {
   type Dashboard,
   type DashboardWidget
 } from '@/composables/useDashboard';
+
+// ============================================
+// Mock useApiFetch
+// ============================================
+const mockUseApiFetch = vi.fn();
+
+vi.mock('@/composables/useApiFetch', () => ({
+  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
+}));
 
 describe('useDashboard', () => {
   beforeEach(() => {
@@ -63,9 +63,7 @@ describe('useDashboard', () => {
     });
 
     it('should return array directly when not wrapped in docs', async () => {
-      const mockDashboards: Dashboard[] = [
-        { id: 1, name: 'Main Dashboard', widgets: [], userId: 1 }
-      ];
+      const mockDashboards: Dashboard[] = [{ id: 1, name: 'Main Dashboard', widgets: [], userId: 1 }];
 
       mockUseApiFetch.mockResolvedValue({
         body: mockDashboards,
@@ -308,9 +306,7 @@ describe('useDashboard', () => {
 
       await fetchPipelineData(dateRange);
 
-      expect(mockUseApiFetch).toHaveBeenCalledWith(
-        'dashboards/pipeline?startDate=2024-01-01&endDate=2024-01-31'
-      );
+      expect(mockUseApiFetch).toHaveBeenCalledWith('dashboards/pipeline?startDate=2024-01-01&endDate=2024-01-31');
     });
 
     it('should return null when API call fails', async () => {
@@ -395,9 +391,7 @@ describe('useDashboard', () => {
 
       await fetchTeamPerformance(dateRange);
 
-      expect(mockUseApiFetch).toHaveBeenCalledWith(
-        'dashboards/team-performance?startDate=2024-01-01&endDate=2024-01-31'
-      );
+      expect(mockUseApiFetch).toHaveBeenCalledWith('dashboards/team-performance?startDate=2024-01-01&endDate=2024-01-31');
     });
 
     it('should return null when API call fails', async () => {

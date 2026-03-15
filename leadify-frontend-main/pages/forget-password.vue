@@ -62,7 +62,13 @@
               >
                 <div class="space-y-6">
                   <div class="form-group flex flex-col gap-2">
-                    <InputText :label="$t('auth.email')" placeholder="name@company.com" name="email" class="modern-input" data-testid="forget-email-input" />
+                    <InputText
+                      :label="$t('auth.email')"
+                      placeholder="name@company.com"
+                      name="email"
+                      class="modern-input"
+                      data-testid="forget-email-input"
+                    />
                   </div>
                 </div>
 
@@ -78,7 +84,12 @@
                     {{ $t('auth.sendResetLink') }}
                   </el-button>
 
-                  <el-button size="large" class="w-full !h-[56px] !rounded-2xl transition-all" @click="router.push('/login')" data-testid="back-to-login-button">
+                  <el-button
+                    size="large"
+                    class="w-full !h-[56px] !rounded-2xl transition-all"
+                    data-testid="back-to-login-button"
+                    @click="router.push('/login')"
+                  >
                     {{ $t('auth.backToLogin') }}
                   </el-button>
                 </div>

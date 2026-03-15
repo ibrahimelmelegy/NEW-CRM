@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { formatLargeNumber } from '@/composables/format';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const props = defineProps<{
   tableType: 'recent-deals' | 'team';

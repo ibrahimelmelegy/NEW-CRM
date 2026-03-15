@@ -295,7 +295,7 @@ import {
   ticketPriorityOptions
 } from '@/composables/useSupport';
 import type { TicketMetrics, AgentWorkload } from '@/composables/useSupport';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const router = useRouter();
 const { t } = useI18n();

@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 import { getOpportunities } from './useOpportunity';
 import type { RelatedTypesValues, RelatedTypeOptions, RelatedToOptions, ProposalTypeOptions, ProposalInfoPayload } from '~/types/Proposal';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 // Handle error during lead creation
 function handleError(message: string) {

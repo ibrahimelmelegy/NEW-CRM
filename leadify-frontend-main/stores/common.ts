@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 // ImageUploader import moved to action to prevent SSR crash
 import { ElNotification } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 export const useMain = defineStore('Main', {
   state: () => ({

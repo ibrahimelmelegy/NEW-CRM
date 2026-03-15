@@ -10,6 +10,16 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import {
+  fetchWebhooks,
+  createWebhook,
+  updateWebhook,
+  deleteWebhook,
+  testWebhook,
+  WEBHOOK_EVENTS,
+  type WebhookConfig
+} from '@/composables/useWebhooks';
+
 // ============================================
 // Mock useApiFetch
 // ============================================
@@ -20,16 +30,6 @@ const mockUseApiFetch = vi.fn();
 vi.mock('@/composables/useApiFetch', () => ({
   useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
 }));
-
-import {
-  fetchWebhooks,
-  createWebhook,
-  updateWebhook,
-  deleteWebhook,
-  testWebhook,
-  WEBHOOK_EVENTS,
-  type WebhookConfig
-} from '@/composables/useWebhooks';
 
 describe('useWebhooks', () => {
   beforeEach(() => {

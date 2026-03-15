@@ -240,7 +240,9 @@ describe('useProposals', () => {
 
       await createProposalFinanceTable({ name: '' });
 
-      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Validation error' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'error', message: 'Validation error' })
+      );
     });
 
     it('should handle unexpected errors', async () => {
@@ -248,7 +250,9 @@ describe('useProposals', () => {
 
       await createProposalFinanceTable({ name: 'Table' });
 
-      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Connection timeout' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'error', message: 'Connection timeout' })
+      );
     });
   });
 
@@ -270,7 +274,9 @@ describe('useProposals', () => {
 
       await updateProposalFinanceTable({ name: 'X' }, 999, undefined);
 
-      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Not found' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'error', message: 'Not found' })
+      );
     });
   });
 
@@ -292,7 +298,9 @@ describe('useProposals', () => {
 
       await deleteProposalFinanceTableItem(5);
 
-      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Cannot delete' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'error', message: 'Cannot delete' })
+      );
     });
   });
 
@@ -314,7 +322,9 @@ describe('useProposals', () => {
 
       await deleteCustomColumn(1, 'nonexistent');
 
-      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', message: 'Column not found' }));
+      expect((globalThis as Record<string, unknown>).ElNotification).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'error', message: 'Column not found' })
+      );
     });
   });
 
