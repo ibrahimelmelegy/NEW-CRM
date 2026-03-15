@@ -93,7 +93,7 @@
     "seed-templates": "ts-node src/docBuilder/seedTemplates.ts",
     "migrate-search": "ts-node src/search/migrations/addSearchVectors.ts",
     "test": "jest --forceExit --detectOpenHandles",
-    "lint": "eslint 'src/**/*.ts'",
+    "lint": "eslint .",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
     "db:migrate:status": "npx sequelize-cli db:migrate:status",

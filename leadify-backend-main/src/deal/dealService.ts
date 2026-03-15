@@ -213,7 +213,7 @@ class DealService {
       const deal = await Deal.create(
         {
           ...input.deal,
-          leadId: (lead as Record<string, unknown>).id,
+          leadId: lead ? (lead as Record<string, unknown>).id : undefined,
           clientId: (client as Record<string, unknown>).id
         },
         {
