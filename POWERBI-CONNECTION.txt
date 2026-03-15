@@ -1,0 +1,52 @@
+============================================
+  إعدادات اتصال Power BI بقاعدة البيانات
+  HP-Tech CRM (Leadify)
+============================================
+
+نوع الاتصال: PostgreSQL Database
+
+--- بيانات الاتصال ---
+
+Server (السيرفر):    157.245.223.119
+Port (البورت):       5432
+Database (قاعدة البيانات): leadify
+Username (المستخدم): powerbi_user
+Password (كلمة المرور): moac39bKyhZ5m2rkqqrh
+
+--- خطوات الربط في Power BI Desktop ---
+
+1. افتح Power BI Desktop
+2. اضغط "Get Data" (جلب البيانات)
+3. اختر "PostgreSQL database"
+4. في خانة Server: اكتب  157.245.223.119
+5. في خانة Database: اكتب  leadify
+6. اضغط OK
+7. اختر "Database" من القائمة
+8. في Username: اكتب  powerbi_user
+9. في Password: اكتب  moac39bKyhZ5m2rkqqrh
+10. اضغط Connect
+
+--- ملاحظات مهمة ---
+
+- هذا المستخدم للقراءة فقط (لا يمكنه تعديل البيانات)
+- يمكن الوصول لجميع الجداول
+- إذا لم يعمل الاتصال، قم بتثبيت:
+  "Npgsql" PostgreSQL driver من:
+  https://www.npgsql.org/
+
+--- الجداول الرئيسية في قاعدة البيانات ---
+
+- leads          (العملاء المحتملين)
+- deals          (الصفقات)
+- clients        (العملاء)
+- contacts       (جهات الاتصال)
+- tasks          (المهام)
+- users          (المستخدمين)
+- invoices       (الفواتير)
+- proposals      (العروض)
+- activities     (الأنشطة)
+- opportunities  (الفرص)
+
+============================================
+تاريخ الإعداد: 2026-03-15
+============================================
