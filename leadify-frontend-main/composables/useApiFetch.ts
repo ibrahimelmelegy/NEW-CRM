@@ -134,6 +134,10 @@ export const useApiFetch = async <T = unknown>(
     // ✅ FIX: Get the Status Code correctly from the HTTP Response first
     const code = fetchError?.response?.status || fetchError?.statusCode || (errorData.code as number) || 500;
 
+    if (!silence) {
+      console.error(`API Error (${code}):`, message);
+    }
+
     return {
       body: null, // Changed from data to body
       success: false,

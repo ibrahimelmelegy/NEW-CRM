@@ -301,7 +301,7 @@ export async function getLeadsStatics() {
     };
   } catch (error: unknown) {
     statsLoading.value = false;
-    (ElNotification as unknown).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Leads stats' });
+    ElNotification({ type: 'error', title: 'Dashboard Error', message: error?.message || 'Failed to load Leads stats' });
     return getDefaultLeadsStats();
   }
 }
@@ -348,7 +348,7 @@ export async function getProjectOperationsStatics() {
     };
   } catch (error: unknown) {
     statsLoading.value = false;
-    (ElNotification as unknown).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Project stats' });
+    ElNotification({ type: 'error', title: 'Dashboard Error', message: error?.message || 'Failed to load Project stats' });
     return getDefaultProjectStats();
   }
 }
@@ -373,7 +373,7 @@ export async function getBussinesStatics() {
     };
   } catch (error: unknown) {
     statsLoading.value = false;
-    (ElNotification as unknown).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Business stats' });
+    ElNotification({ type: 'error', title: 'Dashboard Error', message: error?.message || 'Failed to load Business stats' });
     return { firstCards: [] };
   }
 }
@@ -394,7 +394,7 @@ export async function getPerformanceStatics() {
     };
   } catch (error: unknown) {
     statsLoading.value = false;
-    (ElNotification as unknown).error({ title: 'Dashboard Error', message: error?.message || 'Failed to load Performance stats' });
+    ElNotification({ type: 'error', title: 'Dashboard Error', message: error?.message || 'Failed to load Performance stats' });
     return { firstCards: [] };
   }
 }
