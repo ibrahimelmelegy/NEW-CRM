@@ -287,7 +287,7 @@ describe('useExport', () => {
       const { exportToExcel } = useExport();
       const columnLabels = { product: 'Product Name', quantity: 'Qty', price: 'Unit Price' };
 
-      await expect(exportToExcel('Test', sampleData, columns, { columnLabels })).resolves.toBeUndefined();
+      expect(exportToExcel('Test', sampleData, columns, { columnLabels })).toBeUndefined();
     });
   });
 
