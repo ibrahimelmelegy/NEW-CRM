@@ -9,8 +9,12 @@
  * Uses shared storageState from auth setup for authenticated access.
  * Falls back to inline login if the session expires.
  *
- * TODO: Add data-testid attributes to leads page elements
- * in the source code for more robust selectors.
+ * Uses data-testid selectors for robust element targeting:
+ *   - [data-testid="email-input"]    → Login email input
+ *   - [data-testid="password-input"] → Login password input
+ *   - [data-testid="login-button"]   → Login submit button
+ *   - [data-testid="add-lead-button"] → NuxtLink to add-lead page
+ *   - [data-testid="leads-table"]    → .leads-desktop-view wrapper
  */
 
 import { test, expect, Page } from '@playwright/test';
@@ -29,17 +33,16 @@ async function navigateAuthenticated(page: Page, path: string): Promise<boolean>
 
   if (page.url().includes('/login')) {
     try {
-      const emailInput = page.locator('input[type="email"], input[type="text"]').first();
+      // Use data-testid selectors for login form
+      const emailInput = page.locator('[data-testid="email-input"]');
       await emailInput.waitFor({ state: 'visible', timeout: 10000 });
-      await emailInput.fill(TEST_EMAIL);
+      await emailInput.locator('input').fill(TEST_EMAIL);
 
-      const passwordInput = page.locator('input[type="password"]').first();
+      const passwordInput = page.locator('[data-testid="password-input"]');
       await passwordInput.waitFor({ state: 'visible', timeout: 5000 });
-      await passwordInput.fill(TEST_PASSWORD);
+      await passwordInput.locator('input').fill(TEST_PASSWORD);
 
-      await page.locator(
-        'button[type="submit"], button:has-text("Sign"), button:has-text("Login")'
-      ).first().click();
+      await page.locator('[data-testid="login-button"]').click();
       await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
       await page.waitForTimeout(2000);
 
@@ -65,14 +68,22 @@ async function dismissOverlay(page: Page): Promise<void> {
   }
 }
 
-/** Wait for a data table to appear on the page. */
-async function waitForTable(page: Page, timeout = 20000): Promise<void> {
+/** Wait for the leads table to appear using data-testid, with fallback. */
+async function waitForLeadsTable(page: Page, timeout = 20000): Promise<void> {
   await dismissOverlay(page);
   try {
-    await page.locator('.el-table, table, [class*="table"]').first().waitFor({
-      state: 'visible',
-      timeout,
-    });
+    // Prefer the data-testid="leads-table" wrapper added to .leads-desktop-view
+    const leadsTable = page.locator('[data-testid="leads-table"]');
+    const hasTestId = await leadsTable.isVisible({ timeout: 5000 }).catch(() => false);
+    if (hasTestId) {
+      await leadsTable.waitFor({ state: 'visible', timeout });
+    } else {
+      // Fallback to generic table selectors
+      await page.locator('.el-table, table, [class*="table"]').first().waitFor({
+        state: 'visible',
+        timeout,
+      });
+    }
   } catch {
     // Table may not render if there is no data
   }
@@ -100,15 +111,24 @@ test.describe('Leads Management', () => {
       await expect(heading).toBeVisible({ timeout: 15000 });
     });
 
-    test('should display a data table', async ({ page }) => {
+    test('should display a data table using data-testid', async ({ page }) => {
       const authenticated = await navigateAuthenticated(page, '/sales/leads');
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await page.waitForTimeout(3000);
 
-      const table = page.locator('table, .el-table, [class*="table"]').first();
-      await expect(table).toBeVisible({ timeout: 15000 });
+      // First try data-testid="leads-table" (set on .leads-desktop-view wrapper)
+      const leadsTableTestId = page.locator('[data-testid="leads-table"]');
+      const hasTestId = await leadsTableTestId.isVisible({ timeout: 10000 }).catch(() => false);
+
+      if (hasTestId) {
+        await expect(leadsTableTestId).toBeVisible({ timeout: 15000 });
+      } else {
+        // Fallback to generic table selector
+        const table = page.locator('table, .el-table, [class*="table"]').first();
+        await expect(table).toBeVisible({ timeout: 15000 });
+      }
     });
 
     test('should display table column headers', async ({ page }) => {
@@ -116,7 +136,7 @@ test.describe('Leads Management', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForLeadsTable(page);
 
       const headers = page.locator(
         '.el-table__header th, table thead th, .el-table__header-wrapper th'
@@ -145,7 +165,7 @@ test.describe('Leads Management', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForLeadsTable(page);
 
       const pagination = page.locator(
         '.el-pagination, [class*="pagination"], nav[aria-label*="pagination"]'
@@ -177,7 +197,7 @@ test.describe('Leads Management', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForLeadsTable(page);
 
       const searchInput = page.locator(
         'input[type="search"], input[placeholder*="Search" i], input[placeholder*="search" i], .el-input input'
@@ -196,7 +216,7 @@ test.describe('Leads Management', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForLeadsTable(page);
 
       const filterElements = page.locator(
         '.el-select, [class*="filter"], .status-pill, button:has-text("Filter")'
@@ -216,8 +236,17 @@ test.describe('Leads Management', () => {
       await dismissOverlay(page);
       await page.waitForTimeout(3000);
 
-      const addBtn = page.locator('a[href*="add-lead"]').first();
-      await expect(addBtn).toBeVisible({ timeout: 15000 });
+      // Use data-testid="add-lead-button" set on the NuxtLink wrapping the add lead button
+      const addLeadBtn = page.locator('[data-testid="add-lead-button"]');
+      const hasTestId = await addLeadBtn.isVisible({ timeout: 10000 }).catch(() => false);
+
+      if (hasTestId) {
+        await expect(addLeadBtn).toBeVisible({ timeout: 15000 });
+      } else {
+        // Fallback to href-based selector
+        const addBtn = page.locator('a[href*="add-lead"]').first();
+        await expect(addBtn).toBeVisible({ timeout: 15000 });
+      }
     });
 
     test('should navigate to add-lead page when clicking Add Lead', async ({ page }) => {
@@ -227,11 +256,21 @@ test.describe('Leads Management', () => {
       await dismissOverlay(page);
       await page.waitForTimeout(3000);
 
-      const addBtn = page.locator('a[href*="add-lead"]').first();
-      if (await addBtn.isVisible({ timeout: 10000 }).catch(() => false)) {
-        await addBtn.click();
+      // Prefer data-testid selector
+      const addLeadBtn = page.locator('[data-testid="add-lead-button"]');
+      const hasTestId = await addLeadBtn.isVisible({ timeout: 10000 }).catch(() => false);
+
+      if (hasTestId) {
+        await addLeadBtn.click();
         await page.waitForTimeout(3000);
         expect(page.url()).toContain('add-lead');
+      } else {
+        const addBtn = page.locator('a[href*="add-lead"]').first();
+        if (await addBtn.isVisible({ timeout: 10000 }).catch(() => false)) {
+          await addBtn.click();
+          await page.waitForTimeout(3000);
+          expect(page.url()).toContain('add-lead');
+        }
       }
     });
 
@@ -304,7 +343,7 @@ test.describe('Leads Management', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForLeadsTable(page);
 
       const firstRow = page.locator('.el-table__row, table tbody tr').first();
       if (await firstRow.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -321,7 +360,7 @@ test.describe('Leads Management', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForLeadsTable(page);
 
       const firstRow = page.locator('.el-table__row, table tbody tr').first();
       if (await firstRow.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -346,7 +385,7 @@ test.describe('Leads Management', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForLeadsTable(page);
 
       // Open the actions dropdown on the first row
       const toggleIcon = page.locator('.toggle-icon').first();
