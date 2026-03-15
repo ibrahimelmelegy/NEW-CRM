@@ -483,8 +483,8 @@ const formatMessage = (content: string) => {
     .replace(/\n/g, '<br/>');
 };
 
-// sanitizeHtml: content is already escaped via escapeHtml inside formatMessage — this is a passthrough
-const sanitizeHtml = (html: string): string => html;
+// sanitizeHtml is auto-imported from utils/sanitize.ts (DOMPurify-based)
+// It sanitizes the formatted HTML output before rendering with v-html
 
 const scrollToBottom = async () => {
   await nextTick();

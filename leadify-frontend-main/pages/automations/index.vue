@@ -122,6 +122,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({
   layout: 'default',
@@ -144,11 +145,11 @@ const fetchWorkflows = async () => {
       workflows.value = res.body?.docs || res.body || [];
     } else {
       fetchError.value = res?.message || `API error (code ${res?.code || 'unknown'})`;
-      console.error('[Automations] fetch failed:', res);
+      logger.error('[Automations] fetch failed:', res);
     }
   } catch (err: unknown) {
     fetchError.value = err?.message || 'Network error';
-    console.error('[Automations] unexpected error:', err);
+    logger.error('[Automations] unexpected error:', err);
   } finally {
     loading.value = false;
   }

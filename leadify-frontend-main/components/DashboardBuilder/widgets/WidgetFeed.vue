@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template lang="pug">
 .widget-feed.glass-card.p-5.h-full
   .flex.items-center.justify-between.mb-3
@@ -111,7 +112,7 @@ async function loadData() {
       }
     }
   } catch (e) {
-    console.error('Feed widget load failed:', e);
+    logger.error('Feed widget load failed:', e);
   } finally {
     loading.value = false;
   }

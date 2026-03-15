@@ -1,12 +1,12 @@
 <template lang="pug">
-el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" )
+el-form(  autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-position="top"  :validationSchema="formSchema" data-testid="lead-form" )
   slot
   .glass-card.m-auto.p-10(class="2xl:w-1/2 w-[90%] ")
       .grid.grid-cols-2.gap-3
-        InputText(:label="$t('leads.table.leadName')"  name="leadName" :value="data?.name" )
+        InputText(:label="$t('leads.table.leadName')"  name="leadName" :value="data?.name" data-testid="lead-name-input" )
         InputText(:label="$t('common.companyName')"  name="companyName" :value="data?.companyName" )
-        InputText.mt-4(:label="$t('leads.info.email')"  name="email" :value="data?.email" @value="val=> isEmail = !!val" )
-        InputPhone.mt-4(:label="$t('leads.info.phone')"  name="phone" @value="val=> isPhone = !!val" :value="data?.phone" @validphone="val=> validPhone = val" mode="international" )
+        InputText.mt-4(:label="$t('leads.info.email')"  name="email" :value="data?.email" @value="val=> isEmail = !!val" data-testid="lead-email-input" )
+        InputPhone.mt-4(:label="$t('leads.info.phone')"  name="phone" @value="val=> isPhone = !!val" :value="data?.phone" @validphone="val=> validPhone = val" mode="international" data-testid="lead-phone-input" )
         InputSelect(:label="$t('leads.table.status')" name="leadState" :options="leadStates" :value="data?.status" )
         InputSelect(:label="$t('leads.info.leadSource')" name="leadSource" :options="leadSources" :value="data?.leadSource" @change="checkIfOtherSource" )
       InputText(:label="$t('leads.info.otherSource')"  name="otherSource" v-if="isOtherSource" :value="data?.otherSource" )

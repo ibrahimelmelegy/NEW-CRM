@@ -213,6 +213,7 @@ import { ElMessage } from 'element-plus';
 import { fetchForecasts, fetchForecastByPeriod } from '~/composables/useForecasting';
 import { useApiFetch } from '~/composables/useApiFetch';
 import type { ForecastPeriod } from '~/composables/useForecasting';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Sales Forecasting' });
 
@@ -354,7 +355,7 @@ async function loadData() {
       await loadTeamBreakdown();
     }
   } catch (e) {
-    console.error('Failed to load forecasts', e);
+    logger.error('Failed to load forecasts', e);
     ElMessage.error(t('forecasting.loadFailed'));
   } finally {
     loading.value = false;
@@ -376,7 +377,7 @@ async function loadHistorical() {
       historicalData.value = body;
     }
   } catch (e) {
-    console.error('Failed to load historical comparison', e);
+    logger.error('Failed to load historical comparison', e);
     ElMessage.error(t('forecasting.historicalFailed'));
   } finally {
     loadingHistorical.value = false;
@@ -394,7 +395,7 @@ async function runScenario() {
       scenarioResults.value = body;
     }
   } catch (e) {
-    console.error('Failed to run scenario', e);
+    logger.error('Failed to run scenario', e);
     ElMessage.error(t('forecasting.scenarioFailed'));
   } finally {
     loadingScenario.value = false;
@@ -412,7 +413,7 @@ async function loadTeamBreakdown() {
       teamData.value = body as unknown[];
     }
   } catch (e) {
-    console.error('Failed to load team breakdown', e);
+    logger.error('Failed to load team breakdown', e);
   }
 }
 

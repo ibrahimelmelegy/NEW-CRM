@@ -6,6 +6,7 @@
  * Prereq: npm run seed  (creates SUPER_ADMIN user + role first)
  */
 import { sequelize } from './config/db';
+import logger from './config/logger';
 import bcrypt from 'bcryptjs';
 
 // ── Models ──
@@ -136,7 +137,7 @@ async function seedDemo() {
     // ── 0. Ensure admin user exists ──
     const admin = await User.findOne();
     if (!admin) {
-      console.error('No user found. Run "npm run seed" first.');
+      logger.error('No user found. Run "npm run seed" first.');
       process.exit(1);
     }
     const adminId = admin.id;
@@ -1252,8 +1253,8 @@ async function seedDemo() {
     // DEMO SEED COMPLETE
     process.exit(0);
   } catch (error: unknown) {
-    console.error('Seed failed:', (error as Error).message);
-    console.error((error as Error).stack);
+    logger.error('Seed failed: ' + (error as Error).message);
+    logger.error((error as Error).stack ?? '');
     process.exit(1);
   }
 }

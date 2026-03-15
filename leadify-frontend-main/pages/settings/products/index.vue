@@ -109,6 +109,7 @@ import { ref, computed, reactive } from 'vue';
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { fetchProducts, createProduct, updateProduct, deleteProduct } from '~/composables/useProductCatalog';
 import type { CatalogProduct } from '~/composables/useProductCatalog';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Product Catalog' });
 
@@ -167,7 +168,7 @@ async function loadData() {
     const res = await fetchProducts();
     products.value = res.docs;
   } catch (e) {
-    console.error('Failed to load products', e);
+    logger.error('Failed to load products', e);
   } finally {
     loading.value = false;
   }

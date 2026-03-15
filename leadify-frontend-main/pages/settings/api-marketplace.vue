@@ -329,6 +329,7 @@ import { ref, reactive, computed } from 'vue';
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
 import { graphic } from 'echarts/core';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'API Marketplace' });
 
@@ -907,7 +908,7 @@ function disconnectIntegration(row: unknown) {
       ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: `${row.name} ${t('apiMarketplace.disconnected')}` });
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 
@@ -927,7 +928,7 @@ function revokeKey(key: unknown) {
       ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: `${key.name} ${t('apiMarketplace.revoked')}` });
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 
@@ -939,7 +940,7 @@ function deleteKey(key: unknown) {
       ElNotification({ type: 'success', title: t('apiMarketplace.success'), message: t('apiMarketplace.keyDeleted') });
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 

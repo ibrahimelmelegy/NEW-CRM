@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { sequelize } from './config/db';
+import logger from './config/logger';
 import User from './user/userModel';
 
 async function clean() {
@@ -12,7 +13,7 @@ async function clean() {
     const _deleted = await User.destroy({ where: {}, truncate: true, cascade: true, restartIdentity: true });
     // Users table truncated
   } catch (error) {
-    console.error('Cleanup failed:', error);
+    logger.error('Cleanup failed: ' + error);
   } finally {
     await sequelize.close();
   }

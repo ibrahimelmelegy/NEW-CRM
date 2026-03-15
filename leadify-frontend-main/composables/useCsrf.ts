@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import logger from '~/utils/logger'
 
 const csrfToken = ref<string>('');
 
@@ -8,7 +9,7 @@ async function refreshCsrfToken(): Promise<void> {
     const response = await $fetch<{ csrfToken: string }>(config.public.API_BASE_URL + 'csrf-token', { credentials: 'include' });
     csrfToken.value = response.csrfToken;
   } catch (error) {
-    console.warn('Failed to fetch CSRF token:', error);
+    logger.warn('Failed to fetch CSRF token:', error);
   }
 }
 

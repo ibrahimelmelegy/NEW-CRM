@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 export interface KanbanCard {
   id: string;
@@ -22,7 +23,7 @@ export async function fetchDealKanban(): Promise<Record<string, KanbanCard[]>> {
     const t = useNuxtApp().$i18n.t;
     throw new Error(message || t('common.fetchError'));
   } catch (error) {
-    console.error('Error fetching kanban deals:', error);
+    logger.error('Error fetching kanban deals:', error);
     const t = useNuxtApp().$i18n.t;
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
     return {};
@@ -36,7 +37,7 @@ export async function fetchOpportunityKanban(): Promise<Record<string, KanbanCar
     const t = useNuxtApp().$i18n.t;
     throw new Error(message || t('common.fetchError'));
   } catch (error) {
-    console.error('Error fetching kanban opportunities:', error);
+    logger.error('Error fetching kanban opportunities:', error);
     const t = useNuxtApp().$i18n.t;
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
     return {};

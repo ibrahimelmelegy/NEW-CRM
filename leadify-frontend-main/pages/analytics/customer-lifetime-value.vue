@@ -258,6 +258,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Customer Lifetime Value & Churn Analytics' });
 
@@ -496,7 +497,7 @@ async function loadData() {
       churnCustomers.value = [];
     }
   } catch (e) {
-    console.error('Failed to load CLV analytics data', e);
+    logger.error('Failed to load CLV analytics data', e);
     clvSegments.value = [];
     cohortData.value = [];
     churnCustomers.value = [];

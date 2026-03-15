@@ -11,6 +11,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { sequelize } from './config/db';
+import logger from './config/logger';
 
 const TABLES_TO_TRUNCATE = [
   // ── Junction / child tables first ──
@@ -99,7 +100,7 @@ const TABLES_TO_TRUNCATE = [
 async function cleanData() {
   try {
     await sequelize.authenticate();
-    console.log('Connected to database. Starting cleanup...\n');
+    logger.info('Connected to database. Starting cleanup...');
 
     let cleaned = 0;
     let skipped = 0;
@@ -107,23 +108,23 @@ async function cleanData() {
     for (const table of TABLES_TO_TRUNCATE) {
       try {
         await sequelize.query(`TRUNCATE TABLE "${table}" CASCADE`, { logging: false });
-        console.log(`  ✓ ${table} — truncated`);
+        logger.info(`  ✓ ${table} — truncated`);
         cleaned++;
       } catch (error: unknown) {
         const msg = (error as Error).message || '';
         if (msg.includes('does not exist') || msg.includes('relation')) {
-          console.log(`  - ${table} — table not found (skipped)`);
+          logger.info(`  - ${table} — table not found (skipped)`);
           skipped++;
         } else {
-          console.log(`  ✗ ${table} — ERROR: ${msg}`);
+          logger.info(`  ✗ ${table} — ERROR: ${msg}`);
         }
       }
     }
 
-    console.log(`\nDone! ${cleaned} tables truncated, ${skipped} skipped.`);
-    console.log('Users, Roles, Permissions, Tenants, and Settings preserved.');
+    logger.info(`Done! ${cleaned} tables truncated, ${skipped} skipped.`);
+    logger.info('Users, Roles, Permissions, Tenants, and Settings preserved.');
   } catch (error) {
-    console.error('Cleanup failed:', error);
+    logger.error('Cleanup failed: ' + error);
   } finally {
     await sequelize.close();
   }

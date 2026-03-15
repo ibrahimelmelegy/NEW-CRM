@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue';
 import { useApiFetch } from './useApiFetch';
+import logger from '~/utils/logger'
 
 export interface Priority {
   id: string;
@@ -369,7 +370,7 @@ export function useDailyBriefing() {
         }
       ];
     } catch (error) {
-      console.error('Failed to fetch briefing data:', error);
+      logger.error('Failed to fetch briefing data:', error);
     } finally {
       loading.value = false;
     }

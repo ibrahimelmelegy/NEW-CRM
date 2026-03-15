@@ -339,6 +339,7 @@ import type { SLAPolicy, SLAMetrics, EscalationRule } from '~/composables/useSLA
 import PremiumPageHeader from '~/components/UI/PremiumPageHeader.vue';
 import PremiumKPICards from '~/components/UI/PremiumKPICards.vue';
 import type { KPIMetric } from '~/components/UI/PremiumKPICards.vue';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'SLA Management' });
 
@@ -437,7 +438,7 @@ try {
   const response = await fetchSLAPolicies();
   policies.value = response.docs;
 } catch (e) {
-  console.error('Failed to load SLA policies', e);
+  logger.error('Failed to load SLA policies', e);
 } finally {
   loading.value = false;
 }
@@ -631,7 +632,7 @@ async function initComplianceChart() {
 
     window.addEventListener('resize', () => chartInstance?.resize());
   } catch (e) {
-    console.warn('ECharts not available', e);
+    logger.warn('ECharts not available', e);
   }
 }
 

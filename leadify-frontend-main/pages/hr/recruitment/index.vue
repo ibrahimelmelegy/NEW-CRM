@@ -250,8 +250,8 @@ div
     width="640px"
     destroy-on-close
   )
-    el-form(:model="postingForm" label-position="top")
-      el-form-item(:label="$t('recruitment.jobTitle')" required)
+    el-form(:model="postingForm" :rules="postingRules" ref="postingFormRef" label-position="top")
+      el-form-item(:label="$t('recruitment.jobTitle')" prop="title" required)
         el-input(v-model="postingForm.title" :placeholder="$t('recruitment.jobTitlePlaceholder')")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
         el-form-item(:label="$t('recruitment.department')")
@@ -300,16 +300,16 @@ div
     width="600px"
     destroy-on-close
   )
-    el-form(:model="applicantForm" label-position="top")
+    el-form(:model="applicantForm" :rules="applicantRules" ref="applicantFormRef" label-position="top")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
-        el-form-item(:label="$t('recruitment.applicantName')" required)
+        el-form-item(:label="$t('recruitment.applicantName')" prop="name" required)
           el-input(v-model="applicantForm.name" :placeholder="$t('recruitment.namePlaceholder')")
-        el-form-item(:label="$t('recruitment.email')" required)
+        el-form-item(:label="$t('recruitment.email')" prop="email" required)
           el-input(v-model="applicantForm.email" type="email" :placeholder="$t('recruitment.emailPlaceholder')")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
         el-form-item(:label="$t('recruitment.phone')")
           el-input(v-model="applicantForm.phone" :placeholder="$t('recruitment.phonePlaceholder')")
-        el-form-item(:label="$t('recruitment.jobPosting')" required)
+        el-form-item(:label="$t('recruitment.jobPosting')" prop="jobPostingId" required)
           el-select(v-model="applicantForm.jobPostingId" class="w-full" filterable :placeholder="$t('recruitment.selectPosting')")
             el-option(v-for="p in postings" :key="p.id" :label="p.title" :value="p.id")
       .grid.gap-4(class="grid-cols-1 md:grid-cols-2")
@@ -454,6 +454,24 @@ const defaultApplicantForm = () => ({
 
 const postingForm = reactive(defaultPostingForm());
 const applicantForm = reactive(defaultApplicantForm());
+
+// ─── Form Refs ───────────────────────────────────────────
+const postingFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const applicantFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+
+// ─── Validation Rules ────────────────────────────────────
+const postingRules = computed(() => ({
+  title: [{ required: true, message: t('validation.required') || 'Job title is required', trigger: 'blur' }]
+}));
+
+const applicantRules = computed(() => ({
+  name: [{ required: true, message: t('validation.required') || 'Name is required', trigger: 'blur' }],
+  email: [
+    { required: true, message: t('validation.required') || 'Email is required', trigger: 'blur' },
+    { type: 'email' as const, message: t('validation.email') || 'Invalid email format', trigger: 'blur' }
+  ],
+  jobPostingId: [{ required: true, message: t('validation.required') || 'Job posting is required', trigger: 'change' }]
+}));
 
 // ─── KPI Stats ───────────────────────────────────────────
 const kpiStats = computed(() => {
@@ -650,10 +668,8 @@ function openPostingDialog(item?: unknown) {
 }
 
 async function handleSavePosting() {
-  if (!postingForm.title.trim()) {
-    ElMessage.warning(t('common.fillRequired'));
-    return;
-  }
+  const valid = await postingFormRef.value?.validate().catch(() => false);
+  if (!valid) return;
   saving.value = true;
   try {
     const payload = {
@@ -707,10 +723,8 @@ function openApplicantDialog(item?: unknown) {
 }
 
 async function handleSaveApplicant() {
-  if (!applicantForm.name.trim() || !applicantForm.email.trim() || !applicantForm.jobPostingId) {
-    ElMessage.warning(t('common.fillRequired'));
-    return;
-  }
+  const valid = await applicantFormRef.value?.validate().catch(() => false);
+  if (!valid) return;
   saving.value = true;
   try {
     const payload = { ...applicantForm };

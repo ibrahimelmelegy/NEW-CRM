@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 // Handle error during asset creation
 function handleError(message: string) {
@@ -65,7 +66,7 @@ export async function getAssets(): Promise<UseAssetsResult> {
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching assets:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching assets:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching assets. Please try again.');
@@ -86,7 +87,7 @@ export async function getAsset(id: string | string[]): Promise<Asset> {
     const { body: asset } = await useApiFetch(`asset/${id}`);
     return asset;
   } catch (error) {
-    console.error('Error fetching asset:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching asset:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching asset. Please try again.');
     return {} as Asset;
   }

@@ -389,6 +389,7 @@ import {
   Download
 } from 'lucide-vue-next';
 import { submitForApproval, approveProposal, rejectProposal, deleteProposal, archiveProposal, downloadProposalPdf } from '~/composables/useProposals';
+import logger from '~/utils/logger'
 
 definePageMeta({ middleware: 'permissions' });
 
@@ -732,7 +733,7 @@ async function fetchProposals() {
       totalItems.value = response.body?.pagination?.totalItems || response.body?.totalItems || proposals.value.length;
     }
   } catch (error) {
-    console.error('Failed to fetch proposals:', error);
+    logger.error('Failed to fetch proposals:', error);
   } finally {
     loading.value = false;
   }

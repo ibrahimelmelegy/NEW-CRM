@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 // Handle error during deal creation
 function handleError(message: string) {
   ElNotification({
@@ -111,7 +112,7 @@ export async function getDeals(all?: false): Promise<UseDealResult> {
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching deals:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching deals:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching deals. Please try again.');
@@ -132,7 +133,7 @@ export async function getDeal(id: string | string[]): Promise<Deal> {
     const { body: deal } = await useApiFetch(`deal/${id}`);
     return deal;
   } catch (error) {
-    console.error('Error fetching deal:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching deal:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching deal. Please try again.');
     return {} as Deal;
   }
@@ -143,7 +144,7 @@ export async function getDealActivity(id: string | string[]): Promise<Lead> {
     const { body: lead } = await useApiFetch(`activity/deal/${id}`);
     return lead;
   } catch (error) {
-    console.error('Error fetching lead:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching lead:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching deal. Please try again.');
     return {} as Lead;
   }

@@ -20,6 +20,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart, PieChart, LineChart, FunnelChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
+import logger from '~/utils/logger'
 
 use([CanvasRenderer, BarChart, PieChart, LineChart, FunnelChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
@@ -76,7 +77,7 @@ async function loadData() {
         break;
     }
   } catch (e) {
-    console.error('Chart widget load failed:', e);
+    logger.error('Chart widget load failed:', e);
   } finally {
     loading.value = false;
   }

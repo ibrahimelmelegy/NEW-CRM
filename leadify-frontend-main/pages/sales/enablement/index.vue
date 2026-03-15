@@ -636,9 +636,14 @@ function saveBattleCard() {
 
 function deleteBattleCard(id: number) {
   ElMessageBox.confirm(t('salesEnablement.confirmDelete'), t('common.warning'), { type: 'warning' })
-    .then(() => {
-      battleCards.value = battleCards.value.filter(b => b.id !== id);
-      ElMessage.success(t('common.deleted'));
+    .then(async () => {
+      const res = await useApiFetch(`sales-enablement/battle-cards/${id}`, 'DELETE');
+      if (res.success !== false) {
+        battleCards.value = battleCards.value.filter(b => b.id !== id);
+        ElMessage.success(t('common.deleted'));
+      } else {
+        ElMessage.error(t('common.deleteError') || 'Delete failed');
+      }
     })
     .catch(() => {
       /* cancelled */
@@ -688,9 +693,14 @@ function saveObjection() {
 
 function deleteObjection(id: number) {
   ElMessageBox.confirm(t('salesEnablement.confirmDelete'), t('common.warning'), { type: 'warning' })
-    .then(() => {
-      objections.value = objections.value.filter(o => o.id !== id);
-      ElMessage.success(t('common.deleted'));
+    .then(async () => {
+      const res = await useApiFetch(`sales-enablement/objections/${id}`, 'DELETE');
+      if (res.success !== false) {
+        objections.value = objections.value.filter(o => o.id !== id);
+        ElMessage.success(t('common.deleted'));
+      } else {
+        ElMessage.error(t('common.deleteError') || 'Delete failed');
+      }
     })
     .catch(() => {
       /* cancelled */
@@ -760,9 +770,14 @@ function updateResource() {
 
 function deleteResource(id: number) {
   ElMessageBox.confirm(t('salesEnablement.confirmDelete'), t('common.warning'), { type: 'warning' })
-    .then(() => {
-      resources.value = resources.value.filter(r => r.id !== id);
-      ElMessage.success(t('common.deleted'));
+    .then(async () => {
+      const res = await useApiFetch(`sales-enablement/resources/${id}`, 'DELETE');
+      if (res.success !== false) {
+        resources.value = resources.value.filter(r => r.id !== id);
+        ElMessage.success(t('common.deleted'));
+      } else {
+        ElMessage.error(t('common.deleteError') || 'Delete failed');
+      }
     })
     .catch(() => {
       /* cancelled */

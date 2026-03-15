@@ -249,6 +249,7 @@ import { ref, computed, onMounted } from 'vue';
 import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Advanced Analytics' });
 
@@ -334,7 +335,7 @@ async function loadAllData() {
 
     computeAll();
   } catch (e) {
-    console.error('Failed to load analytics data', e);
+    logger.error('Failed to load analytics data', e);
   } finally {
     loading.value = false;
   }

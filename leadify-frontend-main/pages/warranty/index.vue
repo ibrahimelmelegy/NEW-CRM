@@ -237,6 +237,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
+import logger from '~/utils/logger'
 
 definePageMeta({});
 
@@ -317,7 +318,7 @@ async function fetchWarranties() {
       pagination.total = data.count ?? data.total ?? warranties.value.length;
     }
   } catch (e) {
-    console.error('Failed to fetch warranties:', e);
+    logger.error('Failed to fetch warranties:', e);
     ElMessage.error($t('common.fetchError'));
   } finally {
     loading.value = false;
@@ -341,7 +342,7 @@ async function saveWarranty() {
     showDialog.value = false;
     ElMessage.success($t('warranty.warrantyAdded'));
   } catch (e) {
-    console.error('Failed to save warranty:', e);
+    logger.error('Failed to save warranty:', e);
     ElMessage.error($t('common.error'));
   } finally {
     saving.value = false;
@@ -356,7 +357,7 @@ async function removeWarranty(id: string) {
       ElMessage.success($t('warranty.warrantyDeleted'));
     }
   } catch (e) {
-    console.error('Failed to delete warranty:', e);
+    logger.error('Failed to delete warranty:', e);
     ElMessage.error($t('common.error'));
   }
 }

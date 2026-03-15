@@ -1,13 +1,14 @@
+import logger from '~/utils/logger'
 <template lang="pug">
     div
      .flex.items-center.justify-center(style="flex-direction: column; ")
       .flex.items-center.justify-between.mb-8.gap-2(class="w-[75%]")
         .title.font-bold.text-2xl.capitalize {{ $t('notifications.title') }}
-        .title.font-medium.text-lg.capitalize(v-if="unreadNotificationsCount == 0" style ="color : #6D42E8;cursor: pointer" ) {{ $t('notifications.markAllRead') }}
+        .title.font-medium.text-lg.capitalize(v-if="unreadNotificationsCount === 0" style ="color : #6D42E8;cursor: pointer" ) {{ $t('notifications.markAllRead') }}
         .title.font-medium.text-lg.capitalize( v-if = "unreadNotificationsCount > 0" style ="color : #ff0000;cursor: pointer" @click = "readNotifications") {{ $t('notifications.markingUnread') }} {{unreadNotificationsCount}}
       .notify.glass-card(class="h-[75vh] mb-2 p-[16px]")
        el-icon.is-loading(:size="32" v-if="isLoading" style="color: var(--accent-color, #7849ff)")
-       el-empty(v-if="finalData?.length ==  0 || !finalData " :description="$t('notifications.noData')" image="/images/emptyNotify.png")
+       el-empty(v-if="finalData?.length === 0 || !finalData " :description="$t('notifications.noData')" image="/images/emptyNotify.png")
        .item.flex.flex-wrap.gap-2.items-center.justify-center(v-else-if="finalData && finalData?.length > 0")
          .w-full.my-2.p-2(v-for="notify in finalData" :key="notify?.id" :class="`item-data_${notify?.read}`" @click="() => readNotification(notify)")
             .flex.justify-between.items-center
@@ -16,7 +17,7 @@
                 div
                  span {{notify?.body_ar}}
                  p.text-xs.mb-4.font-medium(style="color: var(--text-muted)") {{ notify?.createdAt }}
-             div.rounded-full.bg-red-500.w-2.h-2(v-if="notify?.read == 'UN_READ'")
+             div.rounded-full.bg-red-500.w-2.h-2(v-if="notify?.read === 'UN_READ'")
        .pagination.mt-auto.flex.items-center.flex-wrap.gap-2.px-6(class="sm:justify-between justify-center" v-if="!withoutPagination ")
          .flex.items-center.gap-3
            span.text-sm(style="color: var(--text-muted)") {{ $t('notifications.show') }}
@@ -101,7 +102,7 @@ const readNotification = async (data: unknown) => {
 
     await read(data.id, path);
   } catch (error) {
-    console.error('Error reading notification:', error);
+    logger.error('Error reading notification:', error);
   }
 };
 

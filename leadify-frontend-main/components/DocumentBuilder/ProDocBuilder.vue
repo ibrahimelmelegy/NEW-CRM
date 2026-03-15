@@ -713,6 +713,7 @@ import type { ProposalData, CustomSection } from './types';
 import { useDocumentArchive } from '~/composables/useDocumentArchive';
 import { getAvailableConversions, convertDocument } from '~/composables/useDocumentConversion';
 import { useDocBuilder } from '~/composables/useDocBuilder';
+import logger from '~/utils/logger'
 
 // Lightweight icon shims using Nuxt Icon (replaces lucide-vue-next)
 const iconShim =
@@ -1092,7 +1093,7 @@ const exportPdf = async () => {
 
     ElMessage.success('PDF exported successfully');
   } catch (err) {
-    console.error('PDF export failed:', err);
+    logger.error('PDF export failed:', err);
     ElMessage.error('PDF export failed — falling back to print');
     window.print();
   } finally {

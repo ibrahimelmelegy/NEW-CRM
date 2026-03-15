@@ -100,6 +100,7 @@ import { ref, reactive, computed } from 'vue';
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { fetchDuplicateSets, confirmDuplicate, dismissDuplicate, mergeDuplicates, scanForDuplicates } from '~/composables/useDuplicateDetection';
 import type { DuplicateSet } from '~/composables/useDuplicateDetection';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Duplicate Detection' });
 
@@ -125,7 +126,7 @@ try {
   duplicateSets.value = response.docs;
   pagination.value = response.pagination;
 } catch (e) {
-  console.error('Failed to load duplicates', e);
+  logger.error('Failed to load duplicates', e);
 } finally {
   loading.value = false;
 }

@@ -13,6 +13,7 @@
 <script lang="ts" setup>
 /* eslint-disable require-await */
 import { ref } from 'vue';
+import logger from '~/utils/logger'
 const { t } = useI18n();
 const loading = ref(false);
 const categoryRef = ref();
@@ -48,7 +49,7 @@ async function onSubmitMaterials() {
     await createAdditionalMaterial(finalValues.value);
     loading.value = false;
   } catch (error) {
-    console.error('Error saving forms:', error);
+    logger.error('Error saving forms:', error);
     loading.value = false;
   } finally {
     loading.value = false;

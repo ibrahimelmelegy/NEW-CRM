@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template lang="pug">
 .flex.items-center.justify-between.mb-8
   .title.font-bold.text-2xl.mb-1.capitalize {{ $t('operations.additionalMaterials.edit') }}
@@ -51,7 +52,7 @@ async function onSubmitMaterials() {
     await updateAdditionalMaterial({ ...finalValues.value, materialId: +(route.params.slug as string) });
     loading.value = false;
   } catch (error) {
-    console.error('Error saving forms:', error);
+    logger.error('Error saving forms:', error);
     loading.value = false;
   } finally {
     loading.value = false;

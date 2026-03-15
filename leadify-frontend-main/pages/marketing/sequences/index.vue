@@ -191,6 +191,7 @@ import { ref, computed } from 'vue';
 import { ElNotification, ElMessageBox } from 'element-plus';
 import { fetchSequences, updateSequence, deleteSequence } from '~/composables/useSequences';
 import type { Sequence } from '~/composables/useSequences';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Sequences' });
 
@@ -224,7 +225,7 @@ async function loadData() {
     const res = await fetchSequences();
     sequences.value = res.docs;
   } catch (e) {
-    console.error('Failed to load sequences', e);
+    logger.error('Failed to load sequences', e);
   } finally {
     loading.value = false;
   }

@@ -10,7 +10,7 @@ div(class="animate-fade-in")
     template(#actions)
       ExportButton(:data="exportData" :columns="exportColumns" :filename="'leads-export'" :title="$t('leads.title')")
       template(v-if="canCreateLeads")
-        NuxtLink(to="/sales/leads/add-lead")
+        NuxtLink(to="/sales/leads/add-lead" data-testid="add-lead-button")
           el-button(size='large' :loading="loading" native-type="submit" type="primary" :icon="Plus" class="!rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform") {{ $t('leads.newLead') }}
       el-dropdown(trigger="click")
         span.el-dropdown-link
@@ -36,7 +36,7 @@ div(class="animate-fade-in")
   AdvancedSearch(v-if="!loadingAction" :entityType="'lead'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
   //- Desktop Table View
-  .leads-desktop-view(v-if="!loadingAction")
+  .leads-desktop-view(v-if="!loadingAction" data-testid="leads-table")
     AppTable(v-slot="{data}" :externalLoading="loading" :filterOptions="filterOptions" :columns="table.columns" position="lead" :pageInfo="response.pagination"  :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('leads.title')" :key="table.data" emptyIcon="ph:user-focus-bold" :emptyMessage="$t('leads.noLeadsYet')" emptyDescription="Create your first lead to start building your sales pipeline" emptyActionHref="/sales/leads/create" emptyActionLabel="Create Lead" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")

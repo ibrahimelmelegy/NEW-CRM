@@ -9,8 +9,11 @@
  * NOTE: These tests opt out of shared storageState
  * so they run in an unauthenticated context.
  *
- * TODO: Add data-testid attributes to login form
- * elements in the source code for more robust selectors.
+ * Uses data-testid selectors for robust element targeting:
+ *   - [data-testid="login-form"]     → el-form on login page
+ *   - [data-testid="email-input"]    → InputText for email
+ *   - [data-testid="password-input"] → InputText for password
+ *   - [data-testid="login-button"]   → el-button submit
  */
 
 import { test, expect } from '@playwright/test';
@@ -32,23 +35,26 @@ test.describe('Authentication', () => {
       // Verify the page title contains something meaningful
       await expect(page).toHaveTitle(/Login|Leadify|CRM/i);
 
-      // Verify email input is present and visible
-      const emailInput = page.locator('input[type="email"], input[placeholder*="email" i]');
-      await expect(emailInput.first()).toBeVisible({ timeout: 10000 });
+      // Verify login form is present using data-testid
+      const loginForm = page.locator('[data-testid="login-form"]');
+      await expect(loginForm).toBeVisible({ timeout: 10000 });
 
-      // Verify password input is present and visible
-      const passwordInput = page.locator('input[type="password"]');
-      await expect(passwordInput.first()).toBeVisible({ timeout: 10000 });
+      // Verify email input is present using data-testid
+      const emailInput = page.locator('[data-testid="email-input"]');
+      await expect(emailInput).toBeVisible({ timeout: 10000 });
+
+      // Verify password input is present using data-testid
+      const passwordInput = page.locator('[data-testid="password-input"]');
+      await expect(passwordInput).toBeVisible({ timeout: 10000 });
     });
 
     test('should display a submit/login button', async ({ page }) => {
       await page.goto('/login');
       await page.waitForLoadState('domcontentloaded');
 
-      const submitButton = page.locator(
-        'button[type="submit"], button:has-text("Sign"), button:has-text("Login"), button:has-text("Log in")'
-      ).first();
-      await expect(submitButton).toBeVisible({ timeout: 10000 });
+      // Use data-testid for reliable button targeting
+      const loginButton = page.locator('[data-testid="login-button"]');
+      await expect(loginButton).toBeVisible({ timeout: 10000 });
     });
 
     test('should display a link to forgot password page', async ({ page }) => {
@@ -68,12 +74,10 @@ test.describe('Authentication', () => {
       await page.goto('/login');
       await page.waitForLoadState('domcontentloaded');
 
-      // Click submit without filling any fields
-      const submitButton = page.locator(
-        'button[type="submit"], button:has-text("Sign"), button:has-text("Login")'
-      ).first();
-      await submitButton.waitFor({ state: 'visible', timeout: 10000 });
-      await submitButton.click();
+      // Click submit without filling any fields using data-testid
+      const loginButton = page.locator('[data-testid="login-button"]');
+      await loginButton.waitFor({ state: 'visible', timeout: 10000 });
+      await loginButton.click();
 
       // Should show validation error messages (Element Plus form validation)
       const validationError = page.locator(
@@ -89,17 +93,16 @@ test.describe('Authentication', () => {
       await page.goto('/login');
       await page.waitForLoadState('domcontentloaded');
 
-      const emailInput = page.locator('input[type="email"], input[type="text"]').first();
+      // Use data-testid selectors for form fields
+      const emailInput = page.locator('[data-testid="email-input"]');
       await emailInput.waitFor({ state: 'visible', timeout: 10000 });
-      await emailInput.fill('not-a-valid-email');
+      await emailInput.locator('input').fill('not-a-valid-email');
 
-      const passwordInput = page.locator('input[type="password"]').first();
-      await passwordInput.fill('somepassword123');
+      const passwordInput = page.locator('[data-testid="password-input"]');
+      await passwordInput.locator('input').fill('somepassword123');
 
-      const submitButton = page.locator(
-        'button[type="submit"], button:has-text("Sign"), button:has-text("Login")'
-      ).first();
-      await submitButton.click();
+      const loginButton = page.locator('[data-testid="login-button"]');
+      await loginButton.click();
 
       await page.waitForTimeout(2000);
 
@@ -114,17 +117,16 @@ test.describe('Authentication', () => {
       await page.goto('/login');
       await page.waitForLoadState('domcontentloaded');
 
-      const emailInput = page.locator('input[type="email"], input[placeholder*="email" i]').first();
+      // Use data-testid selectors for all form interactions
+      const emailInput = page.locator('[data-testid="email-input"]');
       await emailInput.waitFor({ state: 'visible', timeout: 10000 });
-      await emailInput.fill('wrong@email.com');
+      await emailInput.locator('input').fill('wrong@email.com');
 
-      const passwordInput = page.locator('input[type="password"]').first();
-      await passwordInput.fill('wrongpassword123');
+      const passwordInput = page.locator('[data-testid="password-input"]');
+      await passwordInput.locator('input').fill('wrongpassword123');
 
-      const submitButton = page.locator(
-        'button[type="submit"], button:has-text("Sign"), button:has-text("Login")'
-      ).first();
-      await submitButton.click();
+      const loginButton = page.locator('[data-testid="login-button"]');
+      await loginButton.click();
 
       // Should show an error notification (Element Plus notification)
       const errorNotification = page.locator(
@@ -140,17 +142,15 @@ test.describe('Authentication', () => {
       await page.goto('/login');
       await page.waitForLoadState('domcontentloaded');
 
-      const emailInput = page.locator('input[type="email"], input[type="text"]').first();
+      const emailInput = page.locator('[data-testid="email-input"]');
       await emailInput.waitFor({ state: 'visible', timeout: 10000 });
-      await emailInput.fill('fake@nonexistent.com');
+      await emailInput.locator('input').fill('fake@nonexistent.com');
 
-      const passwordInput = page.locator('input[type="password"]').first();
-      await passwordInput.fill('wrongpassword');
+      const passwordInput = page.locator('[data-testid="password-input"]');
+      await passwordInput.locator('input').fill('wrongpassword');
 
-      const submitButton = page.locator(
-        'button[type="submit"], button:has-text("Sign"), button:has-text("Login")'
-      ).first();
-      await submitButton.click();
+      const loginButton = page.locator('[data-testid="login-button"]');
+      await loginButton.click();
       await page.waitForTimeout(3000);
 
       // Verify no auth cookie was set
@@ -166,17 +166,16 @@ test.describe('Authentication', () => {
       await page.goto('/login');
       await page.waitForLoadState('domcontentloaded');
 
-      const emailInput = page.locator('input[type="email"], input[type="text"]').first();
+      // Use data-testid selectors for login flow
+      const emailInput = page.locator('[data-testid="email-input"]');
       await emailInput.waitFor({ state: 'visible', timeout: 10000 });
-      await emailInput.fill(TEST_EMAIL);
+      await emailInput.locator('input').fill(TEST_EMAIL);
 
-      const passwordInput = page.locator('input[type="password"]').first();
-      await passwordInput.fill(TEST_PASSWORD);
+      const passwordInput = page.locator('[data-testid="password-input"]');
+      await passwordInput.locator('input').fill(TEST_PASSWORD);
 
-      const submitButton = page.locator(
-        'button[type="submit"], button:has-text("Sign"), button:has-text("Login")'
-      ).first();
-      await submitButton.click();
+      const loginButton = page.locator('[data-testid="login-button"]');
+      await loginButton.click();
 
       // Wait for redirect away from login
       await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
@@ -191,17 +190,15 @@ test.describe('Authentication', () => {
       await page.goto('/login');
       await page.waitForLoadState('domcontentloaded');
 
-      const emailInput = page.locator('input[type="email"], input[type="text"]').first();
+      const emailInput = page.locator('[data-testid="email-input"]');
       await emailInput.waitFor({ state: 'visible', timeout: 10000 });
-      await emailInput.fill(TEST_EMAIL);
+      await emailInput.locator('input').fill(TEST_EMAIL);
 
-      const passwordInput = page.locator('input[type="password"]').first();
-      await passwordInput.fill(TEST_PASSWORD);
+      const passwordInput = page.locator('[data-testid="password-input"]');
+      await passwordInput.locator('input').fill(TEST_PASSWORD);
 
-      const submitButton = page.locator(
-        'button[type="submit"], button:has-text("Sign"), button:has-text("Login")'
-      ).first();
-      await submitButton.click();
+      const loginButton = page.locator('[data-testid="login-button"]');
+      await loginButton.click();
 
       await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
 
@@ -213,13 +210,13 @@ test.describe('Authentication', () => {
     });
 
     test('should persist session after page reload', async ({ page }) => {
-      // Login first
+      // Login first using data-testid selectors
       await page.goto('/login');
-      const emailInput = page.locator('input[type="email"], input[type="text"]').first();
+      const emailInput = page.locator('[data-testid="email-input"]');
       await emailInput.waitFor({ state: 'visible', timeout: 10000 });
-      await emailInput.fill(TEST_EMAIL);
-      await page.locator('input[type="password"]').first().fill(TEST_PASSWORD);
-      await page.locator('button[type="submit"], button:has-text("Sign"), button:has-text("Login")').first().click();
+      await emailInput.locator('input').fill(TEST_EMAIL);
+      await page.locator('[data-testid="password-input"]').locator('input').fill(TEST_PASSWORD);
+      await page.locator('[data-testid="login-button"]').click();
       await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
 
       // Reload the page

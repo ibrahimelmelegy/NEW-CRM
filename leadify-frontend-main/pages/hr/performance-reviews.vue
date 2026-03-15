@@ -153,6 +153,7 @@ import { ref, computed, onMounted, nextTick } from 'vue';
 import { ElMessage } from 'element-plus';
 import * as echarts from 'echarts/core';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({
   layout: 'default',
@@ -243,7 +244,7 @@ const fetchReviews = async () => {
       reviews.value = [];
     }
   } catch (e) {
-    console.error('Failed to fetch performance reviews', e);
+    logger.error('Failed to fetch performance reviews', e);
     reviews.value = [];
   } finally {
     loading.value = false;

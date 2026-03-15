@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 interface ErrorHandlerResult {
   error: true;
@@ -10,7 +11,7 @@ export function useErrorHandler() {
 
   function handleApiError(error: unknown, context: string): ErrorHandlerResult {
     const message = error instanceof Error ? error.message : t('common.generic');
-    console.error(`[${context}]`, error);
+    logger.error(`[${context}]`, error);
     ElNotification({
       title: t('common.error'),
       message,
@@ -20,7 +21,7 @@ export function useErrorHandler() {
   }
 
   function handleWarning(message: string, context: string) {
-    console.warn(`[${context}]`, message);
+    logger.warn(`[${context}]`, message);
     ElNotification({
       title: t('common.warning'),
       message,

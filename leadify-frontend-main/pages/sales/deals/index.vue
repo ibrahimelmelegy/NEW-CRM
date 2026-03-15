@@ -9,14 +9,14 @@ div(class="animate-fade-in")
   )
     template(#actions)
       el-button-group
-        el-button(type="primary" size="large" class="!rounded-l-xl shadow-lg shadow-primary/30")
+        el-button(type="primary" size="large" class="!rounded-l-xl shadow-lg shadow-primary/30" data-testid="deals-table-view-btn")
           Icon(name="ph:list-bold" size="18")
           span.ml-1 {{ $t('kanban.tableView') }}
-        el-button(:type="'default'" size="large" @click="navigateTo('/sales/deals/kanban')" class="!rounded-r-xl")
+        el-button(:type="'default'" size="large" @click="navigateTo('/sales/deals/kanban')" class="!rounded-r-xl" data-testid="deals-kanban-view-btn")
           Icon(name="ph:columns-bold" size="18")
           span.ml-1 {{ $t('kanban.kanbanView') }}
       ExportButton(:data="exportData" :columns="exportColumns" :filename="'deals-export'" :title="$t('deals.title')")
-      NuxtLink(to="/sales/deals/add-deal")
+      NuxtLink(to="/sales/deals/add-deal" data-testid="add-deal-button")
         el-button(size='large' :loading="loading" v-if="hasPermission('CREATE_DEALS')" native-type="submit" type="primary" :icon="Plus" class="!rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform") {{ $t('deals.newDeal') }}
 
   //- Skeleton Loading State
@@ -41,7 +41,7 @@ div(class="animate-fade-in")
   AdvancedSearch(v-if="!loadingAction" :entityType="'deal'" :fields="advancedSearchFields" @apply="handleAdvancedFilter" @clear="handleClearAdvancedFilter")
 
   //- Desktop Table View
-  .deals-desktop-view(v-if="!loadingAction")
+  .deals-desktop-view(v-if="!loadingAction" data-testid="deals-board")
     AppTable(v-slot="{data}" :filterOptions="filterOptions" :columns="table.columns" position="deal" :pageInfo="response.pagination" :data="table.data" :sortOptions="table.sort" @handleRowClick="handleRowClick" :searchPlaceholder="$t('deals.title')" emptyIcon="ph:handshake-bold" :emptyMessage="$t('deals.noDealsYet')" :emptyDescription="$t('deals.noDealsDesc')" emptyActionHref="/sales/deals/create" :emptyActionLabel="$t('deals.createDeal')" )
       .flex.items-center.py-2(@click.stop)
           el-dropdown(class="outline-0" trigger="click")

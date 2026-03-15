@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 // Handle error during staff creation
 function handleError(message: string) {
@@ -78,7 +79,7 @@ export async function getStaffs(): Promise<UseStaffResult> {
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching staffs:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching staffs:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching staffs. Please try again.');
@@ -102,7 +103,7 @@ export async function getStaff(id: string | string[]): Promise<Staff> {
     const { body: staff } = await useApiFetch(`users/${id}`);
     return staff;
   } catch (error) {
-    console.error('Error fetching staff:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching staff:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching staff. Please try again.');
     return {} as Staff;
   }

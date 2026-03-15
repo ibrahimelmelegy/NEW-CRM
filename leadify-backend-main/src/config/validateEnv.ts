@@ -1,3 +1,5 @@
+import logger from './logger';
+
 interface EnvVar {
   name: string;
   required: boolean;
@@ -124,15 +126,15 @@ export function validateEnvironment(): void {
   }
 
   if (warnings.length > 0) {
-    console.warn('\n--- Environment Warnings ---');
-    warnings.forEach(w => console.warn(`  ${w}`));
-    console.warn('----------------------------\n');
+    logger.warn('\n--- Environment Warnings ---');
+    warnings.forEach(w => logger.warn(`  ${w}`));
+    logger.warn('----------------------------\n');
   }
 
   if (errors.length > 0) {
-    console.error('\n=== Environment Validation Errors ===');
-    errors.forEach(e => console.error(`  ${e}`));
-    console.error('=====================================\n');
+    logger.error('\n=== Environment Validation Errors ===');
+    errors.forEach(e => logger.error(`  ${e}`));
+    logger.error('=====================================\n');
     // Log errors but don't crash — allow server to start with partial config
     // Missing vars will cause runtime errors only when the relevant feature is used
   }

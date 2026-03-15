@@ -1,6 +1,7 @@
 import User from './user/userModel';
 import Role from './role/roleModel';
 import LeadUsers from './lead/model/lead_UsersModel';
+import logger from './config/logger';
 
 const auditAuth = async () => {
   try {
@@ -16,7 +17,7 @@ const auditAuth = async () => {
       // Lead assignment entry processed
     });
   } catch (e) {
-    console.error('❌ Audit Error:', (e as Error).message);
+    logger.error('Audit Error: ' + (e as Error).message);
   }
   process.exit();
 };

@@ -466,6 +466,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Loading } from '@element-plus/icons-vue';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({
   layout: 'default',
@@ -666,7 +667,7 @@ async function fetchData() {
       };
     });
   } catch (err) {
-    console.error('Failed to load resource planner data:', err);
+    logger.error('Failed to load resource planner data:', err);
     ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
@@ -772,7 +773,7 @@ async function applyDayEdit() {
     }
     showDayEditDialog.value = false;
   } catch (err: unknown) {
-    console.error('Failed to update allocation:', err);
+    logger.error('Failed to update allocation:', err);
     ElMessage.error(t('common.error'));
   } finally {
     savingDay.value = false;
@@ -839,7 +840,7 @@ async function saveAllocation() {
       }
     }
   } catch (err: unknown) {
-    console.error('Allocation error:', err);
+    logger.error('Allocation error:', err);
     ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;

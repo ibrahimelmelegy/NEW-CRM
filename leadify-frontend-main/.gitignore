@@ -4,3 +4,6 @@ node_modules
 nuxt.d.ts
 .output
 .env
+coverage/
+report.pdf
+*.pdf

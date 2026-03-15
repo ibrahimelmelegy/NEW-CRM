@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 // Handle error during Opportunity creation
 function handleError(message: string) {
   const t = useNuxtApp().$i18n.t;
@@ -144,7 +145,7 @@ export async function getOpportunities(all?: false): Promise<UseOpportunitiesRes
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching opportunties:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching opportunties:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching opportunties. Please try again.');
@@ -162,7 +163,7 @@ export async function getOpportunity(id: string | string[]): Promise<Opportuniti
     const { body: opportunity } = await useApiFetch(`opportunity/${id}`);
     return opportunity;
   } catch (error) {
-    console.error('Error fetching opportunity:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching opportunity:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching opportunity. Please try again.');
     return {} as Opportunities;
   }
@@ -173,7 +174,7 @@ export async function getOpportunityActivity(id: string | string[]): Promise<Act
     const { body: activity } = await useApiFetch(`activity/opportunity/${id}`);
     return activity as unknown as ActivityResponse;
   } catch (error) {
-    console.error('Error fetching activity:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching activity:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching opportunity. Please try again.');
     return { docs: [], pagination: { page: 1, totalPages: 1, totalItems: 0, limit: 10 } };
   }

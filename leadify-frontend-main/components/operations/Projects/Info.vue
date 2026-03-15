@@ -66,6 +66,7 @@ el-form( autocomplete="off"   @submit.prevent='onSubmit'   ref="myForm" label-po
 <script lang="ts" setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
+import logger from '~/utils/logger'
 const route = useRoute();
 const router = useRouter();
 const props = defineProps({
@@ -223,7 +224,7 @@ const onSubmit = handleSubmit(async (values: CombinedProjectValues) => {
     activeStep.value++;
   } catch (error) {
     // Handle the error and prevent the step from being incremented
-    console.error('Project creation failed', error);
+    logger.error('Project creation failed', error);
   }
   // emit('submit')
 });

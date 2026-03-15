@@ -335,8 +335,8 @@
 
   //- ============ PRODUCT ADD/EDIT DIALOG ============
   el-dialog(v-model="showProductDialog" :title="editingProductId ? $t('productCatalog.editProduct') : $t('productCatalog.addProduct')" width="600px" destroy-on-close)
-    el-form(label-position="top" size="large")
-      el-form-item(:label="$t('productCatalog.productName')" required)
+    el-form(:model="productForm" :rules="productRules" ref="productFormRef" label-position="top" size="large")
+      el-form-item(:label="$t('productCatalog.productName')" prop="name" required)
         el-input(v-model="productForm.name" :placeholder="$t('productCatalog.productNamePlaceholder')")
       .grid.grid-cols-2.gap-4
         el-form-item(:label="$t('productCatalog.sku')")
@@ -345,7 +345,7 @@
           el-select(v-model="productForm.category" class="w-full" allow-create filterable)
             el-option(v-for="cat in allCategoryNames" :key="cat" :label="cat" :value="cat")
       .grid.grid-cols-3.gap-4
-        el-form-item(:label="$t('productCatalog.basePrice')" required)
+        el-form-item(:label="$t('productCatalog.basePrice')" prop="unitPrice" required)
           el-input-number(v-model="productForm.unitPrice" :min="0" :precision="2" class="w-full")
         el-form-item(:label="$t('productCatalog.costPrice')")
           el-input-number(v-model="productForm.costPrice" :min="0" :precision="2" class="w-full")
@@ -558,6 +558,16 @@ const defaultProductForm = () => ({
 });
 const productForm = reactive(defaultProductForm());
 
+const productFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+
+const productRules = computed(() => ({
+  name: [{ required: true, message: t('validation.required') || 'Product name is required', trigger: 'blur' }],
+  unitPrice: [
+    { required: true, message: t('validation.required') || 'Price is required', trigger: 'blur' },
+    { type: 'number' as const, min: 0, message: t('validation.minValue') || 'Price must be 0 or more', trigger: 'blur' }
+  ]
+}));
+
 // Price Lists
 const loadingPriceLists = ref(false);
 const showPriceListDialog = ref(false);
@@ -760,10 +770,8 @@ function openProductDialog(prod?: unknown) {
 }
 
 async function saveProduct() {
-  if (!productForm.name?.trim()) {
-    ElMessage.warning(t('common.fillRequired'));
-    return;
-  }
+  const valid = await productFormRef.value?.validate().catch(() => false);
+  if (!valid) return;
   savingProduct.value = true;
   try {
     const payload = {

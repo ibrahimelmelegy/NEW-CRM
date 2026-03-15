@@ -1,4 +1,5 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import logger from '~/utils/logger'
 
 export interface SpotlightItem {
   id: string;
@@ -919,7 +920,7 @@ export function useSpotlight() {
         }
       }
     } catch (error) {
-      console.warn('Failed to load Spotlight permissions:', error);
+      logger.warn('Failed to load Spotlight permissions:', error);
     }
   }
 

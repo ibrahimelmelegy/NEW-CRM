@@ -62,7 +62,7 @@
               >
                 <div class="space-y-6">
                   <div class="form-group flex flex-col gap-2">
-                    <InputText :label="$t('auth.email')" placeholder="name@company.com" name="email" class="modern-input" />
+                    <InputText :label="$t('auth.email')" placeholder="name@company.com" name="email" class="modern-input" data-testid="forget-email-input" />
                   </div>
                 </div>
 
@@ -73,11 +73,12 @@
                     native-type="submit"
                     type="primary"
                     class="w-full !h-[56px] !rounded-2xl !border-none !text-lg !font-bold shadow-lg shadow-primary/20 transition-all"
+                    data-testid="forget-submit-button"
                   >
                     {{ $t('auth.sendResetLink') }}
                   </el-button>
 
-                  <el-button size="large" class="w-full !h-[56px] !rounded-2xl transition-all" @click="router.push('/login')">
+                  <el-button size="large" class="w-full !h-[56px] !rounded-2xl transition-all" @click="router.push('/login')" data-testid="back-to-login-button">
                     {{ $t('auth.backToLogin') }}
                   </el-button>
                 </div>

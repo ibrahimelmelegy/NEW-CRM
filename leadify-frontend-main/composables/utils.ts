@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 export const numberOfFilters = ref();
 
@@ -115,7 +116,7 @@ export const handleUploadRequestApi = async (params: UploadRequestParams, payloa
     }
   } catch (error) {
     errorData.value = error;
-    console.error('Upload failed:', error);
+    logger.error('Upload failed:', error);
   }
   return { result, errorData };
 };

@@ -198,6 +198,7 @@ div
 import { ElNotification } from 'element-plus';
 import type { DocumentTemplate } from '~/composables/useDocumentTemplates';
 import {
+import logger from '~/utils/logger'
   fetchDocumentTemplates,
   createDocumentTemplate,
   updateDocumentTemplate,
@@ -513,7 +514,7 @@ async function loadTemplates() {
       pagination.value = { ...pagination.value, ...result.pagination };
     }
   } catch (e) {
-    console.error('Failed to load document templates', e);
+    logger.error('Failed to load document templates', e);
     templates.value = [];
     ElNotification({
       type: 'error',
@@ -685,7 +686,7 @@ async function handleSeedDefaults() {
       });
     }
   } catch (e) {
-    console.error('Failed to seed default templates', e);
+    logger.error('Failed to seed default templates', e);
     ElNotification({
       type: 'error',
       title: t('common.error'),

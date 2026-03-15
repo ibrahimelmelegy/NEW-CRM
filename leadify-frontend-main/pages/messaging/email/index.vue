@@ -89,6 +89,7 @@ import { ref, computed, reactive } from 'vue';
 import { ElNotification } from 'element-plus';
 import { fetchEmailMessages, sendEmail, fetchEmailAccounts } from '~/composables/useEmailIntegration';
 import type { EmailMessage, EmailAccount } from '~/composables/useEmailIntegration';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Email' });
 
@@ -130,7 +131,7 @@ async function loadMessages() {
     messages.value = msgRes.docs;
     accounts.value = accRes;
   } catch (e) {
-    console.error('Failed to load emails', e);
+    logger.error('Failed to load emails', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
   } finally {
     loading.value = false;

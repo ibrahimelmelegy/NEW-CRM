@@ -442,6 +442,7 @@
 import { ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
 import { graphic } from 'echarts/core';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'Customer Journey Builder' });
 
@@ -1632,13 +1633,13 @@ async function loadData() {
 
 async function refreshData() {
   await loadData().catch((error: unknown) => {
-    console.error('Operation failed:', error);
+    logger.error('Operation failed:', error);
   });
 }
 
 // ── Initialize ───────────────────────────────────────────
 await loadData().catch((error: unknown) => {
-  console.error('Operation failed:', error);
+  logger.error('Operation failed:', error);
 });
 </script>
 

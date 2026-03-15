@@ -189,11 +189,11 @@ div
 
   //- Program Dialog
   el-dialog(v-model="programDialogVisible" :title="editingProgram ? $t('hr.training.editProgram') : $t('hr.training.newProgram')" width="600px" destroy-on-close)
-    el-form(:model="programForm" label-position="top")
-      el-form-item(:label="$t('hr.training.programTitle')" required)
+    el-form(:model="programForm" :rules="programRules" ref="programFormRef" label-position="top")
+      el-form-item(:label="$t('hr.training.programTitle')" prop="title" required)
         el-input(v-model="programForm.title" :placeholder="$t('hr.training.titlePlaceholder')")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('hr.training.type')" required)
+        el-form-item(:label="$t('hr.training.type')" prop="type" required)
           el-select(v-model="programForm.type" class="w-full")
             el-option(:label="$t('hr.training.typeOnline')" value="ONLINE")
             el-option(:label="$t('hr.training.typeClassroom')" value="CLASSROOM")
@@ -223,12 +223,12 @@ div
 
   //- Enrollment Dialog
   el-dialog(v-model="enrollmentDialogVisible" :title="editingEnrollment ? $t('hr.training.editEnrollment') : $t('hr.training.newEnrollment')" width="600px" destroy-on-close)
-    el-form(:model="enrollmentForm" label-position="top")
+    el-form(:model="enrollmentForm" :rules="enrollmentRules" ref="enrollmentFormRef" label-position="top")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('hr.training.employee')" required)
+        el-form-item(:label="$t('hr.training.employee')" prop="employeeId" required)
           el-select(v-model="enrollmentForm.employeeId" filterable :placeholder="$t('hr.training.selectEmployee')" class="w-full")
             el-option(v-for="emp in employees" :key="emp.id" :label="emp.name" :value="emp.id")
-        el-form-item(:label="$t('hr.training.program')" required)
+        el-form-item(:label="$t('hr.training.program')" prop="programId" required)
           el-select(v-model="enrollmentForm.programId" filterable :placeholder="$t('hr.training.selectProgram')" class="w-full")
             el-option(v-for="p in programs" :key="p.id" :label="p.title" :value="p.id")
       .grid.gap-4(class="grid-cols-3")
@@ -358,6 +358,20 @@ const enrollmentForm = reactive({
   score: 0
 });
 
+// Form Refs & Validation Rules
+const programFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const enrollmentFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+
+const programRules = computed(() => ({
+  title: [{ required: true, message: t('validation.required') || 'Title is required', trigger: 'blur' }],
+  type: [{ required: true, message: t('validation.required') || 'Type is required', trigger: 'change' }]
+}));
+
+const enrollmentRules = computed(() => ({
+  employeeId: [{ required: true, message: t('validation.required') || 'Employee is required', trigger: 'change' }],
+  programId: [{ required: true, message: t('validation.required') || 'Program is required', trigger: 'change' }]
+}));
+
 // Computed
 const avgProgress = computed(() => {
   if (!enrollments.value.length) return 0;
@@ -442,10 +456,8 @@ function openProgramDialog(item?: unknown) {
 }
 
 async function handleSaveProgram() {
-  if (!programForm.title || !programForm.type) {
-    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
-    return;
-  }
+  const valid = await programFormRef.value?.validate().catch(() => false);
+  if (!valid) return;
   saving.value = true;
   try {
     const payload = { ...programForm };
@@ -503,10 +515,8 @@ function openEnrollmentDialog(item?: unknown) {
 }
 
 async function handleSaveEnrollment() {
-  if (!enrollmentForm.employeeId || !enrollmentForm.programId) {
-    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
-    return;
-  }
+  const valid = await enrollmentFormRef.value?.validate().catch(() => false);
+  if (!valid) return;
   saving.value = true;
   try {
     const payload = { ...enrollmentForm };

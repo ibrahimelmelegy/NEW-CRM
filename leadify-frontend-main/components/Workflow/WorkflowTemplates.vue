@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import logger from '~/utils/logger'
 
 interface TemplateNode {
   id: string;
@@ -124,7 +125,7 @@ async function fetchTemplates() {
       templates.value = Array.isArray(body) ? body : [];
     }
   } catch (err) {
-    console.error('Failed to fetch workflow templates:', err);
+    logger.error('Failed to fetch workflow templates:', err);
   } finally {
     loading.value = false;
   }

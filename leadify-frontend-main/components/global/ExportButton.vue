@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template lang="pug">
 el-dropdown(trigger="click" @command="handleExport" :disabled="isExporting")
   el-button(size="large" class="premium-btn-secondary" :loading="isExporting")
@@ -103,7 +104,7 @@ async function exportClientSide(format: string) {
 
     ElMessage.success(t('export.success'));
   } catch (err) {
-    console.error('Export failed:', err);
+    logger.error('Export failed:', err);
     ElMessage.error(t('export.failed'));
   } finally {
     localExporting.value = false;
@@ -230,7 +231,7 @@ async function exportPDFLegacy(headers: string[], rows: string[][], baseName: st
 
     doc.save(`${baseName}.pdf`);
   } catch (err) {
-    console.error('PDF export failed:', err);
+    logger.error('PDF export failed:', err);
   }
 }
 </script>

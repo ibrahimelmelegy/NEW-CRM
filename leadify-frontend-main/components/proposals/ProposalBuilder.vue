@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted } from 'vue';
 import {
+import logger from '~/utils/logger'
   Save,
   ChevronLeft,
   ChevronRight,
@@ -437,7 +438,7 @@ async function handleDownloadPDF() {
     try {
       await (window as unknown).html2pdf().set(opt).from(element).save();
     } catch (err) {
-      console.error('PDF generation failed:', err);
+      logger.error('PDF generation failed:', err);
       alert('Failed to generate PDF. Please use the Print option.');
     } finally {
       element.style.display = originalStyle;
@@ -459,9 +460,9 @@ function handleZoomOut() {
 
 function handleFullScreen() {
   if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(e => console.error('Error entering fullscreen:', e));
+    document.documentElement.requestFullscreen().catch(e => logger.error('Error entering fullscreen:', e));
   } else if (document.exitFullscreen) {
-    document.exitFullscreen().catch(e => console.error('Error exiting fullscreen:', e));
+    document.exitFullscreen().catch(e => logger.error('Error exiting fullscreen:', e));
   }
 }
 

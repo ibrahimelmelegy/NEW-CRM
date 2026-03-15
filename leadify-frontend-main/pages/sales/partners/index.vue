@@ -395,6 +395,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
 import * as echarts from 'echarts/core';
+import { useApiFetch } from '~/composables/useApiFetch';
 
 interface Partner {
   id: string;
@@ -772,8 +773,13 @@ async function handleDeletePartner(partner: Partner) {
       confirmButtonText: t('common.delete'),
       cancelButtonText: t('common.cancel')
     });
-    partners.value = partners.value.filter(p => p.id !== partner.id);
-    ElMessage.success(t('common.deleted'));
+    const res = await useApiFetch(`partners/${partner.id}`, 'DELETE');
+    if (res.success !== false) {
+      partners.value = partners.value.filter(p => p.id !== partner.id);
+      ElMessage.success(t('common.deleted'));
+    } else {
+      ElMessage.error(t('common.deleteError') || 'Delete failed');
+    }
   } catch {
     // cancelled
   }

@@ -139,16 +139,16 @@ div
 
   //- Create/Edit Dialog
   el-dialog(v-model="dialogVisible" :title="editingItem ? $t('hr.performance.editReview') : $t('hr.performance.newReview')" width="600px" destroy-on-close)
-    el-form(:model="form" label-position="top")
+    el-form(:model="form" :rules="formRules" ref="formRef" label-position="top")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('hr.performance.employee')" required)
+        el-form-item(:label="$t('hr.performance.employee')" prop="employeeId" required)
           el-select(v-model="form.employeeId" filterable :placeholder="$t('hr.performance.selectEmployee')" class="w-full")
             el-option(v-for="emp in employees" :key="emp.id" :label="emp.name" :value="emp.id")
-        el-form-item(:label="$t('hr.performance.reviewer')" required)
+        el-form-item(:label="$t('hr.performance.reviewer')" prop="reviewerId" required)
           el-select(v-model="form.reviewerId" filterable :placeholder="$t('hr.performance.selectReviewer')" class="w-full")
             el-option(v-for="emp in employees" :key="emp.id" :label="emp.name" :value="emp.id")
       .grid.gap-4(class="grid-cols-2")
-        el-form-item(:label="$t('hr.performance.period')" required)
+        el-form-item(:label="$t('hr.performance.period')" prop="period" required)
           el-select(v-model="form.period" :placeholder="$t('hr.performance.selectPeriod')" class="w-full")
             el-option(:label="$t('performance.q1_2026')" value="Q1-2026")
             el-option(:label="$t('performance.q2_2026')" value="Q2-2026")
@@ -216,6 +216,14 @@ const form = reactive({
   comments: '',
   goals: ''
 });
+
+const formRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+
+const formRules = computed(() => ({
+  employeeId: [{ required: true, message: t('validation.required') || 'Employee is required', trigger: 'change' }],
+  reviewerId: [{ required: true, message: t('validation.required') || 'Reviewer is required', trigger: 'change' }],
+  period: [{ required: true, message: t('validation.required') || 'Period is required', trigger: 'blur' }]
+}));
 
 const avgRating = computed(() => {
   const rated = reviews.value.filter(r => r.overallRating > 0);
@@ -287,10 +295,8 @@ function openDialog(item?: unknown) {
 }
 
 async function handleSave() {
-  if (!form.employeeId || !form.reviewerId || !form.period) {
-    ElNotification({ type: 'warning', title: t('common.warning'), message: t('common.fillRequired') });
-    return;
-  }
+  const valid = await formRef.value?.validate().catch(() => false);
+  if (!valid) return;
   saving.value = true;
   try {
     const payload = { ...form };

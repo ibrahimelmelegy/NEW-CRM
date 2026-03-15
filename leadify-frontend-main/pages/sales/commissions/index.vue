@@ -131,11 +131,11 @@
 
   //- Add Commission Dialog
   el-dialog(v-model="showDialog" :title="$t('commissions.add')" width="500px")
-    el-form(label-position="top" size="large")
+    el-form(:model="form" :rules="commissionRules" ref="commissionFormRef" label-position="top" size="large")
       .grid.grid-cols-2.gap-4
-        el-form-item(:label="$t('commissions.amount')")
+        el-form-item(:label="$t('commissions.amount')" prop="amount")
           el-input-number(v-model="form.amount" :min="0" :precision="2" class="w-full")
-        el-form-item(:label="$t('commissions.rate')")
+        el-form-item(:label="$t('commissions.rate')" prop="rate")
           el-input-number(v-model="form.rate" :min="0" :max="100" :precision="2" class="w-full")
       el-form-item(:label="$t('commissions.dealValue')")
         el-input-number(v-model="form.dealValue" :min="0" :precision="2" class="w-full")
@@ -167,6 +167,19 @@ const items = ref<Record<string, unknown>[]>([]);
 const selectedIds = ref<number[]>([]);
 const form = reactive({ amount: 0, rate: 5, dealValue: 0, notes: '' });
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
+
+const commissionFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+
+const commissionRules = computed(() => ({
+  amount: [
+    { required: true, message: t('validation.required') || 'Amount is required', trigger: 'blur' },
+    { type: 'number' as const, min: 0.01, message: t('validation.minValue') || 'Amount must be greater than 0', trigger: 'blur' }
+  ],
+  rate: [
+    { required: true, message: t('validation.required') || 'Rate is required', trigger: 'blur' },
+    { type: 'number' as const, min: 0, max: 100, message: t('validation.rangeValue') || 'Rate must be between 0 and 100', trigger: 'blur' }
+  ]
+}));
 const kpiData = ref<Record<string, unknown> | null>(null);
 const analyticsData = ref<Record<string, unknown> | null>(null);
 const forecastData = ref<Record<string, unknown> | null>(null);
@@ -280,6 +293,8 @@ async function fetchForecast() {
 }
 
 async function saveItem() {
+  const valid = await commissionFormRef.value?.validate().catch(() => false);
+  if (!valid) return;
   saving.value = true;
   try {
     const { success } = await useApiFetch('commissions', 'POST', { ...form, status: 'PENDING' });

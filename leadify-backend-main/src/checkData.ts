@@ -1,4 +1,5 @@
 import { sequelize } from './config/db';
+import logger from './config/logger';
 import Lead from './lead/leadModel';
 import Deal from './deal/model/dealModel';
 import User from './user/userModel';
@@ -21,10 +22,10 @@ const checkData = async () => {
     }
 
     if (leads === 0) {
-      console.warn('DATABASE IS EMPTY OF LEADS.');
+      logger.warn('DATABASE IS EMPTY OF LEADS.');
     }
   } catch (e) {
-    console.error('Data Audit Error:', (e as Error).message);
+    logger.error('Data Audit Error: ' + (e as Error).message);
   }
   // Audit complete
   process.exit();

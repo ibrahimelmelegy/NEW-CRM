@@ -48,6 +48,7 @@ import { Delete, Download, Plus, ZoomIn, Crop } from '@element-plus/icons-vue';
 import type { UploadProps, UploadFile } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import { useField } from 'vee-validate';
+import logger from '~/utils/logger'
 
 const props = defineProps({
   name: {
@@ -189,7 +190,7 @@ const cropImage = async () => {
         })
         .catch(err => {
           ElMessage.error('Failed to upload cropped image');
-          console.error(err);
+          logger.error(err);
         });
     }, 'image/jpeg');
   } else {

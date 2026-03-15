@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { useApiFetch } from './useApiFetch';
+import logger from '~/utils/logger'
 
 export interface PlaybookStep {
   id: string;
@@ -101,7 +102,7 @@ export function usePlaybook() {
         }
       }
     } catch (e) {
-      console.error('Failed to fetch playbooks', e);
+      logger.error('Failed to fetch playbooks', e);
     } finally {
       loading.value = false;
     }
@@ -119,7 +120,7 @@ export function usePlaybook() {
       }
       return { body, success };
     } catch (e) {
-      console.error('Failed to create playbook', e);
+      logger.error('Failed to create playbook', e);
       return { body: null, success: false };
     } finally {
       loading.value = false;
@@ -140,7 +141,7 @@ export function usePlaybook() {
       }
       return { body, success };
     } catch (e) {
-      console.error('Failed to update playbook', e);
+      logger.error('Failed to update playbook', e);
       return { body: null, success: false };
     } finally {
       loading.value = false;
@@ -162,7 +163,7 @@ export function usePlaybook() {
       }
       return { success };
     } catch (e) {
-      console.error('Failed to delete playbook', e);
+      logger.error('Failed to delete playbook', e);
       return { success: false };
     } finally {
       loading.value = false;

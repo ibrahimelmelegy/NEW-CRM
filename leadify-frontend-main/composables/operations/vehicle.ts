@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 // Handle error during vehicle creation
 function handleError(message: string) {
@@ -80,7 +81,7 @@ export async function getVehicles(): Promise<UseVehicleResult> {
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching vehicles:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching vehicles:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching vehicles. Please try again.');
@@ -101,7 +102,7 @@ export async function getVehicle(id: string | string[]): Promise<Vehicle> {
     const { body: vehicle } = await useApiFetch(`vehicle/${id}`);
     return vehicle;
   } catch (error) {
-    console.error('Error fetching vehicle:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching vehicle:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching vehicle. Please try again.');
     return {} as Vehicle;
   }

@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template lang="pug">
 el-dialog(
   :model-value="visible"
@@ -265,7 +266,7 @@ async function handleSend() {
       ElMessage.error(t('common.error') || 'Failed to send email');
     }
   } catch (err) {
-    console.error('Failed to send email:', err);
+    logger.error('Failed to send email:', err);
     ElMessage.error(t('common.error') || 'Failed to send email');
   } finally {
     sending.value = false;

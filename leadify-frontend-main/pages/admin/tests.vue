@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template>
   <div class="min-h-screen bg-[#0f172a] text-slate-200 p-6 lg:p-10 font-sans selection:bg-cyan-500/30">
     <header
@@ -192,7 +193,7 @@ const loadTestData = async () => {
     processResults(resultsData);
     lastUpdate.value = new Date().toLocaleTimeString();
   } catch (e) {
-    console.error('Dashboard Engine: Waiting for simulation matrix...', e);
+    logger.error('Dashboard Engine: Waiting for simulation matrix...', e);
     error.value = true;
   }
 };

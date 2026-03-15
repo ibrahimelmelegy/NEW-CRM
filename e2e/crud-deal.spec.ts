@@ -17,8 +17,12 @@
  * Uses shared storageState from auth setup for authenticated access.
  * Falls back to inline login if the session expires.
  *
- * TODO: Add data-testid attributes to deal form elements
- * in the source code for more robust selectors.
+ * Uses data-testid selectors for robust element targeting:
+ *   - [data-testid="email-input"]      → Login email input
+ *   - [data-testid="password-input"]   → Login password input
+ *   - [data-testid="login-button"]     → Login submit button
+ *   - [data-testid="add-deal-button"]  → NuxtLink to add-deal page
+ *   - [data-testid="deals-board"]      → .deals-desktop-view wrapper
  */
 
 import { test, expect, Page } from '@playwright/test';
@@ -43,17 +47,16 @@ async function navigateAuthenticated(page: Page, path: string): Promise<boolean>
 
   if (page.url().includes('/login')) {
     try {
-      const emailInput = page.locator('input[type="email"], input[type="text"]').first();
+      // Use data-testid selectors for login form
+      const emailInput = page.locator('[data-testid="email-input"]');
       await emailInput.waitFor({ state: 'visible', timeout: 10000 });
-      await emailInput.fill(TEST_EMAIL);
+      await emailInput.locator('input').fill(TEST_EMAIL);
 
-      const passwordInput = page.locator('input[type="password"]').first();
+      const passwordInput = page.locator('[data-testid="password-input"]');
       await passwordInput.waitFor({ state: 'visible', timeout: 5000 });
-      await passwordInput.fill(TEST_PASSWORD);
+      await passwordInput.locator('input').fill(TEST_PASSWORD);
 
-      await page.locator(
-        'button[type="submit"], button:has-text("Sign"), button:has-text("Login")'
-      ).first().click();
+      await page.locator('[data-testid="login-button"]').click();
       await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 });
       await page.waitForTimeout(2000);
 
@@ -79,14 +82,22 @@ async function dismissOverlay(page: Page): Promise<void> {
   }
 }
 
-/** Wait for a data table to appear on the page. */
-async function waitForTable(page: Page, timeout = 20000): Promise<void> {
+/** Wait for the deals board/table using data-testid, with fallback. */
+async function waitForDealsBoard(page: Page, timeout = 20000): Promise<void> {
   await dismissOverlay(page);
   try {
-    await page.locator('.el-table, table, [class*="table"], [class*="kanban"]').first().waitFor({
-      state: 'visible',
-      timeout,
-    });
+    // Prefer data-testid="deals-board" (set on .deals-desktop-view wrapper)
+    const dealsBoard = page.locator('[data-testid="deals-board"]');
+    const hasTestId = await dealsBoard.isVisible({ timeout: 5000 }).catch(() => false);
+    if (hasTestId) {
+      await dealsBoard.waitFor({ state: 'visible', timeout });
+    } else {
+      // Fallback to generic table/kanban selectors
+      await page.locator('.el-table, table, [class*="table"], [class*="kanban"]').first().waitFor({
+        state: 'visible',
+        timeout,
+      });
+    }
   } catch {
     // Table/kanban may not render if no data
   }
@@ -117,17 +128,25 @@ test.describe('Deal CRUD Operations', () => {
       await expect(heading).toBeVisible({ timeout: 15000 });
     });
 
-    test('should display a data table or kanban board', async ({ page }) => {
+    test('should display a data table or deals board', async ({ page }) => {
       const authenticated = await navigateAuthenticated(page, '/sales/deals');
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await page.waitForTimeout(3000);
 
-      const tableOrBoard = page.locator(
-        'table, .el-table, [class*="table"], [class*="kanban"]'
-      ).first();
-      await expect(tableOrBoard).toBeVisible({ timeout: 15000 });
+      // Prefer data-testid="deals-board" (set on .deals-desktop-view)
+      const dealsBoard = page.locator('[data-testid="deals-board"]');
+      const hasTestId = await dealsBoard.isVisible({ timeout: 10000 }).catch(() => false);
+
+      if (hasTestId) {
+        await expect(dealsBoard).toBeVisible({ timeout: 15000 });
+      } else {
+        const tableOrBoard = page.locator(
+          'table, .el-table, [class*="table"], [class*="kanban"]'
+        ).first();
+        await expect(tableOrBoard).toBeVisible({ timeout: 15000 });
+      }
     });
 
     test('should have an Add Deal button', async ({ page }) => {
@@ -137,8 +156,17 @@ test.describe('Deal CRUD Operations', () => {
       await dismissOverlay(page);
       await page.waitForTimeout(3000);
 
-      const addBtn = page.locator('a[href*="add-deal"]').first();
-      await expect(addBtn).toBeVisible({ timeout: 15000 });
+      // Use data-testid="add-deal-button" set on the NuxtLink to add-deal
+      const addDealBtn = page.locator('[data-testid="add-deal-button"]');
+      const hasTestId = await addDealBtn.isVisible({ timeout: 10000 }).catch(() => false);
+
+      if (hasTestId) {
+        await expect(addDealBtn).toBeVisible({ timeout: 15000 });
+      } else {
+        // Fallback to href-based selector
+        const addBtn = page.locator('a[href*="add-deal"]').first();
+        await expect(addBtn).toBeVisible({ timeout: 15000 });
+      }
     });
 
     test('should have a toggle between Table and Kanban view', async ({ page }) => {
@@ -148,11 +176,19 @@ test.describe('Deal CRUD Operations', () => {
       await dismissOverlay(page);
       await page.waitForTimeout(3000);
 
-      const kanbanBtn = page.locator(
-        'button:has-text("Kanban"), button:has-text("kanban"), a[href*="kanban"]'
-      ).first();
-      const hasKanban = await kanbanBtn.isVisible({ timeout: 5000 }).catch(() => false);
-      expect(hasKanban).toBeTruthy();
+      // Use data-testid for view toggle buttons set in deals/index.vue
+      const kanbanBtn = page.locator('[data-testid="deals-kanban-view-btn"]');
+      const hasTestId = await kanbanBtn.isVisible({ timeout: 5000 }).catch(() => false);
+
+      if (hasTestId) {
+        expect(hasTestId).toBeTruthy();
+      } else {
+        const fallbackKanbanBtn = page.locator(
+          'button:has-text("Kanban"), button:has-text("kanban"), a[href*="kanban"]'
+        ).first();
+        const hasKanban = await fallbackKanbanBtn.isVisible({ timeout: 5000 }).catch(() => false);
+        expect(hasKanban).toBeTruthy();
+      }
     });
   });
 
@@ -334,7 +370,7 @@ test.describe('Deal CRUD Operations', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForDealsBoard(page);
 
       const firstRow = page.locator('.el-table__row, table tbody tr').first();
       if (await firstRow.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -351,7 +387,7 @@ test.describe('Deal CRUD Operations', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForDealsBoard(page);
 
       const toggleIcon = page.locator('.toggle-icon').first();
       if (await toggleIcon.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -374,7 +410,7 @@ test.describe('Deal CRUD Operations', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForDealsBoard(page);
 
       const firstRow = page.locator('.el-table__row, table tbody tr').first();
       if (await firstRow.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -420,7 +456,7 @@ test.describe('Deal CRUD Operations', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForDealsBoard(page);
 
       const toggleIcon = page.locator('.toggle-icon').first();
       if (await toggleIcon.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -441,7 +477,7 @@ test.describe('Deal CRUD Operations', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForDealsBoard(page);
 
       const toggleIcon = page.locator('.toggle-icon').first();
       if (await toggleIcon.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -464,7 +500,7 @@ test.describe('Deal CRUD Operations', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForDealsBoard(page);
 
       // Try to get to the edit page
       const toggleIcon = page.locator('.toggle-icon').first();
@@ -505,7 +541,7 @@ test.describe('Deal CRUD Operations', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForDealsBoard(page);
 
       const toggleIcon = page.locator('.toggle-icon').first();
       if (await toggleIcon.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -547,7 +583,7 @@ test.describe('Deal CRUD Operations', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForDealsBoard(page);
 
       const toggleIcon = page.locator('.toggle-icon').first();
       if (await toggleIcon.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -569,7 +605,7 @@ test.describe('Deal CRUD Operations', () => {
       if (!authenticated) { test.skip(); return; }
 
       await dismissOverlay(page);
-      await waitForTable(page);
+      await waitForDealsBoard(page);
 
       const toggleIcon = page.locator('.toggle-icon').first();
       if (await toggleIcon.isVisible({ timeout: 5000 }).catch(() => false)) {

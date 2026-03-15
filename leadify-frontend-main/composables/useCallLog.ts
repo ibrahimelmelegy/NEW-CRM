@@ -5,6 +5,7 @@
 import { ref, computed } from 'vue';
 import { ElNotification } from 'element-plus';
 import { useApiFetch } from './useApiFetch';
+import logger from '~/utils/logger'
 
 export interface CallEntry {
   id: number;
@@ -122,7 +123,7 @@ export function useCallLog() {
         analytics.value = body as CallAnalytics;
       }
     } catch (error) {
-      console.error('Failed to fetch call analytics:', error);
+      logger.error('Failed to fetch call analytics:', error);
       const t = useNuxtApp().$i18n.t;
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.fetchError') });
     }

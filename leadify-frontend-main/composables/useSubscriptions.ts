@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 function handleError(message: string) {
   const t = useNuxtApp().$i18n.t;
@@ -304,7 +305,7 @@ export async function fetchSubscriptionMetrics(): Promise<SubscriptionMetrics | 
     }
     return null;
   } catch (error) {
-    console.error('Error fetching metrics:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching metrics:', error instanceof Error ? error.message : error);
     return null;
   }
 }

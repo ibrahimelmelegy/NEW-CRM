@@ -306,6 +306,7 @@ import { ref, computed } from 'vue';
 import { graphic } from 'echarts/core';
 import VChart from 'vue-echarts';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({ title: 'AI Insights Dashboard' });
 
@@ -458,7 +459,7 @@ async function loadData() {
 
     computeAll();
   } catch (e) {
-    console.error('Failed to load AI insights data', e);
+    logger.error('Failed to load AI insights data', e);
   } finally {
     loading.value = false;
   }

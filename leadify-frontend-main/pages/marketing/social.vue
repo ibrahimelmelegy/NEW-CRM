@@ -310,6 +310,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({
   layout: 'default',
@@ -573,10 +574,10 @@ async function fetchProfiles() {
     if (res?.success) {
       profiles.value = res.body?.docs || res.body || [];
     } else {
-      console.error('Failed to load social profiles:', res?.message);
+      logger.error('Failed to load social profiles:', res?.message);
     }
   } catch (e) {
-    console.error('Error fetching social profiles:', e);
+    logger.error('Error fetching social profiles:', e);
   } finally {
     loading.value = false;
   }
@@ -646,7 +647,7 @@ async function fetchPosts() {
       }));
     }
   } catch (e) {
-    console.error('Error fetching posts:', e);
+    logger.error('Error fetching posts:', e);
   } finally {
     postsLoading.value = false;
   }

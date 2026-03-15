@@ -9,6 +9,7 @@
  */
 
 import { sequelize } from '../config/db';
+import logger from '../config/logger';
 import DocumentTemplate, { DocumentTemplateType } from '../documentTemplate/documentTemplateModel';
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -1428,7 +1429,7 @@ if (require.main === module) {
       process.exit(0);
     })
     .catch((err: Error) => {
-      console.error('[seedTemplates] Fatal error:', err);
+      logger.error('[seedTemplates] Fatal error: ' + err);
       process.exit(1);
     });
 }

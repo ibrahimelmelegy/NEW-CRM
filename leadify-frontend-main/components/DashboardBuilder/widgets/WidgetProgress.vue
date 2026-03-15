@@ -1,3 +1,4 @@
+import logger from '~/utils/logger'
 <template lang="pug">
 .widget-progress.glass-card.p-5.h-full
   h4.text-sm.font-bold.mb-4(style="color: var(--text-primary)") {{ title }}
@@ -84,7 +85,7 @@ async function loadData() {
       ];
     }
   } catch (e) {
-    console.error('Progress widget load failed:', e);
+    logger.error('Progress widget load failed:', e);
     // Provide fallback visual data
     targets.value = [
       { label: 'Revenue', actual: '--', goal: '--', percentage: 0, color: TARGET_COLORS[0] },

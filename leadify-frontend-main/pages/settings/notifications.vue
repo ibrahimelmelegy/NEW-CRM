@@ -62,6 +62,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
 import { useApiFetch } from '~/composables/useApiFetch';
+import logger from '~/utils/logger'
 
 definePageMeta({
   title: 'Notification Preferences'
@@ -135,7 +136,7 @@ onMounted(async () => {
       }
     }
   } catch (e) {
-    console.error('Failed to load notification preferences', e);
+    logger.error('Failed to load notification preferences', e);
   } finally {
     loading.value = false;
   }

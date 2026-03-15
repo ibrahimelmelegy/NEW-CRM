@@ -652,7 +652,8 @@
     "unknown": "غير معروف",
     "updatedSuccessfully": "تم التحديث بنجاح",
     "viewNamePlaceholder": "أدخل اسم العرض...",
-    "visaFees": "رسوم التأشيرة"
+    "visaFees": "رسوم التأشيرة",
+    "fields": "حقول"
   },
   "export": {
     "title": "تصدير",
@@ -1004,6 +1005,8 @@
       "rejected": "مرفوض",
       "archived": "مؤرشف"
     },
+    "recentlyExecuted": "تم التنفيذ مؤخراً",
+    "scheduled": "مجدول",
     "optionalDescription": "وصف اختياري",
     "defaultSort": "افتراضي (createdAt)",
     "confirmDeleteReport": "حذف هذا التقرير؟",
@@ -1830,6 +1833,7 @@
     "kanbanView": "كانبان",
     "totalValue": "الإجمالي",
     "stageUpdated": "تم تحديث المرحلة بنجاح",
+    "cardMoved": "تم نقل \"{title}\" من {from} إلى {to}",
     "stages": {
       "progress": "قيد التنفيذ",
       "closed": "مغلق",
@@ -4642,7 +4646,8 @@
     "backToCreditNotes": "العودة إلى إشعارات الدائن",
     "cash": "نقدي",
     "credit": "ائتمان",
-    "bankTransfer": "تحويل بنكي"
+    "bankTransfer": "تحويل بنكي",
+    "collectionCreated": "تم إنشاء المجموعة \"{name}\""
   },
   "executiveDashboard": {
     "title": "لوحة التحكم التنفيذية",
@@ -7532,7 +7537,8 @@
     "ended": "منتهي",
     "earn": "كسب",
     "redeem": "استبدال",
-    "adjust": "تعديل"
+    "adjust": "تعديل",
+    "rewardAdded": "تمت إضافة المكافأة \"{name}\" إلى الكتالوج"
   },
   "trainingLms": {
     "title": "التدريب ونظام إدارة التعلم",
@@ -12380,7 +12386,7 @@
     "dataRefreshed": "تم تحديث البيانات بنجاح",
     "allStatuses": "جميع الحالات",
     "maxRetriesReached": "تم الوصول إلى الحد الأقصى لمحاولات إعادة التشغيل.",
-    "retryQueued": "تمت إضافة إعادة المحاولة إلى قائمة الانتظار. المحاولة {count}/3.",
+    "retryQueued": "تمت إضافة إعادة المحاولة لـ \"{name}\" إلى قائمة الانتظار. المحاولة {attempt}/{max}.",
     "average": "المتوسط",
     "p95": "P95",
     "p99": "P99"
@@ -13425,7 +13431,8 @@
     "picking": "التقاط",
     "receiving": "استلام",
     "shippingZone": "شحن",
-    "quarantine": "حجر صحي"
+    "quarantine": "حجر صحي",
+    "changeStatusConfirm": "تغيير حالة {count} مستودع(ات) إلى {status}؟"
   },
   "archive": {
     "title": "أرشيف المستندات",
@@ -13444,7 +13451,9 @@
     "total": "الإجمالي",
     "archived": "مؤرشف",
     "restore": "استرجاع",
-    "deletePermanently": "حذف نهائي"
+    "deletePermanently": "حذف نهائي",
+    "restoredSuccessfully": "تمت استعادة \"{ref}\" بنجاح.",
+    "permanentlyDeleted": "تم حذف \"{ref}\" نهائياً."
   },
   "territories": {
     "subtitle": "إدارة المناطق الجغرافية أو المخصصة وتعيينها للمستخدمين.",

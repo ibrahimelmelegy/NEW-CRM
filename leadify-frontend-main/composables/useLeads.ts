@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 // Helper function to normalize phone numbers
 function normalizePhoneNumber(phone: string): string {
   return phone.replace(/\s+/g, '').replace(/^\+/, '').replace(/^2/, ''); // Assuming removing country code prefix '2', modify if needed
@@ -134,7 +135,7 @@ export async function getLeads(): Promise<UseLeadsResult> {
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching leads:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching leads:', error instanceof Error ? error.message : error);
 
     const t = getT();
     handleError(t('common.fetchError'));
@@ -155,7 +156,7 @@ export async function getLead(id: string | string[]): Promise<Lead> {
     const { body: lead } = await useApiFetch(`lead/${id}`);
     return lead;
   } catch (error) {
-    console.error('Error fetching lead:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching lead:', error instanceof Error ? error.message : error);
     const t = getT();
     handleError(t('common.fetchError'));
     return {} as Lead;
@@ -167,7 +168,7 @@ export async function getActivity(id: string | string[]): Promise<ActivityRespon
     const { body: activities } = await useApiFetch(`activity/lead/${id}`);
     return activities;
   } catch (error) {
-    console.error('Error fetching activity:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching activity:', error instanceof Error ? error.message : error);
     const t = getT();
     handleError(t('common.fetchError'));
     return { docs: [], pagination: { page: 1, totalPages: 1, totalItems: 0, limit: 10 } } as ActivityResponse;

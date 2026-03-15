@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 // Handle error during manpower creation
 function handleError(message: string) {
@@ -297,7 +298,7 @@ export async function getManpowers(): Promise<UseManpowersResult> {
     }
   } catch (error) {
     // Catch and log any errors, either from the API call or from unexpected issues
-    console.error('Error fetching manpowers:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching manpowers:', error instanceof Error ? error.message : error);
 
     // Optionally, you could show a notification here if needed
     handleError('An error occurred while fetching manpowers. Please try again.');
@@ -318,7 +319,7 @@ export async function getManpower(id: string | string[]): Promise<ManpowerValues
     const { body: manpower } = await useApiFetch(`manpower/${id}`);
     return manpower;
   } catch (error) {
-    console.error('Error fetching manpower:', error instanceof Error ? error.message : error);
+    logger.error('Error fetching manpower:', error instanceof Error ? error.message : error);
     handleError('An error occurred while fetching manpower. Please try again.');
     return {} as ManpowerValues;
   }

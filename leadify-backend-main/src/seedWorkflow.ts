@@ -1,4 +1,5 @@
 import { sequelize } from './config/db';
+import logger from './config/logger';
 import WorkflowRule, { TriggerType, ConditionLogic } from './workflow/workflowModel';
 
 async function seedDelayedWorkflow() {
@@ -51,4 +52,4 @@ async function seedDelayedWorkflow() {
   process.exit(0);
 }
 
-seedDelayedWorkflow().catch(console.error);
+seedDelayedWorkflow().catch(err => logger.error('seedWorkflow failed: ' + err));

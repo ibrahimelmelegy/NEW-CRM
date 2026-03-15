@@ -1,5 +1,15 @@
 <template lang="pug">
 .p-6.animate-entrance
+  //- Coming Soon Banner
+  el-alert(
+    type="info"
+    title="Virtual Office — Coming Soon"
+    description="Real-time video collaboration (WebRTC camera, microphone, screen sharing) is under development. This is a preview of the upcoming feature — room presence and status are live via Socket.io."
+    show-icon
+    :closable="false"
+    style="margin-bottom: 24px; border-radius: 12px;"
+  )
+
   //- Header
   .flex.items-center.justify-between.mb-8
     div

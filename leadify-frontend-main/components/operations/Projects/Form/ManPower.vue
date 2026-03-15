@@ -19,6 +19,7 @@ import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { Plus } from '@element-plus/icons-vue';
 import { ref } from 'vue';
+import logger from '~/utils/logger'
 const { t } = useI18n();
 const props = defineProps({
   loading: Boolean,
@@ -146,7 +147,7 @@ const onSubmit = handleSubmit(async (values: unknown) => {
     }
     emit('submit');
   } catch (error) {
-    console.error('Project creation failed', error);
+    logger.error('Project creation failed', error);
   }
   // emit('submit')
 });

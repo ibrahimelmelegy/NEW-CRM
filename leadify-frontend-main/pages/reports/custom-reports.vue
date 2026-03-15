@@ -27,7 +27,7 @@
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(34,197,94,0.12);")
           Icon(name="ph:play-circle-bold" size="20" style="color: #22c55e")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Recently Executed
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reports.recentlyExecuted') }}
           p.text-2xl.font-black.mt-1(style="color: #22c55e;") {{ recentlyExecutedCount }}
 
     .relative.overflow-hidden.p-5.rounded-2xl.border(style="border-color: var(--border-default); background: var(--bg-elevated);")
@@ -35,7 +35,7 @@
         .w-10.h-10.rounded-xl.flex.items-center.justify-center(style="background: rgba(59,130,246,0.12);")
           Icon(name="ph:clock-bold" size="20" style="color: #3b82f6")
         div
-          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") Scheduled
+          p.text-xs.font-bold.uppercase.tracking-widest(style="color: var(--text-muted);") {{ $t('reports.scheduled') }}
           p.text-2xl.font-black.mt-1(style="color: #3b82f6;") {{ scheduledCount }}
 
   //- Filters Row
@@ -87,7 +87,7 @@
             el-tag(size="small" effect="plain" round) {{ entityTypes[scope.row.entityType] || scope.row.entityType }}
         el-table-column(:label="$t('reportBuilder.fields')" min-width="100")
           template(#default="scope")
-            span.text-sm {{ scope.row.fields?.length || 0 }} fields
+            span.text-sm {{ scope.row.fields?.length || 0 }} {{ $t('common.fields') }}
         el-table-column(:label="$t('reportsPage.createdBy')" min-width="140")
           template(#default="scope")
             span.text-sm {{ scope.row.user?.name || '--' }}
@@ -125,8 +125,8 @@
               el-popconfirm(
                 :title="$t('reports.confirmDeleteReport')"
                 @confirm="handleDelete(scope.row.id)"
-                confirm-button-text="Delete"
-                cancel-button-text="Cancel"
+                :confirm-button-text="$t('common.delete')"
+                :cancel-button-text="$t('common.cancel')"
               )
                 template(#reference)
                   el-button(size="small" text type="danger")
@@ -368,6 +368,7 @@
 import { ref, computed, onMounted, reactive } from 'vue';
 import { ElNotification } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
+import logger from '~/utils/logger'
 
 definePageMeta({});
 
@@ -456,7 +457,7 @@ async function fetchReports() {
       reports.value = Array.isArray(body) ? body : (body as unknown).docs || [];
     }
   } catch (e) {
-    console.error('Failed to fetch reports', e);
+    logger.error('Failed to fetch reports', e);
   } finally {
     loading.value = false;
   }
@@ -469,7 +470,7 @@ async function fetchEntityTypes() {
       entityTypes.value = body as Record<string, string>;
     }
   } catch (e) {
-    console.error('Failed to fetch entity types', e);
+    logger.error('Failed to fetch entity types', e);
   }
 }
 
@@ -485,7 +486,7 @@ async function fetchFields(entityType: string) {
       availableFields.value = (body as unknown).fields || [];
     }
   } catch (e) {
-    console.error('Failed to fetch fields', e);
+    logger.error('Failed to fetch fields', e);
     availableFields.value = [];
   } finally {
     loadingFields.value = false;
@@ -507,7 +508,7 @@ async function handleExecute(report: unknown) {
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
     }
   } catch (e) {
-    console.error('Failed to execute report', e);
+    logger.error('Failed to execute report', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   } finally {
     executingId.value = null;
@@ -553,7 +554,7 @@ async function handleExport(reportId: number, format: string) {
 
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.success') });
   } catch (e) {
-    console.error('Export failed', e);
+    logger.error('Export failed', e);
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
   }
 }
@@ -595,7 +596,7 @@ async function handleSaveReport() {
       formDialogVisible.value = false;
       await fetchReports();
     } catch (e) {
-      console.error('Save failed', e);
+      logger.error('Save failed', e);
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
     } finally {
       saving.value = false;
@@ -613,7 +614,7 @@ async function handleDelete(id: number) {
       ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
     }
   } catch (e) {
-    console.error('Delete failed', e);
+    logger.error('Delete failed', e);
   }
 }
 

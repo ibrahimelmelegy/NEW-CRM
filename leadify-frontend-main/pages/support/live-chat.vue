@@ -290,6 +290,7 @@ import { ref, computed, nextTick, watch, onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useLiveChat } from '~/composables/liveChat';
 import { user } from '~/composables/useUser';
+import logger from '~/utils/logger'
 
 definePageMeta({ layout: 'default', middleware: 'permissions' });
 
@@ -414,7 +415,7 @@ const loadConversations = async () => {
       chats.value = raw.map(normalizeConversation);
     }
   } catch (e) {
-    console.error('Failed to load conversations', e);
+    logger.error('Failed to load conversations', e);
   } finally {
     loadingConversations.value = false;
   }
@@ -432,7 +433,7 @@ const loadMessages = async (conversationId: number) => {
       }
     }
   } catch (e) {
-    console.error('Failed to load messages', e);
+    logger.error('Failed to load messages', e);
   } finally {
     loadingMessages.value = false;
     scrollToBottom();
@@ -451,7 +452,7 @@ const loadAgents = async () => {
       }));
     }
   } catch (e) {
-    console.error('Failed to load agents', e);
+    logger.error('Failed to load agents', e);
   }
 };
 
@@ -467,7 +468,7 @@ const loadCannedResponses = async () => {
       }));
     }
   } catch (e) {
-    console.error('Failed to load canned responses', e);
+    logger.error('Failed to load canned responses', e);
   }
 };
 
@@ -478,7 +479,7 @@ const loadMetrics = async () => {
       metrics.value = res.body as unknown;
     }
   } catch (e) {
-    console.error('Failed to load metrics', e);
+    logger.error('Failed to load metrics', e);
   }
 };
 

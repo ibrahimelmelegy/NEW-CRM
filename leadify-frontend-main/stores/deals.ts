@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import type { Deal } from '~/types/models';
 import type { ApiListParams } from '~/types/api';
 import type { DealStage } from '~/types/enums';
+import logger from '~/utils/logger'
 
 interface Pagination {
   page: number;
@@ -73,7 +74,7 @@ export const useDealStore = defineStore('deals', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to fetch deals';
         this.error = message;
-        console.error('Error fetching deals:', error);
+        logger.error('Error fetching deals:', error);
       } finally {
         this.loading = false;
       }
@@ -94,7 +95,7 @@ export const useDealStore = defineStore('deals', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to fetch deal';
         this.error = message;
-        console.error('Error fetching deal:', error);
+        logger.error('Error fetching deal:', error);
       } finally {
         this.loading = false;
       }
@@ -117,7 +118,7 @@ export const useDealStore = defineStore('deals', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to create deal';
         this.error = message;
-        console.error('Error creating deal:', error);
+        logger.error('Error creating deal:', error);
         return null;
       } finally {
         this.loading = false;
@@ -147,7 +148,7 @@ export const useDealStore = defineStore('deals', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to update deal';
         this.error = message;
-        console.error('Error updating deal:', error);
+        logger.error('Error updating deal:', error);
         return null;
       } finally {
         this.loading = false;
@@ -174,7 +175,7 @@ export const useDealStore = defineStore('deals', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to delete deal';
         this.error = message;
-        console.error('Error deleting deal:', error);
+        logger.error('Error deleting deal:', error);
         return false;
       } finally {
         this.loading = false;

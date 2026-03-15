@@ -1,5 +1,6 @@
 /* eslint-disable require-await */
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger'
 
 export interface InvoiceItem {
   id: number;
@@ -81,7 +82,7 @@ export async function downloadInvoicePdf(id: number, invoiceNumber?: string): Pr
 
     return true;
   } catch (error) {
-    console.error('Failed to download invoice PDF:', error);
+    logger.error('Failed to download invoice PDF:', error);
     const t = useNuxtApp().$i18n.t;
     ElNotification({ type: 'error', title: t('common.error'), message: t('common.downloadFailed') });
     return false;

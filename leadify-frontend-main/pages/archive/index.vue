@@ -131,6 +131,7 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useDocumentArchive, documentTypeLabels } from '~/composables/useDocumentArchive';
 import type { ArchivedDocument } from '~/composables/useDocumentArchive';
+import logger from '~/utils/logger'
 
 definePageMeta({});
 
@@ -160,10 +161,10 @@ function handleRestore(row: ArchivedDocument) {
   })
     .then(() => {
       restoreDocument(row.id, row.documentType);
-      ElMessage.success(`"${row.refNumber}" restored successfully.`);
+      ElMessage.success(t('archive.restoredSuccessfully', { ref: row.refNumber }));
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 
@@ -175,10 +176,10 @@ function handleDelete(row: ArchivedDocument) {
   })
     .then(() => {
       permanentlyDelete(row.id, row.documentType);
-      ElMessage.success(`"${row.refNumber}" permanently deleted.`);
+      ElMessage.success(t('archive.permanentlyDeleted', { ref: row.refNumber }));
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 
@@ -194,7 +195,7 @@ function handleBulkRestore() {
       selectedRows.value = [];
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 
@@ -210,7 +211,7 @@ function handleBulkDelete() {
       selectedRows.value = [];
     })
     .catch((error: unknown) => {
-      console.error('Operation failed:', error);
+      logger.error('Operation failed:', error);
     });
 }
 

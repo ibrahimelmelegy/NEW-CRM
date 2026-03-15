@@ -315,6 +315,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
 import { user } from '~/composables/useUser';
+import logger from '~/utils/logger'
 
 definePageMeta({
   layout: 'default',
@@ -471,7 +472,7 @@ async function fetchTasks() {
       }
     }
   } catch (e) {
-    console.error('Failed to fetch gantt tasks:', e);
+    logger.error('Failed to fetch gantt tasks:', e);
     ElMessage.error(t('common.error'));
   } finally {
     loading.value = false;
@@ -878,7 +879,7 @@ const saveTask = async () => {
       }
     }
   } catch (e) {
-    console.error('Failed to save gantt task:', e);
+    logger.error('Failed to save gantt task:', e);
     ElMessage.error(t('common.error'));
   } finally {
     saving.value = false;
@@ -987,7 +988,7 @@ async function deleteTask(task: GanttTask) {
       ElMessage.error(t('common.error'));
     }
   } catch (e) {
-    console.error('Failed to delete gantt task:', e);
+    logger.error('Failed to delete gantt task:', e);
     ElMessage.error(t('common.error'));
   } finally {
     deleting.value = false;

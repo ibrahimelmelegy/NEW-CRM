@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import type { Lead } from '~/types/models';
 import type { ApiListParams } from '~/types/api';
 import type { LeadStatus } from '~/types/enums';
+import logger from '~/utils/logger'
 
 interface Pagination {
   page: number;
@@ -69,7 +70,7 @@ export const useLeadStore = defineStore('leads', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to fetch leads';
         this.error = message;
-        console.error('Error fetching leads:', error);
+        logger.error('Error fetching leads:', error);
       } finally {
         this.loading = false;
       }
@@ -90,7 +91,7 @@ export const useLeadStore = defineStore('leads', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to fetch lead';
         this.error = message;
-        console.error('Error fetching lead:', error);
+        logger.error('Error fetching lead:', error);
       } finally {
         this.loading = false;
       }
@@ -113,7 +114,7 @@ export const useLeadStore = defineStore('leads', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to create lead';
         this.error = message;
-        console.error('Error creating lead:', error);
+        logger.error('Error creating lead:', error);
         return null;
       } finally {
         this.loading = false;
@@ -143,7 +144,7 @@ export const useLeadStore = defineStore('leads', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to update lead';
         this.error = message;
-        console.error('Error updating lead:', error);
+        logger.error('Error updating lead:', error);
         return null;
       } finally {
         this.loading = false;
@@ -170,7 +171,7 @@ export const useLeadStore = defineStore('leads', {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Failed to delete lead';
         this.error = message;
-        console.error('Error deleting lead:', error);
+        logger.error('Error deleting lead:', error);
         return false;
       } finally {
         this.loading = false;
