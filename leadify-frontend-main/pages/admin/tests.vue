@@ -1,4 +1,3 @@
-import logger from '~/utils/logger'
 <template>
   <div class="min-h-screen bg-[#0f172a] text-slate-200 p-6 lg:p-10 font-sans selection:bg-cyan-500/30">
     <header
@@ -171,7 +170,8 @@ import logger from '~/utils/logger'
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import logger from '~/utils/logger'
 // Security: Open access for local development
 definePageMeta({
   auth: false
