@@ -122,7 +122,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({
   layout: 'default',

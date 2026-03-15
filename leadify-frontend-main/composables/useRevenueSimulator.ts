@@ -1,5 +1,5 @@
 import { ref, reactive, computed } from 'vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 export interface SimulatorBaseline {
   conversionRate: number;

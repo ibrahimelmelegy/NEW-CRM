@@ -193,7 +193,7 @@ const newSubscription = ref({
   planId: ''
 });
 
-const subscriptionFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const subscriptionFormRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
 
 const subscriptionRules = computed(() => ({
   clientId: [{ required: true, message: t('validation.required') || 'Client is required', trigger: 'change' }],

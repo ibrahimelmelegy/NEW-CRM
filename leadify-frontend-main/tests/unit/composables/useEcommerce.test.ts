@@ -12,14 +12,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockUseApiFetch = vi.fn();
-
-vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
-}));
-
-(globalThis as Record<string, unknown>).useApiFetch = (...args: unknown[]) => mockUseApiFetch(...args);
-
 import {
   fetchEcCategories,
   fetchEcCategoryTree,
@@ -56,6 +48,14 @@ import {
   reviewStatusOptions
 } from '@/composables/useEcommerce';
 
+const mockUseApiFetch = vi.fn();
+
+vi.mock('@/composables/useApiFetch', () => ({
+  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
+}));
+
+(globalThis as Record<string, unknown>).useApiFetch = (...args: unknown[]) => mockUseApiFetch(...args);
+
 describe('useEcommerce', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -66,8 +66,22 @@ describe('useEcommerce', () => {
   // ============================================
   describe('fetchEcCategories', () => {
     it('should fetch categories and return docs format', async () => {
-      const mockDocs = [{ id: 'cat-1', name: 'Electronics', slug: 'electronics', sortOrder: 1, isActive: true, productCount: 50, createdAt: '2024-01-01', updatedAt: '2024-01-01' }];
-      mockUseApiFetch.mockResolvedValue({ body: { docs: mockDocs, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } }, success: true });
+      const mockDocs = [
+        {
+          id: 'cat-1',
+          name: 'Electronics',
+          slug: 'electronics',
+          sortOrder: 1,
+          isActive: true,
+          productCount: 50,
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01'
+        }
+      ];
+      mockUseApiFetch.mockResolvedValue({
+        body: { docs: mockDocs, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } },
+        success: true
+      });
 
       const result = await fetchEcCategories();
 
@@ -94,7 +108,19 @@ describe('useEcommerce', () => {
 
   describe('fetchEcCategoryTree', () => {
     it('should fetch category tree', async () => {
-      const mockTree = [{ id: 'cat-1', name: 'Electronics', slug: 'electronics', sortOrder: 1, isActive: true, productCount: 50, createdAt: '2024-01-01', updatedAt: '2024-01-01', children: [] }];
+      const mockTree = [
+        {
+          id: 'cat-1',
+          name: 'Electronics',
+          slug: 'electronics',
+          sortOrder: 1,
+          isActive: true,
+          productCount: 50,
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01',
+          children: []
+        }
+      ];
       mockUseApiFetch.mockResolvedValue({ body: mockTree, success: true });
 
       const result = await fetchEcCategoryTree();
@@ -136,7 +162,19 @@ describe('useEcommerce', () => {
   // ============================================
   describe('fetchCoupons', () => {
     it('should fetch coupons', async () => {
-      const mockCoupon = { id: 'coup-1', code: 'SAVE10', type: CouponTypeEnum.PERCENTAGE, value: 10, minOrderAmount: 50, maxUses: 100, usedCount: 5, maxUsesPerCustomer: 1, status: CouponStatusEnum.ACTIVE, createdAt: '2024-01-01', updatedAt: '2024-01-01' };
+      const mockCoupon = {
+        id: 'coup-1',
+        code: 'SAVE10',
+        type: CouponTypeEnum.PERCENTAGE,
+        value: 10,
+        minOrderAmount: 50,
+        maxUses: 100,
+        usedCount: 5,
+        maxUsesPerCustomer: 1,
+        status: CouponStatusEnum.ACTIVE,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01'
+      };
       mockUseApiFetch.mockResolvedValue({ body: { docs: [mockCoupon], pagination: {} }, success: true });
 
       const result = await fetchCoupons();
@@ -167,7 +205,11 @@ describe('useEcommerce', () => {
 
       await validateCoupon('SAVE10', 100, ['prod-1', 'prod-2']);
 
-      expect(mockUseApiFetch).toHaveBeenCalledWith('ecommerce/coupons/validate', 'POST', { code: 'SAVE10', orderAmount: 100, productIds: ['prod-1', 'prod-2'] });
+      expect(mockUseApiFetch).toHaveBeenCalledWith('ecommerce/coupons/validate', 'POST', {
+        code: 'SAVE10',
+        orderAmount: 100,
+        productIds: ['prod-1', 'prod-2']
+      });
     });
   });
 
@@ -238,7 +280,16 @@ describe('useEcommerce', () => {
 
   describe('fetchActiveCart', () => {
     it('should fetch active cart for a client', async () => {
-      const mockCart = { id: 'cart-1', clientId: 'client-1', status: CartStatusEnum.ACTIVE, currency: 'SAR', discountAmount: 0, items: [], createdAt: '2024-01-01', updatedAt: '2024-01-01' };
+      const mockCart = {
+        id: 'cart-1',
+        clientId: 'client-1',
+        status: CartStatusEnum.ACTIVE,
+        currency: 'SAR',
+        discountAmount: 0,
+        items: [],
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01'
+      };
       mockUseApiFetch.mockResolvedValue({ body: mockCart, success: true });
 
       const result = await fetchActiveCart('client-1');

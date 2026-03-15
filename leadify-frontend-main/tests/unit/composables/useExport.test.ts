@@ -303,10 +303,7 @@ describe('useExport', () => {
       const { exportSavedReport } = useExport();
       await exportSavedReport(1, 'pdf');
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('reports/1/export'),
-        expect.objectContaining({ method: 'POST' })
-      );
+      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('reports/1/export'), expect.objectContaining({ method: 'POST' }));
     });
 
     it('should use GET for CSV format', async () => {
@@ -317,10 +314,7 @@ describe('useExport', () => {
       const { exportSavedReport } = useExport();
       await exportSavedReport(1, 'csv');
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('reports/1/export/csv'),
-        expect.objectContaining({ method: 'GET' })
-      );
+      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('reports/1/export/csv'), expect.objectContaining({ method: 'GET' }));
     });
 
     it('should set exportError when fetch fails', async () => {

@@ -346,7 +346,7 @@ import { ref, reactive, onMounted, computed, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
 import * as echarts from 'echarts/core';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({});
 
@@ -392,7 +392,7 @@ const form = reactive({
   customFields: {} as Record<string, unknown>
 });
 
-const companyFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const companyFormRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
 
 const companyRules = computed(() => ({
   clientName: [{ required: true, message: t('validation.required') || 'Company name is required', trigger: 'blur' }]

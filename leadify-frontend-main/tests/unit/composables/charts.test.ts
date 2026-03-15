@@ -16,6 +16,20 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import {
+  getPieChartsData,
+  getBarChartData,
+  getBarHorizontalChartData,
+  getConversionGauge,
+  getIncreaseLineChart,
+  getBarChartWithLineData,
+  getCenterPieChartsData,
+  getLeadsStatics,
+  getProjectOperationsStatics,
+  getBussinesStatics,
+  getPerformanceStatics
+} from '@/composables/charts';
+
 const mockUseApiFetch = vi.fn();
 const mockElNotification = vi.fn();
 const mockNuxtApp = {
@@ -35,7 +49,9 @@ vi.mock('element-plus', () => ({
 vi.mock('echarts/core', () => ({
   graphic: {
     LinearGradient: class {
-      constructor(...args: unknown[]) { return args; }
+      constructor(...args: unknown[]) {
+        return args;
+      }
     }
   }
 }));
@@ -51,20 +67,6 @@ const { ref } = await import('vue');
 (globalThis as Record<string, unknown>).formatLargeNumber = (n: number) => String(n);
 (globalThis as Record<string, unknown>).capitalizeName = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 (globalThis as Record<string, unknown>).formatSnakeCase = (s: string) => s.replace(/_/g, ' ');
-
-import {
-  getPieChartsData,
-  getBarChartData,
-  getBarHorizontalChartData,
-  getConversionGauge,
-  getIncreaseLineChart,
-  getBarChartWithLineData,
-  getCenterPieChartsData,
-  getLeadsStatics,
-  getProjectOperationsStatics,
-  getBussinesStatics,
-  getPerformanceStatics
-} from '@/composables/charts';
 
 const sampleData = [
   { name: 'Q1', value: 100 },

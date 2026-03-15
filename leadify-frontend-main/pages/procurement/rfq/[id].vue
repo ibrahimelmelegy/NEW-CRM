@@ -74,7 +74,7 @@
 /* eslint-disable require-await */
 import { ArrowLeft } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const route = useRoute();
 const router = useRouter();

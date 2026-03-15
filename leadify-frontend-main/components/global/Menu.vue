@@ -82,7 +82,7 @@ import { useMain } from '~/stores/common';
 import { useApiFetch } from '~/composables/useApiFetch';
 import { useThemeStore } from '~/stores/theme';
 import { useSidebarFavorites } from '~/composables/useSidebarFavorites';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const themeStore = useThemeStore();
 const mainStore = useMain();

@@ -217,7 +217,7 @@ const form = reactive({
   goals: ''
 });
 
-const formRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const formRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
 
 const formRules = computed(() => ({
   employeeId: [{ required: true, message: t('validation.required') || 'Employee is required', trigger: 'change' }],

@@ -12,6 +12,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { useDashboardBuilder } from '@/composables/useDashboardBuilder';
+
 const mockUseApiFetch = vi.fn();
 const mockElNotification = vi.fn();
 const mockNuxtApp = { $i18n: { t: (key: string) => key } };
@@ -30,8 +32,6 @@ vi.mock('element-plus', () => ({
 
 const { ref } = await import('vue');
 (globalThis as Record<string, unknown>).ref = ref;
-
-import { useDashboardBuilder } from '@/composables/useDashboardBuilder';
 
 describe('useDashboardBuilder', () => {
   beforeEach(() => {
@@ -284,9 +284,7 @@ describe('useDashboardBuilder', () => {
       const mockDashboard = {
         id: 1,
         isDefault: true,
-        widgets: [
-          { id: 'w1', type: 'kpi-revenue', config: { colSpan: 1, rowSpan: 1 } }
-        ]
+        widgets: [{ id: 'w1', type: 'kpi-revenue', config: { colSpan: 1, rowSpan: 1 } }]
       };
       mockUseApiFetch.mockResolvedValue({ success: true, body: { docs: [mockDashboard] } });
 
@@ -309,7 +307,11 @@ describe('useDashboardBuilder', () => {
 
     it('should manage loading state', async () => {
       let resolvePromise: (value: unknown) => void;
-      mockUseApiFetch.mockReturnValueOnce(new Promise(resolve => { resolvePromise = resolve; }));
+      mockUseApiFetch.mockReturnValueOnce(
+        new Promise(resolve => {
+          resolvePromise = resolve;
+        })
+      );
 
       const { loadDashboard, loading } = useDashboardBuilder();
 

@@ -126,7 +126,7 @@
 /* eslint-disable require-await */
 import { ref, computed } from 'vue';
 import { CheckCircle, XCircle, Clock, Send, AlertCircle, Loader2, MessageSquare } from 'lucide-vue-next';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 // ---- Types ----
 type ProposalStatus = 'DRAFT' | 'WAITING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'SENT' | 'ARCHIVED';

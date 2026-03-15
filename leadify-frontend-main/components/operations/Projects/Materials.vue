@@ -29,7 +29,7 @@ import * as yup from 'yup';
 import { ref, computed, onMounted } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const props = defineProps({
   loading: Boolean,

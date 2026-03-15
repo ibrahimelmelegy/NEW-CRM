@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { ElNotification } from 'element-plus';
 import { useApiFetch } from './useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 

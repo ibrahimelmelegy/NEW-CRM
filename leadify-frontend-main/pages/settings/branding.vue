@@ -300,7 +300,7 @@
 import { ref, reactive, computed } from 'vue';
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const router = useRouter();
 const { $i18n } = useNuxtApp();

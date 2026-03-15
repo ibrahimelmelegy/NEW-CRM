@@ -10,6 +10,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { useCurrency, type CurrencyItem, type TaxRuleItem } from '@/composables/useCurrency';
+
 // ============================================
 // Mock useApiFetch
 // ============================================
@@ -18,8 +20,6 @@ const mockUseApiFetch = vi.fn();
 vi.mock('@/composables/useApiFetch', () => ({
   useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
 }));
-
-import { useCurrency, type CurrencyItem, type TaxRuleItem } from '@/composables/useCurrency';
 
 describe('useCurrency', () => {
   let currency: ReturnType<typeof useCurrency>;
@@ -173,9 +173,7 @@ describe('useCurrency', () => {
     });
 
     it('should return the list of tax rules', async () => {
-      const mockTaxRules: TaxRuleItem[] = [
-        { id: 1, name: 'VAT', rate: 15, region: 'SA', description: 'Saudi VAT', isActive: true }
-      ];
+      const mockTaxRules: TaxRuleItem[] = [{ id: 1, name: 'VAT', rate: 15, region: 'SA', description: 'Saudi VAT', isActive: true }];
 
       mockUseApiFetch.mockResolvedValue({ success: true, body: mockTaxRules });
 

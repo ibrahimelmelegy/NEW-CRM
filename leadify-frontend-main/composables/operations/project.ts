@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 // Handle error during service creation
 function handleError(message: string) {

@@ -1,5 +1,5 @@
 import { ElNotification } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 export interface KanbanCard {
   id: string;

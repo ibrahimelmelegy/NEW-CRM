@@ -1,5 +1,5 @@
 import { ElNotification } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 // Handle error during task operations
 function handleError(message: string) {

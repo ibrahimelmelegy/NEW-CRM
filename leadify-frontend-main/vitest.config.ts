@@ -20,15 +20,7 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       reportsDirectory: './coverage',
       include: ['composables/**/*.ts', 'utils/**/*.ts', 'stores/**/*.ts'],
-      exclude: [
-        'node_modules',
-        '.nuxt',
-        'tests/**',
-        '**/*.d.ts',
-        '**/*.spec.ts',
-        '**/*.test.ts',
-        'components/**'
-      ],
+      exclude: ['node_modules', '.nuxt', 'tests/**', '**/*.d.ts', '**/*.spec.ts', '**/*.test.ts', 'components/**'],
       // Coverage thresholds - Phase 3.3 target: 60%+
       thresholds: {
         statements: 15,

@@ -191,7 +191,7 @@ import { ref, computed } from 'vue';
 import { ElNotification, ElMessageBox } from 'element-plus';
 import { fetchSequences, updateSequence, deleteSequence } from '~/composables/useSequences';
 import type { Sequence } from '~/composables/useSequences';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'Sequences' });
 

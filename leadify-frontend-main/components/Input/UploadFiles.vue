@@ -27,7 +27,7 @@ el-form-item(:label="label" :error="errorMessage" class="!mb-6 w-full")
 import { ElMessage } from 'element-plus';
 import { useField } from 'vee-validate';
 import type { UploadFile, UploadProps } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 const { t } = useI18n();
 
 const props = defineProps({

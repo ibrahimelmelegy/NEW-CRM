@@ -13,14 +13,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockUseApiFetch = vi.fn();
-
-vi.mock('@/composables/useApiFetch', () => ({
-  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
-}));
-
-(globalThis as Record<string, unknown>).useApiFetch = (...args: unknown[]) => mockUseApiFetch(...args);
-
 import {
   fetchEmployees,
   fetchEmployeeById,
@@ -47,6 +39,14 @@ import {
   EMPLOYEE_STATUSES
 } from '@/composables/useEmployees';
 
+const mockUseApiFetch = vi.fn();
+
+vi.mock('@/composables/useApiFetch', () => ({
+  useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
+}));
+
+(globalThis as Record<string, unknown>).useApiFetch = (...args: unknown[]) => mockUseApiFetch(...args);
+
 describe('useEmployees', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -58,9 +58,21 @@ describe('useEmployees', () => {
   describe('fetchEmployees', () => {
     it('should fetch employees from correct endpoint', async () => {
       const mockDocs = [
-        { id: 'emp-1', employeeNumber: 'EMP-001', firstName: 'John', lastName: 'Doe', email: 'john@example.com', hireDate: '2023-01-01', employmentType: 'FULL_TIME', status: 'ACTIVE' }
+        {
+          id: 'emp-1',
+          employeeNumber: 'EMP-001',
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john@example.com',
+          hireDate: '2023-01-01',
+          employmentType: 'FULL_TIME',
+          status: 'ACTIVE'
+        }
       ];
-      mockUseApiFetch.mockResolvedValue({ body: { docs: mockDocs, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } }, success: true });
+      mockUseApiFetch.mockResolvedValue({
+        body: { docs: mockDocs, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } },
+        success: true
+      });
 
       const result = await fetchEmployees();
 
@@ -94,7 +106,16 @@ describe('useEmployees', () => {
   // ============================================
   describe('fetchEmployeeById', () => {
     it('should fetch a single employee by ID', async () => {
-      const mockEmployee = { id: 'emp-1', employeeNumber: 'EMP-001', firstName: 'Jane', lastName: 'Smith', email: 'jane@example.com', hireDate: '2023-01-01', employmentType: 'FULL_TIME', status: 'ACTIVE' };
+      const mockEmployee = {
+        id: 'emp-1',
+        employeeNumber: 'EMP-001',
+        firstName: 'Jane',
+        lastName: 'Smith',
+        email: 'jane@example.com',
+        hireDate: '2023-01-01',
+        employmentType: 'FULL_TIME',
+        status: 'ACTIVE'
+      };
       mockUseApiFetch.mockResolvedValue({ body: mockEmployee, success: true });
 
       const result = await fetchEmployeeById('emp-1');
@@ -116,7 +137,15 @@ describe('useEmployees', () => {
   // ============================================
   describe('createEmployee', () => {
     it('should call POST with employee data', async () => {
-      const data = { firstName: 'Alice', lastName: 'Wonder', email: 'alice@example.com', hireDate: '2024-01-01', employmentType: 'FULL_TIME', status: 'ACTIVE', employeeNumber: 'EMP-100' };
+      const data = {
+        firstName: 'Alice',
+        lastName: 'Wonder',
+        email: 'alice@example.com',
+        hireDate: '2024-01-01',
+        employmentType: 'FULL_TIME',
+        status: 'ACTIVE',
+        employeeNumber: 'EMP-100'
+      };
       mockUseApiFetch.mockResolvedValue({ success: true, body: { id: 'emp-100', ...data } });
 
       await createEmployee(data);
@@ -180,7 +209,16 @@ describe('useEmployees', () => {
   describe('fetchDirectReports', () => {
     it('should fetch direct reports for a manager', async () => {
       const mockReports = [
-        { id: 'emp-2', employeeNumber: 'EMP-002', firstName: 'Bob', lastName: 'Report', email: 'bob@example.com', hireDate: '2023-01-01', employmentType: 'FULL_TIME', status: 'ACTIVE' }
+        {
+          id: 'emp-2',
+          employeeNumber: 'EMP-002',
+          firstName: 'Bob',
+          lastName: 'Report',
+          email: 'bob@example.com',
+          hireDate: '2023-01-01',
+          employmentType: 'FULL_TIME',
+          status: 'ACTIVE'
+        }
       ];
       mockUseApiFetch.mockResolvedValue({ body: mockReports, success: true });
 

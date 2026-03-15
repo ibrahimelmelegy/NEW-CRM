@@ -197,8 +197,8 @@ div
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
 import type { DocumentTemplate } from '~/composables/useDocumentTemplates';
+import logger from '~/utils/logger';
 import {
-import logger from '~/utils/logger'
   fetchDocumentTemplates,
   createDocumentTemplate,
   updateDocumentTemplate,

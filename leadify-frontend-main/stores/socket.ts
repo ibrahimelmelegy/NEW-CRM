@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { io as socketIo, type Socket } from 'socket.io-client';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 type EventCallback = (...args: unknown[]) => void;
 

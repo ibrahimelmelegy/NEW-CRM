@@ -9,6 +9,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { usetoken } from '@/composables/state';
+
 // Mock useState to simulate Nuxt's useState composable
 const stateStore = new Map<string, { value: unknown }>();
 
@@ -20,8 +22,6 @@ const mockUseState = vi.fn((key: string, init?: () => unknown) => {
 });
 
 (globalThis as Record<string, unknown>).useState = mockUseState;
-
-import { usetoken } from '@/composables/state';
 
 describe('state', () => {
   beforeEach(() => {

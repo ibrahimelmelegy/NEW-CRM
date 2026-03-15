@@ -58,7 +58,16 @@ describe('useCommunication', () => {
     it('should fetch timeline activities for a contact', async () => {
       const mockData = {
         docs: [
-          { id: 1, type: ActivityType.EMAIL, contactId: '10', contactType: ContactType.LEAD, subject: 'Hello', userId: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' }
+          {
+            id: 1,
+            type: ActivityType.EMAIL,
+            contactId: '10',
+            contactType: ContactType.LEAD,
+            subject: 'Hello',
+            userId: 1,
+            createdAt: '2024-01-01',
+            updatedAt: '2024-01-01'
+          }
         ],
         pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 }
       };
@@ -72,8 +81,26 @@ describe('useCommunication', () => {
     });
 
     it('should append activities when append flag is true', async () => {
-      const existingActivity = { id: 1, type: ActivityType.CALL, contactId: '10', contactType: ContactType.LEAD, subject: 'Call 1', userId: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' };
-      const newActivity = { id: 2, type: ActivityType.EMAIL, contactId: '10', contactType: ContactType.LEAD, subject: 'Email 1', userId: 1, createdAt: '2024-01-02', updatedAt: '2024-01-02' };
+      const existingActivity = {
+        id: 1,
+        type: ActivityType.CALL,
+        contactId: '10',
+        contactType: ContactType.LEAD,
+        subject: 'Call 1',
+        userId: 1,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01'
+      };
+      const newActivity = {
+        id: 2,
+        type: ActivityType.EMAIL,
+        contactId: '10',
+        contactType: ContactType.LEAD,
+        subject: 'Email 1',
+        userId: 1,
+        createdAt: '2024-01-02',
+        updatedAt: '2024-01-02'
+      };
 
       mockUseApiFetch.mockResolvedValue({
         body: { docs: [newActivity], pagination: { page: 2, limit: 20, totalItems: 2, totalPages: 2 } },
@@ -89,7 +116,11 @@ describe('useCommunication', () => {
 
     it('should manage loading state', async () => {
       let resolvePromise: (value: unknown) => void;
-      mockUseApiFetch.mockReturnValueOnce(new Promise(resolve => { resolvePromise = resolve; }));
+      mockUseApiFetch.mockReturnValueOnce(
+        new Promise(resolve => {
+          resolvePromise = resolve;
+        })
+      );
 
       const { fetchTimeline, loading } = useCommunication('10', 'LEAD');
 
@@ -108,7 +139,16 @@ describe('useCommunication', () => {
   // ============================================
   describe('logActivity', () => {
     it('should post activity and prepend to list', async () => {
-      const newActivity = { id: 10, type: ActivityType.NOTE, contactId: '5', contactType: ContactType.CLIENT, subject: 'Spoke with client', userId: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' };
+      const newActivity = {
+        id: 10,
+        type: ActivityType.NOTE,
+        contactId: '5',
+        contactType: ContactType.CLIENT,
+        subject: 'Spoke with client',
+        userId: 1,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01'
+      };
       mockUseApiFetch.mockResolvedValue({ body: newActivity, success: true });
 
       const { logActivity, activities } = useCommunication('5', 'CLIENT');
@@ -124,7 +164,19 @@ describe('useCommunication', () => {
     });
 
     it('should increment total items count on success', async () => {
-      mockUseApiFetch.mockResolvedValue({ body: { id: 1, type: ActivityType.EMAIL, contactId: '1', contactType: ContactType.LEAD, subject: 'Test', userId: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' }, success: true });
+      mockUseApiFetch.mockResolvedValue({
+        body: {
+          id: 1,
+          type: ActivityType.EMAIL,
+          contactId: '1',
+          contactType: ContactType.LEAD,
+          subject: 'Test',
+          userId: 1,
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01'
+        },
+        success: true
+      });
 
       const { logActivity, pagination } = useCommunication('1', 'LEAD');
       pagination.value.totalItems = 5;
@@ -143,8 +195,26 @@ describe('useCommunication', () => {
 
       const { deleteActivity, activities, pagination } = useCommunication('5', 'CLIENT');
       activities.value = [
-        { id: 1, type: ActivityType.EMAIL, contactId: '5', contactType: ContactType.CLIENT, subject: 'Test', userId: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-        { id: 2, type: ActivityType.CALL, contactId: '5', contactType: ContactType.CLIENT, subject: 'Call', userId: 1, createdAt: '2024-01-02', updatedAt: '2024-01-02' }
+        {
+          id: 1,
+          type: ActivityType.EMAIL,
+          contactId: '5',
+          contactType: ContactType.CLIENT,
+          subject: 'Test',
+          userId: 1,
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01'
+        },
+        {
+          id: 2,
+          type: ActivityType.CALL,
+          contactId: '5',
+          contactType: ContactType.CLIENT,
+          subject: 'Call',
+          userId: 1,
+          createdAt: '2024-01-02',
+          updatedAt: '2024-01-02'
+        }
       ];
       pagination.value.totalItems = 2;
 
@@ -160,7 +230,18 @@ describe('useCommunication', () => {
       mockUseApiFetch.mockResolvedValue({ success: false, body: null });
 
       const { deleteActivity, activities } = useCommunication('5', 'CLIENT');
-      activities.value = [{ id: 1, type: ActivityType.EMAIL, contactId: '5', contactType: ContactType.CLIENT, subject: 'Test', userId: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' }];
+      activities.value = [
+        {
+          id: 1,
+          type: ActivityType.EMAIL,
+          contactId: '5',
+          contactType: ContactType.CLIENT,
+          subject: 'Test',
+          userId: 1,
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01'
+        }
+      ];
 
       await deleteActivity(1);
 
@@ -173,7 +254,17 @@ describe('useCommunication', () => {
   // ============================================
   describe('fetchStats', () => {
     it('should fetch stats without date range', async () => {
-      const mockStats = { totalActivities: 100, callsToday: 5, emailsThisWeek: 20, meetingsScheduled: 3, notesCreated: 15, tasksThisWeek: 8, avgCallDuration: 180, trend: 12, byType: {} };
+      const mockStats = {
+        totalActivities: 100,
+        callsToday: 5,
+        emailsThisWeek: 20,
+        meetingsScheduled: 3,
+        notesCreated: 15,
+        tasksThisWeek: 8,
+        avgCallDuration: 180,
+        trend: 12,
+        byType: {}
+      };
       mockUseApiFetch.mockResolvedValue({ body: mockStats, success: true });
 
       const { fetchStats, stats } = useCommunication();
@@ -198,7 +289,18 @@ describe('useCommunication', () => {
   // ============================================
   describe('fetchRecent', () => {
     it('should fetch recent activities with default limit', async () => {
-      const mockActivities = [{ id: 1, type: ActivityType.EMAIL, contactId: '1', contactType: ContactType.LEAD, subject: 'Recent', userId: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' }];
+      const mockActivities = [
+        {
+          id: 1,
+          type: ActivityType.EMAIL,
+          contactId: '1',
+          contactType: ContactType.LEAD,
+          subject: 'Recent',
+          userId: 1,
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01'
+        }
+      ];
       mockUseApiFetch.mockResolvedValue({ body: mockActivities, success: true });
 
       const { fetchRecent, activities } = useCommunication();
@@ -222,7 +324,7 @@ describe('useCommunication', () => {
   // Call Timer
   // ============================================
   describe('call timer', () => {
-    it('should start the timer and increment seconds', async () => {
+    it('should start the timer and increment seconds', () => {
       const { startCallTimer, callTimerSeconds, callTimerRunning } = useCommunication();
 
       startCallTimer();

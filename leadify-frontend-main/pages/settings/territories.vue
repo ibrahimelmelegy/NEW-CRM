@@ -57,7 +57,7 @@ import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { fetchTerritoryTree, createTerritory, updateTerritory, deleteTerritory } from '~/composables/useTerritories';
 import type { Territory } from '~/composables/useTerritories';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'Territories' });
 

@@ -359,7 +359,7 @@
 import { ref, reactive, computed } from 'vue';
 import { ElNotification, ElMessageBox } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ layout: 'default', title: 'Sales Playbooks' });
 
@@ -407,7 +407,7 @@ const form = reactive<PlaybookForm>({
   steps: []
 });
 
-const playbookFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const playbookFormRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
 
 const playbookRules = computed(() => ({
   name: [{ required: true, message: t('validation.required') || 'Playbook name is required', trigger: 'blur' }],

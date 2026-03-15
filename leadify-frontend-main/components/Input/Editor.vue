@@ -109,7 +109,7 @@ import { TextAlign } from '@tiptap/extension-text-align';
 import { Underline } from '@tiptap/extension-underline';
 import { Link } from '@tiptap/extension-link';
 import { Placeholder } from '@tiptap/extension-placeholder';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const props = defineProps({
   type: {

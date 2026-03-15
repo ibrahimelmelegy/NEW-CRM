@@ -168,7 +168,7 @@ import {
 } from '~/composables/useSequences';
 import type { Sequence, SequenceEnrollment, SequenceStats, SequenceStep } from '~/composables/useSequences';
 import { useSafeBack } from '~/composables/useSafeBack';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'Sequence Detail' });
 

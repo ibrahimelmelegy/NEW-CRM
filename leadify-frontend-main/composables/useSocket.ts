@@ -1,5 +1,5 @@
 import { io, Socket } from 'socket.io-client';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 export const useSocket = () => {
   const config = useRuntimeConfig();

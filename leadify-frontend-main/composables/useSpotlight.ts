@@ -1,5 +1,5 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 export interface SpotlightItem {
   id: string;

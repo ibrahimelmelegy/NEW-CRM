@@ -429,7 +429,7 @@
 import { ref, reactive, computed, onMounted, nextTick, watch, onBeforeUnmount } from 'vue';
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const { goBack } = useSafeBack('/settings');
 const { t } = useI18n();

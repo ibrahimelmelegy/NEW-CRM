@@ -1,6 +1,6 @@
 // Formatting utilities are now auto-imported from composables/format.ts
 import { useApiFetch } from '@/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 export const globalFilterOptions = ref<Record<string, string | string[] | number[]>>({});
 

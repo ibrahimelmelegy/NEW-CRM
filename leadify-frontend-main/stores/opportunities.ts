@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import type { Opportunity } from '~/types/models';
 import type { ApiListParams } from '~/types/api';
 import type { OpportunityStage } from '~/types/enums';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 interface Pagination {
   page: number;

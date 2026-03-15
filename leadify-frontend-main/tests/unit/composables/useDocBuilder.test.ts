@@ -35,9 +35,23 @@ describe('useDocBuilder', () => {
   describe('fetchDocuments', () => {
     it('should fetch documents and set documents state', async () => {
       const mockDocs = [
-        { id: 'doc-1', type: 'PROPOSAL', reference: 'PRO-001', title: 'Test Proposal', status: 'DRAFT', version: 1, currency: 'SAR', createdBy: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' }
+        {
+          id: 'doc-1',
+          type: 'PROPOSAL',
+          reference: 'PRO-001',
+          title: 'Test Proposal',
+          status: 'DRAFT',
+          version: 1,
+          currency: 'SAR',
+          createdBy: 1,
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01'
+        }
       ];
-      mockUseApiFetch.mockResolvedValue({ body: { docs: mockDocs, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } }, success: true });
+      mockUseApiFetch.mockResolvedValue({
+        body: { docs: mockDocs, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } },
+        success: true
+      });
 
       const { fetchDocuments, documents } = useDocBuilder();
       await fetchDocuments();
@@ -70,7 +84,11 @@ describe('useDocBuilder', () => {
 
     it('should manage loading state', async () => {
       let resolvePromise: (value: unknown) => void;
-      mockUseApiFetch.mockReturnValueOnce(new Promise(resolve => { resolvePromise = resolve; }));
+      mockUseApiFetch.mockReturnValueOnce(
+        new Promise(resolve => {
+          resolvePromise = resolve;
+        })
+      );
 
       const { fetchDocuments, loading } = useDocBuilder();
 
@@ -89,7 +107,18 @@ describe('useDocBuilder', () => {
   // ============================================
   describe('getDocument', () => {
     it('should fetch a single document by ID', async () => {
-      const mockDoc = { id: 'doc-1', type: 'PROPOSAL', reference: 'PRO-001', title: 'My Proposal', status: 'DRAFT', version: 1, currency: 'SAR', createdBy: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' };
+      const mockDoc = {
+        id: 'doc-1',
+        type: 'PROPOSAL',
+        reference: 'PRO-001',
+        title: 'My Proposal',
+        status: 'DRAFT',
+        version: 1,
+        currency: 'SAR',
+        createdBy: 1,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01'
+      };
       mockUseApiFetch.mockResolvedValue({ body: mockDoc, success: true });
 
       const { getDocument, currentDocument } = useDocBuilder();
@@ -115,7 +144,16 @@ describe('useDocBuilder', () => {
   describe('createDocument', () => {
     it('should call POST and set currentDocument', async () => {
       const data = { type: 'PROPOSAL', title: 'New Proposal', currency: 'SAR' };
-      const created = { id: 'doc-2', ...data, reference: 'PRO-002', status: 'DRAFT', version: 1, createdBy: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' };
+      const created = {
+        id: 'doc-2',
+        ...data,
+        reference: 'PRO-002',
+        status: 'DRAFT',
+        version: 1,
+        createdBy: 1,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01'
+      };
       mockUseApiFetch.mockResolvedValue({ body: created, success: true });
 
       const { createDocument, currentDocument } = useDocBuilder();
@@ -127,7 +165,11 @@ describe('useDocBuilder', () => {
 
     it('should manage saving state', async () => {
       let resolvePromise: (value: unknown) => void;
-      mockUseApiFetch.mockReturnValueOnce(new Promise(resolve => { resolvePromise = resolve; }));
+      mockUseApiFetch.mockReturnValueOnce(
+        new Promise(resolve => {
+          resolvePromise = resolve;
+        })
+      );
 
       const { createDocument, saving } = useDocBuilder();
 
@@ -147,7 +189,18 @@ describe('useDocBuilder', () => {
   describe('updateDocument', () => {
     it('should call PUT with document ID and data', async () => {
       const data = { title: 'Updated Title' };
-      const updated = { id: 'doc-1', type: 'PROPOSAL', reference: 'PRO-001', ...data, status: 'DRAFT', version: 2, currency: 'SAR', createdBy: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' };
+      const updated = {
+        id: 'doc-1',
+        type: 'PROPOSAL',
+        reference: 'PRO-001',
+        ...data,
+        status: 'DRAFT',
+        version: 2,
+        currency: 'SAR',
+        createdBy: 1,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01'
+      };
       mockUseApiFetch.mockResolvedValue({ body: updated, success: true });
 
       const { updateDocument, currentDocument } = useDocBuilder();
@@ -177,11 +230,35 @@ describe('useDocBuilder', () => {
   // ============================================
   describe('changeStatus', () => {
     it('should call PUT status endpoint and update documents list', async () => {
-      const updatedDoc = { id: 'doc-1', type: 'PROPOSAL', reference: 'PRO-001', title: 'Test', status: 'SENT', version: 1, currency: 'SAR', createdBy: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' };
+      const updatedDoc = {
+        id: 'doc-1',
+        type: 'PROPOSAL',
+        reference: 'PRO-001',
+        title: 'Test',
+        status: 'SENT',
+        version: 1,
+        currency: 'SAR',
+        createdBy: 1,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01'
+      };
       mockUseApiFetch.mockResolvedValue({ body: updatedDoc, success: true });
 
       const { changeStatus, documents } = useDocBuilder();
-      documents.value = [{ id: 'doc-1', type: 'PROPOSAL', reference: 'PRO-001', title: 'Test', status: 'DRAFT', version: 1, currency: 'SAR', createdBy: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' }];
+      documents.value = [
+        {
+          id: 'doc-1',
+          type: 'PROPOSAL',
+          reference: 'PRO-001',
+          title: 'Test',
+          status: 'DRAFT',
+          version: 1,
+          currency: 'SAR',
+          createdBy: 1,
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01'
+        }
+      ];
 
       await changeStatus('doc-1', 'SENT');
 
@@ -271,7 +348,18 @@ describe('useDocBuilder', () => {
 
   describe('restoreVersion', () => {
     it('should call restore endpoint and update currentDocument', async () => {
-      const restoredDoc = { id: 'doc-1', type: 'PROPOSAL', reference: 'PRO-001', title: 'Restored', status: 'DRAFT', version: 1, currency: 'SAR', createdBy: 1, createdAt: '2024-01-01', updatedAt: '2024-01-01' };
+      const restoredDoc = {
+        id: 'doc-1',
+        type: 'PROPOSAL',
+        reference: 'PRO-001',
+        title: 'Restored',
+        status: 'DRAFT',
+        version: 1,
+        currency: 'SAR',
+        createdBy: 1,
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01'
+      };
       mockUseApiFetch.mockResolvedValue({ body: restoredDoc, success: true });
 
       const { restoreVersion, currentDocument } = useDocBuilder();

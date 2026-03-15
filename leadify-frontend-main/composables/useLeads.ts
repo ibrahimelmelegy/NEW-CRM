@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { ElNotification } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 // Helper function to normalize phone numbers
 function normalizePhoneNumber(phone: string): string {
   return phone.replace(/\s+/g, '').replace(/^\+/, '').replace(/^2/, ''); // Assuming removing country code prefix '2', modify if needed

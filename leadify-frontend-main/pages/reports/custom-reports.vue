@@ -368,7 +368,7 @@
 import { ref, computed, onMounted, reactive } from 'vue';
 import { ElNotification } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({});
 

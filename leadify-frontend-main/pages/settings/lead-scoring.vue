@@ -107,7 +107,7 @@ import { ref, reactive } from 'vue';
 import { ElNotification, ElMessageBox, ElMessage } from 'element-plus';
 import { fetchScoringRules, createScoringRule, updateScoringRule, deleteScoringRule, getGradeThresholds } from '~/composables/useLeadScoring';
 import type { ScoringRule, ScoringCriteria, GradeThreshold } from '~/composables/useLeadScoring';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'Lead Scoring' });
 

@@ -12,6 +12,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { fetchCheckIns, createCheckIn, fetchMyHistory, fetchTeamLocations } from '@/composables/useFieldOps';
+
 const mockUseApiFetch = vi.fn();
 
 vi.mock('@/composables/useApiFetch', () => ({
@@ -19,8 +21,6 @@ vi.mock('@/composables/useApiFetch', () => ({
 }));
 
 (globalThis as Record<string, unknown>).useApiFetch = (...args: unknown[]) => mockUseApiFetch(...args);
-
-import { fetchCheckIns, createCheckIn, fetchMyHistory, fetchTeamLocations } from '@/composables/useFieldOps';
 
 describe('useFieldOps', () => {
   beforeEach(() => {
@@ -33,9 +33,20 @@ describe('useFieldOps', () => {
   describe('fetchCheckIns', () => {
     it('should fetch check-ins without params', async () => {
       const mockDocs = [
-        { id: 1, userId: 10, latitude: 24.7136, longitude: 46.6753, type: 'CHECK_IN' as const, createdAt: '2024-01-01T09:00:00Z', updatedAt: '2024-01-01T09:00:00Z' }
+        {
+          id: 1,
+          userId: 10,
+          latitude: 24.7136,
+          longitude: 46.6753,
+          type: 'CHECK_IN' as const,
+          createdAt: '2024-01-01T09:00:00Z',
+          updatedAt: '2024-01-01T09:00:00Z'
+        }
       ];
-      mockUseApiFetch.mockResolvedValue({ body: { docs: mockDocs, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } }, success: true });
+      mockUseApiFetch.mockResolvedValue({
+        body: { docs: mockDocs, pagination: { page: 1, limit: 20, totalItems: 1, totalPages: 1 } },
+        success: true
+      });
 
       const result = await fetchCheckIns();
 
@@ -82,7 +93,10 @@ describe('useFieldOps', () => {
   describe('createCheckIn', () => {
     it('should call POST endpoint with check-in data', async () => {
       const data = { latitude: 24.7136, longitude: 46.6753, type: 'CHECK_IN', address: 'Riyadh, Saudi Arabia', notes: 'Morning check-in' };
-      mockUseApiFetch.mockResolvedValue({ success: true, body: { id: 1, userId: 10, ...data, createdAt: '2024-01-01T09:00:00Z', updatedAt: '2024-01-01T09:00:00Z' } });
+      mockUseApiFetch.mockResolvedValue({
+        success: true,
+        body: { id: 1, userId: 10, ...data, createdAt: '2024-01-01T09:00:00Z', updatedAt: '2024-01-01T09:00:00Z' }
+      });
 
       const result = await createCheckIn(data);
 
@@ -115,8 +129,24 @@ describe('useFieldOps', () => {
   describe('fetchMyHistory', () => {
     it('should fetch current user check-in history', async () => {
       const mockHistory = [
-        { id: 1, userId: 10, latitude: 24.7136, longitude: 46.6753, type: 'CHECK_IN' as const, createdAt: '2024-01-01T09:00:00Z', updatedAt: '2024-01-01T09:00:00Z' },
-        { id: 2, userId: 10, latitude: 24.7136, longitude: 46.6753, type: 'CHECK_OUT' as const, createdAt: '2024-01-01T17:00:00Z', updatedAt: '2024-01-01T17:00:00Z' }
+        {
+          id: 1,
+          userId: 10,
+          latitude: 24.7136,
+          longitude: 46.6753,
+          type: 'CHECK_IN' as const,
+          createdAt: '2024-01-01T09:00:00Z',
+          updatedAt: '2024-01-01T09:00:00Z'
+        },
+        {
+          id: 2,
+          userId: 10,
+          latitude: 24.7136,
+          longitude: 46.6753,
+          type: 'CHECK_OUT' as const,
+          createdAt: '2024-01-01T17:00:00Z',
+          updatedAt: '2024-01-01T17:00:00Z'
+        }
       ];
       mockUseApiFetch.mockResolvedValue({ body: mockHistory, success: true });
 
@@ -149,8 +179,26 @@ describe('useFieldOps', () => {
   describe('fetchTeamLocations', () => {
     it('should fetch team locations', async () => {
       const mockLocations = [
-        { id: 10, userId: 1, latitude: 24.7136, longitude: 46.6753, type: 'CHECK_IN' as const, user: { id: 1, name: 'Alice', email: 'alice@example.com' }, createdAt: '2024-01-01T09:00:00Z', updatedAt: '2024-01-01T09:00:00Z' },
-        { id: 11, userId: 2, latitude: 24.8000, longitude: 46.7000, type: 'CHECK_IN' as const, user: { id: 2, name: 'Bob', email: 'bob@example.com' }, createdAt: '2024-01-01T09:30:00Z', updatedAt: '2024-01-01T09:30:00Z' }
+        {
+          id: 10,
+          userId: 1,
+          latitude: 24.7136,
+          longitude: 46.6753,
+          type: 'CHECK_IN' as const,
+          user: { id: 1, name: 'Alice', email: 'alice@example.com' },
+          createdAt: '2024-01-01T09:00:00Z',
+          updatedAt: '2024-01-01T09:00:00Z'
+        },
+        {
+          id: 11,
+          userId: 2,
+          latitude: 24.8,
+          longitude: 46.7,
+          type: 'CHECK_IN' as const,
+          user: { id: 2, name: 'Bob', email: 'bob@example.com' },
+          createdAt: '2024-01-01T09:30:00Z',
+          updatedAt: '2024-01-01T09:30:00Z'
+        }
       ];
       mockUseApiFetch.mockResolvedValue({ body: mockLocations, success: true });
 

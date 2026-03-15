@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
 import { useApiFetch } from './useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 export interface Priority {
   id: string;

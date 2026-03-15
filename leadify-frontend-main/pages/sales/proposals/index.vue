@@ -389,7 +389,7 @@ import {
   Download
 } from 'lucide-vue-next';
 import { submitForApproval, approveProposal, rejectProposal, deleteProposal, archiveProposal, downloadProposalPdf } from '~/composables/useProposals';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ middleware: 'permissions' });
 

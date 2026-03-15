@@ -213,7 +213,7 @@ import { ElMessage } from 'element-plus';
 import { fetchForecasts, fetchForecastByPeriod } from '~/composables/useForecasting';
 import { useApiFetch } from '~/composables/useApiFetch';
 import type { ForecastPeriod } from '~/composables/useForecasting';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'Sales Forecasting' });
 

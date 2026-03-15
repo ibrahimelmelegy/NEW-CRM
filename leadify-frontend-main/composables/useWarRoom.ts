@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { useApiFetch } from './useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 export interface WarRoomMetrics {
   totalDeals: number;

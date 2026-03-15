@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import type { Lead } from '~/types/models';
 import type { ApiListParams } from '~/types/api';
 import type { LeadStatus } from '~/types/enums';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 interface Pagination {
   page: number;

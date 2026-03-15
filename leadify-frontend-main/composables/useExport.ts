@@ -1,4 +1,4 @@
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 /**
  * useExport composable
  *
@@ -190,12 +190,12 @@ export function useExport() {
   /**
    * Generate an Excel file client-side using SheetJS and download it.
    */
-  async function exportToExcel(
+  function exportToExcel(
     title: string,
     data: Record<string, unknown>[],
     columns: string[],
     options?: { columnLabels?: Record<string, string>; filename?: string }
-  ): Promise<void> {
+  ): void {
     if (!data.length || !columns.length) return;
 
     exporting.value = true;

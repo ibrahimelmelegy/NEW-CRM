@@ -10,6 +10,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { getChurnDashboardData, getRiskTagType } from '@/composables/useChurnDashboard';
+
 const mockUseApiFetch = vi.fn();
 const mockElNotification = vi.fn();
 const mockNuxtApp = {
@@ -30,8 +32,6 @@ vi.mock('element-plus', () => ({
 (globalThis as Record<string, unknown>).ElNotification = (...args: unknown[]) => mockElNotification(...args);
 (globalThis as Record<string, unknown>).useNuxtApp = () => mockNuxtApp;
 
-import { getChurnDashboardData, getRiskTagType } from '@/composables/useChurnDashboard';
-
 describe('useChurnDashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -45,7 +45,16 @@ describe('useChurnDashboard', () => {
       const mockData = {
         summary: { highRisk: 5, mediumRisk: 12, lowRisk: 30, totalAtRisk: 47 },
         atRiskLeads: [
-          { id: '1', name: 'Acme Corp', email: 'contact@acme.com', status: 'active', riskLevel: 'HIGH', riskScore: 85, daysSinceLastContact: 45, lastContactDate: '2024-01-01' }
+          {
+            id: '1',
+            name: 'Acme Corp',
+            email: 'contact@acme.com',
+            status: 'active',
+            riskLevel: 'HIGH',
+            riskScore: 85,
+            daysSinceLastContact: 45,
+            lastContactDate: '2024-01-01'
+          }
         ],
         riskDistribution: [
           { name: 'HIGH', value: 5 },

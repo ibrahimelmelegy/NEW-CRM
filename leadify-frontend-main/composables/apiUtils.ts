@@ -1,6 +1,6 @@
 import { ElNotification } from 'element-plus';
 import { useAuthStore } from '~/stores/auth';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 // ✅ Removed top-level useRuntimeConfig to prevent Nuxt context errors
 

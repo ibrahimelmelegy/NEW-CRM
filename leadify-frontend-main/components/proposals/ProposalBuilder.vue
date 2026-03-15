@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted } from 'vue';
 import {
-import logger from '~/utils/logger'
   Save,
   ChevronLeft,
   ChevronRight,
@@ -30,6 +29,7 @@ import logger from '~/utils/logger'
   Loader2,
   AlertCircle
 } from 'lucide-vue-next';
+import logger from '~/utils/logger';
 
 // ── Types ──────────────────────────────────────────────────────────
 export interface ProposalItem {

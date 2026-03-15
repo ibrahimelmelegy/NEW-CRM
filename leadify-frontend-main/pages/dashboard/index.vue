@@ -119,7 +119,7 @@ div
 import { ElNotification } from 'element-plus';
 import { getIncreaseLineChart, getBarChartData } from '~/composables/charts';
 import { fetchExecutiveSummary, fetchPipelineData, fetchRevenueChart } from '~/composables/useDashboard';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 // Lazy-load heavy chart dependencies for faster initial page load
 const VChart = defineAsyncComponent(() =>

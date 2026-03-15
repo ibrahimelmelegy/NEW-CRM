@@ -99,8 +99,8 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
+import logger from '~/utils/logger';
 import {
-import logger from '~/utils/logger'
   fetchDealKanban,
   fetchOpportunityKanban,
   updateDealStage,

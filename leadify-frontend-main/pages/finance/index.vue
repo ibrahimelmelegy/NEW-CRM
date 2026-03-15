@@ -161,7 +161,7 @@ import {
   type ExpenseCategory
 } from '~/composables/useFinance';
 import { getCollectionDashboard, type CollectionDashboard } from '~/composables/usePayments';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 // Lazy-load heavy chart dependencies for faster initial page load
 let graphic: unknown;

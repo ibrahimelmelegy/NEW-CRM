@@ -5,7 +5,7 @@ export const logger = {
   error: (...args: unknown[]) => console.error(...args), // always log errors
   warn: (...args: unknown[]) => isDev && console.warn(...args),
   info: (...args: unknown[]) => isDev && console.info(...args),
-  debug: (...args: unknown[]) => isDev && console.debug(...args),
+  debug: (...args: unknown[]) => isDev && console.debug(...args)
 };
 
 export default logger;

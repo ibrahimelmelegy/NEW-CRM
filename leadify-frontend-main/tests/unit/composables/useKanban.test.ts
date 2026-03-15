@@ -11,6 +11,16 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import {
+  fetchDealKanban,
+  fetchOpportunityKanban,
+  updateDealStage,
+  updateOpportunityStage,
+  getStageColor,
+  getPriorityColor,
+  type KanbanCard
+} from '@/composables/useKanban';
+
 // ============================================
 // Mocks
 // ============================================
@@ -33,16 +43,6 @@ vi.mock('@/composables/useApiFetch', () => ({
 (globalThis as Record<string, unknown>).useNuxtApp = () => ({
   $i18n: { t: (key: string) => key }
 });
-
-import {
-  fetchDealKanban,
-  fetchOpportunityKanban,
-  updateDealStage,
-  updateOpportunityStage,
-  getStageColor,
-  getPriorityColor,
-  type KanbanCard
-} from '@/composables/useKanban';
 
 describe('useKanban', () => {
   beforeEach(() => {
@@ -93,9 +93,7 @@ describe('useKanban', () => {
 
       await fetchDealKanban();
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
 
     it('should return empty object and show notification when exception is thrown', async () => {
@@ -104,9 +102,7 @@ describe('useKanban', () => {
       const result = await fetchDealKanban();
 
       expect(result).toEqual({});
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
   });
 
@@ -150,9 +146,7 @@ describe('useKanban', () => {
 
       await fetchOpportunityKanban();
 
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
   });
 
@@ -181,9 +175,7 @@ describe('useKanban', () => {
       const result = await updateDealStage('deal-123', 'INVALID');
 
       expect(result).toBe(false);
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
 
     it('should return false and show notification when exception is thrown', async () => {
@@ -192,9 +184,7 @@ describe('useKanban', () => {
       const result = await updateDealStage('deal-123', 'CLOSED');
 
       expect(result).toBe(false);
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
 
     it('should return true for successful stage update', async () => {
@@ -230,9 +220,7 @@ describe('useKanban', () => {
       const result = await updateOpportunityStage('opp-123', 'WON');
 
       expect(result).toBe(false);
-      expect(mockElNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'error' })
-      );
+      expect(mockElNotification).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }));
     });
 
     it('should return false when exception is thrown', async () => {

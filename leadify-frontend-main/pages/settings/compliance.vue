@@ -405,7 +405,7 @@ import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
 import { graphic } from 'echarts/core';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'Compliance Center' });
 

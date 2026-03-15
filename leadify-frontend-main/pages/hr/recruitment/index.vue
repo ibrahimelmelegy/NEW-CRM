@@ -456,8 +456,8 @@ const postingForm = reactive(defaultPostingForm());
 const applicantForm = reactive(defaultApplicantForm());
 
 // ─── Form Refs ───────────────────────────────────────────
-const postingFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
-const applicantFormRef = ref<InstanceType<typeof import('element-plus')['ElForm']> | null>(null);
+const postingFormRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
+const applicantFormRef = ref<InstanceType<(typeof import('element-plus'))['ElForm']> | null>(null);
 
 // ─── Validation Rules ────────────────────────────────────
 const postingRules = computed(() => ({

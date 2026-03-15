@@ -608,7 +608,7 @@
 /* eslint-disable no-use-before-define */
 import { ElNotification, ElMessageBox } from 'element-plus';
 import VChart from 'vue-echarts';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'Customer Segmentation' });
 

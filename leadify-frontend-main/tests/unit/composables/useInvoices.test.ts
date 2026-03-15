@@ -13,14 +13,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  fetchInvoices,
-  fetchInvoiceById,
-  markCollected,
-  markUncollected,
-  fetchInvoiceSummary,
-  downloadInvoicePdf
-} from '~/composables/useInvoices';
+import { fetchInvoices, fetchInvoiceById, markCollected, markUncollected, fetchInvoiceSummary, downloadInvoicePdf } from '~/composables/useInvoices';
 
 // Mock useApiFetch globally
 const mockApiFetch = vi.fn();
@@ -45,7 +38,7 @@ vi.mock('@/composables/useApiFetch', () => ({
 const mockLink = {
   href: '',
   download: '',
-  click: vi.fn(),
+  click: vi.fn()
 };
 const mockCreateElement = vi.spyOn(document, 'createElement').mockReturnValue(mockLink as unknown as HTMLElement);
 const mockAppendChild = vi.spyOn(document.body, 'appendChild').mockImplementation(node => node);
@@ -238,7 +231,10 @@ describe('useInvoices', () => {
   // ============================================
   describe('fetchInvoiceSummary', () => {
     it('should call the correct endpoint', async () => {
-      mockApiFetch.mockResolvedValue({ success: true, body: { totalInvoices: 10, totalAmount: 50000, collectedAmount: 30000, pendingAmount: 20000, collectedCount: 6, pendingCount: 4 } });
+      mockApiFetch.mockResolvedValue({
+        success: true,
+        body: { totalInvoices: 10, totalAmount: 50000, collectedAmount: 30000, pendingAmount: 20000, collectedCount: 6, pendingCount: 4 }
+      });
 
       await fetchInvoiceSummary();
 

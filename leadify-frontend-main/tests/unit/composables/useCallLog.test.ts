@@ -90,7 +90,11 @@ describe('useCallLog', () => {
 
     it('should manage loading state', async () => {
       let resolvePromise: (value: unknown) => void;
-      mockApiFetch.mockReturnValueOnce(new Promise(resolve => { resolvePromise = resolve; }));
+      mockApiFetch.mockReturnValueOnce(
+        new Promise(resolve => {
+          resolvePromise = resolve;
+        })
+      );
 
       const { fetchCalls, loading } = useCallLog();
 
@@ -198,11 +202,15 @@ describe('useCallLog', () => {
         notes: 'Good call'
       });
 
-      expect(mockApiFetch).toHaveBeenCalledWith('communications/calls', 'POST', expect.objectContaining({
-        phoneNumber: '+9876543210',
-        direction: 'OUTBOUND',
-        outcome: 'CONNECTED'
-      }));
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        'communications/calls',
+        'POST',
+        expect.objectContaining({
+          phoneNumber: '+9876543210',
+          direction: 'OUTBOUND',
+          outcome: 'CONNECTED'
+        })
+      );
     });
 
     it('should return true on success', async () => {
@@ -250,9 +258,13 @@ describe('useCallLog', () => {
         notes: ''
       });
 
-      expect(mockApiFetch).toHaveBeenCalledWith('communications/calls', 'POST', expect.objectContaining({
-        outcome: 'VOICEMAIL'
-      }));
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        'communications/calls',
+        'POST',
+        expect.objectContaining({
+          outcome: 'VOICEMAIL'
+        })
+      );
     });
 
     it('should include notes in the payload', async () => {
@@ -268,10 +280,14 @@ describe('useCallLog', () => {
         notes: 'Client wants to schedule a follow-up'
       });
 
-      expect(mockApiFetch).toHaveBeenCalledWith('communications/calls', 'POST', expect.objectContaining({
-        body: 'Client wants to schedule a follow-up',
-        notes: 'Client wants to schedule a follow-up'
-      }));
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        'communications/calls',
+        'POST',
+        expect.objectContaining({
+          body: 'Client wants to schedule a follow-up',
+          notes: 'Client wants to schedule a follow-up'
+        })
+      );
     });
   });
 

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { useSocketStore } from '~/stores/socket';
 import type { AppNotification } from '~/types/models';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 export const useNotificationStore = defineStore('notifications', {
   state: () => ({

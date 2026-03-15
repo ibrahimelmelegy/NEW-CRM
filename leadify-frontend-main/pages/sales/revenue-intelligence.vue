@@ -192,7 +192,7 @@ import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import * as echarts from 'echarts/core';
 import { ElMessage } from 'element-plus';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({ title: 'Revenue Intelligence' });
 

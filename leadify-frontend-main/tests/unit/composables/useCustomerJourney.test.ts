@@ -19,8 +19,8 @@ vi.mock('@/composables/useApiFetch', () => ({
 }));
 
 // Mocking auto-imported vue composables
-vi.mock('vue', async (importOriginal) => {
-  const actual = await importOriginal() as Record<string, unknown>;
+vi.mock('vue', async importOriginal => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
   return { ...actual };
 });
 
@@ -93,7 +93,11 @@ describe('useCustomerJourney', () => {
 
     it('should manage loading state during fetch', async () => {
       let resolvePromise: (value: unknown) => void;
-      mockUseApiFetch.mockReturnValueOnce(new Promise(resolve => { resolvePromise = resolve; }));
+      mockUseApiFetch.mockReturnValueOnce(
+        new Promise(resolve => {
+          resolvePromise = resolve;
+        })
+      );
 
       const { fetchJourney, loading } = useCustomerJourney();
 
@@ -101,7 +105,14 @@ describe('useCustomerJourney', () => {
       const promise = fetchJourney('lead-123');
       expect(loading.value).toBe(true);
 
-      resolvePromise!({ body: { events: [], summary: { totalTouchpoints: 0, journeyDurationDays: 0, avgDaysBetweenTouchpoints: 0, firstContact: '', lastContact: '' } }, success: true, message: '' });
+      resolvePromise!({
+        body: {
+          events: [],
+          summary: { totalTouchpoints: 0, journeyDurationDays: 0, avgDaysBetweenTouchpoints: 0, firstContact: '', lastContact: '' }
+        },
+        success: true,
+        message: ''
+      });
       await promise;
       expect(loading.value).toBe(false);
     });

@@ -310,7 +310,7 @@ import {
 } from 'lucide-vue-next';
 import { getProposal, deleteProposal as deleteProposalApi } from '~/composables/useProposals';
 import ProposalApprovalActions from '~/components/DocumentBuilder/ProposalApprovalActions.vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({
   layout: 'default',

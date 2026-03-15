@@ -15,6 +15,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import useTableFilter from '@/composables/useTableFilter';
+
 // ============================================
 // Mocks
 // ============================================
@@ -40,8 +42,6 @@ const mockFormatSnakeCase = vi.fn((s: string) => (s ? s.replace(/_/g, ' ') : '-'
 vi.mock('@/composables/useApiFetch', () => ({
   useApiFetch: (...args: unknown[]) => mockUseApiFetch(...args)
 }));
-
-import useTableFilter from '@/composables/useTableFilter';
 
 describe('useTableFilter', () => {
   beforeEach(() => {

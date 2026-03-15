@@ -131,7 +131,7 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useDocumentArchive, documentTypeLabels } from '~/composables/useDocumentArchive';
 import type { ArchivedDocument } from '~/composables/useDocumentArchive';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({});
 

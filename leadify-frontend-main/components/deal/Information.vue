@@ -29,7 +29,7 @@ import { useForm } from 'vee-validate';
 import isEmailValidator from 'validator/lib/isEmail';
 import * as yup from 'yup';
 import { Plus } from '@element-plus/icons-vue';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 const props = defineProps({
   editMode: Boolean,
   deal: Object

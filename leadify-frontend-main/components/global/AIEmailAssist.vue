@@ -42,7 +42,7 @@ el-dialog.glass-dialog(
 import { ref } from 'vue';
 import { ElNotification } from 'element-plus';
 import { useApiFetch } from '@/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 const props = defineProps({
   modelValue: Boolean,

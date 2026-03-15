@@ -52,7 +52,7 @@ import { ref, computed, onMounted } from 'vue';
 import { Loading } from '@element-plus/icons-vue';
 import { ArrowLeft, Download } from 'lucide-vue-next';
 import { getProposal } from '~/composables/useProposals';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 // ProposalPrintTemplate is auto-imported by Nuxt from components/proposals/
 
 definePageMeta({

@@ -466,7 +466,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Loading } from '@element-plus/icons-vue';
 import { useApiFetch } from '~/composables/useApiFetch';
-import logger from '~/utils/logger'
+import logger from '~/utils/logger';
 
 definePageMeta({
   layout: 'default',
