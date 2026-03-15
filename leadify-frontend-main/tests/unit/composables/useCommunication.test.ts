@@ -324,7 +324,7 @@ describe('useCommunication', () => {
   // Call Timer
   // ============================================
   describe('call timer', () => {
-    it('should start the timer and increment seconds', async () => {
+    it('should start the timer and increment seconds', () => {
       const { startCallTimer, callTimerSeconds, callTimerRunning } = useCommunication();
 
       startCallTimer();

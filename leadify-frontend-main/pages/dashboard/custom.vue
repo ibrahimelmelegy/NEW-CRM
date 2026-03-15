@@ -145,8 +145,8 @@ div
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger';
 import {
-import logger from '~/utils/logger'
   fetchDashboards,
   createDashboard,
   updateDashboard,

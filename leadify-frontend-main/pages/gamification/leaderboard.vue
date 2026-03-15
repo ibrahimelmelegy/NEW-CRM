@@ -258,8 +258,8 @@ div
 
 <script lang="ts" setup>
 import { ElNotification } from 'element-plus';
+import logger from '~/utils/logger';
 import {
-import logger from '~/utils/logger'
   fetchLeaderboard,
   fetchAchievements,
   awardPoints,

@@ -163,7 +163,7 @@ describe('useEmailComposer', () => {
   // openComposer / closeComposer
   // ============================================
   describe('openComposer', () => {
-    it('should set composerVisible to true', async () => {
+    it('should set composerVisible to true', () => {
       mockUseApiFetch.mockResolvedValue({ body: [], success: true });
 
       const { openComposer, composerVisible } = useEmailComposer();
@@ -172,7 +172,7 @@ describe('useEmailComposer', () => {
       expect(composerVisible.value).toBe(true);
     });
 
-    it('should set context data when provided', async () => {
+    it('should set context data when provided', () => {
       mockUseApiFetch.mockResolvedValue({ body: [], success: true });
 
       const { openComposer, context } = useEmailComposer();
@@ -182,7 +182,7 @@ describe('useEmailComposer', () => {
       expect(context.value.companyName).toBe('Wonderland Inc');
     });
 
-    it('should fetch templates when opened', async () => {
+    it('should fetch templates when opened', () => {
       mockUseApiFetch.mockResolvedValue({ body: [], success: true });
 
       const { openComposer } = useEmailComposer();
@@ -193,7 +193,7 @@ describe('useEmailComposer', () => {
   });
 
   describe('closeComposer', () => {
-    it('should set composerVisible to false', async () => {
+    it('should set composerVisible to false', () => {
       mockUseApiFetch.mockResolvedValue({ body: [], success: true });
 
       const { openComposer, closeComposer, composerVisible } = useEmailComposer();

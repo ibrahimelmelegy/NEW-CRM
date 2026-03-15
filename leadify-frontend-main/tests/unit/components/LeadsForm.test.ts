@@ -23,7 +23,7 @@ import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('vee-validate', () => ({
   useForm: () => ({
-    handleSubmit: (fn: Function) => fn,
+    handleSubmit: (fn: (...args: unknown[]) => unknown) => fn,
     errors: {},
     values: {}
   })
