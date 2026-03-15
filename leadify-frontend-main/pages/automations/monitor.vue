@@ -551,7 +551,7 @@ function retryExecution(row: unknown) {
     return;
   }
   row.retryCount = (row.retryCount || 0) + 1;
-  ElMessage.success(t('workflowMonitor.retryQueued', `Retry queued for "${row.workflowName}". Attempt ${row.retryCount}/3.`));
+  ElMessage.success(t('workflowMonitor.retryQueued', { name: row.workflowName, attempt: row.retryCount, max: 3 }));
 }
 
 function viewRunDetails(row: unknown) {

@@ -1714,6 +1714,7 @@
     "kanbanView": "Kanban",
     "totalValue": "Total",
     "stageUpdated": "Stage updated successfully",
+    "cardMoved": "Moved \"{title}\" from {from} to {to}",
     "stages": {
       "progress": "In Progress",
       "closed": "Closed",
@@ -4617,7 +4618,8 @@
     "backToCreditNotes": "Back to Credit Notes",
     "cash": "Cash",
     "credit": "Credit",
-    "bankTransfer": "Bank Transfer"
+    "bankTransfer": "Bank Transfer",
+    "collectionCreated": "Collection \"{name}\" created"
   },
   "executiveDashboard": {
     "title": "Executive Dashboard",
@@ -7507,7 +7509,8 @@
     "ended": "Ended",
     "earn": "Earn",
     "redeem": "Redeem",
-    "adjust": "Adjust"
+    "adjust": "Adjust",
+    "rewardAdded": "Reward \"{name}\" added to catalog"
   },
   "trainingLms": {
     "title": "Training & LMS",
@@ -12383,7 +12386,7 @@
     "dataRefreshed": "Data refreshed successfully",
     "allStatuses": "All Statuses",
     "maxRetriesReached": "Maximum retry attempts reached for this execution.",
-    "retryQueued": "Retry queued. Attempt {count}/3.",
+    "retryQueued": "Retry queued for \"{name}\". Attempt {attempt}/{max}.",
     "average": "Average",
     "p95": "P95",
     "p99": "P99"
@@ -13448,7 +13451,9 @@
     "total": "Total",
     "archived": "Archived",
     "restore": "Restore",
-    "deletePermanently": "Delete Permanently"
+    "deletePermanently": "Delete Permanently",
+    "restoredSuccessfully": "\"{ref}\" restored successfully.",
+    "permanentlyDeleted": "\"{ref}\" permanently deleted."
   },
   "territories": {
     "subtitle": "Manage geographic or custom territories and assign them to users.",

@@ -281,7 +281,7 @@ const onDrop = (_e: DragEvent, newStatus: string) => {
   if (draggedCard && draggedCard.status !== newStatus) {
     const oldStatus = draggedCard.status;
     draggedCard.status = newStatus;
-    ElMessage.success(`Moved "${draggedCard.title}" from ${oldStatus} to ${newStatus}`);
+    ElMessage.success(t('kanban.cardMoved', { title: draggedCard.title, from: oldStatus, to: newStatus }));
   }
   draggedCard = null;
 };

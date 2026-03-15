@@ -647,7 +647,7 @@ function deleteCollection(collection: Collection) {
 }
 
 function createCollection() {
-  ElMessage.success(`Collection "${newCollection.value.name}" created`);
+  ElMessage.success(t('documents.collectionCreated', { name: newCollection.value.name }));
   showCollectionDialog.value = false;
   newCollection.value = { name: '', description: '', privacy: 'private' };
 }

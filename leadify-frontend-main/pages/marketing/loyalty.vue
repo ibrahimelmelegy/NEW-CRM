@@ -583,7 +583,7 @@ const addReward = () => {
     category: newReward.value.category,
     icon: 'ph:gift-bold'
   });
-  ElMessage.success(`Reward "${newReward.value.name}" added to catalog`);
+  ElMessage.success(t('loyalty.rewardAdded', { name: newReward.value.name }));
   showAddRewardDialog.value = false;
   newReward.value = { name: '', description: '', pointsCost: 0, stock: 0, category: 'Discount' };
 };

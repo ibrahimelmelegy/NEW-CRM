@@ -161,7 +161,7 @@ function handleRestore(row: ArchivedDocument) {
   })
     .then(() => {
       restoreDocument(row.id, row.documentType);
-      ElMessage.success(`"${row.refNumber}" restored successfully.`);
+      ElMessage.success(t('archive.restoredSuccessfully', { ref: row.refNumber }));
     })
     .catch((error: unknown) => {
       logger.error('Operation failed:', error);
@@ -176,7 +176,7 @@ function handleDelete(row: ArchivedDocument) {
   })
     .then(() => {
       permanentlyDelete(row.id, row.documentType);
-      ElMessage.success(`"${row.refNumber}" permanently deleted.`);
+      ElMessage.success(t('archive.permanentlyDeleted', { ref: row.refNumber }));
     })
     .catch((error: unknown) => {
       logger.error('Operation failed:', error);
