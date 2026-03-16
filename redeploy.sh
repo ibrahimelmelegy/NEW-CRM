@@ -17,7 +17,7 @@ echo "[1/4] Pulling latest code..."
 cd "$APP_DIR"
 git fetch origin main
 git reset --hard origin/main
-git clean -fd
+git clean -fd -e nginx/ -e .env* -e backups/
 
 # 2. Build containers
 echo "[2/4] Building containers..."
