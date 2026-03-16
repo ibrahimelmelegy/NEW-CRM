@@ -15,7 +15,8 @@ echo ""
 # 1. Pull latest code
 echo "[1/4] Pulling latest code..."
 cd "$APP_DIR"
-git pull origin main
+git fetch origin main
+git reset --hard origin/main
 
 # 2. Build containers
 echo "[2/4] Building containers..."
