@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { QueryTypes } from 'sequelize';
-import sequelize from '../config/database';
+import { sequelize } from '../config/db';
 import { wrapResult } from '../utils/response/responseWrapper';
 
 class PowerBIController {
