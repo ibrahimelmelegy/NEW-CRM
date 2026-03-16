@@ -1,5 +1,5 @@
 // ─── Twilio SMS Service Provider ─────────────────────────────────────────────
-import logger from '../config/logger';
+import logger from '../../config/logger';
 // Uses real Twilio SDK when TWILIO_AUTH_TOKEN is set, otherwise returns mock data.
 // Note: The existing TwilioService in src/integration/twilioService.ts handles VoIP calls.
 // This provider focuses on SMS messaging capabilities.

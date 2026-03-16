@@ -1,5 +1,5 @@
 // ─── Slack Integration Provider ──────────────────────────────────────────────
-import logger from '../config/logger';
+import logger from '../../config/logger';
 // Full-featured Slack provider that works with both Incoming Webhooks and Web API.
 // Uses SLACK_BOT_TOKEN for Web API features, SLACK_WEBHOOK_URL for basic messaging.
 

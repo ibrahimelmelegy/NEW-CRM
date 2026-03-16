@@ -1,5 +1,5 @@
 // ─── Salesforce CRM Sync Provider ────────────────────────────────────────────
-import logger from '../config/logger';
+import logger from '../../config/logger';
 // Uses Salesforce REST API via jsforce when SALESFORCE_CLIENT_ID is configured.
 // Falls back to mock data when credentials are not present.
 

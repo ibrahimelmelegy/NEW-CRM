@@ -1,5 +1,5 @@
 // ─── Mailchimp Email Marketing Provider ──────────────────────────────────────
-import logger from '../config/logger';
+import logger from '../../config/logger';
 // Uses Mailchimp Marketing API when MAILCHIMP_API_KEY is set, otherwise returns mock data.
 
 export interface MailchimpListInput {
