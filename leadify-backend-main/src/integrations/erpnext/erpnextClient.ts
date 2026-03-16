@@ -2,7 +2,7 @@ import https from 'https';
 import http from 'http';
 import { URL } from 'url';
 import { ERPNextConfig } from './erpnextConfig';
-import logger from '../config/logger';
+import logger from '../../config/logger';
 
 // ---------------------------------------------------------------------------
 // Types

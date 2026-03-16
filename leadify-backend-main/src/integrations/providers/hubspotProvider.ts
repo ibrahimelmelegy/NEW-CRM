@@ -1,5 +1,5 @@
 // ─── HubSpot CRM Sync Provider ───────────────────────────────────────────────
-import logger from '../config/logger';
+import logger from '../../config/logger';
 // Uses HubSpot API when HUBSPOT_API_KEY is configured, otherwise returns mock data.
 
 export interface HubSpotSyncResult<T> {

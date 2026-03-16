@@ -1,5 +1,5 @@
 // ─── Stripe Payment Gateway Provider ─────────────────────────────────────────
-import logger from '../config/logger';
+import logger from '../../config/logger';
 // Uses real Stripe SDK when STRIPE_SECRET_KEY is set, otherwise returns mock data.
 
 export interface StripeCustomerInput {

@@ -1,5 +1,5 @@
 // ─── WhatsApp Business API Provider ──────────────────────────────────────────
-import logger from '../config/logger';
+import logger from '../../config/logger';
 // Uses Meta's WhatsApp Business Cloud API when configured, otherwise returns mock data.
 // Env vars: WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_ACCESS_TOKEN, WHATSAPP_WEBHOOK_VERIFY_TOKEN
 

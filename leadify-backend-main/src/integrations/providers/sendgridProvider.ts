@@ -1,5 +1,5 @@
 // ─── SendGrid Email Service Provider ─────────────────────────────────────────
-import logger from '../config/logger';
+import logger from '../../config/logger';
 // Uses real SendGrid SDK when SENDGRID_API_KEY is set, otherwise returns mock data.
 
 export interface EmailInput {
