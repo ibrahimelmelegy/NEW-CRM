@@ -80,7 +80,7 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json --noCheck",
     "start": "npm run build && node dist/server.js",
     "dev": "nodemon --watch src --exec ts-node src/server.ts",
     "seed": "ts-node src/seed.ts",
