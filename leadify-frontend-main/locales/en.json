@@ -4135,9 +4135,13 @@
       "allStatuses": "All Statuses",
       "ratingDistribution": "Rating Distribution",
       "outstanding": "Outstanding",
-      "exceeds": "Exceeds",
-      "meets": "Meets",
-      "needsImprovement": "Needs Improvement"
+      "exceeds": "Exceeds Expectations",
+      "meets": "Meets Expectations",
+      "needsImprovement": "Needs Improvement",
+      "statusPending": "Pending",
+      "statusInProgress": "In Progress",
+      "statusCompleted": "Completed",
+      "statusCancelled": "Cancelled"
     },
     "employees": {
       "employees": "Employees",
@@ -5868,6 +5872,7 @@
     "gosi": "GOSI",
     "absent": "Absent",
     "loan": "Loan",
+    "runCreatedSuccess": "Payroll run created successfully",
     "months": {
       "january": "January",
       "february": "February",
@@ -6062,7 +6067,8 @@
     "assignee": "Assignee",
     "created": "Created",
     "assignedToMe": "Assigned to Me",
-    "failedToLoadTickets": "Failed to load tickets"
+    "failedToLoadTickets": "Failed to load tickets",
+    "statusUpdateFailed": "Failed to update ticket status"
   },
   "accounting": {
     "title": "Accounting",
@@ -7244,7 +7250,18 @@
     "referral": "Referral",
     "website": "Website",
     "jobBoard": "Job Board",
-    "other": "Other"
+    "other": "Other",
+    "postingStatusOpen": "Open",
+    "postingStatusClosed": "Closed",
+    "postingStatusDraft": "Draft",
+    "postingStatusOnHold": "On Hold",
+    "stageApplied": "Applied",
+    "stageScreening": "Screening",
+    "stageInterview": "Interview",
+    "stageAssessment": "Assessment",
+    "stageOffer": "Offer",
+    "stageHired": "Hired",
+    "stageRejected": "Rejected"
   },
   "vendorScorecard": {
     "title": "Vendor Scorecard",
@@ -14001,5 +14018,116 @@
   "current": "Current",
   "executive": "Executive",
   "enabled": "Enabled",
-  "disabled": "Disabled"
+  "disabled": "Disabled",
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your CRM configuration, integrations, and preferences.",
+    "systemAndSecurity": "System & Security",
+    "cards": {
+      "pipeline": {
+        "title": "Pipeline",
+        "desc": "Configure sales pipeline stages and deal workflows."
+      },
+      "customFields": {
+        "title": "Custom Fields",
+        "desc": "Add and manage custom fields for leads, deals, and contacts."
+      },
+      "leadScoring": {
+        "title": "Lead Scoring",
+        "desc": "Define scoring rules to prioritize your best leads."
+      },
+      "approvals": {
+        "title": "Approvals",
+        "desc": "Set up multi-step approval chains for business processes."
+      },
+      "workflows": {
+        "title": "Workflows",
+        "desc": "Automate actions with custom workflow rules and triggers."
+      },
+      "territories": {
+        "title": "Territories",
+        "desc": "Define and assign sales territories for your team."
+      },
+      "currencies": {
+        "title": "Currencies",
+        "desc": "Manage supported currencies and exchange rates."
+      },
+      "taxRules": {
+        "title": "Tax Rules",
+        "desc": "Configure tax rates and rules for invoices and orders."
+      },
+      "products": {
+        "title": "Products",
+        "desc": "Manage your product catalog and pricing."
+      },
+      "documentTemplates": {
+        "title": "Document Templates",
+        "desc": "Create and manage templates for proposals, invoices, and contracts."
+      },
+      "emailTemplates": {
+        "title": "Email Templates",
+        "desc": "Design reusable email templates for outreach and notifications."
+      },
+      "emailAccounts": {
+        "title": "Email Accounts",
+        "desc": "Connect and manage email accounts for sending and receiving."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "desc": "Configure notification preferences and channels."
+      },
+      "integrations": {
+        "title": "Integrations",
+        "desc": "Connect third-party apps and services to your CRM."
+      },
+      "webhooks": {
+        "title": "Webhooks",
+        "desc": "Set up webhooks to push real-time data to external systems."
+      },
+      "organization": {
+        "title": "Organization",
+        "desc": "View your tenant plan, usage limits, and organization details."
+      },
+      "security": {
+        "title": "Security",
+        "desc": "Manage roles, permissions, and access controls."
+      },
+      "auditLogs": {
+        "title": "Audit Logs",
+        "desc": "Review all system activity and user actions."
+      },
+      "dataImport": {
+        "title": "Data Import",
+        "desc": "Import leads, contacts, and deals from CSV or Excel."
+      },
+      "dataGovernance": {
+        "title": "Data Governance",
+        "desc": "Manage data retention, GDPR compliance, and cleanup rules."
+      },
+      "duplicateDetection": {
+        "title": "Duplicate Detection",
+        "desc": "Configure rules to detect and merge duplicate records."
+      },
+      "sla": {
+        "title": "SLA",
+        "desc": "Define service level agreements and response time targets."
+      },
+      "assignmentRules": {
+        "title": "Assignment Rules",
+        "desc": "Automate lead and deal assignment based on criteria."
+      },
+      "portalUsers": {
+        "title": "Portal Users",
+        "desc": "Manage customer portal access and permissions."
+      },
+      "whiteLabel": {
+        "title": "White Label",
+        "desc": "Customize branding, logos, and colors for your organization."
+      },
+      "themeStudio": {
+        "title": "Theme Studio",
+        "desc": "Customize the look and feel of your CRM interface."
+      }
+    }
+  }
 }

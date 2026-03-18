@@ -237,7 +237,7 @@ const staffAnalytics = computed(() => {
   // Department count (extracted from role or department field)
   const departments = new Set<string>();
   data.forEach(s => {
-    const dept = s.department || s.roleDetails?.split('-')[0]?.trim() || 'Unknown';
+    const dept = s.department || s.roleDetails?.split('-')[0]?.trim() || t('common.unknown');
     departments.add(dept);
   });
 
@@ -276,7 +276,7 @@ const departmentChartOption = computed(() => {
 
   const deptMap = new Map<string, number>();
   data.forEach(s => {
-    const dept = s.department || s.roleDetails?.split('-')[0]?.trim() || 'Unknown';
+    const dept = s.department || s.roleDetails?.split('-')[0]?.trim() || t('common.unknown');
     deptMap.set(dept, (deptMap.get(dept) || 0) + 1);
   });
 
@@ -294,7 +294,7 @@ const roleChartOption = computed(() => {
 
   const roleMap = new Map<string, number>();
   data.forEach(s => {
-    const role = s.roleDetails || 'Unknown';
+    const role = s.roleDetails || t('common.unknown');
     roleMap.set(role, (roleMap.get(role) || 0) + 1);
   });
 

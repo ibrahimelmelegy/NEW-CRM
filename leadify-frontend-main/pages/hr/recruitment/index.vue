@@ -408,22 +408,22 @@ const newStage = ref('');
 // ─── Misc ────────────────────────────────────────────────
 const departments = ref<Record<string, unknown>[]>([]);
 
-const POSTING_STATUSES = [
-  { value: 'OPEN', label: 'Open' },
-  { value: 'CLOSED', label: 'Closed' },
-  { value: 'DRAFT', label: 'Draft' },
-  { value: 'ON_HOLD', label: 'On Hold' }
-];
+const POSTING_STATUSES = computed(() => [
+  { value: 'OPEN', label: t('recruitment.postingStatusOpen') },
+  { value: 'CLOSED', label: t('recruitment.postingStatusClosed') },
+  { value: 'DRAFT', label: t('recruitment.postingStatusDraft') },
+  { value: 'ON_HOLD', label: t('recruitment.postingStatusOnHold') }
+]);
 
-const APPLICANT_STAGES = [
-  { value: 'APPLIED', label: 'Applied' },
-  { value: 'SCREENING', label: 'Screening' },
-  { value: 'INTERVIEW', label: 'Interview' },
-  { value: 'ASSESSMENT', label: 'Assessment' },
-  { value: 'OFFER', label: 'Offer' },
-  { value: 'HIRED', label: 'Hired' },
-  { value: 'REJECTED', label: 'Rejected' }
-];
+const APPLICANT_STAGES = computed(() => [
+  { value: 'APPLIED', label: t('recruitment.stageApplied') },
+  { value: 'SCREENING', label: t('recruitment.stageScreening') },
+  { value: 'INTERVIEW', label: t('recruitment.stageInterview') },
+  { value: 'ASSESSMENT', label: t('recruitment.stageAssessment') },
+  { value: 'OFFER', label: t('recruitment.stageOffer') },
+  { value: 'HIRED', label: t('recruitment.stageHired') },
+  { value: 'REJECTED', label: t('recruitment.stageRejected') }
+]);
 
 const STAGE_ORDER = ['APPLIED', 'SCREENING', 'INTERVIEW', 'ASSESSMENT', 'OFFER', 'HIRED'];
 
@@ -533,7 +533,7 @@ const availableStages = computed(() => {
   const current = stageApplicant.value.stage;
   const currentIdx = STAGE_ORDER.indexOf(current);
 
-  return APPLICANT_STAGES.map(s => {
+  return APPLICANT_STAGES.value.map(s => {
     const idx = STAGE_ORDER.indexOf(s.value);
     let disabled = false;
     if (s.value === current) disabled = true;

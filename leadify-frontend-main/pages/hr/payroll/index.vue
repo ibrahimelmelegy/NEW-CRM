@@ -161,11 +161,11 @@ async function handleCreateRun() {
   try {
     const res = await createPayrollRun(newRun.value);
     if (res.success) {
-      ElNotification({ type: 'success', title: 'Success', message: 'Payroll run created successfully' });
+      ElNotification({ type: 'success', title: t('common.success'), message: t('payroll.runCreatedSuccess') });
       showNewRunDialog.value = false;
       result.value = await fetchPayrollRuns();
     } else {
-      ElNotification({ type: 'error', title: 'Error', message: res.message });
+      ElNotification({ type: 'error', title: t('common.error'), message: res.message });
     }
   } finally {
     creating.value = false;

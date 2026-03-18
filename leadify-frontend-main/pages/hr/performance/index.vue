@@ -30,7 +30,7 @@ div
     .flex.items-center.justify-between.mb-4
       .flex.items-center.gap-2
         Icon(name="ph:chart-bar-horizontal-bold" size="20" style="color: #7849ff")
-        span.text-sm.font-semibold(style="color: var(--text-primary)") Rating Distribution
+        span.text-sm.font-semibold(style="color: var(--text-primary)") {{ $t('hr.performance.ratingDistribution') }}
       el-select(v-model="distributionPeriod" size="small" style="width: 160px" @change="loadDistribution")
         el-option(:label="$t('performance.q1_2026')" value="Q1-2026")
         el-option(:label="$t('performance.q2_2026')" value="Q2-2026")
@@ -41,7 +41,7 @@ div
     .space-y-3(v-loading="distributionLoading")
       //- Outstanding (4-5)
       .flex.items-center.gap-3
-        .w-40.text-xs.font-medium.shrink-0(style="color: #22c55e") Outstanding (4-5)
+        .w-40.text-xs.font-medium.shrink-0(style="color: #22c55e") {{ $t('hr.performance.outstanding') }} (4-5)
         .flex-1.relative
           .h-7.rounded-lg.overflow-hidden(style="background: rgba(255,255,255,0.05)")
             .h-full.rounded-lg.transition-all.duration-500(
@@ -52,7 +52,7 @@ div
           span(style="color: var(--text-muted)") &nbsp;({{ distributionPct(distribution.outstanding) }}%)
       //- Exceeds (3-4)
       .flex.items-center.gap-3
-        .w-40.text-xs.font-medium.shrink-0(style="color: #3b82f6") Exceeds (3-4)
+        .w-40.text-xs.font-medium.shrink-0(style="color: #3b82f6") {{ $t('hr.performance.exceeds') }} (3-4)
         .flex-1.relative
           .h-7.rounded-lg.overflow-hidden(style="background: rgba(255,255,255,0.05)")
             .h-full.rounded-lg.transition-all.duration-500(
@@ -63,7 +63,7 @@ div
           span(style="color: var(--text-muted)") &nbsp;({{ distributionPct(distribution.exceeds) }}%)
       //- Meets (2-3)
       .flex.items-center.gap-3
-        .w-40.text-xs.font-medium.shrink-0(style="color: #f59e0b") Meets (2-3)
+        .w-40.text-xs.font-medium.shrink-0(style="color: #f59e0b") {{ $t('hr.performance.meets') }} (2-3)
         .flex-1.relative
           .h-7.rounded-lg.overflow-hidden(style="background: rgba(255,255,255,0.05)")
             .h-full.rounded-lg.transition-all.duration-500(
@@ -74,7 +74,7 @@ div
           span(style="color: var(--text-muted)") &nbsp;({{ distributionPct(distribution.meets) }}%)
       //- Needs Improvement (1-2)
       .flex.items-center.gap-3
-        .w-40.text-xs.font-medium.shrink-0(style="color: #ef4444") Needs Improvement (1-2)
+        .w-40.text-xs.font-medium.shrink-0(style="color: #ef4444") {{ $t('hr.performance.needsImprovement') }} (1-2)
         .flex-1.relative
           .h-7.rounded-lg.overflow-hidden(style="background: rgba(255,255,255,0.05)")
             .h-full.rounded-lg.transition-all.duration-500(
@@ -200,12 +200,12 @@ const distribution = reactive({
   needsImprovement: 0
 });
 
-const REVIEW_STATUSES = [
-  { value: 'PENDING', label: 'Pending', type: 'warning' },
-  { value: 'IN_PROGRESS', label: 'In Progress', type: '' },
-  { value: 'COMPLETED', label: 'Completed', type: 'success' },
-  { value: 'CANCELLED', label: 'Cancelled', type: 'info' }
-];
+const REVIEW_STATUSES = computed(() => [
+  { value: 'PENDING', label: t('hr.performance.statusPending'), type: 'warning' },
+  { value: 'IN_PROGRESS', label: t('hr.performance.statusInProgress'), type: '' },
+  { value: 'COMPLETED', label: t('hr.performance.statusCompleted'), type: 'success' },
+  { value: 'CANCELLED', label: t('hr.performance.statusCancelled'), type: 'info' }
+]);
 
 const form = reactive({
   employeeId: '' as string | number,
