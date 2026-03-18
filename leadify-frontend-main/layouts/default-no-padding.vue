@@ -60,8 +60,8 @@
 import { useWindowSize } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { ArrowRight, Search, Plus } from '@element-plus/icons-vue';
-import type { User } from '~/types/models';
 import { ElNotification } from 'element-plus';
+import type { User } from '~/types/models';
 import { useMain } from '~/stores/common';
 
 // Initialize Spotlight (keyboard listener)
