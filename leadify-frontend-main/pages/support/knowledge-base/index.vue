@@ -153,10 +153,8 @@ let debounceTimer: ReturnType<typeof setTimeout>;
 const articles = computed(() => {
   if (!search.value) return allArticles.value;
   const q = search.value.toLowerCase();
-  return allArticles.value.filter(a =>
-    a.title?.toLowerCase().includes(q) ||
-    a.excerpt?.toLowerCase().includes(q) ||
-    a.category?.toLowerCase().includes(q)
+  return allArticles.value.filter(
+    a => a.title?.toLowerCase().includes(q) || a.excerpt?.toLowerCase().includes(q) || a.category?.toLowerCase().includes(q)
   );
 });
 
