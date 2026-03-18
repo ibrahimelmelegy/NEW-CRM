@@ -48,7 +48,7 @@
             span.text-xs.font-mono.font-bold(style="color: #7849ff") {{ ticket.ticketNumber }}
             el-tag(:type="getPriorityType(ticket.priority)" size="small" round effect="dark") {{ ticket.priority }}
           p.text-sm.font-medium.mb-2(style="color: var(--text-primary)") {{ ticket.subject }}
-          p.text-xs.mb-3(v-if="ticket.description" style="color: var(--text-muted)") {{ ticket.description?.substring(0, 80) }}{{ ticket.description?.length > 80 ? '...' : '' }}
+          p.text-xs.mb-3(v-if="ticket.description" style="color: var(--text-muted)") {{ ticket.description?.substring(0, 80) }}{{ (ticket.description?.length ?? 0) > 80 ? '...' : '' }}
           .flex.items-center.justify-between
             .flex.items-center.gap-2
               .w-6.h-6.rounded-full.flex.items-center.justify-center.text-xs(
@@ -66,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElNotification } from 'element-plus';
+import { ElMessage, ElNotification } from 'element-plus';
 import { fetchTickets } from '@/composables/useSupport';
 
 definePageMeta({ middleware: 'permissions' });
@@ -112,18 +112,24 @@ async function onDrop(event: DragEvent, newStatus: string) {
   event.preventDefault();
   if (!draggedTicket || draggedTicket.status === newStatus) return;
 
-  const oldStatus = draggedTicket.status;
-  draggedTicket.status = newStatus;
+  const ticket = draggedTicket;
+  const oldStatus = ticket.status;
+  ticket.status = newStatus;
 
   try {
-    await useApiFetch(`support/tickets/${draggedTicket.id}`, 'PUT', { status: newStatus });
+    const res = await useApiFetch(`support/tickets/${ticket.id}`, 'PUT', { status: newStatus });
+    if (!res?.success) {
+      ticket.status = oldStatus;
+      ElMessage.error(res?.message || t('support.statusUpdateFailed'));
+      return;
+    }
     ElNotification({ type: 'success', title: t('common.success'), message: t('common.saved') });
   } catch {
-    draggedTicket.status = oldStatus;
-    ElNotification({ type: 'error', title: t('common.error'), message: t('common.error') });
+    ticket.status = oldStatus;
+    ElMessage.error(t('support.statusUpdateFailed'));
+  } finally {
+    draggedTicket = null;
   }
-
-  draggedTicket = null;
 }
 
 async function loadTickets() {
