@@ -7,7 +7,9 @@
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'powerbi_user') THEN
-    CREATE USER powerbi_user WITH PASSWORD 'moac39bKyhZ5m2rkqqrh';
+    CREATE USER powerbi_user WITH PASSWORD 'CtWPFyv8uEBOGGxRKKDkZuYS';
+  ELSE
+    ALTER USER powerbi_user WITH PASSWORD 'CtWPFyv8uEBOGGxRKKDkZuYS';
   END IF;
 END
 $$;

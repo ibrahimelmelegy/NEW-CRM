@@ -37,7 +37,7 @@ docker compose -f docker-compose.prod.yml exec -T db psql \
 docker compose -f docker-compose.prod.yml exec -T db psql \
   -U "${POSTGRES_USER:-leadify}" \
   -d "${POSTGRES_DB:-leadify}" \
-  -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='powerbi_user') THEN CREATE USER powerbi_user WITH PASSWORD 'moac39bKyhZ5m2rkqqrh'; END IF; END \$\$; GRANT CONNECT ON DATABASE ${POSTGRES_DB:-leadify} TO powerbi_user; GRANT USAGE ON SCHEMA public TO powerbi_user; GRANT SELECT ON ALL TABLES IN SCHEMA public TO powerbi_user; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO powerbi_user;" \
+  -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='powerbi_user') THEN CREATE USER powerbi_user WITH PASSWORD 'CtWPFyv8uEBOGGxRKKDkZuYS'; ELSE ALTER USER powerbi_user WITH PASSWORD 'CtWPFyv8uEBOGGxRKKDkZuYS'; END IF; END \$\$; GRANT CONNECT ON DATABASE ${POSTGRES_DB:-leadify} TO powerbi_user; GRANT USAGE ON SCHEMA public TO powerbi_user; GRANT SELECT ON ALL TABLES IN SCHEMA public TO powerbi_user; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO powerbi_user;" \
   2>/dev/null || echo "Power BI user setup skipped (will retry on next deploy)"
 
 # 5. Clean up old images
@@ -55,4 +55,4 @@ echo "  Server:   157.245.223.119"
 echo "  Port:     5432"
 echo "  Database: ${POSTGRES_DB:-leadify}"
 echo "  Username: powerbi_user"
-echo "  Password: moac39bKyhZ5m2rkqqrh"
+echo "  Password: CtWPFyv8uEBOGGxRKKDkZuYS"
