@@ -320,7 +320,7 @@ el-tabs.demo-tabs(v-model="activeName", @tab-click="handleClick")
     )
     .flex.justify-center.items-center.w-full
       el-button.mb-2(
-        v-if="activity?.docs?.length > 0",
+        v-if="(activity?.docs?.length ?? 0) > 0",
         :loading="loading",
         class="!rounded-2xl",
         type="primary",

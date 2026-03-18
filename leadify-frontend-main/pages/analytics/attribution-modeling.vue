@@ -549,8 +549,8 @@ const campaignDetailKpis = computed(() => {
 });
 
 // ─── Campaign detail timelines and deals ────────────────────
-const campaignTimelines: Record<string, any[]> = {};
-const campaignDeals: Record<string, any[]> = {};
+const campaignTimelines: Record<string, Record<string, unknown>[]> = {};
+const campaignDeals: Record<string, Record<string, unknown>[]> = {};
 
 // ─── Channel Color Map ──────────────────────────────────────
 const channelColors: Record<string, string> = {

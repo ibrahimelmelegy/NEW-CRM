@@ -184,5 +184,6 @@ router.get('/:id/pdf', authenticateUser, pdfLimiter, invoiceController.generateP
 router.get('/:id', authenticateUser, invoiceController.getInvoiceById);
 router.put('/:id/collect', authenticateUser, HasPermission([DealPermissionsEnum.EDIT_DEALS]), invoiceController.markCollected);
 router.put('/:id/uncollect', authenticateUser, HasPermission([DealPermissionsEnum.EDIT_DEALS]), invoiceController.markUncollected);
+router.delete('/:id', authenticateUser, HasPermission([DealPermissionsEnum.DELETE_DEALS]), invoiceController.deleteInvoice);
 
 export default router;

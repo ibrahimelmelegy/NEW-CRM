@@ -768,7 +768,7 @@ const stockReorderChartOption = computed(() => {
     .sort((a, b) => a.currentStock / a.reorderPoint - b.currentStock / b.reorderPoint)
     .slice(0, 10);
 
-  const names = top10.map(p => (p.name?.length > 18 ? p.name.slice(0, 18) + '...' : (p.name ?? '')));
+  const names = top10.map(p => ((p.name?.length ?? 0) > 18 ? p.name.slice(0, 18) + '...' : (p.name ?? '')));
   const stockValues = top10.map(p => p.currentStock ?? 0);
   const reorderValues = top10.map(p => p.reorderPoint ?? 0);
 

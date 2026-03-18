@@ -84,6 +84,7 @@
 import { useWindowSize } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { ArrowRight, Search, Plus } from '@element-plus/icons-vue';
+import type { User } from '~/types/models';
 import { useMain } from '~/stores/common';
 
 // Initialize Spotlight
@@ -187,7 +188,7 @@ watch(width, () => {
   checkwidth();
 });
 
-const user = ref<any>({});
+const user = ref<Partial<User>>({});
 
 if (!user.value?.id) {
   const meResponse = await useApiFetch('auth/me');

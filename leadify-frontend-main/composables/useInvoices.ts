@@ -54,6 +54,22 @@ export async function fetchInvoiceSummary(): Promise<InvoiceSummary> {
   return { totalInvoices: 0, totalAmount: 0, collectedAmount: 0, pendingAmount: 0, collectedCount: 0, pendingCount: 0 };
 }
 
+export async function deleteInvoiceById(id: number) {
+  const t = useNuxtApp().$i18n.t;
+  try {
+    const response = await useApiFetch(`invoices/${id}`, 'DELETE');
+    if (response?.success) {
+      ElNotification({ type: 'success', title: t('common.success'), message: t('common.deleted') });
+    } else {
+      ElNotification({ type: 'error', title: t('common.error'), message: response?.message || 'Failed to delete invoice' });
+    }
+    return response;
+  } catch (error) {
+    ElNotification({ type: 'error', title: t('common.error'), message: error instanceof Error ? error.message : 'Unknown error' });
+    return { success: false, body: null, message: 'Unknown error', code: 500 };
+  }
+}
+
 /**
  * Download invoice as PDF from server-side generation endpoint.
  * Triggers a browser download of the generated file.

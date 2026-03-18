@@ -422,7 +422,7 @@ async function handleFileUpload(event: Event) {
 
   try {
     const baseUrl = config.public.API_BASE_URL || '';
-    const response = await $fetch<any>(`${baseUrl}documents/files/upload`, {
+    const response = await $fetch<Record<string, unknown>>(`${baseUrl}documents/files/upload`, {
       method: 'POST',
       body: formData,
       credentials: 'include'

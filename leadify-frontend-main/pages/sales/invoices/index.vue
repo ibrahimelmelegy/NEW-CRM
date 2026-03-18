@@ -78,6 +78,10 @@ div
                 .flex.items-center
                   Icon.text-md.mr-2(name="ph:file-pdf-bold")
                   p.text-sm PDF
+              el-dropdown-item(@click="deleteId = data?.id; deletePopup = true")
+                .flex.items-center
+                  Icon.text-md.mr-2(name="ph:trash-bold")
+                  p.text-sm {{ $t('common.delete') }}
 
   //- Mobile Card View
   .inv-mobile-view(v-if="!loading")
@@ -103,7 +107,7 @@ div
           v-for="inv in mobileFilteredInvoices"
           :key="inv.id"
           :rightActions="[{ name: inv.collected ? 'uncollect' : 'collect', label: inv.collected ? $t('invoices.undo') : $t('invoices.markCollected'), icon: inv.collected ? 'ph:arrow-counter-clockwise-bold' : 'ph:check-circle-bold', color: inv.collected ? '#f59e0b' : '#10B981' }]"
-          :leftActions="[{ name: 'pdf', label: 'PDF', icon: 'ph:file-pdf-bold', color: '#EF4444' }]"
+          :leftActions="[{ name: 'pdf', label: 'PDF', icon: 'ph:file-pdf-bold', color: '#EF4444' }, { name: 'delete', label: $t('common.delete'), icon: 'ph:trash-bold', color: '#dc2626' }]"
           @action="(name) => handleInvSwipe(name, inv)"
         )
           .entity-card.p-4(@click="handleRowClick(inv)")
@@ -161,12 +165,14 @@ div
         Icon(name="ph:arrow-right" size="18" style="color: var(--text-muted)")
     template(#footer)
       el-button(@click="showTemplateSelector = false") {{ $t('common.cancel') }}
+
+  ActionModel(v-model="deletePopup" :loading="deleting" :description="$t('common.confirmDelete')" @confirm="confirmDelete")
 </template>
 
 <script setup lang="ts">
 import { ElMessage, ElNotification } from 'element-plus';
 import type { InvoiceItem, InvoiceSummary } from '~/composables/useInvoices';
-import { fetchInvoices, fetchInvoiceSummary, markCollected, markUncollected, downloadInvoicePdf } from '~/composables/useInvoices';
+import { fetchInvoices, fetchInvoiceSummary, markCollected, markUncollected, downloadInvoicePdf, deleteInvoiceById } from '~/composables/useInvoices';
 import { getAgingReport } from '~/composables/useInvoiceBilling';
 import type { AgingReport } from '~/composables/useInvoiceBilling';
 
@@ -188,6 +194,9 @@ const exportData = computed(() => table.value.data);
 
 const loading = ref(true);
 const collecting = ref<number | null>(null);
+const deletePopup = ref(false);
+const deleteId = ref<number | null>(null);
+const deleting = ref(false);
 
 // Data
 const invoices = ref<InvoiceItem[]>([]);
@@ -366,6 +375,21 @@ async function handleUncollect(id: number) {
   }
 }
 
+async function confirmDelete() {
+  if (!deleteId.value) return;
+  deleting.value = true;
+  try {
+    const response = await deleteInvoiceById(deleteId.value);
+    if (response?.success) {
+      await Promise.all([loadInvoices(), loadSummary()]);
+    }
+  } finally {
+    deleting.value = false;
+    deletePopup.value = false;
+    deleteId.value = null;
+  }
+}
+
 function handleExport() {
   const csvHeaders = ['Invoice #', 'Deal', 'Amount', 'Date', 'Status', 'Collected Date'];
   const rows = (table.value.data || []).map(r => [
@@ -532,6 +556,10 @@ function handleInvSwipe(name: string, inv: unknown) {
       break;
     case 'pdf':
       exportInvoicePDF(inv);
+      break;
+    case 'delete':
+      deleteId.value = inv.id;
+      deletePopup.value = true;
       break;
   }
 }

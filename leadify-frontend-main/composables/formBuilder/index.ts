@@ -153,7 +153,7 @@ export function useFormBuilder() {
     return null;
   }
 
-  async function getSubmissions(params?: { formId?: number; limit?: number }): Promise<any[]> {
+  async function getSubmissions(params?: { formId?: number; limit?: number }): Promise<Record<string, unknown>[]> {
     const qs = params?.formId ? `?formId=${params.formId}&limit=${params?.limit ?? 50}` : `?limit=${params?.limit ?? 50}`;
     const { body, success } = await useApiFetch(`form-builder/submissions${qs}`);
     if (success && body) {

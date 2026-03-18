@@ -47,7 +47,7 @@ div
                 Icon(name="ph:clipboard-text-bold" size="18" style="color: #8b5cf6")
               div
                 p.text-sm.font-semibold(style="color: var(--text-primary)") {{ row.title }}
-                p.text-xs(v-if="row.description" style="color: var(--text-muted)") {{ row.description?.substring(0, 50) }}{{ row.description?.length > 50 ? '...' : '' }}
+                p.text-xs(v-if="row.description" style="color: var(--text-muted)") {{ row.description?.substring(0, 50) }}{{ (row.description?.length ?? 0) > 50 ? '...' : '' }}
         el-table-column(:label="$t('common.status')" prop="status" width="130" sortable)
           template(#default="{ row }")
             el-tag(:type="getStatusType(row.status)" size="small" effect="dark") {{ row.status }}

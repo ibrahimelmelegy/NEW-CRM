@@ -306,7 +306,7 @@ const upcomingBookings = ref<Record<string, unknown>[]>([]);
 const availStaffId = ref('' as unknown);
 const availDate = ref('');
 const loadingAvailability = ref(false);
-const availableSlots = ref<any[] | null>(null);
+const availableSlots = ref<Record<string, unknown>[] | null>(null);
 
 // Stats
 const stats = computed(() => {

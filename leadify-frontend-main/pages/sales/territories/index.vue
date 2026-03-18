@@ -615,7 +615,7 @@ const availableRegions = computed(() => {
 });
 
 const territoriesByRegion = computed(() => {
-  const groups: Record<string, any[]> = {};
+  const groups: Record<string, Record<string, unknown>[]> = {};
   for (const ter of filteredTerritories.value) {
     const region = ter.type || ter.region || 'Other';
     if (!groups[region]) groups[region] = [];

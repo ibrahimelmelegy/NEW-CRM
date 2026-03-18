@@ -9,7 +9,7 @@ import logger from '~/utils/logger'
       .notify.glass-card(class="h-[75vh] mb-2 p-[16px]")
        el-icon.is-loading(:size="32" v-if="isLoading" style="color: var(--accent-color, #7849ff)")
        el-empty(v-if="finalData?.length === 0 || !finalData " :description="$t('notifications.noData')" image="/images/emptyNotify.png")
-       .item.flex.flex-wrap.gap-2.items-center.justify-center(v-else-if="finalData && finalData?.length > 0")
+       .item.flex.flex-wrap.gap-2.items-center.justify-center(v-else-if="finalData && (finalData?.length ?? 0) > 0")
          .w-full.my-2.p-2(v-for="notify in finalData" :key="notify?.id" :class="`item-data_${notify?.read}`" @click="() => readNotification(notify)")
             .flex.justify-between.items-center
              div.flex.gap-2

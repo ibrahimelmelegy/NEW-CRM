@@ -67,13 +67,13 @@ const DEAL_STAGE_PROBABILITY: Record<string, number> = {
 
 class DealService {
   public async convertLeadTODeal(input: ConvertLeadToDealInput & { userId: string }, admin: User): Promise<Deal> {
-    let lead: Record<string, unknown>,
+    let lead: Lead,
       client: unknown = null;
     const transaction = await sequelize.transaction();
     try {
       lead = await leadService.leadOrError({ id: input.leadId });
-      (lead as any).set({ status: LeadStatusEnums.CONVERTED });
-      await (lead as any).save({ transaction });
+      lead.set({ status: LeadStatusEnums.CONVERTED });
+      await lead.save({ transaction });
 
       client = await Client.findOne({ where: { email: lead.email } });
       if (client) throw new BaseError(ERRORS.CLIENT_ALREADY_FOUND);
@@ -93,14 +93,14 @@ class DealService {
         opportunity = await Opportunity.findByPk(input.opportunityId);
         if (!opportunity) throw new BaseError(ERRORS.OPPORTUNITY_NOT_FOUND);
       }
-      const exitingDeal = await Deal.findOne({
+      const existingDeal = await Deal.findOne({
         where: {
           name: input.name,
           companyName: input.companyName
         },
         attributes: ['name', 'companyName']
       });
-      if (exitingDeal) throw new BaseError(ERRORS.DEAL_ALREADY_EXIST);
+      if (existingDeal) throw new BaseError(ERRORS.DEAL_ALREADY_EXIST);
       if (input.stage !== DealStageEnums.CANCELLED) {
         delete input.cancelledReason;
       }
@@ -162,12 +162,12 @@ class DealService {
   public async createDeal(input: CreateLeadAndDealInput, admin: User): Promise<Deal> {
     // Parallel validation: check users + duplicate in one round-trip
     const userIds = input.deal.users && Array.isArray(input.deal.users) ? input.deal.users : [];
-    const [users, exitingDeal] = await Promise.all([
+    const [users, existingDeal] = await Promise.all([
       userIds.length ? User.findAll({ where: { id: { [Op.in]: userIds } } }) : Promise.resolve([]),
       Deal.findOne({ where: { name: input.deal.name, companyName: input.deal.companyName }, attributes: ['name', 'companyName'] })
     ]);
     if (userIds.length && !users.length) throw new BaseError(ERRORS.USER_NOT_FOUND);
-    if (exitingDeal) throw new BaseError(ERRORS.DEAL_ALREADY_EXIST);
+    if (existingDeal) throw new BaseError(ERRORS.DEAL_ALREADY_EXIST);
     if (input.deal.stage !== DealStageEnums.CANCELLED) delete input.deal.cancelledReason;
 
     const t = await sequelize.transaction();
@@ -594,7 +594,7 @@ class DealService {
               duration: 30, // Default duration
               status: ProjectStatusEnum.ACTIVE,
               assignedUsersIds: [user.id],
-              etimadInfo: {} as any // Bypass strict TS check for non-Etimad projects
+              etimadInfo: {} as Record<string, unknown> // Bypass strict TS check for non-Etimad projects
             }
           },
           user

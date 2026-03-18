@@ -145,7 +145,7 @@ class ProjectService {
       });
     } catch (error) {
       await transaction?.rollback();
-      throw new BaseError((ERRORS[(<any>error).message] as any) || ERRORS.SOMETHING_WENT_WRONG);
+      throw new BaseError(ERRORS[(error as Error).message as keyof typeof ERRORS] || ERRORS.SOMETHING_WENT_WRONG);
     }
   }
 

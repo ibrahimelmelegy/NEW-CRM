@@ -4,6 +4,7 @@ import invoiceService from './invoiceService';
 import { AuthenticatedRequest } from '../types';
 import pdfService from '../docBuilder/pdfService';
 import Setting from '../setting/settingModel';
+import Invoice from '../deal/model/invoiceMode';
 
 class InvoiceController {
   async getInvoices(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -90,6 +91,20 @@ class InvoiceController {
       const tenantId = req.user?.tenantId || undefined;
       const invoices = await invoiceService.getOverdueInvoices(tenantId);
       wrapResult(res, invoices);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteInvoice(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const invoice = await invoiceService.getInvoiceById(id);
+      if (!invoice) {
+        return wrapResult(res, { message: 'Invoice not found' }, 404);
+      }
+      await Invoice.destroy({ where: { id } });
+      wrapResult(res, { message: 'Invoice deleted successfully' });
     } catch (error) {
       next(error);
     }

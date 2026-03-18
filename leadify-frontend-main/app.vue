@@ -17,7 +17,7 @@ import elAr from 'element-plus/dist/locale/ar.mjs';
 // Global locale direction handler — ensures RTL/LTR is always in sync
 const { locale } = useI18n();
 
-const elLocaleMap: Record<string, any> = { en: elEn, ar: elAr };
+const elLocaleMap: Record<string, typeof elEn> = { en: elEn, ar: elAr };
 const elLocale = computed(() => elLocaleMap[locale.value] || elEn);
 
 watch(

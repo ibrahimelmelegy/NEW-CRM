@@ -88,7 +88,7 @@
                 Icon(:name="categoryIcon(pb.category)" size="22")
               div
                 p.text-base.font-bold(style="color: var(--text-primary)") {{ pb.name }}
-                p.text-xs(class="mt-0.5" style="color: var(--text-muted)") {{ pb.description?.slice(0, 60) }}{{ pb.description?.length > 60 ? '...' : '' }}
+                p.text-xs(class="mt-0.5" style="color: var(--text-muted)") {{ pb.description?.slice(0, 60) }}{{ (pb.description?.length ?? 0) > 60 ? '...' : '' }}
             el-tag.shrink-0(size="small" :type="pb.status === 'active' ? 'success' : 'info'" round) {{ pb.status === 'active' ? $t('common.active') : $t('playbooks.draft') }}
 
           //- Category Badge

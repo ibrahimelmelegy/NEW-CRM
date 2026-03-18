@@ -640,7 +640,7 @@ async function fetchData() {
 
     // Build resource heatmap from manpower + allocations
     const manpowerHoursMap = new Map<string, number[]>();
-    const manpowerAllocMap = new Map<string, any[]>();
+    const manpowerAllocMap = new Map<string, Record<string, unknown>[]>();
 
     for (const alloc of allocList) {
       const mpId = alloc.manpowerId;

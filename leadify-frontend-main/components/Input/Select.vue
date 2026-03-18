@@ -5,7 +5,7 @@ el-form-item(:error='errorMessage' label-position="top" :label="label" :class="i
       v-infinite-scroll="load"
       infinite-scroll-immediate
       class="w-full"
-      class="{'h-[200px]' : options?.length > 10}")
+      class="{'h-[200px]' : (options?.length ?? 0) > 10}")
       el-option(
         v-for="item in options"
         :key="item.value"

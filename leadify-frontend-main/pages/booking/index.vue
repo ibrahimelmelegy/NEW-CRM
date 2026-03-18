@@ -625,7 +625,7 @@ const quickBook = (hour: number) => {
 };
 
 const copyBookingLink = (page: unknown) => {
-  const baseUrl = (config.public.BOOKING_BASE_URL || config.public.BASE_URL || '').replace(/\/$/, '');
+  const baseUrl = (config.public.BOOKING_BASE_URL || config.public.BASE_URL || window.location.origin).replace(/\/$/, '');
   navigator.clipboard?.writeText(`${baseUrl}/book/${page.slug || page.id}`);
   ElMessage.success(t('booking.linkCopied'));
 };
@@ -656,7 +656,7 @@ async function fetchStaffAvailability() {
     if (res?.success && res?.body) {
       // Group slots by staff member for the UI
       const slotData = Array.isArray(res.body) ? res.body : [];
-      const staffMap = new Map<number, any>();
+      const staffMap = new Map<number, Record<string, unknown>>();
       for (const slot of slotData) {
         const staffId = slot.staffId;
         if (!staffMap.has(staffId)) {

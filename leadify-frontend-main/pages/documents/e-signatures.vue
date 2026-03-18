@@ -73,7 +73,7 @@
               <el-avatar v-for="(r, idx) in row.recipients?.slice(0, 3)" :key="idx" :size="28" class="border-2 border-slate-800 bg-slate-700">
                 {{ r.name?.charAt(0) }}
               </el-avatar>
-              <span v-if="row.recipients?.length > 3" class="ml-2 text-xs text-slate-500">+{{ row.recipients.length - 3 }}</span>
+              <span v-if="(row.recipients?.length ?? 0) > 3" class="ml-2 text-xs text-slate-500">+{{ row.recipients.length - 3 }}</span>
             </div>
           </template>
         </el-table-column>

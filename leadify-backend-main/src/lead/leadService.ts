@@ -384,7 +384,7 @@ class LeadService {
     for (const lead of createdLeads) {
       const leadData = leadArray.find(l => l.name === lead.name);
       if (leadData?.userIds && leadData.userIds.length > 0) {
-        await (lead as any).$set('users', leadData.userIds);
+        await (lead as Lead & { $set: (association: string, ids: number[]) => Promise<void> }).$set('users', leadData.userIds);
       }
     }
 

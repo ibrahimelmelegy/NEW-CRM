@@ -141,7 +141,7 @@ class TaskService {
       data.completedAt = null;
     }
 
-    await (task as any).update(data);
+    await task.update(data);
     return this.getTaskById(id);
   }
 
@@ -166,7 +166,7 @@ class TaskService {
       return this.getTaskById(id);
     }
 
-    await (task as any).update({
+    await task.update({
       status: TaskStatus.COMPLETED,
       completedAt: new Date()
     });

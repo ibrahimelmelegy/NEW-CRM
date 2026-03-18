@@ -49,7 +49,7 @@
             p.text-sm.font-semibold(style="color: var(--text-primary)") {{ task.title }}
             el-tag(:type="getPriorityType(task.priority)" size="small" round) {{ task.priority }}
 
-          p.text-xs.mb-3(v-if="task.description" style="color: var(--text-muted)") {{ task.description?.substring(0, 60) }}{{ task.description?.length > 60 ? '...' : '' }}
+          p.text-xs.mb-3(v-if="task.description" style="color: var(--text-muted)") {{ task.description?.substring(0, 60) }}{{ (task.description?.length ?? 0) > 60 ? '...' : '' }}
 
           .flex.items-center.justify-between
             .flex.items-center.gap-2

@@ -429,7 +429,7 @@ function computeCohort() {
   }
 
   // Group deals by the month they were created
-  const cohortMap = new Map<string, any[]>();
+  const cohortMap = new Map<string, Record<string, unknown>[]>();
   deals.forEach(deal => {
     const created = new Date(deal.createdAt || deal.created_at || Date.now());
     const key = getMonthKey(created);

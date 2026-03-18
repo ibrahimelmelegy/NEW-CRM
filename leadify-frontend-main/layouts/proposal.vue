@@ -67,6 +67,7 @@ section
 import { storeToRefs } from 'pinia';
 import { ElNotification } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
+import type { User } from '~/types/models';
 import { useMain } from '~/stores/common';
 import { user as globalUser } from '~/composables/useUser';
 const mainData = useMain();
@@ -115,7 +116,7 @@ async function logout() {
   router.push('/login');
 }
 
-const user = ref<any>({});
+const user = ref<Partial<User>>({});
 const proposal = await getProposal(route.params.slug as string);
 
 if (!user.value?.id) {
