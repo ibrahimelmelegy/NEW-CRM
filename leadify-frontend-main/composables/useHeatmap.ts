@@ -60,9 +60,13 @@ export function useHeatmap() {
   }
 
   async function fetchRecentActivity() {
-    const res = await useApiFetch('insights/heatmap/recent?limit=30');
-    if (res.success && res.body) {
-      recentActivity.value = res.body as unknown;
+    try {
+      const res = await useApiFetch('insights/heatmap/recent?limit=30');
+      if (res.success && res.body) {
+        recentActivity.value = res.body as unknown;
+      }
+    } catch {
+      // Silently handle – recent activity is non-critical
     }
   }
 

@@ -21,6 +21,9 @@
           | {{ $t('heatmap.activityMap') }}
         .flex.justify-center(v-if="loading")
           el-skeleton(:rows="7" animated)
+        .text-center.py-8(v-else-if="error")
+          p.text-secondary {{ $t('common.fetchError') }}
+          el-button.mt-3(type="primary" @click="loadData") {{ $t('common.retry') }}
         ActivityHeatmap(v-else :data="heatmapData")
 
     //- Live Ticker
@@ -43,6 +46,7 @@ const { t } = useI18n();
 const { heatmapData, recentActivity, loading, year, fetchHeatmap, fetchRecentActivity } = useHeatmap();
 
 const viewMode = ref('team');
+const error = ref(false);
 const viewOptions = computed(() => [
   { label: t('heatmap.viewTeam'), value: 'team' },
   { label: t('heatmap.viewIndividual'), value: 'individual' }
@@ -54,11 +58,20 @@ const yearOptions = [currentYear - 2, currentYear - 1, currentYear];
 
 function onYearChange(val: number) {
   year.value = val;
-  fetchHeatmap();
+  loadData();
 }
 
-onMounted(async () => {
-  await Promise.all([fetchHeatmap(), fetchRecentActivity()]);
+async function loadData() {
+  error.value = false;
+  try {
+    await Promise.all([fetchHeatmap(), fetchRecentActivity()]);
+  } catch {
+    error.value = true;
+  }
+}
+
+onMounted(() => {
+  loadData();
 });
 </script>
 

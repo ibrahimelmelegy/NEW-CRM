@@ -5,7 +5,7 @@ div
     :subtitle="$t('knowledgeBase.subtitle')"
   )
     template(#actions)
-      ExportButton(:data="articles" :columns="exportColumns" :filename="'knowledge-base-export'" :title="$t('knowledgeBase.title')")
+      ExportButton(:data="allArticles" :columns="exportColumns" :filename="'knowledge-base-export'" :title="$t('knowledgeBase.title')")
       el-button(type="primary" size="large" @click="showEditor = true" class="!rounded-2xl")
         Icon(name="ph:plus-bold" size="14" aria-label="Create")
         span.ml-1 {{ $t('knowledgeBase.createArticle') }}
@@ -129,7 +129,7 @@ const exportColumns = [
   { prop: 'viewCount', label: t('knowledgeBase.views') }
 ];
 
-const articles = ref<KBArticle[]>([]);
+const allArticles = ref<KBArticle[]>([]);
 const categories = ref<string[]>([]);
 const loading = ref(true);
 const saving = ref(false);
@@ -149,6 +149,17 @@ const formRef = ref();
 
 let debounceTimer: ReturnType<typeof setTimeout>;
 
+// Client-side filtered articles for instant feedback while server request is in-flight
+const articles = computed(() => {
+  if (!search.value) return allArticles.value;
+  const q = search.value.toLowerCase();
+  return allArticles.value.filter(a =>
+    a.title?.toLowerCase().includes(q) ||
+    a.excerpt?.toLowerCase().includes(q) ||
+    a.category?.toLowerCase().includes(q)
+  );
+});
+
 const form = reactive({
   title: '',
   content: '',
@@ -165,9 +176,9 @@ const rules = {
 
 const summaryStats = computed(() => {
   const total = pagination.value.totalItems;
-  const published = articles.value.filter(a => a.status === 'PUBLISHED').length;
-  const drafts = articles.value.filter(a => a.status === 'DRAFT').length;
-  const totalViews = articles.value.reduce((sum, a) => sum + (a.viewCount || 0), 0);
+  const published = allArticles.value.filter(a => a.status === 'PUBLISHED').length;
+  const drafts = allArticles.value.filter(a => a.status === 'DRAFT').length;
+  const totalViews = allArticles.value.reduce((sum, a) => sum + (a.viewCount || 0), 0);
   return [
     { label: t('knowledgeBase.totalArticles'), value: total, icon: 'ph:article-bold', color: '#7849ff' },
     { label: t('knowledgeBase.published'), value: published, icon: 'ph:check-circle-bold', color: '#22c55e' },
@@ -189,7 +200,7 @@ async function loadArticles() {
     if (statusFilter.value) params.status = statusFilter.value;
 
     const result = await fetchKBArticles(params);
-    articles.value = result.docs;
+    allArticles.value = result.docs;
     pagination.value = result.pagination;
   } finally {
     loading.value = false;
@@ -205,7 +216,7 @@ function debounceLoad() {
   debounceTimer = setTimeout(() => {
     currentPage.value = 1;
     loadArticles();
-  }, 400);
+  }, 300);
 }
 
 function viewArticle(article: KBArticle) {

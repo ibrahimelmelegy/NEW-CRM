@@ -649,6 +649,16 @@ async function handleDelete() {
   }
 }
 
+// Handle pagination
+async function handlePageChange(page) {
+  await handleClick({ props: { name: activeName.value } });
+}
+
+// Handle search
+async function handleSearch(query) {
+  await handleClick({ props: { name: activeName.value } });
+}
+
 // Handle view action
 const handleView = row => {
   router.push(`/operations/daily-task/${row?.id}`);
