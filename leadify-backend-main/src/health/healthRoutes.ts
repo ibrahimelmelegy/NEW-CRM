@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { sequelize } from '../config/db';
+import redisClient from '../config/redis';
 
 const router = Router();
 
@@ -45,8 +46,8 @@ router.get('/health', (_req: Request, res: Response) => {
  * @swagger
  * /api/health/ready:
  *   get:
- *     summary: Deep health check (database connectivity)
- *     description: Tests database connectivity and reports memory usage. Used for readiness probes.
+ *     summary: Deep health check (database + Redis connectivity)
+ *     description: Tests database and Redis connectivity. Used for readiness probes.
  *     tags: [Health]
  *     security: []
  *     responses:
@@ -60,54 +61,80 @@ router.get('/health', (_req: Request, res: Response) => {
  *                 status:
  *                   type: string
  *                   example: ok
- *                 checks:
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 uptime:
+ *                   type: number
+ *                 details:
  *                   type: object
  *                   properties:
- *                     database:
+ *                     db:
  *                       type: object
  *                       properties:
  *                         status:
  *                           type: string
- *                           example: ok
+ *                           example: connected
+ *                     redis:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           example: connected
  *                     memory:
  *                       type: object
  *                       properties:
  *                         status:
  *                           type: string
  *                           example: ok
- *                         usage:
+ *                         message:
  *                           type: string
- *                           example: 128MB
+ *                           example: 128MB / 256MB
  *       503:
- *         description: Service unavailable (database connection failed)
+ *         description: Service unavailable (database or Redis connection failed)
  */
 router.get('/health/ready', async (_req: Request, res: Response) => {
+  const timestamp = new Date().toISOString();
+  const details: Record<string, { status: string; message?: string }> = {};
+  let healthy = true;
+
+  // ── Database check ──────────────────────────────────────────────────────
   try {
     await sequelize.authenticate();
-    const [_results] = await sequelize.query('SELECT 1+1 AS result');
-
-    res.status(200).json({
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-      checks: {
-        database: { status: 'ok', responseTime: 'fast' },
-        memory: {
-          status: 'ok',
-          usage: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + 'MB',
-          total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024) + 'MB'
-        }
-      }
-    });
+    details.db = { status: 'connected' };
   } catch (error) {
-    res.status(503).json({
-      status: 'error',
-      timestamp: new Date().toISOString(),
-      checks: {
-        database: { status: 'error', message: (error as Error).message }
-      }
-    });
+    healthy = false;
+    details.db = { status: 'disconnected', message: (error as Error).message };
   }
+
+  // ── Redis check ─────────────────────────────────────────────────────────
+  try {
+    if (redisClient.isOpen) {
+      await redisClient.ping();
+      details.redis = { status: 'connected' };
+    } else {
+      healthy = false;
+      details.redis = { status: 'disconnected', message: 'Redis client is not connected' };
+    }
+  } catch (error) {
+    healthy = false;
+    details.redis = { status: 'disconnected', message: (error as Error).message };
+  }
+
+  // ── Memory info ─────────────────────────────────────────────────────────
+  const mem = process.memoryUsage();
+  details.memory = {
+    status: 'ok',
+    message: `${Math.round(mem.heapUsed / 1024 / 1024)}MB / ${Math.round(mem.heapTotal / 1024 / 1024)}MB`
+  };
+
+  const statusCode = healthy ? 200 : 503;
+  res.status(statusCode).json({
+    status: healthy ? 'ok' : 'error',
+    timestamp,
+    uptime: process.uptime(),
+    details
+  });
 });
 
 /**

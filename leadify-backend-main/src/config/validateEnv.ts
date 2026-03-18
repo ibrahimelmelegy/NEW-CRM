@@ -89,6 +89,22 @@ const ENV_VARS: EnvVar[] = [
   }
 ];
 
+/**
+ * Critical environment variables that MUST be present for the server to function.
+ * If any of these groups are entirely missing, the server cannot start safely.
+ */
+interface CriticalGroup {
+  /** At least one of these env vars must be set */
+  vars: string[];
+  label: string;
+}
+
+const CRITICAL_GROUPS: CriticalGroup[] = [
+  { vars: ['DB_HOST', 'DATABASE_URL'], label: 'Database connection (DB_HOST or DATABASE_URL)' },
+  { vars: ['SECRET_KEY'], label: 'JWT / CSRF secret (SECRET_KEY)' },
+  { vars: ['REDIS_URL', 'REDIS_HOST'], label: 'Redis connection (REDIS_URL or REDIS_HOST)' }
+];
+
 export function validateEnvironment(): void {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -135,7 +151,22 @@ export function validateEnvironment(): void {
     logger.error('\n=== Environment Validation Errors ===');
     errors.forEach(e => logger.error(`  ${e}`));
     logger.error('=====================================\n');
-    // Log errors but don't crash — allow server to start with partial config
-    // Missing vars will cause runtime errors only when the relevant feature is used
+  }
+
+  // ── Critical group check: exit if any essential group is entirely missing ──
+  const fatal: string[] = [];
+  for (const group of CRITICAL_GROUPS) {
+    const hasAny = group.vars.some(v => !!process.env[v]);
+    if (!hasAny) {
+      fatal.push(`FATAL: ${group.label} — set at least one of: ${group.vars.join(', ')}`);
+    }
+  }
+
+  if (fatal.length > 0) {
+    logger.error('\n=== FATAL: Missing critical environment variables ===');
+    fatal.forEach(f => logger.error(`  ${f}`));
+    logger.error('Server cannot start without these. Exiting.');
+    logger.error('=====================================================\n');
+    process.exit(1);
   }
 }
