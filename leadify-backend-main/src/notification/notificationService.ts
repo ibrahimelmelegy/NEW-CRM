@@ -10,6 +10,7 @@ import { ERRORS } from '../utils/error/errors';
 import { NotificationReadEnums, NotificationTypeEnums } from './notificationEnum';
 import Notification from './notificationModel';
 import { io } from '../server';
+import logger from '../config/logger';
 
 class NotificationService {
   async getNotifications(input: Record<string, unknown>, user: User): Promise<void> {
@@ -47,7 +48,7 @@ class NotificationService {
     );
     try {
       io.emit('notification:read', { userId: user.id, readAll: true });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: notification:read'); }
   }
 
   async updateNotificationToClicked(id: string, user: User): Promise<void> {
@@ -68,10 +69,10 @@ class NotificationService {
     });
     try {
       io.emit('lead:assigned', { leadId: input.target, assignedTo: input.userId });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: lead:assigned'); }
     try {
       io.emit('notification:new', { userId: input.userId, notification: { id: notification.id, type: NotificationTypeEnums.LEAD_ASSIGNED } });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: notification:new'); }
   }
 
   async sendAssignOpportunityNotification(input: Record<string, unknown>, opportunity: Opportunity, admin: User): Promise<void> {

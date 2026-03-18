@@ -3,6 +3,7 @@ import { LoyaltyProgram, LoyaltyPoints } from './loyaltyModel';
 import Client from '../client/clientModel';
 import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
+import logger from '../config/logger';
 
 interface TierDefinition {
   name: string;
@@ -246,11 +247,11 @@ class LoyaltyService {
 
     try {
       io.emit('loyalty:points_earned', { clientId, programId, pointsEarned, totalEarned: tierAfter.totalEarned });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: loyalty event'); }
     if (tierChanged) {
       try {
         io.emit('loyalty:tier_upgrade', { clientId, programId, previousTier: tierBefore.currentTier, currentTier: tierAfter.currentTier });
-      } catch (_ignored: unknown) { /* non-critical */ }
+      } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: loyalty event'); }
     }
 
     return {

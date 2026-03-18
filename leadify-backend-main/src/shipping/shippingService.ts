@@ -2,6 +2,7 @@ import { Op, fn, col } from 'sequelize';
 import { Shipment, ShippingRate } from './shippingModel';
 import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
+import logger from '../config/logger';
 
 /** Valid status progression order */
 const STATUS_ORDER: Record<string, string[]> = {
@@ -159,11 +160,11 @@ class ShippingService {
     await shipment.update(updateData);
     try {
       io.emit('shipping:status_changed', { id: shipment.id, shipmentNumber: shipment.shipmentNumber, previousStatus: currentStatus, newStatus });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: shipping event'); }
     if (newStatus === 'DELIVERED') {
       try {
         io.emit('shipping:delivered', { id: shipment.id, shipmentNumber: shipment.shipmentNumber, recipientName: shipment.recipientName });
-      } catch (_ignored: unknown) { /* non-critical */ }
+      } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: shipping event'); }
     }
     return shipment;
   }
@@ -275,7 +276,7 @@ class ShippingService {
 
     try {
       io.emit('shipping:bulk_status_updated', { successCount, failCount });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: shipping event'); }
 
     return { total: updates.length, successCount, failCount, results };
   }

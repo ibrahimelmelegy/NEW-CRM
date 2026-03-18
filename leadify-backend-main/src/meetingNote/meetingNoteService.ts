@@ -3,13 +3,14 @@ import MeetingNote from './meetingNoteModel';
 import User from '../user/userModel';
 import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
+import logger from '../config/logger';
 
 class MeetingNoteService {
   async create(data: Record<string, unknown>, userId: number, tenantId?: string) {
     const note = await MeetingNote.create({ ...data, createdBy: userId, tenantId });
     try {
       io.emit('meetingNote:created', { id: note.id, title: note.title });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: meetingNote event'); }
     return this.getById(note.id);
   }
 
@@ -52,7 +53,7 @@ class MeetingNoteService {
     await item.update(data);
     try {
       io.emit('meetingNote:updated', { id: item.id, title: item.title });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: meetingNote event'); }
     return this.getById(item.id);
   }
 
@@ -62,7 +63,7 @@ class MeetingNoteService {
     await item.destroy();
     try {
       io.emit('meetingNote:deleted', { id });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: meetingNote event'); }
     return true;
   }
 }

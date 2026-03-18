@@ -6,6 +6,7 @@ import WorkOrder from './workOrderModel';
 import QualityCheck from './qualityCheckModel';
 import { tenantWhere, tenantCreate } from '../utils/tenantScope';
 import { io } from '../server';
+import logger from '../config/logger';
 
 class ManufacturingService {
   // ─── BOM ───────────────────────────────────────────────────────────
@@ -266,7 +267,7 @@ class ManufacturingService {
     await wo.destroy();
     try {
       io.emit('manufacturing:work_order_deleted', { id, woNumber: wo.woNumber });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: manufacturing event'); }
     return { deleted: true };
   }
 
@@ -320,7 +321,7 @@ class ManufacturingService {
         status,
         percentComplete: wo.planned > 0 ? Math.round((newProduced / wo.planned) * 100) : 0
       });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: manufacturing event'); }
 
     return { workOrder: wo, qualityCheck, percentComplete: wo.planned > 0 ? Math.round((newProduced / wo.planned) * 100) : 0 };
   }

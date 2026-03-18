@@ -11,6 +11,7 @@ import BaseError from '../utils/error/base-http-exception';
 import { ERRORS } from '../utils/error/errors';
 import { clampPagination } from '../utils/pagination';
 import { io } from '../server';
+import logger from '../config/logger';
 
 class SupportService {
   // ─── Ticket Number Generation ─────────────────────────────────────────
@@ -259,7 +260,7 @@ class SupportService {
         newPriority,
         assignedTo: updateData.assignedTo || ticket.assignedTo
       });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: ticket:escalated'); }
 
     return this.getTicketById(ticketId);
   }
@@ -293,7 +294,7 @@ class SupportService {
 
     try {
       io.emit('ticket:reopened', { ticketId: ticket.id, ticketNumber: ticket.ticketNumber });
-    } catch (_ignored: unknown) { /* non-critical */ }
+    } catch (error: unknown) { logger.warn({ err: error }, 'Socket emit failed: ticket:reopened'); }
     return this.getTicketById(ticketId);
   }
 
