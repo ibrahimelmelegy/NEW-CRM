@@ -200,8 +200,11 @@
       "Read(//c/Users/ielme/.ssh/**)",
       "Bash(do echo:*)",
       "Read(//d/Crm-Dev/NEW-CRM/**)",
-      "Bash(for f:*)"
+      "Bash(for f:*)",
+      "mcp__playwright__browser_snapshot"
     ],
-    "additionalDirectories": ["\\tmp"]
+    "additionalDirectories": [
+      "\\tmp"
+    ]
   }
 }
